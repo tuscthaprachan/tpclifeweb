@@ -1,0 +1,58 @@
+{
+  "name": "tpclife",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TPC Life (ท้ายท่าพระจันทร์), a one-stop student life portal for Thammasat University Tha Prachan",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:a11y": "playwright test --config=tests/playwright.config.ts a11y",
+    "test:e2e": "playwright test --config=tests/playwright.config.ts e2e",
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "check": "npm run check:contrast && npm run check:i18n && npm run typecheck && npm run lint"
+  },
+  "comment:overrides": "Pins TypeScript across the tree. Without this npm oscillates between TS 5 and TS 7 resolving typescript-eslint's wide range and never terminates. TS 7 is not used because typescript-eslint 8 caps below it.",
+  "overrides": {
+    "typescript": "$typescript"
+  },
+  "dependencies": {
+    "@portabletext/react": "^7.0.1",
+    "@sanity/client": "^7.26.2",
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^6.9.1",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
+    "next": "^16.3.0",
+    "next-sanity": "^13.3.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "sanity": "^6.9.1",
+    "server-only": "^0.0.1",
+    "styled-components": "^6.5.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@eslint/eslintrc": "^3.3.6",
+    "@playwright/test": "^1.62.1",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.0",
+    "postcss": "^8.5.26",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "unrs-resolver@1.12.2": true
+  }
+}

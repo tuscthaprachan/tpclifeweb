@@ -1,0 +1,142 @@
+/*
+ * Typography.
+ *
+ * Two scripts, two faces, two sets of metrics.
+ *
+ * Lexend for English. Sarabun for Thai. Sarabun also carries Latin glyphs, so a
+ * Thai page renders wholly in Sarabun and stays visually consistent rather than
+ * switching face mid-sentence for every Latin acronym (TUSU, TU-GET, MRT), of
+ * which this site has many. An English page uses Lexend and falls through to
+ * Sarabun for any Thai proper noun.
+ *
+ * Thai gets more leading than Latin. Thai stacks vowel and tone marks above and
+ * below the base character, and at 1.6 those marks collide with the line above.
+ */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-en);
+  font-size: var(--text-base);
+  line-height: var(--leading-en);
+  font-weight: var(--weight-regular);
+  color: var(--ink-900);
+  background-color: var(--surface);
+  font-synthesis-weight: none;
+}
+
+html[lang^="th"] body {
+  font-family: var(--font-th);
+  line-height: var(--leading-th);
+}
+
+/*
+ * 3.1.2 Language of Parts. Any element carrying its own lang attribute gets that
+ * language's face and leading, so a Thai phrase quoted inside an English page
+ * renders correctly rather than falling back at the glyph level.
+ */
+:lang(th) {
+  font-family: var(--font-th);
+  line-height: var(--leading-th);
+}
+
+:lang(en) {
+  font-family: var(--font-en);
+  line-height: var(--leading-en);
+}
+
+/*
+ * Thai has no spaces between words, so the browser breaks Thai lines using
+ * dictionary rules. `line-break: loose` lets it break at more opportunities,
+ * which matters at 320px where a long unbroken Thai run would otherwise force
+ * horizontal scroll and fail 1.4.10.
+ */
+:lang(th),
+html[lang^="th"] body {
+  line-break: loose;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--ink-900);
+  text-wrap: balance;
+}
+
+html[lang^="th"] h1,
+html[lang^="th"] h2,
+html[lang^="th"] h3,
+html[lang^="th"] h4,
+html[lang^="th"] h5,
+html[lang^="th"] h6 {
+  /* Tight leading clips Thai tone marks at display sizes. */
+  line-height: 1.4;
+}
+
+h1 {
+  font-size: var(--text-4xl);
+}
+h2 {
+  font-size: var(--text-2xl);
+}
+h3 {
+  font-size: var(--text-xl);
+}
+h4 {
+  font-size: var(--text-lg);
+}
+h5,
+h6 {
+  font-size: var(--text-base);
+}
+
+p,
+li,
+dd,
+dt,
+td,
+th,
+figcaption {
+  text-wrap: pretty;
+}
+
+/*
+ * Reading measure. Applied by the Prose component rather than globally, so
+ * tables and panels are free to use the full width.
+ */
+.measure {
+  max-width: var(--measure-en);
+}
+
+html[lang^="th"] .measure,
+.measure:lang(th) {
+  max-width: var(--measure-th);
+}
+
+small {
+  font-size: var(--text-sm);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/*
+ * 1.4.12 Text Spacing. The site must survive a reader overriding all four of
+ * these. Nothing anywhere may set a fixed height on a text container, which is
+ * enforced by the text-spacing test in tests/a11y.
+ */

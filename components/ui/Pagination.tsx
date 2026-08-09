@@ -1,0 +1,50 @@
+import type { Locale } from "@/lib/i18n/config";
+import { formatNumber } from "@/lib/i18n/format";
+import { UI } from "@/lib/i18n/strings";
+import { cx } from "./cx";
+import { ArrowLeftIcon, ArrowRightIcon } from "./icons";
+
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  /** Builds a real URL for a given page, query-param driven, so this works with JavaScript off. */
+  buildHref: (page: number) => string;
+  locale: Locale;
+  className?: string;
+}
+
+const LINK_CLASS =
+  "inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)] rounded-control px-[var(--space-2)] py-[var(--space-1)] font-medium text-action no-underline hover:bg-surface-alt hover:text-action-hover hover:underline";
+
+export function Pagination({ currentPage, totalPages, buildHref, locale, className }: PaginationProps) {
+  if (totalPages <= 1) return null;
+
+  const previousPage = currentPage > 1 ? currentPage - 1 : null;
+  const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+
+  return (
+    <nav aria-label={UI.pagination[locale]} className={cx("flex items-center justify-between gap-[var(--space-4)]", className)}>
+      {previousPage ? (
+        <a href={buildHref(previousPage)} className={LINK_CLASS} rel="prev">
+          <ArrowLeftIcon />
+          {UI.previousPage[locale]}
+        </a>
+      ) : (
+        <span />
+      )}
+
+      <p className="m-0 text-sm text-ink-600">
+        {UI.page[locale]} {formatNumber(currentPage, locale)} {UI.of[locale]} {formatNumber(totalPages, locale)}
+      </p>
+
+      {nextPage ? (
+        <a href={buildHref(nextPage)} className={LINK_CLASS} rel="next">
+          {UI.nextPage[locale]}
+          <ArrowRightIcon />
+        </a>
+      ) : (
+        <span />
+      )}
+    </nav>
+  );
+}

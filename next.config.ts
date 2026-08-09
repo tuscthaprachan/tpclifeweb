@@ -1,0 +1,47 @@
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+    formats: ["image/avif", "image/webp"],
+  },
+
+  typescript: {
+    // A type error is a build failure. There is no "ship it anyway" here.
+    ignoreBuildErrors: false,
+  },
+
+  // Next 16 no longer runs ESLint as part of `next build`. Linting is a
+  // separate gate, run by `npm run check` and in CI.
+
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          // No camera, microphone or location. The site never needs them, and
+          // saying so explicitly is cheaper than being asked why it might.
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+          },
+        ],
+      },
+      {
+        // The search index is regenerated on revalidation, so it may be cached
+        // hard at the edge but must revalidate quickly when content changes.
+        source: "/api/search-index/:locale",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" },
+        ],
+      },
+    ];
+  },
+};
+
+export default nextConfig;

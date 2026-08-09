@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  # The checks below do not talk to Sanity, but lib/sanity/env.ts throws at
+  # import time on a missing project id. These are placeholders, not secrets.
+  NEXT_PUBLIC_SANITY_PROJECT_ID: ci000000
+  NEXT_PUBLIC_SANITY_DATASET: production
+  NEXT_PUBLIC_SITE_URL: http://localhost:3000
+
+jobs:
+  check:
+    name: Types, lint and design system
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      # Fails if any colour pair drops below 4.5:1 for text or 3:1 for a
+      # control border, or if a fill-only brand colour is given a text role.
+      - name: Contrast
+        run: npm run check:contrast
+
+      # Fails on a missing translation or an em dash.
+      - name: Bilingual copy and house style
+        run: npm run check:i18n
+
+      - name: Types
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+  accessibility:
+    name: Accessibility
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+
+      # axe against every route in both locales, plus the reflow, text spacing
+      # and target size checks. Zero violations required.
+      - name: axe, reflow, text spacing, target size
+        run: npm run test:a11y
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14

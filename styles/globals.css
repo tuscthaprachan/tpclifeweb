@@ -1,0 +1,234 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "./typography.css";
+
+/*
+ * Expose the design tokens to Tailwind so utilities such as text-ink-900 and
+ * bg-surface-alt resolve to the same custom properties the components use.
+ * There is one source of truth for colour and it is tokens.css.
+ */
+@theme inline {
+  --color-ink-900: var(--ink-900);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
+  --color-ink-inverse: var(--ink-inverse);
+  --color-ink-on-fill: var(--ink-on-fill);
+
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-surface-sunk: var(--surface-sunk);
+  --color-surface-overlay: var(--surface-overlay);
+
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-action: var(--colour-action);
+  --color-action-hover: var(--colour-action-hover);
+  --color-action-ink: var(--colour-action-ink);
+  --color-accent: var(--colour-accent);
+  --color-accent-strong: var(--colour-accent-strong);
+
+  --color-transport: var(--fill-transport);
+  --color-transport-soft: var(--fill-transport-soft);
+  --color-welfare: var(--fill-welfare);
+  --color-welfare-soft: var(--fill-welfare-soft);
+  --color-activity: var(--fill-activity);
+  --color-activity-soft: var(--fill-activity-soft);
+  --color-governance: var(--fill-governance);
+  --color-governance-soft: var(--fill-governance-soft);
+
+  --color-success: var(--status-success);
+  --color-success-soft: var(--status-success-soft);
+  --color-warning: var(--status-warning);
+  --color-warning-soft: var(--status-warning-soft);
+  --color-error: var(--status-error);
+  --color-error-soft: var(--status-error-soft);
+  --color-info: var(--status-info);
+  --color-info-soft: var(--status-info-soft);
+  --color-neutral: var(--status-neutral);
+  --color-neutral-soft: var(--status-neutral-soft);
+
+  --font-en: var(--font-en);
+  --font-th: var(--font-th);
+  --font-mono: var(--font-mono);
+
+  --radius-control: var(--radius-control);
+  --radius-panel: var(--radius-panel);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-elevation: var(--elevation);
+
+  --breakpoint-xs: 30rem;
+  --breakpoint-sm: 48rem;
+  --breakpoint-md: 64rem;
+  --breakpoint-lg: 80rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+/*
+ * Focus. Two tones: a solid bar that carries the visibility guarantee against
+ * the surface, and the brand fill inside it. See the note in tokens.css.
+ *
+ * :focus-visible only, so a mouse click on a button does not leave a ring
+ * behind, but every keyboard path shows one (2.4.7).
+ */
+:focus-visible {
+  outline: var(--focus-width) solid var(--focus-fill);
+  outline-offset: 0;
+  box-shadow: 0 0 0 calc(var(--focus-width) * 2) var(--focus-bar);
+  border-radius: var(--radius-control);
+}
+
+/*
+ * 2.4.11 Focus Not Obscured. The header is sticky, so every focusable target
+ * needs clearance beneath it when scrolled into view. --header-height is set by
+ * the header component.
+ */
+:where(a, button, input, select, textarea, summary, [tabindex]) {
+  scroll-margin-top: calc(var(--header-height, 4rem) + var(--space-4));
+  scroll-margin-bottom: var(--space-4);
+}
+
+/*
+ * 2.5.8 Target Size (Minimum). Interactive controls are at least 24x24 CSS px,
+ * and 44px on a touch pointer. Inline links inside a paragraph are exempt under
+ * the criterion, so they are excluded here rather than made to bloat body copy.
+ */
+:where(button, [role="button"], input[type="checkbox"], input[type="radio"], summary, [role="tab"]) {
+  min-block-size: var(--target-min);
+  min-inline-size: var(--target-min);
+}
+
+a {
+  color: var(--colour-action);
+  text-decoration-thickness: max(1px, 0.0625em);
+  text-underline-offset: 0.2em;
+}
+
+/*
+ * 2.5.8 Target Size, for standalone links.
+ *
+ * The criterion exempts a link sitting inside a running sentence, which is why
+ * the blanket min-size rule above covers buttons but not anchors. But a link
+ * that is the ONLY thing in its paragraph or list item is not inline in a
+ * sentence: it is a navigation or action target, and at the default line
+ * height it renders about 21px tall and fails.
+ *
+ * `:only-child` is the precise inverse of the exception, so this catches the
+ * standalone case without bloating the line height of links inside body copy.
+ * --target-min is 24px, and 44px under `pointer: coarse`.
+ */
+:where(p, li, dd, dt) > a:only-child {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--target-min);
+}
+
+a:hover {
+  color: var(--colour-action-hover);
+  text-decoration-thickness: max(2px, 0.125em);
+}
+
+/* 1.4.1 Use of Color. Links inside body copy stay underlined, always. */
+.prose a,
+p a,
+li a {
+  text-decoration: underline;
+}
+
+img,
+picture,
+video,
+svg {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+hr {
+  border: 0;
+  border-block-start: var(--border-width) solid var(--line);
+  margin-block: var(--space-8);
+}
+
+/* Visually hidden but present for assistive technology. */
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
+ * The same, but becomes visible on focus. This is what the skip link uses, so
+ * it is the first thing a keyboard user reaches (2.4.1).
+ */
+.visually-hidden-focusable:not(:focus):not(:focus-within) {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
+ * 2.3.1 and 2.2.2. Motion is decoration. When a reader has asked the system for
+ * less of it, they get none of it.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Forced colours. Keep the focus indicator and never rely on our own palette. */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 3px solid CanvasText;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .no-print {
+    display: none !important;
+  }
+  /* Print the destination of every link, since a printed link is otherwise dead. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+}

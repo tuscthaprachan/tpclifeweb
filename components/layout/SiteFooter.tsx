@@ -1,0 +1,46 @@
+/**
+ * Footer: secondary navigation (including the accessibility statement and
+ * cookies page), then the consistent help block. One `<footer>` landmark and
+ * one `<nav>` landmark, both rendered once by the root layout so they appear
+ * identically on every page.
+ */
+
+import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
+import type { HelpContact, NavItem } from "@/lib/sanity/types";
+import { HelpBlock } from "./HelpBlock";
+import { ServiceNavigation } from "./ServiceNavigation";
+import { ShellContainer } from "./ShellContainer";
+
+export function SiteFooter({
+  locale,
+  serviceName,
+  footerNav,
+  helpContacts,
+}: {
+  locale: Locale;
+  serviceName: LocaleString;
+  footerNav: NavItem[];
+  helpContacts: HelpContact[];
+}) {
+  return (
+    <footer className="mt-12 border-t border-line bg-surface-alt">
+      <ShellContainer className="py-8">
+        {/*
+         * TODO: add to UI strings. There is no existing shared vocabulary
+         * entry for the footer navigation's accessible name (UI.mainMenu is
+         * specifically the header's), so this is hardcoded per house style
+         * rather than inventing a synonym silently.
+         */}
+        <ServiceNavigation
+          locale={locale}
+          items={footerNav}
+          label={locale === "th" ? "เมนูท้ายเว็บไซต์" : "Footer navigation"}
+        />
+
+        <HelpBlock locale={locale} contacts={helpContacts} />
+
+        <p className="mt-8 text-sm text-ink-600">{pick(serviceName, locale)}</p>
+      </ShellContainer>
+    </footer>
+  );
+}
