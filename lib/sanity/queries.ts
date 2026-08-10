@@ -444,6 +444,16 @@ export async function getPlaces(): Promise<CampusPlace[]> {
  * Those anchor ids must exist on the rendered items or the link lands at the
  * top of the page, which is degraded but not broken.
  *
+ * EVERY OPERAND OF A `haystack` MUST BE WRAPPED IN `coalesce(..., "")`.
+ * GROQ string concatenation is null-propagating: if any one operand is null
+ * the whole expression becomes null, not a shorter string. `haystack` then
+ * reaches `tokenise()` as null and the search page dies with
+ * `Cannot read properties of null (reading 'normalize')`, for every reader
+ * and not just for the one document at fault. A single optional field empty
+ * by an editor, such as a form with no description, is enough to do it.
+ * Coalescing a field that is currently required costs nothing and survives
+ * the field later being made optional.
+ *
  * If you add a document type here, add its route first.
  * ------------------------------------------------------------------ */
 
@@ -452,7 +462,7 @@ const SEARCH_INDEX_QUERY = defineQuery(`
     "forms": *[_type == "form" && isActive == true]{
       "id": _id, "type": "form", "path": {"th": "/th/forms/" + slug.current, "en": "/en/forms/" + slug.current},
       title, "summary": purpose, category, owner,
-      "haystack": pt::text(description.th) + " " + pt::text(description.en) + " " + title.th + " " + title.en + " " + purpose.th + " " + purpose.en,
+      "haystack": coalesce(pt::text(description.th), "") + " " + coalesce(pt::text(description.en), "") + " " + coalesce(title.th, "") + " " + coalesce(title.en, "") + " " + coalesce(purpose.th, "") + " " + coalesce(purpose.en, ""),
       "weight": 100
     },
     "shuttleRoutes": *[_type == "shuttleRoute" && isActive == true]{
@@ -465,37 +475,37 @@ const SEARCH_INDEX_QUERY = defineQuery(`
     "welfarePages": *[_type == "welfarePage"]{
       "id": _id, "type": "welfarePage", "path": {"th": "/th/welfare/" + slug.current, "en": "/en/welfare/" + slug.current},
       title, summary, category,
-      "haystack": title.th + " " + title.en + " " + summary.th + " " + summary.en + " " + pt::text(body.th) + " " + pt::text(body.en),
+      "haystack": coalesce(title.th, "") + " " + coalesce(title.en, "") + " " + coalesce(summary.th, "") + " " + coalesce(summary.en, "") + " " + coalesce(pt::text(body.th), "") + " " + coalesce(pt::text(body.en), ""),
       "weight": 60
     },
     "guidePages": *[_type == "guidePage"]{
       "id": _id, "type": "guidePage", "path": {"th": "/th/guide/" + slug.current, "en": "/en/guide/" + slug.current},
       title, summary, category,
-      "haystack": title.th + " " + title.en + " " + summary.th + " " + summary.en + " " + pt::text(body.th) + " " + pt::text(body.en),
+      "haystack": coalesce(title.th, "") + " " + coalesce(title.en, "") + " " + coalesce(summary.th, "") + " " + coalesce(summary.en, "") + " " + coalesce(pt::text(body.th), "") + " " + coalesce(pt::text(body.en), ""),
       "weight": 60
     },
     "faqs": *[_type == "faq"]{
       "id": _id, "type": "faq", "path": {"th": "/th/faq#" + _id, "en": "/en/faq#" + _id},
       "title": question, "summary": question, category,
-      "haystack": question.th + " " + question.en + " " + pt::text(answer.th) + " " + pt::text(answer.en),
+      "haystack": coalesce(question.th, "") + " " + coalesce(question.en, "") + " " + coalesce(pt::text(answer.th), "") + " " + coalesce(pt::text(answer.en), ""),
       "weight": 50
     },
     "events": *[_type == "event" && isCancelled != true]{
       "id": _id, "type": "event", "path": {"th": "/th/events/" + slug.current, "en": "/en/events/" + slug.current},
       title, summary, category, owner,
-      "haystack": title.th + " " + title.en + " " + summary.th + " " + summary.en,
+      "haystack": coalesce(title.th, "") + " " + coalesce(title.en, "") + " " + coalesce(summary.th, "") + " " + coalesce(summary.en, ""),
       "weight": 40
     },
     "newsPosts": *[_type == "newsPost"]{
       "id": _id, "type": "newsPost", "path": {"th": "/th/news/" + slug.current, "en": "/en/news/" + slug.current},
       title, summary, category, owner,
-      "haystack": title.th + " " + title.en + " " + summary.th + " " + summary.en,
+      "haystack": coalesce(title.th, "") + " " + coalesce(title.en, "") + " " + coalesce(summary.th, "") + " " + coalesce(summary.en, ""),
       "weight": 20
     },
     "policies": *[_type == "policy"]{
       "id": _id, "type": "policy", "path": {"th": "/th/policy/" + slug.current, "en": "/en/policy/" + slug.current},
       title, summary, owner,
-      "haystack": title.th + " " + title.en + " " + summary.th + " " + summary.en + " " + policyArea.th + " " + policyArea.en,
+      "haystack": coalesce(title.th, "") + " " + coalesce(title.en, "") + " " + coalesce(summary.th, "") + " " + coalesce(summary.en, "") + " " + coalesce(policyArea.th, "") + " " + coalesce(policyArea.en, ""),
       "weight": 30
     },
     "organisations": *[_type == "organisation" && isActive == true]{

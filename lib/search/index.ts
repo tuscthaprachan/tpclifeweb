@@ -93,7 +93,13 @@ function prepareRecord(record: SearchRecord): PreparedRecord {
     // should still find the record even if it also happens to repeat a
     // title word, and the field-priority scoring above already makes sure a
     // genuine title/summary hit outranks a body-only one regardless.
-    body: toFieldTokens(tokenise(record.haystack)),
+    // `?? ""` is a backstop, not the fix. The haystack is built by GROQ
+    // string concatenation, which is null-propagating, so one empty optional
+    // field nulls the whole thing; SEARCH_INDEX_QUERY coalesces every operand
+    // to prevent that. If one is ever missed, a record that cannot be
+    // searched by body text is a far better outcome than the search page
+    // throwing for every reader.
+    body: toFieldTokens(tokenise(record.haystack ?? "")),
   };
   preparedCache.set(record, prepared);
   return prepared;
