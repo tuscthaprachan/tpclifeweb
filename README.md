@@ -30,6 +30,26 @@ npm run dev
 
 The site is at `http://localhost:3000` and the CMS at `http://localhost:3000/studio`.
 
+## Deploying
+
+`lib/sanity/env.ts` throws at import time on a missing project id, so a Vercel project without these set fails the build during page data collection rather than deploying a half-configured site. Set all six in Vercel under Settings, Environment Variables, for Production, Preview and Development:
+
+| Variable | Value |
+| --- | --- |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | from sanity.io/manage |
+| `NEXT_PUBLIC_SANITY_DATASET` | `production` |
+| `NEXT_PUBLIC_SANITY_API_VERSION` | `2025-02-19` |
+| `SANITY_API_READ_TOKEN` | Viewer role token. Server only, never exposed to the browser |
+| `SANITY_REVALIDATE_SECRET` | any long random string, reused in the webhook below |
+| `NEXT_PUBLIC_SITE_URL` | the production origin, with no trailing slash |
+
+Only the first two are needed for the build to pass. The rest decide whether the deployed site actually works: without `NEXT_PUBLIC_SITE_URL` the canonical, hreflang and Open Graph URLs all point at `http://localhost:3000`, and without `SANITY_REVALIDATE_SECRET` the revalidation webhook refuses every request with a 500.
+
+Two things then have to be done in sanity.io/manage, neither of which lives in this repo:
+
+1. **CORS origins.** Add the production origin and `https://*.vercel.app` for previews, both with credentials allowed, or the embedded Studio at `/studio` cannot reach the API.
+2. **The revalidation webhook.** Set it up exactly as documented at the top of `app/api/revalidate/route.ts`, using the same secret. Until it exists, published content does not reach the site until the next deploy, which for a service that carries service alerts and shuttle times is the failure that matters most.
+
 ## Checks
 
 ```bash
