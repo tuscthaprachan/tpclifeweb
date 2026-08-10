@@ -23,11 +23,11 @@
  *     the only published timetable is an image in an Instagram post, not
  *     structured data. Inventing departure times would be worse than
  *     showing none, so this script does not touch `shuttleRoute` at all.
- *   - A published `form.equipmentRequest`. Its `destinationUrl` was never
+ *   - A published `form-equipmentRequest`. Its `destinationUrl` was never
  *     captured (see FORMS[1].needsVerification), and `form` schema
  *     validation requires a URL for a Google Form. Publishing a form with a
  *     dead or missing link would be worse than not listing it, so this
- *     script writes it as a Sanity DRAFT (`drafts.form.equipmentRequest`):
+ *     script writes it as a Sanity DRAFT (`drafts.form-equipmentRequest`):
  *     it exists for an editor to find and finish in the Studio, but the
  *     published dataset the site reads from (`lib/sanity/client.ts` fetches
  *     with `perspective: "published"`) never sees it.
@@ -59,9 +59,10 @@
  *   does not set `allowImportingTsExtensions`, and `tsc --noEmit` rejects
  *   imports written with one. `tsx` is the option that satisfies both.
  *   Every document below is written with `createOrReplace` against a
- *   deterministic `_id` (for example `organisation.basictpc`), so running
+ *   deterministic `_id` (for example `organisation-basictpc`), so running
  *   this script again updates the same documents instead of duplicating
- *   them.
+ *   them. Those ids are built by `docId` and must never contain a dot; see
+ *   the comment on that function for what breaks if they do.
  */
 
 import { randomUUID } from "node:crypto";
@@ -139,6 +140,30 @@ function slug(current: string) {
   return { _type: "slug" as const, current };
 }
 
+/**
+ * Builds a deterministic document id, joined with a hyphen and with any dots
+ * in the key removed.
+ *
+ * A published document's id MUST NOT contain a dot. Sanity's default
+ * public-read grant is `_id in path("*")`, which matches only dot-free ids:
+ * that single wildcard is precisely how a published document is told apart
+ * from its `drafts.`-prefixed counterpart. Give a published document a dotted
+ * id and it falls on the drafts side of that filter, so anonymous readers
+ * cannot see it at all.
+ *
+ * That failure is silent and badly misleading. The Studio, which reads with a
+ * logged-in editor's credentials, shows the content perfectly, while the site
+ * reads through `lib/sanity/client.ts`, which carries no token by design, gets
+ * nothing back, and renders its empty states. It looks like the site is
+ * ignoring the CMS rather than like a permissions problem.
+ *
+ * Instagram handles in data/harvested-inventory.ts contain dots (for example
+ * `res.tu.official`), which is how this arose.
+ */
+function docId(type: string, name: string): string {
+  return `${type}-${name.replace(/\./g, "-")}`;
+}
+
 /** One plain paragraph block, the minimum valid `bodyPortableText` content. */
 function paragraph(text: string) {
   return {
@@ -192,7 +217,7 @@ function organisationContacts(org: HarvestedOrganisation): OrganisationContact[]
 
 function buildOrganisationDoc(org: HarvestedOrganisation) {
   return {
-    _id: `organisation.${org.handle}`,
+    _id: docId("organisation", org.handle),
     _type: "organisation" as const,
     name: organisationName(org),
     slug: slug(slugify(org.name)),
@@ -222,7 +247,7 @@ function buildFormDoc(form: (typeof FORMS)[number]) {
     // header comment), so it is written as a draft: everything else about
     // it is genuine, but it is not honest to publish a "start now" link that
     // does not exist yet.
-    _id: isEmergencyReport ? `form.${form.key}` : `drafts.form.${form.key}`,
+    _id: isEmergencyReport ? docId("form", form.key) : `drafts.${docId("form", form.key)}`,
     _type: "form" as const,
     title: form.title,
     slug: slug(slugify(form.title.en)),
@@ -290,7 +315,7 @@ function externalLinkFromDocument(doc: (typeof SOURCE_DOCUMENTS)[number]): Exter
 }
 
 const USEFUL_SERVICES_PAGE = {
-  _id: "guidePage.useful-online-services",
+  _id: docId("guidePage", "useful-online-services"),
   _type: "guidePage" as const,
   title: { th: "บริการออนไลน์ที่ใช้บ่อย", en: "Useful online services" },
   slug: slug("useful-online-services"),
@@ -308,7 +333,7 @@ const USEFUL_SERVICES_PAGE = {
 };
 
 const RULES_AND_DOCUMENTS_PAGE = {
-  _id: "guidePage.rules-and-documents",
+  _id: docId("guidePage", "rules-and-documents"),
   _type: "guidePage" as const,
   title: { th: "ระเบียบและเอกสารอ้างอิง", en: "Rules and reference documents" },
   slug: slug("rules-and-documents"),
@@ -359,7 +384,7 @@ const REGULATION_LINK: ExternalLink = {
 };
 
 const ABOUT_TUSU_PAGE = {
-  _id: "guidePage.about-tusu",
+  _id: docId("guidePage", "about-tusu"),
   _type: "guidePage" as const,
   title: STUDENT_BODIES.tusu.name,
   slug: slug("about-tusu"),
@@ -384,7 +409,7 @@ const ABOUT_TUSU_PAGE = {
 };
 
 const ABOUT_TUSC_PAGE = {
-  _id: "guidePage.about-tusc",
+  _id: docId("guidePage", "about-tusc"),
   _type: "guidePage" as const,
   title: STUDENT_BODIES.tusc.name,
   slug: slug("about-tusc"),
