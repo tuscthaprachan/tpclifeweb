@@ -23,7 +23,7 @@ export interface SanityRef {
 }
 
 export interface SanityImage {
-  _type: "image";
+  _type: "siteImage";
   asset: SanityRef;
   /**
    * Required by schema validation. An image with no alt text cannot be

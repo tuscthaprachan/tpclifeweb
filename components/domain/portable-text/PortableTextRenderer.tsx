@@ -64,7 +64,7 @@ function buildComponents(locale: Locale, headingLevel: HeadingLevel): PortableTe
       em: ({ children }) => <em>{children}</em>,
     },
     types: {
-      image: ({ value }: { value: ImageValue }) => <ImageBlock value={value} locale={locale} />,
+      siteImage: ({ value }: { value: ImageValue }) => <ImageBlock value={value} locale={locale} />,
       formCallout: ({ value }: { value: FormCalloutValue }) => (
         <FormCalloutBlock value={value} locale={locale} headingLevel={bodyLevel} />
       ),

@@ -1,9 +1,15 @@
 import { defineField, defineType } from "sanity";
 
 /**
- * The site-wide image type. Naming this schema type `image` and basing it on
- * Sanity's built-in `image` type means every image field across the Studio,
- * however it is declared, gets these extra fields automatically.
+ * The site-wide image type, based on Sanity's built-in `image`.
+ *
+ * It must NOT be named `image`. Sanity reserves the built-in type names, and
+ * registering a custom type over one of them fails schema validation with
+ * `Invalid type name: "image" is a reserved name`, which takes down the whole
+ * Studio at `/studio` with a 500 rather than degrading. The consequence is
+ * that image fields do not inherit these fields automatically: every field
+ * that wants alt text and a caption must say `type: "siteImage"` explicitly.
+ * If you add an image field anywhere, use `siteImage`, not `image`.
  *
  * WCAG 1.1.1 is not negotiable: an image either says what it shows, in both
  * languages, or is explicitly marked as decorative. There is no third
@@ -11,8 +17,8 @@ import { defineField, defineType } from "sanity";
  * cannot express "required unless `isDecorative` is true", but the
  * validation below enforces exactly that at publish time.
  */
-export const image = defineType({
-  name: "image",
+export const siteImage = defineType({
+  name: "siteImage",
   title: "Image",
   type: "image",
   options: { hotspot: true },

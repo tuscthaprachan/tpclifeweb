@@ -4,7 +4,7 @@ import { pick, type Locale } from "@/lib/i18n/config";
 import { urlFor } from "@/lib/sanity/image";
 import type { SanityImage } from "@/lib/sanity/types";
 
-export type ImageValue = SanityImage & { _type: "image"; _key: string };
+export type ImageValue = SanityImage & { _type: "siteImage"; _key: string };
 
 // Fixed output aspect ratio for body images. The source asset's own aspect
 // ratio is not queried here (that would need a per-image round trip to read

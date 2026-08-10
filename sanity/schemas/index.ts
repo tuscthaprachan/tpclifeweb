@@ -3,7 +3,7 @@ import type { SchemaTypeDefinition } from "sanity";
 import { externalLink } from "./objects/externalLink";
 import { formPrerequisite } from "./objects/formPrerequisite";
 import { helpContact } from "./objects/helpContact";
-import { image } from "./objects/image";
+import { siteImage } from "./objects/siteImage";
 import { localeBlock, localeString, localeText } from "./objects/locale";
 import { navItem } from "./objects/navItem";
 import { openingHours } from "./objects/openingHours";
@@ -45,7 +45,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   localeBlock,
 
   // Shared small objects
-  image,
+  siteImage,
   navItem,
   externalLink,
   helpContact,

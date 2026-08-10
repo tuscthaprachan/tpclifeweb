@@ -248,7 +248,7 @@ export const bodyPortableText = defineType({
         annotations: [],
       },
     }),
-    defineArrayMember({ type: "image" }),
+    defineArrayMember({ type: "siteImage" }),
     defineArrayMember({ type: "formCallout" }),
     defineArrayMember({ type: "linkOut" }),
     defineArrayMember({ type: "calloutBox" }),

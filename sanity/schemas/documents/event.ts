@@ -100,7 +100,7 @@ export const event = defineType({
     defineField({
       name: "cover",
       title: "Cover image",
-      type: "image",
+      type: "siteImage",
       description: "Optional.",
     }),
     defineField({
