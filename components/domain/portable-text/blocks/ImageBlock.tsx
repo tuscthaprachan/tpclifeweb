@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { pick, type Locale } from "@/lib/i18n/config";
-import { urlFor } from "@/lib/sanity/image";
+import { hasImageAsset, urlFor } from "@/lib/sanity/image";
 import type { SanityImage } from "@/lib/sanity/types";
 
 export type ImageValue = SanityImage & { _type: "siteImage"; _key: string };
@@ -16,12 +16,16 @@ const WIDTH = 1600;
 const HEIGHT = 900;
 
 /**
- * The schema's custom `image` type (`sanity/schemas/objects/image.ts`):
+ * The schema's custom image type (`sanity/schemas/objects/siteImage.ts`):
  * bilingual alt text, or `alt=""` when `isDecorative` is on (1.1.1), plus an
  * optional bilingual caption.
  */
 export function ImageBlock({ value, locale }: { value: ImageValue; locale: Locale }) {
-  if (!value?.asset) return null;
+  // `hasImageAsset` rather than `!value?.asset`: an interrupted upload leaves
+  // an `asset` object with no `_ref` inside it, which passes a plain
+  // truthiness check and then throws inside `urlFor(...).url()` below,
+  // taking down the whole article rather than one figure.
+  if (!hasImageAsset(value)) return null;
 
   const alt = value.isDecorative ? "" : pick(value.alt, locale);
   const caption = value.caption ? pick(value.caption, locale) : "";

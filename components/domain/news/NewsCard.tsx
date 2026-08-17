@@ -4,7 +4,7 @@ import NextLink from "next/link";
 import { Heading, Tag, Timestamp } from "@/components/ui";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import { urlFor } from "@/lib/sanity/image";
+import { hasImageAsset, urlFor } from "@/lib/sanity/image";
 import type { NewsPost } from "@/lib/sanity/types";
 import { categoryLabel } from "./categoryLabel";
 import { ownerLabel } from "./ownerLabel";
@@ -31,7 +31,7 @@ export function NewsCard({ post, locale, headingLevel }: NewsCardProps) {
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-panel border border-line">
-      {post.cover ? (
+      {hasImageAsset(post.cover) ? (
         <div className="relative aspect-[16/9] w-full bg-surface-sunk">
           <Image
             src={urlFor(post.cover).width(COVER_WIDTH).height(COVER_HEIGHT).fit("crop").auto("format").url()}

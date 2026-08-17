@@ -5,7 +5,7 @@ import { Heading, StatusTag, Tag } from "@/components/ui";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { urlFor } from "@/lib/sanity/image";
+import { hasImageAsset, urlFor } from "@/lib/sanity/image";
 import type { CampusEvent } from "@/lib/sanity/types";
 import { categoryLabel } from "./categoryLabel";
 import { EventSchedule } from "./EventSchedule";
@@ -37,7 +37,15 @@ export function EventCard({ event, locale, headingLevel }: EventCardProps) {
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-panel border border-line">
-      {event.cover ? (
+      {/*
+        `hasImageAsset` rather than a plain truthiness check on `cover`. An
+        editor can save a `siteImage` object before the file finishes
+        uploading, which leaves a truthy object with no `asset._ref` behind
+        it. `urlFor` resolves lazily and only throws inside `.url()`, so the
+        plain check let one half-uploaded cover take down the whole events
+        list rather than just dropping its own picture.
+      */}
+      {hasImageAsset(event.cover) ? (
         <div className="relative aspect-[16/9] w-full bg-surface-sunk">
           <Image
             src={urlFor(event.cover).width(COVER_WIDTH).height(COVER_HEIGHT).fit("crop").auto("format").url()}
