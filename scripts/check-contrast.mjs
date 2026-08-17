@@ -134,7 +134,7 @@ function assertions() {
  * The three pastels are fills only. If any of them is ever assigned to a text
  * or border role token, this catches it regardless of what the assertions say.
  */
-const FILL_ONLY = new Set(["#f9a36a", "#f47a8b", "#b284d4"]);
+const FILL_ONLY = new Set(["#f9a36a", "#f2896a", "#b284d4"]);
 const TEXT_ROLES = [
   "--ink-900",
   "--ink-600",

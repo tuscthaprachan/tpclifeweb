@@ -17,26 +17,26 @@ If you need something that is not in them, say so in your report. Do not add it 
 
 ## Colour: the hard rule
 
-Three of the five brand colours cannot carry text on a light surface. Measured:
+The palette sits on a single orange-to-purple axis, and orange is a genuine co-primary: it has both a pastel fill pole and a deep, text-capable pole, exactly as purple does. Three of the five brand colours cannot carry text on a light surface. Measured:
 
 | | on white | verdict |
 |---|---|---|
 | `#F9A36A` orange | 2.00:1 | fails |
-| `#F47A8B` pink | 2.62:1 | fails |
+| `#F2896A` coral | 2.45:1 | fails |
 | `#B284D4` lilac | 2.94:1 | fails |
-| `#7267C8` indigo | 4.68:1 | passes |
-| `#A33A72` plum | 6.17:1 | passes |
+| `#9C4500` orange-deep | 6.43:1 | passes |
+| `#6B21A8` purple | 8.72:1 | passes |
 
-So orange, pink and lilac are **fills**. They carry `--ink-on-fill` on top of them. They are never text on a light surface, never a border that identifies a control, and never the only thing that distinguishes one state from another.
+So orange, coral and lilac are **fills**. They carry `--ink-on-fill` on top of them. They are never text on a light surface, never a border that identifies a control, and never the only thing that distinguishes one state from another.
 
-Text and interactive work is done by `--colour-action` and `--colour-accent`. Use the role tokens, never the raw brand primitives.
+Text and interactive work is done by `--colour-action` (the purple pole, `#6B21A8`, 8.72:1 on white) and `--colour-accent` (the deep orange pole, `#9C4500`, 6.43:1 on white). Use the role tokens, never the raw brand primitives.
 
-`npm run check:contrast` re-derives all 110 pairs and fails the build if any drops below its threshold. Run it after touching anything visual.
+`npm run check:contrast` re-derives every pair and fails the build if any drops below its threshold. Run it after touching anything visual.
 
 Fills are semantic and fixed, so colour carries information rather than decoration:
 
 - `--fill-transport` orange: shuttle, buses, boats, anything time sensitive
-- `--fill-welfare` pink: welfare, health, wellbeing
+- `--fill-welfare` coral: welfare, health, wellbeing
 - `--fill-activity` lilac: clubs, events, activities
 - `--fill-governance` indigo: TUSU, TUSC, policy
 

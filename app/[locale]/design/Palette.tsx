@@ -13,32 +13,32 @@ interface PaletteEntry {
 
 const BRAND_PRIMITIVES: PaletteEntry[] = [
   { cssVar: "--brand-orange", label: "brand-orange #F9A36A", ratio: "2.00:1 on white. FAILS as text.", role: "Fill only. Never text, never a control border, never the only carrier of meaning." },
-  { cssVar: "--brand-pink", label: "brand-pink #F47A8B", ratio: "2.62:1 on white. FAILS as text.", role: "Fill only. Never text, never a control border, never the only carrier of meaning." },
+  { cssVar: "--brand-coral", label: "brand-coral #F2896A", ratio: "2.45:1 on white. FAILS as text.", role: "Fill only. Warm, orange-family welfare colour. Never text, never a control border, never the only carrier of meaning." },
   { cssVar: "--brand-lilac", label: "brand-lilac #B284D4", ratio: "2.94:1 on white. FAILS as text.", role: "Fill only. Never text, never a control border, never the only carrier of meaning." },
-  { cssVar: "--brand-indigo", label: "brand-indigo #7267C8", ratio: "4.68:1 on white. Passes.", role: "Source colour behind colour-accent and the governance fill. Not referenced directly by components." },
-  { cssVar: "--brand-plum", label: "brand-plum #A33A72", ratio: "6.17:1 on white. Passes.", role: "Source colour behind colour-action. Not referenced directly by components." },
+  { cssVar: "--brand-orange-deep", label: "brand-orange-deep #9C4500", ratio: "6.43:1 on white. Passes.", role: "The deep, text-capable orange pole of the axis. Also used directly as colour-accent." },
+  { cssVar: "--brand-purple", label: "brand-purple #6B21A8", ratio: "8.72:1 on white. Passes.", role: "The purple pole of the axis. Also used directly as colour-action." },
 ];
 
 const ROLE_TOKENS: PaletteEntry[] = [
   { cssVar: "--ink-900", label: "ink-900", ratio: "17.87:1 on white, 15.91:1 dark", role: "Body text." },
-  { cssVar: "--ink-600", label: "ink-600", ratio: "9.74:1 on white, 10.65:1 dark", role: "Secondary text." },
-  { cssVar: "--ink-500", label: "ink-500", ratio: "5.90:1 on white, 6.72:1 dark", role: "Hint text. The lightest text colour this system permits." },
-  { cssVar: "--colour-action", label: "colour-action", ratio: "8.34:1 on white, 9.02:1 dark", role: "Links, primary buttons." },
-  { cssVar: "--colour-action-hover", label: "colour-action-hover", ratio: "10.97:1 on white, 12.02:1 dark", role: "Hover state for the action colour." },
-  { cssVar: "--colour-accent", label: "colour-accent", ratio: "6.60:1 on white, 8.42:1 dark", role: "Secondary action colour, tab and Details accents." },
-  { cssVar: "--colour-accent-strong", label: "colour-accent-strong", ratio: "9.04:1 on white, 11.14:1 dark", role: "A stronger secondary action colour." },
+  { cssVar: "--ink-600", label: "ink-600", ratio: "9.74:1 on white, 10.58:1 dark", role: "Secondary text." },
+  { cssVar: "--ink-500", label: "ink-500", ratio: "5.90:1 on white, 6.84:1 dark", role: "Hint text. The lightest text colour this system permits." },
+  { cssVar: "--colour-action", label: "colour-action", ratio: "8.72:1 on white, 9.35:1 dark", role: "Links, primary buttons. The purple pole of the orange-purple axis." },
+  { cssVar: "--colour-action-hover", label: "colour-action-hover", ratio: "11.07:1 on white, 11.63:1 dark", role: "Hover state for the action colour." },
+  { cssVar: "--colour-accent", label: "colour-accent", ratio: "6.43:1 on white, 10.06:1 dark", role: "Secondary action colour, tab and Details accents. The deep orange pole of the axis." },
+  { cssVar: "--colour-accent-strong", label: "colour-accent-strong", ratio: "8.92:1 on white, 12.35:1 dark", role: "A stronger secondary action colour." },
   { cssVar: "--line-strong", label: "line-strong", ratio: "3.65:1 on white, 3.46:1 on surface-alt", role: "Control borders (1.4.11). --line is decorative only and never identifies a control." },
 ];
 
 const FILL_TOKENS: PaletteEntry[] = [
   { cssVar: "--fill-transport", label: "fill-transport", ratio: "ink-on-fill 8.91:1", role: "Shuttle, buses, boats, anything time sensitive. Tags and badges only, per the hard rule." },
-  { cssVar: "--fill-welfare", label: "fill-welfare", ratio: "ink-on-fill 6.81:1", role: "Welfare, health, wellbeing. Tags and badges only." },
+  { cssVar: "--fill-welfare", label: "fill-welfare", ratio: "ink-on-fill 7.28:1", role: "Welfare, health, wellbeing. Tags and badges only." },
   { cssVar: "--fill-activity", label: "fill-activity", ratio: "ink-on-fill 6.08:1", role: "Clubs, events, activities. Tags and badges only." },
   {
     cssVar: "--fill-governance",
     label: "fill-governance",
     ratio: "ink-on-fill 5.39:1",
-    role: "TUSU, TUSC, policy. Tags and badges only. This is a lightened #8C83D6, not the raw brand indigo, which only reaches 3.82:1 against ink and would fail here.",
+    role: "TUSU, TUSC, policy. Tags and badges only. A fixed hex on the purple side of the axis, independent of --brand-purple, which is tuned dark for text rather than for a light saturated fill.",
   },
 ];
 

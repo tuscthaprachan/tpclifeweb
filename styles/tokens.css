@@ -4,18 +4,29 @@
  * Every colour value here has a measured WCAG 2.2 contrast ratio recorded beside it.
  * Do not add, change or invent a colour without re-running `npm run check:contrast`.
  *
+ * The palette sits on a single orange-to-purple axis. Orange is a genuine
+ * co-primary, not a fill of convenience: it has both a pastel fill pole and a
+ * deep, text-capable pole, exactly as purple does.
+ *
  * THE HARD RULE
  * -------------
  * Three of the five brand colours cannot carry text on a light surface:
- *   --brand-orange #F9A36A  2.00:1 on white  FAILS
- *   --brand-pink   #F47A8B  2.62:1 on white  FAILS
- *   --brand-lilac  #B284D4  2.94:1 on white  FAILS
+ *   --brand-orange      #F9A36A  2.00:1 on white  FAILS
+ *   --brand-coral       #F2896A  2.45:1 on white  FAILS
+ *   --brand-lilac       #B284D4  2.94:1 on white  FAILS
  * They are FILLS. They carry near-black ink on top of them, where they measure
- * 8.91:1, 6.81:1 and 6.08:1 respectively. They are never text on a light surface,
+ * 8.91:1, 7.28:1 and 6.08:1 respectively. They are never text on a light surface,
  * never a border that identifies a control, and never the only carrier of meaning.
  *
- * Text and interactive work is done by --colour-action (plum) and --colour-accent
- * (indigo), both of which clear 4.5:1.
+ * The other two clear the bar on white and are the text-capable poles of the axis:
+ *   --brand-orange-deep #9C4500  6.43:1 on white  PASSES (also 6.10:1 on
+ *                                --surface-alt, 5.63:1 on --surface-sunk)
+ *   --brand-purple      #6B21A8  8.72:1 on white  PASSES (also 8.27:1 on
+ *                                --surface-alt, 7.63:1 on --surface-sunk)
+ *
+ * Text and interactive work is done by --colour-action (the purple pole) and
+ * --colour-accent (the deep orange pole), both of which clear 4.5:1, and
+ * --colour-action clears 7:1 on every surface with headroom to spare for hover.
  */
 
 :root {
@@ -23,20 +34,22 @@
 
   /* ---------------------------------------------------------------- *
    * Brand primitives. Reference these only through the role tokens
-   * below, never directly in a component.
+   * below, never directly in a component. The five sit on one
+   * orange-to-purple axis: a pastel and a deep, text-capable shade
+   * at each pole, plus lilac as the pastel companion on the purple side.
    * ---------------------------------------------------------------- */
-  --brand-orange: #f9a36a; /* fill only */
-  --brand-pink: #f47a8b; /* fill only */
-  --brand-lilac: #b284d4; /* fill only */
-  --brand-indigo: #7267c8; /* 4.68:1 on white */
-  --brand-plum: #a33a72; /* 6.17:1 on white */
+  --brand-orange: #f9a36a; /* fill only, 2.00:1 on white */
+  --brand-coral: #f2896a; /* fill only, 2.45:1 on white. Warm, orange-family welfare colour. */
+  --brand-lilac: #b284d4; /* fill only, 2.94:1 on white */
+  --brand-orange-deep: #9c4500; /* 6.43:1 on white, 6.10:1 on --surface-alt, 5.63:1 on --surface-sunk */
+  --brand-purple: #6b21a8; /* 8.72:1 on white, 8.27:1 on --surface-alt, 7.63:1 on --surface-sunk */
 
   /* ---------------------------------------------------------------- *
    * Ink. Text colours, light theme.
    * ---------------------------------------------------------------- */
-  --ink-900: #1a1523; /* 17.87:1 on white. Body text. */
-  --ink-600: #4a4055; /*  9.74:1 on white. Secondary text. */
-  --ink-500: #6b6076; /*  5.90:1 on white. Hint text. Lightest permitted text. */
+  --ink-900: #1a1523; /* 17.87:1 white, 16.94:1 --surface-alt, 15.63:1 --surface-sunk. Body text. */
+  --ink-600: #4a4055; /*  9.74:1 white,  9.24:1 --surface-alt,  8.52:1 --surface-sunk. Secondary text. */
+  --ink-500: #6b6076; /*  5.90:1 white,  5.59:1 --surface-alt,  5.16:1 --surface-sunk. Hint text. Lightest permitted text. */
   --ink-inverse: #ffffff;
 
   /* The ink that sits on a saturated brand fill. Deliberately the SAME value in
@@ -57,22 +70,24 @@
    * interactive control must use --line-strong, which meets 1.4.11.
    * ---------------------------------------------------------------- */
   --line: #e3dae6; /* decorative dividers only */
-  --line-strong: #8e8199; /* 3.65:1 on white, 3.46:1 on --surface-alt */
+  --line-strong: #8e8199; /* 3.65:1 on white, 3.46:1 on --surface-alt, 3.19:1 on --surface-sunk */
 
   /* ---------------------------------------------------------------- *
-   * Action. Links, primary buttons.
+   * Action. Links, primary buttons. The purple pole of the axis.
    * ---------------------------------------------------------------- */
-  --colour-action: #8a2464; /*  8.34:1 on white */
-  --colour-action-hover: #6e1a4c; /* 10.97:1 on white */
-  --colour-action-ink: #ffffff; /*  8.34:1 on --colour-action */
+  --colour-action: #6b21a8; /*  8.72:1 on white, 8.27:1 on --surface-alt, 7.63:1 on --surface-sunk */
+  --colour-action-hover: #56178c; /* 11.07:1 on white, 10.50:1 on --surface-alt, 9.68:1 on --surface-sunk */
+  --colour-action-ink: #ffffff; /*  8.72:1 on --colour-action */
 
-  --colour-accent: #5a4fb0; /*  6.60:1 on white */
-  --colour-accent-strong: #463c92; /*  9.04:1 on white */
+  /* Accent. Secondary actions. The deep orange pole of the axis. */
+  --colour-accent: #9c4500; /*  6.43:1 on white, 6.10:1 on --surface-alt, 5.63:1 on --surface-sunk */
+  --colour-accent-strong: #7a3600; /*  8.92:1 on white, 8.45:1 on --surface-alt, 7.80:1 on --surface-sunk */
 
   /* ---------------------------------------------------------------- *
    * Fills. Semantic and fixed, so colour carries information.
    *   orange = transport and time sensitive
-   *   pink   = welfare and wellbeing
+   *   coral  = welfare and wellbeing (warm, orange-family, moved off the
+   *            old magenta-pink so it sits on the same orange-purple axis)
    *   lilac  = activities, clubs and events
    *   indigo = governance, policy, TUSU and TUSC
    * Each has a "soft" variant for large tinted areas, which carries
@@ -80,14 +95,15 @@
    * tags, rules and panel headers, which carries --ink-on-fill and is
    * identical in both themes.
    *
-   * The saturated governance fill is a lightened #7267C8. The brand
-   * indigo itself only reaches 3.82:1 against ink, so it cannot carry
-   * body text as a fill. #8C83D6 reaches 5.39:1 and still reads indigo.
+   * The saturated governance fill is a fixed hex on the purple side of the
+   * axis, independent of --brand-purple (which is tuned dark for text, not
+   * for a light saturated fill). #8C83D6 reaches 5.39:1 against ink and
+   * still reads as a distinct violet next to --colour-action.
    * ---------------------------------------------------------------- */
   --fill-transport: #f9a36a; /* ink-on-fill 8.91:1 */
   --fill-transport-soft: #fde9da; /* ink-900 15.18:1 */
-  --fill-welfare: #f47a8b; /* ink-on-fill 6.81:1 */
-  --fill-welfare-soft: #fce3e7; /* ink-900 14.70:1 */
+  --fill-welfare: #f2896a; /* ink-on-fill 7.28:1 */
+  --fill-welfare-soft: #fde2d6; /* ink-900 14.48:1 */
   --fill-activity: #b284d4; /* ink-on-fill 6.08:1 */
   --fill-activity-soft: #ede0f5; /* ink-900 14.11:1 */
   --fill-governance: #8c83d6; /* ink-on-fill 5.39:1 */
@@ -211,15 +227,17 @@
 }
 
 /*
- * Dark theme. The relationship inverts: on a dark surface the three
- * pastels finally have the contrast to be text, so they become the
- * accent colours. Measured against --surface #16121C.
+ * Dark theme. The relationship inverts: on a dark surface the pastel
+ * orange finally has the contrast to be text-adjacent, and the deep
+ * orange and purple poles both lighten so they keep clearing 4.5:1.
+ * Measured against --surface #16121C, --surface-alt #1E1927 and
+ * --surface-sunk #262034.
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink-900: #f2ecf5; /* 15.91:1 */
-    --ink-600: #cbc0d4; /* 10.65:1 */
-    --ink-500: #a599b0; /*  6.72:1 */
+    --ink-900: #f2ecf5; /* 15.91:1 --surface, 14.79:1 --surface-alt, 13.52:1 --surface-sunk */
+    --ink-600: #cbc0d4; /* 10.58:1 --surface,  9.83:1 --surface-alt,  8.99:1 --surface-sunk */
+    --ink-500: #a599b0; /*  6.84:1 --surface,  6.36:1 --surface-alt,  5.81:1 --surface-sunk */
     --ink-inverse: #16121c;
 
     --surface: #16121c;
@@ -228,20 +246,20 @@
     --surface-overlay: #221c2d;
 
     --line: #362e46;
-    --line-strong: #8b7f9c; /* 3.62:1 on --surface */
+    --line-strong: #8b7f9c; /* 4.94:1 --surface, 4.59:1 --surface-alt, 4.19:1 --surface-sunk */
 
-    --colour-action: #f2a8cf; /*  9.02:1 on --surface */
-    --colour-action-hover: #f8cbe3; /* 12.02:1 */
+    --colour-action: #d3a8f0; /*  9.35:1 --surface, 8.69:1 --surface-alt, 7.94:1 --surface-sunk */
+    --colour-action-hover: #e0c2f7; /* 11.63:1 --surface, 10.81:1 --surface-alt, 9.88:1 --surface-sunk */
     --colour-action-ink: #16121c;
 
-    --colour-accent: #b3a9f2; /*  8.42:1 */
-    --colour-accent-strong: #d0c9f8; /* 11.14:1 */
+    --colour-accent: #f3b276; /* 10.06:1 --surface, 9.35:1 --surface-alt, 8.55:1 --surface-sunk */
+    --colour-accent-strong: #f8cba0; /* 12.35:1 --surface, 11.48:1 --surface-alt, 10.49:1 --surface-sunk */
 
     /* Saturated fills are NOT overridden. They stay light in both themes
        and keep carrying --ink-on-fill, so a tag reads identically either
        way. Only the soft tints flip, because they carry --ink-900. */
     --fill-transport-soft: #3a2617; /* ink-900 12.31:1 */
-    --fill-welfare-soft: #3a1d24; /* ink-900 13.10:1 */
+    --fill-welfare-soft: #3a2117; /* ink-900 12.83:1 */
     --fill-activity-soft: #2e2440; /* ink-900 12.54:1 */
     --fill-governance-soft: #262242; /* ink-900 13.02:1 */
 
@@ -281,15 +299,15 @@
   --line: #362e46;
   --line-strong: #8b7f9c;
 
-  --colour-action: #f2a8cf;
-  --colour-action-hover: #f8cbe3;
+  --colour-action: #d3a8f0;
+  --colour-action-hover: #e0c2f7;
   --colour-action-ink: #16121c;
 
-  --colour-accent: #b3a9f2;
-  --colour-accent-strong: #d0c9f8;
+  --colour-accent: #f3b276;
+  --colour-accent-strong: #f8cba0;
 
   --fill-transport-soft: #3a2617;
-  --fill-welfare-soft: #3a1d24;
+  --fill-welfare-soft: #3a2117;
   --fill-activity-soft: #2e2440;
   --fill-governance-soft: #262242;
 
