@@ -40,10 +40,13 @@ The site is at `http://localhost:3000` and the CMS at `http://localhost:3000/stu
 | `NEXT_PUBLIC_SANITY_DATASET` | `production` |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | `2025-02-19` |
 | `SANITY_API_READ_TOKEN` | Viewer role token. Server only, never exposed to the browser |
+| `SANITY_API_WRITE_TOKEN` | Editor role token. Server only. Used only by the lost and found report form |
 | `SANITY_REVALIDATE_SECRET` | any long random string, reused in the webhook below |
 | `NEXT_PUBLIC_SITE_URL` | the production origin, with no trailing slash |
 
 Only the first two are needed for the build to pass. The rest decide whether the deployed site actually works: without `NEXT_PUBLIC_SITE_URL` the canonical, hreflang and Open Graph URLs all point at `http://localhost:3000`, and without `SANITY_REVALIDATE_SECRET` the revalidation webhook refuses every request with a 500.
+
+`SANITY_API_WRITE_TOKEN` is the only one that is genuinely optional. Without it the lost and found register still works, and its report page tells the reader to use the contact details instead of showing a form that cannot store anything. Set it and students can file a report themselves, which arrives in the Studio under Lost and found, Waiting for approval, and is invisible to readers until an editor publishes it.
 
 Two things then have to be done in sanity.io/manage, neither of which lives in this repo:
 
