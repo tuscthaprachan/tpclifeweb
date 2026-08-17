@@ -38,6 +38,7 @@ export function getSiteSettings(): SiteSettings {
       { label: { th: "สวัสดิการนักศึกษา", en: "Student welfare" }, path: "/welfare" },
       { label: { th: "ข่าวสาร", en: "News" }, path: "/news" },
       { label: { th: "กิจกรรม", en: "Events" }, path: "/events" },
+      { label: { th: "ของหายและของเก็บได้", en: "Lost and found" }, path: "/lost-and-found" },
       { label: { th: "ความคืบหน้านโยบาย", en: "Policy progress" }, path: "/policy" },
       { label: { th: "ทำเนียบชุมนุมและหน่วยงาน", en: "Directory" }, path: "/directory" },
     ],
