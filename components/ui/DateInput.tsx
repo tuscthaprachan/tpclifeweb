@@ -21,6 +21,18 @@ interface DateInputProps {
   defaultValue?: Partial<DateParts>;
   onValueChange?: (value: DateParts) => void;
   className?: string;
+  /**
+   * Set this ONLY when the field really does collect the reader's own date of
+   * birth. It emits `autocomplete="bday-day"` and siblings, which is what
+   * 1.3.5 Identify Input Purpose asks for on a birthday, and which tells the
+   * browser to offer the reader's stored date of birth.
+   *
+   * Left unset, no autocomplete attribute is emitted at all. That is correct
+   * rather than lazy: HTML's autofill vocabulary has no token for "some
+   * date", so any date that is not a birthday has no purpose to declare, and
+   * declaring the wrong one is worse than declaring none.
+   */
+  purpose?: "bday";
 }
 
 const FIELD_WIDTH: Record<keyof DateParts, string> = {
@@ -37,11 +49,22 @@ const MAX_LENGTH: Record<keyof DateParts, number> = { day: 2, month: 2, year: 4 
  * per OS locale, which is exactly the inconsistency this pattern avoids, and
  * it cannot show the Buddhist year Thai readers expect (lib/i18n/format.ts).
  */
-export function DateInput({ id, legend, hint, error, dayLabel, monthLabel, yearLabel, value, defaultValue, onValueChange, className }: DateInputProps) {
-  const parts: Array<{ key: keyof DateParts; label: string; autoComplete: string }> = [
-    { key: "day", label: dayLabel, autoComplete: "bday-day" },
-    { key: "month", label: monthLabel, autoComplete: "bday-month" },
-    { key: "year", label: yearLabel, autoComplete: "bday-year" },
+export function DateInput({ id, legend, hint, error, dayLabel, monthLabel, yearLabel, value, defaultValue, onValueChange, className, purpose }: DateInputProps) {
+  /*
+   * `autoComplete` is undefined unless the caller declared this a birthday.
+   *
+   * It used to be hardcoded to bday-day/bday-month/bday-year for every
+   * DateInput on the site, which was wrong in two ways at once. It misstates
+   * the field's purpose under 1.3.5 whenever the date is not a birth date,
+   * and, more seriously, it invites the browser to autofill the reader's real
+   * date of birth. On the lost and found report form, which asks when an item
+   * was lost and publishes what it is told, that meant a stored date of birth
+   * could be autofilled straight into public content.
+   */
+  const parts: Array<{ key: keyof DateParts; label: string; autoComplete: string | undefined }> = [
+    { key: "day", label: dayLabel, autoComplete: purpose === "bday" ? "bday-day" : undefined },
+    { key: "month", label: monthLabel, autoComplete: purpose === "bday" ? "bday-month" : undefined },
+    { key: "year", label: yearLabel, autoComplete: purpose === "bday" ? "bday-year" : undefined },
   ];
 
   function update(part: keyof DateParts, next: string) {
