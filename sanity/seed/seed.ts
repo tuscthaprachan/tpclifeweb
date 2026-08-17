@@ -6,9 +6,12 @@
  *
  * WHAT THIS CREATES
  *   - `organisation` documents for the 23 real organisations in ORGANISATIONS.
- *   - `form` documents for the 2 real forms in FORMS. Both require Google
- *     sign-in; the emergency report form's 401-to-anonymous-requests finding
- *     is carried into its `signInNote`, translated into both languages.
+ *   - `form` documents for the 2 real forms in FORMS, both published. The
+ *     emergency report form's 401-to-anonymous-requests finding is carried
+ *     into its `signInNote`, translated into both languages. The equipment
+ *     request form's `destinationUrl` was missing when this script last ran;
+ *     it has since been captured from TUSU's linktree and is now published
+ *     too (see FORMS[1] in the data file).
  *   - Two `guidePage` documents that collect EXTERNAL_SERVICES and
  *     SOURCE_DOCUMENTS as `relatedLinks`. Neither set belongs to a page that
  *     exists yet, so a guide page is the honest home for them (see the
@@ -16,27 +19,26 @@
  *     rewriting each source as page content).
  *   - Two `guidePage` documents, "about-tusu" and "about-tusc", built from
  *     STUDENT_BODIES.
+ *   - Two `shuttleRoute` documents, "shuttleRoute-sanamChai" and
+ *     "shuttleRoute-pinklao", built from SHUTTLE_ROUTES. See the long comment
+ *     above buildShuttleRouteDoc below for exactly what is, and is not,
+ *     confirmed about them.
  *
- * WHAT THIS DELIBERATELY DOES NOT CREATE
- *   - Any `shuttleRoute` or shuttle timetable. TRANSPORT.shuttle in
- *     data/harvested-inventory.ts carries a `needsVerification` note because
- *     the only published timetable is an image in an Instagram post, not
- *     structured data. Inventing departure times would be worse than
- *     showing none, so this script does not touch `shuttleRoute` at all.
- *   - A published `form-equipmentRequest`. Its `destinationUrl` was never
- *     captured (see FORMS[1].needsVerification), and `form` schema
- *     validation requires a URL for a Google Form. Publishing a form with a
- *     dead or missing link would be worse than not listing it, so this
- *     script writes it as a Sanity DRAFT (`drafts.form-equipmentRequest`):
- *     it exists for an editor to find and finish in the Studio, but the
- *     published dataset the site reads from (`lib/sanity/client.ts` fetches
- *     with `perspective: "published"`) never sees it.
+ * WHAT THIS PREVIOUSLY DID NOT CREATE, AND WHY THAT CHANGED
+ *   Earlier versions of this script refused to create any `shuttleRoute`,
+ *   because the only published timetable was an image in an Instagram post
+ *   and inventing structured departure times from it would have been worse
+ *   than showing none. That blocker is gone: the site owner supplied two
+ *   official timetable graphics on 16 August 2026, transcribed into
+ *   SHUTTLE_ROUTES in data/harvested-inventory.ts. What those graphics do
+ *   not publish (travel time between stops, and which term the timetable
+ *   applies to) is recorded honestly on the documents themselves, not
+ *   invented; see buildShuttleRouteDoc's comment below.
  *
- * Every `needsVerification` note that is not carried into a document (the
- * equipment form's missing link, the shuttle timetable, the unconfirmed bus
- * route numbers) is printed to the console at the end of the run instead, so
- * running this script surfaces exactly what still needs a human, rather than
- * silently dropping it.
+ * Every `needsVerification` note that is not carried into a document is
+ * printed to the console at the end of the run instead, so running this
+ * script surfaces exactly what still needs a human, rather than silently
+ * dropping it.
  *
  * HOW TO RUN
  *   Needs a Sanity API token with write access: Studio -> manage.sanity.io ->
@@ -71,13 +73,15 @@ import { createClient } from "@sanity/client";
 
 import {
   EXTERNAL_SERVICES,
+  FACULTY_NAME_SPELLING_NOTE,
   FORMS,
   ORGANISATIONS,
+  SHUTTLE_ROUTES,
   SOURCE_DOCUMENTS,
   STUDENT_BODIES,
   TRANSPORT,
 } from "../../data/harvested-inventory";
-import type { LocaleString } from "../../lib/i18n/config";
+import type { LocaleString, LocaleText } from "../../lib/i18n/config";
 import { apiVersion, dataset, projectId } from "../../lib/sanity/env";
 import type {
   ExternalLink,
@@ -85,6 +89,8 @@ import type {
   Organisation,
   OrganisationContact,
   OrganisationType,
+  ShuttleRoute,
+  ShuttleStop,
 } from "../../lib/sanity/types";
 
 /* ------------------------------------------------------------------ *
@@ -241,13 +247,16 @@ const EMERGENCY_REPORT_SIGN_IN_NOTE: LocaleString = {
 
 function buildFormDoc(form: (typeof FORMS)[number]) {
   const isEmergencyReport = form.key === "emergencyReport";
+  // A form needs somewhere to send the student before it can honestly be
+  // published; see the schema's own destinationUrl validation in
+  // sanity/schemas/documents/form.ts. Both real forms have one now, but this
+  // stays a check rather than a hardcoded assumption, so a future form
+  // added to FORMS without a captured URL yet still lands as a draft
+  // instead of publishing a dead "start now" link.
+  const hasDestinationUrl = "destinationUrl" in form && Boolean(form.destinationUrl);
 
   return {
-    // The equipment request form is missing a real destinationUrl (see the
-    // header comment), so it is written as a draft: everything else about
-    // it is genuine, but it is not honest to publish a "start now" link that
-    // does not exist yet.
-    _id: isEmergencyReport ? docId("form", form.key) : `drafts.${docId("form", form.key)}`,
+    _id: hasDestinationUrl ? docId("form", form.key) : `drafts.${docId("form", form.key)}`,
     _type: "form" as const,
     title: form.title,
     slug: slug(slugify(form.title.en)),
@@ -258,10 +267,11 @@ function buildFormDoc(form: (typeof FORMS)[number]) {
     signInType: form.signInType,
     ...(isEmergencyReport ? { signInNote: EMERGENCY_REPORT_SIGN_IN_NOTE } : {}),
     destinationType: form.destinationType,
-    ...("destinationUrl" in form ? { destinationUrl: form.destinationUrl } : {}),
+    ...(hasDestinationUrl ? { destinationUrl: form.destinationUrl } : {}),
     isActive: true,
     isPriority: form.isPriority,
     ...(isEmergencyReport ? { lastVerified: "2026-08-07" } : {}),
+    ...(form.key === "equipmentRequest" ? { lastVerified: "2026-08-16" } : {}),
   } satisfies Omit<FormRecord, "_createdAt" | "_updatedAt">;
 }
 
@@ -429,11 +439,137 @@ const ABOUT_TUSC_PAGE = {
       label: { th: "ลิงก์ทรีของสภานักศึกษา ท่าพระจันทร์", en: "TUSC Tha Prachan Linktree" },
       url: STUDENT_BODIES.tusc.linktree,
     },
+    {
+      _key: key(),
+      label: { th: "Facebook สภานักศึกษา ท่าพระจันทร์", en: "TUSC Tha Prachan Facebook" },
+      url: `https://facebook.com/${STUDENT_BODIES.tusc.facebook}`,
+    },
+    {
+      _key: key(),
+      label: { th: "Instagram สภานักศึกษา ท่าพระจันทร์", en: "TUSC Tha Prachan Instagram" },
+      url: `https://instagram.com/${STUDENT_BODIES.tusc.instagram}`,
+    },
+    {
+      _key: key(),
+      label: { th: "อีเมลสภานักศึกษา ท่าพระจันทร์", en: "TUSC Tha Prachan email" },
+      url: `mailto:${STUDENT_BODIES.tusc.email}`,
+    },
   ] satisfies ExternalLink[],
-  lastReviewed: "2026-08-07",
+  lastReviewed: "2026-08-16",
 };
 
 const GUIDE_PAGE_DOCS = [USEFUL_SERVICES_PAGE, RULES_AND_DOCUMENTS_PAGE, ABOUT_TUSU_PAGE, ABOUT_TUSC_PAGE];
+
+/* ------------------------------------------------------------------ *
+ * Shuttle routes
+ *
+ * Built from SHUTTLE_ROUTES in data/harvested-inventory.ts, which carries
+ * the long account of where these times came from and what is still
+ * unverified; read that comment before changing anything here.
+ *
+ * Two honesty decisions made here, both required by CONTRIBUTING.md and
+ * spelled out again so they are not missed on a future edit:
+ *
+ *   1. offsetMinutes. Neither timetable graphic publishes travel time
+ *      between stops, only departure times from Tha Prachan. Every stop
+ *      below is therefore given `offsetMinutes: 0`, the schema's own
+ *      documented meaning for "not measured yet" (see
+ *      sanity/schemas/objects/shuttleStop.ts: "the first stop... should be
+ *      0"). This is not a claim that every stop is reached instantly; it is
+ *      the honest absence of a number, made explicit in the route's own
+ *      `notes` field below (dormitoryAndOffsetNotes) so nobody mistakes a
+ *      placeholder for a measurement.
+ *
+ *   2. The dormitory-service markers on the Pinklao Line graphic. There is
+ *      no field on `shuttleRoute` or `shuttleStop` for a note attached to a
+ *      specific departure TIME rather than a specific STOP (checked both
+ *      schemas; `shuttleStop.note` is per stop, and `shuttleRoute` has no
+ *      per-departure array at all, see sanity/schemas/documents/
+ *      shuttleRoute.ts). The route's own `notes` field (LocaleText, "what
+ *      a student should know") is the closest real fit and is used for it
+ *      below, spelling out exactly which times it applies to. A per-
+ *      departure structured field would be a schema change, which is
+ *      outside this agent's owned directories.
+ * ------------------------------------------------------------------ */
+
+function joinLocaleText(...parts: LocaleText[]): LocaleText {
+  return {
+    th: parts.map((part) => part.th).filter(Boolean).join(" "),
+    en: parts.map((part) => part.en).filter(Boolean).join(" "),
+  };
+}
+
+/** Groups SHUTTLE_ROUTES' dormitoryDepartures by their shared note text and renders one sentence per group. */
+function dormitoryDepartureNote(
+  dormitoryDepartures: (typeof SHUTTLE_ROUTES)[number]["dormitoryDepartures"],
+): LocaleText | undefined {
+  if (!dormitoryDepartures || dormitoryDepartures.length === 0) return undefined;
+
+  const groups = new Map<string, { note: { th: string; en: string }; times: string[] }>();
+  for (const departure of dormitoryDepartures) {
+    const group = groups.get(departure.note.en) ?? { note: departure.note, times: [] };
+    group.times.push(departure.time);
+    groups.set(departure.note.en, group);
+  }
+
+  const th: string[] = [];
+  const en: string[] = [];
+  for (const { note, times } of groups.values()) {
+    th.push(`รถรอบ ${times.map((time) => `${time} น.`).join(" และ ")} คือ${note.th}`);
+    en.push(`The ${times.join(" and ")} departures are the ${note.en.charAt(0).toLowerCase()}${note.en.slice(1)}.`);
+  }
+  return { th: th.join(" "), en: en.join(" ") };
+}
+
+const OFFSET_UNKNOWN_NOTE: LocaleText = {
+  th: "เวลาแต่ละจุดจอดยังไม่มีข้อมูลระยะเวลาการเดินทางที่เผยแพร่อย่างเป็นทางการ จึงแสดงเป็นเวลาเดียวกับเวลาออกจากท่าพระจันทร์ ไม่ใช่เวลาที่วัดจริง",
+  en: "Travel time between stops has not been published, so every stop shows the same time as the departure from Tha Prachan, not a measured travel time.",
+};
+
+const LAST_BUS_NOTE: LocaleText = {
+  th: "รถเที่ยวสุดท้ายออกจากท่าพระจันทร์เวลา 21:30 น.",
+  en: "The last bus of the day leaves Tha Prachan at 21:30.",
+};
+
+const TERM_UNKNOWN_NOTE: LocaleText = {
+  th: "ตารางนี้ไม่ได้ระบุภาคการศึกษาหรือปีการศึกษาที่ใช้งาน ควรตรวจสอบกับ อมธ. ท่าพระจันทร์ก่อนถือว่าเป็นตารางปัจจุบัน",
+  en: "This timetable does not state which term or academic year it applies to. Confirm with TUSU Tha Prachan before treating it as current.",
+};
+
+const SHUTTLE_SOURCE_NOTE: LocaleString = {
+  th: "ถอดความจากภาพตารางเวลาอย่างเป็นทางการที่ อมธ. ท่าพระจันทร์จัดหาให้ 16 สิงหาคม 2569",
+  en: "Transcribed from the official timetable graphic supplied by TUSU Tha Prachan, 16 August 2026.",
+};
+
+function buildShuttleStop(stop: (typeof SHUTTLE_ROUTES)[number]["stops"][number]): ShuttleStop {
+  return { _key: key(), name: stop.name, offsetMinutes: 0 };
+}
+
+function buildShuttleRouteDoc(route: (typeof SHUTTLE_ROUTES)[number]) {
+  return {
+    _id: docId("shuttleRoute", route.key),
+    _type: "shuttleRoute" as const,
+    name: route.name,
+    slug: slug(slugify(route.name.en)),
+    description: route.description,
+    stops: route.stops.map(buildShuttleStop),
+    calendar: { daysOfWeek: route.daysOfWeek } satisfies ShuttleRoute["calendar"],
+    departures: [...route.departures],
+    notes: joinLocaleText(
+      OFFSET_UNKNOWN_NOTE,
+      dormitoryDepartureNote(route.dormitoryDepartures) ?? { th: "", en: "" },
+      LAST_BUS_NOTE,
+      TERM_UNKNOWN_NOTE,
+    ),
+    // No realtime feed exists for either route; leave this unset entirely
+    // rather than an empty string. See its doc comment in lib/sanity/types.ts.
+    isActive: true,
+    sourceNote: SHUTTLE_SOURCE_NOTE,
+    lastVerified: "2026-08-16",
+  } satisfies Omit<ShuttleRoute, "_createdAt" | "_updatedAt">;
+}
+
+const SHUTTLE_ROUTE_DOCS = SHUTTLE_ROUTES.map(buildShuttleRouteDoc);
 
 /* ------------------------------------------------------------------ *
  * Run
@@ -444,7 +580,7 @@ const GUIDE_PAGE_DOCS = [USEFUL_SERVICES_PAGE, RULES_AND_DOCUMENTS_PAGE, ABOUT_T
 type SeedDoc = { _id: string; _type: string } & Record<string, unknown>;
 
 async function seedAll(): Promise<void> {
-  const docs: SeedDoc[] = [...ORGANISATION_DOCS, ...FORM_DOCS, ...GUIDE_PAGE_DOCS];
+  const docs: SeedDoc[] = [...ORGANISATION_DOCS, ...FORM_DOCS, ...GUIDE_PAGE_DOCS, ...SHUTTLE_ROUTE_DOCS];
 
   let succeeded = 0;
   const failures: Array<{ id: string; error: unknown }> = [];
@@ -470,12 +606,19 @@ async function seedAll(): Promise<void> {
   }
 
   console.log(
-    "\nStill needs a human, not written to any document:\n" +
-      "  - form.equipmentRequest: destinationUrl was never captured. " +
-      `${FORMS.find((f) => f.key === "equipmentRequest")?.needsVerification ?? ""} ` +
-      "Seeded as a draft, not published.\n" +
+    "\nStill needs a human, not fully resolved by this run:\n" +
+      `  - form.emergencyReport: ${FORMS.find((f) => f.key === "emergencyReport")?.needsVerification ?? ""}\n` +
+      `  - form.equipmentRequest: ${FORMS.find((f) => f.key === "equipmentRequest")?.needsVerification ?? ""}\n` +
+      `  - external service tuWellBeing / wellbeingCenter: ${
+        EXTERNAL_SERVICES.find((s) => s.key === "tuWellBeing")?.needsVerification ?? ""
+      }\n` +
       `  - shuttle: ${TRANSPORT.shuttle.needsVerification}\n` +
+      "  - shuttleRoute-sanamChai and shuttleRoute-pinklao: every stop's offsetMinutes is 0, a placeholder, " +
+      "because neither timetable graphic publishes travel time between stops. Time the routes by hand and update " +
+      "each stop. Also, the term or academic year both timetables apply to is unknown; confirm with TUSU before " +
+      "relying on them past the current term. Both caveats are also written into each route's own `notes` field.\n" +
       `  - bus routes: ${TRANSPORT.needsVerification}\n` +
+      `  - faculty name spelling: ${FACULTY_NAME_SPELLING_NOTE}\n` +
       `  - TUSU/TUSC campus reform note (English only, not seeded): ${STUDENT_BODIES.campusReform.note}\n`,
   );
 

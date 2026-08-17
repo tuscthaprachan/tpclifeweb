@@ -8,16 +8,27 @@
  *   https://linktr.ee/tpc.contact.info      club and faculty committee directory
  *   https://linktr.ee/tpc.student.welfare   welfare links
  *   https://online.fliphtml5.com/hpjjz/upyn TU91 Handbook, "The Magic of TPC"
+ *   Two official shuttle timetable graphics supplied directly by the site
+ *     owner on 16 August 2026 (Sanam Chai Line and Pinklao Line). These are
+ *     not a link tree or a scan; they are the first structured timetable this
+ *     file has ever held. See SHUTTLE_ROUTES below for what was, and was not,
+ *     on them.
  *
  * WHAT THIS IS NOT
  * This is a starting point for editors, not a substitute for them. Anything
- * marked `needsVerification` was read off a scanned page, a link tree label or
- * a search result and has not been confirmed by TUSU or TUSC. Do not present
- * unverified values to students as fact. In particular there is NO shuttle
- * timetable here, because the only published one is an image in an Instagram
- * post and inventing times would be worse than showing none.
+ * marked `needsVerification` was read off a scanned page, a link tree label,
+ * a search result or a timetable graphic and has not been confirmed by TUSU
+ * or TUSC beyond what is stated. Do not present unverified values to students
+ * as fact.
  *
- * Harvested 7 August 2026.
+ * The shuttle timetable graphics gave real, official departure times, so
+ * SHUTTLE_ROUTES below is genuine structured data, not an invention. What
+ * they did NOT give: the travel time between one stop and the next (so every
+ * stop's offset is recorded as unknown, not guessed), and which term or
+ * academic year the timetable applies to (so that is flagged too). See
+ * SHUTTLE_ROUTES' own comment for the full account.
+ *
+ * Harvested 7 August 2026. Shuttle timetables added 16 August 2026.
  */
 
 /* ------------------------------------------------------------------ *
@@ -53,6 +64,14 @@ export const EXTERNAL_SERVICES = [
       en: "Report faults with campus facilities and the physical environment",
     },
   },
+  // wellbeingCenter and tuWellBeing carry two different LINE Official
+  // Account IDs (@754xjgcn and @460rxhfi) under two near-identical English
+  // names, one read off the TUSC linktree and the other off the TUSU
+  // welfare sub-linktree. Independent research on 16 August 2026 confirms
+  // both IDs are real and distinct, but whether they are one service
+  // advertised twice or genuinely two services remains unresolved. Kept as
+  // two separate entries rather than merged; see the shared
+  // `needsVerification` note on each.
   {
     key: "wellbeingCenter",
     name: { th: "TU Wellbeing Center", en: "TU Wellbeing Center" },
@@ -60,9 +79,12 @@ export const EXTERNAL_SERVICES = [
     category: "welfare",
     requiresSignIn: false,
     note: {
-      th: "ติดต่อผ่าน LINE Official Account",
-      en: "Contact through the LINE official account",
+      th: "ติดต่อผ่าน LINE Official Account จากลิงก์ทรีของสภานักศึกษา ท่าพระจันทร์",
+      en: "Contact through the LINE official account, from the TUSC Tha Prachan linktree",
     },
+    needsVerification:
+      "May be the same wellbeing service as tuWellBeing (@460rxhfi) advertised under a slightly different name by " +
+      "TUSC rather than TUSU, or a genuinely different service. Not merged with it. Ask TUSU and TUSC to confirm.",
   },
   {
     key: "tuWellBeing",
@@ -71,9 +93,12 @@ export const EXTERNAL_SERVICES = [
     category: "welfare",
     requiresSignIn: false,
     note: {
-      th: "ติดต่อผ่าน LINE Official Account",
-      en: "Contact through the LINE official account",
+      th: "ติดต่อผ่าน LINE Official Account จากลิงก์ทรีสวัสดิการนักศึกษาของ อมธ. ท่าพระจันทร์",
+      en: "Contact through the LINE official account, from the TUSU Tha Prachan student welfare sub-linktree",
     },
+    needsVerification:
+      "May be the same wellbeing service as wellbeingCenter (@754xjgcn) advertised under a slightly different name " +
+      "by TUSU rather than TUSC, or a genuinely different service. Not merged with it. Ask TUSU and TUSC to confirm.",
   },
   {
     key: "library",
@@ -123,7 +148,12 @@ export const FORMS = [
     signInType: "google",
     isPriority: true,
     verifiedNote:
-      "Returns HTTP 401 to an anonymous request. A Google account is required. Verified 7 August 2026.",
+      "Returns HTTP 401 to an anonymous request. A Google account is required. Verified 7 August 2026, confirmed again independently 16 August 2026.",
+    needsVerification:
+      "TUSU's own linktree (linktr.ee/TUSU_Tha.pra.chaN) links to the same form ID but at the /formResponse path " +
+      "(a submission endpoint, not the normal entry page) rather than /viewform, which is what TUSC's linktree and " +
+      "this destinationUrl use. /viewform was kept here because it is the normal way to open a Google Form. Ask " +
+      "TUSU whether their linktree's /formResponse link is a mistake.",
   },
   {
     key: "equipmentRequest",
@@ -135,13 +165,18 @@ export const FORMS = [
       th: "ขอยืมอุปกรณ์กิจกรรมจาก อมธ. ท่าพระจันทร์",
       en: "Borrow activity equipment from TUSU Tha Prachan",
     },
+    destinationUrl:
+      "https://docs.google.com/forms/d/e/1FAIpQLSeC78lQvgJMjLq5IeQ_cl1kwrPaf6G2JtNMCBqW3JUCSejIfw/viewform",
     destinationType: "googleForm",
     category: "activity",
     owner: "tusu",
     requiresSignIn: true,
     signInType: "google",
     isPriority: true,
-    needsVerification: "The exact form URL was not captured. Ask TUSU for the current link.",
+    needsVerification:
+      "URL captured 16 August 2026 from TUSU's linktree (linktr.ee/TUSU_Tha.pra.chaN). Unlike the emergency report " +
+      "form, nobody has actually tested that this form rejects an anonymous request; requiresSignIn and signInType " +
+      "are carried over from the previous entry, not independently confirmed against this specific form.",
   },
 ] as const;
 
@@ -182,17 +217,23 @@ export const SOURCE_DOCUMENTS = [
       en: "TPC university divisions contact information",
     },
     url: "https://drive.google.com/file/d/1z0dI7GngUZbVRy1KbecpWopyq1JPWbf-/view",
+    note: "The Drive file itself is titled \"contract infomation.pdf\" (sic, both words), not a transcription error made here.",
   },
   {
     key: "openData",
     title: { th: "ข้อมูลเปิดของสภานักศึกษา", en: "TUSC open data" },
     url: "https://drive.google.com/drive/folders/1PvLJqanBEvYMNxGO0Kdx9Yd462fou_vM",
+    note: "The Drive folder is named \"OPEN DATA 2025\".",
   },
   {
     key: "tu91Handbook",
     title: { th: "คู่มือ TU91 The Magic of TPC", en: "TU91 Handbook, The Magic of TPC" },
     url: "https://online.fliphtml5.com/hpjjz/upyn/",
-    note: "33 scanned pages, no text layer. Its contents list is the content inventory below.",
+    note:
+      "33 scanned pages, no text layer, confirmed again 16 August 2026: the pages are rendered as image tiles, so " +
+      "the handbook is not searchable and its content cannot be extracted without OCR. This is the exact " +
+      "accessibility failure this site exists to fix; its content is not available through this site until someone " +
+      "does that work. Its contents list is the content inventory below.",
   },
   {
     key: "shuttleTimetable",
@@ -201,7 +242,11 @@ export const SOURCE_DOCUMENTS = [
       en: "TPC shuttle bus stops and timetable",
     },
     url: "https://www.instagram.com/p/DIEOlffS5dr/",
-    note: "Published only as an image in an Instagram post. Must be transcribed by hand before the shuttle panel can show anything.",
+    note:
+      "This Instagram post is a THIRD, older shuttle source, distinct from the two official timetable graphics " +
+      "transcribed into SHUTTLE_ROUTES below on 16 August 2026. It has not been cross-checked against those " +
+      "graphics and may show different stops, times or routes. Kept here as a reference link, not as the source of " +
+      "the seeded timetable.",
   },
 ] as const;
 
@@ -254,7 +299,15 @@ export const ORGANISATIONS = [
   { name: "LL.B. Student Committee", handle: "llbthammasat_sc", type: "facultyCommittee", faculty: { th: "คณะนิติศาสตร์", en: "Faculty of Law" } },
 
   // Faculty of Social Administration
-  { name: "SPD Inter Student Council", handle: "spdstudentc", type: "facultyCommittee", faculty: { th: "คณะสังคมสงเคราะห์ศาสตร์", en: "Faculty of Social Administration" } },
+  //
+  // The Thai faculty name below is spelled exactly as it appears as a
+  // section header on linktr.ee/tpc.contact.info: "คณะสังคมสงเคราะห์ศาษตร์".
+  // The correct spelling of the word "ศาสตร์" (field of study) has ส before
+  // ต; the source page has ษ instead, which is very likely an unintentional
+  // typo on the faculty's own committee's page, not a different word. It is
+  // kept verbatim rather than silently corrected; see FACULTY_NAME_SPELLING
+  // below and the console summary this seed prints.
+  { name: "SPD Inter Student Council", handle: "spdstudentc", type: "facultyCommittee", faculty: { th: "คณะสังคมสงเคราะห์ศาษตร์", en: "Faculty of Social Administration" } },
 
   // Faculty of Journalism and Mass Communication
   { name: "BJM TPC Student Council", handle: "bjm.tpc", type: "facultyCommittee", faculty: { th: "คณะวารสารศาสตร์และสื่อสารมวลชน", en: "Faculty of Journalism and Mass Communication" } },
@@ -276,6 +329,16 @@ export const ORGANISATIONS = [
   { name: "TUSU Tha Prachan", handle: "tusu.tpc", type: "studentBody", nameTh: "องค์การนักศึกษามหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์" },
 ] as const;
 
+/**
+ * See the comment above the SPD Inter Student Council entry in ORGANISATIONS.
+ * Printed in the seed script's end-of-run summary so a human sees it without
+ * having to read this file.
+ */
+export const FACULTY_NAME_SPELLING_NOTE =
+  "The Faculty of Social Administration's Thai name is recorded verbatim as \"คณะสังคมสงเคราะห์ศาษตร์\", " +
+  "spelled exactly as printed on linktr.ee/tpc.contact.info. The standard spelling ends \"ศาสตร์\", not \"ศาษตร์\". " +
+  "Ask the faculty committee which spelling they actually want before treating this as a typo to fix.";
+
 /* ------------------------------------------------------------------ *
  * Getting to Tha Prachan
  *
@@ -296,20 +359,182 @@ export const TRANSPORT = {
     },
   },
   shuttle: {
+    // These two names match SHUTTLE_ROUTES below, which is now the real,
+    // structured source for stops and departure times. This list stays a
+    // plain array of route names (rather than being replaced by
+    // SHUTTLE_ROUTES) only because app/[locale]/getting-around/page.tsx
+    // already reads TRANSPORT.shuttle.routes in this exact shape; that page
+    // is outside this agent's owned directories, so its shape is kept
+    // rather than changed here.
     routes: [
-      { th: "ท่าพระจันทร์ ถึง เซ็นทรัลปิ่นเกล้า", en: "Tha Prachan to Central Pinklao" },
-      { th: "หอพัก ถึง ท่าพระจันทร์", en: "Dormitory to Tha Prachan" },
+      { th: "รถเวียนสายสนามไชย", en: "Sanam Chai Line" },
+      { th: "รถเวียนสายปิ่นเกล้า", en: "Pinklao Line" },
     ],
     note: {
-      th: "ให้บริการวันจันทร์ถึงศุกร์ ไม่ให้บริการวันเสาร์ อาทิตย์ และวันหยุดนักขัตฤกษ์ แสดงบัตรประจำตัวนักศึกษาเมื่อขึ้นรถ",
-      en: "Runs Monday to Friday. No service at weekends or on public holidays. Show your student card when boarding",
+      th: "ให้บริการวันจันทร์ถึงศุกร์ ไม่ให้บริการวันเสาร์ อาทิตย์ และวันหยุดนักขัตฤกษ์ ดูตารางเวลาและจุดจอดแต่ละเส้นทางได้ที่หน้ารถรับส่ง",
+      en: "Runs Monday to Friday. No service at weekends or public holidays. See the shuttle page for each route's timetable and stops",
     },
     needsVerification:
-      "Departure times are NOT recorded here. The only published timetable is an image in an Instagram post. Transcribe it with TUSU before the shuttle panel goes live.",
+      "Two official timetable graphics were transcribed 16 August 2026 into SHUTTLE_ROUTES; see that export's own " +
+      "comment for exactly what is and is not confirmed (per-stop travel time and the term/academic year the " +
+      "timetable applies to are both unknown). The 'show your student card when boarding' instruction, present on " +
+      "the old placeholder note above, was NOT on either timetable graphic and has been dropped rather than carried " +
+      "forward unverified; confirm with TUSU whether it still applies.",
   },
   needsVerification:
     "City bus route numbers appear on the handbook's scanned page but were not legible enough to record reliably. Confirm against a current source.",
 } as const;
+
+/* ------------------------------------------------------------------ *
+ * Shuttle timetables
+ *
+ * Transcribed by hand from two official timetable graphics the site owner
+ * supplied on 16 August 2026, one per route. This is the first genuine,
+ * structured shuttle timetable this file has held; everything in
+ * `departures` below is read directly off those graphics, not invented,
+ * interpolated or estimated.
+ *
+ * WHAT THE GRAPHICS DID NOT GIVE, AND WHAT WAS DONE ABOUT IT
+ *   - Per-stop travel time. Neither graphic publishes how long it takes to
+ *     reach any stop after the one the shuttle departs from; only departure
+ *     times from Thammasat University Tha Prachan are published. Inventing
+ *     a plausible-sounding "5 minutes to the next stop" would be exactly the
+ *     kind of fabrication CONTRIBUTING.md's Honesty section forbids, so
+ *     every stop below is `offsetMinutes: 0` and every route's `notes` says
+ *     plainly, in both languages, that this is a placeholder and not a
+ *     measured time. A future editor who times the route by hand can update
+ *     `offsetMinutes` per stop without changing anything else about the
+ *     document shape.
+ *   - Which term or academic year the timetable applies to. Neither graphic
+ *     is dated. A stale timetable silently served to students as current is
+ *     the single worst failure mode for a service like this, so
+ *     `needsVerification` below says so explicitly, and the same caveat is
+ *     repeated in each route's own `notes` field so it is visible to
+ *     whoever reads the document in the Studio or, until an editor commits
+ *     to a term, to a student reading the site itself.
+ *
+ * The Pinklao Line timetable graphic also marks four specific departures as
+ * dormitory shuttle services (see `dormitoryDepartures` on that route). This
+ * is real, published information a student needs, not a note about the data;
+ * see the seed script for where it ends up, since neither `shuttleStop.note`
+ * (a stop, not a departure time) nor a field of its own exists for a
+ * per-departure tag in `sanity/schemas/objects/shuttleStop.ts` or
+ * `sanity/schemas/documents/shuttleRoute.ts`.
+ * ------------------------------------------------------------------ */
+
+interface ShuttleRouteSourceStop {
+  name: { th: string; en: string };
+}
+
+interface DormitoryDeparture {
+  time: string;
+  note: { th: string; en: string };
+}
+
+interface ShuttleRouteSource {
+  key: string;
+  name: { th: string; en: string };
+  description: { th: string; en: string };
+  stops: ShuttleRouteSourceStop[];
+  daysOfWeek: number[];
+  departures: string[];
+  lastBus: string;
+  dormitoryDepartures?: DormitoryDeparture[];
+}
+
+// The plain-language notes about unpublished per-stop offsets, the last bus
+// and the unknown term (referenced in the file comment above) are assembled
+// in sanity/seed/seed.ts, next to the other document-building logic, rather
+// than duplicated here. This file holds the raw harvested facts (the routes,
+// stops and departure times below); how they become a document's fields is
+// the seed script's job, matching every other export in this file.
+
+export const SHUTTLE_ROUTES: ShuttleRouteSource[] = [
+  {
+    key: "sanamChai",
+    name: { th: "รถเวียนสายสนามไชย", en: "Sanam Chai Line" },
+    description: {
+      th: "รถเวียนสองจุดจอดระหว่างมหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ กับสถานีรถไฟฟ้ามหานครสนามไชย ทางออกมิวเซียมสยาม",
+      en: "A two-stop shuttle between Thammasat University Tha Prachan and MRT Sanam Chai Station, Museum Siam Exit.",
+    },
+    stops: [
+      { name: { th: "มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์", en: "Thammasat University Tha Prachan" } },
+      { name: { th: "สถานีสนามไชย (ทางออกมิวเซียมสยาม)", en: "MRT Sanam Chai Station (Museum Siam Exit)" } },
+    ],
+    daysOfWeek: [1, 2, 3, 4, 5],
+    departures: [
+      "07:45",
+      "08:00", "08:15", "08:30", "08:45",
+      "09:00", "09:30", "09:45",
+      "10:00",
+      "12:00", "12:15", "12:30", "12:45",
+      "13:00", "13:15", "13:30",
+      "14:00",
+      "15:00",
+      "16:00", "16:15", "16:30", "16:45",
+      "17:00", "17:15", "17:30", "17:45",
+      "18:00", "18:15", "18:30",
+      "19:00",
+      "20:00", "20:30", "20:45",
+      "21:00", "21:30",
+    ],
+    lastBus: "21:30",
+  },
+  {
+    key: "pinklao",
+    name: { th: "รถเวียนสายปิ่นเกล้า", en: "Pinklao Line" },
+    description: {
+      th: "รถเวียนวนรอบระหว่างมหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ กับย่านปิ่นเกล้า ผ่านจุดจอด 8 จุด แล้ววนกลับมาที่ต้นทาง",
+      en: "A loop shuttle between Thammasat University Tha Prachan and the Pinklao area, through 8 stops, then back to the origin to complete the loop.",
+    },
+    stops: [
+      { name: { th: "มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์", en: "Thammasat University Tha Prachan" } },
+      { name: { th: "ก่อนสะพานปิ่นเกล้า", en: "Before Pinklao Bridge" } },
+      { name: { th: "พาต้าปิ่นเกล้า", en: "Pata Pinklao" } },
+      { name: { th: "เมเจอร์ปิ่นเกล้า", en: "Major Pinklao" } },
+      { name: { th: "ลุมพินีพาร์ค ปิ่นเกล้า", en: "Lumphini Park Pinklao" } },
+      { name: { th: "ลุมพินีเพลส ปิ่นเกล้า 2", en: "Lumphini Place Pinklao 2" } },
+      { name: { th: "เซ็นทรัลปิ่นเกล้า", en: "Central Pinklao" } },
+      { name: { th: "ตรงข้ามพาต้าปิ่นเกล้า", en: "Opposite Pata Pinklao" } },
+      { name: { th: "หลังสะพานปิ่นเกล้า", en: "After Pinklao Bridge" } },
+    ],
+    daysOfWeek: [1, 2, 3, 4, 5],
+    departures: [
+      "07:00", "07:20", "07:40",
+      "08:00", "08:20", "08:40",
+      "09:00", "09:30",
+      "11:00", "11:30",
+      "12:00", "12:30",
+      "13:00", "13:30",
+      "14:00", "14:30",
+      "16:00", "16:20", "16:40",
+      "17:00", "17:20", "17:40",
+      "18:00", "18:30",
+      "19:00", "19:30",
+      "20:00", "20:30",
+      "21:00", "21:30",
+    ],
+    lastBus: "21:30",
+    dormitoryDepartures: [
+      {
+        time: "07:00",
+        note: { th: "บริการหอใน ขาเข้ารอบเช้า", en: "Morning TPC dormitory service" },
+      },
+      {
+        time: "09:00",
+        note: { th: "บริการหอใน ขาเข้ารอบเช้า", en: "Morning TPC dormitory service" },
+      },
+      {
+        time: "17:00",
+        note: { th: "บริการหอใน ขาออกรอบเย็น", en: "Evening TPC dormitory service" },
+      },
+      {
+        time: "19:00",
+        note: { th: "บริการหอใน ขาออกรอบเย็น", en: "Evening TPC dormitory service" },
+      },
+    ],
+  },
+];
 
 /* ------------------------------------------------------------------ *
  * The two bodies
@@ -339,6 +564,9 @@ export const STUDENT_BODIES = {
       th: "ฝ่ายนิติบัญญัติและตรวจสอบ พิจารณาและอนุมัติระเบียบว่าด้วยกิจกรรมนักศึกษา ตรวจสอบการดำเนินงาน นโยบาย และงบประมาณขององค์การนักศึกษา และเผยแพร่ข้อมูลเปิด",
       en: "The legislative and scrutiny body. It drafts and approves rules on student activities, scrutinises the Union's decisions, policies and budget, and publishes open data",
     },
+    instagram: "tusc.tpc",
+    facebook: "tusc.tpc",
+    email: "tusc.thaprachan@gmail.com",
     linktree: "https://linktr.ee/tusc.tpc",
   },
   governedBy: {
