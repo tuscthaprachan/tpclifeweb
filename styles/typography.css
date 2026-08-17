@@ -73,6 +73,32 @@ h6 {
   text-wrap: balance;
 }
 
+/*
+ * A heading sitting on a surface that sets its own text colour has to take
+ * that colour, not --ink-900.
+ *
+ * This rule cannot be replaced with a Tailwind utility on the heading, and
+ * that is worth explaining because it looks like it could be. globals.css
+ * does `@import "tailwindcss"`, which puts every utility inside
+ * `@layer utilities`, while this file is imported unlayered. Unlayered CSS
+ * beats layered CSS outright, whatever the specificity, so the rule above
+ * wins against `text-inherit` or any other class put on the heading itself.
+ * The fix therefore has to live here, unlayered, alongside the rule causing
+ * it.
+ *
+ * Without this, `Panel` renders near-black ink on its saturated background:
+ * measured at 2.78:1 on the success tone, a real 1.4.3 failure. The token
+ * pair is correct, so check-contrast.mjs cannot see this; it compares tokens
+ * rather than what the cascade resolves to. The axe suite caught it.
+ *
+ * Keyed off an explicit attribute rather than a colour utility class,
+ * because a component that paints its own background is exactly the case
+ * that has to opt in deliberately.
+ */
+[data-inherit-heading-colour] :is(h1, h2, h3, h4, h5, h6) {
+  color: inherit;
+}
+
 html[lang^="th"] h1,
 html[lang^="th"] h2,
 html[lang^="th"] h3,
