@@ -24,6 +24,10 @@ import type {
   CampusPlace,
   Faq,
   FormRecord,
+  LostFoundCategory,
+  LostFoundItem,
+  LostFoundKind,
+  LostFoundStatus,
   NewsPost,
   Organisation,
   Policy,
@@ -424,6 +428,139 @@ export async function getPlaces(): Promise<CampusPlace[]> {
 }
 
 /* ------------------------------------------------------------------ *
+ * Lost and found
+ *
+ * `client` fetches with `perspective: "published"`, which is what makes the
+ * public report form safe: a submission is written as a draft and simply is
+ * not in any of these results until an editor publishes it. There is no
+ * "pending" flag to get wrong.
+ *
+ * Filtering happens in GROQ rather than in the page, so the list works with
+ * JavaScript off: the filter form submits query parameters, the server reads
+ * them, and these queries do the work. Passing `null` for a filter means "do
+ * not filter on this", which is why every predicate below is guarded with
+ * `!defined($param)`.
+ * ------------------------------------------------------------------ */
+
+const LOST_FOUND_PROJECTION = /* groq */ `
+  ${DOC_META}
+  ...,
+  place->{ ${DOC_META} ... }
+`;
+
+export interface LostFoundFilters {
+  kind?: LostFoundKind | null;
+  category?: LostFoundCategory | null;
+  /** Omit to show only entries still open, which is what a searcher wants. */
+  status?: LostFoundStatus | null;
+}
+
+export interface PagedLostFound {
+  items: LostFoundItem[];
+  total: number;
+}
+
+export const LOST_FOUND_PAGE_QUERY = defineQuery(`
+  {
+    "items": *[
+      _type == "lostFoundItem"
+      && (!defined($kind) || kind == $kind)
+      && (!defined($category) || category == $category)
+      && (!defined($status) || status == $status)
+    ] | order(occurredOn desc, publishedAt desc) [$start...$end]{
+      ${LOST_FOUND_PROJECTION}
+    },
+    "total": count(*[
+      _type == "lostFoundItem"
+      && (!defined($kind) || kind == $kind)
+      && (!defined($category) || category == $category)
+      && (!defined($status) || status == $status)
+    ])
+  }
+`);
+
+/** `page` is 1-based. */
+export async function getLostFoundPage(
+  filters: LostFoundFilters = {},
+  page = 1,
+  pageSize = 24,
+): Promise<PagedLostFound> {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  return safeFetch<PagedLostFound>(
+    "getLostFoundPage",
+    () => client.fetch<PagedLostFound>(
+      LOST_FOUND_PAGE_QUERY,
+      {
+        start,
+        end,
+        kind: filters.kind ?? null,
+        category: filters.category ?? null,
+        status: filters.status ?? null,
+      },
+      { next: { tags: [CACHE_TAGS.lostFound] } },
+    ),
+    // An unreadable register is an empty register, not a broken page. The
+    // reader still gets the report form and the contact details, which are
+    // the two things they can act on when the list itself is unavailable.
+    { items: [], total: 0 },
+  );
+}
+
+export const LOST_FOUND_ITEM_BY_SLUG_QUERY = defineQuery(`
+  *[_type == "lostFoundItem" && slug.current == $slug][0]{
+    ${LOST_FOUND_PROJECTION}
+  }
+`);
+
+export async function getLostFoundItemBySlug(slug: string): Promise<LostFoundItem | null> {
+  return safeFetch<LostFoundItem | null>(
+    "getLostFoundItemBySlug",
+    () => client.fetch<LostFoundItem | null>(
+      LOST_FOUND_ITEM_BY_SLUG_QUERY,
+      { slug },
+      { next: { tags: [CACHE_TAGS.lostFound] } },
+    ),
+    null,
+  );
+}
+
+/**
+ * Looks an entry up by the reference code a student was given, so someone
+ * holding "LF-2026-0184" on a slip of paper can find it without describing
+ * the item again. Matched case-insensitively, because the code gets written
+ * down by hand.
+ */
+export const LOST_FOUND_ITEM_BY_REFERENCE_QUERY = defineQuery(`
+  *[_type == "lostFoundItem" && lower(reference) == lower($reference)][0]{
+    ${LOST_FOUND_PROJECTION}
+  }
+`);
+
+export async function getLostFoundItemByReference(reference: string): Promise<LostFoundItem | null> {
+  return safeFetch<LostFoundItem | null>(
+    "getLostFoundItemByReference",
+    () => client.fetch<LostFoundItem | null>(
+      LOST_FOUND_ITEM_BY_REFERENCE_QUERY,
+      { reference },
+      { next: { tags: [CACHE_TAGS.lostFound] } },
+    ),
+    null,
+  );
+}
+
+/**
+ * The highest reference number issued so far, used to allocate the next one.
+ * Returns 0 when the register is empty or unreadable, and the caller must
+ * treat a collision as possible rather than assuming this is authoritative:
+ * two submissions in the same second can read the same number. The report
+ * action retries on conflict for exactly that reason.
+ */
+export const LOST_FOUND_LAST_REFERENCE_QUERY = defineQuery(`
+  *[_type == "lostFoundItem" && defined(reference)] | order(reference desc)[0].reference
+`);
+
+/* ------------------------------------------------------------------ *
  * Search index
  *
  * One row per indexable document, both languages in the same record so a
@@ -520,6 +657,22 @@ const SEARCH_INDEX_QUERY = defineQuery(`
       "haystack": name.th + " " + name.en + " " + coalesce(building.th, "") + " " + coalesce(building.en, ""),
       "weight": 20,
       category
+    },
+    // Only entries still open are indexed. A returned umbrella is a true
+    // fact about the past and stays on its own page, but putting it in
+    // search means someone hunting for their umbrella today wades through
+    // other people's closed entries first. The reference code is in the
+    // haystack so pasting "LF-2026-0184" into the site search finds it.
+    //
+    // These are line comments, not a /* */ block. GROQ has no block comment
+    // syntax: one here fails the whole query to parse, and safeFetch turns
+    // that into a silently empty search index for EVERY type, not just this
+    // one. It is a quiet failure, so it is worth stating plainly.
+    "lostFoundItems": *[_type == "lostFoundItem" && status == "open"]{
+      "id": _id, "type": "lostFoundItem", "path": {"th": "/th/lost-and-found/" + slug.current, "en": "/en/lost-and-found/" + slug.current},
+      title, "summary": description, owner,
+      "haystack": coalesce(title.th, "") + " " + coalesce(title.en, "") + " " + coalesce(description.th, "") + " " + coalesce(description.en, "") + " " + coalesce(reference, "") + " " + coalesce(locationNote.th, "") + " " + coalesce(locationNote.en, "") + " " + coalesce(place->name.th, "") + " " + coalesce(place->name.en, ""),
+      "weight": 70
     }
   }
 `);
@@ -535,6 +688,7 @@ interface SearchIndexRaw {
   policies: SearchRecord[];
   organisations: SearchRecord[];
   places: SearchRecord[];
+  lostFoundItems: SearchRecord[];
 }
 
 /** Every bucket empty. Used as the fallback when the index read fails. */
@@ -549,6 +703,7 @@ const EMPTY_SEARCH_INDEX_RAW: SearchIndexRaw = {
   policies: [],
   organisations: [],
   places: [],
+  lostFoundItems: [],
 };
 
 /**
@@ -583,6 +738,7 @@ export async function getSearchIndex(): Promise<SearchIndex> {
     ...raw.policies,
     ...raw.organisations,
     ...raw.places,
+    ...raw.lostFoundItems,
   ];
 
   return { generatedAt: new Date().toISOString(), records };

@@ -42,6 +42,7 @@ const TAGS_BY_TYPE: Record<string, readonly CacheTag[]> = {
   faq: [CACHE_TAGS.faq, CACHE_TAGS.searchIndex],
   organisation: [CACHE_TAGS.directory, CACHE_TAGS.searchIndex],
   place: [CACHE_TAGS.place, CACHE_TAGS.searchIndex],
+  lostFoundItem: [CACHE_TAGS.lostFound, CACHE_TAGS.searchIndex],
 };
 
 export async function POST(request: NextRequest) {

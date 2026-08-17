@@ -241,6 +241,12 @@ export interface NewsPost extends DocumentMeta {
   owner: Owner;
   category?: Category;
   cover?: SanityImage;
+  /**
+   * Additional pictures shown under the body, in the order the editor set.
+   * Every entry carries the same alt text contract as `cover`: a `SanityImage`
+   * is either described in both languages or explicitly `isDecorative`.
+   */
+  gallery?: SanityImage[];
   tags?: LocaleString[];
 }
 
@@ -403,6 +409,127 @@ export interface CampusPlace extends DocumentMeta {
 }
 
 /* ------------------------------------------------------------------ *
+ * Lost and found
+ *
+ * Two halves of one register: things a student has lost, and things someone
+ * has handed in. They share a document type so that one list, one search and
+ * one filter serve both, and so a match between the two halves is a
+ * comparison of like with like rather than of two different shapes.
+ *
+ * HONESTY, the same rule the shuttle timetable is held to. This register
+ * says only what an editor has recorded. It never claims an item has been
+ * matched, returned or collected unless someone set that status by hand.
+ * `status` is therefore an explicit editorial field with no inferred value,
+ * and a `found` item's holding location is stated in words rather than
+ * implied by whoever logged it.
+ *
+ * PRIVACY. A lost property register is a public page about other people's
+ * possessions. Nothing here is a place to put a student's name, ID number,
+ * phone number or address, and the schema deliberately gives those nowhere
+ * to live. A photograph of a found item is a picture of the item, never of
+ * the person who handed it in or of the identifying details on its face.
+ * Whoever holds the item does the identity check off this website, through
+ * `claimContact`.
+ * ------------------------------------------------------------------ */
+
+/**
+ * Which half of the register a document belongs to.
+ *   `lost`  a student has lost this and is looking for it.
+ *   `found` someone has handed this in and it is waiting to be collected.
+ */
+export type LostFoundKind = "lost" | "found";
+
+/**
+ * Where an item has got to. Only ever set by an editor.
+ *   `open`      still open. A lost item is still missing, a found item is
+ *               still waiting to be collected.
+ *   `matched`   a possible owner has come forward and it is being checked.
+ *   `returned`  back with its owner. The end state that matters.
+ *   `unclaimed` the claim window in `claimBy` has passed with nobody
+ *               collecting it. Says what happened, not that it vanished.
+ *   `withdrawn` the person who logged it asked for it to be taken down, or
+ *               it turned out to be logged twice.
+ */
+export type LostFoundStatus = "open" | "matched" | "returned" | "unclaimed" | "withdrawn";
+
+/**
+ * What kind of thing it is. A fixed list, because free text categories make
+ * the filter useless and are not translatable. `other` is deliberate: an
+ * editor who cannot place an item must not be forced to file it wrongly.
+ */
+export type LostFoundCategory =
+  | "idCard"
+  | "bankCard"
+  | "keys"
+  | "wallet"
+  | "phone"
+  | "laptop"
+  | "bag"
+  | "clothing"
+  | "book"
+  | "stationery"
+  | "jewellery"
+  | "eyewear"
+  | "umbrella"
+  | "waterBottle"
+  | "other";
+
+export interface LostFoundItem extends DocumentMeta {
+  _type: "lostFoundItem";
+  /**
+   * The short human-readable code a student quotes at the desk, for example
+   * "LF-2026-0184". Generated on first save and never reused, so that a
+   * conversation about an item does not depend on describing it again.
+   */
+  reference: string;
+  kind: LostFoundKind;
+  title: LocaleString;
+  slug: SanitySlug;
+  /**
+   * What the item is, in enough detail to recognise but not enough to claim
+   * falsely. Editors are told in the Studio to hold back one identifying
+   * detail so a claim can be verified against it.
+   */
+  description: LocaleText;
+  category: LostFoundCategory;
+  /** Pictures of the item itself. Never of a person, never of an ID's face. */
+  photos?: SanityImage[];
+  /** Where on campus it was lost or found, when it is a place the site knows. */
+  place?: CampusPlace;
+  /** Free text location for anywhere `place` does not cover, including off campus. */
+  locationNote?: LocaleString;
+  /** The Asia/Bangkok calendar date it was lost or found, "YYYY-MM-DD". */
+  occurredOn: string;
+  status: LostFoundStatus;
+  /**
+   * `found` items only. Where the item physically is right now and who is
+   * holding it, in words. A student must be able to read this and know which
+   * counter to walk to.
+   */
+  heldAt?: LocaleString;
+  /**
+   * `found` items only. The date after which the holder stops keeping it.
+   * Renders as a deadline, and drives the `unclaimed` status once passed,
+   * but only when an editor sets that status. Nothing here expires itself.
+   */
+  claimBy?: string;
+  /** How to start a claim. Reuses the sitewide help contact shape. */
+  claimContact?: HelpContact;
+  /** Which body is running this entry. Every entry is attributable. */
+  owner: Owner;
+  publishedAt: string;
+  /** When it reached `returned` or `unclaimed`. Set by an editor with the status. */
+  resolvedAt?: string;
+  /**
+   * True when this came in through the public report form rather than being
+   * typed in by an editor. A submission arrives as an unpublished draft and
+   * is invisible to readers until someone approves it, so this flag records
+   * provenance; it is not what controls visibility.
+   */
+  submittedByStudent?: boolean;
+}
+
+/* ------------------------------------------------------------------ *
  * Search
  * ------------------------------------------------------------------ */
 
@@ -435,7 +562,8 @@ export type SearchableType =
   | "newsPost"
   | "policy"
   | "organisation"
-  | "place";
+  | "place"
+  | "lostFoundItem";
 
 export interface SearchIndex {
   generatedAt: string;

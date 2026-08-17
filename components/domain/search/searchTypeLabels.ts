@@ -34,4 +34,5 @@ export const SEARCH_TYPE_LABEL: Record<SearchableType, LocaleString> = {
   organisation: { th: "หน่วยงาน", en: "Organisation" },
   // TODO: add to UI strings
   place: { th: "สถานที่", en: "Place" },
+  lostFoundItem: UI.lostAndFound,
 };

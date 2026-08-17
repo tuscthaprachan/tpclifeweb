@@ -45,6 +45,54 @@ export const structure: StructureResolver = (S) => {
             ]),
         ),
 
+      /*
+       * Lost and found. The queue comes first because it is the only list in
+       * this Studio that fills up on its own: the public report form writes
+       * drafts, and a draft nobody looks at is a student whose report went
+       * nowhere. `_id in path("drafts.**")` is how Sanity expresses "not yet
+       * published"; the site reads with `perspective: "published"`, so
+       * everything in that queue is invisible to readers until approved.
+       */
+      S.listItem()
+        .title("Lost and found")
+        .child(
+          S.list()
+            .title("Lost and found")
+            .items([
+              S.listItem()
+                .title("Waiting for approval")
+                .child(
+                  S.documentList()
+                    .title("Waiting for approval")
+                    .apiVersion(apiVersion)
+                    .filter('_type == "lostFoundItem" && _id in path("drafts.**")')
+                    .defaultOrdering([{ field: "_createdAt", direction: "desc" }]),
+                ),
+              S.listItem()
+                .title("Still open")
+                .child(
+                  S.documentList()
+                    .title("Still open")
+                    .apiVersion(apiVersion)
+                    .filter('_type == "lostFoundItem" && status == "open"')
+                    .defaultOrdering([{ field: "occurredOn", direction: "desc" }]),
+                ),
+              S.listItem()
+                .title("Past the collection date")
+                .child(
+                  S.documentList()
+                    .title("Past the collection date")
+                    .apiVersion(apiVersion)
+                    .filter(
+                      '_type == "lostFoundItem" && kind == "found" && status == "open" && defined(claimBy) && claimBy < $today',
+                    )
+                    .params({ today: new Date().toISOString().slice(0, 10) })
+                    .defaultOrdering([{ field: "claimBy", direction: "asc" }]),
+                ),
+              S.documentTypeListItem("lostFoundItem").title("Every entry"),
+            ]),
+        ),
+
       S.listItem()
         .title("Governance")
         .child(S.documentTypeList("policy").title("Policies")),

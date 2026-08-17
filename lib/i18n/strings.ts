@@ -122,6 +122,7 @@ export const UI = {
   allDay: { th: "ตลอดวัน", en: "All day" },
   location: { th: "สถานที่", en: "Location" },
   publishedOn: { th: "เผยแพร่เมื่อ", en: "Published" },
+  morePictures: { th: "ภาพเพิ่มเติม", en: "More pictures" },
 
   /* Governance */
   policyTracker: { th: "ความคืบหน้านโยบาย", en: "Policy progress" },
@@ -168,6 +169,110 @@ export const UI = {
   contact: { th: "ติดต่อ", en: "Contact" },
   lastReviewed: { th: "ตรวจสอบล่าสุด", en: "Last reviewed" },
   seeAll: { th: "ดูทั้งหมด", en: "See all" },
+
+  /* Lost and found */
+  lostAndFound: { th: "ของหายและของเก็บได้", en: "Lost and found" },
+  lostAndFoundIntro: {
+    th: "ค้นหาของที่หาย และดูของที่มีคนเก็บมาส่งไว้ที่ท่าพระจันทร์",
+    en: "Search for something you lost, and see what has been handed in at Tha Prachan",
+  },
+  lostItems: { th: "ของที่หาย", en: "Lost items" },
+  foundItems: { th: "ของที่เก็บได้", en: "Found items" },
+  /* The word on a single entry, so a list mixing both halves stays readable. */
+  itemLost: { th: "หาย", en: "Lost" },
+  itemFound: { th: "เก็บได้", en: "Found" },
+  reportLostItem: { th: "แจ้งของหาย", en: "Report something lost" },
+  reportFoundItem: { th: "แจ้งของที่เก็บได้", en: "Report something found" },
+  lostFoundReference: { th: "เลขอ้างอิง", en: "Reference" },
+  lostFoundReferenceHint: {
+    th: "ใช้เลขนี้เมื่อติดต่อขอรับของคืน",
+    en: "Quote this number when you contact the desk to collect it",
+  },
+  dateLost: { th: "วันที่หาย", en: "Date lost" },
+  dateFound: { th: "วันที่เก็บได้", en: "Date found" },
+  whereLost: { th: "หายที่ไหน", en: "Where it was lost" },
+  whereFound: { th: "เก็บได้ที่ไหน", en: "Where it was found" },
+  heldAt: { th: "เก็บรักษาไว้ที่", en: "Being held at" },
+  collectBy: { th: "รับคืนภายใน", en: "Collect by" },
+  howToClaim: { th: "วิธีขอรับคืน", en: "How to claim this" },
+  claimCheckNote: {
+    th: "ผู้ดูแลจะถามรายละเอียดของสิ่งของเพื่อยืนยันว่าเป็นของคุณจริง",
+    en: "Whoever holds the item will ask you to describe it, to check it is yours",
+  },
+  lostFoundStatusOpen: { th: "ยังไม่มีผู้รับคืน", en: "Still open" },
+  lostFoundStatusMatched: { th: "อยู่ระหว่างตรวจสอบ", en: "Being checked" },
+  lostFoundStatusReturned: { th: "คืนเจ้าของแล้ว", en: "Returned" },
+  lostFoundStatusUnclaimed: { th: "พ้นกำหนดรับคืน", en: "Claim window closed" },
+  lostFoundStatusWithdrawn: { th: "ถอนรายการแล้ว", en: "Withdrawn" },
+  lostFoundCategoryIdCard: { th: "บัตรนักศึกษาหรือบัตรประชาชน", en: "Student or ID card" },
+  lostFoundCategoryBankCard: { th: "บัตรธนาคาร", en: "Bank card" },
+  lostFoundCategoryKeys: { th: "กุญแจ", en: "Keys" },
+  lostFoundCategoryWallet: { th: "กระเป๋าสตางค์", en: "Wallet or purse" },
+  lostFoundCategoryPhone: { th: "โทรศัพท์", en: "Phone" },
+  lostFoundCategoryLaptop: { th: "โน้ตบุ๊กและแท็บเล็ต", en: "Laptop or tablet" },
+  lostFoundCategoryBag: { th: "กระเป๋า", en: "Bag" },
+  lostFoundCategoryClothing: { th: "เสื้อผ้า", en: "Clothing" },
+  lostFoundCategoryBook: { th: "หนังสือ", en: "Book" },
+  lostFoundCategoryStationery: { th: "เครื่องเขียน", en: "Stationery" },
+  lostFoundCategoryJewellery: { th: "เครื่องประดับ", en: "Jewellery or watch" },
+  lostFoundCategoryEyewear: { th: "แว่นตา", en: "Glasses" },
+  lostFoundCategoryUmbrella: { th: "ร่ม", en: "Umbrella" },
+  lostFoundCategoryWaterBottle: { th: "ขวดน้ำ", en: "Water bottle" },
+  lostFoundCategoryOther: { th: "อื่น ๆ", en: "Other" },
+  noLostFoundItems: {
+    th: "ยังไม่มีรายการที่ตรงกับตัวกรองนี้",
+    en: "Nothing matches these filters yet",
+  },
+  /* The report form. */
+  reportLostFoundIntro: {
+    th: "กรอกรายละเอียดของสิ่งของ เจ้าหน้าที่จะตรวจสอบก่อนเผยแพร่ขึ้นหน้าเว็บไซต์",
+    en: "Describe the item. Someone checks every report before it appears on this page",
+  },
+  reportLostFoundPrivacy: {
+    th: "อย่ากรอกชื่อ เลขบัตรประชาชน หรือข้อมูลส่วนตัวของผู้อื่น รายละเอียดที่กรอกจะแสดงต่อสาธารณะ",
+    en: "Do not enter anyone's name, ID number or personal details. What you write here becomes public",
+  },
+  reportLostFoundHoldBack: {
+    th: "เก็บรายละเอียดเฉพาะบางอย่างไว้ในช่องสำหรับเจ้าหน้าที่ เพื่อใช้ยืนยันตัวเจ้าของ",
+    en: "Keep one identifying detail for the staff-only box, so a claim can be checked against it",
+  },
+  whatIsIt: { th: "สิ่งของอะไร", en: "What is the item" },
+  describeIt: { th: "รายละเอียด", en: "Description" },
+  privateDetail: { th: "รายละเอียดสำหรับเจ้าหน้าที่", en: "Detail for staff only" },
+  yourContact: { th: "ช่องทางติดต่อของคุณ", en: "How we can reach you" },
+  yourContactHint: {
+    th: "อีเมลหรือไอดีไลน์ ใช้ติดต่อกลับเท่านั้น ไม่แสดงบนหน้าเว็บไซต์",
+    en: "Email or LINE ID. Used to contact you only, and never shown on this page",
+  },
+  /*
+   * The filter legend and the report form's first question ask the same
+   * thing, so they are one string. `itemLost` and `itemFound` label a single
+   * entry; this labels the choice between them.
+   */
+  lostOrFound: { th: "หายหรือเก็บได้", en: "Lost or found" },
+  notInThisList: { th: "ไม่มีในรายการ", en: "Not in this list" },
+  describeLocation: { th: "อธิบายตำแหน่งด้วยตัวเอง", en: "Describe the location yourself" },
+  /*
+   * A student cannot attach a photo. Anonymous asset upload would mean a
+   * Sanity write token in the browser bundle, so pictures are added by an
+   * editor afterwards. Saying so is better than a file input that discards
+   * what a worried student just uploaded.
+   */
+  reportNoPhotoNote: {
+    th: "แบบฟอร์มนี้ไม่รับรูปภาพ เจ้าหน้าที่จะเพิ่มรูปให้หลังจากตรวจสอบรายงานนี้",
+    en: "This form does not accept a photo. Staff add a picture once they have reviewed this report",
+  },
+  sending: { th: "กำลังส่ง", en: "Sending" },
+  submitReport: { th: "ส่งรายงาน", en: "Send report" },
+  reportReceivedTitle: { th: "ได้รับรายงานแล้ว", en: "Report received" },
+  reportReceivedBody: {
+    th: "เจ้าหน้าที่จะตรวจสอบและเผยแพร่รายการนี้ หากมีข้อสงสัยจะติดต่อกลับตามช่องทางที่ให้ไว้",
+    en: "Someone will check this report and publish the entry. If anything is unclear, they will contact you",
+  },
+  reportUnavailable: {
+    th: "ขณะนี้ยังไม่สามารถรับรายงานผ่านเว็บไซต์ได้ โปรดติดต่อตามช่องทางด้านล่าง",
+    en: "Reports cannot be sent from this page right now. Please use the contact details below",
+  },
 
   /* Help. 3.2.6 Consistent Help, same words in the same place on every page. */
   needHelp: { th: "ต้องการความช่วยเหลือ", en: "Need help" },
@@ -217,6 +322,27 @@ export const UI = {
 
   /* Errors */
   errorSummaryTitle: { th: "มีข้อผิดพลาด", en: "There is a problem" },
+  /*
+   * Field-level validation messages. Shared rather than per-form, because a
+   * reader who meets the same mistake twice should meet the same sentence
+   * twice. They say what to do, not what the reader did wrong.
+   */
+  errorFieldRequired: {
+    th: "กรุณากรอกข้อมูลนี้ก่อนส่งรายงาน",
+    en: "Fill this in before you send the report",
+  },
+  errorInvalidDate: {
+    th: "ระบุวันที่ให้ถูกต้อง และไม่เป็นวันในอนาคต",
+    en: "Enter a real date that is not in the future",
+  },
+  errorLocationRequired: {
+    th: "เลือกสถานที่จากรายการ หรือกรอกตำแหน่งด้วยตัวเองด้านล่าง",
+    en: "Choose a place from the list, or describe the location yourself below",
+  },
+  errorReportNotSaved: {
+    th: "ไม่สามารถบันทึกรายงานได้ในขณะนี้ ลองใหม่อีกครั้ง",
+    en: "The report could not be saved right now. Try again",
+  },
   pageNotFoundTitle: { th: "ไม่พบหน้าที่ต้องการ", en: "Page not found" },
   pageNotFoundBody: {
     th: "หน้าที่คุณเปิดอาจถูกย้ายหรือลบไปแล้ว ลองค้นหาหรือกลับไปหน้าแรก",

@@ -24,6 +24,7 @@ import { event } from "./documents/event";
 import { faq } from "./documents/faq";
 import { form } from "./documents/form";
 import { guidePage } from "./documents/guidePage";
+import { lostFoundItem } from "./documents/lostFoundItem";
 import { newsPost } from "./documents/newsPost";
 import { organisation } from "./documents/organisation";
 import { place } from "./documents/place";
@@ -77,4 +78,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   faq,
   organisation,
   place,
+  lostFoundItem,
 ];
