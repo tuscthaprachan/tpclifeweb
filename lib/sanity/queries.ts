@@ -604,8 +604,14 @@ const SEARCH_INDEX_QUERY = defineQuery(`
     },
     "shuttleRoutes": *[_type == "shuttleRoute" && isActive == true]{
       "id": _id, "type": "shuttleRoute", "path": {"th": "/th/getting-around#route-" + slug.current, "en": "/en/getting-around#route-" + slug.current},
-      title, "summary": {"th": coalesce(description.th, ""), "en": coalesce(description.en, "")},
-      "haystack": title.th + " " + title.en + " " + coalesce(description.th, "") + " " + coalesce(description.en, ""),
+      // Projects name AS title. A shuttleRoute has no title field, it has a
+      // name (see lib/sanity/types.ts), so naming title bare yielded null and
+      // search() died reading .th off it, for every reader and not only for
+      // this record. It stayed hidden for as long as the dataset held no
+      // shuttleRoute, which was until the timetables were seeded.
+      // No backticks in this comment: it lives inside a JS template literal.
+      "title": name, "summary": {"th": coalesce(description.th, ""), "en": coalesce(description.en, "")},
+      "haystack": coalesce(name.th, "") + " " + coalesce(name.en, "") + " " + coalesce(description.th, "") + " " + coalesce(description.en, ""),
       "weight": 100,
       "category": "transport"
     },
@@ -648,13 +654,13 @@ const SEARCH_INDEX_QUERY = defineQuery(`
     "organisations": *[_type == "organisation" && isActive == true]{
       "id": _id, "type": "organisation", "path": {"th": "/th/directory#org-" + slug.current, "en": "/en/directory#org-" + slug.current},
       "title": name, "summary": {"th": coalesce(faculty.th, ""), "en": coalesce(faculty.en, "")},
-      "haystack": name.th + " " + name.en + " " + coalesce(faculty.th, "") + " " + coalesce(faculty.en, ""),
+      "haystack": coalesce(name.th, "") + " " + coalesce(name.en, "") + " " + coalesce(faculty.th, "") + " " + coalesce(faculty.en, ""),
       "weight": 20
     },
     "places": *[_type == "place"]{
       "id": _id, "type": "place", "path": {"th": "/th/directory#place-" + slug.current, "en": "/en/directory#place-" + slug.current},
       "title": name, "summary": {"th": coalesce(building.th, ""), "en": coalesce(building.en, "")},
-      "haystack": name.th + " " + name.en + " " + coalesce(building.th, "") + " " + coalesce(building.en, ""),
+      "haystack": coalesce(name.th, "") + " " + coalesce(name.en, "") + " " + coalesce(building.th, "") + " " + coalesce(building.en, ""),
       "weight": 20,
       category
     },

@@ -86,8 +86,22 @@ function prepareRecord(record: SearchRecord): PreparedRecord {
   if (cached) return cached;
 
   const prepared: PreparedRecord = {
-    title: toFieldTokens(tokenise(`${record.title.th} ${record.title.en}`)),
-    summary: toFieldTokens(tokenise(`${record.summary.th} ${record.summary.en}`)),
+    /*
+     * `record.title` and `record.summary` are typed as required, but they
+     * come from GROQ, which returns null for a field the projection names
+     * and the document does not have. That is not hypothetical: the
+     * shuttleRoute bucket projected a bare `title` when the field is called
+     * `name`, and every reader's search page threw on `record.title.th`
+     * rather than the one bad record simply ranking badly. It stayed hidden
+     * for as long as the dataset had no shuttleRoute in it.
+     *
+     * SEARCH_INDEX_QUERY is the fix and is now correct. This is the
+     * backstop, in the same spirit as `record.haystack ?? ""` below: a
+     * record that cannot be found by title is a far better outcome than a
+     * search page that 500s for everyone.
+     */
+    title: toFieldTokens(tokenise(`${record.title?.th ?? ""} ${record.title?.en ?? ""}`)),
+    summary: toFieldTokens(tokenise(`${record.summary?.th ?? ""} ${record.summary?.en ?? ""}`)),
     // The haystack already contains the title and summary text too (see
     // getSearchIndex), which is correct: a query that only hits the body
     // should still find the record even if it also happens to repeat a
