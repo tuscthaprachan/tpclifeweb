@@ -62,7 +62,16 @@ export const newsPost = defineType({
       name: "cover",
       title: "Cover image",
       type: "siteImage",
-      description: "Optional.",
+      description:
+        "Optional. Shown at the top of the post and in news lists, cropped to 16:9, so a picture with the subject centred crops better than one with detail near the edges. Alt text is required unless the image is marked decorative. If the picture shows an identifiable person, get their agreement before publishing it on a public page.",
+    }),
+    defineField({
+      name: "gallery",
+      title: "Gallery",
+      type: "array",
+      of: [defineArrayMember({ type: "siteImage" })],
+      description:
+        "Optional. Additional pictures shown under the article, in the order listed here, cropped to 4:3. Alt text is required on each image unless it is marked decorative, and a caption is optional. If a picture shows an identifiable person, get their agreement before publishing it on a public page.",
     }),
     defineField({
       name: "tags",
