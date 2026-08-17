@@ -46,7 +46,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
-  const settings = getSiteSettings();
+  const settings = await getSiteSettings();
   const name = pick(settings.serviceName, locale);
   const description = pick(settings.tagline, locale);
 
@@ -83,7 +83,7 @@ export default async function RootLayout({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const settings = getSiteSettings();
+  const settings = await getSiteSettings();
 
   return (
     <html lang={HTML_LANG[locale]} className={fontVariables}>

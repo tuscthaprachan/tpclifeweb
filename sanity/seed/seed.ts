@@ -5,6 +5,13 @@
  * from and what still needs a human to confirm it.
  *
  * WHAT THIS CREATES
+ *   - The one `siteSettings` singleton, id exactly "siteSettings" because
+ *     sanity/structure.ts pins the Settings desk item to that id. It carries
+ *     the service name, the two navigation lists, the phase banner and the
+ *     help contacts. `components/layout/site-settings.ts` has a complete
+ *     fallback for when it is absent, so this does not make the site work;
+ *     it puts the chrome under editorial control instead of requiring a
+ *     developer and a deploy to change the menu.
  *   - `organisation` documents for the 23 real organisations in ORGANISATIONS.
  *   - `form` documents for the 2 real forms in FORMS, both published. The
  *     emergency report form's 401-to-anonymous-requests finding is carried
@@ -572,6 +579,107 @@ function buildShuttleRouteDoc(route: (typeof SHUTTLE_ROUTES)[number]) {
 const SHUTTLE_ROUTE_DOCS = SHUTTLE_ROUTES.map(buildShuttleRouteDoc);
 
 /* ------------------------------------------------------------------ *
+ * Site settings
+ *
+ * The one singleton. Its `_id` must be exactly "siteSettings", because
+ * sanity/structure.ts pins the Settings desk item to
+ * `S.document().documentId("siteSettings")`: any other id and an editor
+ * opening Settings gets an empty form while the real document sits
+ * unreachable.
+ *
+ * `components/layout/site-settings.ts` carries a complete fallback for when
+ * this document does not exist, so seeding it is not what makes the site
+ * work. What it does is put the chrome under editorial control: until this
+ * exists, an editor cannot change the service name, the menu or the help
+ * contacts without a developer and a deploy.
+ *
+ * The help contacts are the real harvested channels rather than the
+ * placeholders the fallback ships with. 3.2.6 Consistent Help means these
+ * appear in the same place on every page, so a dead link here is a dead end
+ * on the entire site.
+ * ------------------------------------------------------------------ */
+
+function navItem(th: string, en: string, path: string) {
+  return { _key: key(), label: { th, en }, path };
+}
+
+const SITE_SETTINGS_DOC = {
+  _id: "siteSettings",
+  _type: "siteSettings" as const,
+  serviceName: { th: "ท้ายท่าพระจันทร์", en: "TPC Life" },
+  tagline: {
+    th: "ข้อมูลชีวิตนักศึกษาท่าพระจันทร์ ทุกเรื่องในที่เดียว",
+    en: "Everything a Tha Prachan student needs, in one place",
+  },
+  /*
+   * Alpha, deliberately. The register is new, the timetables carry unverified
+   * caveats and the handbook is not yet searchable. Claiming beta or live
+   * would be the same kind of dishonesty as labelling a computed departure
+   * time "live". An editor moves this on when the content justifies it.
+   */
+  phase: "alpha" as const,
+  phaseNote: {
+    th: "นี่คือบริการใหม่ที่ยังอยู่ระหว่างทดลอง ข้อมูลบางส่วนอาจยังไม่ครบ",
+    en: "This is a new service still being tested. Some information may be incomplete",
+  },
+  primaryNav: [
+    navItem("แบบฟอร์ม", "Forms", "/forms"),
+    navItem("การเดินทาง", "Getting around", "/getting-around"),
+    navItem("สวัสดิการนักศึกษา", "Student welfare", "/welfare"),
+    navItem("ข่าวสาร", "News", "/news"),
+    navItem("กิจกรรม", "Events", "/events"),
+    navItem("ของหายและของเก็บได้", "Lost and found", "/lost-and-found"),
+    navItem("ความคืบหน้านโยบาย", "Policy progress", "/policy"),
+    navItem("ทำเนียบชุมนุมและหน่วยงาน", "Directory", "/directory"),
+  ],
+  footerNav: [
+    navItem("คำถามที่พบบ่อย", "Common questions", "/faq"),
+    navItem("เกี่ยวกับ", "About", "/about"),
+    navItem("การเข้าถึง", "Accessibility", "/accessibility"),
+    navItem("คุกกี้", "Cookies", "/cookies"),
+  ],
+  helpContacts: [
+    {
+      _key: key(),
+      label: STUDENT_BODIES.tusu.name,
+      channel: "url" as const,
+      value: STUDENT_BODIES.tusu.linktree,
+    },
+    {
+      _key: key(),
+      label: STUDENT_BODIES.tusc.name,
+      channel: "url" as const,
+      value: STUDENT_BODIES.tusc.linktree,
+    },
+    {
+      // The only channel of the four that reaches a named inbox rather than a
+      // link tree, so it is worth listing separately.
+      _key: key(),
+      label: { th: "อีเมลสภานักศึกษา ท่าพระจันทร์", en: "Email TUSC Tha Prachan" },
+      channel: "email" as const,
+      value: STUDENT_BODIES.tusc.email,
+    },
+  ],
+  organisationLinks: [
+    {
+      _key: key(),
+      label: { th: "อมธ. ท่าพระจันทร์ บน Instagram", en: "TUSU Tha Prachan on Instagram" },
+      url: `https://www.instagram.com/${STUDENT_BODIES.tusu.instagram}/`,
+    },
+    {
+      _key: key(),
+      label: { th: "สภานักศึกษา ท่าพระจันทร์ บน Instagram", en: "TUSC Tha Prachan on Instagram" },
+      url: `https://www.instagram.com/${STUDENT_BODIES.tusc.instagram}/`,
+    },
+    {
+      _key: key(),
+      label: { th: "สภานักศึกษา ท่าพระจันทร์ บน Facebook", en: "TUSC Tha Prachan on Facebook" },
+      url: `https://www.facebook.com/${STUDENT_BODIES.tusc.facebook}/`,
+    },
+  ],
+};
+
+/* ------------------------------------------------------------------ *
  * Run
  * ------------------------------------------------------------------ */
 
@@ -580,7 +688,13 @@ const SHUTTLE_ROUTE_DOCS = SHUTTLE_ROUTES.map(buildShuttleRouteDoc);
 type SeedDoc = { _id: string; _type: string } & Record<string, unknown>;
 
 async function seedAll(): Promise<void> {
-  const docs: SeedDoc[] = [...ORGANISATION_DOCS, ...FORM_DOCS, ...GUIDE_PAGE_DOCS, ...SHUTTLE_ROUTE_DOCS];
+  const docs: SeedDoc[] = [
+    SITE_SETTINGS_DOC,
+    ...ORGANISATION_DOCS,
+    ...FORM_DOCS,
+    ...GUIDE_PAGE_DOCS,
+    ...SHUTTLE_ROUTE_DOCS,
+  ];
 
   let succeeded = 0;
   const failures: Array<{ id: string; error: unknown }> = [];
