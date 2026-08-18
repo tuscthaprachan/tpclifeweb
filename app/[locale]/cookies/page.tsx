@@ -23,8 +23,8 @@ import { alternatesFor } from "@/lib/i18n/metadata";
 // CONTRIBUTING.md's own instruction for a missing shared string, reported in
 // the harden agent's final report.
 const INTRO: LocaleString = {
-  th: "หน้านี้อธิบายตรงไปตรงมาว่าเว็บไซต์ท้ายท่าพระจันทร์เก็บอะไรไว้ในเบราว์เซอร์ของคุณบ้าง และเก็บไว้เพื่ออะไร ไม่มีคุกกี้โฆษณา และไม่มีการติดตามข้ามเว็บไซต์",
-  en: "This page states plainly what TPC Life stores in your browser, and why. There are no advertising cookies and no cross-site tracking.",
+  th: "หน้านี้อธิบายตรงไปตรงมาว่าเว็บไซต์ #ท้ายท่าพระจันทร์ เก็บอะไรไว้ในเบราว์เซอร์ของคุณบ้าง และเก็บไว้เพื่ออะไร ไม่มีคุกกี้โฆษณา และไม่มีการติดตามข้ามเว็บไซต์",
+  en: "This page states plainly what #tpclife stores in your browser, and why. There are no advertising cookies and no cross-site tracking.",
 };
 
 const WHAT_HEADING: LocaleString = { th: "สิ่งที่จัดเก็บ", en: "What is stored" };

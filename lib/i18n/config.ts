@@ -2,7 +2,7 @@
  * Locale contract for TPC Life.
  *
  * The site is natively bilingual, not a translated English site. Thai is the
- * default because the majority of Tha Prachan students read Thai first, but
+ * default because the majority of Thammasat Tha Prachan students read Thai first, but
  * neither language is a second-class citizen: every route exists under both
  * prefixes, every piece of content carries both, and the language toggle keeps
  * you on the page you were reading.

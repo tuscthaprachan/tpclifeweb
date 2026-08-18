@@ -70,9 +70,109 @@
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  min-height: 100dvh;
+/*
+ * Layering contract. Read this before adding a rule to this file.
+ *
+ * `@import "tailwindcss"` above establishes the cascade layer order
+ * `theme, base, components, utilities`. Anything declared OUTSIDE an
+ * `@layer` block is unlayered, and unlayered CSS beats every layered rule
+ * outright, regardless of specificity. Tailwind's utilities (text-ink-900,
+ * bg-action, and so on) all live in `@layer utilities`, which is the LAST
+ * layer, so it is meant to win against base defaults. An unlayered element
+ * rule breaks that: it beats `@layer utilities` even though utilities comes
+ * later, which is exactly how the primary Button went invisible (purple
+ * text-action-ink utility class silently lost to an unlayered `a { color }`
+ * rule, leaving purple text on a purple fill).
+ *
+ * The rule of thumb: a plain element selector that sets a colour or
+ * typography default (`a`, `body`, `h1..h6`, `hr`, `img`, `p`/`li`, and so
+ * on) belongs in `@layer base` below, so a component can override it with a
+ * utility class the normal way. Only keep something unlayered when it is a
+ * deliberate override that MUST win no matter what a component author
+ * writes. `:focus-visible`, the reduced-motion kill switch, forced-colors,
+ * `.visually-hidden`, and print rules all fall in that bucket, and stay
+ * unlayered further down this file on purpose. If you are about to add a
+ * new unlayered rule, stop and ask whether it truly needs to out-rank every
+ * utility class ever written, or whether it is just another base default
+ * that belongs inside `@layer base` instead.
+ */
+@layer base {
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    /*
+     * 1.4.10 Reflow safety net. typography.css already forces this for Thai
+     * text (`:lang(th)`), because Thai has no spaces for the browser to
+     * break on, but Latin text gets no such treatment by default and this
+     * site has plenty of long unbroken Latin runs it does not control the
+     * wording of: emails, LINE IDs, and reference numbers rendered as plain
+     * text rather than a link. `break-word` only takes effect when a word
+     * genuinely cannot fit, so it never touches normal wrapping.
+     */
+    overflow-wrap: break-word;
+  }
+
+  /*
+   * 2.5.8 Target Size (Minimum). Interactive controls are at least 24x24 CSS
+   * px, and 44px on a touch pointer. Inline links inside a paragraph are
+   * exempt under the criterion, so they are excluded here rather than made
+   * to bloat body copy.
+   */
+  :where(button, [role="button"], input[type="checkbox"], input[type="radio"], summary, [role="tab"]) {
+    min-block-size: var(--target-min);
+    min-inline-size: var(--target-min);
+  }
+
+  a {
+    color: var(--colour-action);
+    text-decoration-thickness: max(1px, 0.0625em);
+    text-underline-offset: 0.2em;
+  }
+
+  /*
+   * 2.5.8 Target Size, for standalone links.
+   *
+   * The criterion exempts a link sitting inside a running sentence, which is
+   * why the blanket min-size rule above covers buttons but not anchors. But
+   * a link that is the ONLY thing in its paragraph or list item is not
+   * inline in a sentence: it is a navigation or action target, and at the
+   * default line height it renders about 21px tall and fails.
+   *
+   * `:only-child` is the precise inverse of the exception, so this catches
+   * the standalone case without bloating the line height of links inside
+   * body copy. --target-min is 24px, and 44px under `pointer: coarse`.
+   */
+  :where(p, li, dd, dt) > a:only-child {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+  }
+
+  a:hover {
+    color: var(--colour-action-hover);
+    text-decoration-thickness: max(2px, 0.125em);
+  }
+
+  /* 1.4.1 Use of Color. Links inside body copy stay underlined, always. */
+  .prose a,
+  p a,
+  li a {
+    text-decoration: underline;
+  }
+
+  img,
+  picture,
+  video,
+  svg {
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+
+  hr {
+    border: 0;
+    border-block-start: var(--border-width) solid var(--line);
+    margin-block: var(--space-8);
+  }
 }
 
 /*
@@ -81,6 +181,10 @@ body {
  *
  * :focus-visible only, so a mouse click on a button does not leave a ring
  * behind, but every keyboard path shows one (2.4.7).
+ *
+ * Left unlayered, deliberately: the focus indicator must win over whatever
+ * utility classes a component happens to carry, so it stays outside
+ * `@layer base` per the layering contract above.
  */
 :focus-visible {
   outline: var(--focus-width) solid var(--focus-fill);
@@ -97,67 +201,6 @@ body {
 :where(a, button, input, select, textarea, summary, [tabindex]) {
   scroll-margin-top: calc(var(--header-height, 4rem) + var(--space-4));
   scroll-margin-bottom: var(--space-4);
-}
-
-/*
- * 2.5.8 Target Size (Minimum). Interactive controls are at least 24x24 CSS px,
- * and 44px on a touch pointer. Inline links inside a paragraph are exempt under
- * the criterion, so they are excluded here rather than made to bloat body copy.
- */
-:where(button, [role="button"], input[type="checkbox"], input[type="radio"], summary, [role="tab"]) {
-  min-block-size: var(--target-min);
-  min-inline-size: var(--target-min);
-}
-
-a {
-  color: var(--colour-action);
-  text-decoration-thickness: max(1px, 0.0625em);
-  text-underline-offset: 0.2em;
-}
-
-/*
- * 2.5.8 Target Size, for standalone links.
- *
- * The criterion exempts a link sitting inside a running sentence, which is why
- * the blanket min-size rule above covers buttons but not anchors. But a link
- * that is the ONLY thing in its paragraph or list item is not inline in a
- * sentence: it is a navigation or action target, and at the default line
- * height it renders about 21px tall and fails.
- *
- * `:only-child` is the precise inverse of the exception, so this catches the
- * standalone case without bloating the line height of links inside body copy.
- * --target-min is 24px, and 44px under `pointer: coarse`.
- */
-:where(p, li, dd, dt) > a:only-child {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: var(--target-min);
-}
-
-a:hover {
-  color: var(--colour-action-hover);
-  text-decoration-thickness: max(2px, 0.125em);
-}
-
-/* 1.4.1 Use of Color. Links inside body copy stay underlined, always. */
-.prose a,
-p a,
-li a {
-  text-decoration: underline;
-}
-
-img,
-picture,
-video,
-svg {
-  max-inline-size: 100%;
-  block-size: auto;
-}
-
-hr {
-  border: 0;
-  border-block-start: var(--border-width) solid var(--line);
-  margin-block: var(--space-8);
 }
 
 /* Visually hidden but present for assistive technology. */

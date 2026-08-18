@@ -10,7 +10,7 @@ import { ShuttleCountdown } from "./ShuttleCountdown";
 
 /*
  * TODO: add to UI strings. There is no shared string yet for "this route's
- * timetable has not been published". The only published Tha Prachan shuttle
+ * timetable has not been published". The only published Thammasat Tha Prachan shuttle
  * timetable is an image in an Instagram post (see
  * data/harvested-inventory.ts, TRANSPORT.shuttle.needsVerification); a
  * `shuttleRoute` document can genuinely exist with an empty `departures`

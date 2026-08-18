@@ -30,9 +30,9 @@ const TIMETABLE_COLUMNS: DataTableColumn<TimetableRow>[] = [
 ];
 
 const TIMETABLE_ROWS: TimetableRow[] = [
-  { route: "Tha Prachan to Rangsit", departs: "07:30", seats: "12" },
-  { route: "Tha Prachan to Rangsit", departs: "08:00", seats: "4" },
-  { route: "Rangsit to Tha Prachan", departs: "08:15", seats: "20" },
+  { route: "Thammasat Tha Prachan to Rangsit", departs: "07:30", seats: "12" },
+  { route: "Thammasat Tha Prachan to Rangsit", departs: "08:00", seats: "4" },
+  { route: "Rangsit to Thammasat Tha Prachan", departs: "08:15", seats: "20" },
 ];
 
 export function ContentSection({ headingLevel, locale }: { headingLevel: HeadingLevel; locale: Locale }) {

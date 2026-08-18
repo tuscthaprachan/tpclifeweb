@@ -12,6 +12,7 @@
  * `isLocale`, which bubbles above this layout since it has no parent).
  */
 
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -23,6 +24,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { HTML_LANG, LOCALES, DEFAULT_LOCALE, OTHER_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
+import { isStoredTheme, THEME_COOKIE, type ThemeChoice } from "@/lib/theme/config";
 
 // Every request path outside these two locales 404s instead of silently
 // rendering. Paired with the explicit isLocale check below, which TypeScript
@@ -85,15 +87,38 @@ export default async function RootLayout({
 
   const settings = await getSiteSettings();
 
+  /*
+   * Reading the theme cookie here, server-side, is what makes the theme
+   * toggle flash-free: `data-theme` is stamped on `<html>` in the SSR
+   * response itself, so the very first paint already carries the reader's
+   * forced theme rather than starting on `prefers-color-scheme` and
+   * snapping over once a client script runs. No inline script is needed at
+   * all, which is strictly better than the usual "blocking script in
+   * <head>" workaround for this problem.
+   *
+   * A cookie value that fails `isStoredTheme` (missing, malformed, or an
+   * old "system" value from a version of this code that used to write one)
+   * is treated as "system": no attribute is stamped, and tokens.css's
+   * `prefers-color-scheme` media query decides, exactly as it did before
+   * this toggle existed.
+   */
+  const cookieStore = await cookies();
+  const storedTheme = cookieStore.get(THEME_COOKIE)?.value;
+  const theme: ThemeChoice = isStoredTheme(storedTheme) ? storedTheme : "system";
+
   return (
-    <html lang={HTML_LANG[locale]} className={fontVariables}>
+    <html
+      lang={HTML_LANG[locale]}
+      className={fontVariables}
+      data-theme={theme === "system" ? undefined : theme}
+    >
       <body>
         {/* First focusable element in the document (2.4.1). */}
         <SkipLink locale={locale} />
 
         <PhaseBanner locale={locale} phase={settings.phase} phaseNote={settings.phaseNote} />
 
-        <SiteHeader locale={locale} serviceName={settings.serviceName} navItems={settings.primaryNav} />
+        <SiteHeader locale={locale} serviceName={settings.serviceName} navItems={settings.primaryNav} theme={theme} />
 
         {/*
           tabIndex={-1} is required, not decorative. Without it the browser

@@ -20,8 +20,8 @@
  * WHAT THIS CREATES (all new document types for this dataset)
  *   - 16 `faq` documents, from the Q&A section on pages 31-32.
  *   - 6 `welfarePage` documents, from สวัสดิการนักศึกษา on pages 13-19.
- *   - 6 `guidePage` documents: the campus overview, getting to Tha Prachan,
- *     Tha Prachan to Rangsit, TU-GET, the library, and student discounts.
+ *   - 6 `guidePage` documents: the campus overview, getting to Thammasat Tha Prachan,
+ *     Thammasat Tha Prachan to Rangsit, TU-GET, the library, and student discounts.
  *   - 17 `place` documents: 6 libraries with their real opening hours, the
  *     3 sport and leisure facilities on page 19, TU Virtual Clinic, and the
  *     7 food shops on pages 28-29.
@@ -742,7 +742,7 @@ const WELFARE_PAGES: ContentPageSpec[] = [
         li: "หากมีชื่อในกรมธรรม์แต่ไม่ได้ใช้โรงพยาบาลคู่สัญญา ต้องสำรองจ่ายเอง แล้วนำเอกสารมายื่นที่เจ้าหน้าที่กองกิจการนักศึกษาประจำศูนย์ เพื่อนำส่งบริษัทประกัน",
       },
       { h: "โรงพยาบาลคู่สัญญา (ไม่ต้องสำรองจ่าย)" },
-      { li: "ท่าพระจันทร์ — โรงพยาบาลเจ้าพระยาปิ่นเกล้า" },
+      { li: "ธรรมศาสตร์ท่าพระจันทร์ — โรงพยาบาลเจ้าพระยาปิ่นเกล้า" },
       { li: "ศูนย์รังสิต — โรงพยาบาลธรรมศาสตร์เฉลิมพระเกียรติ" },
       { li: "ศูนย์ลำปาง — โรงพยาบาลขลางค์นคร-ราม" },
       { li: "ศูนย์พัทยา — โรงพยาบาลกรุงเทพพัทยา" },
@@ -771,7 +771,7 @@ const WELFARE_PAGES: ContentPageSpec[] = [
         li: "If you are on the policy but use a hospital that is not contracted, you pay first, then submit the paperwork to the Student Affairs Division at your campus, which forwards it to the insurer.",
       },
       { h: "Contracted hospitals (no payment up front)" },
-      { li: "Tha Prachan — Chao Phya Pinklao Hospital" },
+      { li: "Thammasat Tha Prachan — Chao Phya Pinklao Hospital" },
       { li: "Rangsit — Thammasat University Hospital" },
       { li: "Lampang — Khelang Nakhon-Ram Hospital" },
       { li: "Pattaya — Bangkok Hospital Pattaya" },
@@ -807,7 +807,7 @@ const WELFARE_PAGES: ContentPageSpec[] = [
       },
       { h: "TCAPS" },
       {
-        p: "ศูนย์บริการให้คำปรึกษา ตั้งอยู่ที่คณะศิลปศาสตร์ มหาวิทยาลัยธรรมศาสตร์ ทั้งท่าพระจันทร์และศูนย์รังสิต",
+        p: "ศูนย์บริการให้คำปรึกษา ตั้งอยู่ที่คณะศิลปศาสตร์ มหาวิทยาลัยธรรมศาสตร์ ทั้งธรรมศาสตร์ท่าพระจันทร์และศูนย์รังสิต",
       },
       { h: "บริการให้คำปรึกษาแบบออนไลน์" },
       {
@@ -828,7 +828,7 @@ const WELFARE_PAGES: ContentPageSpec[] = [
       },
       { h: "TCAPS" },
       {
-        p: "A counselling centre at the Faculty of Liberal Arts, on both the Tha Prachan and Rangsit campuses.",
+        p: "A counselling centre at the Faculty of Liberal Arts, on both the Thammasat Tha Prachan and Rangsit campuses.",
       },
       { h: "Online counselling" },
       {
@@ -939,7 +939,7 @@ const WELFARE_PAGES: ContentPageSpec[] = [
     bodyTh: [
       { h: "ผ้าอนามัยและถุงยางอนามัย" },
       {
-        li: "ท่าพระจันทร์ — ขอผ้าอนามัยฟรีได้ที่แต่ละคณะ หรือที่ห้ององค์การนักศึกษา มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ (อมธ.)",
+        li: "ธรรมศาสตร์ท่าพระจันทร์ — ขอผ้าอนามัยฟรีได้ที่แต่ละคณะ หรือที่ห้ององค์การนักศึกษา มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ (อมธ.)",
       },
       {
         li: "ศูนย์รังสิต — ขอได้ที่ Thammasat Well Being Center และจุดแจกบริเวณห้องน้ำ หอสมุดป๋วย อึ๊งภากรณ์ และศูนย์การเรียนรู้กรมหลวงนราธิวาสราชนครินทร์ (ศกร.)",
@@ -947,7 +947,7 @@ const WELFARE_PAGES: ContentPageSpec[] = [
       {
         li: "ถุงยางอนามัย กดได้ที่ตู้ถุงยางอนามัย บริเวณชั้น 1 อาคารกิจกรรมนักศึกษา",
       },
-      { h: "สวัสดิการด้านกีฬาและความบันเทิง ท่าพระจันทร์" },
+      { h: "สวัสดิการด้านกีฬาและความบันเทิง ธรรมศาสตร์ท่าพระจันทร์" },
       {
         li: "ฟิตเนส ข้างอาคารยิมเนเซียม เปิดวันจันทร์ - ศุกร์ เวลา 14.00 - 20.00 น.",
       },
@@ -955,13 +955,13 @@ const WELFARE_PAGES: ContentPageSpec[] = [
         li: "ห้องสันทนาการนักศึกษา (Student lounge) ชั้น 3 อาคารกิจกรรมนักศึกษา เปิดวันจันทร์ - ศุกร์ เวลา 10.00 - 20.00 น.",
       },
       {
-        li: "ศูนย์บริการคอมพิวเตอร์ ท่าพระจันทร์ บริเวณ 1 และ 2 อาคารยิมเนเซียม เปิดวันจันทร์ - ศุกร์ เวลา 08.00 - 19.00 น.",
+        li: "ศูนย์บริการคอมพิวเตอร์ ธรรมศาสตร์ท่าพระจันทร์ บริเวณ 1 และ 2 อาคารยิมเนเซียม เปิดวันจันทร์ - ศุกร์ เวลา 08.00 - 19.00 น.",
       },
     ],
     bodyEn: [
       { h: "Sanitary products and condoms" },
       {
-        li: "Tha Prachan — free sanitary products from any faculty, or from the TUSU Tha Prachan office",
+        li: "Thammasat Tha Prachan — free sanitary products from any faculty, or from the TUSU Tha Prachan office",
       },
       {
         li: "Rangsit — from the Thammasat Well Being Center, and from the dispensing points by the toilets at Puey Ungphakorn Library and the Krom Luang Narathiwat Learning Centre",
@@ -969,7 +969,7 @@ const WELFARE_PAGES: ContentPageSpec[] = [
       {
         li: "Condoms are available from the dispenser on the 1st floor of the Student Activity Building",
       },
-      { h: "Sport and leisure at Tha Prachan" },
+      { h: "Sport and leisure at Thammasat Tha Prachan" },
       {
         li: "Fitness centre, beside the gymnasium — Monday to Friday, 14:00 to 20:00",
       },
@@ -977,7 +977,7 @@ const WELFARE_PAGES: ContentPageSpec[] = [
         li: "Student lounge, 3rd floor of the Student Activity Building — Monday to Friday, 10:00 to 20:00",
       },
       {
-        li: "Tha Prachan Computer Service Center, areas 1 and 2 of the gymnasium — Monday to Friday, 08:00 to 19:00",
+        li: "Thammasat Tha Prachan Computer Service Center, areas 1 and 2 of the gymnasium — Monday to Friday, 08:00 to 19:00",
       },
     ],
   },
@@ -994,7 +994,7 @@ const GUIDE_PAGES: ContentPageSpec[] = [
     slug: "our-tpc", // sourcePage: 4
     order: 1,
     category: "activity",
-    title: { th: "รู้จักท่าพระจันทร์", en: "About Tha Prachan" },
+    title: { th: "รู้จักธรรมศาสตร์ท่าพระจันทร์", en: "About Thammasat Tha Prachan" },
     summary: {
       th: "มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ วิทยาเขตแรกของธรรมศาสตร์ ตั้งอยู่ตรงข้ามสนามหลวงและติดแม่น้ำเจ้าพระยา มี 10 คณะ 16 สาขา",
       en: "Thammasat's first campus, opposite Sanam Luang and on the Chao Phraya river, with 10 faculties and colleges and 16 programmes.",
@@ -1038,10 +1038,10 @@ const GUIDE_PAGES: ContentPageSpec[] = [
     slug: "getting-to-tha-prachan", // sourcePage: 5
     order: 2,
     category: "transport",
-    title: { th: "การเดินทางมาท่าพระจันทร์", en: "Getting to Tha Prachan" },
+    title: { th: "การเดินทางมาธรรมศาสตร์ท่าพระจันทร์", en: "Getting to Thammasat Tha Prachan" },
     summary: {
       th: "เส้นทางมายังมหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ ด้วยรถโดยสารประจำทาง เรือด่วนเจ้าพระยา เรือข้ามฟาก MRT และ BTS",
-      en: "How to reach the Tha Prachan campus by bus, Chao Phraya express boat, cross-river ferry, MRT and BTS.",
+      en: "How to reach the Thammasat Tha Prachan campus by bus, Chao Phraya express boat, cross-river ferry, MRT and BTS.",
     },
     bodyTh: [
       { h: "รถโดยสารประจำทาง" },
@@ -1087,7 +1087,7 @@ const GUIDE_PAGES: ContentPageSpec[] = [
       },
       { h: "By BTS" },
       {
-        li: "Victory Monument on the Sukhumvit line, then a bus from the Phaya Thai island stop to Tha Prachan",
+        li: "Victory Monument on the Sukhumvit line, then a bus from the Phaya Thai island stop to Thammasat Tha Prachan",
       },
       {
         li: "Taksin on the Silom line, then the Chao Phraya express boat to Tha Chang pier and walk to the campus",
@@ -1098,10 +1098,10 @@ const GUIDE_PAGES: ContentPageSpec[] = [
     slug: "tha-prachan-to-rangsit", // sourcePage: 21, 22
     order: 3,
     category: "transport",
-    title: { th: "เดินทางจากท่าพระจันทร์ไปศูนย์รังสิต", en: "Tha Prachan to Rangsit" },
+    title: { th: "เดินทางจากธรรมศาสตร์ท่าพระจันทร์ไปศูนย์รังสิต", en: "Thammasat Tha Prachan to Rangsit" },
     summary: {
-      th: "สี่เส้นทางระหว่างท่าพระจันทร์กับศูนย์รังสิต พร้อมค่าโดยสารและระยะเวลาเดินทางโดยประมาณตามที่วารสารระบุ",
-      en: "Four ways to get between Tha Prachan and the Rangsit campus, with the fares and approximate journey times printed in the handbook.",
+      th: "สี่เส้นทางระหว่างธรรมศาสตร์ท่าพระจันทร์กับศูนย์รังสิต พร้อมค่าโดยสารและระยะเวลาเดินทางโดยประมาณตามที่วารสารระบุ",
+      en: "Four ways to get between Thammasat Tha Prachan and the Rangsit campus, with the fares and approximate journey times printed in the handbook.",
     },
     bodyTh: [
       {
@@ -1139,7 +1139,7 @@ const GUIDE_PAGES: ContentPageSpec[] = [
       { p: "All journey times are approximate and depend on traffic." },
       { h: "Express bus 1-9E" },
       {
-        li: "From Sanam Luang, opposite the Tha Prachan campus, to TU Rangsit",
+        li: "From Sanam Luang, opposite the Thammasat Tha Prachan campus, to TU Rangsit",
       },
       { li: "Fare 27 baht" },
       { li: "About 1 hour 30 minutes" },
@@ -1160,7 +1160,7 @@ const GUIDE_PAGES: ContentPageSpec[] = [
       { li: "Then a taxi or ride-hail to TU Rangsit, about 20 minutes" },
       { h: "Bus then minivan, or bus all the way" },
       {
-        li: "Tha Prachan to Victory Monument on bus 59 or 503 (Sanam Luang – Rangsit), 25 baht, about 1 hour",
+        li: "Thammasat Tha Prachan to Victory Monument on bus 59 or 503 (Sanam Luang – Rangsit), 25 baht, about 1 hour",
       },
       {
         li: "Then the Victory Monument – TU Rangsit minivan from the Phaya Thai island stop, 47 baht, about 40 minutes",
@@ -1226,7 +1226,7 @@ const GUIDE_PAGES: ContentPageSpec[] = [
       { li: "Fee 800 baht, or 1,000 baht for a late application" },
       { li: "Results about 5 to 7 days after the exam" },
       { h3: "Exam buildings by campus" },
-      { li: "Tha Prachan — Language Institute building" },
+      { li: "Thammasat Tha Prachan — Language Institute building" },
       { li: "Rangsit — SC2 lecture building" },
       { li: "Lampang — Boonchoo Panithan building" },
       { li: "Pattaya — Thammasat Innovation Centre building" },
@@ -1265,13 +1265,13 @@ const GUIDE_PAGES: ContentPageSpec[] = [
     category: "welfare",
     title: { th: "หอสมุดธรรมศาสตร์", en: "TU Library" },
     summary: {
-      th: "หอสมุดปรีดี พนมยงค์ และห้องสมุดคณะที่ท่าพระจันทร์ พร้อมเวลาเปิดทำการและวิธีจองห้องผ่าน LINE",
-      en: "Pridi Banomyong Library and the faculty libraries at Tha Prachan, their opening hours, and how to book a room over LINE.",
+      th: "หอสมุดปรีดี พนมยงค์ และห้องสมุดคณะที่ธรรมศาสตร์ท่าพระจันทร์ พร้อมเวลาเปิดทำการและวิธีจองห้องผ่าน LINE",
+      en: "Pridi Banomyong Library and the faculty libraries at Thammasat Tha Prachan, their opening hours, and how to book a room over LINE.",
     },
     bodyTh: [
       { h: "หอสมุดปรีดี พนมยงค์" },
       {
-        p: "บ้านหลังที่สองของเด็กท่าพระจันทร์ ช่วงใกล้สอบหรือหลังเลิกเรียนสามารถจองห้องเข้าไปใช้งานได้ ทั้ง Study room และ Co-learning space",
+        p: "บ้านหลังที่สองของเด็กธรรมศาสตร์ท่าพระจันทร์ ช่วงใกล้สอบหรือหลังเลิกเรียนสามารถจองห้องเข้าไปใช้งานได้ ทั้ง Study room และ Co-learning space",
       },
       {
         p: "ที่นี่มีอุปกรณ์ครบ ทั้งปลั๊กไฟและที่ชาร์จแบต มีผ้าห่มให้ยืมเพราะแอร์เย็นมาก มีบอร์ดเกมให้เล่น และมีหนังสือหลายประเภททั้งภาษาไทยและภาษาอังกฤษให้ยืมได้ หากหาไม่เจอหรือต้องการความช่วยเหลือ สามารถสอบถามเจ้าหน้าที่ได้",
@@ -1304,7 +1304,7 @@ const GUIDE_PAGES: ContentPageSpec[] = [
     bodyEn: [
       { h: "Pridi Banomyong Library" },
       {
-        p: "The second home of Tha Prachan students. Around exams, or after class, you can book a study room or use the co-learning space.",
+        p: "The second home of Thammasat Tha Prachan students. Around exams, or after class, you can book a study room or use the co-learning space.",
       },
       {
         p: "It has everything you need: power sockets and chargers, blankets to borrow because the air conditioning is fierce, board games, and books in Thai and English to take out. If you cannot find something or need help, ask the staff.",
@@ -1354,10 +1354,10 @@ const GUIDE_PAGES: ContentPageSpec[] = [
     slug: "student-discounts", // sourcePage: 30
     order: 6,
     category: "welfare",
-    title: { th: "สิทธิพิเศษสำหรับเด็กท่าพระจันทร์", en: "Discounts for TPC students" },
+    title: { th: "สิทธิพิเศษสำหรับเด็กธรรมศาสตร์ท่าพระจันทร์", en: "Discounts for TPC students" },
     summary: {
-      th: "ส่วนลดและสิทธิพิเศษที่ได้เมื่อแสดงบัตรนักศึกษา ทั้งร้านหนังสือ ร้านอาหารและคาเฟ่ ห้องสมุด และพิพิธภัณฑ์รอบท่าพระจันทร์",
-      en: "What your student card gets you: the bookshop, cafes and restaurants, the library, and the museums around Tha Prachan.",
+      th: "ส่วนลดและสิทธิพิเศษที่ได้เมื่อแสดงบัตรนักศึกษา ทั้งร้านหนังสือ ร้านอาหารและคาเฟ่ ห้องสมุด และพิพิธภัณฑ์รอบธรรมศาสตร์ท่าพระจันทร์",
+      en: "What your student card gets you: the bookshop, cafes and restaurants, the library, and the museums around Thammasat Tha Prachan.",
     },
     bodyTh: [
       { h: "ศูนย์หนังสือธรรมศาสตร์" },
@@ -1366,7 +1366,7 @@ const GUIDE_PAGES: ContentPageSpec[] = [
       { li: "Amazon ที่คณะนิติศาสตร์ — นักศึกษาและบุคลากร ลด 10%" },
       { li: "ร้านครัวม่วน ตรอกพระจันทร์กลาง — นักศึกษา ลด 10%" },
       { li: "LUA café — ลด 10% เมื่อแสดงบัตรนักศึกษา" },
-      { li: "ช่างคั่ว สาขาท่าพระจันทร์ — ลด 10% เมื่อแสดงบัตรนักศึกษา" },
+      { li: "ช่างคั่ว สาขาธรรมศาสตร์ท่าพระจันทร์ — ลด 10% เมื่อแสดงบัตรนักศึกษา" },
       {
         li: "ร้านอาหารเธียเตอร์ริเวอร์ไซด์ — ลดค่าอาหารและเครื่องดื่ม 10% เมื่อแสดงบัตรนักศึกษา ไม่จำกัดจำนวนครั้ง และไม่รวมกับโปรโมชั่นอื่น",
       },
@@ -1394,7 +1394,7 @@ const GUIDE_PAGES: ContentPageSpec[] = [
       { li: "Amazon at the Faculty of Law — 10% off for students and staff" },
       { li: "Khrua Muan, Trok Phra Chan Klang — 10% off for students" },
       { li: "LUA café — 10% off on showing your student card" },
-      { li: "Chang Khua, Tha Prachan branch — 10% off on showing your student card" },
+      { li: "Chang Khua, Thammasat Tha Prachan branch — 10% off on showing your student card" },
       {
         li: "Theatre Riverside restaurant — 10% off food and drink on showing your student card, no limit on how often, not combinable with other promotions",
       },
@@ -1446,8 +1446,8 @@ const PLACES: PlaceSpec[] = [
     category: "welfare",
     name: { th: "หอสมุดปรีดี พนมยงค์", en: "Pridi Banomyong Library" },
     description: {
-      th: "หอสมุดกลางของท่าพระจันทร์ มีห้อง Study room ห้อง Co-learning space ห้อง Performative room ปลั๊กไฟ ผ้าห่มให้ยืม บอร์ดเกม และโควตาพรินต์ฟรีที่ชั้น U2",
-      en: "The main Tha Prachan library: study rooms, a co-learning space, a performative room, power sockets, blankets to borrow, board games, and the free printing quota on level U2.",
+      th: "หอสมุดกลางของธรรมศาสตร์ท่าพระจันทร์ มีห้อง Study room ห้อง Co-learning space ห้อง Performative room ปลั๊กไฟ ผ้าห่มให้ยืม บอร์ดเกม และโควตาพรินต์ฟรีที่ชั้น U2",
+      en: "The main Thammasat Tha Prachan library: study rooms, a co-learning space, a performative room, power sockets, blankets to borrow, board games, and the free printing quota on level U2.",
     },
     openingHours: [hours(EVERY_DAY, "08:30", "21:30", CLOSED_PUBLIC_HOLIDAYS)],
     isKeyLocation: true,
@@ -1534,8 +1534,8 @@ const PLACES: PlaceSpec[] = [
       en: "Health courtyard, under the Student Activity Building, opposite the gym",
     },
     description: {
-      th: "ห้องพยาบาลของท่าพระจันทร์ เตรียมบัตรนักศึกษา บัตรประชาชน หรือพาสปอร์ตสำหรับนักศึกษาต่างชาติไปด้วย",
-      en: "The Tha Prachan sick bay. Bring your student card and ID card, or your passport if you are an international student.",
+      th: "ห้องพยาบาลของธรรมศาสตร์ท่าพระจันทร์ เตรียมบัตรนักศึกษา บัตรประชาชน หรือพาสปอร์ตสำหรับนักศึกษาต่างชาติไปด้วย",
+      en: "The Thammasat Tha Prachan sick bay. Bring your student card and ID card, or your passport if you are an international student.",
     },
     openingHours: [hours(MON_FRI, "09:00", "16:30")],
     isKeyLocation: true,
@@ -1545,7 +1545,7 @@ const PLACES: PlaceSpec[] = [
   {
     slug: "tha-prachan-fitness",
     category: "activity",
-    name: { th: "ฟิตเนส ท่าพระจันทร์", en: "Tha Prachan fitness centre" },
+    name: { th: "ฟิตเนส ธรรมศาสตร์ท่าพระจันทร์", en: "Thammasat Tha Prachan fitness centre" },
     building: { th: "ข้างอาคารยิมเนเซียม", en: "Beside the gymnasium" },
     openingHours: [hours(MON_FRI, "14:00", "20:00")],
   },
@@ -1563,8 +1563,8 @@ const PLACES: PlaceSpec[] = [
     slug: "tha-prachan-computer-service-center",
     category: "activity",
     name: {
-      th: "ศูนย์บริการคอมพิวเตอร์ ท่าพระจันทร์",
-      en: "Tha Prachan Computer Service Center",
+      th: "ศูนย์บริการคอมพิวเตอร์ ธรรมศาสตร์ท่าพระจันทร์",
+      en: "Thammasat Tha Prachan Computer Service Center",
     },
     building: {
       th: "บริเวณ 1 และ 2 อาคารยิมเนเซียม",
@@ -1635,7 +1635,7 @@ const PLACES: PlaceSpec[] = [
   {
     slug: "chang-khua-tha-prachan",
     category: "activity",
-    name: { th: "ช่างคั่ว สาขาท่าพระจันทร์", en: "Chang Khua, Tha Prachan" },
+    name: { th: "ช่างคั่ว สาขาธรรมศาสตร์ท่าพระจันทร์", en: "Chang Khua, Thammasat Tha Prachan" },
     description: {
       th: "ร้านกาแฟคั่วสด บรรยากาศโฮมมี่ แนะนำ Caramel Macchiato และ Earl grey peach pinkvine เริ่มต้น 90 บาท ลด 10% เมื่อแสดงบัตรนักศึกษา",
       en: "Freshly roasted coffee in a homely setting. The handbook recommends the caramel macchiato and the earl grey peach pinkvine, from 90 baht. 10% off with a student card.",
@@ -1725,8 +1725,8 @@ const NEW_ORGANISATIONS: OrgSpec[] = [
       en: "TUTPC.FC",
     },
     description: {
-      th: "กลุ่มอิสระสำหรับชาวท่าพระจันทร์ที่สนใจกีฬาฟุตบอลและฟุตซอล ได้มีโอกาสมาเล่นกีฬาร่วมกัน",
-      en: "An independent group for Tha Prachan students who play football and futsal, and want people to play with.",
+      th: "กลุ่มอิสระสำหรับชาวธรรมศาสตร์ท่าพระจันทร์ที่สนใจกีฬาฟุตบอลและฟุตซอล ได้มีโอกาสมาเล่นกีฬาร่วมกัน",
+      en: "An independent group for Thammasat Tha Prachan students who play football and futsal, and want people to play with.",
     },
     contacts: [contact("instagram", "tutpc.fc")],
   },
@@ -1911,8 +1911,8 @@ const ENRICHMENTS: Enrichment[] = [
       en: "TPC Allstar",
     },
     description: {
-      th: "ชุมนุมกีฬาบาสเกตบอลและวอลเลย์บอลสำหรับชาวท่าพระจันทร์ที่ชอบเล่นกีฬา เปิดโอกาสให้นักศึกษามาเล่นกีฬาด้วยกัน เพื่อสร้างเสริมสุขภาพและความสัมพันธ์ระหว่างนักศึกษา",
-      en: "A basketball and volleyball club for Tha Prachan students, giving people somewhere to play together, for their health and to get to know each other.",
+      th: "ชุมนุมกีฬาบาสเกตบอลและวอลเลย์บอลสำหรับชาวธรรมศาสตร์ท่าพระจันทร์ที่ชอบเล่นกีฬา เปิดโอกาสให้นักศึกษามาเล่นกีฬาด้วยกัน เพื่อสร้างเสริมสุขภาพและความสัมพันธ์ระหว่างนักศึกษา",
+      en: "A basketball and volleyball club for Thammasat Tha Prachan students, giving people somewhere to play together, for their health and to get to know each other.",
     },
   },
   {
@@ -1920,8 +1920,8 @@ const ENRICHMENTS: Enrichment[] = [
     sourcePage: 11,
     name: { th: "ชุมนุม TPC DANCE", en: "TPC Dance" },
     description: {
-      th: "ชุมนุมเกี่ยวกับการเต้น เป็นพื้นที่สำหรับชาวท่าพระจันทร์ที่ชื่นชอบในการเต้น",
-      en: "A dance club, and a space for Tha Prachan students who love to dance.",
+      th: "ชุมนุมเกี่ยวกับการเต้น เป็นพื้นที่สำหรับชาวธรรมศาสตร์ท่าพระจันทร์ที่ชื่นชอบในการเต้น",
+      en: "A dance club, and a space for Thammasat Tha Prachan students who love to dance.",
     },
   },
   {
@@ -1930,7 +1930,7 @@ const ENRICHMENTS: Enrichment[] = [
     name: { th: "ชุมนุม TPC Music", en: "TPC Music" },
     description: {
       th: "ชุมนุมเกี่ยวกับดนตรี เปิดพื้นที่ให้นักศึกษามหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ ที่รักในเสียงดนตรีได้มีส่วนร่วม",
-      en: "A music club, open to any Tha Prachan student who loves music.",
+      en: "A music club, open to any Thammasat Tha Prachan student who loves music.",
     },
   },
   {
@@ -1939,7 +1939,7 @@ const ENRICHMENTS: Enrichment[] = [
     name: { th: "ชุมนุมสื่อสร้างสรรค์", en: "TUHost" },
     description: {
       th: "ชุมนุมเกี่ยวกับการเป็นพิธีกร รวมไปถึงการสร้างสื่อสร้างสรรค์ในมหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์",
-      en: "A club for hosting and compering, and for making creative media at Tha Prachan.",
+      en: "A club for hosting and compering, and for making creative media at Thammasat Tha Prachan.",
     },
   },
   {
@@ -2109,7 +2109,7 @@ async function run(): Promise<void> {
       "    and last departure (Sanam Chai 07.45-21.30, Pinklao 07.00-21.00), which is weaker than\n" +
       "    the timetable graphics these documents were built from. Departures were NOT overwritten.\n" +
       "    Check the printed first/last against the existing arrays and reconcile if they disagree.\n" +
-      "  - The shuttle waiting point at Tha Prachan is in front of the Sri Burapha Auditorium\n" +
+      "  - The shuttle waiting point at Thammasat Tha Prachan is in front of the Sri Burapha Auditorium\n" +
       "    (หน้าหอประชุมศรีบูรพา), and the service is free, Monday to Friday, excluding public\n" +
       "    holidays. Worth adding to the routes' notes/fare fields once someone confirms it.\n" +
       EXTRA_CONTACTS_TO_REVIEW.map((item) => `  - ${item.id}: ${item.note}`).join("\n"),

@@ -92,3 +92,27 @@ export function ArrowRightIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+/**
+ * The mobile menu's disclosure marker. Three bars is a widely recognised
+ * affordance for "there is a menu here", which is why the header pairs it
+ * with the visible open/close text rather than relying on either alone
+ * (2.5.3 Label in Name: the icon is aria-hidden, so the accessible name
+ * still comes entirely from the visible text next to it).
+ */
+export function MenuIcon({ className }: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" width="20" height="20" fill="none" className={className}>
+      <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function SearchIcon({ className }: IconProps) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" width="20" height="20" fill="none" className={className}>
+      <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M16 16l-3.2-3.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}

@@ -337,8 +337,8 @@ const USEFUL_SERVICES_PAGE = {
   title: { th: "บริการออนไลน์ที่ใช้บ่อย", en: "Useful online services" },
   slug: slug("useful-online-services"),
   summary: {
-    th: "ลิงก์ตรงไปยังระบบจอง เครื่องมือแจ้งปัญหา และช่องทางดูแลสุขภาพใจที่นักศึกษาท่าพระจันทร์ใช้บ่อยที่สุด",
-    en: "Direct links to the booking systems, reporting tools and wellbeing lines Tha Prachan students use most often.",
+    th: "ลิงก์ตรงไปยังระบบจอง เครื่องมือแจ้งปัญหา และช่องทางดูแลสุขภาพใจที่นักศึกษาธรรมศาสตร์ท่าพระจันทร์ใช้บ่อยที่สุด",
+    en: "Direct links to the booking systems, reporting tools and wellbeing lines Thammasat Tha Prachan students use most often.",
   },
   body: {
     th: [paragraph("แต่ละลิงก์เปิดไปยังระบบของหน่วยงานนั้นโดยตรง ตรวจสอบว่าต้องเข้าสู่ระบบก่อนหรือไม่ก่อนเริ่มใช้งาน")],
@@ -355,8 +355,8 @@ const RULES_AND_DOCUMENTS_PAGE = {
   title: { th: "ระเบียบและเอกสารอ้างอิง", en: "Rules and reference documents" },
   slug: slug("rules-and-documents"),
   summary: {
-    th: "ข้อบังคับและเอกสารอ้างอิงอย่างเป็นทางการของท่าพระจันทร์ บางฉบับเผยแพร่เป็นไฟล์ PDF ไฟล์ Drive หรือคู่มือที่สแกนไว้เท่านั้น",
-    en: "Official regulations and reference material for Tha Prachan. Some are only published as a PDF, a Drive file or a scanned handbook.",
+    th: "ข้อบังคับและเอกสารอ้างอิงอย่างเป็นทางการของธรรมศาสตร์ท่าพระจันทร์ บางฉบับเผยแพร่เป็นไฟล์ PDF ไฟล์ Drive หรือคู่มือที่สแกนไว้เท่านั้น",
+    en: "Official regulations and reference material for Thammasat Tha Prachan. Some are only published as a PDF, a Drive file or a scanned handbook.",
   },
   body: {
     th: [
@@ -406,8 +406,8 @@ const ABOUT_TUSU_PAGE = {
   title: STUDENT_BODIES.tusu.name,
   slug: slug("about-tusu"),
   summary: {
-    th: "องค์การนักศึกษาฝ่ายบริหารประจำท่าพระจันทร์ ดูแลงบประมาณ กิจกรรมระดับมหาวิทยาลัย และสวัสดิการนักศึกษา",
-    en: "The executive student body at Tha Prachan, responsible for budget, university-wide activities and student welfare.",
+    th: "องค์การนักศึกษาฝ่ายบริหารประจำธรรมศาสตร์ท่าพระจันทร์ ดูแลงบประมาณ กิจกรรมระดับมหาวิทยาลัย และสวัสดิการนักศึกษา",
+    en: "The executive student body at Thammasat Tha Prachan, responsible for budget, university-wide activities and student welfare.",
   },
   body: {
     th: [paragraph(STUDENT_BODIES.tusu.role.th), paragraph(establishedParagraph(STUDENT_BODIES.tusu.established).th)],
@@ -431,8 +431,8 @@ const ABOUT_TUSC_PAGE = {
   title: STUDENT_BODIES.tusc.name,
   slug: slug("about-tusc"),
   summary: {
-    th: "ฝ่ายนิติบัญญัติและตรวจสอบประจำท่าพระจันทร์ พิจารณาระเบียบกิจกรรมนักศึกษาและตรวจสอบการดำเนินงานขององค์การนักศึกษา",
-    en: "The legislative and scrutiny body at Tha Prachan, approving student activity rules and scrutinising the Union's work.",
+    th: "ฝ่ายนิติบัญญัติและตรวจสอบประจำธรรมศาสตร์ท่าพระจันทร์ พิจารณาระเบียบกิจกรรมนักศึกษาและตรวจสอบการดำเนินงานขององค์การนักศึกษา",
+    en: "The legislative and scrutiny body at Thammasat Tha Prachan, approving student activity rules and scrutinising the Union's work.",
   },
   body: {
     th: [paragraph(STUDENT_BODIES.tusc.role.th), paragraph(establishedParagraph(STUDENT_BODIES.tusc.established).th)],
@@ -478,7 +478,7 @@ const GUIDE_PAGE_DOCS = [USEFUL_SERVICES_PAGE, RULES_AND_DOCUMENTS_PAGE, ABOUT_T
  * spelled out again so they are not missed on a future edit:
  *
  *   1. offsetMinutes. Neither timetable graphic publishes travel time
- *      between stops, only departure times from Tha Prachan. Every stop
+ *      between stops, only departure times from Thammasat Tha Prachan. Every stop
  *      below is therefore given `offsetMinutes: 0`, the schema's own
  *      documented meaning for "not measured yet" (see
  *      sanity/schemas/objects/shuttleStop.ts: "the first stop... should be
@@ -529,13 +529,13 @@ function dormitoryDepartureNote(
 }
 
 const OFFSET_UNKNOWN_NOTE: LocaleText = {
-  th: "เวลาแต่ละจุดจอดยังไม่มีข้อมูลระยะเวลาการเดินทางที่เผยแพร่อย่างเป็นทางการ จึงแสดงเป็นเวลาเดียวกับเวลาออกจากท่าพระจันทร์ ไม่ใช่เวลาที่วัดจริง",
-  en: "Travel time between stops has not been published, so every stop shows the same time as the departure from Tha Prachan, not a measured travel time.",
+  th: "เวลาแต่ละจุดจอดยังไม่มีข้อมูลระยะเวลาการเดินทางที่เผยแพร่อย่างเป็นทางการ จึงแสดงเป็นเวลาเดียวกับเวลาออกจากธรรมศาสตร์ท่าพระจันทร์ ไม่ใช่เวลาที่วัดจริง",
+  en: "Travel time between stops has not been published, so every stop shows the same time as the departure from Thammasat Tha Prachan, not a measured travel time.",
 };
 
 const LAST_BUS_NOTE: LocaleText = {
-  th: "รถเที่ยวสุดท้ายออกจากท่าพระจันทร์เวลา 21:30 น.",
-  en: "The last bus of the day leaves Tha Prachan at 21:30.",
+  th: "รถเที่ยวสุดท้ายออกจากธรรมศาสตร์ท่าพระจันทร์เวลา 21:30 น.",
+  en: "The last bus of the day leaves Thammasat Tha Prachan at 21:30.",
 };
 
 const TERM_UNKNOWN_NOTE: LocaleText = {
@@ -606,10 +606,10 @@ function navItem(th: string, en: string, path: string) {
 const SITE_SETTINGS_DOC = {
   _id: "siteSettings",
   _type: "siteSettings" as const,
-  serviceName: { th: "ท้ายท่าพระจันทร์", en: "TPC Life" },
+  serviceName: { th: "#ท้ายท่าพระจันทร์", en: "#tpclife" },
   tagline: {
-    th: "ข้อมูลชีวิตนักศึกษาท่าพระจันทร์ ทุกเรื่องในที่เดียว",
-    en: "Everything a Tha Prachan student needs, in one place",
+    th: "ข้อมูลชีวิตนักศึกษาธรรมศาสตร์ท่าพระจันทร์ ทุกเรื่องในที่เดียว",
+    en: "Everything a Thammasat Tha Prachan student needs, in one place",
   },
   /*
    * Alpha, deliberately. The register is new, the timetables carry unverified

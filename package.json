@@ -2,7 +2,7 @@
   "name": "tpclife",
   "version": "0.1.0",
   "private": true,
-  "description": "TPC Life (ท้ายท่าพระจันทร์), a one-stop student life portal for Thammasat University Tha Prachan",
+  "description": "#tpclife (#ท้ายท่าพระจันทร์), a one-stop student life portal for Thammasat Tha Prachan",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -121,7 +121,7 @@ export interface ServiceAlert extends DocumentMeta {
 /* ------------------------------------------------------------------ *
  * Shuttle bus
  *
- * There is no GPS feed for the Tha Prachan shuttle and no public API. Times
+ * There is no GPS feed for the Thammasat Tha Prachan shuttle and no public API. Times
  * shown to students are computed from this timetable and must always be
  * labelled as scheduled, never as live. See lib/shuttle.
  * ------------------------------------------------------------------ */

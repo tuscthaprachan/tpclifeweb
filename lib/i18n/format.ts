@@ -2,7 +2,7 @@
  * Date, time and number formatting.
  *
  * Everything on this site happens in Asia/Bangkok. A student reading the page
- * from abroad still needs to know when the shuttle leaves Tha Prachan, not when
+ * from abroad still needs to know when the shuttle leaves Thammasat Tha Prachan, not when
  * it leaves in their own timezone, so every format here pins the zone
  * explicitly rather than trusting the device.
  *

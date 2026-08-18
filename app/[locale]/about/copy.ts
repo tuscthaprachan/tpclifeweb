@@ -39,8 +39,8 @@ export const CAMPUS_REFORM_LABEL: LocaleString = { th: "สภานักศึ
 
 // TODO: add to UI strings.
 export const CAMPUS_REFORM_TEXT: LocaleString = {
-  th: "ตั้งแต่ พ.ศ. 2563 แต่ละศูนย์การศึกษาของมหาวิทยาลัยธรรมศาสตร์มีสภานักศึกษาของตนเอง ดูแลกิจการเฉพาะของศูนย์การศึกษานั้น สภานักศึกษา ท่าพระจันทร์ในหน้านี้จึงหมายถึงสภาประจำท่าพระจันทร์โดยเฉพาะ ไม่ใช่สภานักศึกษาส่วนกลางของมหาวิทยาลัย",
-  en: "Since 2020 each Thammasat University campus has had its own elected student council covering that campus's own affairs. TUSC Tha Prachan, referred to throughout this site, is specifically the Tha Prachan campus council, not the university's central student council.",
+  th: "ตั้งแต่ พ.ศ. 2563 แต่ละศูนย์การศึกษาของมหาวิทยาลัยธรรมศาสตร์มีสภานักศึกษาของตนเอง ดูแลกิจการเฉพาะของศูนย์การศึกษานั้น สภานักศึกษา ท่าพระจันทร์ในหน้านี้จึงหมายถึงสภาประจำธรรมศาสตร์ท่าพระจันทร์โดยเฉพาะ ไม่ใช่สภานักศึกษาส่วนกลางของมหาวิทยาลัย",
+  en: "Since 2020 each Thammasat University campus has had its own elected student council covering that campus's own affairs. TUSC Tha Prachan, referred to throughout this site, is specifically the Thammasat Tha Prachan campus council, not the university's central student council.",
 };
 
 // TODO: add to UI strings.

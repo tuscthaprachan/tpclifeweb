@@ -23,7 +23,7 @@ interface AtAGlanceProps {
  * that matters right now.
  *
  * Every route in `ShuttlePanel` is labelled "Scheduled" (`UI.scheduled`),
- * never "live". There is no GPS feed for the Tha Prachan shuttle
+ * never "live". There is no GPS feed for the Thammasat Tha Prachan shuttle
  * (CONTRIBUTING.md, Honesty), and nothing in this component or its children
  * implies otherwise.
  *

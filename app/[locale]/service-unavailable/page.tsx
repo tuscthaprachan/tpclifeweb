@@ -25,8 +25,8 @@ import { alternatesFor } from "@/lib/i18n/metadata";
 // shared body copy for it; UI.errorBody is written for a page-level error,
 // not "the whole service is down", so it is not reused here.
 const SERVICE_UNAVAILABLE_BODY: LocaleString = {
-  th: "ระบบท้ายท่าพระจันทร์ไม่พร้อมให้บริการชั่วคราว อาจเกิดจากการปรับปรุงระบบหรือปัญหาทางเทคนิค โปรดลองใหม่อีกครั้งในอีกสักครู่",
-  en: "TPC Life is temporarily unavailable, most likely due to maintenance or a technical problem. Please try again shortly.",
+  th: "ระบบ #ท้ายท่าพระจันทร์ ไม่พร้อมให้บริการชั่วคราว อาจเกิดจากการปรับปรุงระบบหรือปัญหาทางเทคนิค โปรดลองใหม่อีกครั้งในอีกสักครู่",
+  en: "#tpclife is temporarily unavailable, most likely due to maintenance or a technical problem. Please try again shortly.",
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {

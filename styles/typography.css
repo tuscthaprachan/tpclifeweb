@@ -18,14 +18,23 @@ html {
   text-size-adjust: 100%;
 }
 
-body {
-  font-family: var(--font-en);
-  font-size: var(--text-base);
-  line-height: var(--leading-en);
-  font-weight: var(--weight-regular);
-  color: var(--ink-900);
-  background-color: var(--surface);
-  font-synthesis-weight: none;
+/*
+ * Base element defaults. See the layering contract comment in globals.css:
+ * these live in `@layer base` so a component can still win against them with
+ * an ordinary Tailwind utility class (`@layer utilities`, which comes
+ * later), rather than losing outright the way the primary Button's
+ * text-action-ink class did against an unlayered `a { color }` rule.
+ */
+@layer base {
+  body {
+    font-family: var(--font-en);
+    font-size: var(--text-base);
+    line-height: var(--leading-en);
+    font-weight: var(--weight-regular);
+    color: var(--ink-900);
+    background-color: var(--surface);
+    font-synthesis-weight: none;
+  }
 }
 
 html[lang^="th"] body {
@@ -61,42 +70,81 @@ html[lang^="th"] body {
   word-break: normal;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-tight);
-  color: var(--ink-900);
-  text-wrap: balance;
-}
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-tight);
+    color: var(--ink-900);
+    text-wrap: balance;
+  }
 
-/*
- * A heading sitting on a surface that sets its own text colour has to take
- * that colour, not --ink-900.
- *
- * This rule cannot be replaced with a Tailwind utility on the heading, and
- * that is worth explaining because it looks like it could be. globals.css
- * does `@import "tailwindcss"`, which puts every utility inside
- * `@layer utilities`, while this file is imported unlayered. Unlayered CSS
- * beats layered CSS outright, whatever the specificity, so the rule above
- * wins against `text-inherit` or any other class put on the heading itself.
- * The fix therefore has to live here, unlayered, alongside the rule causing
- * it.
- *
- * Without this, `Panel` renders near-black ink on its saturated background:
- * measured at 2.78:1 on the success tone, a real 1.4.3 failure. The token
- * pair is correct, so check-contrast.mjs cannot see this; it compares tokens
- * rather than what the cascade resolves to. The axe suite caught it.
- *
- * Keyed off an explicit attribute rather than a colour utility class,
- * because a component that paints its own background is exactly the case
- * that has to opt in deliberately.
- */
-[data-inherit-heading-colour] :is(h1, h2, h3, h4, h5, h6) {
-  color: inherit;
+  /*
+   * A heading sitting on a surface that sets its own text colour has to take
+   * that colour, not --ink-900.
+   *
+   * This rule is NOT the same layering hazard the primary Button had. The
+   * `h1..h6` rule above now lives in `@layer base` (see the layering
+   * contract in globals.css), so a heading that carries its own colour
+   * utility class would already win against it normally, because utilities
+   * come later. But `Panel` never puts a colour utility on its `Heading`; it only
+   * paints the colour on the wrapping `<div>` (`text-action-ink` /
+   * `text-inverse`) and expects the heading inside to pick it up by
+   * inheritance. The `h1..h6` rule above sets `color` directly on the
+   * heading element itself, and a declaration that targets an element
+   * directly always wins over an inherited value, regardless of layer or
+   * specificity. So without an explicit override on the heading, it still
+   * renders --ink-900, not the panel's colour, layering fix or not.
+   *
+   * This rule supplies that override. It stays keyed off an explicit
+   * attribute rather than a colour utility class, because a component that
+   * paints its own background is exactly the case that has to opt in
+   * deliberately. It now lives in `@layer base` alongside the rule it
+   * overrides: `[data-inherit-heading-colour] :is(h1..h6)` is more specific
+   * than the plain `h1..h6` selector, so ordinary cascade specificity
+   * decides the winner within the layer and no unlayered escape hatch is
+   * needed for this one. A genuine colour utility placed directly on a heading
+   * still wins over both, exactly as it should.
+   *
+   * Without this, `Panel` renders near-black ink on its saturated background:
+   * measured at 2.78:1 on the success tone, a real 1.4.3 failure. The token
+   * pair is correct, so check-contrast.mjs cannot see this; it compares tokens
+   * rather than what the cascade resolves to. The axe suite caught it.
+   */
+  [data-inherit-heading-colour] :is(h1, h2, h3, h4, h5, h6) {
+    color: inherit;
+  }
+
+  h1 {
+    font-size: var(--text-4xl);
+  }
+  h2 {
+    font-size: var(--text-2xl);
+  }
+  h3 {
+    font-size: var(--text-xl);
+  }
+  h4 {
+    font-size: var(--text-lg);
+  }
+  h5,
+  h6 {
+    font-size: var(--text-base);
+  }
+
+  p,
+  li,
+  dd,
+  dt,
+  td,
+  th,
+  figcaption {
+    text-wrap: pretty;
+  }
 }
 
 html[lang^="th"] h1,
@@ -107,33 +155,6 @@ html[lang^="th"] h5,
 html[lang^="th"] h6 {
   /* Tight leading clips Thai tone marks at display sizes. */
   line-height: 1.4;
-}
-
-h1 {
-  font-size: var(--text-4xl);
-}
-h2 {
-  font-size: var(--text-2xl);
-}
-h3 {
-  font-size: var(--text-xl);
-}
-h4 {
-  font-size: var(--text-lg);
-}
-h5,
-h6 {
-  font-size: var(--text-base);
-}
-
-p,
-li,
-dd,
-dt,
-td,
-th,
-figcaption {
-  text-wrap: pretty;
 }
 
 /*

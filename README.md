@@ -1,12 +1,12 @@
-# TPC Life (ท้ายท่าพระจันทร์)
+# #tpclife (#ท้ายท่าพระจันทร์)
 
-A one-stop student life portal for Thammasat University Tha Prachan, built for and with the Thammasat University Student Union Tha Prachan (อมธ. ท่าพระจันทร์) and the Thammasat University Student Council Tha Prachan (สภานักศึกษา ท่าพระจันทร์).
+A one-stop student life portal for Thammasat Tha Prachan, built for and with the Thammasat University Student Union Tha Prachan (อมธ. ท่าพระจันทร์) and the Thammasat University Student Council Tha Prachan (สภานักศึกษา ท่าพระจันทร์).
 
 Natively bilingual Thai and English. WCAG 2.2 AA. Content managed in Sanity, deployed on Vercel.
 
 ## What it replaces
 
-Tha Prachan student information currently lives across four Linktrees, a 33 page scanned handbook with no text layer, several Google Drive PDFs, an Instagram post that serves as the shuttle timetable, and sign-in gated Google Forms. None of it is searchable and none of it is accessible.
+Thammasat Tha Prachan student information currently lives across four Linktrees, a 33 page scanned handbook with no text layer, several Google Drive PDFs, an Instagram post that serves as the shuttle timetable, and sign-in gated Google Forms. None of it is searchable and none of it is accessible.
 
 ## What it does
 

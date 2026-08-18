@@ -18,7 +18,7 @@ import { alternatesFor } from "@/lib/i18n/metadata";
  * report.
  */
 const HEADINGS = {
-  shuttle: { th: "รถรับส่งท่าพระจันทร์", en: "TPC shuttle bus" },
+  shuttle: { th: "รถรับส่งธรรมศาสตร์ท่าพระจันทร์", en: "TPC shuttle bus" },
   mrt: { th: "รถไฟฟ้า MRT", en: "MRT" },
   boat: { th: "เรือด่วนเจ้าพระยา", en: "Chao Phraya express boat" },
   vehicleAccess: { th: "หลักเกณฑ์รถเข้า-ออกและค่าปรับ", en: "Vehicle access rules and fines" },

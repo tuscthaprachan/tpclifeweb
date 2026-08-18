@@ -1,7 +1,7 @@
 /**
  * Pure shuttle schedule engine. No React, no I/O, fully testable.
  *
- * There is no GPS feed and no API for the Tha Prachan shuttle. Every time
+ * There is no GPS feed and no API for the Thammasat Tha Prachan shuttle. Every time
  * this module computes comes from the timetable published in the CMS
  * (`ShuttleRoute.departures`), never from a live vehicle position. Callers
  * must label everything this returns as "scheduled" (`UI.scheduled`), never

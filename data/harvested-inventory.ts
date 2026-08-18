@@ -1,5 +1,5 @@
 /**
- * Real Tha Prachan information harvested from the existing published sources,
+ * Real Thammasat Tha Prachan information harvested from the existing published sources,
  * used to seed the CMS.
  *
  * WHERE THIS CAME FROM
@@ -132,12 +132,12 @@ export const FORMS = [
   {
     key: "emergencyReport",
     title: {
-      th: "แบบฟอร์มร้องเรียนและแจ้งเหตุ ท่าพระจันทร์",
+      th: "แบบฟอร์มร้องเรียนและแจ้งเหตุ ธรรมศาสตร์ท่าพระจันทร์",
       en: "TPC emergency report and complaint form",
     },
     purpose: {
-      th: "แจ้งเหตุฉุกเฉินหรือร้องเรียนเรื่องที่เกิดขึ้นในพื้นที่ท่าพระจันทร์",
-      en: "Report an emergency or make a complaint about something at Tha Prachan",
+      th: "แจ้งเหตุฉุกเฉินหรือร้องเรียนเรื่องที่เกิดขึ้นในพื้นที่ธรรมศาสตร์ท่าพระจันทร์",
+      en: "Report an emergency or make a complaint about something at Thammasat Tha Prachan",
     },
     destinationUrl:
       "https://docs.google.com/forms/d/e/1FAIpQLSfDhKDWjdMJnCid_EpwQBwcuxyylXGm4qDGSMYcLiW8by9jvA/viewform",
@@ -207,13 +207,13 @@ export const SOURCE_DOCUMENTS = [
   },
   {
     key: "studentWelfare",
-    title: { th: "สวัสดิการนักศึกษาท่าพระจันทร์", en: "TPC student welfare" },
+    title: { th: "สวัสดิการนักศึกษาธรรมศาสตร์ท่าพระจันทร์", en: "TPC student welfare" },
     url: "https://drive.google.com/file/d/1FdmB1CqVNwH6FZp_x08B3CKfC-4p-MTM/view",
   },
   {
     key: "divisionsContact",
     title: {
-      th: "ข้อมูลติดต่อหน่วยงานในท่าพระจันทร์",
+      th: "ข้อมูลติดต่อหน่วยงานในธรรมศาสตร์ท่าพระจันทร์",
       en: "TPC university divisions contact information",
     },
     url: "https://drive.google.com/file/d/1z0dI7GngUZbVRy1KbecpWopyq1JPWbf-/view",
@@ -238,7 +238,7 @@ export const SOURCE_DOCUMENTS = [
   {
     key: "shuttleTimetable",
     title: {
-      th: "ตารางจุดรับ-ส่งเส้นทางเดินรถรับส่งท่าพระจันทร์",
+      th: "ตารางจุดรับ-ส่งเส้นทางเดินรถรับส่งธรรมศาสตร์ท่าพระจันทร์",
       en: "TPC shuttle bus stops and timetable",
     },
     url: "https://www.instagram.com/p/DIEOlffS5dr/",
@@ -340,7 +340,7 @@ export const FACULTY_NAME_SPELLING_NOTE =
   "Ask the faculty committee which spelling they actually want before treating this as a typo to fix.";
 
 /* ------------------------------------------------------------------ *
- * Getting to Tha Prachan
+ * Getting to Thammasat Tha Prachan
  *
  * From the handbook's "How to go to TU TPC" page and the university's own
  * published information. Bus route numbers were read off a scanned page, so

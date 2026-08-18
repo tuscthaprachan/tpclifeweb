@@ -21,7 +21,7 @@ function departuresMessage(value: string[] | undefined): true | string {
 
 /**
  * A shuttle route with its stops and timetable. There is no GPS feed and no
- * public API for the Tha Prachan shuttle, so everything shown to students is
+ * public API for the Thammasat Tha Prachan shuttle, so everything shown to students is
  * computed from this timetable and must always be labelled scheduled, never
  * live.
  */
@@ -34,7 +34,7 @@ export const shuttleRoute = defineType({
       name: "name",
       title: "Route name",
       type: "localeString",
-      description: 'For example "Tha Prachan to Central Pinklao".',
+      description: 'For example "Thammasat Tha Prachan to Central Pinklao".',
       validation: (rule) => rule.required().custom(bilingualStringMessage),
     }),
     defineField({

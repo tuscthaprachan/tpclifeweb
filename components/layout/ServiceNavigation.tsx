@@ -17,10 +17,36 @@ import { usePathname } from "next/navigation";
 import { localePath, pick, stripLocale, type Locale } from "@/lib/i18n/config";
 import type { NavItem } from "@/lib/sanity/types";
 
+/*
+ * How the list of links lays itself out. "responsive" is the original
+ * behaviour (a vertical stack that becomes a horizontal row at `sm`),
+ * still right for the footer, which is never nested inside a disclosure and
+ * has no other component telling it when to switch.
+ *
+ * The header needs the other two instead of "responsive": it renders this
+ * component in two DIFFERENT places at once (the desktop row and the
+ * mobile disclosure panel) and decides which one is visible with its own
+ * breakpoint. If this component also switched orientation internally at
+ * `sm`, the copy sitting inside the still-open mobile panel between `sm`
+ * and the header's own (larger) breakpoint would flip to a horizontal row
+ * while it is still meant to be the vertical "menu is open" list, cramming
+ * eight long Thai labels into a strip a phone-in-landscape or small tablet
+ * cannot fit. Forcing the orientation explicitly from the caller removes
+ * that coupling entirely.
+ */
+export type ServiceNavigationVariant = "responsive" | "horizontal" | "vertical";
+
+const LIST_CLASS: Record<ServiceNavigationVariant, string> = {
+  responsive: "flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-6",
+  horizontal: "flex flex-wrap items-center gap-x-6 gap-y-2 text-sm",
+  vertical: "flex flex-col gap-2 text-base",
+};
+
 export function ServiceNavigation({
   locale,
   items,
   label,
+  variant = "responsive",
   className = "",
 }: {
   locale: Locale;
@@ -29,6 +55,7 @@ export function ServiceNavigation({
    * two nav landmarks on the same page (e.g. header and footer) stay
    * distinguishable. */
   label: string;
+  variant?: ServiceNavigationVariant;
   className?: string;
 }) {
   const pathname = usePathname();
@@ -36,7 +63,7 @@ export function ServiceNavigation({
 
   return (
     <nav aria-label={label} className={className}>
-      <ul className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:gap-6">
+      <ul className={LIST_CLASS[variant]}>
         {items.map((item) => {
           const isCurrent = currentPath === item.path;
           return (

@@ -29,10 +29,10 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
   _createdAt: "2026-08-07T00:00:00.000Z",
   _updatedAt: "2026-08-07T00:00:00.000Z",
 
-  serviceName: { th: "ท้ายท่าพระจันทร์", en: "TPC Life" },
+  serviceName: { th: "#ท้ายท่าพระจันทร์", en: "#tpclife" },
   tagline: {
-    th: "ข้อมูลชีวิตนักศึกษาท่าพระจันทร์ ทุกเรื่องในที่เดียว",
-    en: "Everything a Tha Prachan student needs, in one place",
+    th: "ข้อมูลชีวิตนักศึกษาธรรมศาสตร์ท่าพระจันทร์ ทุกเรื่องในที่เดียว",
+    en: "Everything a Thammasat Tha Prachan student needs, in one place",
   },
 
   phase: "alpha",

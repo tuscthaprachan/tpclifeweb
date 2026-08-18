@@ -20,10 +20,10 @@ function makeRoute(overrides: Partial<ShuttleRoute> = {}): ShuttleRoute {
     _type: "shuttleRoute",
     _createdAt: "2026-01-01T00:00:00.000Z",
     _updatedAt: "2026-01-01T00:00:00.000Z",
-    name: { th: "ท่าพระจันทร์ ถึง เซ็นทรัลปิ่นเกล้า", en: "Tha Prachan to Central Pinklao" },
+    name: { th: "ธรรมศาสตร์ท่าพระจันทร์ ถึง เซ็นทรัลปิ่นเกล้า", en: "Thammasat Tha Prachan to Central Pinklao" },
     slug: { _type: "slug", current: "tha-prachan-pinklao" },
     stops: [
-      { _key: "origin", name: { th: "ท่าพระจันทร์", en: "Tha Prachan" }, offsetMinutes: 0 },
+      { _key: "origin", name: { th: "ธรรมศาสตร์ท่าพระจันทร์", en: "Thammasat Tha Prachan" }, offsetMinutes: 0 },
       { _key: "downstream", name: { th: "เซ็นทรัลปิ่นเกล้า", en: "Central Pinklao" }, offsetMinutes: 15 },
     ],
     calendar: {

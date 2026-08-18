@@ -3,7 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * Accessibility and end to end suites.
  *
- * The mobile project is not an afterthought. A Tha Prachan student checking the
+ * The mobile project is not an afterthought. A Thammasat Tha Prachan student checking the
  * next shuttle is standing at a stop holding a phone, so that is the primary
  * target and it runs first.
  *

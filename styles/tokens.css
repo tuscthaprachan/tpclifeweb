@@ -306,8 +306,24 @@
 /*
  * Explicit theme override. The site's own theme control stamps
  * data-theme on the root element and it must win in both directions.
+ *
+ * Note on the "light" side of this escape hatch: there is deliberately no
+ * `:root[data-theme="light"] { ... }` colour block below. The default
+ * `:root` values above already ARE the light theme, and the dark block's
+ * `:not([data-theme="light"])` guard is what stops it overriding them when a
+ * reader forces light against a dark system preference. So forcing light
+ * needs no colour overrides of its own, only the color-scheme correction
+ * beneath this comment, which native form controls and the scrollbar do
+ * need told explicitly (the inherited `color-scheme: light dark` on :root
+ * would otherwise still let a dark system preference paint native chrome
+ * dark even though every token here is light).
  */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --ink-900: #ede6e8;
   --ink-600: #bcb5b7;
   --ink-500: #9b9597;

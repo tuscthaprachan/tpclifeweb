@@ -47,8 +47,8 @@ const PAGE_INTRO: LocaleString = {
   en: "Pick the route that matches what you need to report. There are three, sorted by what kind of problem it is",
 }; // TODO: add to UI strings
 const ROUTE_1_USE_WHEN: LocaleString = {
-  th: "ใช้ช่องทางนี้เมื่อเกิดเหตุฉุกเฉิน หรือมีเรื่องร้องเรียนเกี่ยวกับเหตุการณ์ในพื้นที่ท่าพระจันทร์",
-  en: "Use this for an emergency, or a complaint about something that happened at Tha Prachan",
+  th: "ใช้ช่องทางนี้เมื่อเกิดเหตุฉุกเฉิน หรือมีเรื่องร้องเรียนเกี่ยวกับเหตุการณ์ในพื้นที่ธรรมศาสตร์ท่าพระจันทร์",
+  en: "Use this for an emergency, or a complaint about something that happened at Thammasat Tha Prachan",
 }; // TODO: add to UI strings
 const ROUTE_2_USE_WHEN: LocaleString = {
   th: "ใช้ช่องทางนี้เมื่อพบปัญหาสภาพแวดล้อมหรือสิ่งอำนวยความสะดวกในมหาวิทยาลัย เช่น ไฟดับ น้ำรั่ว หรือทางเดินชำรุด",

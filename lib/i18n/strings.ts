@@ -20,7 +20,7 @@ import type { Locale, LocaleString } from "./config";
 
 export const UI = {
   /* Global chrome */
-  serviceName: { th: "ท้ายท่าพระจันทร์", en: "TPC Life" },
+  serviceName: { th: "#ท้ายท่าพระจันทร์", en: "#tpclife" },
   skipToContent: { th: "ข้ามไปยังเนื้อหาหลัก", en: "Skip to main content" },
   mainMenu: { th: "เมนูหลัก", en: "Main menu" },
   footerMenu: { th: "เมนูท้ายเว็บไซต์", en: "Footer navigation" },
@@ -39,7 +39,7 @@ export const UI = {
 
   /* Search */
   search: { th: "ค้นหา", en: "Search" },
-  searchLabel: { th: "ค้นหาข้อมูลนักศึกษาท่าพระจันทร์", en: "Search Tha Prachan student information" },
+  searchLabel: { th: "ค้นหาข้อมูลนักศึกษาธรรมศาสตร์ท่าพระจันทร์", en: "Search Thammasat Tha Prachan student information" },
   searchPlaceholder: { th: "ค้นหาแบบฟอร์ม รถรับส่ง สวัสดิการ กิจกรรม", en: "Search forms, shuttle, welfare, activities" },
   searchHint: {
     th: "พิมพ์คำค้นได้ทั้งภาษาไทยและภาษาอังกฤษ",
@@ -63,8 +63,8 @@ export const UI = {
   hours: { th: "ชั่วโมง", en: "hr" },
   departingNow: { th: "กำลังออก", en: "Departing now" },
   /*
-   * This label is load-bearing. There is no GPS feed for the Tha Prachan
-   * shuttle, so every time shown is computed from the published timetable.
+   * This label is load-bearing. There is no GPS feed for the Thammasat Tha
+   * Prachan shuttle, so every time shown is computed from the published timetable.
    * Do not replace this with "live" under any circumstances.
    */
   scheduled: { th: "ตามตารางเวลา", en: "Scheduled" },
@@ -84,8 +84,8 @@ export const UI = {
   /* Forms */
   forms: { th: "แบบฟอร์ม", en: "Forms" },
   formsIntro: {
-    th: "แบบฟอร์มทั้งหมดที่นักศึกษาท่าพระจันทร์ต้องใช้ รวมไว้ที่เดียว",
-    en: "Every form a Tha Prachan student needs, in one place",
+    th: "แบบฟอร์มทั้งหมดที่นักศึกษาธรรมศาสตร์ท่าพระจันทร์ต้องใช้ รวมไว้ที่เดียว",
+    en: "Every form a Thammasat Tha Prachan student needs, in one place",
   },
   startForm: { th: "เริ่มกรอกแบบฟอร์ม", en: "Start now" },
   beforeYouStart: { th: "ก่อนเริ่มกรอก", en: "Before you start" },
@@ -173,8 +173,8 @@ export const UI = {
   /* Lost and found */
   lostAndFound: { th: "ของหายและของเก็บได้", en: "Lost and found" },
   lostAndFoundIntro: {
-    th: "ค้นหาของที่หาย และดูของที่มีคนเก็บมาส่งไว้ที่ท่าพระจันทร์",
-    en: "Search for something you lost, and see what has been handed in at Tha Prachan",
+    th: "ค้นหาของที่หาย และดูของที่มีคนเก็บมาส่งไว้ที่ธรรมศาสตร์ท่าพระจันทร์",
+    en: "Search for something you lost, and see what has been handed in at Thammasat Tha Prachan",
   },
   lostItems: { th: "ของที่หาย", en: "Lost items" },
   foundItems: { th: "ของที่เก็บได้", en: "Found items" },

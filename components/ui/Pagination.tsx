@@ -23,7 +23,17 @@ export function Pagination({ currentPage, totalPages, buildHref, locale, classNa
   const nextPage = currentPage < totalPages ? currentPage + 1 : null;
 
   return (
-    <nav aria-label={UI.pagination[locale]} className={cx("flex items-center justify-between gap-[var(--space-4)]", className)}>
+    <nav
+      aria-label={UI.pagination[locale]}
+      /*
+       * `flex-wrap` is the 1.4.10 Reflow guard here: "previous"/"next" carry
+       * full Thai words plus an icon, and at 320px the three pieces
+       * (previous, page count, next) can outgrow the viewport if forced onto
+       * one line. Wrapping lets the page-count text drop to its own line
+       * rather than forcing the whole nav to scroll sideways.
+       */
+      className={cx("flex flex-wrap items-center justify-between gap-[var(--space-4)]", className)}
+    >
       {previousPage ? (
         <a href={buildHref(previousPage)} className={LINK_CLASS} rel="prev">
           <ArrowLeftIcon />
