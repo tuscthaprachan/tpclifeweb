@@ -4,29 +4,37 @@
  * Every colour value here has a measured WCAG 2.2 contrast ratio recorded beside it.
  * Do not add, change or invent a colour without re-running `npm run check:contrast`.
  *
- * The palette sits on a single orange-to-purple axis. Orange is a genuine
- * co-primary, not a fill of convenience: it has both a pastel fill pole and a
- * deep, text-capable pole, exactly as purple does.
+ * The palette sits on a single orange-to-purple axis, and the two poles now
+ * carry EQUAL visual weight. Ink, lines, surfaces, action, accent, fills and
+ * focus all alternate deliberately between the warm (orange) and cool
+ * (purple) side of the axis instead of purple dominating and orange showing
+ * up only as an accent. Where a token used to be purple by default, it is
+ * now either genuinely neutral (ink, lines) or explicitly paired with an
+ * orange peer at matching lightness and chroma (action/accent, fills,
+ * focus).
  *
  * THE HARD RULE
  * -------------
  * Three of the five brand colours cannot carry text on a light surface:
- *   --brand-orange      #F9A36A  2.00:1 on white  FAILS
- *   --brand-coral       #F2896A  2.45:1 on white  FAILS
- *   --brand-lilac       #B284D4  2.94:1 on white  FAILS
+ *   --brand-orange      #e7935b  2.41:1 on white  FAILS
+ *   --brand-coral       #e07e61  2.87:1 on white  FAILS
+ *   --brand-lilac       #c293e5  2.44:1 on white  FAILS
  * They are FILLS. They carry near-black ink on top of them, where they measure
- * 8.91:1, 7.28:1 and 6.08:1 respectively. They are never text on a light surface,
+ * 7.13:1, 5.99:1 and 7.03:1 respectively. They are never text on a light surface,
  * never a border that identifies a control, and never the only carrier of meaning.
  *
  * The other two clear the bar on white and are the text-capable poles of the axis:
- *   --brand-orange-deep #9C4500  6.43:1 on white  PASSES (also 6.10:1 on
- *                                --surface-alt, 5.63:1 on --surface-sunk)
- *   --brand-purple      #6B21A8  8.72:1 on white  PASSES (also 8.27:1 on
- *                                --surface-alt, 7.63:1 on --surface-sunk)
+ *   --brand-orange-deep #843a01  8.12:1 on white  PASSES (also 7.71:1 on
+ *                                --surface-alt, 7.12:1 on --surface-sunk)
+ *   --brand-purple      #613f87  8.17:1 on white  PASSES (also 7.76:1 on
+ *                                --surface-alt, 7.16:1 on --surface-sunk)
+ * The two are within 0.05:1 of each other on every surface: neither pole is
+ * the "stronger" one.
  *
  * Text and interactive work is done by --colour-action (the purple pole) and
- * --colour-accent (the deep orange pole), both of which clear 4.5:1, and
- * --colour-action clears 7:1 on every surface with headroom to spare for hover.
+ * --colour-accent (the deep orange pole), both of which clear 4.5:1 with
+ * matching OKLCH lightness and chroma, so neither reads as louder than the
+ * other.
  */
 
 :root {
@@ -38,50 +46,59 @@
    * orange-to-purple axis: a pastel and a deep, text-capable shade
    * at each pole, plus lilac as the pastel companion on the purple side.
    * ---------------------------------------------------------------- */
-  --brand-orange: #f9a36a; /* fill only, 2.00:1 on white */
-  --brand-coral: #f2896a; /* fill only, 2.45:1 on white. Warm, orange-family welfare colour. */
-  --brand-lilac: #b284d4; /* fill only, 2.94:1 on white */
-  --brand-orange-deep: #9c4500; /* 6.43:1 on white, 6.10:1 on --surface-alt, 5.63:1 on --surface-sunk */
-  --brand-purple: #6b21a8; /* 8.72:1 on white, 8.27:1 on --surface-alt, 7.63:1 on --surface-sunk */
+  --brand-orange: #e7935b; /* fill only, 2.41:1 on white */
+  --brand-coral: #e07e61; /* fill only, 2.87:1 on white. Warm, orange-family welfare colour. */
+  --brand-lilac: #c293e5; /* fill only, 2.44:1 on white */
+  --brand-orange-deep: #843a01; /* 8.12:1 on white, 7.71:1 on --surface-alt, 7.12:1 on --surface-sunk */
+  --brand-purple: #613f87; /* 8.17:1 on white, 7.76:1 on --surface-alt, 7.16:1 on --surface-sunk */
 
   /* ---------------------------------------------------------------- *
-   * Ink. Text colours, light theme.
+   * Ink. Text colours, light theme. Near-neutral: very low chroma
+   * (OKLCH C ~0.008) sitting at a hue roughly midway between the purple
+   * and orange poles, so body text reads as neutral ink rather than
+   * purple-black.
    * ---------------------------------------------------------------- */
-  --ink-900: #1a1523; /* 17.87:1 white, 16.94:1 --surface-alt, 15.63:1 --surface-sunk. Body text. */
-  --ink-600: #4a4055; /*  9.74:1 white,  9.24:1 --surface-alt,  8.52:1 --surface-sunk. Secondary text. */
-  --ink-500: #6b6076; /*  5.90:1 white,  5.59:1 --surface-alt,  5.16:1 --surface-sunk. Hint text. Lightest permitted text. */
+  --ink-900: #1f1a1c; /* 17.17:1 white, 16.31:1 --surface-alt, 15.05:1 --surface-sunk. Body text. */
+  --ink-600: #554f51; /*  8.00:1 white,  7.60:1 --surface-alt,  7.02:1 --surface-sunk. Secondary text. */
+  --ink-500: #6d6769; /*  5.53:1 white,  5.26:1 --surface-alt,  4.85:1 --surface-sunk. Hint text. Lightest permitted text. */
   --ink-inverse: #ffffff;
 
   /* The ink that sits on a saturated brand fill. Deliberately the SAME value in
      both themes, because a saturated fill stays light in both themes. This is
      what makes the fills readable: the pastel never has to carry light text. */
-  --ink-on-fill: #1a1523;
+  --ink-on-fill: #1f1a1c;
 
   /* ---------------------------------------------------------------- *
-   * Surfaces.
+   * Surfaces. The tint alternates so neither hue owns the page:
+   * --surface-alt leans warm (orange), --surface-sunk leans cool
+   * (purple), both at the same low chroma magnitude so the banding
+   * reads even.
    * ---------------------------------------------------------------- */
   --surface: #ffffff;
-  --surface-alt: #fbf8fa; /* page banding */
-  --surface-sunk: #f4eef3; /* inset panels, code */
+  --surface-alt: #fef8f4; /* page banding, warm orange tint */
+  --surface-sunk: #f1eff5; /* inset panels, code, cool purple tint */
   --surface-overlay: #ffffff;
 
   /* ---------------------------------------------------------------- *
    * Lines. --line is decorative only. Anything that delineates an
    * interactive control must use --line-strong, which meets 1.4.11.
+   * Both are near-neutral, not purple-grey.
    * ---------------------------------------------------------------- */
-  --line: #e3dae6; /* decorative dividers only */
-  --line-strong: #8e8199; /* 3.65:1 on white, 3.46:1 on --surface-alt, 3.19:1 on --surface-sunk */
+  --line: #e2dcde; /* decorative dividers only */
+  --line-strong: #868082; /* 3.87:1 on white, 3.68:1 on --surface-alt, 3.39:1 on --surface-sunk */
 
   /* ---------------------------------------------------------------- *
    * Action. Links, primary buttons. The purple pole of the axis.
    * ---------------------------------------------------------------- */
-  --colour-action: #6b21a8; /*  8.72:1 on white, 8.27:1 on --surface-alt, 7.63:1 on --surface-sunk */
-  --colour-action-hover: #56178c; /* 11.07:1 on white, 10.50:1 on --surface-alt, 9.68:1 on --surface-sunk */
-  --colour-action-ink: #ffffff; /*  8.72:1 on --colour-action */
+  --colour-action: #613f87; /*  8.17:1 on white, 7.76:1 on --surface-alt, 7.16:1 on --surface-sunk */
+  --colour-action-hover: #42295e; /* 12.28:1 on white, 11.66:1 on --surface-alt, 10.76:1 on --surface-sunk */
+  --colour-action-ink: #ffffff; /*  8.17:1 on --colour-action */
 
-  /* Accent. Secondary actions. The deep orange pole of the axis. */
-  --colour-accent: #9c4500; /*  6.43:1 on white, 6.10:1 on --surface-alt, 5.63:1 on --surface-sunk */
-  --colour-accent-strong: #7a3600; /*  8.92:1 on white, 8.45:1 on --surface-alt, 7.80:1 on --surface-sunk */
+  /* Accent. Secondary actions. The deep orange pole of the axis, matched
+     to --colour-action in OKLCH lightness and chroma so the two poles
+     carry equal visual weight. */
+  --colour-accent: #843a01; /*  8.12:1 on white, 7.71:1 on --surface-alt, 7.12:1 on --surface-sunk */
+  --colour-accent-strong: #5c2600; /* 12.12:1 on white, 11.51:1 on --surface-alt, 10.62:1 on --surface-sunk */
 
   /* ---------------------------------------------------------------- *
    * Fills. Semantic and fixed, so colour carries information.
@@ -95,45 +112,50 @@
    * tags, rules and panel headers, which carries --ink-on-fill and is
    * identical in both themes.
    *
-   * The saturated governance fill is a fixed hex on the purple side of the
-   * axis, independent of --brand-purple (which is tuned dark for text, not
-   * for a light saturated fill). #8C83D6 reaches 5.39:1 against ink and
-   * still reads as a distinct violet next to --colour-action.
+   * The orange pair (transport, welfare) and the purple pair (activity,
+   * governance) are mirrored: transport and activity share the same
+   * OKLCH lightness and chroma, and welfare and governance share the
+   * same lightness and chroma, so the tag row doesn't lean warm or cool.
    * ---------------------------------------------------------------- */
-  --fill-transport: #f9a36a; /* ink-on-fill 8.91:1 */
-  --fill-transport-soft: #fde9da; /* ink-900 15.18:1 */
-  --fill-welfare: #f2896a; /* ink-on-fill 7.28:1 */
-  --fill-welfare-soft: #fde2d6; /* ink-900 14.48:1 */
-  --fill-activity: #b284d4; /* ink-on-fill 6.08:1 */
-  --fill-activity-soft: #ede0f5; /* ink-900 14.11:1 */
-  --fill-governance: #8c83d6; /* ink-on-fill 5.39:1 */
-  --fill-governance-soft: #e4e0f7; /* ink-900 13.87:1 */
+  --fill-transport: #e7935b; /* ink-on-fill 7.13:1 */
+  --fill-transport-soft: #fbe4d7; /* ink-900 14.05:1 */
+  --fill-welfare: #e07e61; /* ink-on-fill 5.99:1 */
+  --fill-welfare-soft: #fbdfd7; /* ink-900 13.61:1 */
+  --fill-activity: #c293e5; /* ink-on-fill 7.03:1 */
+  --fill-activity-soft: #f0e4f9; /* ink-900 14.04:1 */
+  --fill-governance: #998fe8; /* ink-on-fill 6.09:1 */
+  --fill-governance-soft: #e4e3fb; /* ink-900 13.64:1 */
 
   /* ---------------------------------------------------------------- *
    * Status. Semantic only. Always rendered with an icon and a word as
    * well as the colour, never colour alone (1.4.1).
    * ---------------------------------------------------------------- */
-  --status-success: #1e6b4f; /* 5.42:1 on white */
+  --status-success: #1e6b4f; /* 6.42:1 on white */
   --status-success-soft: #e2f2ea;
-  --status-warning: #8a4b00; /* 7.06:1 on white */
+  --status-warning: #8a4b00; /* 6.80:1 on white */
   --status-warning-soft: #fdeedd;
-  --status-error: #b3261e; /* 6.24:1 on white */
+  --status-error: #b3261e; /* 6.54:1 on white */
   --status-error-soft: #fce9e7;
   --status-info: #463c92; /* 9.04:1 on white */
-  --status-info-soft: #e4e0f7;
-  --status-neutral: #4a4055;
-  --status-neutral-soft: #f0ecf2;
+  --status-info-soft: #e4e3fb;
+  --status-neutral: #554f51; /* == --ink-600, the new near-neutral */
+  --status-neutral-soft: #efe9eb;
 
   /* ---------------------------------------------------------------- *
    * Focus. A two tone indicator: a brand fill with a solid bar beneath
-   * it. The bar carries the visibility guarantee and flips with the
-   * theme (17.87:1 on white, 18.46:1 on the dark surface). The orange
-   * fill is the brand signature and is weak against white on its own,
-   * which is exactly why the bar is there. check-contrast.mjs asserts
-   * that at least one of the two tones clears 3:1 against the surface.
+   * it. Both poles sit adjacent here on purpose, so the focus ring is
+   * the site's one signature spot where orange and purple touch. The
+   * bar carries the visibility guarantee and is a deep purple, which
+   * flips to a light purple in the dark theme (12.28:1 on white here;
+   * 13.81:1 on the dark surface in the dark theme block below). The
+   * orange fill is --brand-orange itself and is weak against white on
+   * its own (2.41:1), which is exactly why the bar is there.
+   * check-contrast.mjs asserts that at least one of the two tones clears
+   * 3:1 against the surface, so the fill is deliberately kept in step
+   * with --brand-orange by hand: the harness cannot catch it drifting.
    * ---------------------------------------------------------------- */
-  --focus-fill: #f9a36a;
-  --focus-bar: #1a1523;
+  --focus-fill: #e7935b;
+  --focus-bar: #42295e;
   --focus-width: 3px;
 
   /* ---------------------------------------------------------------- *
@@ -227,41 +249,41 @@
 }
 
 /*
- * Dark theme. The relationship inverts: on a dark surface the pastel
- * orange finally has the contrast to be text-adjacent, and the deep
- * orange and purple poles both lighten so they keep clearing 4.5:1.
- * Measured against --surface #16121C, --surface-alt #1E1927 and
- * --surface-sunk #262034.
+ * Dark theme. Ink, surfaces, action/accent and the focus bar all invert in
+ * lightness while keeping the same balance rule: near-neutral ink, an
+ * alternating (now purple-then-orange) surface tint, and action/accent
+ * matched to each other in OKLCH lightness and chroma. Measured against
+ * --surface #171214, --surface-alt #1F1D22 and --surface-sunk #2B2522.
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink-900: #f2ecf5; /* 15.91:1 --surface, 14.79:1 --surface-alt, 13.52:1 --surface-sunk */
-    --ink-600: #cbc0d4; /* 10.58:1 --surface,  9.83:1 --surface-alt,  8.99:1 --surface-sunk */
-    --ink-500: #a599b0; /*  6.84:1 --surface,  6.36:1 --surface-alt,  5.81:1 --surface-sunk */
-    --ink-inverse: #16121c;
+    --ink-900: #ede6e8; /* 15.08:1 --surface, 13.59:1 --surface-alt, 12.29:1 --surface-sunk */
+    --ink-600: #bcb5b7; /*  9.21:1 --surface,  8.30:1 --surface-alt,  7.50:1 --surface-sunk */
+    --ink-500: #9b9597; /*  6.30:1 --surface,  5.68:1 --surface-alt,  5.13:1 --surface-sunk */
+    --ink-inverse: #171214;
 
-    --surface: #16121c;
-    --surface-alt: #1e1927;
-    --surface-sunk: #262034;
-    --surface-overlay: #221c2d;
+    --surface: #171214;
+    --surface-alt: #1f1d22; /* cool purple tint */
+    --surface-sunk: #2b2522; /* warm orange tint */
+    --surface-overlay: #242227; /* follows --surface-alt's purple family */
 
-    --line: #362e46;
-    --line-strong: #8b7f9c; /* 4.94:1 --surface, 4.59:1 --surface-alt, 4.19:1 --surface-sunk */
+    --line: #3b3638;
+    --line-strong: #857e80; /* 4.67:1 --surface, 4.21:1 --surface-alt, 3.81:1 --surface-sunk */
 
-    --colour-action: #d3a8f0; /*  9.35:1 --surface, 8.69:1 --surface-alt, 7.94:1 --surface-sunk */
-    --colour-action-hover: #e0c2f7; /* 11.63:1 --surface, 10.81:1 --surface-alt, 9.88:1 --surface-sunk */
-    --colour-action-ink: #16121c;
+    --colour-action: #d7b9ff; /* 10.83:1 --surface, 9.76:1 --surface-alt, 8.83:1 --surface-sunk */
+    --colour-action-hover: #e7d8fe; /* 13.81:1 --surface, 12.45:1 --surface-alt, 11.26:1 --surface-sunk */
+    --colour-action-ink: #171214;
 
-    --colour-accent: #f3b276; /* 10.06:1 --surface, 9.35:1 --surface-alt, 8.55:1 --surface-sunk */
-    --colour-accent-strong: #f8cba0; /* 12.35:1 --surface, 11.48:1 --surface-alt, 10.49:1 --surface-sunk */
+    --colour-accent: #ffb68f; /* 10.89:1 --surface, 9.82:1 --surface-alt, 8.87:1 --surface-sunk */
+    --colour-accent-strong: #ffd6c1; /* 13.80:1 --surface, 12.44:1 --surface-alt, 11.25:1 --surface-sunk */
 
     /* Saturated fills are NOT overridden. They stay light in both themes
        and keep carrying --ink-on-fill, so a tag reads identically either
        way. Only the soft tints flip, because they carry --ink-900. */
-    --fill-transport-soft: #3a2617; /* ink-900 12.31:1 */
-    --fill-welfare-soft: #3a2117; /* ink-900 12.83:1 */
-    --fill-activity-soft: #2e2440; /* ink-900 12.54:1 */
-    --fill-governance-soft: #262242; /* ink-900 13.02:1 */
+    --fill-transport-soft: #3c2414; /* ink-900 11.75:1 */
+    --fill-welfare-soft: #3d1e15; /* ink-900 12.25:1 */
+    --fill-activity-soft: #31243c; /* ink-900 11.80:1 */
+    --fill-governance-soft: #27243f; /* ink-900 12.11:1 */
 
     --status-success: #6fd3a8;
     --status-success-soft: #14301f;
@@ -270,12 +292,12 @@
     --status-error: #f7938c;
     --status-error-soft: #3a1a1a;
     --status-info: #b3a9f2;
-    --status-info-soft: #262242;
-    --status-neutral: #cbc0d4;
-    --status-neutral-soft: #2a2436;
+    --status-info-soft: #27243f;
+    --status-neutral: #bcb5b7; /* == --ink-600 */
+    --status-neutral-soft: #302d2e;
 
-    --focus-fill: #f9a36a;
-    --focus-bar: #ffffff;
+    --focus-fill: #e7935b;
+    --focus-bar: #e7d8fe;
 
     --elevation: 0 4px 16px -2px rgb(0 0 0 / 0.6), 0 1px 3px rgb(0 0 0 / 0.4);
   }
@@ -286,30 +308,30 @@
  * data-theme on the root element and it must win in both directions.
  */
 :root[data-theme="dark"] {
-  --ink-900: #f2ecf5;
-  --ink-600: #cbc0d4;
-  --ink-500: #a599b0;
-  --ink-inverse: #16121c;
+  --ink-900: #ede6e8;
+  --ink-600: #bcb5b7;
+  --ink-500: #9b9597;
+  --ink-inverse: #171214;
 
-  --surface: #16121c;
-  --surface-alt: #1e1927;
-  --surface-sunk: #262034;
-  --surface-overlay: #221c2d;
+  --surface: #171214;
+  --surface-alt: #1f1d22;
+  --surface-sunk: #2b2522;
+  --surface-overlay: #242227;
 
-  --line: #362e46;
-  --line-strong: #8b7f9c;
+  --line: #3b3638;
+  --line-strong: #857e80;
 
-  --colour-action: #d3a8f0;
-  --colour-action-hover: #e0c2f7;
-  --colour-action-ink: #16121c;
+  --colour-action: #d7b9ff;
+  --colour-action-hover: #e7d8fe;
+  --colour-action-ink: #171214;
 
-  --colour-accent: #f3b276;
-  --colour-accent-strong: #f8cba0;
+  --colour-accent: #ffb68f;
+  --colour-accent-strong: #ffd6c1;
 
-  --fill-transport-soft: #3a2617;
-  --fill-welfare-soft: #3a2117;
-  --fill-activity-soft: #2e2440;
-  --fill-governance-soft: #262242;
+  --fill-transport-soft: #3c2414;
+  --fill-welfare-soft: #3d1e15;
+  --fill-activity-soft: #31243c;
+  --fill-governance-soft: #27243f;
 
   --status-success: #6fd3a8;
   --status-success-soft: #14301f;
@@ -318,12 +340,12 @@
   --status-error: #f7938c;
   --status-error-soft: #3a1a1a;
   --status-info: #b3a9f2;
-  --status-info-soft: #262242;
-  --status-neutral: #cbc0d4;
-  --status-neutral-soft: #2a2436;
+  --status-info-soft: #27243f;
+  --status-neutral: #bcb5b7;
+  --status-neutral-soft: #302d2e;
 
-  --focus-fill: #f9a36a;
-  --focus-bar: #ffffff;
+  --focus-fill: #e7935b;
+  --focus-bar: #e7d8fe;
 
   --elevation: 0 4px 16px -2px rgb(0 0 0 / 0.6), 0 1px 3px rgb(0 0 0 / 0.4);
 }

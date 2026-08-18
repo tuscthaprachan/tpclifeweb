@@ -133,8 +133,18 @@ function assertions() {
 /**
  * The three pastels are fills only. If any of them is ever assigned to a text
  * or border role token, this catches it regardless of what the assertions say.
+ *
+ * Derived from the parsed brand primitives rather than written out as literal
+ * hexes, because a literal set silently stops matching the moment the palette
+ * is retuned, and a guard that quietly matches nothing is worse than no guard.
  */
-const FILL_ONLY = new Set(["#f9a36a", "#f2896a", "#b284d4"]);
+const FILL_ONLY = new Set(
+  ["--brand-orange", "--brand-coral", "--brand-lilac"].map((name) => {
+    const value = light[name];
+    if (!value) throw new Error(`fill-only primitive not found in :root: ${name}`);
+    return value;
+  }),
+);
 const TEXT_ROLES = [
   "--ink-900",
   "--ink-600",

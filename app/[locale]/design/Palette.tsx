@@ -12,42 +12,42 @@ interface PaletteEntry {
 }
 
 const BRAND_PRIMITIVES: PaletteEntry[] = [
-  { cssVar: "--brand-orange", label: "brand-orange #F9A36A", ratio: "2.00:1 on white. FAILS as text.", role: "Fill only. Never text, never a control border, never the only carrier of meaning." },
-  { cssVar: "--brand-coral", label: "brand-coral #F2896A", ratio: "2.45:1 on white. FAILS as text.", role: "Fill only. Warm, orange-family welfare colour. Never text, never a control border, never the only carrier of meaning." },
-  { cssVar: "--brand-lilac", label: "brand-lilac #B284D4", ratio: "2.94:1 on white. FAILS as text.", role: "Fill only. Never text, never a control border, never the only carrier of meaning." },
-  { cssVar: "--brand-orange-deep", label: "brand-orange-deep #9C4500", ratio: "6.43:1 on white. Passes.", role: "The deep, text-capable orange pole of the axis. Also used directly as colour-accent." },
-  { cssVar: "--brand-purple", label: "brand-purple #6B21A8", ratio: "8.72:1 on white. Passes.", role: "The purple pole of the axis. Also used directly as colour-action." },
+  { cssVar: "--brand-orange", label: "brand-orange #E7935B", ratio: "2.41:1 on white. FAILS as text.", role: "Fill only. Never text, never a control border, never the only carrier of meaning." },
+  { cssVar: "--brand-coral", label: "brand-coral #E07E61", ratio: "2.87:1 on white. FAILS as text.", role: "Fill only. Warm, orange-family welfare colour. Never text, never a control border, never the only carrier of meaning." },
+  { cssVar: "--brand-lilac", label: "brand-lilac #C293E5", ratio: "2.44:1 on white. FAILS as text.", role: "Fill only. Never text, never a control border, never the only carrier of meaning." },
+  { cssVar: "--brand-orange-deep", label: "brand-orange-deep #843A01", ratio: "8.12:1 on white. Passes.", role: "The deep, text-capable orange pole of the axis. Also used directly as colour-accent." },
+  { cssVar: "--brand-purple", label: "brand-purple #613F87", ratio: "8.17:1 on white. Passes.", role: "The purple pole of the axis. Also used directly as colour-action." },
 ];
 
 const ROLE_TOKENS: PaletteEntry[] = [
-  { cssVar: "--ink-900", label: "ink-900", ratio: "17.87:1 on white, 15.91:1 dark", role: "Body text." },
-  { cssVar: "--ink-600", label: "ink-600", ratio: "9.74:1 on white, 10.58:1 dark", role: "Secondary text." },
-  { cssVar: "--ink-500", label: "ink-500", ratio: "5.90:1 on white, 6.84:1 dark", role: "Hint text. The lightest text colour this system permits." },
-  { cssVar: "--colour-action", label: "colour-action", ratio: "8.72:1 on white, 9.35:1 dark", role: "Links, primary buttons. The purple pole of the orange-purple axis." },
-  { cssVar: "--colour-action-hover", label: "colour-action-hover", ratio: "11.07:1 on white, 11.63:1 dark", role: "Hover state for the action colour." },
-  { cssVar: "--colour-accent", label: "colour-accent", ratio: "6.43:1 on white, 10.06:1 dark", role: "Secondary action colour, tab and Details accents. The deep orange pole of the axis." },
-  { cssVar: "--colour-accent-strong", label: "colour-accent-strong", ratio: "8.92:1 on white, 12.35:1 dark", role: "A stronger secondary action colour." },
-  { cssVar: "--line-strong", label: "line-strong", ratio: "3.65:1 on white, 3.46:1 on surface-alt", role: "Control borders (1.4.11). --line is decorative only and never identifies a control." },
+  { cssVar: "--ink-900", label: "ink-900", ratio: "17.17:1 on white, 15.08:1 dark", role: "Body text." },
+  { cssVar: "--ink-600", label: "ink-600", ratio: "8.00:1 on white, 9.21:1 dark", role: "Secondary text." },
+  { cssVar: "--ink-500", label: "ink-500", ratio: "5.53:1 on white, 6.30:1 dark", role: "Hint text. The lightest text colour this system permits." },
+  { cssVar: "--colour-action", label: "colour-action", ratio: "8.17:1 on white, 10.83:1 dark", role: "Links, primary buttons. The purple pole of the orange-purple axis, matched to colour-accent in weight." },
+  { cssVar: "--colour-action-hover", label: "colour-action-hover", ratio: "12.28:1 on white, 13.81:1 dark", role: "Hover state for the action colour." },
+  { cssVar: "--colour-accent", label: "colour-accent", ratio: "8.12:1 on white, 10.89:1 dark", role: "Secondary action colour, tab and Details accents. The deep orange pole of the axis, matched to colour-action in weight." },
+  { cssVar: "--colour-accent-strong", label: "colour-accent-strong", ratio: "12.12:1 on white, 13.80:1 dark", role: "A stronger secondary action colour." },
+  { cssVar: "--line-strong", label: "line-strong", ratio: "3.87:1 on white, 3.68:1 on surface-alt", role: "Control borders (1.4.11). --line is decorative only and never identifies a control." },
 ];
 
 const FILL_TOKENS: PaletteEntry[] = [
-  { cssVar: "--fill-transport", label: "fill-transport", ratio: "ink-on-fill 8.91:1", role: "Shuttle, buses, boats, anything time sensitive. Tags and badges only, per the hard rule." },
-  { cssVar: "--fill-welfare", label: "fill-welfare", ratio: "ink-on-fill 7.28:1", role: "Welfare, health, wellbeing. Tags and badges only." },
-  { cssVar: "--fill-activity", label: "fill-activity", ratio: "ink-on-fill 6.08:1", role: "Clubs, events, activities. Tags and badges only." },
+  { cssVar: "--fill-transport", label: "fill-transport", ratio: "ink-on-fill 7.13:1", role: "Shuttle, buses, boats, anything time sensitive. Tags and badges only, per the hard rule." },
+  { cssVar: "--fill-welfare", label: "fill-welfare", ratio: "ink-on-fill 5.99:1", role: "Welfare, health, wellbeing. Tags and badges only." },
+  { cssVar: "--fill-activity", label: "fill-activity", ratio: "ink-on-fill 7.03:1", role: "Clubs, events, activities. Tags and badges only." },
   {
     cssVar: "--fill-governance",
     label: "fill-governance",
-    ratio: "ink-on-fill 5.39:1",
+    ratio: "ink-on-fill 6.09:1",
     role: "TUSU, TUSC, policy. Tags and badges only. A fixed hex on the purple side of the axis, independent of --brand-purple, which is tuned dark for text rather than for a light saturated fill.",
   },
 ];
 
 const STATUS_TOKENS: PaletteEntry[] = [
-  { cssVar: "--status-success", label: "status-success", ratio: "5.42:1 on white", role: "StatusTag icon colour only. The label text is always ink-900, per 1.4.1: colour is reinforcement, not the only signal." },
-  { cssVar: "--status-warning", label: "status-warning", ratio: "7.06:1 on white", role: "Same." },
-  { cssVar: "--status-error", label: "status-error", ratio: "6.24:1 on white", role: "Same." },
+  { cssVar: "--status-success", label: "status-success", ratio: "6.42:1 on white", role: "StatusTag icon colour only. The label text is always ink-900, per 1.4.1: colour is reinforcement, not the only signal." },
+  { cssVar: "--status-warning", label: "status-warning", ratio: "6.80:1 on white", role: "Same." },
+  { cssVar: "--status-error", label: "status-error", ratio: "6.54:1 on white", role: "Same." },
   { cssVar: "--status-info", label: "status-info", ratio: "9.04:1 on white", role: "Same." },
-  { cssVar: "--status-neutral", label: "status-neutral", ratio: "9.74:1 on white", role: "Same." },
+  { cssVar: "--status-neutral", label: "status-neutral", ratio: "8.00:1 on white", role: "Same." },
 ];
 
 function Swatch({ entry }: { entry: PaletteEntry }) {
