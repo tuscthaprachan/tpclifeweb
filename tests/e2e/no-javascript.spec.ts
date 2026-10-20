@@ -206,8 +206,9 @@ test("/eat/week redirects to a shareable seed and locks work as links", async ({
 });
 
 test("/eat/mine explains that it needs JavaScript", async ({ page }) => {
-  await page.goto(localePath("en", "/eat/mine"));
-  await expect(page.getByText("This page needs JavaScript")).toBeVisible();
+  const response = await page.request.get(localePath("en", "/eat/mine"));
+  const html = await response.text();
+  expect(html).toMatch(/<noscript>[\s\S]*This page needs JavaScript[\s\S]*<\/noscript>/);
 });
 
 /* ---- Eat as a group: the builder round trips as a plain GET form ---- */
@@ -220,9 +221,11 @@ test("Eat as a group: Add another person works without JavaScript", async ({ pag
   await expect(page).toHaveURL(/p=Mint\.50~Ben~\./);
   await expect(page.getByRole("group", { name: "Person 3" })).toBeVisible();
 
-  await page.getByRole("button", { name: /^Remove Person 1/ }).click();
+  await page.getByRole("button", { name: /^Remove Person 1/ }).focus();
+  await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/p=Ben~\./);
-  await page.getByRole("button", { name: "Show results" }).click();
+  await page.getByRole("button", { name: "Show results" }).focus();
+  await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#results$/);
 });
 
