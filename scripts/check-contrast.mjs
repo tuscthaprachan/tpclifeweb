@@ -222,6 +222,37 @@ for (const [themeName, tokens] of [
   }
 }
 
+/*
+ * Share images (lib/og). Fixed colours, no theme. Cards are shown scaled down
+ * in feeds, so every text pair is held to 4.5:1 rather than the large-text 3:1.
+ */
+{
+  const og = JSON.parse(readFileSync(join(root, "lib", "og", "palette.json"), "utf8"));
+  console.log("\nshare images");
+  console.log("-".repeat(72));
+  for (const [tone, { fill, soft, ink }] of Object.entries(og.tones)) {
+    for (const [fg, bg, why] of [
+      [og.ink, soft, "title"],
+      [og.inkMuted, soft, "description and campus"],
+      [og.purple, soft, "wordmark purple"],
+      [og.orangeText, soft, "wordmark orange"],
+      [ink, fill, "section label"],
+    ]) {
+      const r = ratio(fg, bg);
+      checks += 1;
+      const ok = r >= 4.5;
+      if (!ok) failures += 1;
+      if (!ok || process.env.VERBOSE) {
+        console.log(`  ${ok ? "ok  " : "FAIL"} ${r.toFixed(2).padStart(5)}:1 (need 4.5) ${fg} on ${bg}  ${tone} ${why}`);
+      }
+    }
+  }
+  if (FILL_ONLY.has(og.orangeText) || FILL_ONLY.has(og.purple)) {
+    console.error("  FAIL  a share image text colour is a fill-only brand colour.");
+    failures += 1;
+  }
+}
+
 console.log("-".repeat(72));
 if (failures > 0) {
   console.error(`\n${failures} contrast failure(s) across ${checks} checks.\n`);

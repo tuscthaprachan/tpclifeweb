@@ -15,6 +15,11 @@
  * raised and narrow mark glyphs mapped to private-use code points
  * (U+F700 to U+F710), and `shapeThai` swaps them in before rendering.
  *
+ * Colours live in `palette.json` so `scripts/check-contrast.mjs` can hold
+ * every text pair to 4.5:1. Share cards are shown scaled down to a third or
+ * less, so no text here counts as large. The orange bar is decorative and
+ * carries no text, so it may stay the fill-only brand orange.
+ *
  * `next.config.ts` traces `assets/og/**` into every server bundle so the
  * runtime-rendered images for dynamic slugs find the files on Vercel.
  */
@@ -26,19 +31,14 @@ import { ImageResponse } from "next/og";
 
 import { DEFAULT_LOCALE, isLocale, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 
+import palette from "./palette.json";
+
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = "image/png";
 
 export type OgTone = "brand" | "transport" | "welfare" | "activity" | "governance" | "canteen";
 
-const TONE: Record<OgTone, { fill: string; soft: string; ink?: string }> = {
-  brand: { fill: "#613f87", soft: "#f1eff5", ink: "#ffffff" },
-  transport: { fill: "#e7935b", soft: "#fbe4d7" },
-  welfare: { fill: "#e07e61", soft: "#fbdfd7" },
-  activity: { fill: "#c293e5", soft: "#f0e4f9" },
-  governance: { fill: "#998fe8", soft: "#e4e3fb" },
-  canteen: { fill: "#e7935b", soft: "#fef8f4" },
-};
+const TONE: Record<OgTone, { fill: string; soft: string; ink: string }> = palette.tones;
 
 const SERVICE_NAME: LocaleString = { th: "#ท้ายท่าพระจันทร์", en: "#tpclife" };
 const CAMPUS: LocaleString = {
@@ -80,9 +80,6 @@ function loadFonts() {
   fonts ??= readFonts();
   return fonts;
 }
-
-const BRAND_PURPLE = "#613f87";
-const BRAND_ORANGE = "#e7935b";
 
 const UPPER_VOWELS = "\u0E31\u0E34\u0E35\u0E36\u0E37\u0E47\u0E4D";
 const TALL_CONSONANTS = "\u0E1B\u0E1D\u0E1F";
@@ -132,12 +129,12 @@ export function ogLocale(raw: string | undefined): Locale {
 }
 
 /** Alt text that says what the image shows, for `generateImageMetadata`. */
-export function ogAlt({ locale, title, kicker }: Pick<OgContent, "locale" | "title" | "kicker">): string {
-  return [kicker, title, pick(SERVICE_NAME, locale)].filter(Boolean).join(" · ");
+export function ogAlt({ locale, title, kicker, description }: OgContent): string {
+  return [kicker, title, description, pick(SERVICE_NAME, locale)].filter(Boolean).join(" · ");
 }
 
 export async function renderOgImage({ locale, title, kicker, description, tone = "brand" }: OgContent): Promise<ImageResponse> {
-  const { fill, soft, ink = "#1f1a1c" } = TONE[tone];
+  const { fill, soft, ink } = TONE[tone];
   const heading = shapeThai(clip(title, 110));
   const lede = description ? shapeThai(clip(description, 160)) : undefined;
   const serviceName = pick(SERVICE_NAME, locale);
@@ -152,12 +149,12 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
           display: "flex",
           background: "#ffffff",
           fontFamily: "Lexend, Sarabun",
-          color: "#1f1a1c",
+          color: palette.ink,
         }}
       >
         <div style={{ width: 28, height: "100%", display: "flex", flexDirection: "column" }}>
-          <div style={{ flex: 1, display: "flex", background: BRAND_PURPLE }} />
-          <div style={{ flex: 1, display: "flex", background: BRAND_ORANGE }} />
+          <div style={{ flex: 1, display: "flex", background: palette.purple }} />
+          <div style={{ flex: 1, display: "flex", background: palette.orangeBar }} />
         </div>
         <div
           style={{
@@ -199,7 +196,7 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
               {heading}
             </div>
             {lede ? (
-              <div style={{ display: "flex", fontSize: 32, lineHeight: locale === "th" ? 1.6 : 1.4, color: "#554f51", marginTop: 24 }}>{lede}</div>
+              <div style={{ display: "flex", fontSize: 32, lineHeight: locale === "th" ? 1.6 : 1.4, color: palette.inkMuted, marginTop: 24 }}>{lede}</div>
             ) : null}
           </div>
           <div
@@ -207,7 +204,7 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              borderTop: "3px solid #e2dcde",
+              borderTop: `3px solid ${palette.rule}`,
               paddingTop: 28,
             }}
           >
@@ -219,13 +216,13 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
                 fontWeight: 700,
                 lineHeight: 1,
                 fontFamily: locale === "th" ? "Sarabun" : "Lexend",
-                color: BRAND_PURPLE,
+                color: palette.purple,
               }}
             >
-              <span style={{ color: BRAND_ORANGE }}>{shapeThai(lead)}</span>
+              <span style={{ color: palette.orangeText }}>{shapeThai(lead)}</span>
               <span>{shapeThai(serviceName.slice(lead.length))}</span>
             </div>
-            <div style={{ display: "flex", fontSize: 28, color: "#554f51" }}>{shapeThai(pick(CAMPUS, locale))}</div>
+            <div style={{ display: "flex", fontSize: 28, color: palette.inkMuted }}>{shapeThai(pick(CAMPUS, locale))}</div>
           </div>
         </div>
       </div>
