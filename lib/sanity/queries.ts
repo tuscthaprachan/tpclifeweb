@@ -802,6 +802,10 @@ export const CANTEEN_DATA_QUERY = defineQuery(`
  * empty arrays and dishes that point at a missing stall are dropped.
  */
 export async function getCanteenData(): Promise<CanteenData> {
+  if (process.env.NODE_ENV !== "production" && process.env.CANTEEN_FIXTURE === "1") {
+    const { makeData } = await import("@/tests/unit/canteen/fixture");
+    return makeData();
+  }
   const raw = await safeFetch<Partial<CanteenData> | null>(
     "getCanteenData",
     () => client.fetch<Partial<CanteenData> | null>(
