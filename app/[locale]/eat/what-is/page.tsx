@@ -78,7 +78,7 @@ export default async function WhatIsIndexPage({
                   <li key={canonical._id} className="min-w-0 rounded-panel border border-line bg-surface p-[var(--space-4)]">
                     <Stack space={2}>
                       <Heading level={2} visualLevel={4} className="m-0">
-                        <Link href={eatHref(locale, `/eat/what-is/${canonical.slug.current}`, filters)}>{pick(canonical.name, locale)}</Link>
+                        <Link href={eatHref(locale, `/eat/what-is/${canonical.slug.current}`, filters)} className="inline-flex min-h-[var(--target-min)] items-center">{pick(canonical.name, locale)}</Link>
                       </Heading>
                       {otherName && otherName !== pick(canonical.name, locale) ? (
                         <p lang={other} className="m-0 text-ink-600">
