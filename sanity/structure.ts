@@ -1,6 +1,7 @@
 import type { StructureResolver } from "sanity/structure";
 
 import { apiVersion } from "@/lib/sanity/env";
+import { CANTEEN_PRICE_STALE_DAYS } from "@/sanity/schemas/constants";
 
 /**
  * Desk structure, grouped by what an editor is actually trying to do rather
@@ -12,6 +13,8 @@ import { apiVersion } from "@/lib/sanity/env";
 export const structure: StructureResolver = (S) => {
   const sixMonthsAgo = new Date();
   sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  const stalePriceCutoff = new Date();
+  stalePriceCutoff.setDate(stalePriceCutoff.getDate() - CANTEEN_PRICE_STALE_DAYS);
 
   return S.list()
     .title("TPC Life")
@@ -105,6 +108,54 @@ export const structure: StructureResolver = (S) => {
             .items([
               S.documentTypeListItem("organisation").title("Organisations"),
               S.documentTypeListItem("place").title("Places"),
+            ]),
+        ),
+
+      /*
+       * Canteen. Prices are surveyed, so the list that matters most is the one
+       * that shows which dishes have gone too long without a price check. A
+       * dish with no `checkedOn` at all counts as not checked.
+       */
+      S.listItem()
+        .title("Canteen")
+        .child(
+          S.list()
+            .title("Canteen")
+            .items([
+              S.listItem()
+                .title("Stalls")
+                .child(
+                  S.documentTypeList("canteenStall")
+                    .title("Stalls")
+                    .defaultOrdering([{ field: "number", direction: "asc" }]),
+                ),
+              S.listItem()
+                .title("Dishes")
+                .child(
+                  S.documentTypeList("canteenDish")
+                    .title("Dishes")
+                    .defaultOrdering([{ field: "name.en", direction: "asc" }]),
+                ),
+              S.documentTypeListItem("canonicalDish").title("Canonical dishes"),
+              S.listItem()
+                .title(`Prices not checked in ${CANTEEN_PRICE_STALE_DAYS} days`)
+                .child(
+                  S.documentList()
+                    .title(`Prices not checked in ${CANTEEN_PRICE_STALE_DAYS} days`)
+                    .apiVersion(apiVersion)
+                    .filter('_type == "canteenDish" && (!defined(checkedOn) || checkedOn < $cutoff)')
+                    .params({ cutoff: stalePriceCutoff.toISOString().slice(0, 10) })
+                    .defaultOrdering([{ field: "checkedOn", direction: "asc" }]),
+                ),
+              S.divider(),
+              S.listItem()
+                .title("Canteen settings")
+                .child(
+                  S.document()
+                    .schemaType("canteenSettings")
+                    .documentId("canteenSettings")
+                    .title("Canteen settings"),
+                ),
             ]),
         ),
 

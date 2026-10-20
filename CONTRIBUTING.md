@@ -49,6 +49,10 @@ Every user-facing string exists in Thai and English. Neither is a translation of
 - **No em dashes.** Use a comma, a full stop, or restructure. `npm run check:i18n` fails the build on one.
 - Reuse a string from `lib/i18n/strings.ts` rather than inventing a synonym.
 
+### The /eat section
+
+The What to eat section (`/[locale]/eat`) is the one place that may use a warmer, casual voice, for example "Go with this" and "เอาอันนี้ไป". Every other rule on this page still applies there: every string in both languages and each written as native Thai or English, no em dashes, and the honesty rules below. Prices always show the date they were checked, diet tags say "stall says" or "certified", and nothing implies live data. Food has no fifth fill: use `--fill-welfare` for the section.
+
 ## Accessibility
 
 WCAG 2.2 AA is a build gate. The parts that catch people out:

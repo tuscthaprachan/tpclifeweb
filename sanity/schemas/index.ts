@@ -20,6 +20,10 @@ import { policyUpdate } from "./objects/policyUpdate";
 import { serviceCalendar } from "./objects/serviceCalendar";
 import { shuttleStop } from "./objects/shuttleStop";
 
+import { canonicalDish } from "./documents/canonicalDish";
+import { canteenDish } from "./documents/canteenDish";
+import { canteenSettings } from "./documents/canteenSettings";
+import { canteenStall } from "./documents/canteenStall";
 import { event } from "./documents/event";
 import { faq } from "./documents/faq";
 import { form } from "./documents/form";
@@ -79,4 +83,10 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   organisation,
   place,
   lostFoundItem,
+
+  // Canteen ("What to eat")
+  canteenSettings,
+  canteenStall,
+  canonicalDish,
+  canteenDish,
 ];

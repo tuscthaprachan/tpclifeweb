@@ -41,8 +41,17 @@ const TAGS_BY_TYPE: Record<string, readonly CacheTag[]> = {
   guidePage: [CACHE_TAGS.content, CACHE_TAGS.searchIndex],
   faq: [CACHE_TAGS.faq, CACHE_TAGS.searchIndex],
   organisation: [CACHE_TAGS.directory, CACHE_TAGS.searchIndex],
-  place: [CACHE_TAGS.place, CACHE_TAGS.searchIndex],
+  // The canteen dataset embeds its place (for the opening hours), so a place edit refreshes it too.
+  place: [CACHE_TAGS.place, CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
   lostFoundItem: [CACHE_TAGS.lostFound, CACHE_TAGS.searchIndex],
+  // The canteen is one cached dataset (settings, stalls, dishes, canonical
+  // dishes), so a change to any of the four refreshes the whole thing. Dishes
+  // and canonical dish aliases are meant to join the search index, so those
+  // types also invalidate its tag.
+  canteenSettings: [CACHE_TAGS.canteen],
+  canteenStall: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
+  canteenDish: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
+  canonicalDish: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
 };
 
 export async function POST(request: NextRequest) {

@@ -569,3 +569,216 @@ export interface SearchIndex {
   generatedAt: string;
   records: SearchRecord[];
 }
+
+/* ------------------------------------------------------------------ *
+ * Canteen ("What to eat")
+ *
+ * One on-campus canteen, maintained by TUSU editors in Sanity. The dish is
+ * the primary object; a stall is where you walk to.
+ *
+ * HONESTY. Every price is a surveyed figure with a "checked on" date, never
+ * a current price. Diet fields are the stall's own word. There is NO
+ * allergen data anywhere in this model, on purpose, and no operational
+ * signal (closed today, sold out, queue, payment method).
+ *
+ * `canteenDish.stall` and `canteenDish.canonical` are stored as references and
+ * `getCanteenData` returns them as references (`{ _ref }`). The pure code in
+ * `lib/canteen` joins them with `indexCanteen` in `lib/canteen/derive.ts`, so
+ * the whole dataset ships once and filtering is instant on the client.
+ * ------------------------------------------------------------------ */
+
+/** Fixed cuisine list for a stall. A stall can have several. */
+export type CanteenCuisine =
+  | "thaiRice"
+  | "madeToOrder"
+  | "noodles"
+  | "isan"
+  | "chickenRice"
+  | "curryOverRice"
+  | "muslim"
+  | "drinks"
+  | "desserts"
+  | "fruit";
+
+/**
+ * `stallDeclared` is the stall's own word, recorded with the date it was
+ * asked (`halalCheckedOn`). `certified` is stronger and needs a certificate
+ * on file. Shown as "stall says halal" and "certified halal".
+ */
+export type HalalStatus = "none" | "stallDeclared" | "certified";
+
+export type DishType =
+  | "rice"
+  | "noodles"
+  | "soup"
+  | "curryOverRice"
+  | "madeToOrder"
+  | "singlePlate"
+  | "snack"
+  | "drink"
+  | "dessert";
+
+/** Drives meal combos: one main, optionally one drink and one dessert. */
+export type DishCourse = "main" | "side" | "drink" | "dessert";
+
+export type Protein = "pork" | "chicken" | "beef" | "seafood" | "fish" | "egg" | "tofu" | "none";
+
+export type CookingStyle =
+  | "stirFried"
+  | "deepFried"
+  | "boiled"
+  | "grilled"
+  | "steamed"
+  | "salad"
+  | "curry";
+
+export type Temperature = "hot" | "cold";
+
+/** Typical spice as made by default: 0 not spicy, 1 mild, 2 medium, 3 hot. */
+export type SpiceLevel = 0 | 1 | 2 | 3;
+
+/**
+ * Whether a dish suits a diet. `canAsk` means the stall will make it that
+ * way on request. It is the stall's word, not a guarantee.
+ */
+export type DietAvailability = "no" | "canAsk" | "yes";
+
+/** Which edge of the floor plan something sits on. */
+export type FloorSide = "north" | "south" | "east" | "west";
+
+/** A rectangle on the floor plan grid. Columns and rows count from 0 at the top left. */
+export interface MapCell {
+  col: number;
+  row: number;
+  w: number;
+  h: number;
+}
+
+export interface CanteenStall extends DocumentMeta {
+  _type: "canteenStall";
+  name: LocaleString;
+  slug: SanitySlug;
+  /** As painted on the stall. */
+  number: number;
+  cuisine: CanteenCuisine[];
+  halal: HalalStatus;
+  /** The date the stall was asked about halal. Shown beside the tag. */
+  halalCheckedOn?: string;
+  /** The whole stall is vegetarian or jay. */
+  vegetarianStall?: boolean;
+  /** Optional. When absent the canteen's hours apply. */
+  hours?: OpeningHours[];
+  mapCell: MapCell;
+  wayfinding?: LocaleString;
+  photo?: SanityImage;
+}
+
+/** One way to order a dish, shown on the "what is this dish" page. */
+export interface HowToOrderPhrase {
+  _key: string;
+  th: string;
+  romanised: string;
+  en: string;
+}
+
+/** The taxonomy layer: one per real-world dish, not per stall. */
+export interface CanonicalDish extends DocumentMeta {
+  _type: "canonicalDish";
+  name: LocaleString;
+  slug: SanitySlug;
+  /** Alternative spellings that feed search, for example krapow, kaprao. */
+  aliases?: string[];
+  explainer?: LocaleText;
+  howToOrder?: HowToOrderPhrase[];
+}
+
+/** A priced variant, for example "special" +10 or "add egg" +10. */
+export interface DishVariant {
+  _key: string;
+  label: LocaleString;
+  /** Baht added to the base price. Never negative. */
+  delta: number;
+}
+
+/** One surveyed price. Append only, so the history is evidence rather than a guess. */
+export interface DishPriceRecord {
+  _key: string;
+  price: number;
+  /** "YYYY-MM-DD", the day the price was read off the board. */
+  checkedOn: string;
+}
+
+export interface CanteenDish extends DocumentMeta {
+  _type: "canteenDish";
+  /** As the stall writes it. */
+  name: LocaleString;
+  slug: SanitySlug;
+  stall: SanityRef;
+  canonical?: SanityRef;
+  /** Baht, the base price as surveyed. */
+  price: number;
+  variants?: DishVariant[];
+  type: DishType;
+  course: DishCourse;
+  protein: Protein[];
+  style: CookingStyle;
+  spice: SpiceLevel;
+  temperature: Temperature;
+  /** Soupy or with sauce. */
+  wet: boolean;
+  vegetarian: DietAvailability;
+  vegan: DietAvailability;
+  jay: DietAvailability;
+  photo?: SanityImage;
+  priceHistory?: DishPriceRecord[];
+  /** "YYYY-MM-DD", the day the current price was last checked. */
+  checkedOn: string;
+  /** Drives the "prices not checked" view in the Studio. */
+  lastReviewed?: string;
+}
+
+/** An entrance to the canteen, positioned on the edge of the floor plan. */
+export interface CanteenEntrance {
+  _key: string;
+  label: LocaleString;
+  col: number;
+  row: number;
+  side: FloorSide;
+}
+
+export interface CanteenSeatingZone {
+  _key: string;
+  label: LocaleString;
+  col: number;
+  row: number;
+  w: number;
+  h: number;
+}
+
+/** Singleton. Holds the floor plan and the jay festival window. */
+export interface CanteenSettings extends DocumentMeta {
+  _type: "canteenSettings";
+  /** The canteen `place`, which carries the hours and the location. */
+  canteen?: CampusPlace | SanityRef;
+  gridCols: number;
+  gridRows: number;
+  entrances?: CanteenEntrance[];
+  seatingZones?: CanteenSeatingZone[];
+  /** Which edge of the plan faces the river. */
+  riverSide?: FloorSide;
+  /** "YYYY-MM-DD". Inclusive. Turns on the jay banner and a default filter suggestion. */
+  jayFestivalStart?: string;
+  jayFestivalEnd?: string;
+}
+
+/**
+ * Everything the canteen section needs, in one value. Around 300 dishes, so
+ * it is shipped once and filtered in memory on the server and the client.
+ * `settings` is null until an editor creates the singleton.
+ */
+export interface CanteenData {
+  settings: CanteenSettings | null;
+  stalls: CanteenStall[];
+  dishes: CanteenDish[];
+  canonicals: CanonicalDish[];
+}

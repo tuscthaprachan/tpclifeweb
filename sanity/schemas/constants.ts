@@ -30,3 +30,108 @@ export const WEEKDAY_OPTIONS = [
   { title: "Friday", value: 5 },
   { title: "Saturday", value: 6 },
 ];
+
+/* ------------------------------------------------------------------ *
+ * Canteen ("What to eat")
+ *
+ * Every list below mirrors a union in `lib/sanity/types.ts` and a list in
+ * `lib/canteen/options.ts`. A unit test (`tests/unit/canteen/options.test.ts`)
+ * fails if the three drift apart.
+ * ------------------------------------------------------------------ */
+
+/** Matches `CanteenCuisine`. A stall can have several. */
+export const CANTEEN_CUISINE_OPTIONS = [
+  { title: "Thai rice dishes", value: "thaiRice" },
+  { title: "Made to order (ตามสั่ง)", value: "madeToOrder" },
+  { title: "Noodles", value: "noodles" },
+  { title: "Isan", value: "isan" },
+  { title: "Chicken rice", value: "chickenRice" },
+  { title: "Curry over rice", value: "curryOverRice" },
+  { title: "Muslim food", value: "muslim" },
+  { title: "Drinks", value: "drinks" },
+  { title: "Desserts", value: "desserts" },
+  { title: "Fruit", value: "fruit" },
+];
+
+/** Matches `HalalStatus`. "Stall says" is the stall's own word, "certified" needs a certificate on file. */
+export const HALAL_OPTIONS = [
+  { title: "None", value: "none" },
+  { title: "Stall says it is halal (asked, no certificate)", value: "stallDeclared" },
+  { title: "Certified halal (certificate on file)", value: "certified" },
+];
+
+/** Matches `DishType`. */
+export const DISH_TYPE_OPTIONS = [
+  { title: "Rice", value: "rice" },
+  { title: "Noodles", value: "noodles" },
+  { title: "Soup", value: "soup" },
+  { title: "Curry over rice", value: "curryOverRice" },
+  { title: "Made to order (ตามสั่ง)", value: "madeToOrder" },
+  { title: "Single plate", value: "singlePlate" },
+  { title: "Snack", value: "snack" },
+  { title: "Drink", value: "drink" },
+  { title: "Dessert", value: "dessert" },
+];
+
+/** Matches `DishCourse`. Drives the meal combos: one main, optionally a drink and a dessert. */
+export const DISH_COURSE_OPTIONS = [
+  { title: "Main", value: "main" },
+  { title: "Side", value: "side" },
+  { title: "Drink", value: "drink" },
+  { title: "Dessert", value: "dessert" },
+];
+
+/** Matches `Protein`. */
+export const PROTEIN_OPTIONS = [
+  { title: "Pork", value: "pork" },
+  { title: "Chicken", value: "chicken" },
+  { title: "Beef", value: "beef" },
+  { title: "Seafood", value: "seafood" },
+  { title: "Fish", value: "fish" },
+  { title: "Egg", value: "egg" },
+  { title: "Tofu", value: "tofu" },
+  { title: "None", value: "none" },
+];
+
+/** Matches `CookingStyle`. */
+export const COOKING_STYLE_OPTIONS = [
+  { title: "Stir-fried", value: "stirFried" },
+  { title: "Deep-fried", value: "deepFried" },
+  { title: "Boiled or soup", value: "boiled" },
+  { title: "Grilled", value: "grilled" },
+  { title: "Steamed", value: "steamed" },
+  { title: "Salad", value: "salad" },
+  { title: "Curry", value: "curry" },
+];
+
+/** Matches `Temperature`. */
+export const TEMPERATURE_OPTIONS = [
+  { title: "Hot", value: "hot" },
+  { title: "Cold", value: "cold" },
+];
+
+/** Typical spice as made by default. Stored as a number 0 to 3. */
+export const SPICE_OPTIONS = [
+  { title: "0, not spicy", value: 0 },
+  { title: "1, mild", value: 1 },
+  { title: "2, medium", value: 2 },
+  { title: "3, hot", value: 3 },
+];
+
+/** Matches `DietAvailability`. "Can ask" means the stall will make it without meat on request. */
+export const DIET_AVAILABILITY_OPTIONS = [
+  { title: "No", value: "no" },
+  { title: "Can ask (the stall will make it this way on request)", value: "canAsk" },
+  { title: "Yes (as it is normally made)", value: "yes" },
+];
+
+/** Matches `FloorSide`. Which edge of the floor plan an entrance or the river is on. */
+export const FLOOR_SIDE_OPTIONS = [
+  { title: "North (top of the plan)", value: "north" },
+  { title: "South (bottom of the plan)", value: "south" },
+  { title: "East (right of the plan)", value: "east" },
+  { title: "West (left of the plan)", value: "west" },
+];
+
+/** Price older than this many days appears in the Studio list "Prices not checked in 120 days". */
+export const CANTEEN_PRICE_STALE_DAYS = 120;

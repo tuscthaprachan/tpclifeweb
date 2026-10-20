@@ -68,6 +68,7 @@ export const CACHE_TAGS = {
   place: "place",
   faq: "faq",
   lostFound: "lostFound",
+  canteen: "canteen",
   searchIndex: "searchIndex",
 } as const;
 

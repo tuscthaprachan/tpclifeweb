@@ -19,8 +19,10 @@ import { defineQuery } from "next-sanity";
 import { client } from "./client";
 import { CACHE_TAGS } from "./env";
 import { safeFetch } from "./safe-fetch";
+import { emptyCanteenData, normaliseCanteenData } from "@/lib/canteen/derive";
 import type {
   CampusEvent,
+  CanteenData,
   CampusPlace,
   Faq,
   FormRecord,
@@ -748,4 +750,66 @@ export async function getSearchIndex(): Promise<SearchIndex> {
   ];
 
   return { generatedAt: new Date().toISOString(), records };
+}
+
+/* ------------------------------------------------------------------ *
+ * Canteen ("What to eat")
+ * ------------------------------------------------------------------ */
+
+/**
+ * The whole canteen dataset in one request: around 300 dishes, roughly 40 KB
+ * as JSON. One cached query feeds every page and is shipped once to the
+ * client, so filtering is instant and the server and client run the same
+ * code on the same data.
+ *
+ * REFERENCES. `dish.stall` and `dish.canonical` come back as references
+ * (`{ _ref, _type }`), not expanded documents. That is deliberate: expanding
+ * them would copy each stall into every one of its dishes and bloat the
+ * payload that is sent to the browser. `lib/canteen/derive.ts` joins them
+ * once with `indexCanteen(data)`. The one reference that IS expanded is the
+ * settings' `canteen` place, because the opening hours live on it and only
+ * one copy exists.
+ *
+ * Reads with the plain `client`, so the published perspective applies and
+ * drafts never reach readers.
+ */
+export const CANTEEN_DATA_QUERY = defineQuery(`
+  {
+    "settings": *[_type == "canteenSettings"][0]{
+      ${DOC_META}
+      ...,
+      canteen->{ ${DOC_META} name, slug, openingHours, closureNote }
+    },
+    "stalls": *[_type == "canteenStall"] | order(number asc){
+      ${DOC_META}
+      ...
+    },
+    "dishes": *[_type == "canteenDish"] | order(name.en asc){
+      ${DOC_META}
+      ...
+    },
+    "canonicals": *[_type == "canonicalDish"] | order(name.en asc){
+      ${DOC_META}
+      ...
+    }
+  }
+`);
+
+/**
+ * Fetches the canteen dataset. Returns an empty but valid `CanteenData` when
+ * nothing exists yet or when the CMS cannot be reached, so every canteen page
+ * can render its empty state. The result is normalised: missing arrays become
+ * empty arrays and dishes that point at a missing stall are dropped.
+ */
+export async function getCanteenData(): Promise<CanteenData> {
+  const raw = await safeFetch<Partial<CanteenData> | null>(
+    "getCanteenData",
+    () => client.fetch<Partial<CanteenData> | null>(
+      CANTEEN_DATA_QUERY,
+      {},
+      { next: { tags: [CACHE_TAGS.canteen] } },
+    ),
+    null,
+  );
+  return raw ? normaliseCanteenData(raw) : emptyCanteenData();
 }
