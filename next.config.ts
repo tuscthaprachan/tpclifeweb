@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  // Fonts read at runtime by lib/og/render.tsx for share images.
+  outputFileTracingIncludes: {
+    "/**": ["./assets/og/**"],
+  },
+
   images: {
     remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
     formats: ["image/avif", "image/webp"],
