@@ -23,7 +23,7 @@ import { getSiteSettings } from "@/components/layout/site-settings";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SkipLink } from "@/components/layout/SkipLink";
-import { HTML_LANG, LOCALES, DEFAULT_LOCALE, OTHER_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
+import { HTML_LANG, LOCALES, DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { isStoredTheme, THEME_COOKIE, type ThemeChoice } from "@/lib/theme/config";
 
 // Every request path outside these two locales 404s instead of silently
@@ -62,15 +62,18 @@ export async function generateMetadata({
      * page. Each page calls `alternatesFor(locale, route)` from
      * `lib/i18n/metadata.ts` instead, and the structure test enforces it.
      */
+    /*
+     * No title, description or url here: a layout value would be every
+     * page's og:title. Left unset, Next fills them from each page's own
+     * metadata. Images come from the `opengraph-image.tsx` files.
+     */
     openGraph: {
-      title: name,
-      description,
-      url: localePath(locale, "/"),
       siteName: name,
       locale: HTML_LANG[locale].replace("-", "_"),
       alternateLocale: HTML_LANG[OTHER_LOCALE[locale]].replace("-", "_"),
       type: "website",
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 

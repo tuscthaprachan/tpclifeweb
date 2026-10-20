@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  // Fonts read at runtime by lib/og/render.tsx for share images.
+  outputFileTracingIncludes: {
+    "/**": ["./assets/og/**"],
+  },
+
   images: {
     remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
     formats: ["image/avif", "image/webp"],
@@ -23,7 +28,6 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
           // No camera, microphone or location. The site never needs them, and
           // saying so explicitly is cheaper than being asked why it might.
           {
@@ -31,6 +35,16 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
           },
         ],
+      },
+      {
+        source: "/((?!studio(?:/|$)).*)",
+        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
+      },
+      {
+        // The sanity.io dashboard shows the Studio in an iframe, so /studio
+        // allows that one origin instead of sending X-Frame-Options.
+        source: "/studio/:path*",
+        headers: [{ key: "Content-Security-Policy", value: "frame-ancestors 'self' https://www.sanity.io" }],
       },
       {
         // The search index is regenerated on revalidation, so it may be cached

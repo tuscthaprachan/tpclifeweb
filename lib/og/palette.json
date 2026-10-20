@@ -1,0 +1,15 @@
+{
+  "ink": "#1f1a1c",
+  "inkMuted": "#554f51",
+  "rule": "#e2dcde",
+  "purple": "#613f87",
+  "orange": "#f26b0f",
+  "tones": {
+    "brand": { "fill": "#613f87", "soft": "#f1eff5", "ink": "#ffffff" },
+    "transport": { "fill": "#e7935b", "soft": "#fbe4d7", "ink": "#1f1a1c" },
+    "welfare": { "fill": "#e07e61", "soft": "#fbdfd7", "ink": "#1f1a1c" },
+    "activity": { "fill": "#c293e5", "soft": "#f0e4f9", "ink": "#1f1a1c" },
+    "governance": { "fill": "#998fe8", "soft": "#e4e3fb", "ink": "#1f1a1c" },
+    "canteen": { "fill": "#e7935b", "soft": "#fef8f4", "ink": "#1f1a1c" }
+  }
+}
