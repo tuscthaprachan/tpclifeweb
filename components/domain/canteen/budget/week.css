@@ -1,0 +1,123 @@
+/*
+ * The week plan table. A real table on wide screens. Under 40rem each row
+ * becomes a stacked card whose cells carry their column name, so nothing
+ * scrolls sideways at 320px. Print: only the plan, as a plain table.
+ */
+
+.week-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+.week-table caption {
+  text-align: start;
+  padding-block-end: var(--space-2);
+  font-weight: 600;
+}
+
+.week-table th,
+.week-table td {
+  padding: var(--space-3);
+  text-align: start;
+  vertical-align: top;
+  border-block-end: 1px solid var(--line);
+}
+
+.week-table thead th {
+  background: var(--surface-alt);
+  font-size: var(--text-sm);
+}
+
+.week-table tfoot th,
+.week-table tfoot td {
+  font-weight: 600;
+  border-block-end: 0;
+  background: var(--surface-alt);
+}
+
+.week-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+}
+
+@media (max-width: 39.999rem) {
+  .week-table,
+  .week-table tbody,
+  .week-table tfoot,
+  .week-table tr,
+  .week-table th,
+  .week-table td {
+    display: block;
+  }
+
+  .week-table caption {
+    display: block;
+    inline-size: 100%;
+  }
+
+  .week-table thead {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .week-table tbody tr,
+  .week-table tfoot tr {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel, 0.5rem);
+    margin-block-end: var(--space-3);
+    padding: var(--space-2) 0;
+    background: var(--surface);
+  }
+
+  .week-table th,
+  .week-table td {
+    border-block-end: 0;
+    padding-block: var(--space-1);
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .week-table td[data-label]::before {
+    content: attr(data-label) ": ";
+    font-size: var(--text-sm);
+    color: var(--ink-600);
+  }
+
+  .week-table td:empty {
+    display: none;
+  }
+
+  .week-table tfoot td[data-label=""]::before {
+    content: none;
+  }
+}
+
+@media print {
+  body:has(.week-plan) :is(header, footer, nav, .skip-link, .no-print) {
+    display: none !important;
+  }
+
+  .week-plan,
+  .week-plan * {
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  .week-plan a {
+    text-decoration: none;
+  }
+
+  .week-plan .week-actions {
+    display: none;
+  }
+
+  .week-table th,
+  .week-table td {
+    border-block-end: 1px solid #000;
+  }
+}
