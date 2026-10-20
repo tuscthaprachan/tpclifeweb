@@ -43,6 +43,9 @@ const LISTINGS: Array<{ listing: string; detailPrefix: string }> = [
   { listing: "/policy", detailPrefix: "/policy/" },
   { listing: "/welfare", detailPrefix: "/welfare/" },
   { listing: "/lost-and-found", detailPrefix: "/lost-and-found/" },
+  // What to eat. Both listings are empty (and the audit skips) until the canteen has been surveyed.
+  { listing: "/eat/dishes", detailPrefix: "/eat/dishes/" },
+  { listing: "/eat/stalls", detailPrefix: "/eat/stalls/" },
 ];
 
 /**

@@ -66,11 +66,14 @@ export function ServiceNavigation({
       <ul className={LIST_CLASS[variant]}>
         {items.map((item) => {
           const isCurrent = currentPath === item.path;
+          // A page inside a section (/eat/dishes under /eat) marks the section as the place you are in,
+          // without claiming it is the section's own page.
+          const isWithin = !isCurrent && item.path !== "/" && currentPath.startsWith(`${item.path}/`);
           return (
             <li key={item.path}>
               <Link
                 href={localePath(locale, item.path)}
-                aria-current={isCurrent ? "page" : undefined}
+                aria-current={isCurrent ? "page" : isWithin ? "true" : undefined}
                 className="inline-flex min-h-[var(--target-min)] items-center py-1 font-medium text-ink-900 no-underline hover:text-action"
               >
                 {pick(item.label, locale)}

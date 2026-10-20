@@ -1,0 +1,177 @@
+/**
+ * Bilingual labels for every option value the canteen uses. One record per
+ * enum, keyed by the same value the URL and the data use, so a new option
+ * fails typecheck here until it has both languages.
+ *
+ *   label(DIET_LABEL, "nopork", locale)
+ *
+ * Diet FILTER labels live here. The wording of a diet TAG on a dish (which
+ * says "stall says" or "certified") is built in `DietTag.tsx`, from
+ * `DIET_TAG_LABEL` below.
+ */
+
+import type { Locale } from "@/lib/i18n/config";
+import type {
+  CanteenCuisine,
+  CookingStyle,
+  DishType,
+  HalalStatus,
+  Protein,
+  SpiceLevel,
+} from "@/lib/sanity/types";
+import type { AvoidKey, DietKey, FeelKey, GroupKey, SortKey } from "@/lib/canteen/params";
+import type { Bilingual } from "./strings";
+
+/** Reads one language out of a label record. */
+export function label<K extends string>(labels: Record<K, Bilingual>, key: K, locale: Locale): string {
+  return labels[key][locale];
+}
+
+/** Diet filter options, as they read on the filter form and on filter chips. */
+export const DIET_LABEL: Record<DietKey, Bilingual> = {
+  nopork: { th: "ไม่มีหมู", en: "No pork" },
+  halal: { th: "ฮาลาล (ร้านแจ้งหรือมีใบรับรอง)", en: "Halal (stall says or certified)" },
+  certified: { th: "ฮาลาลมีใบรับรอง", en: "Halal (certified only)" },
+  vegetarian: { th: "มังสวิรัติ (หรือขอทำได้)", en: "Vegetarian (or ask for it)" },
+  vegan: { th: "วีแกน (หรือขอทำได้)", en: "Vegan (or ask for it)" },
+  jay: { th: "เจ (หรือขอทำได้)", en: "Jay (or ask for it)" },
+};
+
+/** Short diet names for a chip row where space is tight, for example the Decide for me block. */
+export const DIET_SHORT_LABEL: Record<DietKey, Bilingual> = {
+  nopork: { th: "ไม่มีหมู", en: "No pork" },
+  halal: { th: "ฮาลาล", en: "Halal" },
+  certified: { th: "ฮาลาลมีใบรับรอง", en: "Certified halal" },
+  vegetarian: { th: "มังสวิรัติ", en: "Vegetarian" },
+  vegan: { th: "วีแกน", en: "Vegan" },
+  jay: { th: "เจ", en: "Jay" },
+};
+
+/** What a diet tag on a dish says. "Stall says" unless certified, "ask" when the stall will make it that way on request. */
+export const DIET_TAG_LABEL = {
+  nopork: { th: "ไม่มีหมูในรายการ", en: "No pork listed" },
+  halalStall: { th: "ร้านแจ้งว่าฮาลาล", en: "Stall says halal" },
+  halalCertified: { th: "ฮาลาลมีใบรับรอง", en: "Certified halal" },
+  vegetarianYes: { th: "ร้านแจ้งว่ามังสวิรัติ", en: "Stall says vegetarian" },
+  vegetarianAsk: { th: "ขอทำแบบมังสวิรัติได้", en: "Ask for veggie" },
+  veganYes: { th: "ร้านแจ้งว่าวีแกน", en: "Stall says vegan" },
+  veganAsk: { th: "ขอทำแบบวีแกนได้", en: "Ask for vegan" },
+  jayYes: { th: "ร้านแจ้งว่าเจ", en: "Stall says jay" },
+  jayAsk: { th: "ขอทำแบบเจได้", en: "Ask for jay" },
+} as const satisfies Record<string, Bilingual>;
+
+export const TYPE_LABEL: Record<DishType, Bilingual> = {
+  rice: { th: "ข้าวจาน", en: "Rice dishes" },
+  noodles: { th: "ก๋วยเตี๋ยวและเส้น", en: "Noodles" },
+  soup: { th: "ซุปและต้ม", en: "Soup" },
+  curryOverRice: { th: "ข้าวแกง", en: "Curry over rice" },
+  madeToOrder: { th: "อาหารตามสั่ง", en: "Made to order" },
+  singlePlate: { th: "อาหารจานเดียว", en: "Single plates" },
+  snack: { th: "ของกินเล่น", en: "Snacks" },
+  drink: { th: "เครื่องดื่ม", en: "Drinks" },
+  dessert: { th: "ของหวาน", en: "Desserts" },
+};
+
+/** Singular wording, for a tag on one dish. */
+export const TYPE_TAG_LABEL: Record<DishType, Bilingual> = {
+  rice: { th: "ข้าว", en: "Rice dish" },
+  noodles: { th: "เส้น", en: "Noodles" },
+  soup: { th: "ซุป", en: "Soup" },
+  curryOverRice: { th: "ข้าวแกง", en: "Curry over rice" },
+  madeToOrder: { th: "ตามสั่ง", en: "Made to order" },
+  singlePlate: { th: "จานเดียว", en: "Single plate" },
+  snack: { th: "ของกินเล่น", en: "Snack" },
+  drink: { th: "เครื่องดื่ม", en: "Drink" },
+  dessert: { th: "ของหวาน", en: "Dessert" },
+};
+
+export const AVOID_LABEL: Record<AvoidKey, Bilingual> = {
+  pork: { th: "ไม่เอาหมู", en: "No pork" },
+  beef: { th: "ไม่เอาเนื้อวัว", en: "No beef" },
+  seafood: { th: "ไม่เอาอาหารทะเล", en: "No seafood" },
+  fish: { th: "ไม่เอาปลา", en: "No fish" },
+  egg: { th: "ไม่เอาไข่", en: "No egg" },
+};
+
+export const FEEL_LABEL: Record<FeelKey, Bilingual> = {
+  hot: { th: "ร้อน", en: "Hot" },
+  cold: { th: "เย็น", en: "Cold" },
+  soupy: { th: "มีน้ำ", en: "Soupy" },
+  dry: { th: "แห้ง", en: "Dry" },
+  fried: { th: "ผัดหรือทอด", en: "Fried" },
+  notFried: { th: "ไม่ผัดไม่ทอด", en: "Not fried" },
+};
+
+/** The spice scale as a word: how hot a dish is by default. */
+export const SPICE_LABEL: Record<SpiceLevel, Bilingual> = {
+  0: { th: "ไม่เผ็ด", en: "Not spicy" },
+  1: { th: "เผ็ดน้อย", en: "Mild" },
+  2: { th: "เผ็ดกลาง", en: "Medium" },
+  3: { th: "เผ็ดมาก", en: "Hot" },
+};
+
+/** The spice FILTER options. The value is the ceiling: "1" means mild or less. */
+export const SPICE_FILTER_LABEL: Record<"any" | "0" | "1" | "2", Bilingual> = {
+  any: { th: "ได้ทุกระดับ", en: "Any spice" },
+  "0": { th: "ไม่เผ็ดเท่านั้น", en: "Not spicy only" },
+  "1": { th: "เผ็ดน้อยหรือต่ำกว่า", en: "Mild or less" },
+  "2": { th: "เผ็ดกลางหรือต่ำกว่า", en: "Up to medium" },
+};
+
+export const SORT_LABEL: Record<SortKey, Bilingual> = {
+  price: { th: "ราคาถูกก่อน", en: "Cheapest first" },
+  walk: { th: "ลำดับที่เดินผ่าน", en: "Walking order" },
+  name: { th: "ชื่อ ก ถึง ฮ", en: "Name, A to Z" },
+  stall: { th: "เลขร้าน", en: "Stall number" },
+};
+
+export const GROUP_LABEL: Record<GroupKey, Bilingual> = {
+  none: { th: "ไม่จัดกลุ่ม", en: "No grouping" },
+  stall: { th: "ตามร้าน", en: "By stall" },
+  canonical: { th: "ตามเมนู เทียบราคาแต่ละร้าน", en: "By dish, to compare prices" },
+};
+
+export const CUISINE_LABEL: Record<CanteenCuisine, Bilingual> = {
+  thaiRice: { th: "ข้าวราดแกง", en: "Thai rice dishes" },
+  madeToOrder: { th: "อาหารตามสั่ง", en: "Made to order" },
+  noodles: { th: "ก๋วยเตี๋ยว", en: "Noodles" },
+  isan: { th: "อาหารอีสาน", en: "Isan food" },
+  chickenRice: { th: "ข้าวมันไก่", en: "Chicken rice" },
+  curryOverRice: { th: "ข้าวแกง", en: "Curry over rice" },
+  muslim: { th: "อาหารมุสลิม", en: "Muslim food" },
+  drinks: { th: "เครื่องดื่ม", en: "Drinks" },
+  desserts: { th: "ของหวาน", en: "Desserts" },
+  fruit: { th: "ผลไม้", en: "Fruit" },
+};
+
+export const PROTEIN_LABEL: Record<Protein, Bilingual> = {
+  pork: { th: "หมู", en: "Pork" },
+  chicken: { th: "ไก่", en: "Chicken" },
+  beef: { th: "เนื้อวัว", en: "Beef" },
+  seafood: { th: "อาหารทะเล", en: "Seafood" },
+  fish: { th: "ปลา", en: "Fish" },
+  egg: { th: "ไข่", en: "Egg" },
+  tofu: { th: "เต้าหู้", en: "Tofu" },
+  none: { th: "ไม่มีเนื้อสัตว์", en: "No meat" },
+};
+
+export const STYLE_LABEL: Record<CookingStyle, Bilingual> = {
+  stirFried: { th: "ผัด", en: "Stir-fried" },
+  deepFried: { th: "ทอด", en: "Deep-fried" },
+  boiled: { th: "ต้มหรือน้ำซุป", en: "Boiled or soup" },
+  grilled: { th: "ย่างหรือปิ้ง", en: "Grilled" },
+  steamed: { th: "นึ่ง", en: "Steamed" },
+  salad: { th: "ยำหรือสลัด", en: "Salad" },
+  curry: { th: "แกง", en: "Curry" },
+};
+
+/** The halal status of a stall, in the stall's own words unless certified. */
+export const HALAL_LABEL: Record<HalalStatus, Bilingual> = {
+  none: { th: "ไม่ได้แจ้งว่าฮาลาล", en: "Not marked halal" },
+  stallDeclared: { th: "ร้านแจ้งว่าฮาลาล", en: "Stall says halal" },
+  certified: { th: "ฮาลาลมีใบรับรอง", en: "Certified halal" },
+};
+
+/** Labels for the removable chip of a budget filter and similar single-value filters. */
+export const OPEN_CHIP_LABEL: Bilingual = { th: "เปิดอยู่ตามเวลาทำการ", en: "Open by scheduled hours" };
+export const VARIANTS_CHIP_LABEL: Bilingual = { th: "นับราคาพิเศษ", en: "Special price counted" };

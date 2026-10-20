@@ -625,6 +625,7 @@ const SITE_SETTINGS_DOC = {
   primaryNav: [
     navItem("แบบฟอร์ม", "Forms", "/forms"),
     navItem("การเดินทาง", "Getting around", "/getting-around"),
+    navItem("กินอะไรดี", "What to eat", "/eat"),
     navItem("สวัสดิการนักศึกษา", "Student welfare", "/welfare"),
     navItem("ข่าวสาร", "News", "/news"),
     navItem("กิจกรรม", "Events", "/events"),

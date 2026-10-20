@@ -44,6 +44,7 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
   primaryNav: [
     { label: { th: "แบบฟอร์ม", en: "Forms" }, path: "/forms" },
     { label: { th: "การเดินทาง", en: "Getting around" }, path: "/getting-around" },
+    { label: { th: "กินอะไรดี", en: "What to eat" }, path: "/eat" },
     { label: { th: "สวัสดิการนักศึกษา", en: "Student welfare" }, path: "/welfare" },
     { label: { th: "ข่าวสาร", en: "News" }, path: "/news" },
     { label: { th: "กิจกรรม", en: "Events" }, path: "/events" },

@@ -124,3 +124,47 @@ test("pagination on /news accepts ?page= without JavaScript", async ({ page }) =
   await expect(page.locator("h1")).toHaveText(UI.news.th);
   await expect(page).toHaveURL(/page=2/);
 });
+
+/*
+ * What to eat. The filter form only exists once the canteen has dishes, so
+ * these skip against an empty CMS, the same honest limit as pagination above.
+ * Run them with CANTEEN_FIXTURE=1 on the dev server to exercise them.
+ */
+test("filters on /eat/dishes work via <form method=\"get\">", async ({ page }) => {
+  await page.goto(localePath("en", "/eat/dishes"));
+  const noPork = page.locator("#col-diet-0");
+  test.skip((await noPork.count()) === 0, "No canteen data in this environment, so there is no filter form to submit.");
+
+  // By keyboard, which is also what a keyboard user does: the controls are invisible inputs stretched over
+  // their chip, and Playwright's pointer scroll parks them under the sticky header and summary bar.
+  await noPork.focus();
+  await page.keyboard.press("Space");
+  await page.locator("#col-max-2").focus();
+  await page.keyboard.press("Space");
+  await page.locator("#col-max-2").locator("xpath=ancestor::form").getByRole("button", { name: /^Show \d+ dish/ }).click();
+
+  await expect(page).toHaveURL(/max=50/);
+  await expect(page).toHaveURL(/diet=nopork/);
+  await expect(page.locator("#col-diet-0")).toBeChecked();
+  await expect(page.locator("#col-max-2")).toBeChecked();
+});
+
+test("filters on /eat/dishes are reachable on a phone without JavaScript", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.goto(localePath("en", "/eat/dishes"));
+  const edit = page.getByRole("link", { name: /^Edit filters/ });
+  test.skip((await edit.count()) === 0, "No canteen data in this environment, so there is no filter form to reach.");
+
+  await edit.click();
+  await expect(page).toHaveURL(/#eat-filters$/);
+  await expect(page.locator("#inline-diet-0")).toBeVisible();
+});
+
+test("Decide for me on /eat is a GET form to /eat/pick", async ({ page }) => {
+  await page.goto(localePath("en", "/eat"));
+  const form = page.locator('form[action$="/eat/pick"]');
+  test.skip((await form.count()) === 0, "No canteen data in this environment, so there is no Decide for me block.");
+
+  await expect(form).toHaveAttribute("method", "get");
+  await expect(form.getByRole("button", { name: "Decide for me" })).toBeVisible();
+});

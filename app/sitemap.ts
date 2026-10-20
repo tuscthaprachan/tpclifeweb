@@ -20,7 +20,7 @@
 
 import type { MetadataRoute } from "next";
 import { LOCALES, localePath } from "@/lib/i18n/config";
-import { getLostFoundPage } from "@/lib/sanity/queries";
+import { getCanteenData, getLostFoundPage } from "@/lib/sanity/queries";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -40,6 +40,14 @@ const STATIC_ROUTES = [
   "/cookies",
   "/lost-and-found",
   "/lost-and-found/report",
+  "/eat",
+  "/eat/dishes",
+  "/eat/stalls",
+  "/eat/map",
+  "/eat/meal",
+  "/eat/week",
+  "/eat/group",
+  "/eat/what-is",
 ];
 
 // A large page size rather than a dedicated "every slug" query, the same
@@ -66,5 +74,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  return [...staticEntries, ...lostFoundEntries];
+  // What to eat: one page per dish and per stall. `getCanteenData` returns an empty dataset
+  // when the CMS has none or cannot be reached, so this adds nothing rather than failing.
+  const canteen = await getCanteenData();
+  const canteenEntries = LOCALES.flatMap((locale) => [
+    ...canteen.dishes.map((dish) => ({
+      url: `${SITE_URL}${localePath(locale, `/eat/dishes/${dish.slug.current}`)}`,
+      lastModified: new Date(dish._updatedAt),
+    })),
+    ...canteen.stalls.map((stall) => ({
+      url: `${SITE_URL}${localePath(locale, `/eat/stalls/${stall.slug.current}`)}`,
+      lastModified: new Date(stall._updatedAt),
+    })),
+    ...canteen.canonicals.map((canonical) => ({
+      url: `${SITE_URL}${localePath(locale, `/eat/what-is/${canonical.slug.current}`)}`,
+      lastModified: new Date(canonical._updatedAt),
+    })),
+  ]);
+
+  return [...staticEntries, ...lostFoundEntries, ...canteenEntries];
 }
