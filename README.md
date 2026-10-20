@@ -46,6 +46,8 @@ The site is at `http://localhost:3000` and the CMS at `http://localhost:3000/stu
 
 Only the first two are needed for the build to pass. The rest decide whether the deployed site actually works: without `NEXT_PUBLIC_SITE_URL` the canonical, hreflang and Open Graph URLs all point at `http://localhost:3000`, and without `SANITY_REVALIDATE_SECRET` the revalidation webhook refuses every request with a 500.
 
+To show the What to eat service with data before any real survey exists, set `CANTEEN_DEMO=1` on a Preview deployment. The `/eat` pages then read a fictional canteen from `lib/canteen/demo.ts` instead of Sanity: eight stalls and about 70 dishes, all made up. Every `/eat` page carries a "Demo data" banner, search results and the home page say "demo data", the pages are `noindex` and they are left out of the sitemap. Leave it unset on Production.
+
 `SANITY_API_WRITE_TOKEN` is the only one that is genuinely optional. Without it the lost and found register still works, and its report page tells the reader to use the contact details instead of showing a form that cannot store anything. Set it and students can file a report themselves, which arrives in the Studio under Lost and found, Waiting for approval, and is invisible to readers until an editor publishes it.
 
 Two things then have to be done in sanity.io/manage, neither of which lives in this repo:

@@ -19,6 +19,7 @@ import { defineQuery } from "next-sanity";
 import { client } from "./client";
 import { CACHE_TAGS } from "./env";
 import { safeFetch } from "./safe-fetch";
+import { demoCanteenData, isCanteenDemo } from "@/lib/canteen/demo";
 import { emptyCanteenData, normaliseCanteenData } from "@/lib/canteen/derive";
 import { canteenSearchRecords } from "@/lib/search/canteen";
 import type {
@@ -815,6 +816,8 @@ export const CANTEEN_DATA_QUERY = defineQuery(`
  * empty arrays and dishes that point at a missing stall are dropped.
  */
 export async function getCanteenData(): Promise<CanteenData> {
+  // Preview only: a clearly labelled fictional dataset, never fetched from Sanity.
+  if (isCanteenDemo()) return normaliseCanteenData(demoCanteenData());
   if (process.env.NODE_ENV !== "production" && process.env.CANTEEN_FIXTURE === "1") {
     const { makeData } = await import("@/tests/unit/canteen/fixture");
     return makeData();

@@ -15,6 +15,7 @@
 
 import { TYPE_LABEL } from "@/components/domain/canteen/labels";
 import { excerpt } from "@/components/domain/canteen/extras/text";
+import { DEMO_NOTICE, isCanteenDemo } from "@/lib/canteen/demo";
 import { indexCanteen, stallOf } from "@/lib/canteen/derive";
 import { formatDate, formatNumber } from "@/lib/i18n/format";
 import type { LocaleString } from "@/lib/i18n/config";
@@ -30,12 +31,15 @@ const join = (...parts: Array<string | undefined | null>): string => parts.filte
 export function canteenSearchRecords(data: CanteenData): SearchRecord[] {
   const index = indexCanteen(data);
   const records: SearchRecord[] = [];
+  // Demo data is labelled in every summary so a search result never reads as a real record.
+  const demo = isCanteenDemo();
+  const mark = (text: string, locale: "th" | "en") => (demo ? `${text} ${DEMO_NOTICE.label[locale]}` : text);
 
   for (const canonical of data.canonicals) {
     const phrases = (canonical.howToOrder ?? []).map((phrase) => join(phrase.th, phrase.romanised, phrase.en));
     const explainer: LocaleString = {
-      th: excerpt(canonical.explainer?.th, 160),
-      en: excerpt(canonical.explainer?.en, 160),
+      th: mark(excerpt(canonical.explainer?.th, 160), "th"),
+      en: mark(excerpt(canonical.explainer?.en, 160), "en"),
     };
     records.push({
       id: canonical._id,
@@ -70,7 +74,7 @@ export function canteenSearchRecords(data: CanteenData): SearchRecord[] {
       type: "canteenDish",
       path: { th: `/th/eat/dishes/${dish.slug.current}`, en: `/en/eat/dishes/${dish.slug.current}` },
       title: dish.name,
-      summary: { th: price("th"), en: price("en") },
+      summary: { th: mark(price("th"), "th"), en: mark(price("en"), "en") },
       haystack: join(
         dish.name?.th,
         dish.name?.en,
