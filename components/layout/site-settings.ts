@@ -91,5 +91,26 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
  * Server Component, so this costs them an await and nothing else.
  */
 export async function getSiteSettings(): Promise<SiteSettings> {
-  return (await fetchSiteSettings()) ?? FALLBACK_SITE_SETTINGS;
+  return withRequiredNav((await fetchSiteSettings()) ?? FALLBACK_SITE_SETTINGS);
+}
+
+/**
+ * Sections that must always be reachable from the primary navigation, even
+ * when the `siteSettings` document in the CMS predates them. An editor can
+ * still rename or move one by adding it to the document themselves; it is
+ * only inserted when its path is missing, after the item named in `after`.
+ */
+const REQUIRED_NAV: readonly { item: SiteSettings["primaryNav"][number]; after: string }[] = [
+  { item: { label: { th: "กินอะไรดี", en: "What to eat" }, path: "/eat" }, after: "/getting-around" },
+];
+
+export function withRequiredNav(settings: SiteSettings): SiteSettings {
+  let nav = settings.primaryNav ?? [];
+  for (const { item, after } of REQUIRED_NAV) {
+    if (nav.some((existing) => existing.path === item.path)) continue;
+    const anchor = nav.findIndex((existing) => existing.path === after);
+    const at = anchor === -1 ? nav.length : anchor + 1;
+    nav = [...nav.slice(0, at), item, ...nav.slice(at)];
+  }
+  return nav === settings.primaryNav ? settings : { ...settings, primaryNav: nav };
 }
