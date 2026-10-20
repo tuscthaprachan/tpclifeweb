@@ -139,6 +139,7 @@ export const CUISINE_LABEL: Record<CanteenCuisine, Bilingual> = {
   chickenRice: { th: "ข้าวมันไก่", en: "Chicken rice" },
   curryOverRice: { th: "ข้าวแกง", en: "Curry over rice" },
   muslim: { th: "อาหารมุสลิม", en: "Muslim food" },
+  international: { th: "อาหารนานาชาติ", en: "International food" },
   drinks: { th: "เครื่องดื่ม", en: "Drinks" },
   desserts: { th: "ของหวาน", en: "Desserts" },
   fruit: { th: "ผลไม้", en: "Fruit" },

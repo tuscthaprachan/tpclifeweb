@@ -90,6 +90,12 @@ const GLYPHS: Record<CanteenCuisine, ReactNode> = {
     </>
   ),
   muslim: <path d="M8 1 A5 5 0 1 0 8 11 A3.8 3.8 0 1 1 8 1 Z" />,
+  international: (
+    <>
+      <circle cx="6" cy="6" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M1.5 6 H10.5 M6 1.5 C3.5 4 3.5 8 6 10.5 C8.5 8 8.5 4 6 1.5" fill="none" stroke="currentColor" strokeWidth="1" />
+    </>
+  ),
   drinks: <path d="M2 2 H10 L9 11 H3 Z" />,
   desserts: (
     <>
@@ -145,7 +151,7 @@ function Entrance({ entrance, index, layout, locale, isStart }: EntranceDrawProp
       : side === "east"
         ? `translate(${edge.x} ${edge.y}) rotate(90)`
         : `translate(${edge.x} ${edge.y})`;
-  const label = truncate(pick(entrance.label, locale), 12);
+  const label = truncate(pick(entrance.label, locale), 28);
   const key = MAP_STRINGS.entranceKey(index + 1);
 
   return (

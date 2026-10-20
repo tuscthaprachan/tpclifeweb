@@ -598,6 +598,7 @@ export type CanteenCuisine =
   | "chickenRice"
   | "curryOverRice"
   | "muslim"
+  | "international"
   | "drinks"
   | "desserts"
   | "fruit";

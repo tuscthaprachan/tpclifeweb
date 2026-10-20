@@ -48,6 +48,7 @@ export const CANTEEN_CUISINE_OPTIONS = [
   { title: "Chicken rice", value: "chickenRice" },
   { title: "Curry over rice", value: "curryOverRice" },
   { title: "Muslim food", value: "muslim" },
+  { title: "International", value: "international" },
   { title: "Drinks", value: "drinks" },
   { title: "Desserts", value: "desserts" },
   { title: "Fruit", value: "fruit" },

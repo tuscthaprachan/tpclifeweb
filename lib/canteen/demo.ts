@@ -1,27 +1,53 @@
 /**
- * A FICTIONAL canteen, for previews only.
+ * The canteen demo: a REAL structure with EXAMPLE menus. Previews only.
  *
- * Turned on with `CANTEEN_DEMO=1`. Every stall, dish, price and date in this
- * file is made up so the owner can see the What to eat service working with a
- * realistic amount of data. None of it is a survey of the real canteen, and
- * the site says so: `app/[locale]/eat/layout.tsx` shows a banner on every
- * /eat page, search and the home page label the records as demo data, the
- * /eat pages are set to noindex and the sitemap leaves them out.
+ * Turned on with `CANTEEN_DEMO=1`. Two things are mixed here and the site
+ * says so (`app/[locale]/eat/layout.tsx` shows a banner on every /eat page,
+ * search and the home page label the records "example menus", the /eat pages
+ * are set to noindex and the sitemap leaves them out):
  *
- * Names are plain about it ("Demo stall 1"). Ids start with "demo-".
+ * REAL, from the university's canteen documents:
+ *   - memo อว 67.06.1/ส177 dated 27 August 2569 (2026), which carries the
+ *     floor plan of the ground floor canteen in the Thammasat 60th
+ *     Anniversary Building, and
+ *   - the selection results of Wednesday 2 September 2569, contract period
+ *     1 October 2569 to 30 September 2570 (2026-27).
+ *   From these: the shop names, the stall numbers, the trading hours (Monday
+ *   to Friday 07:00 to 16:00, closed Saturday, Sunday and public holidays)
+ *   and the layout of the hall. Stall 10 is not let: it is zoned for curry
+ *   over rice and has no shop.
  *
- * Floor plan (12 columns by 8 rows, river on the east side):
+ * ASSUMED: for types with several slots (made to order 1 and 12, noodles 2
+ * and 13, international 4 and 16, snacks 5, 8 and 18, rice plates 6 and 15,
+ * general drinks 11 and 17) the pairing of shop to stall number was worked
+ * out from the committee score ranking and is not confirmed on site. Those
+ * stalls say so in their wayfinding. Stalls 3, 7, 9 and 14 are certain by
+ * type; the shop at 7 is the owner's decision.
  *
- *   row 0-1:  stall 1 (0-2)   stall 2 (3-5)   stall 3 (6-8)   stall 4 (9-11)
- *   row 3-4:  zone A (1-3)    zone B (5-7)    zone C (8-10)
- *   row 6-7:  stall 5 (0-2)   stall 6 (3-5)   stall 7 (6-8)   stall 8 (9-11)
+ * MADE UP: every dish, price, diet tag and price history. The shops' real
+ * menus have not been surveyed. Dish ids start with "demo-".
  *
- * with the main road entrance on the west edge and the river side entrance on
- * the east edge, both on row 4.
+ * Floor plan (17 columns by 7 rows, top = north, landscape). Stalls are
+ * 2 cells wide. The hall is read from the drawing; lifts, toilets, stairs and
+ * the ATM cannot be drawn by the map, so they appear in the wayfinding text.
+ *
+ *   col:  0-1   2-6          7-9      10-11   12-14      15-16
+ *   row 0 [ 1 ] . . [17 ] .. [18 ]    [ 8  ]  [east  ]   [ 12 ]
+ *   row 1 [ 2 ] [west seating]  stairs [ 9  ]  [seating]  [ 13 ]
+ *   row 2 [ 3 ]               (gap)   [ 10 ]             [ 14 ]
+ *   row 3 [ 4 ]                       [ 11 ]             [ 15 ]
+ *   row 4 [ 5 ]                                          [ 16 ]
+ *   row 5 [ 6 ]
+ *   row 6 [ 7 ]               [south tables, cols 9-16]
+ *
+ * (17 sits at cols 4-5 and 18 at cols 8-9 of row 0, either side of the
+ * central north lobby at cols 6-7.) Entrances: the main entrance on the south
+ * wall, and the courtyard doors on the north wall, one set in each half.
  *
  * Price history. Four survey dates, one in each of four semesters (1/2025,
  * 2/2025, summer 2025 and 1/2026), so the price tracker has a line to draw.
- * About three dishes in four went up by 5 baht at some point.
+ * About three dishes in four went up by 5 baht at some point. These are
+ * made-up examples, like every other price here.
  */
 
 import type {
@@ -45,20 +71,20 @@ import type {
   DishCourse,
 } from "@/lib/sanity/types";
 
-/** True when the fictional dataset is switched on. Read on the server, in any NODE_ENV. */
+/** True when the demo dataset is switched on. Read on the server, in any NODE_ENV. */
 export function isCanteenDemo(): boolean {
   return process.env.CANTEEN_DEMO === "1";
 }
 
-/** The wording that marks demo data wherever it appears. Both languages, no em dashes. */
+/** The wording that marks the example menus wherever they appear. Both languages, no em dashes. */
 export const DEMO_NOTICE = {
-  title: { th: "ข้อมูลตัวอย่าง", en: "Demo data" },
+  title: { th: "เมนูตัวอย่าง", en: "Example menus" },
   body: {
-    th: "ร้านค้า เมนูและราคาในส่วนนี้สมมติขึ้นเพื่อแสดงการทำงานของบริการ ไม่ใช่ข้อมูลของโรงอาหารจริง",
-    en: "These stalls, dishes and prices are made up to show how this works. They are not the real canteen.",
+    th: "ชื่อร้าน เลขร้าน เวลาทำการและผังโรงอาหารมาจากเอกสารการคัดเลือกผู้ประกอบการโรงอาหารของมหาวิทยาลัย ปี 2569 (สัญญา 1 ตุลาคม 2569 ถึง 30 กันยายน 2570) ส่วนการจับคู่ร้านกับเลขร้านในประเภทที่มีหลายแผงเป็นการสันนิษฐานจากลำดับคะแนนการคัดเลือก ยังไม่ได้ยืนยันหน้างาน เมนู ราคา ป้ายอาหารพิเศษและประวัติราคาเป็นตัวอย่างที่สมมติขึ้น จนกว่าจะสำรวจเมนูจริง",
+    en: "Shop names, stall numbers, opening hours and the floor plan come from the university's canteen selection documents for 2026-27 (B.E. 2569), contract period 1 October 2026 to 30 September 2027. Where several stalls share a type, which shop has which number is assumed from the selection ranking and is not yet confirmed on site. The dishes, prices, diet tags and price history are made-up examples until the menus are surveyed.",
   },
   /** Appended to a line that would otherwise read as a real record. */
-  label: { th: "(ข้อมูลตัวอย่าง)", en: "(demo data)" },
+  label: { th: "(เมนูตัวอย่าง)", en: "(example menus)" },
 } as const;
 
 /** Survey dates, one per semester. The last one is every dish's "checked on". */
@@ -67,6 +93,7 @@ const SURVEYS = ["2025-09-15", "2026-02-10", "2026-06-20", CHECKED_ON] as const;
 
 /** Which survey a 5 baht rise first shows in, by dish position. Every fourth dish never rose. */
 const RISE_AT = [Number.POSITIVE_INFINITY, 1, 2, 3];
+
 
 const slug = (current: string) => ({ _type: "slug" as const, current });
 const ref = (id: string) => ({ _type: "reference" as const, _ref: id });
@@ -82,121 +109,245 @@ interface StallSpec {
   cuisine: CanteenCuisine[];
   halal: HalalStatus;
   halalCheckedOn?: string;
-  vegetarianStall?: boolean;
   col: number;
   row: number;
+  /** Cells wide and tall. */
+  w: number;
+  h: number;
   wayfinding: { th: string; en: string };
-  ownHours?: boolean;
 }
 
+/** Appended to the wayfinding of every stall whose number was assumed from the ranking. */
+const ASSUMED = {
+  th: " เลขร้านนี้สันนิษฐานจากลำดับคะแนนการคัดเลือก ยังไม่ได้ยืนยันหน้างาน",
+  en: " Stall number assumed from the selection ranking, not yet confirmed on site.",
+} as const;
+
+const assumed = (text: { th: string; en: string }) => ({ th: text.th + ASSUMED.th, en: text.en + ASSUMED.en });
+
 const STALL_SPECS: StallSpec[] = [
+  /* West column, stalls 1 to 7, facing east into the hall. */
   {
     number: 1,
-    th: "ร้านตัวอย่าง 1 ข้าวราดแกง",
-    en: "Demo stall 1, curry over rice",
-    cuisine: ["curryOverRice", "thaiRice"],
+    th: "ร้านแม่พิมพ์อาหารตามสั่ง",
+    en: "Mae Phim, made to order",
+    cuisine: ["madeToOrder"],
     halal: "none",
-    col: 0,
-    row: 0,
-    wayfinding: {
-      th: "ร้านแรกริมผนังด้านเหนือ อยู่ใกล้ทางเข้าถนนใหญ่",
-      en: "First stall along the north wall, close to the main road entrance.",
-    },
+    col: 0, row: 0, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านแรกที่ปลายด้านเหนือของแถวร้านฝั่งตะวันตก หันหน้าเข้าหาโถงโรงอาหาร",
+      en: "First stall at the north end of the west column, facing east into the hall.",
+    }),
   },
   {
     number: 2,
-    th: "ร้านตัวอย่าง 2 อาหารตามสั่ง",
-    en: "Demo stall 2, made to order",
-    cuisine: ["madeToOrder"],
+    th: "ร้านก๋วยเตี๋ยวสองพี่น้อง",
+    en: "Song Phi Nong Noodles",
+    cuisine: ["noodles"],
     halal: "none",
-    col: 3,
-    row: 0,
-    wayfinding: {
-      th: "ร้านที่สองริมผนังด้านเหนือ ถัดจากร้านข้าวราดแกง",
-      en: "Second stall along the north wall, right after the curry over rice stall.",
-    },
+    col: 0, row: 1, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านที่สองจากทางเหนือในแถวร้านฝั่งตะวันตก หันหน้าเข้าหาโถง",
+      en: "Second stall from the north in the west column, facing the hall.",
+    }),
   },
   {
     number: 3,
-    th: "ร้านตัวอย่าง 3 ก๋วยเตี๋ยว",
-    en: "Demo stall 3, noodles",
-    cuisine: ["noodles"],
+    th: "ร้านลุงกับป้าไดนับ",
+    en: "Lung Kap Pa Dainap",
+    cuisine: ["drinks"],
     halal: "none",
-    col: 6,
-    row: 0,
-    ownHours: true,
+    col: 0, row: 2, w: 2, h: 1,
     wayfinding: {
-      th: "ร้านที่สามริมผนังด้านเหนือ มองหาหม้อน้ำซุปหน้าร้าน",
-      en: "Third stall along the north wall. Look for the broth pots at the front.",
+      th: "ร้านที่สามจากทางเหนือในแถวร้านฝั่งตะวันตก ขายเครื่องดื่มทำสด หันหน้าเข้าหาโถง",
+      en: "Third stall from the north in the west column. Made-to-order drinks, facing the hall.",
     },
   },
   {
     number: 4,
-    th: "ร้านตัวอย่าง 4 ข้าวมันไก่",
-    en: "Demo stall 4, chicken rice",
-    cuisine: ["chickenRice"],
-    halal: "stallDeclared",
-    halalCheckedOn: "2026-08-20",
-    col: 9,
-    row: 0,
-    wayfinding: {
-      th: "ร้านสุดท้ายริมผนังด้านเหนือ ใกล้ทางเข้าฝั่งแม่น้ำ",
-      en: "Last stall along the north wall, nearest the river side entrance.",
-    },
+    th: "ร้าน Steck Project",
+    en: "Steck Project",
+    cuisine: ["international"],
+    halal: "none",
+    col: 0, row: 3, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านกลางแถวฝั่งตะวันตก ขายอาหารนานาชาติ ด้านหลังแถวร้านฝั่งตะวันตกเป็นห้องน้ำ บันไดและทางหนีไฟ",
+      en: "Middle of the west column. International food. Behind the west column are toilets, stairs and a fire exit.",
+    }),
   },
   {
     number: 5,
-    th: "ร้านตัวอย่าง 5 อาหารอีสาน",
-    en: "Demo stall 5, Isan food",
-    cuisine: ["isan"],
+    th: "ร้าน Yum Yum Snakie",
+    en: "Yum Yum Snakie",
+    cuisine: ["desserts", "fruit"],
     halal: "none",
-    col: 0,
-    row: 6,
-    wayfinding: {
-      th: "ร้านแรกริมผนังด้านใต้ เดินเข้าจากทางเข้าถนนใหญ่แล้วเลี้ยวซ้าย",
-      en: "First stall along the south wall. Come in from the main road entrance and turn left.",
-    },
+    col: 0, row: 4, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านที่ห้าจากทางเหนือในแถวร้านฝั่งตะวันตก ขายขนม ของหวานและผลไม้ หันหน้าเข้าหาโถง",
+      en: "Fifth stall from the north in the west column. Snacks, desserts and fruit, facing the hall.",
+    }),
   },
   {
     number: 6,
-    th: "ร้านตัวอย่าง 6 อาหารมุสลิม",
-    en: "Demo stall 6, Muslim food (halal certified)",
-    cuisine: ["muslim"],
-    halal: "certified",
-    halalCheckedOn: "2026-08-20",
-    col: 3,
-    row: 6,
-    wayfinding: {
-      th: "ร้านที่สองริมผนังด้านใต้ ตรงข้ามร้านตามสั่ง",
-      en: "Second stall along the south wall, across the hall from the made to order stall.",
-    },
+    th: "ร้านแม่ปราณีต",
+    en: "Mae Pranit",
+    cuisine: ["thaiRice", "chickenRice"],
+    halal: "none",
+    col: 0, row: 5, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านที่หกจากทางเหนือในแถวร้านฝั่งตะวันตก ขายข้าวหน้าต่าง ๆ หันหน้าเข้าหาโถง",
+      en: "Sixth stall from the north in the west column. Rice plates, facing the hall.",
+    }),
   },
   {
     number: 7,
-    th: "ร้านตัวอย่าง 7 อาหารเจและมังสวิรัติ",
-    en: "Demo stall 7, jay and vegetarian",
-    cuisine: ["thaiRice", "madeToOrder"],
+    th: "ร้านคงคา GaNGa",
+    en: "Khongkha GaNGa",
+    cuisine: ["drinks"],
     halal: "none",
-    vegetarianStall: true,
-    col: 6,
-    row: 6,
+    col: 0, row: 6, w: 2, h: 1,
     wayfinding: {
-      th: "ร้านที่สามริมผนังด้านใต้ มีธงเจสีเหลืองหน้าร้าน",
-      en: "Third stall along the south wall, with the yellow jay flag at the front.",
+      th: "ร้านสุดท้ายที่ปลายด้านใต้ของแถวร้านฝั่งตะวันตก ขายเครื่องดื่มทำสด ตู้เอทีเอ็มอยู่ใกล้ผนังด้านใต้ในครึ่งซ้ายของโรงอาหาร",
+      en: "Last stall at the south end of the west column. Made-to-order drinks. The ATM is near the south wall in the left half of the hall.",
+    },
+  },
+
+  /* Middle block, stalls 8 to 11, backing onto the lifts, facing east. */
+  {
+    number: 8,
+    th: "ร้านกัลยาผลไม้ปอกพร้อมทาน",
+    en: "Kanlaya Peeled Fruit",
+    cuisine: ["fruit", "desserts"],
+    halal: "none",
+    col: 10, row: 0, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านบนสุดของกลุ่มร้านกลางโถง ด้านหลังเป็นลิฟต์สองตัวทางฝั่งตะวันตก หันหน้าไปทางทิศตะวันออก ขายผลไม้ปอกพร้อมทาน",
+      en: "Top stall of the middle block, with the two lifts behind it on the west side, facing east. Peeled fruit.",
+    }),
+  },
+  {
+    number: 9,
+    th: "ร้านอีสาน",
+    en: "Isan Shop",
+    cuisine: ["isan"],
+    halal: "none",
+    col: 10, row: 1, w: 2, h: 1,
+    wayfinding: {
+      th: "ร้านที่สองจากทางเหนือในกลุ่มร้านกลางโถง ด้านหลังเป็นลิฟต์ หันหน้าไปทางทิศตะวันออก",
+      en: "Second stall from the north in the middle block, with the lifts behind it, facing east.",
     },
   },
   {
-    number: 8,
-    th: "ร้านตัวอย่าง 8 เครื่องดื่มและของหวาน",
-    en: "Demo stall 8, drinks and desserts",
-    cuisine: ["drinks", "desserts", "fruit"],
+    number: 10,
+    th: "ยังไม่มีร้าน",
+    en: "No shop yet",
+    cuisine: [],
     halal: "none",
-    col: 9,
-    row: 6,
+    col: 10, row: 2, w: 2, h: 1,
     wayfinding: {
-      th: "ร้านสุดท้ายริมผนังด้านใต้ ใกล้ทางเข้าฝั่งแม่น้ำ",
-      en: "Last stall along the south wall, nearest the river side entrance.",
+      th: "ยังไม่มีร้านในแผงนี้ กำหนดไว้สำหรับข้าวราดแกง อยู่ที่สามจากทางเหนือในกลุ่มร้านกลางโถง",
+      en: "No shop yet. Zoned for curry over rice. Third stall from the north in the middle block.",
     },
+  },
+  {
+    number: 11,
+    th: "ร้าน BM HEALTH CLUB",
+    en: "BM HEALTH CLUB",
+    cuisine: ["drinks"],
+    halal: "none",
+    col: 10, row: 3, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านล่างสุดของกลุ่มร้านกลางโถง ด้านหลังเป็นลิฟต์ หันหน้าไปทางทิศตะวันออก ขายเครื่องดื่มทั่วไป",
+      en: "Bottom stall of the middle block, with the lifts behind it, facing east. General drinks.",
+    }),
+  },
+
+  /* East column, stalls 12 to 16, facing west into the hall. */
+  {
+    number: 12,
+    th: "ร้านเทียนทองอาหารตามสั่ง",
+    en: "Thian Thong, made to order",
+    cuisine: ["madeToOrder"],
+    halal: "none",
+    col: 15, row: 0, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านแรกที่ปลายด้านเหนือของแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตกเข้าหาโถง",
+      en: "First stall at the north end of the east column, facing west into the hall.",
+    }),
+  },
+  {
+    number: 13,
+    th: "ร้านก๋วยเตี๋ยวหมี่ไก่ฉีก",
+    en: "Mi Kai Chik Noodles",
+    cuisine: ["noodles"],
+    halal: "none",
+    col: 15, row: 1, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านที่สองจากทางเหนือในแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก",
+      en: "Second stall from the north in the east column, facing west.",
+    }),
+  },
+  {
+    number: 14,
+    th: "ร้านมุมกินฮาลาล",
+    en: "Mum Kin Halal",
+    cuisine: ["muslim"],
+    halal: "stallDeclared",
+    col: 15, row: 2, w: 2, h: 1,
+    wayfinding: {
+      th: "ร้านกลางแถวฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก ได้รับคัดเลือกในประเภทอาหารฮาลาลของมหาวิทยาลัย ป้ายฮาลาลนี้อิงตามประเภทดังกล่าว ไม่ใช่ใบรับรอง",
+      en: "Middle of the east column, facing west. Selected for the university's halal food slot. The halal tag follows that category and is not a certificate.",
+    },
+  },
+  {
+    number: 15,
+    th: "ร้านข้าวมันไก่-ขาหมู TU",
+    en: "TU Khao Man Kai, Khao Kha Mu",
+    cuisine: ["chickenRice", "thaiRice"],
+    halal: "none",
+    col: 15, row: 3, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านที่สี่จากทางเหนือในแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก ขายข้าวมันไก่และข้าวขาหมู",
+      en: "Fourth stall from the north in the east column, facing west. Chicken rice and pork leg rice.",
+    }),
+  },
+  {
+    number: 16,
+    th: "ร้าน Tamasato ราเม็ง",
+    en: "Tamasato Ramen",
+    cuisine: ["international"],
+    halal: "none",
+    col: 15, row: 4, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "ร้านสุดท้ายที่ปลายด้านใต้ของแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก ขายราเม็ง ด้านหลังแถวร้านฝั่งตะวันออกเป็นห้องน้ำและบันได",
+      en: "Last stall at the south end of the east column, facing west. Ramen. Behind the east column are toilets and stairs.",
+    }),
+  },
+
+  /* Corner kiosks on the north wall, either side of the central north lobby. */
+  {
+    number: 17,
+    th: "ร้านแอมที สาขาท่าพระจันทร์",
+    en: "Aem Thi, Tha Phra Chan branch",
+    cuisine: ["drinks"],
+    halal: "none",
+    col: 4, row: 0, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางซ้ายของทางเข้ากลางด้านเหนือ ขายเครื่องดื่มทั่วไป",
+      en: "Triangular corner kiosk on the north wall, left of the central north entrance. General drinks.",
+    }),
+  },
+  {
+    number: 18,
+    th: "ร้านขนมหวานป้าหมู",
+    en: "Pa Mu Desserts",
+    cuisine: ["desserts", "fruit"],
+    halal: "none",
+    col: 8, row: 0, w: 2, h: 1,
+    wayfinding: assumed({
+      th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางขวาของทางเข้ากลางด้านเหนือ ทางตะวันตกของยอดกลุ่มร้านกลางโถง ขายขนมหวาน",
+      en: "Triangular corner kiosk on the north wall, right of the central north entrance and just west of the top of the middle block. Desserts.",
+    }),
   },
 ];
 
@@ -212,11 +363,7 @@ function buildStalls(stamp: string): CanteenStall[] {
     cuisine: spec.cuisine,
     halal: spec.halal,
     ...(spec.halalCheckedOn ? { halalCheckedOn: spec.halalCheckedOn } : {}),
-    ...(spec.vegetarianStall ? { vegetarianStall: true } : {}),
-    ...(spec.ownHours
-      ? { hours: [{ _key: "own", daysOfWeek: [1, 2, 3, 4, 5], opens: "09:00", closes: "14:00" }] }
-      : {}),
-    mapCell: { col: spec.col, row: spec.row, w: 3, h: 2 },
+    mapCell: { col: spec.col, row: spec.row, w: spec.w, h: spec.h },
     wayfinding: spec.wayfinding,
   }));
 }
@@ -463,6 +610,7 @@ function buildCanonicals(stamp: string): CanonicalDish[] {
   }));
 }
 
+
 /* ------------------------------------------------------------------ *
  * Dishes
  * ------------------------------------------------------------------ */
@@ -470,7 +618,6 @@ function buildCanonicals(stamp: string): CanonicalDish[] {
 const SPECIAL: DishVariant = { _key: "special", label: { th: "พิเศษ", en: "Large portion" }, delta: 10 };
 const FRIED_EGG: DishVariant = { _key: "egg", label: { th: "ไข่ดาว", en: "Fried egg" }, delta: 10 };
 const BIG_CUP: DishVariant = { _key: "big", label: { th: "แก้วใหญ่", en: "Large cup" }, delta: 10 };
-const EXTRA_TOPPING: DishVariant = { _key: "topping", label: { th: "เพิ่มท็อปปิ้ง", en: "Extra topping" }, delta: 10 };
 
 interface DishOptions {
   canonical?: string;
@@ -502,102 +649,131 @@ function d(stall: number, slugText: string, th: string, en: string, price: numbe
   specs.push({ stall, slug: slugText, th, en, price, ...options });
 }
 
-/* Stall 1: curry over rice. */
-const CURRY: DishOptions = { type: "curryOverRice", style: "curry", wet: true, canonical: "khao-gaeng", variants: [EXTRA_TOPPING] };
-d(1, "green-curry-chicken-rice", "ข้าวราดแกงเขียวหวานไก่", "Green curry chicken over rice", 45, { ...CURRY, protein: ["chicken"], spice: 2 });
-d(1, "panang-pork-rice", "ข้าวราดพะแนงหมู", "Panang pork curry over rice", 45, { ...CURRY, protein: ["pork"], spice: 1 });
-d(1, "massaman-chicken-rice", "ข้าวราดมัสมั่นไก่", "Massaman chicken curry over rice", 45, { ...CURRY, protein: ["chicken"], spice: 1 });
-d(1, "curry-one-topping", "ข้าวราดแกง 1 อย่าง", "Curry over rice, one topping", 35, { ...CURRY, protein: ["pork"], spice: 1 });
-d(1, "curry-two-toppings", "ข้าวราดแกง 2 อย่าง", "Curry over rice, two toppings", 50, { ...CURRY, protein: ["pork", "chicken"], spice: 1 });
-d(1, "stewed-egg-rice", "ข้าวไข่พะโล้", "Five-spice stewed egg and pork over rice", 40, { type: "curryOverRice", style: "boiled", wet: true, protein: ["pork", "egg"], spice: 0, variants: [SPECIAL] });
-d(1, "pad-prik-king-pork", "ข้าวผัดพริกขิงหมู", "Pork stir-fried with chilli paste and beans, over rice", 45, { protein: ["pork"], spice: 2, variants: [FRIED_EGG] });
-d(1, "omelette-rice-curry", "ข้าวไข่เจียวราดแกง", "Omelette over rice", 30, { canonical: "khai-jiao", protein: ["egg"], style: "deepFried", spice: 0, vegetarian: "canAsk", variants: [SPECIAL] });
-d(1, "morning-glory-rice", "ข้าวผัดผักบุ้งไฟแดง", "Morning glory stir-fried with garlic, over rice", 40, { protein: ["pork"], spice: 2, vegetarian: "canAsk", vegan: "canAsk", jay: "canAsk" });
 
-/* Stall 2: made to order. */
+/* Stall 1: made to order (Mae Phim). */
 const ORDER: DishOptions = { type: "madeToOrder", variants: [SPECIAL, FRIED_EGG] };
-d(2, "kra-pao-pork", "กะเพราหมูสับ", "Holy basil minced pork", 50, { ...ORDER, canonical: "pad-kra-pao", protein: ["pork"], spice: 3 });
-d(2, "kra-pao-chicken", "กะเพราไก่", "Holy basil chicken", 50, { ...ORDER, canonical: "pad-kra-pao", protein: ["chicken"], spice: 3 });
-d(2, "kra-pao-crispy-pork", "กะเพราหมูกรอบ", "Holy basil crispy pork belly", 60, { ...ORDER, canonical: "pad-kra-pao", protein: ["pork"], spice: 3 });
-d(2, "kra-pao-seafood", "กะเพราทะเล", "Holy basil mixed seafood", 65, { ...ORDER, canonical: "pad-kra-pao", protein: ["seafood"], spice: 3 });
-d(2, "khao-pad-pork", "ข้าวผัดหมู", "Fried rice with pork", 45, { ...ORDER, canonical: "khao-pad", protein: ["pork", "egg"], spice: 0, vegetarian: "canAsk" });
-d(2, "khao-pad-shrimp", "ข้าวผัดกุ้ง", "Fried rice with shrimp", 60, { ...ORDER, canonical: "khao-pad", protein: ["seafood", "egg"], spice: 0 });
-d(2, "pad-see-ew-pork", "ผัดซีอิ๊วหมู", "Wide noodles in soy sauce with pork", 50, { ...ORDER, type: "noodles", canonical: "pad-see-ew", protein: ["pork", "egg"], spice: 0 });
-d(2, "rad-na-pork", "ราดหน้าหมู", "Noodles in gravy with pork", 55, { ...ORDER, type: "noodles", canonical: "rad-na", protein: ["pork"], spice: 0, wet: true });
-d(2, "khai-jiao-pork", "ไข่เจียวหมูสับ", "Omelette with minced pork over rice", 40, { ...ORDER, canonical: "khai-jiao", protein: ["pork", "egg"], style: "deepFried", spice: 0 });
-d(2, "jok-pork", "โจ๊กหมู", "Rice porridge with pork", 35, { type: "soup", canonical: "jok", protein: ["pork"], style: "boiled", spice: 0, wet: true, variants: [SPECIAL] });
-d(2, "pad-thai-shrimp", "ผัดไทยกุ้งสด", "Pad Thai with fresh shrimp", 55, { ...ORDER, type: "noodles", canonical: "pad-thai", protein: ["seafood", "egg"], spice: 0 });
+d(1, "kra-pao-pork", "กะเพราหมูสับ", "Holy basil minced pork", 50, { ...ORDER, canonical: "pad-kra-pao", protein: ["pork"], spice: 3 });
+d(1, "kra-pao-chicken", "กะเพราไก่", "Holy basil chicken", 50, { ...ORDER, canonical: "pad-kra-pao", protein: ["chicken"], spice: 3 });
+d(1, "khao-pad-pork", "ข้าวผัดหมู", "Fried rice with pork", 45, { ...ORDER, canonical: "khao-pad", protein: ["pork", "egg"], spice: 0, vegetarian: "canAsk" });
+d(1, "khai-jiao-pork", "ไข่เจียวหมูสับ", "Omelette with minced pork over rice", 40, { ...ORDER, canonical: "khai-jiao", protein: ["pork", "egg"], style: "deepFried", spice: 0 });
+d(1, "pad-see-ew-pork", "ผัดซีอิ๊วหมู", "Wide noodles in soy sauce with pork", 50, { ...ORDER, type: "noodles", canonical: "pad-see-ew", protein: ["pork", "egg"], spice: 0 });
+d(1, "pad-thai-chicken", "ผัดไทยไก่", "Pad Thai with chicken", 50, { ...ORDER, type: "noodles", canonical: "pad-thai", protein: ["chicken", "egg"], spice: 0 });
 
-/* Stall 3: noodles. */
+/* Stall 12: made to order (Thian Thong). */
+d(12, "kra-pao-crispy-pork", "กะเพราหมูกรอบ", "Holy basil crispy pork belly", 60, { ...ORDER, canonical: "pad-kra-pao", protein: ["pork"], spice: 3 });
+d(12, "kra-pao-seafood", "กะเพราทะเล", "Holy basil mixed seafood", 65, { ...ORDER, canonical: "pad-kra-pao", protein: ["seafood"], spice: 3 });
+d(12, "khao-pad-shrimp", "ข้าวผัดกุ้ง", "Fried rice with shrimp", 60, { ...ORDER, canonical: "khao-pad", protein: ["seafood", "egg"], spice: 0 });
+d(12, "omelette-rice", "ข้าวไข่เจียว", "Plain omelette over rice", 30, { ...ORDER, canonical: "khai-jiao", protein: ["egg"], style: "deepFried", spice: 0, vegetarian: "canAsk" });
+d(12, "pad-see-ew-chicken", "ผัดซีอิ๊วไก่", "Wide noodles in soy sauce with chicken", 50, { ...ORDER, type: "noodles", canonical: "pad-see-ew", protein: ["chicken", "egg"], spice: 0 });
+d(12, "pad-thai-shrimp", "ผัดไทยกุ้งสด", "Pad Thai with fresh shrimp", 60, { ...ORDER, type: "noodles", canonical: "pad-thai", protein: ["seafood", "egg"], spice: 0 });
+
+/* Stall 2: noodles (Song Phi Nong). Its sign lists noodles, kuay jub, rad na, khanom jeen, blood tom and porridge. */
 const NOODLE: DishOptions = { type: "noodles", style: "boiled", wet: true, variants: [SPECIAL] };
-d(3, "noodle-soup-pork", "ก๋วยเตี๋ยวหมูน้ำใส", "Pork noodle soup, clear broth", 45, { ...NOODLE, canonical: "kuay-teow", protein: ["pork"], spice: 0 });
-d(3, "noodle-tom-yum-pork", "ก๋วยเตี๋ยวต้มยำหมู", "Pork noodles in tom yum broth", 50, { ...NOODLE, canonical: "tom-yum", protein: ["pork"], spice: 2 });
-d(3, "boat-noodles", "ก๋วยเตี๋ยวเรือ", "Boat noodles", 40, { ...NOODLE, canonical: "kuay-teow", protein: ["pork", "beef"], spice: 2 });
-d(3, "yen-ta-fo", "เย็นตาโฟ", "Pink noodle soup with fish balls and squid", 50, { ...NOODLE, protein: ["fish", "seafood"], spice: 1 });
-d(3, "egg-noodle-dry-pork", "บะหมี่แห้งหมูแดง", "Dry egg noodles with roast pork", 45, { ...NOODLE, wet: false, style: "stirFried", protein: ["pork"], spice: 0 });
-d(3, "wonton-noodle", "บะหมี่เกี๊ยวหมู", "Egg noodles with pork wontons", 50, { ...NOODLE, protein: ["pork"], spice: 0 });
-d(3, "kuay-teow-kua-gai", "ก๋วยเตี๋ยวคั่วไก่", "Fried wide noodles with chicken and egg", 45, { ...NOODLE, wet: false, style: "stirFried", protein: ["chicken", "egg"], spice: 0 });
-d(3, "pad-see-ew-chicken", "ผัดซีอิ๊วไก่", "Wide noodles in soy sauce with chicken", 50, { ...NOODLE, wet: false, style: "stirFried", canonical: "pad-see-ew", protein: ["chicken", "egg"], spice: 0 });
-d(3, "rad-na-seafood", "ราดหน้าทะเล", "Noodles in gravy with seafood", 65, { ...NOODLE, canonical: "rad-na", style: "stirFried", protein: ["seafood"], spice: 0 });
-d(3, "pad-thai-chicken", "ผัดไทยไก่", "Pad Thai with chicken", 50, { ...NOODLE, wet: false, style: "stirFried", canonical: "pad-thai", protein: ["chicken", "egg"], spice: 0 });
+d(2, "noodle-soup-pork", "ก๋วยเตี๋ยวหมูน้ำใส", "Pork noodle soup, clear broth", 45, { ...NOODLE, canonical: "kuay-teow", protein: ["pork"], spice: 0 });
+d(2, "noodle-tom-yum-pork", "ก๋วยเตี๋ยวต้มยำหมู", "Pork noodles in tom yum broth", 50, { ...NOODLE, canonical: "tom-yum", protein: ["pork"], spice: 2 });
+d(2, "kuay-jub", "ก๋วยจั๊บน้ำข้น", "Rolled rice noodles in peppery broth", 50, { ...NOODLE, protein: ["pork"], spice: 1 });
+d(2, "rad-na-pork", "ราดหน้าหมู", "Noodles in gravy with pork", 55, { ...NOODLE, canonical: "rad-na", style: "stirFried", protein: ["pork"], spice: 0 });
+d(2, "khanom-jeen-nam-ya", "ขนมจีนน้ำยา", "Rice vermicelli with fish curry sauce", 40, { ...NOODLE, protein: ["fish"], style: "curry", spice: 2 });
+d(2, "jok-pork", "โจ๊กหมู", "Rice porridge with pork", 35, { type: "soup", canonical: "jok", protein: ["pork"], style: "boiled", spice: 0, wet: true, variants: [SPECIAL] });
 
-/* Stall 4: chicken rice. */
-const CHICKEN_RICE: DishOptions = { canonical: "khao-man-gai", protein: ["chicken"], style: "steamed", spice: 0, variants: [SPECIAL] };
-d(4, "khao-man-gai", "ข้าวมันไก่ต้ม", "Chicken rice, poached", 45, CHICKEN_RICE);
-d(4, "khao-man-gai-fried", "ข้าวมันไก่ทอด", "Chicken rice, fried chicken", 50, { ...CHICKEN_RICE, style: "deepFried" });
-d(4, "khao-man-gai-mixed", "ข้าวมันไก่รวม", "Chicken rice, poached and fried", 55, { ...CHICKEN_RICE, style: "deepFried" });
-d(4, "khao-man-gai-breast", "ข้าวมันไก่อกไก่", "Chicken rice, breast meat only", 50, CHICKEN_RICE);
-d(4, "khao-na-gai-yang", "ข้าวหน้าไก่ย่าง", "Grilled chicken over rice", 50, { protein: ["chicken"], style: "grilled", spice: 1, variants: [SPECIAL] });
-d(4, "chicken-broth-bowl", "น้ำซุปไก่ถ้วย", "Chicken broth, one bowl", 20, { type: "soup", course: "side", protein: ["chicken"], style: "boiled", spice: 0, wet: true });
+/* Stall 13: noodles, shredded chicken (Mi Kai Chik). */
+d(13, "mi-gai-chi", "หมี่ไก่ฉีก", "Egg noodles with shredded chicken", 50, { ...NOODLE, wet: false, protein: ["chicken"], spice: 0 });
+d(13, "mi-gai-chi-soup", "หมี่ไก่ฉีกน้ำ", "Egg noodle soup with shredded chicken", 50, { ...NOODLE, protein: ["chicken"], spice: 0 });
+d(13, "noodle-soup-chicken", "ก๋วยเตี๋ยวไก่น้ำใส", "Chicken noodle soup, clear broth", 45, { ...NOODLE, canonical: "kuay-teow", protein: ["chicken"], spice: 0 });
+d(13, "rad-na-chicken", "ราดหน้าไก่", "Noodles in gravy with chicken", 55, { ...NOODLE, canonical: "rad-na", style: "stirFried", protein: ["chicken"], spice: 0 });
+d(13, "noodle-tom-yum-chicken", "ก๋วยเตี๋ยวต้มยำไก่", "Chicken noodles in tom yum broth", 50, { ...NOODLE, canonical: "tom-yum", protein: ["chicken"], spice: 2 });
 
-/* Stall 5: Isan. */
-d(5, "som-tam-thai", "ตำไทย", "Som tam Thai, sweet and sour", 40, { type: "singlePlate", canonical: "som-tam", protein: ["seafood"], style: "salad", spice: 3, temperature: "cold", vegetarian: "canAsk" });
-d(5, "som-tam-poo-pla-ra", "ตำปูปลาร้า", "Som tam with salted crab and fermented fish", 45, { type: "singlePlate", canonical: "som-tam", protein: ["seafood", "fish"], style: "salad", spice: 3, temperature: "cold" });
-d(5, "larb-pork", "ลาบหมู", "Pork larb", 55, { type: "singlePlate", canonical: "larb", protein: ["pork"], style: "salad", spice: 3 });
-d(5, "nam-tok-pork", "น้ำตกหมู", "Grilled pork neck salad", 60, { type: "singlePlate", protein: ["pork"], style: "grilled", spice: 3 });
-d(5, "grilled-chicken-isan", "ไก่ย่างอีสาน", "Isan grilled chicken", 55, { type: "singlePlate", protein: ["chicken"], style: "grilled", spice: 1, variants: [SPECIAL] });
-d(5, "sai-krok-isan", "ไส้กรอกอีสาน", "Isan sausage, four pieces", 35, { type: "snack", course: "side", protein: ["pork"], style: "grilled", spice: 1 });
-d(5, "sticky-rice", "ข้าวเหนียว", "Sticky rice, one bag", 10, { type: "rice", course: "side", protein: ["none"], style: "steamed", spice: 0, vegetarian: "yes", vegan: "yes", jay: "yes" });
-d(5, "tom-saep-pork", "ต้มแซ่บกระดูกหมู", "Spicy pork rib soup", 55, { type: "soup", canonical: "tom-yum", protein: ["pork"], style: "boiled", spice: 3, wet: true });
-
-/* Stall 6: Muslim food, halal certified. */
-d(6, "khao-mok-gai", "ข้าวหมกไก่", "Chicken biryani", 55, { canonical: "khao-mok-gai", protein: ["chicken"], style: "steamed", spice: 1, variants: [SPECIAL] });
-d(6, "khao-mok-beef", "ข้าวหมกเนื้อ", "Beef biryani", 65, { canonical: "khao-mok-gai", protein: ["beef"], style: "steamed", spice: 1, variants: [SPECIAL] });
-d(6, "kra-pao-chicken-halal", "กะเพราไก่ฮาลาล", "Holy basil chicken", 50, { type: "madeToOrder", canonical: "pad-kra-pao", protein: ["chicken"], spice: 3, variants: [SPECIAL, FRIED_EGG] });
-d(6, "khao-pad-chicken-halal", "ข้าวผัดไก่", "Fried rice with chicken", 50, { type: "madeToOrder", canonical: "khao-pad", protein: ["chicken", "egg"], spice: 0, variants: [SPECIAL, FRIED_EGG] });
-d(6, "larb-beef", "ลาบเนื้อ", "Beef larb", 60, { type: "singlePlate", canonical: "larb", protein: ["beef"], style: "salad", spice: 3 });
-d(6, "massaman-beef-rice", "ข้าวราดมัสมั่นเนื้อ", "Massaman beef curry over rice", 60, { type: "curryOverRice", canonical: "khao-gaeng", protein: ["beef"], style: "curry", spice: 1, wet: true });
-d(6, "roti-gaeng", "โรตีแกงไก่", "Roti with chicken curry", 40, { type: "snack", protein: ["chicken"], style: "curry", spice: 1, wet: true });
-d(6, "tom-yum-chicken", "ต้มยำไก่", "Tom yum chicken soup", 55, { type: "soup", canonical: "tom-yum", protein: ["chicken"], style: "boiled", spice: 2, wet: true });
-d(6, "satay-chicken", "สะเต๊ะไก่", "Chicken satay, five sticks", 45, { type: "snack", course: "side", protein: ["chicken"], style: "grilled", spice: 1 });
-
-/* Stall 7: jay and vegetarian. Jay food has no egg, so the omelette is vegetarian only. */
-const JAY: DishOptions = { protein: ["tofu"], vegetarian: "yes", vegan: "yes", jay: "yes" };
-d(7, "jay-kra-pao-tofu", "กะเพราเต้าหู้เจ", "Holy basil tofu, jay", 40, { ...JAY, type: "madeToOrder", canonical: "pad-kra-pao", spice: 2, variants: [SPECIAL] });
-d(7, "jay-khao-pad", "ข้าวผัดเจ", "Fried rice, jay", 40, { ...JAY, type: "madeToOrder", canonical: "khao-pad", spice: 0, variants: [SPECIAL] });
-d(7, "jay-pad-see-ew", "ผัดซีอิ๊วเจ", "Wide noodles in soy sauce, jay", 45, { ...JAY, type: "noodles", canonical: "pad-see-ew", spice: 0 });
-d(7, "jay-rad-na", "ราดหน้าเจ", "Noodles in gravy, jay", 45, { ...JAY, type: "noodles", canonical: "rad-na", spice: 0, wet: true });
-d(7, "jay-som-tam", "ตำเจ", "Som tam without fish sauce, jay", 40, { ...JAY, type: "singlePlate", canonical: "som-tam", protein: ["none"], style: "salad", spice: 3, temperature: "cold" });
-d(7, "jay-jok", "โจ๊กเจ", "Rice porridge, jay", 30, { ...JAY, type: "soup", canonical: "jok", protein: ["none"], style: "boiled", spice: 0, wet: true });
-d(7, "jay-tom-yum", "ต้มยำเห็ดเจ", "Mushroom tom yum, jay", 45, { ...JAY, type: "soup", canonical: "tom-yum", protein: ["none"], style: "boiled", spice: 2, wet: true });
-d(7, "jay-green-curry-rice", "ข้าวราดแกงเขียวหวานเต้าหู้เจ", "Green curry tofu over rice, jay", 40, { ...JAY, type: "curryOverRice", canonical: "khao-gaeng", style: "curry", spice: 2, wet: true });
-d(7, "veg-omelette-rice", "ข้าวไข่เจียวผัก", "Vegetable omelette over rice", 35, { type: "madeToOrder", canonical: "khai-jiao", protein: ["egg"], style: "deepFried", spice: 0, vegetarian: "yes", vegan: "no", jay: "no" });
-
-/* Stall 8: drinks, desserts and fruit. */
+/* Drinks. */
 const DRINK: DishOptions = { type: "drink", course: "drink", protein: ["none"], style: "steamed", spice: 0, temperature: "cold", wet: true, variants: [BIG_CUP] };
 const DESSERT: DishOptions = { type: "dessert", course: "dessert", protein: ["none"], style: "steamed", spice: 0, vegetarian: "yes" };
-d(8, "thai-iced-tea", "ชาเย็น", "Thai iced tea", 25, { ...DRINK, canonical: "cha-yen", vegetarian: "yes" });
-d(8, "iced-lime-tea", "ชามะนาวเย็น", "Iced lime tea", 25, { ...DRINK, vegetarian: "yes", vegan: "yes", jay: "yes" });
-d(8, "iced-coffee", "กาแฟเย็น", "Iced coffee", 30, { ...DRINK, vegetarian: "yes" });
-d(8, "hot-coffee", "กาแฟร้อน", "Hot coffee", 25, { ...DRINK, temperature: "hot", variants: [], vegetarian: "yes" });
-d(8, "watermelon-shake", "แตงโมปั่น", "Watermelon shake", 30, { ...DRINK, vegetarian: "yes", vegan: "yes", jay: "yes" });
-d(8, "mango-shake", "มะม่วงปั่น", "Mango shake", 35, { ...DRINK, vegetarian: "yes", vegan: "yes", jay: "yes" });
-d(8, "drinking-water", "น้ำดื่มขวด", "Bottled water", 15, { ...DRINK, variants: [], wet: false, vegetarian: "yes", vegan: "yes", jay: "yes" });
-d(8, "bua-loy-sweet-egg", "บัวลอยไข่หวาน", "Rice balls in coconut milk with sweet egg", 30, { ...DESSERT, canonical: "bua-loy", style: "boiled", temperature: "hot", wet: true, protein: ["egg"] });
-d(8, "mango-sticky-rice", "ข้าวเหนียวมะม่วง", "Mango with sticky rice", 35, { ...DESSERT, vegan: "yes", jay: "yes" });
-d(8, "khanom-krok", "ขนมครก 5 ชิ้น", "Coconut pancakes, a box of five", 25, { ...DESSERT, style: "grilled", temperature: "hot", vegan: "canAsk", jay: "canAsk" });
-d(8, "ruam-mit", "รวมมิตร", "Mixed sweets in iced coconut milk", 30, { ...DESSERT, style: "boiled", wet: true, vegan: "yes", jay: "yes" });
-d(8, "cut-fruit", "ผลไม้รวมตัดแต่ง", "Cut fruit cup", 25, { ...DESSERT, vegan: "yes", jay: "yes" });
+const PLANT_DRINK: DishOptions = { ...DRINK, vegetarian: "yes", vegan: "yes", jay: "yes" };
+
+/* Stall 3: made-to-order drinks (Lung Kap Pa Dainap): oliang, iced black tea, old-style coffee, roselle. */
+d(3, "oliang", "โอเลี้ยง", "Iced black coffee, oliang", 20, { ...DRINK, vegetarian: "yes", vegan: "yes", jay: "yes" });
+d(3, "black-tea-iced", "ชาดำเย็น", "Iced black tea", 20, PLANT_DRINK);
+d(3, "kafae-boran", "กาแฟโบราณ", "Old-style coffee", 25, { ...DRINK, vegetarian: "yes" });
+d(3, "krachiap", "กระเจี๊ยบ", "Roselle drink", 20, PLANT_DRINK);
+
+/* Stall 7: made-to-order drinks (Khongkha GaNGa). */
+d(7, "thai-iced-tea", "ชาเย็น", "Thai iced tea", 25, { ...DRINK, canonical: "cha-yen", vegetarian: "yes" });
+d(7, "iced-lime-tea", "ชามะนาวเย็น", "Iced lime tea", 25, PLANT_DRINK);
+d(7, "iced-coffee", "กาแฟเย็น", "Iced coffee", 30, { ...DRINK, vegetarian: "yes" });
+d(7, "hot-coffee", "กาแฟร้อน", "Hot coffee", 25, { ...DRINK, temperature: "hot", variants: [], vegetarian: "yes" });
+
+/* Stall 11: general drinks (BM HEALTH CLUB): smoothies, green tea, bubble tea, soft drinks. */
+d(11, "mango-smoothie", "มะม่วงปั่น", "Mango smoothie", 35, PLANT_DRINK);
+d(11, "strawberry-smoothie", "สตรอว์เบอร์รีปั่น", "Strawberry smoothie", 35, PLANT_DRINK);
+d(11, "iced-green-tea", "ชาเขียวเย็น", "Iced green tea", 30, { ...DRINK, vegetarian: "yes" });
+d(11, "bubble-milk-tea", "ชานมไข่มุก", "Bubble milk tea", 35, { ...DRINK, vegetarian: "yes" });
+d(11, "soft-drink-can", "น้ำอัดลมกระป๋อง", "Soft drink, can", 20, { ...PLANT_DRINK, variants: [], wet: false });
+
+/* Stall 17: general drinks (kiosk). */
+d(17, "thai-iced-tea-kiosk", "ชาเย็น", "Thai iced tea", 30, { ...DRINK, canonical: "cha-yen", vegetarian: "yes" });
+d(17, "lemon-soda", "เลมอนโซดา", "Lemon soda", 25, PLANT_DRINK);
+d(17, "drinking-water", "น้ำดื่มขวด", "Bottled water", 15, { ...PLANT_DRINK, variants: [], wet: false });
+
+/* Stall 4: international (Steck Project): steak and pasta. */
+const WESTERN: DishOptions = { type: "singlePlate", style: "grilled", spice: 0, variants: [SPECIAL] };
+d(4, "pork-steak", "สเต็กหมู", "Pork steak with fries and salad", 65, { ...WESTERN, protein: ["pork"] });
+d(4, "chicken-steak", "สเต็กไก่", "Chicken steak with fries and salad", 60, { ...WESTERN, protein: ["chicken"] });
+d(4, "beef-steak", "สเต็กเนื้อ", "Beef steak with fries and salad", 70, { ...WESTERN, protein: ["beef"] });
+d(4, "spaghetti-carbonara", "สปาเกตตีคาโบนาร่า", "Spaghetti carbonara", 55, { ...WESTERN, type: "noodles", style: "stirFried", protein: ["pork", "egg"] });
+
+/* Stall 16: international (Tamasato Ramen). */
+const RAMEN: DishOptions = { type: "noodles", style: "boiled", wet: true, spice: 1, variants: [SPECIAL] };
+d(16, "tonkotsu-ramen", "ราเม็งทงคตสึ", "Tonkotsu ramen", 70, { ...RAMEN, protein: ["pork", "egg"] });
+d(16, "shoyu-chicken-ramen", "ราเม็งโชยุไก่", "Chicken shoyu ramen", 65, { ...RAMEN, protein: ["chicken", "egg"], spice: 0 });
+d(16, "gyoza", "เกี๊ยวซ่าทอด 5 ชิ้น", "Fried gyoza, five pieces", 40, { type: "snack", course: "side", protein: ["pork"], style: "deepFried", spice: 0 });
+
+/* Stall 5: snacks, desserts, fruit (Yum Yum Snakie). */
+d(5, "french-fries", "เฟรนช์ฟรายส์", "French fries", 30, { type: "snack", course: "side", protein: ["none"], style: "deepFried", spice: 0, vegetarian: "yes", vegan: "yes", jay: "yes" });
+d(5, "chicken-nuggets", "นักเก็ตไก่", "Chicken nuggets", 35, { type: "snack", course: "side", protein: ["chicken"], style: "deepFried", spice: 0 });
+d(5, "bua-loy-sweet-egg", "บัวลอยไข่หวาน", "Rice balls in coconut milk with sweet egg", 30, { ...DESSERT, canonical: "bua-loy", style: "boiled", temperature: "hot", wet: true, protein: ["egg"] });
+d(5, "honey-toast", "ขนมปังปิ้งน้ำผึ้ง", "Honey toast", 45, { ...DESSERT, style: "grilled", temperature: "hot" });
+
+/* Stall 8: peeled fruit (Kanlaya). */
+const FRUIT: DishOptions = { ...DESSERT, course: "dessert", temperature: "cold", style: "salad", vegan: "yes", jay: "yes" };
+d(8, "cut-watermelon", "แตงโมปอกพร้อมทาน", "Peeled watermelon cup", 20, FRUIT);
+d(8, "cut-pineapple", "สับปะรดปอกพร้อมทาน", "Peeled pineapple cup", 20, FRUIT);
+d(8, "cut-fruit", "ผลไม้รวมตัดแต่ง", "Mixed cut fruit cup", 25, FRUIT);
+d(8, "cut-guava", "ฝรั่งปอกพร้อมทาน", "Peeled guava cup", 20, FRUIT);
+
+/* Stall 18: desserts kiosk (Pa Mu). */
+d(18, "bua-loy-kiosk", "บัวลอยน้ำขิง", "Rice balls in ginger syrup", 30, { ...DESSERT, canonical: "bua-loy", style: "boiled", temperature: "hot", wet: true, protein: ["none"], vegan: "yes", jay: "yes" });
+d(18, "ruam-mit", "รวมมิตร", "Mixed sweets in iced coconut milk", 30, { ...DESSERT, style: "boiled", wet: true, vegan: "yes", jay: "yes" });
+d(18, "mango-sticky-rice", "ข้าวเหนียวมะม่วง", "Mango with sticky rice", 35, { ...DESSERT, vegan: "yes", jay: "yes" });
+d(18, "khanom-krok", "ขนมครก 5 ชิ้น", "Coconut pancakes, a box of five", 25, { ...DESSERT, style: "grilled", temperature: "hot", vegan: "canAsk", jay: "canAsk" });
+
+/* Stall 6: rice plates (Mae Pranit): red pork, crispy pork, pork leg, chicken rice, khao mok gai. */
+d(6, "khao-mu-daeng", "ข้าวหมูแดง", "Red roast pork over rice", 50, { protein: ["pork"], style: "grilled", spice: 0, variants: [SPECIAL] });
+d(6, "khao-mu-krop", "ข้าวหมูกรอบ", "Crispy pork belly over rice", 55, { protein: ["pork"], style: "deepFried", spice: 0, variants: [SPECIAL] });
+d(6, "khao-kha-mu", "ข้าวขาหมู", "Stewed pork leg over rice", 60, { protein: ["pork", "egg"], style: "boiled", spice: 0, wet: true, variants: [SPECIAL] });
+d(6, "khao-man-gai-mae", "ข้าวมันไก่", "Chicken rice", 50, { canonical: "khao-man-gai", protein: ["chicken"], style: "steamed", spice: 0, variants: [SPECIAL] });
+d(6, "khao-mok-gai-mae", "ข้าวหมกไก่", "Chicken biryani", 55, { canonical: "khao-mok-gai", protein: ["chicken"], style: "steamed", spice: 1, variants: [SPECIAL] });
+
+/* Stall 15: rice plates (TU chicken rice and pork leg). */
+const CHICKEN_RICE: DishOptions = { canonical: "khao-man-gai", protein: ["chicken"], style: "steamed", spice: 0, variants: [SPECIAL] };
+d(15, "khao-man-gai", "ข้าวมันไก่ต้ม", "Chicken rice, poached", 45, CHICKEN_RICE);
+d(15, "khao-man-gai-fried", "ข้าวมันไก่ทอด", "Chicken rice, fried chicken", 50, { ...CHICKEN_RICE, style: "deepFried" });
+d(15, "khao-man-gai-mixed", "ข้าวมันไก่รวม", "Chicken rice, poached and fried", 55, { ...CHICKEN_RICE, style: "deepFried" });
+d(15, "khao-kha-mu-tu", "ข้าวขาหมู", "Stewed pork leg over rice", 55, { protein: ["pork", "egg"], style: "boiled", spice: 0, wet: true, variants: [SPECIAL] });
+
+/* Stall 14: halal food. No pork anywhere on this menu. */
+d(14, "khao-mok-gai", "ข้าวหมกไก่", "Chicken biryani", 55, { canonical: "khao-mok-gai", protein: ["chicken"], style: "steamed", spice: 1, variants: [SPECIAL] });
+d(14, "khao-mok-beef", "ข้าวหมกเนื้อ", "Beef biryani", 65, { canonical: "khao-mok-gai", protein: ["beef"], style: "steamed", spice: 1, variants: [SPECIAL] });
+d(14, "kra-pao-chicken-halal", "กะเพราไก่", "Holy basil chicken", 50, { type: "madeToOrder", canonical: "pad-kra-pao", protein: ["chicken"], spice: 3, variants: [SPECIAL, FRIED_EGG] });
+d(14, "khao-pad-chicken-halal", "ข้าวผัดไก่", "Fried rice with chicken", 50, { type: "madeToOrder", canonical: "khao-pad", protein: ["chicken", "egg"], spice: 0, variants: [SPECIAL, FRIED_EGG] });
+d(14, "khai-jiao-halal", "ข้าวไข่เจียว", "Omelette over rice", 30, { type: "madeToOrder", canonical: "khai-jiao", protein: ["egg"], style: "deepFried", spice: 0, vegetarian: "canAsk", variants: [SPECIAL] });
+d(14, "tom-yum-chicken", "ต้มยำไก่", "Tom yum chicken soup", 55, { type: "soup", canonical: "tom-yum", protein: ["chicken"], style: "boiled", spice: 2, wet: true });
+d(14, "massaman-beef-rice", "ข้าวราดมัสมั่นเนื้อ", "Massaman beef curry over rice", 60, { type: "curryOverRice", protein: ["beef"], style: "curry", spice: 1, wet: true });
+
+/* Stall 9: Isan. */
+d(9, "som-tam-thai", "ตำไทย", "Som tam Thai, sweet and sour", 40, { type: "singlePlate", canonical: "som-tam", protein: ["seafood"], style: "salad", spice: 3, temperature: "cold", vegetarian: "canAsk" });
+d(9, "som-tam-poo-pla-ra", "ตำปูปลาร้า", "Som tam with salted crab and fermented fish", 45, { type: "singlePlate", canonical: "som-tam", protein: ["seafood", "fish"], style: "salad", spice: 3, temperature: "cold" });
+d(9, "larb-pork", "ลาบหมู", "Pork larb", 55, { type: "singlePlate", canonical: "larb", protein: ["pork"], style: "salad", spice: 3 });
+d(9, "grilled-chicken-isan", "ไก่ย่างอีสาน", "Isan grilled chicken", 55, { type: "singlePlate", protein: ["chicken"], style: "grilled", spice: 1, variants: [SPECIAL] });
+d(9, "sticky-rice", "ข้าวเหนียว", "Sticky rice, one bag", 10, { type: "rice", course: "side", protein: ["none"], style: "steamed", spice: 0, vegetarian: "yes", vegan: "yes", jay: "yes" });
+d(9, "tom-saep-pork", "ต้มแซ่บกระดูกหมู", "Spicy pork rib soup", 55, { type: "soup", canonical: "tom-yum", protein: ["pork"], style: "boiled", spice: 3, wet: true });
 
 function buildDishes(stamp: string): CanteenDish[] {
   return specs.map((spec, position) => {
@@ -639,15 +815,17 @@ function buildDishes(stamp: string): CanteenDish[] {
  * Settings
  * ------------------------------------------------------------------ */
 
+/** Main entrance on the south wall, south of the central staircase; courtyard doors on the north wall, one set in each half. */
 const ENTRANCES: CanteenEntrance[] = [
-  { _key: "river", label: { th: "ทางเข้าฝั่งแม่น้ำ", en: "River side entrance" }, col: 11, row: 4, side: "east" },
-  { _key: "road", label: { th: "ทางเข้าถนนใหญ่", en: "Main road entrance" }, col: 0, row: 4, side: "west" },
+  { _key: "main", label: { th: "ทางเข้าหลัก", en: "Main entrance" }, col: 7, row: 6, side: "south" },
+  { _key: "north-left", label: { th: "ประตูลานอเนกประสงค์ ซ้าย", en: "North courtyard doors, left" }, col: 3, row: 0, side: "north" },
+  { _key: "north-right", label: { th: "ประตูลานอเนกประสงค์ ขวา", en: "North courtyard doors, right" }, col: 13, row: 0, side: "north" },
 ];
 
 const SEATING: CanteenSeatingZone[] = [
-  { _key: "zone-a", label: { th: "โซนที่นั่ง A ฝั่งถนนใหญ่", en: "Seating zone A, main road side" }, col: 1, row: 3, w: 3, h: 2 },
-  { _key: "zone-b", label: { th: "โซนที่นั่ง B กลางโรงอาหาร", en: "Seating zone B, middle of the hall" }, col: 5, row: 3, w: 3, h: 2 },
-  { _key: "zone-c", label: { th: "โซนที่นั่ง C ฝั่งแม่น้ำ", en: "Seating zone C, river side" }, col: 8, row: 3, w: 3, h: 2 },
+  { _key: "west", label: { th: "ที่นั่งฝั่งตะวันตก ข้างร้าน 1 ถึง 7", en: "West seating, by stalls 1 to 7" }, col: 2, row: 1, w: 5, h: 6 },
+  { _key: "east", label: { th: "ที่นั่งฝั่งตะวันออก ร้าน 8 ถึง 16", en: "East seating, stalls 8 to 16" }, col: 12, row: 0, w: 3, h: 5 },
+  { _key: "south", label: { th: "โต๊ะแถวใต้ ทางตะวันออกเฉียงใต้", en: "South tables, south-east" }, col: 9, row: 6, w: 8, h: 1 },
 ];
 
 function buildSettings(stamp: string): CanteenSettings {
@@ -661,19 +839,16 @@ function buildSettings(stamp: string): CanteenSettings {
       _type: "place",
       _createdAt: stamp,
       _updatedAt: stamp,
-      name: { th: "โรงอาหารตัวอย่าง", en: "Demo canteen" },
-      slug: slug("demo-canteen"),
+      name: { th: "โรงอาหาร อาคารธรรมศาสตร์ 60 ปี", en: "Thammasat 60th Anniversary Building canteen" },
+      slug: slug("thammasat-60-years-canteen"),
       category: "welfare",
-      openingHours: [
-        { _key: "weekdays", daysOfWeek: [1, 2, 3, 4, 5], opens: "07:00", closes: "16:00" },
-        { _key: "saturday", daysOfWeek: [6], opens: "08:00", closes: "14:00" },
-      ],
+      // Monday to Friday 07:00 to 16:00. Closed Saturday, Sunday and public holidays (no public holiday data here).
+      openingHours: [{ _key: "weekdays", daysOfWeek: [1, 2, 3, 4, 5], opens: "07:00", closes: "16:00" }],
     },
-    gridCols: 12,
-    gridRows: 8,
+    gridCols: 17,
+    gridRows: 7,
     entrances: ENTRANCES,
     seatingZones: SEATING,
-    riverSide: "east",
     jayFestivalStart: "2026-10-10",
     jayFestivalEnd: "2026-10-18",
   };
@@ -684,8 +859,9 @@ function buildSettings(stamp: string): CanteenSettings {
  * ------------------------------------------------------------------ */
 
 /**
- * The whole fictional canteen. `now` only stamps the document metadata; every
- * survey date is fixed so the price history reads the same on every request.
+ * The canteen with its real structure and example menus. `now` only stamps
+ * the document metadata; every survey date is fixed so the price history
+ * reads the same on every request.
  */
 export function demoCanteenData(now: Date = new Date()): CanteenData {
   const stamp = now.toISOString();

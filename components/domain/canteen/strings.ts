@@ -188,6 +188,10 @@ export const EAT = {
   wayfindingTitle: { th: "หาร้านเจอได้อย่างไร", en: "How to find it" },
   noWayfinding: { th: "ยังไม่มีคำอธิบายทางเดิน ดูเลขร้านบนแผนที่", en: "No directions yet. Look for the stall number on the map." },
   vegetarianStall: { th: "ร้านมังสวิรัติ", en: "Vegetarian stall" },
+  noMenuYet: {
+    th: "แผงนี้ยังไม่มีร้าน จึงยังไม่มีเมนู",
+    en: "There is no shop in this stall yet, so there is no menu.",
+  },
   halalAsked: { th: "ถามร้านเมื่อ", en: "asked on" },
   stallMatches: { th: "ตรงกับตัวกรองของคุณ", en: "match your filters" },
   viewStall: { th: "ดูเมนูร้านนี้", en: "See this stall's menu" },

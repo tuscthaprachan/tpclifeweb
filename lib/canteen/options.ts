@@ -29,6 +29,7 @@ export const CUISINES: readonly CanteenCuisine[] = [
   "chickenRice",
   "curryOverRice",
   "muslim",
+  "international",
   "drinks",
   "desserts",
   "fruit",

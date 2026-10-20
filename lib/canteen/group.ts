@@ -394,7 +394,9 @@ export function bindingConstraint(
     data.stalls.filter((stall) => (perPersonMaps[personIndex]!.get(stall._id)?.length ?? 0) > 0).length,
   );
 
-  const candidates = data.stalls.map((stall) => {
+  // A stall with no dishes at all (a vacant slot) is not somewhere a group can eat, so it is never suggested.
+  const stallsWithDishes = new Set(data.dishes.map((dish) => dish.stall._ref));
+  const candidates = data.stalls.filter((stall) => stallsWithDishes.has(stall._id)).map((stall) => {
     const blockers: Blocker[] = [];
     people.forEach((person, personIndex) => {
       if ((perPersonMaps[personIndex]!.get(stall._id)?.length ?? 0) > 0) return;

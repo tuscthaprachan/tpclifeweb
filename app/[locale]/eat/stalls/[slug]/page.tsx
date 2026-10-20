@@ -140,6 +140,11 @@ export default async function EatStallPage({
             <Heading level={2} id="eat-stall-menu" visualLevel={3} className="m-0">
               {t(EAT.menuTitle, locale)}
             </Heading>
+            {dishes.length === 0 ? (
+              <InsetText>
+                <p className="m-0 text-ink-900">{t(EAT.noMenuYet, locale)}</p>
+              </InsetText>
+            ) : null}
             {sections.map((section) => (
               <section key={section.type} aria-labelledby={`eat-stall-type-${section.type}`}>
                 <Stack space={3}>
