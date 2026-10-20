@@ -102,3 +102,66 @@ for (const locale of LOCALES as readonly Locale[]) {
     });
   }
 }
+
+/* ---- Decide for me (/eat/pick): a seeded result page, in each mode ---- */
+
+for (const locale of LOCALES as readonly Locale[]) {
+  for (const mode of ["dish", "meal", "stall"]) {
+    test(`axe decide for me: ${locale} ${mode}`, async ({ page }) => {
+      const path = `${localePath(locale, "/eat/pick")}?seed=abc123&max=80&mode=${mode}`;
+      const response = await page.goto(path);
+      expect(response?.ok(), `${path} did not respond with an ok status`).toBeTruthy();
+      await page.waitForTimeout(1200); // let the reel settle
+      const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
+      expect(results.violations, formatViolations(path, results.violations)).toEqual([]);
+    });
+  }
+}
+
+/* ---- Budget tools and personal data (/eat/meal, /eat/week, /eat/mine) ---- */
+for (const locale of LOCALES as readonly Locale[]) {
+  for (const route of ["/eat/meal", "/eat/meal?max=60", "/eat/week", "/eat/week?budget=300&days=1,2,3,4,5&seed=abc234", "/eat/mine"]) {
+    test(`axe budget pages: ${locale} ${route}`, async ({ page }) => {
+      const path = localePath(locale, route);
+      const response = await page.goto(path);
+      expect(response?.ok(), `${path} did not respond with an ok status`).toBeTruthy();
+      const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
+      expect(results.violations, formatViolations(path, results.violations)).toEqual([]);
+    });
+  }
+}
+
+/* ---- Eat as a group (/eat/group): builder and each strategy ---- */
+const GROUP_PEOPLE = "p=Mint.50.np-v.s1~Ben.80..s3";
+for (const locale of LOCALES as readonly Locale[]) {
+  test(`axe eat group: ${locale}`, async ({ page }) => {
+    for (const query of ["", `?${GROUP_PEOPLE}`, `?${GROUP_PEOPLE}&strat=own&seed=abc`, `?${GROUP_PEOPLE}&strat=random&seed=abc`]) {
+      const path = `${localePath(locale, "/eat/group")}${query}`;
+      await test.step(path, async () => {
+        const response = await page.goto(path);
+        expect(response?.ok(), `${path} did not respond with an ok status`).toBeTruthy();
+        const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
+        expect(results.violations, formatViolations(path, results.violations)).toEqual([]);
+      });
+    }
+  });
+}
+
+/* ---- What is this dish (/eat/what-is) and the canteen search shortcut ---- */
+for (const locale of LOCALES as readonly Locale[]) {
+  test(`axe what-is index, first dish and search shortcut: ${locale}`, async ({ page }) => {
+    const paths = [localePath(locale, "/eat/what-is"), `${localePath(locale, "/search")}?q=50+baht+noodles`];
+    const first = await page.goto(paths[0]!);
+    expect(first?.ok()).toBeTruthy();
+    const href = await page.locator('main a[href*="/eat/what-is/"]').first().getAttribute("href");
+    if (href) paths.push(href, `${href}${href.includes("?") ? "&" : "?"}show=0`);
+    for (const path of paths) {
+      await test.step(path, async () => {
+        const response = await page.goto(path);
+        expect(response?.ok(), `${path} did not respond with an ok status`).toBeTruthy();
+        const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
+        expect(results.violations, formatViolations(path, results.violations)).toEqual([]);
+      });
+    }
+  });
+}

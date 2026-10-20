@@ -18,6 +18,7 @@ import { search } from "@/lib/search";
 import { logZeroResultSearch } from "@/lib/search/log-zero-result";
 import { getSearchIndex } from "@/lib/sanity/queries";
 import { Container, EmptyState, Heading, Stack } from "@/components/ui";
+import { CanteenShortcutCallout } from "@/components/domain/search/CanteenShortcutCallout";
 import { SearchBar } from "@/components/domain/search/SearchBar";
 import { SearchResults } from "@/components/domain/search/SearchResults";
 
@@ -71,6 +72,8 @@ export default async function SearchPage({ params, searchParams }: SearchPagePro
           <Heading level={1}>{UI.searchResults[locale]}</Heading>
           <SearchBar locale={locale} defaultValue={query} />
         </Stack>
+
+        <CanteenShortcutCallout query={query} locale={locale} />
 
         {query.trim().length === 0 ? null : results.length > 0 ? (
           <Stack space={4}>

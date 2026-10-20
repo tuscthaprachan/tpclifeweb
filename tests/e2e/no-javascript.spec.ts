@@ -168,3 +168,74 @@ test("Decide for me on /eat is a GET form to /eat/pick", async ({ page }) => {
   await expect(form).toHaveAttribute("method", "get");
   await expect(form.getByRole("button", { name: "Decide for me" })).toBeVisible();
 });
+
+/* ---- Decide for me (/eat/pick) ---- */
+
+test("Decide for me redirects to a seeded URL and every action is a plain link", async ({ page }) => {
+  await page.goto(localePath("en", "/eat/pick"));
+  const title = page.locator("#pick-result-title");
+  test.skip((await title.count()) === 0, "No canteen data in this environment, so there is nothing to pick.");
+
+  await expect(page).toHaveURL(/seed=[a-z0-9]+/);
+  const seeded = page.url();
+  await page.reload();
+  await expect(page).toHaveURL(seeded);
+  await expect(page.getByRole("link", { name: "Spin again" })).toHaveAttribute("href", /seed=/);
+  await expect(page.getByRole("link", { name: "Not feeling it" })).toHaveAttribute("href", /not=/);
+  await expect(page.getByRole("link", { name: "Go with this" })).toHaveAttribute("href", /\/eat\/stalls\//);
+  await page.getByRole("link", { name: "Spin again" }).click();
+  await expect(page).toHaveURL(/seed=/);
+});
+
+/* ---- Budget tools and personal data ---- */
+test("/eat/meal budget form is a GET form and works without JavaScript", async ({ page }) => {
+  await page.goto(localePath("en", "/eat/meal?max=60"));
+  const form = page.locator('form[action$="/eat/meal"]').first();
+  await expect(form).toHaveAttribute("method", "get");
+  await expect(form.getByRole("button", { name: "Find meals" })).toBeVisible();
+});
+
+test("/eat/week redirects to a shareable seed and locks work as links", async ({ page }) => {
+  await page.goto(localePath("en", "/eat/week?budget=300"));
+  await expect(page).toHaveURL(/seed=[a-z0-9]+/);
+  const lock = page.getByRole("link", { name: /^Lock: Monday/ });
+  test.skip((await lock.count()) === 0, "No canteen data in this environment, so there is no plan.");
+  await lock.click();
+  await expect(page).toHaveURL(/lock\.1=/);
+  await expect(page.getByRole("link", { name: /^Unlock: Monday/ })).toBeVisible();
+});
+
+test("/eat/mine explains that it needs JavaScript", async ({ page }) => {
+  await page.goto(localePath("en", "/eat/mine"));
+  await expect(page.getByText("This page needs JavaScript")).toBeVisible();
+});
+
+/* ---- Eat as a group: the builder round trips as a plain GET form ---- */
+test("Eat as a group: Add another person works without JavaScript", async ({ page }) => {
+  await page.goto(localePath("en", "/eat/group?p=Mint.50~Ben"));
+  const add = page.getByRole("button", { name: "Add another person" });
+  test.skip((await add.count()) === 0, "No canteen data in this environment, so there is no group builder.");
+
+  await add.click();
+  await expect(page).toHaveURL(/p=Mint\.50~Ben~\./);
+  await expect(page.getByRole("group", { name: "Person 3" })).toBeVisible();
+
+  await page.getByRole("button", { name: /^Remove Person 1/ }).click();
+  await expect(page).toHaveURL(/p=Ben~\./);
+  await page.getByRole("button", { name: "Show results" }).click();
+  await expect(page).toHaveURL(/#results$/);
+});
+
+/* ---- What is this dish: Show to the stall is a link without JavaScript ---- */
+test("What is this dish: Show to the stall works without JavaScript", async ({ page }) => {
+  await page.goto(localePath("en", "/eat/what-is"));
+  const dish = page.locator('main a[href*="/eat/what-is/"]').first();
+  test.skip((await dish.count()) === 0, "No canteen data in this environment.");
+  await dish.click();
+  const show = page.getByRole("link", { name: /^Show to the stall/ }).first();
+  test.skip((await show.count()) === 0, "This dish has no order phrases.");
+  await show.click();
+  await expect(page).toHaveURL(/show=0/);
+  await expect(page.locator('[lang="th"]').first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Back to the dish" })).toBeVisible();
+});

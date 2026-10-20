@@ -39,7 +39,9 @@ import { getSiteSettings } from "@/components/layout/site-settings";
 import { Container, Heading, Stack } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
+import { closesAt as canteenClosesAt } from "@/lib/canteen/derive";
 import {
+  getCanteenData,
   getActiveServiceAlerts,
   getActiveShuttleRoutes,
   getKeyPlaces,
@@ -81,7 +83,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   const settings = await getSiteSettings();
 
-  const [alerts, routes, keyPlaces, events, newsPage, priorityForms, policies] = await Promise.all([
+  const [alerts, routes, keyPlaces, events, newsPage, priorityForms, policies, canteenData] = await Promise.all([
     getActiveServiceAlerts(),
     getActiveShuttleRoutes(),
     getKeyPlaces(),
@@ -89,7 +91,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getNewsPage(1, NEWS_FETCH_COUNT),
     getPriorityForms(),
     getPolicies(),
+    getCanteenData(),
   ]);
+  // The canteen line only appears once the canteen has been surveyed. The
+  // closing time is the scheduled one, and is left out when it is unknown.
+  const canteen =
+    canteenData.dishes.length > 0 ? { closesAt: canteenClosesAt(canteenData.settings, undefined, new Date()) } : null;
 
   return (
     <Container>
@@ -102,7 +109,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </Stack>
 
         {/* 2. At-a-glance live information. */}
-        <AtAGlance locale={locale} alerts={alerts} routes={routes} places={keyPlaces} />
+        <AtAGlance locale={locale} alerts={alerts} routes={routes} places={keyPlaces} canteen={canteen} />
 
         {/* 3. Events and news. */}
         <EventsAndNews locale={locale} events={events} news={newsPage.items} />

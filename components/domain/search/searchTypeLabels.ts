@@ -35,4 +35,6 @@ export const SEARCH_TYPE_LABEL: Record<SearchableType, LocaleString> = {
   // TODO: add to UI strings
   place: { th: "สถานที่", en: "Place" },
   lostFoundItem: UI.lostAndFound,
+  canteenDish: { th: "เมนูโรงอาหาร", en: "Canteen dish" },
+  canonicalDish: { th: "เมนูนี้คืออะไร", en: "What is this dish" },
 };

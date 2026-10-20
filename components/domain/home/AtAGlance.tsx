@@ -4,6 +4,7 @@ import { Heading, Stack } from "@/components/ui";
 import { type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { CampusPlace, ServiceAlert as ServiceAlertDoc, ShuttleRoute } from "@/lib/sanity/types";
+import { CanteenGlance } from "./CanteenGlance";
 import { KeyOpeningHours } from "./KeyOpeningHours";
 
 interface AtAGlanceProps {
@@ -12,6 +13,12 @@ interface AtAGlanceProps {
   routes: ShuttleRoute[];
   places: CampusPlace[];
   now?: Date;
+  /**
+   * The canteen line. Omit (or pass null) when there is no canteen data.
+   * `closesAt` is the scheduled closing time ("HH:mm") while the canteen is
+   * open by its published hours, and null when that is unknown or it is shut.
+   */
+  canteen?: { closesAt: string | null } | null;
 }
 
 /**
@@ -35,7 +42,7 @@ interface AtAGlanceProps {
  * component renders here. Reported in the home agent's final report as a
  * field that would need adding to the schema rather than invented locally.
  */
-export function AtAGlance({ locale, alerts, routes, places, now = new Date() }: AtAGlanceProps) {
+export function AtAGlance({ locale, alerts, routes, places, now = new Date(), canteen }: AtAGlanceProps) {
   return (
     <Stack space={6} as="section">
       <Heading level={2}>{UI.atAGlance[locale]}</Heading>
@@ -53,6 +60,8 @@ export function AtAGlance({ locale, alerts, routes, places, now = new Date() }: 
       <ShuttlePanel locale={locale} routes={routes} headingLevel={3} now={now} />
 
       <KeyOpeningHours locale={locale} places={places} headingLevel={3} now={now} />
+
+      {canteen ? <CanteenGlance locale={locale} closesAt={canteen.closesAt} /> : null}
     </Stack>
   );
 }

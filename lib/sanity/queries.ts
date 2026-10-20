@@ -20,6 +20,7 @@ import { client } from "./client";
 import { CACHE_TAGS } from "./env";
 import { safeFetch } from "./safe-fetch";
 import { emptyCanteenData, normaliseCanteenData } from "@/lib/canteen/derive";
+import { canteenSearchRecords } from "@/lib/search/canteen";
 import type {
   CampusEvent,
   CanteenData,
@@ -714,6 +715,15 @@ const EMPTY_SEARCH_INDEX_RAW: SearchIndexRaw = {
   lostFoundItems: [],
 };
 
+/** The canteen's search records, or none if anything about them goes wrong: a canteen problem must never take down site search. */
+async function canteenSearchRecordsSafe(): Promise<SearchRecord[]> {
+  try {
+    return canteenSearchRecords(await getCanteenData());
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Fetches every indexable document and assembles the flat `SearchRecord[]`
  * described in `lib/sanity/types.ts`. Intended to run at build time, or on
@@ -747,6 +757,9 @@ export async function getSearchIndex(): Promise<SearchIndex> {
     ...raw.organisations,
     ...raw.places,
     ...raw.lostFoundItems,
+    // Canteen dishes and explainers are built in code from the one cached
+    // canteen dataset, with canonical aliases folded into the haystack.
+    ...(await canteenSearchRecordsSafe()),
   ];
 
   return { generatedAt: new Date().toISOString(), records };

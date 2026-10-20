@@ -563,7 +563,9 @@ export type SearchableType =
   | "policy"
   | "organisation"
   | "place"
-  | "lostFoundItem";
+  | "lostFoundItem"
+  | "canteenDish"
+  | "canonicalDish";
 
 export interface SearchIndex {
   generatedAt: string;

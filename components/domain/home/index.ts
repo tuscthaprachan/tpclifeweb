@@ -6,6 +6,7 @@
 
 export * from "./openingHours";
 export * from "./KeyOpeningHours";
+export * from "./CanteenGlance";
 export * from "./AtAGlance";
 export * from "./EventsAndNews";
 export * from "./PriorityForms";
