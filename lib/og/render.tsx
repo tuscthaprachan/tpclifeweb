@@ -9,6 +9,12 @@
  * any glyph Lexend lacks, which is how a Thai title renders without a
  * per-string script check.
  *
+ * Satori also does no Thai mark positioning, so a tone mark over an upper
+ * vowel (the mai ek in เรื่อง) lands on the vowel and vanishes, and marks
+ * over ป ฝ ฟ hit the ascender. The Sarabun files here have the font's own
+ * raised and narrow mark glyphs mapped to private-use code points
+ * (U+F700 to U+F710), and `shapeThai` swaps them in before rendering.
+ *
  * `next.config.ts` traces `assets/og/**` into every server bundle so the
  * runtime-rendered images for dynamic slugs find the files on Vercel.
  */
@@ -75,6 +81,38 @@ function loadFonts() {
   return fonts;
 }
 
+const BRAND_PURPLE = "#613f87";
+const BRAND_ORANGE = "#e7935b";
+
+const UPPER_VOWELS = "\u0E31\u0E34\u0E35\u0E36\u0E37\u0E47\u0E4D";
+const TALL_CONSONANTS = "\u0E1B\u0E1D\u0E1F";
+const HIGH_TONE = 0xf700;
+const NARROW_TONE = 0xf705;
+const NARROW_UPPER = 0xf70a;
+
+function shapeThai(text: string): string {
+  let out = "";
+  let base = "";
+  let upper = false;
+  for (const ch of text) {
+    const cp = ch.codePointAt(0)!;
+    const tall = TALL_CONSONANTS.includes(base);
+    if (cp >= 0x0e48 && cp <= 0x0e4c) {
+      out += String.fromCodePoint((upper ? HIGH_TONE : tall ? NARROW_TONE : cp) + (upper || tall ? cp - 0x0e48 : 0));
+    } else if (UPPER_VOWELS.includes(ch)) {
+      out += tall ? String.fromCodePoint(NARROW_UPPER + UPPER_VOWELS.indexOf(ch)) : ch;
+      upper = true;
+    } else {
+      if (!(cp >= 0x0e38 && cp <= 0x0e3a)) {
+        base = ch;
+        upper = false;
+      }
+      out += ch;
+    }
+  }
+  return out;
+}
+
 function clip(text: string, max: number): string {
   const chars = Array.from(text.trim());
   return chars.length > max ? `${chars.slice(0, max - 1).join("").trimEnd()}…` : chars.join("");
@@ -100,8 +138,10 @@ export function ogAlt({ locale, title, kicker }: Pick<OgContent, "locale" | "tit
 
 export async function renderOgImage({ locale, title, kicker, description, tone = "brand" }: OgContent): Promise<ImageResponse> {
   const { fill, soft, ink = "#1f1a1c" } = TONE[tone];
-  const heading = clip(title, 110);
-  const lede = description ? clip(description, 160) : undefined;
+  const heading = shapeThai(clip(title, 110));
+  const lede = description ? shapeThai(clip(description, 160)) : undefined;
+  const serviceName = pick(SERVICE_NAME, locale);
+  const tail = locale === "th" ? "#ท้าย" : "";
 
   return new ImageResponse(
     (
@@ -115,7 +155,10 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
           color: "#1f1a1c",
         }}
       >
-        <div style={{ width: 28, height: "100%", display: "flex", background: fill }} />
+        <div style={{ width: 28, height: "100%", display: "flex", flexDirection: "column" }}>
+          <div style={{ flex: 1, display: "flex", background: BRAND_PURPLE }} />
+          <div style={{ flex: 1, display: "flex", background: BRAND_ORANGE }} />
+        </div>
         <div
           style={{
             flex: 1,
@@ -141,7 +184,7 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
                   marginBottom: 32,
                 }}
               >
-                {clip(kicker, 48)}
+                {shapeThai(clip(kicker, 48))}
               </div>
             ) : null}
             <div
@@ -149,14 +192,14 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
                 display: "flex",
                 fontSize: titleSize(heading),
                 fontWeight: 700,
-                lineHeight: 1.2,
+                lineHeight: locale === "th" ? 1.45 : 1.2,
                 letterSpacing: "-0.01em",
               }}
             >
               {heading}
             </div>
             {lede ? (
-              <div style={{ display: "flex", fontSize: 32, lineHeight: 1.4, color: "#554f51", marginTop: 24 }}>{lede}</div>
+              <div style={{ display: "flex", fontSize: 32, lineHeight: locale === "th" ? 1.6 : 1.4, color: "#554f51", marginTop: 24 }}>{lede}</div>
             ) : null}
           </div>
           <div
@@ -168,8 +211,11 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
               paddingTop: 28,
             }}
           >
-            <div style={{ display: "flex", fontSize: 40, fontWeight: 700, color: "#613f87" }}>{pick(SERVICE_NAME, locale)}</div>
-            <div style={{ display: "flex", fontSize: 28, color: "#554f51" }}>{pick(CAMPUS, locale)}</div>
+            <div style={{ display: "flex", fontSize: 40, fontWeight: 700, color: BRAND_PURPLE }}>
+              {tail ? <span style={{ color: BRAND_ORANGE }}>{shapeThai(tail)}</span> : null}
+              <span>{shapeThai(serviceName.slice(tail.length))}</span>
+            </div>
+            <div style={{ display: "flex", fontSize: 28, color: "#554f51" }}>{shapeThai(pick(CAMPUS, locale))}</div>
           </div>
         </div>
       </div>
