@@ -1,0 +1,209 @@
+/**
+ * Layout maths for the canteen floor plan. Pure: no React, no DOM, so the
+ * server render and the unit tests run exactly the same code.
+ *
+ * Two coordinate systems are used. "Grid units" count cells from the top
+ * left of the plan (a stall at col 2, row 1 starts 2 cells in and 1 down).
+ * "View units" are the SVG viewBox: grid units times `CELL`, shifted by the
+ * margin that makes room for entrance badges and the river band.
+ */
+
+import { compareStallsByWalk } from "@/lib/canteen/derive";
+import type { CanteenEntrance, CanteenSettings, CanteenStall, FloorSide, MapCell } from "@/lib/sanity/types";
+
+/** Side of one grid cell in view units. */
+export const CELL = 72;
+
+/** Largest grid accepted, so a mistyped settings value cannot produce a huge drawing. */
+export const MAX_GRID = 40;
+
+/** Gap between neighbouring tiles, in view units. */
+export const TILE_GAP = 4;
+
+/** Margin on an edge that has an entrance, for the badge and its label. */
+const ENTRANCE_BAND = 52;
+/** Extra margin on the river edge, for the band that carries its label. */
+const RIVER_BAND = 20;
+/** Margin on every edge. */
+const BASE_MARGIN = 6;
+
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export interface Rect extends Point {
+  w: number;
+  h: number;
+}
+
+export interface Margins {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+export interface PlanLayout {
+  /** Columns and rows actually drawn: the settings grid, grown if a stall or zone sits outside it. */
+  cols: number;
+  rows: number;
+  margins: Margins;
+  /** Full viewBox size. */
+  width: number;
+  height: number;
+}
+
+function wholeNumber(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? Math.round(value) : fallback;
+}
+
+/** True when the settings describe a floor plan that can be drawn. */
+export function hasFloorPlan(settings: CanteenSettings | null | undefined, stalls: readonly CanteenStall[]): boolean {
+  if (!settings || stalls.length === 0) return false;
+  return wholeNumber(settings.gridCols, 0) >= 1 && wholeNumber(settings.gridRows, 0) >= 1;
+}
+
+/** The edge of the plan an entrance sits on, in grid units, at the middle of its cell. */
+export function entrancePoint(entrance: Pick<CanteenEntrance, "col" | "row" | "side">, cols: number, rows: number): Point {
+  switch (entrance.side) {
+    case "north":
+      return { x: entrance.col + 0.5, y: 0 };
+    case "south":
+      return { x: entrance.col + 0.5, y: rows };
+    case "west":
+      return { x: 0, y: entrance.row + 0.5 };
+    case "east":
+      return { x: cols, y: entrance.row + 0.5 };
+  }
+}
+
+/** Grid size actually needed: the settings size, grown to hold every stall and seating zone. */
+export function gridExtent(
+  settings: Pick<CanteenSettings, "gridCols" | "gridRows" | "seatingZones">,
+  stalls: readonly Pick<CanteenStall, "mapCell">[],
+): { cols: number; rows: number } {
+  let cols = Math.min(MAX_GRID, Math.max(1, wholeNumber(settings.gridCols, 1)));
+  let rows = Math.min(MAX_GRID, Math.max(1, wholeNumber(settings.gridRows, 1)));
+  const cells: MapCell[] = [...stalls.map((stall) => stall.mapCell), ...(settings.seatingZones ?? [])];
+  for (const cell of cells) {
+    cols = Math.min(MAX_GRID, Math.max(cols, cell.col + Math.max(1, cell.w)));
+    rows = Math.min(MAX_GRID, Math.max(rows, cell.row + Math.max(1, cell.h)));
+  }
+  return { cols, rows };
+}
+
+/** Margins and viewBox size for a plan. `compact` drops the entrance bands, which only carry labels. */
+export function planLayout(
+  settings: Pick<CanteenSettings, "gridCols" | "gridRows" | "seatingZones" | "entrances" | "riverSide">,
+  stalls: readonly Pick<CanteenStall, "mapCell">[],
+  options: { compact?: boolean } = {},
+): PlanLayout {
+  const { cols, rows } = gridExtent(settings, stalls);
+  const margins: Margins = { top: BASE_MARGIN, right: BASE_MARGIN, bottom: BASE_MARGIN, left: BASE_MARGIN };
+  const grow = (side: FloorSide, amount: number) => {
+    margins[side === "north" ? "top" : side === "south" ? "bottom" : side === "east" ? "right" : "left"] += amount;
+  };
+  if (!options.compact) {
+    for (const side of new Set((settings.entrances ?? []).map((entrance) => entrance.side))) grow(side, ENTRANCE_BAND);
+    if (settings.riverSide) grow(settings.riverSide, RIVER_BAND);
+  }
+  return {
+    cols,
+    rows,
+    margins,
+    width: margins.left + cols * CELL + margins.right,
+    height: margins.top + rows * CELL + margins.bottom,
+  };
+}
+
+/** A grid cell as a rectangle in view units, shrunk by `inset` on every side. */
+export function cellRect(cell: MapCell, layout: Pick<PlanLayout, "margins">, inset = 0): Rect {
+  return {
+    x: layout.margins.left + cell.col * CELL + inset,
+    y: layout.margins.top + cell.row * CELL + inset,
+    w: Math.max(0, Math.max(1, cell.w) * CELL - inset * 2),
+    h: Math.max(0, Math.max(1, cell.h) * CELL - inset * 2),
+  };
+}
+
+/** The middle of a cell, in grid units. */
+export function cellCentre(cell: MapCell): Point {
+  return { x: cell.col + Math.max(1, cell.w) / 2, y: cell.row + Math.max(1, cell.h) / 2 };
+}
+
+/** Grid units to view units. */
+export function toView(point: Point, layout: Pick<PlanLayout, "margins">): Point {
+  return { x: layout.margins.left + point.x * CELL, y: layout.margins.top + point.y * CELL };
+}
+
+export function manhattan(a: Point, b: Point): number {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
+/** Stalls in walking order: top row first, then left to right, then stall number. Returns a copy. */
+export function walkingOrder<T extends CanteenStall>(stalls: readonly T[]): T[] {
+  return [...stalls].sort(compareStallsByWalk);
+}
+
+/**
+ * Index of the entrance closest to a point (grid units) by Manhattan
+ * distance, or -1 when there are no entrances. The first entrance wins a tie.
+ */
+export function nearestEntrance(
+  entrances: readonly Pick<CanteenEntrance, "col" | "row" | "side">[],
+  point: Point,
+  cols: number,
+  rows: number,
+): number {
+  let best = -1;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  entrances.forEach((entrance, index) => {
+    const distance = manhattan(entrancePoint(entrance, cols, rows), point);
+    if (distance < bestDistance) {
+      best = index;
+      bestDistance = distance;
+    }
+  });
+  return best;
+}
+
+/**
+ * A simple walking route: starting at `origin` (grid units), repeatedly go to
+ * the nearest unvisited stall by Manhattan distance between cell centres.
+ * Ties fall back to walking order, so the result is deterministic. This is a
+ * greedy tour, not a shortest path: it is a sensible order to visit, not a
+ * promise of the shortest walk.
+ */
+export function routeOrder<T extends CanteenStall>(stalls: readonly T[], origin: Point): T[] {
+  const remaining = walkingOrder(stalls);
+  const route: T[] = [];
+  let here = origin;
+  while (remaining.length > 0) {
+    let bestIndex = 0;
+    let bestDistance = Number.POSITIVE_INFINITY;
+    remaining.forEach((stall, index) => {
+      const distance = manhattan(here, cellCentre(stall.mapCell));
+      if (distance < bestDistance) {
+        bestIndex = index;
+        bestDistance = distance;
+      }
+    });
+    const [next] = remaining.splice(bestIndex, 1);
+    route.push(next!);
+    here = cellCentre(next!.mapCell);
+  }
+  return route;
+}
+
+/** Shortens text to at most `max` characters, ending in an ellipsis. Counts by code point, so Thai and emoji are not cut mid character. */
+export function truncate(text: string, max: number): string {
+  const chars = Array.from(text);
+  if (chars.length <= max) return text;
+  return `${chars.slice(0, Math.max(1, max - 1)).join("").trimEnd()}…`;
+}
+
+/** Roughly how many characters of a given font size fit in a width, both in view units. */
+export function charsThatFit(width: number, fontSize: number): number {
+  return Math.max(1, Math.floor(width / (fontSize * 0.6)));
+}
