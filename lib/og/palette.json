@@ -3,8 +3,7 @@
   "inkMuted": "#554f51",
   "rule": "#e2dcde",
   "purple": "#613f87",
-  "orangeText": "#a34a0b",
-  "orangeBar": "#e7935b",
+  "orange": "#f26b0f",
   "tones": {
     "brand": { "fill": "#613f87", "soft": "#f1eff5", "ink": "#ffffff" },
     "transport": { "fill": "#e7935b", "soft": "#fbe4d7", "ink": "#1f1a1c" },

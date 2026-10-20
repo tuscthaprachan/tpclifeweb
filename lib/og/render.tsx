@@ -17,8 +17,8 @@
  *
  * Colours live in `palette.json` so `scripts/check-contrast.mjs` can hold
  * every text pair to 4.5:1. Share cards are shown scaled down to a third or
- * less, so no text here counts as large. The orange bar is decorative and
- * carries no text, so it may stay the fill-only brand orange.
+ * less, so no text here counts as large. The bright orange is used only in
+ * the wordmark, which 1.4.3 exempts as a logotype, and the decorative bar.
  *
  * `next.config.ts` traces `assets/og/**` into every server bundle so the
  * runtime-rendered images for dynamic slugs find the files on Vercel.
@@ -154,7 +154,7 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
       >
         <div style={{ width: 28, height: "100%", display: "flex", flexDirection: "column" }}>
           <div style={{ flex: 1, display: "flex", background: palette.purple }} />
-          <div style={{ flex: 1, display: "flex", background: palette.orangeBar }} />
+          <div style={{ flex: 1, display: "flex", background: palette.orange }} />
         </div>
         <div
           style={{
@@ -219,7 +219,7 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
                 color: palette.purple,
               }}
             >
-              <span style={{ color: palette.orangeText }}>{shapeThai(lead)}</span>
+              <span style={{ color: palette.orange }}>{shapeThai(lead)}</span>
               <span>{shapeThai(serviceName.slice(lead.length))}</span>
             </div>
             <div style={{ display: "flex", fontSize: 28, color: palette.inkMuted }}>{shapeThai(pick(CAMPUS, locale))}</div>
