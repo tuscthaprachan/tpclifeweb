@@ -52,6 +52,8 @@ export interface OgContent {
   kicker?: string;
   description?: string;
   tone?: OgTone;
+  /** The home page card: a giant wordmark with `title` as the line beneath it. */
+  hero?: boolean;
 }
 
 const FONT_DIR = join(process.cwd(), "assets/og");
@@ -129,17 +131,33 @@ export function ogLocale(raw: string | undefined): Locale {
 }
 
 /** Alt text that says what the image shows, for `generateImageMetadata`. */
-export function ogAlt({ locale, title, kicker, description }: OgContent): string {
+export function ogAlt({ locale, title, kicker, description, hero }: OgContent): string {
+  if (hero) return `${pick(SERVICE_NAME, locale)} · ${title}`;
   return [kicker, title, description, pick(SERVICE_NAME, locale)].filter(Boolean).join(" · ");
 }
 
-export async function renderOgImage({ locale, title, kicker, description, tone = "brand" }: OgContent): Promise<ImageResponse> {
-  const { fill, soft, ink } = TONE[tone];
-  const heading = shapeThai(clip(title, 110));
-  const lede = description ? shapeThai(clip(description, 160)) : undefined;
-  const serviceName = pick(SERVICE_NAME, locale);
+function Wordmark({ locale, size }: { locale: Locale; size: number }) {
+  const name = pick(SERVICE_NAME, locale);
   const lead = locale === "th" ? "#ท้าย" : "#tpc";
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "baseline",
+        fontSize: size,
+        fontWeight: 700,
+        lineHeight: 1,
+        fontFamily: locale === "th" ? "Sarabun" : "Lexend",
+        color: palette.purple,
+      }}
+    >
+      <span style={{ color: palette.orange }}>{shapeThai(lead)}</span>
+      <span>{shapeThai(name.slice(lead.length))}</span>
+    </div>
+  );
+}
 
+async function frame(soft: string, children: React.ReactNode[]): Promise<ImageResponse> {
   return new ImageResponse(
     (
       <div
@@ -166,67 +184,94 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
             background: soft,
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {kicker ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignSelf: "flex-start",
-                  fontSize: 30,
-                  fontWeight: 700,
-                  padding: "8px 20px",
-                  borderRadius: 8,
-                  background: fill,
-                  color: ink,
-                  marginBottom: 32,
-                }}
-              >
-                {shapeThai(clip(kicker, 48))}
-              </div>
-            ) : null}
-            <div
-              style={{
-                display: "flex",
-                fontSize: titleSize(heading),
-                fontWeight: 700,
-                lineHeight: locale === "th" ? 1.45 : 1.2,
-                letterSpacing: "-0.01em",
-              }}
-            >
-              {heading}
-            </div>
-            {lede ? (
-              <div style={{ display: "flex", fontSize: 32, lineHeight: locale === "th" ? 1.6 : 1.4, color: palette.inkMuted, marginTop: 24 }}>{lede}</div>
-            ) : null}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              borderTop: `3px solid ${palette.rule}`,
-              paddingTop: 28,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                fontSize: 40,
-                fontWeight: 700,
-                lineHeight: 1,
-                fontFamily: locale === "th" ? "Sarabun" : "Lexend",
-                color: palette.purple,
-              }}
-            >
-              <span style={{ color: palette.orange }}>{shapeThai(lead)}</span>
-              <span>{shapeThai(serviceName.slice(lead.length))}</span>
-            </div>
-            <div style={{ display: "flex", fontSize: 28, color: palette.inkMuted }}>{shapeThai(pick(CAMPUS, locale))}</div>
-          </div>
+          {...children}
         </div>
       </div>
     ),
     { ...OG_SIZE, fonts: await loadFonts() },
+  );
+}
+
+function renderOgHero({ locale, title }: OgContent): Promise<ImageResponse> {
+  return frame(
+    TONE.brand.soft,
+    [
+      <div key="main" style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <Wordmark locale={locale} size={locale === "th" ? 124 : 216} />
+        <div
+          style={{
+            display: "flex",
+            fontSize: 40,
+            lineHeight: locale === "th" ? 1.6 : 1.35,
+            color: palette.inkMuted,
+            marginTop: 40,
+            maxWidth: 960,
+          }}
+        >
+          {shapeThai(clip(title, 120))}
+        </div>
+      </div>,
+      <div key="campus" style={{ display: "flex", fontSize: 28, color: palette.inkMuted }}>{shapeThai(pick(CAMPUS, locale))}</div>,
+    ],
+  );
+}
+
+export function renderOgImage(content: OgContent): Promise<ImageResponse> {
+  if (content.hero) return renderOgHero(content);
+  const { locale, title, kicker, description, tone = "brand" } = content;
+  const { fill, soft, ink } = TONE[tone];
+  const heading = shapeThai(clip(title, 110));
+  const lede = description ? shapeThai(clip(description, 160)) : undefined;
+
+  return frame(
+    soft,
+    [
+      <div key="main" style={{ display: "flex", flexDirection: "column" }}>
+        {kicker ? (
+          <div
+            style={{
+              display: "flex",
+              alignSelf: "flex-start",
+              fontSize: 30,
+              fontWeight: 700,
+              padding: "8px 20px",
+              borderRadius: 8,
+              background: fill,
+              color: ink,
+              marginBottom: 32,
+            }}
+          >
+            {shapeThai(clip(kicker, 48))}
+          </div>
+        ) : null}
+        <div
+          style={{
+            display: "flex",
+            fontSize: titleSize(heading),
+            fontWeight: 700,
+            lineHeight: locale === "th" ? 1.45 : 1.2,
+            letterSpacing: "-0.01em",
+          }}
+        >
+          {heading}
+        </div>
+        {lede ? (
+          <div style={{ display: "flex", fontSize: 32, lineHeight: locale === "th" ? 1.6 : 1.4, color: palette.inkMuted, marginTop: 24 }}>{lede}</div>
+        ) : null}
+      </div>,
+      <div
+        key="footer"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderTop: `3px solid ${palette.rule}`,
+          paddingTop: 28,
+        }}
+      >
+        <Wordmark locale={locale} size={40} />
+        <div style={{ display: "flex", fontSize: 28, color: palette.inkMuted }}>{shapeThai(pick(CAMPUS, locale))}</div>
+      </div>,
+    ],
   );
 }
