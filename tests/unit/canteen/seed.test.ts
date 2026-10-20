@@ -39,3 +39,23 @@ describe("survey CSV reader", () => {
     }
   });
 });
+
+describe("2569 stall sheet", () => {
+  it("gives the triangular kiosks their shape and size, matching the demo floor plan", async () => {
+    const parseCsv = await loadParser();
+    const { readFileSync } = await import("node:fs");
+    const { demoCanteenData } = await import("@/lib/canteen/demo");
+    const rows = parseCsv(readFileSync("data/canteen-stalls-2569.csv", "utf8"));
+    const demo = demoCanteenData().stalls;
+    for (const row of rows) {
+      const cell = demo.find((stall) => stall.number === Number(row.cells.number))!.mapCell;
+      expect(Number(row.cells.map_col)).toBe(cell.col);
+      expect(Number(row.cells.map_row)).toBe(cell.row);
+      expect(Number(row.cells.map_w)).toBe(cell.w);
+      expect(Number(row.cells.map_h)).toBe(cell.h);
+      expect(row.cells.map_shape || "rect").toBe(cell.shape ?? "rect");
+    }
+    expect(rows.find((row) => row.cells.number === "17")?.cells.map_shape).toBe("triangleBottomRight");
+    expect(rows.find((row) => row.cells.number === "18")?.cells.map_shape).toBe("triangleBottomLeft");
+  });
+});

@@ -28,7 +28,7 @@ export type AvoidKey = (typeof AVOID_KEYS)[number];
 export const FEEL_KEYS = ["hot", "cold", "soupy", "dry", "fried", "notFried"] as const;
 export type FeelKey = (typeof FEEL_KEYS)[number];
 
-export const SORT_KEYS = ["price", "walk", "name", "stall"] as const;
+export const SORT_KEYS = ["price", "name", "stall"] as const;
 export type SortKey = (typeof SORT_KEYS)[number];
 
 export const GROUP_KEYS = ["none", "stall", "canonical"] as const;
@@ -153,7 +153,8 @@ export function parse(raw: RawParams): CanteenFilters {
 
   filters.open = flag(raw, "open");
 
-  const sort = first(raw, "sort");
+  // `walk` is the old name of the stall number order, kept so saved links still work.
+  const sort = first(raw, "sort") === "walk" ? "stall" : first(raw, "sort");
   if (sort !== undefined && (SORT_KEYS as readonly string[]).includes(sort)) filters.sort = sort as SortKey;
 
   const group = first(raw, "group");

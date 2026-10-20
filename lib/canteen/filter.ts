@@ -113,8 +113,8 @@ function compareName(a: CanteenDish, b: CanteenDish, locale: Locale): number {
 
 /**
  * Returns a sorted copy. `price` is cheapest
- * first, `walk` follows the stalls in walking order (floor plan row, then
- * column), `name` is A to Z, `stall` is by stall number. Every sort breaks
+ * first, `name` is A to Z, `stall` is by stall number, which follows the way
+ * you walk through the hall. Every sort breaks
  * ties the same way, by price then name then slug, so the order is stable.
  */
 export function sortDishes(
@@ -131,8 +131,6 @@ export function sortDishes(
     switch (filters.sort) {
       case "price":
         return price(a) - price(b) || walkRankOf(data, a) - walkRankOf(data, b) || compareName(a, b, locale);
-      case "walk":
-        return walkRankOf(data, a) - walkRankOf(data, b) || tie(a, b);
       case "name":
         return compareName(a, b, locale);
       case "stall":

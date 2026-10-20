@@ -95,7 +95,27 @@ describe("demo canteen data", () => {
     for (const number of [3, 7, 9, 14]) expect(byNumber.get(number)?.wayfinding?.en).not.toMatch(/assumed/);
   });
 
-  it("puts stalls 1 to 7 in one column, in walking order", () => {
+  it("draws the north kiosks as triangles either side of the central lobby, and no two stalls overlap", () => {
+    const k17 = data.stalls.find((stall) => stall.number === 17)!.mapCell;
+    const k18 = data.stalls.find((stall) => stall.number === 18)!.mapCell;
+    expect(k17).toMatchObject({ row: 0, w: 2, h: 2, shape: "triangleBottomRight" });
+    expect(k18).toMatchObject({ row: 0, w: 2, h: 2, shape: "triangleBottomLeft" });
+    expect(k17.col + k17.w).toBeLessThan(k18.col); // the lobby lies between them
+    const cells = data.stalls.map((stall) => stall.mapCell);
+    for (const [i, a] of cells.entries()) {
+      for (const b of cells.slice(i + 1)) {
+        const apart = a.col + a.w <= b.col || b.col + b.w <= a.col || a.row + a.h <= b.row || b.row + b.h <= a.row;
+        expect(apart).toBe(true);
+      }
+    }
+  });
+
+  it("uses the real 2569 jay festival dates", () => {
+    expect(data.settings?.jayFestivalStart).toBe("2026-10-10");
+    expect(data.settings?.jayFestivalEnd).toBe("2026-10-18");
+  });
+
+  it("puts stalls 1 to 7 in one column, in walking order (stall number)", () => {
     const west = [1, 2, 3, 4, 5, 6, 7].map((number) => data.stalls.find((stall) => stall.number === number)!);
     expect(new Set(west.map((stall) => stall.mapCell.col)).size).toBe(1);
     expect(west.map((stall) => stall.mapCell.row)).toEqual([0, 1, 2, 3, 4, 5, 6]);

@@ -52,10 +52,13 @@ describe("derive: data", () => {
     expect(stallOf(data, dishById(data, "e"))?.number).toBe(2);
   });
 
-  it("orders stalls by floor plan row, then column", () => {
+  it("orders stalls by stall number, whatever the floor plan says, and ties by name", () => {
     const data = makeData();
     data.stalls[0]!.mapCell = { col: 0, row: 5, w: 1, h: 1 };
-    expect(indexCanteen(data).stallsInWalkOrder.map((s) => s.number)).toEqual([2, 3, 4, 5, 6, 1]);
+    expect(indexCanteen(data).stallsInWalkOrder.map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6]);
+    const tied = makeData();
+    tied.stalls[1]!.number = 1;
+    expect(indexCanteen(tied).stallsInWalkOrder.slice(0, 2).map((s) => s.name.en)).toEqual(["Fixture stall 1", "Fixture stall 2"]);
   });
 });
 

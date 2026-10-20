@@ -89,18 +89,20 @@ export interface CanteenIndex {
   canonicalById: ReadonlyMap<string, CanonicalDish>;
   canonicalBySlug: ReadonlyMap<string, CanonicalDish>;
   dishBySlug: ReadonlyMap<string, CanteenDish>;
-  /** Stalls in walking order: by floor plan row, then column, then number. */
+  /** Stalls in walking order: by stall number, which follows the hall (west column, middle block, east column, north kiosks). */
   stallsInWalkOrder: readonly CanteenStall[];
   /** Position of each stall id in `stallsInWalkOrder`, from 0. */
   walkRank: ReadonlyMap<string, number>;
 }
 
-/** Walking order comparison: top row first, then left to right, then stall number. */
+/**
+ * Walking order comparison: by stall number, then name. The university's
+ * numbering already follows the hall, so the floor plan position is not used.
+ */
 export function compareStallsByWalk(a: CanteenStall, b: CanteenStall): number {
   return (
-    a.mapCell.row - b.mapCell.row ||
-    a.mapCell.col - b.mapCell.col ||
     a.number - b.number ||
+    a.name.en.localeCompare(b.name.en, "en") ||
     a.slug.current.localeCompare(b.slug.current)
   );
 }

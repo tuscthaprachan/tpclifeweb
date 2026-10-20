@@ -9,9 +9,12 @@
  *
  * Nothing on the plan is a live signal. Positions come from a survey.
  *
- * Keyboard order: the tiles are emitted in walking order (top row, left to
- * right), never in highlight or drawing order. Tiles do not overlap, so the
+ * Keyboard order: the tiles are emitted in walking order (stall number), never in highlight or drawing order. Tiles do not overlap, so the
  * z-order is unaffected.
+ *
+ * A stall with a `shape` other than rect is a triangular kiosk. Its numbers
+ * sit near the right angle, where the tile is widest, and its name is left to
+ * the stall list, which carries every full name.
  *
  * Colour is never the only cue: a match count is a number in text, a stall
  * with none gets diagonal hatching AND the text "0", a highlighted stall
@@ -30,9 +33,12 @@ import {
   cellCentre,
   cellRect,
   charsThatFit,
+  cellShape,
   entrancePoint,
+  fromRightAngle,
   planLayout,
   toView,
+  trianglePath,
   truncate,
   type PlanLayout,
 } from "./geometry";
@@ -312,26 +318,67 @@ export function CanteenMap({
         const shortName = truncate(name, charsThatFit(roomForText, 11));
         const glyphs = stall.cuisine.slice(0, 3);
         const wide = rect.w >= CELL * 1.5;
+        const shape = cellShape(stall.mapCell);
+        const triangle = shape !== "rect";
+        const tileClass = none ? "cmap-tile cmap-tile-none" : "cmap-tile";
+        // Where a triangle's numbers go, measured in from the right angle (across the base, up the side).
+        const spot = (along: number, up: number) => fromRightAngle(rect, shape, along, up) ?? { x: rect.x, y: rect.y };
+        const pillAt = triangle ? spot(compact ? 44 : 22, compact ? 44 : 16) : null;
+        const badgeAt = triangle ? spot(22, 40) : null;
+        const markAt = triangle ? spot(compact ? 84 : 56, compact ? 18 : 17) : null;
 
         const body = (
           <>
-            <rect
-              className={none ? "cmap-tile cmap-tile-none" : "cmap-tile"}
-              x={rect.x}
-              y={rect.y}
-              width={rect.w}
-              height={rect.h}
-              rx={8}
-            />
-            {none ? <rect x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={8} fill={`url(#${hatchId})`} /> : null}
-            {highlighted ? (
+            {triangle ? (
               <>
-                <rect className="cmap-hl-outer" x={rect.x - 4} y={rect.y - 4} width={rect.w + 8} height={rect.h + 8} rx={11} />
-                <rect className="cmap-hl-inner" x={rect.x + 1} y={rect.y + 1} width={rect.w - 2} height={rect.h - 2} rx={7} />
+                <path className={tileClass} d={trianglePath(rect, shape)!} />
+                {none ? <path d={trianglePath(rect, shape)!} fill={`url(#${hatchId})`} /> : null}
               </>
+            ) : (
+              <>
+                <rect className={tileClass} x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={8} />
+                {none ? <rect x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={8} fill={`url(#${hatchId})`} /> : null}
+              </>
+            )}
+            {highlighted ? (
+              triangle ? (
+                <>
+                  <path className="cmap-hl-outer" d={trianglePath(rect, shape, 4)!} />
+                  <path className="cmap-hl-inner" d={trianglePath(rect, shape, -1)!} />
+                </>
+              ) : (
+                <>
+                  <rect className="cmap-hl-outer" x={rect.x - 4} y={rect.y - 4} width={rect.w + 8} height={rect.h + 8} rx={11} />
+                  <rect className="cmap-hl-inner" x={rect.x + 1} y={rect.y + 1} width={rect.w - 2} height={rect.h - 2} rx={7} />
+                </>
+              )
             ) : null}
 
-            {compact ? (
+            {triangle && pillAt && badgeAt ? (
+              compact ? (
+                <>
+                  <rect className="cmap-pill" x={pillAt.x - 20} y={pillAt.y - 14} width={40} height={28} rx={14} />
+                  <text className="cmap-number" x={pillAt.x} y={pillAt.y + 1}>
+                    {stall.number}
+                  </text>
+                </>
+              ) : (
+                <>
+                  <rect className="cmap-pill" x={pillAt.x - 14} y={pillAt.y - 10} width={28} height={20} rx={10} />
+                  <text className="cmap-number" x={pillAt.x} y={pillAt.y + 0.5}>
+                    {stall.number}
+                  </text>
+                  {count !== undefined ? (
+                    <>
+                      <rect className="cmap-badge" x={badgeAt.x - 14} y={badgeAt.y - 10} width={28} height={20} rx={5} />
+                      <text className="cmap-badge-text" x={badgeAt.x} y={badgeAt.y + 0.5}>
+                        {count}
+                      </text>
+                    </>
+                  ) : null}
+                </>
+              )
+            ) : compact ? (
               <>
                 <rect className="cmap-pill" x={rect.x + rect.w / 2 - 20} y={rect.y + rect.h / 2 - 14} width={40} height={28} rx={14} />
                 <text className="cmap-number" x={rect.x + rect.w / 2} y={rect.y + rect.h / 2 + 1}>
@@ -377,14 +424,14 @@ export function CanteenMap({
               <>
                 <circle
                   className="cmap-mark"
-                  cx={rect.x + rect.w - (compact ? 18 : 17)}
-                  cy={rect.y + rect.h - (compact ? 18 : 17)}
+                  cx={markAt ? markAt.x : rect.x + rect.w - (compact ? 18 : 17)}
+                  cy={markAt ? markAt.y : rect.y + rect.h - (compact ? 18 : 17)}
                   r={compact ? 14 : 12}
                 />
                 <text
                   className="cmap-mark-text"
-                  x={rect.x + rect.w - (compact ? 18 : 17)}
-                  y={rect.y + rect.h - (compact ? 17 : 16)}
+                  x={markAt ? markAt.x : rect.x + rect.w - (compact ? 18 : 17)}
+                  y={markAt ? markAt.y + 1 : rect.y + rect.h - (compact ? 17 : 16)}
                 >
                   {stop}
                 </text>
@@ -392,10 +439,17 @@ export function CanteenMap({
             ) : null}
 
             {links ? (
-              <>
-                <rect className="cmap-ring-outer" x={rect.x - 2} y={rect.y - 2} width={rect.w + 4} height={rect.h + 4} rx={10} />
-                <rect className="cmap-ring-inner" x={rect.x - 2} y={rect.y - 2} width={rect.w + 4} height={rect.h + 4} rx={10} />
-              </>
+              triangle ? (
+                <>
+                  <path className="cmap-ring-outer" d={trianglePath(rect, shape, 2)!} />
+                  <path className="cmap-ring-inner" d={trianglePath(rect, shape, 2)!} />
+                </>
+              ) : (
+                <>
+                  <rect className="cmap-ring-outer" x={rect.x - 2} y={rect.y - 2} width={rect.w + 4} height={rect.h + 4} rx={10} />
+                  <rect className="cmap-ring-inner" x={rect.x - 2} y={rect.y - 2} width={rect.w + 4} height={rect.h + 4} rx={10} />
+                </>
+              )
             ) : null}
           </>
         );

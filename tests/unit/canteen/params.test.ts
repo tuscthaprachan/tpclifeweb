@@ -8,6 +8,10 @@ describe("params", () => {
     expect(filters).toMatchObject({ max: 50, diet: ["nopork"], type: ["noodles", "soup"], spice: 1, sort: "price" });
   });
 
+  it("reads the old sort=walk link as stall number order", () => {
+    expect(parse(new URLSearchParams("sort=walk")).sort).toBe("stall");
+  });
+
   it("serialises in one canonical order, leaving defaults and commas readable", () => {
     const text = serialise({
       ...defaultFilters(),
@@ -15,12 +19,12 @@ describe("params", () => {
       diet: ["jay", "nopork"],
       max: 50,
       spice: 1,
-      sort: "walk",
+      sort: "stall",
       group: "stall",
       variants: true,
       open: true,
     });
-    expect(text).toBe("max=50&diet=nopork,jay&type=noodles,soup&spice=1&open=1&sort=walk&group=stall&variants=1");
+    expect(text).toBe("max=50&diet=nopork,jay&type=noodles,soup&spice=1&open=1&sort=stall&group=stall&variants=1");
     expect(serialise(defaultFilters())).toBe("");
   });
 

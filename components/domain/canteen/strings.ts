@@ -136,8 +136,8 @@ export const EAT = {
   },
   stallsTitle: { th: "ร้านค้าในโรงอาหาร", en: "Stalls in the canteen" },
   stallsIntro: {
-    th: "เรียงตามลำดับที่เดินผ่าน เริ่มจากแถวบนของแผนผัง",
-    en: "In the order you walk past them, starting from the top row of the floor plan.",
+    th: "เรียงตามเลขร้าน ซึ่งไล่ตามลำดับที่เดินผ่านในโรงอาหาร",
+    en: "In stall number order, which follows the way you walk through the hall.",
   },
   noResultsTitle: { th: "ไม่เจอเมนูที่ตรงกับตัวกรอง", en: "No dishes match those filters" },
   relaxTitle: { th: "ลองแบบนี้ดู", en: "Try one of these" },
@@ -262,11 +262,6 @@ export const eat = {
     return locale === "th" ? `ดู ${n(count, locale)} เมนู` : `Show ${n(count, locale)} ${count === 1 ? "dish" : "dishes"}`;
   },
 
-  /** "Remove filter: No pork". */
-  removeFilterNamed(locale: Locale, label: string): string {
-    return `${locale === "th" ? "เอาตัวกรองออก" : "Remove filter"}: ${label}`;
-  },
-
   /** "Raise your budget to 60 baht for 8 dishes". */
   relaxRaise(locale: Locale, budget: number, count: number): string {
     return locale === "th"
@@ -337,19 +332,9 @@ export const eat = {
       : `${n(min, locale)} to ${n(max, locale)} baht`;
   },
 
-  /** "Save Fixture dish A as a favourite". Visible text is short; this is the visually hidden part. */
-  favouriteFor(locale: Locale, dish: string): string {
-    return locale === "th" ? `เมนู ${dish}` : dish;
-  },
-
   /** "Options for Fixture dish". */
   dishAtStall(locale: Locale, dish: string, stall: string): string {
     return locale === "th" ? `${dish} ที่${stall}` : `${dish} at ${stall}`;
-  },
-
-  /** "Stall says halal, asked on 2 Jan 2026" tail used on detail pages. */
-  asked(locale: Locale, date: string): string {
-    return locale === "th" ? `ถามร้านเมื่อ ${date}` : `asked ${date}`;
   },
 
   /** "9 of 12 stalls", or "12 stalls" when no filter is on. */

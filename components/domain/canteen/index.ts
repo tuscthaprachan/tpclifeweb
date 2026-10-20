@@ -14,6 +14,7 @@ export * from "./diet";
 export * from "./compare";
 export * from "./chips";
 export * from "./query";
+export * from "./tidy";
 export * from "./paginate";
 
 export * from "./DietTag";

@@ -16,6 +16,7 @@ import type {
   DishType,
   FloorSide,
   HalalStatus,
+  MapShape,
   Protein,
   SpiceLevel,
   Temperature,
@@ -36,6 +37,8 @@ export const CUISINES: readonly CanteenCuisine[] = [
 ];
 
 export const HALAL_STATUSES: readonly HalalStatus[] = ["none", "stallDeclared", "certified"];
+
+export const MAP_SHAPES: readonly MapShape[] = ["rect", "triangleBottomRight", "triangleBottomLeft"];
 
 export const DISH_TYPES: readonly DishType[] = [
   "rice",

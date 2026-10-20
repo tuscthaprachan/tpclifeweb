@@ -21,7 +21,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { EAT, eat, eatHref, readFilters, t } from "@/components/domain/canteen";
+import { EAT, eat, eatHref, readFilters, redirectToTidyQuery, t } from "@/components/domain/canteen";
 import {
   PICK,
   PICK_ROUTE,
@@ -76,6 +76,7 @@ export default async function EatPickPage({
   const locale: Locale = rawLocale;
 
   const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, PICK_ROUTE), query);
   const parsed = readPickParams(query);
 
   // No seed: make one and come back, so the address bar always holds a reproducible, shareable result.
@@ -136,7 +137,7 @@ export default async function EatPickPage({
     if (budget === undefined) {
       result = <PickEmpty locale={locale} data={data} filters={filters} reason="budget" now={now} />;
     } else {
-      const combos = mealCombos(data, filters, budget, { now, limit: 30 });
+      const combos = mealCombos(data, filters, budget, { now, limit: 30, sameStallOnly: pickParams.sameStall });
       const { combo, vetoRelaxed } = chooseCombo(combos, seed, pickParams.not);
       if (!combo) {
         result = <PickEmpty locale={locale} data={data} filters={filters} reason="meal" now={now} />;
@@ -226,7 +227,7 @@ export default async function EatPickPage({
             <Heading level={2} id="pick-controls" visualLevel={4} className="m-0">
               {PICK.controlsHeading[locale]}
             </Heading>
-            <PickControls locale={locale} filters={filters} mode={pickParams.mode} bias={pickParams.bias} />
+            <PickControls locale={locale} filters={filters} mode={pickParams.mode} bias={pickParams.bias} sameStall={pickParams.sameStall} />
             <Link href={eatHref(locale, "/eat/dishes", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
               {t(EAT.editFilters, locale)}
             </Link>

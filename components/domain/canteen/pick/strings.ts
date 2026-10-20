@@ -88,7 +88,7 @@ export const PICK = {
   stallPickTitle: { th: "ร้านที่สุ่มได้", en: "Your stall" },
   stallDishes: { th: "เมนูที่ตรงตัวกรองที่ร้านนี้", en: "Dishes here that match your filters" },
   mealPickTitle: { th: "ชุดอาหารที่สุ่มได้", en: "Your meal" },
-  mealWalk: { th: "ลำดับที่เดินไป", en: "Walking order" },
+  mealWalk: { th: "ร้านที่ต้องไป เรียงตามเลขร้าน", en: "Stalls to visit, in stall number order" },
   alsoWord: { th: "ร้าน", en: "at" },
 
   /* ---- Empty and notes ---- */

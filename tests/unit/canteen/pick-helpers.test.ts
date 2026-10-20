@@ -15,11 +15,11 @@ import { defaultFilters, mealCombos } from "@/lib/canteen";
 import { NOW, makeData } from "./fixture";
 
 
-const base: PickParams = { seed: "k7m2qx", mode: "dish", bias: "fair", lock: [], not: [] };
+const base: PickParams = { seed: "k7m2qx", mode: "dish", bias: "fair", lock: [], not: [], sameStall: false };
 
 describe("readPickParams", () => {
   it("defaults to a dish, fair, nothing locked or vetoed", () => {
-    expect(readPickParams({})).toEqual({ mode: "dish", bias: "fair", lock: [], not: [] });
+    expect(readPickParams({})).toEqual({ mode: "dish", bias: "fair", lock: [], not: [], sameStall: false });
   });
 
   it("reads every parameter and drops what is invalid", () => {
@@ -38,12 +38,13 @@ describe("readPickParams", () => {
       lock: ["stall", "type"],
       of: "fixture-dish-a",
       not: ["one", "two"],
+      sameStall: false,
     });
   });
 
   it("ignores a lock without a valid previous dish, and bad modes, biases and seeds", () => {
     const params = readPickParams({ lock: "stall", of: "NOT A SLUG", mode: "x", bias: "y", seed: "no spaces!" });
-    expect(params).toEqual({ mode: "dish", bias: "fair", lock: [], not: [] });
+    expect(params).toEqual({ mode: "dish", bias: "fair", lock: [], not: [], sameStall: false });
   });
 
   it("caps the vetoes so a hand edited link cannot grow without limit", () => {
@@ -66,9 +67,16 @@ describe("links", () => {
     expect(pickExtras({ ...base, lock: ["stall"] }).lock).toBeUndefined();
   });
 
+  it("keeps same=1 on a meal link, and leaves it out otherwise", () => {
+    expect(readPickParams({ mode: "meal", same: "1" }).sameStall).toBe(true);
+    expect(readPickParams({ mode: "meal", same: "yes" }).sameStall).toBe(false);
+    expect(pickExtras({ ...base, sameStall: true }).same).toBe("1");
+    expect(pickExtras(base).same).toBeUndefined();
+  });
+
   it("builds a href that parses back to the same state", () => {
     const filters = { ...defaultFilters(), max: 50 };
-    const state: PickParams = { seed: "abc123", mode: "meal", bias: "cheap", lock: ["type"], of: "fixture-dish-a", not: ["q"] };
+    const state: PickParams = { seed: "abc123", mode: "meal", bias: "cheap", lock: ["type"], of: "fixture-dish-a", not: ["q"], sameStall: true };
     const href = pickHref("en", filters, state);
     expect(href.startsWith("/en/eat/pick?max=50&")).toBe(true);
     expect(readPickParams(new URLSearchParams(href.split("?")[1]))).toEqual(state);

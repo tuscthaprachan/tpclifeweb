@@ -1,5 +1,5 @@
 /**
- * Every stall, in the order you walk past them. Shares the filters with the
+ * Every stall, in stall number order (which follows the hall). Shares the filters with the
  * dish list: with filters on, each card says how many of its dishes match and
  * the price range covers just those, and stalls with none are shown plainly
  * as having none rather than hidden.
@@ -15,6 +15,7 @@ import {
   StallCard,
   eat,
   readFilters,
+  redirectToTidyQuery,
   t,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -22,7 +23,7 @@ import { Container, EmptyState, Grid, Heading, InsetText, Stack } from "@/compon
 import { indexCanteen, priceRange } from "@/lib/canteen/derive";
 import { facetCounts, matchesFilters } from "@/lib/canteen/filter";
 import { countActiveValues } from "@/lib/canteen/params";
-import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/sanity/queries";
@@ -50,7 +51,9 @@ export default async function EatStallsPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const filters = readFilters(await searchParams);
+  const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, ROUTE), query);
+  const filters = readFilters(query);
   const data = await getCanteenData();
   const now = new Date();
 

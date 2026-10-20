@@ -1,6 +1,6 @@
 # What to eat: canteen service plan
 
-Status: proposal. Nothing here is built yet.
+Status: built. The real stall line-up and floor plan, from the 2569 canteen selection documents, are in the demo dataset (`lib/canteen/demo.ts`) and in `data/canteen-stalls-2569.csv`. Menus and prices are still to be surveyed: until then the dishes are made-up examples, shown only when `CANTEEN_DEMO=1` is set (for previews).
 
 ## 1. Decisions already made
 
@@ -33,7 +33,7 @@ New top-level section, `/eat` (Thai label "กินอะไรดี", English
 /[locale]/eat                      Hub: decide, browse, map, budget, all on one page
 /[locale]/eat/dishes               Full filterable dish list (the filter "home")
 /[locale]/eat/dishes/[slug]        Dish page: price, stall, map, same dish elsewhere, how to order
-/[locale]/eat/stalls               Stall list in walking order
+/[locale]/eat/stalls               Stall list in stall number order
 /[locale]/eat/stalls/[slug]        Stall page: full menu, position on map
 /[locale]/eat/pick                 Randomiser result (?seed=&mode= + filter params)
 /[locale]/eat/meal                 Budget combos: "I have X baht"
@@ -89,7 +89,7 @@ A sticky summary bar under the header on every `/eat` page: "No pork · under 50
 | halal | `none` \| `stallDeclared` \| `certified` | With `halalCheckedOn` date |
 | vegetarianStall | boolean | Whole stall is vegetarian or jay |
 | hours | openingHours[] | Optional, inherits the canteen's |
-| mapCell | `{ col, row, w, h }` | Position on the floor plan grid |
+| mapCell | `{ col, row, w, h, shape? }` | Position on the floor plan grid. `shape` is `rect` (default), `triangleBottomRight` or `triangleBottomLeft` for a triangular kiosk |
 | wayfinding | localeString | "Second on the left from the river entrance" |
 | photo | siteImage | Optional |
 
@@ -152,7 +152,7 @@ Add `CanteenStall`, `CanteenDish`, `CanonicalDish`, `CanteenSettings` to `lib/sa
 | Feel | `feel` | Chips | hot, cold, soupy, dry, fried, not fried |
 | Stall | `stall` | Select | |
 | Open now | `open` | Checkbox | Scheduled hours |
-| Sort | `sort` | Select | cheapest, walking order, A to Z, stall |
+| Sort | `sort` | Select | cheapest, A to Z, stall number (the hall is numbered in walking order; the old `sort=walk` link still works) |
 
 Example: `/th/eat/dishes?max=50&diet=nopork&type=noodles,soup&spice=1&sort=price`
 
@@ -230,8 +230,8 @@ No server state, everything in the URL.
 An SVG floor plan built from `canteenSettings` and each stall's `mapCell`, so editors can move stalls without code.
 - Stall tiles show number, name and a cuisine icon.
 - **Filter heatmap**: with filters active, each stall shows a badge with how many dishes match ("5"), and stalls with none are dimmed. The badge carries the number in text, so it does not rely on colour.
-- Picks, combos and group results draw their stalls with numbered markers in walking order from the chosen entrance.
-- Every tile is a link to the stall page. Keyboard order follows walking order, not DOM order of the drawing.
+- Picks, combos and group results draw their stalls with numbered markers in route order from the chosen entrance.
+- Every tile is a link to the stall page. Keyboard order follows stall number, which follows the hall (west column 1 to 7, middle block 8 to 11, east column 12 to 16, north kiosks 17 and 18), not DOM order of the drawing.
 - The map is supplementary. An equivalent ordered list sits beside it (or below on mobile) and is what screen readers get first.
 - Reflows at 320 px by switching to the list with a small static map, never a horizontal scroll.
 
@@ -339,10 +339,10 @@ Vercel Analytics custom events, no personal data:
 
 Phase 1 alone is a useful product. Each later phase is independent and shippable.
 
-## 13. Still needs your call
+## 13. Decisions
 
-1. **Contract files.** `lib/sanity/types.ts`, `lib/i18n/strings.ts` and possibly `styles/tokens.css` are fixed contracts. Who signs off adding canteen types and strings?
-2. **Colour.** Use welfare coral for the section, or add a food fill?
-3. **Casual voice.** Add a short exception to `CONTRIBUTING.md` so later contributors know `/eat` is the one place it applies.
-4. **Who surveys**, and when, so prices have a first `checkedOn` date.
-5. **Halal wording.** Confirm the fixed question surveyors ask stalls, in Thai.
+1. **Contract files.** Decided: extended. Canteen types and strings were added to `lib/sanity/types.ts` and the shared vocabulary.
+2. **Colour.** Decided: welfare coral for the section. There is no food fill.
+3. **Casual voice.** Decided: `CONTRIBUTING.md` carries the `/eat` exception.
+4. **Who surveys**, and when, so prices have a first `checkedOn` date. Still to do: the dishes and prices are examples until it happens.
+5. **Halal wording.** Still open: the fixed question surveyors ask stalls, in Thai, is not yet confirmed. Until then stall 14 follows the university's halal food slot and says so.

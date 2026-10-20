@@ -9,7 +9,7 @@
  */
 
 import { compareStallsByWalk } from "@/lib/canteen/derive";
-import type { CanteenEntrance, CanteenSettings, CanteenStall, FloorSide, MapCell } from "@/lib/sanity/types";
+import type { CanteenEntrance, CanteenSettings, CanteenStall, FloorSide, MapCell, MapShape } from "@/lib/sanity/types";
 
 /** Side of one grid cell in view units. */
 export const CELL = 72;
@@ -127,9 +127,69 @@ export function cellRect(cell: MapCell, layout: Pick<PlanLayout, "margins">, ins
   };
 }
 
-/** The middle of a cell, in grid units. */
+/** The outline of a cell. Anything but a known triangle is a rectangle. */
+export function cellShape(cell: Pick<MapCell, "shape">): MapShape {
+  return cell.shape === "triangleBottomRight" || cell.shape === "triangleBottomLeft" ? cell.shape : "rect";
+}
+
+/**
+ * Where the right angle of a triangular cell sits inside a rect, and which
+ * way the two legs run from it: `across` is +1 when the horizontal leg runs
+ * right, -1 when it runs left; the vertical leg always runs up. Null for a rectangle.
+ */
+export function rightAngle(rect: Rect, shape: MapShape): { corner: Point; across: 1 | -1 } | null {
+  switch (shape) {
+    case "triangleBottomRight":
+      return { corner: { x: rect.x + rect.w, y: rect.y + rect.h }, across: -1 };
+    case "triangleBottomLeft":
+      return { corner: { x: rect.x, y: rect.y + rect.h }, across: 1 };
+    default:
+      return null;
+  }
+}
+
+/** A point `along` units from the right angle across the horizontal leg and `up` units up the vertical leg. Null for a rectangle. */
+export function fromRightAngle(rect: Rect, shape: MapShape, along: number, up: number): Point | null {
+  const angle = rightAngle(rect, shape);
+  return angle ? { x: angle.corner.x + angle.across * along, y: angle.corner.y - up } : null;
+}
+
+/**
+ * The three corners of a triangular cell inside a rect, or null for a
+ * rectangle. `grow` moves every edge outward by that many units (negative
+ * moves it inward), keeping the corners sharp, so a focus ring or an outline
+ * can sit a fixed distance from the tile.
+ */
+export function trianglePoints(rect: Rect, shape: MapShape, grow = 0): Point[] | null {
+  const angle = rightAngle(rect, shape);
+  if (!angle) return null;
+  const { w, h } = rect;
+  const k = Math.sqrt(1 / (w * w) + 1 / (h * h));
+  const along = w * (1 + grow * k + grow / h);
+  const up = h * (1 + grow * k + grow / w);
+  const at = (a: number, u: number): Point => ({ x: angle.corner.x + angle.across * a, y: angle.corner.y - u });
+  return [at(-grow, -grow), at(along, -grow), at(-grow, up)];
+}
+
+/** An SVG path for the triangle, or null for a rectangle. */
+export function trianglePath(rect: Rect, shape: MapShape, grow = 0): string | null {
+  const points = trianglePoints(rect, shape, grow);
+  if (!points) return null;
+  return `M ${points.map((p) => `${round(p.x)} ${round(p.y)}`).join(" L ")} Z`;
+}
+
+function round(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+/** The middle of a cell, in grid units. A triangle gives its centroid, a third of the way in from the right angle. */
 export function cellCentre(cell: MapCell): Point {
-  return { x: cell.col + Math.max(1, cell.w) / 2, y: cell.row + Math.max(1, cell.h) / 2 };
+  const w = Math.max(1, cell.w);
+  const h = Math.max(1, cell.h);
+  const shape = cellShape(cell);
+  if (shape === "triangleBottomRight") return { x: cell.col + w - w / 3, y: cell.row + h - h / 3 };
+  if (shape === "triangleBottomLeft") return { x: cell.col + w / 3, y: cell.row + h - h / 3 };
+  return { x: cell.col + w / 2, y: cell.row + h / 2 };
 }
 
 /** Grid units to view units. */
@@ -141,7 +201,7 @@ export function manhattan(a: Point, b: Point): number {
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 
-/** Stalls in walking order: top row first, then left to right, then stall number. Returns a copy. */
+/** Stalls in walking order: by stall number, then name. Returns a copy. */
 export function walkingOrder<T extends CanteenStall>(stalls: readonly T[]): T[] {
   return [...stalls].sort(compareStallsByWalk);
 }

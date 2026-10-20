@@ -3,7 +3,7 @@ import { dishDietTags, stallHalalTag } from "@/components/domain/canteen/diet";
 import { cheapestSlugs } from "@/components/domain/canteen/compare";
 import { activeChips, filterSummary } from "@/components/domain/canteen/chips";
 import { paginateGroups, parsePage } from "@/components/domain/canteen/paginate";
-import { carriedParams, formQuery, readFilters } from "@/components/domain/canteen/query";
+import { carriedParams, formQuery, readFilters, tidyQuery } from "@/components/domain/canteen/query";
 import { applyFilters, groupDishes } from "@/lib/canteen/filter";
 import { defaultFilters, parse } from "@/lib/canteen/params";
 import { makeData, NOW } from "./fixture";
@@ -92,5 +92,22 @@ describe("form query", () => {
   });
   it("carries only what the form does not own", () => {
     expect(carriedParams({ diet: "nopork", seed: "x", page: "2" })).toEqual({ seed: "x" });
+  });
+});
+
+describe("tidyQuery", () => {
+  it("drops the empty values a no JavaScript submit sends", () => {
+    expect(tidyQuery({ max: "", maxOther: "", diet: "nopork" })).toBe("diet=nopork");
+    expect(tidyQuery({ max: "", maxOther: "" })).toBe("");
+  });
+
+  it("folds a typed amount into max and keeps other parameters in order", () => {
+    expect(tidyQuery({ max: "50", maxOther: "65", seed: "abc", same: "1" })).toBe("seed=abc&same=1&max=65");
+  });
+
+  it("is null when the query is already tidy, so nothing redirects twice", () => {
+    expect(tidyQuery({})).toBeNull();
+    expect(tidyQuery({ max: "50", diet: "nopork,jay" })).toBeNull();
+    expect(tidyQuery(new URLSearchParams(tidyQuery({ max: "", diet: "jay", maxOther: "40" })!))).toBeNull();
   });
 });

@@ -74,20 +74,17 @@ describe("applyFilters", () => {
     expect(run({ sort: "price" }).slice(0, 10)).toEqual(["r", "o", "p", "q", "n", "d", "t", "a", "g", "l"]);
   });
 
-  it("sorts by walking order: floor plan row, then column", () => {
-    expect(run({ sort: "walk" }).slice(0, 5)).toEqual(["d", "a", "b", "c", "g"]);
+  it("sorts by stall number, which is the walking order, whatever the floor plan says", () => {
+    expect(run({ sort: "stall" }).slice(0, 5)).toEqual(["d", "a", "b", "c", "g"]);
     const moved = makeData();
     moved.stalls[0]!.mapCell = { col: 0, row: 5, w: 1, h: 1 };
-    const order = slugs(applyFilters(moved, f({ sort: "walk" }), NOW));
-    expect(order.slice(0, 4)).toEqual(["g", "e", "h", "f"]); // stall 2 now first
-    expect(order.slice(-4)).toEqual(["d", "a", "b", "c"]); // stall 1 now last
+    const order = slugs(applyFilters(moved, f({ sort: "stall" }), NOW));
+    expect(order.slice(0, 4)).toEqual(["d", "a", "b", "c"]); // stall 1 stays first
+    expect(order.slice(-4)).toEqual(slugs(applyFilters(makeData(), f({ sort: "stall" }), NOW)).slice(-4));
   });
 
-  it("sorts A to Z and by stall number", () => {
+  it("sorts A to Z", () => {
     expect(run({ sort: "name" })).toEqual("abcdefghijklmnopqrstu".split(""));
-    const moved = makeData();
-    moved.stalls[0]!.mapCell = { col: 0, row: 5, w: 1, h: 1 };
-    expect(slugs(applyFilters(moved, f({ sort: "stall" }), NOW)).slice(0, 4)).toEqual(["d", "a", "b", "c"]);
   });
 
   it("is a pure function of its inputs", () => {

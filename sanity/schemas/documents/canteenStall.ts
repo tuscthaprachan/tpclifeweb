@@ -102,6 +102,22 @@ export const canteenStall = defineType({
         defineField({ name: "row", title: "Row", type: "number", validation: (rule) => rule.required().custom(wholeNumber(0)) }),
         defineField({ name: "w", title: "Width", type: "number", initialValue: 1, validation: (rule) => rule.required().custom(wholeNumber(1)) }),
         defineField({ name: "h", title: "Height", type: "number", initialValue: 1, validation: (rule) => rule.required().custom(wholeNumber(1)) }),
+        defineField({
+          name: "shape",
+          title: "Shape",
+          type: "string",
+          description:
+            "Most stalls fill their cells, so leave this on Rectangle. A triangular corner kiosk fills half of its cells: pick the corner where the right angle is, and the long slanted side is drawn on the opposite diagonal.",
+          options: {
+            list: [
+              { title: "Rectangle", value: "rect" },
+              { title: "Triangle, right angle at the bottom right", value: "triangleBottomRight" },
+              { title: "Triangle, right angle at the bottom left", value: "triangleBottomLeft" },
+            ],
+            layout: "radio",
+          },
+          initialValue: "rect",
+        }),
       ],
       options: { columns: 4 },
       validation: (rule) => rule.required(),

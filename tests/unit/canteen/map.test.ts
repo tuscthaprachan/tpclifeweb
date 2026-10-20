@@ -4,6 +4,8 @@ import {
   CELL,
   cellCentre,
   cellRect,
+  cellShape,
+  fromRightAngle,
   entrancePoint,
   gridExtent,
   hasFloorPlan,
@@ -11,6 +13,8 @@ import {
   nearestEntrance,
   planLayout,
   routeOrder,
+  trianglePath,
+  trianglePoints,
   truncate,
   walkingOrder,
 } from "@/components/domain/canteen/map/geometry";
@@ -21,9 +25,12 @@ describe("map geometry", () => {
   const data = makeData();
   const settings = data.settings!;
 
-  it("walking order is row, then column, then number", () => {
+  it("walking order is stall number, whatever the floor plan position", () => {
     const shuffled = [...data.stalls].reverse();
     expect(walkingOrder(shuffled).map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6]);
+    // Move stall 1 to the bottom row: a row-major order would put it last.
+    const moved = shuffled.map((s) => (s.number === 1 ? { ...s, mapCell: { col: 0, row: 5, w: 1, h: 1 } } : s));
+    expect(walkingOrder(moved).map((s) => s.number)).toEqual([1, 2, 3, 4, 5, 6]);
   });
 
   it("converts a cell to a rect inside the margins", () => {
@@ -92,5 +99,62 @@ describe("map geometry", () => {
     expect(truncate("abc", 5)).toBe("abc");
     expect(truncate("abcdefgh", 5)).toBe("abcd…");
     expect(Array.from(truncate("😀😀😀😀😀😀", 3))).toHaveLength(3);
+  });
+});
+
+describe("triangular cells", () => {
+  const rect = { x: 100, y: 200, w: 140, h: 140 };
+
+  it("treats anything but a known triangle as a rectangle", () => {
+    expect(cellShape({})).toBe("rect");
+    expect(cellShape({ shape: "triangleBottomLeft" })).toBe("triangleBottomLeft");
+    expect(cellShape({ shape: "hexagon" as never })).toBe("rect");
+    expect(trianglePoints(rect, "rect")).toBeNull();
+    expect(trianglePath(rect, "rect")).toBeNull();
+  });
+
+  it("puts the right angle at the named corner, with the hypotenuse on the opposite diagonal", () => {
+    expect(trianglePoints(rect, "triangleBottomRight")).toEqual([
+      { x: 240, y: 340 },
+      { x: 100, y: 340 },
+      { x: 240, y: 200 },
+    ]);
+    expect(trianglePoints(rect, "triangleBottomLeft")).toEqual([
+      { x: 100, y: 340 },
+      { x: 240, y: 340 },
+      { x: 100, y: 200 },
+    ]);
+  });
+
+  it("grows by a fixed distance on every edge, keeping the corners sharp", () => {
+    const [corner, base, side] = trianglePoints(rect, "triangleBottomRight", 4)!;
+    expect(corner).toEqual({ x: 244, y: 344 });
+    // The legs sit 4 units out, and the slanted edge (x + y = 440) 4 units out measured square to it.
+    expect(base!.y).toBe(344);
+    expect(side!.x).toBe(244);
+    expect(base!.x + base!.y).toBeCloseTo(440 - 4 * Math.SQRT2);
+    expect(side!.x + side!.y).toBeCloseTo(440 - 4 * Math.SQRT2);
+    // Shrinking mirrors growing.
+    expect(trianglePoints(rect, "triangleBottomRight", -4)![0]).toEqual({ x: 236, y: 336 });
+  });
+
+  it("writes a closed path", () => {
+    expect(trianglePath(rect, "triangleBottomLeft")).toBe("M 100 340 L 240 340 L 100 200 Z");
+  });
+
+  it("measures positions in from the right angle, and has none for a rectangle", () => {
+    expect(fromRightAngle(rect, "triangleBottomRight", 22, 16)).toEqual({ x: 218, y: 324 });
+    expect(fromRightAngle(rect, "triangleBottomLeft", 22, 16)).toEqual({ x: 122, y: 324 });
+    expect(fromRightAngle(rect, "rect", 22, 16)).toBeNull();
+  });
+
+  it("centres a triangle a third of the way in from the right angle", () => {
+    expect(cellCentre({ col: 4, row: 0, w: 2, h: 2 })).toEqual({ x: 5, y: 1 });
+    const right = cellCentre({ col: 4, row: 0, w: 2, h: 2, shape: "triangleBottomRight" });
+    expect(right.x).toBeCloseTo(4 + 2 - 2 / 3);
+    expect(right.y).toBeCloseTo(2 - 2 / 3);
+    const left = cellCentre({ col: 8, row: 0, w: 2, h: 2, shape: "triangleBottomLeft" });
+    expect(left.x).toBeCloseTo(8 + 2 / 3);
+    expect(left.y).toBeCloseTo(2 - 2 / 3);
   });
 });

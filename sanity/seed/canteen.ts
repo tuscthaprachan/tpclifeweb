@@ -57,6 +57,7 @@ import {
   DISH_COURSES,
   DISH_TYPES,
   HALAL_STATUSES,
+  MAP_SHAPES,
   PROTEINS,
   TEMPERATURES,
 } from "../../lib/canteen/options";
@@ -382,6 +383,7 @@ function buildStalls(file: string, rows: Row[]): { docs: SeedDoc[]; idByNumber: 
     const mapRow = wholeNumber(file, row, "map_row", 0);
     const w = wholeNumber(file, row, "map_w", 1, 1);
     const h = wholeNumber(file, row, "map_h", 1, 1);
+    const shape = row.cells.map_shape ? enumValue(file, row, "map_shape", MAP_SHAPES) : "rect";
     const wayfinding = bilingual(file, row, "wayfinding", false);
     const hours = row.cells.hours ? parseHours(file, row, row.cells.hours) : [];
 
@@ -398,7 +400,13 @@ function buildStalls(file: string, rows: Row[]): { docs: SeedDoc[]; idByNumber: 
       ...(halalCheckedOn ? { halalCheckedOn } : {}),
       vegetarianStall: yesNo(file, row, "vegetarian_stall"),
       ...(hours.length > 0 ? { hours } : {}),
-      mapCell: { col: col ?? 0, row: mapRow ?? 0, w: w ?? 1, h: h ?? 1 },
+      mapCell: {
+        col: col ?? 0,
+        row: mapRow ?? 0,
+        w: w ?? 1,
+        h: h ?? 1,
+        ...(shape && shape !== "rect" ? { shape } : {}),
+      },
       ...(wayfinding.th && wayfinding.en ? { wayfinding: localeString(wayfinding.th, wayfinding.en) } : {}),
     });
   }

@@ -41,6 +41,8 @@ export interface PickParams {
   of?: string;
   /** Vetoed dish slugs. */
   not: string[];
+  /** Meal mode only: drink and dessert come from the main's stall (`same=1`). */
+  sameStall: boolean;
 }
 
 function all(raw: RawParams, name: string): string[] {
@@ -56,6 +58,7 @@ export function readPickParams(raw: RawParams): PickParams {
   const seed = all(raw, "seed")[0]?.toLowerCase();
   const mode = all(raw, "mode")[0];
   const bias = all(raw, "bias")[0];
+  const sameStall = all(raw, "same")[0] === "1";
   const of = all(raw, "of")[0];
   const lockTokens = new Set(all(raw, "lock"));
   const not = [...new Set(all(raw, "not").filter((slug) => SLUG.test(slug)))].slice(0, MAX_VETOES);
@@ -70,6 +73,7 @@ export function readPickParams(raw: RawParams): PickParams {
     lock: validOf ? lock : [],
     ...(validOf ? { of: validOf } : {}),
     not,
+    sameStall,
   };
 }
 
@@ -110,6 +114,7 @@ export function pickExtras(params: PickParams, change: Partial<PickParams> = {})
     lock: lock.length > 0 ? lock.join(",") : undefined,
     of: lock.length > 0 ? next.of : undefined,
     not: next.not.length > 0 ? next.not.slice(0, MAX_VETOES).join(",") : undefined,
+    same: next.sameStall ? "1" : undefined,
   };
 }
 

@@ -25,7 +25,8 @@
  * type; the shop at 7 is the owner's decision.
  *
  * MADE UP: every dish, price, diet tag and price history. The shops' real
- * menus have not been surveyed. Dish ids start with "demo-".
+ * menus have not been surveyed. Dish ids start with "demo-". The jay festival
+ * window in the settings is NOT made up: it is the real 2569 dates.
  *
  * Floor plan (17 columns by 7 rows, top = north, landscape). Stalls are
  * 2 cells wide. The hall is read from the drawing; lifts, toilets, stairs and
@@ -33,15 +34,18 @@
  *
  *   col:  0-1   2-6          7-9      10-11   12-14      15-16
  *   row 0 [ 1 ] . . [17 ] .. [18 ]    [ 8  ]  [east  ]   [ 12 ]
- *   row 1 [ 2 ] [west seating]  stairs [ 9  ]  [seating]  [ 13 ]
- *   row 2 [ 3 ]               (gap)   [ 10 ]             [ 14 ]
+ *   row 1 [ 2 ]     [17 ]    [18 ]    [ 9  ]  [seating]  [ 13 ]
+ *   row 2 [ 3 ] [west seating] (gap)  [ 10 ]             [ 14 ]
  *   row 3 [ 4 ]                       [ 11 ]             [ 15 ]
  *   row 4 [ 5 ]                                          [ 16 ]
  *   row 5 [ 6 ]
  *   row 6 [ 7 ]               [south tables, cols 9-16]
  *
- * (17 sits at cols 4-5 and 18 at cols 8-9 of row 0, either side of the
- * central north lobby at cols 6-7.) Entrances: the main entrance on the south
+ * (17 and 18 are triangular kiosks on the north wall, each in 2 by 2 cells,
+ * at cols 4-5 and cols 8-9, either side of the central north lobby at
+ * cols 6-7. 17 has its right angle at the bottom right of its cells, 18 at
+ * the bottom left. Stall numbers follow the hall: 1 to 7 the west column,
+ * 8 to 11 the middle block, 12 to 16 the east column, then the two kiosks.) Entrances: the main entrance on the south
  * wall, and the courtyard doors on the north wall, one set in each half.
  *
  * Price history. Four survey dates, one in each of four semesters (1/2025,
@@ -64,6 +68,7 @@ import type {
   DishVariant,
   HalalStatus,
   HowToOrderPhrase,
+  MapShape,
   Protein,
   SpiceLevel,
   CookingStyle,
@@ -114,6 +119,8 @@ interface StallSpec {
   /** Cells wide and tall. */
   w: number;
   h: number;
+  /** Defaults to a rectangle. */
+  shape?: MapShape;
   wayfinding: { th: string; en: string };
 }
 
@@ -331,7 +338,7 @@ const STALL_SPECS: StallSpec[] = [
     en: "Aem Thi, Tha Phra Chan branch",
     cuisine: ["drinks"],
     halal: "none",
-    col: 4, row: 0, w: 2, h: 1,
+    col: 4, row: 0, w: 2, h: 2, shape: "triangleBottomRight",
     wayfinding: assumed({
       th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางซ้ายของทางเข้ากลางด้านเหนือ ขายเครื่องดื่มทั่วไป",
       en: "Triangular corner kiosk on the north wall, left of the central north entrance. General drinks.",
@@ -343,7 +350,7 @@ const STALL_SPECS: StallSpec[] = [
     en: "Pa Mu Desserts",
     cuisine: ["desserts", "fruit"],
     halal: "none",
-    col: 8, row: 0, w: 2, h: 1,
+    col: 8, row: 0, w: 2, h: 2, shape: "triangleBottomLeft",
     wayfinding: assumed({
       th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางขวาของทางเข้ากลางด้านเหนือ ทางตะวันตกของยอดกลุ่มร้านกลางโถง ขายขนมหวาน",
       en: "Triangular corner kiosk on the north wall, right of the central north entrance and just west of the top of the middle block. Desserts.",
@@ -363,7 +370,7 @@ function buildStalls(stamp: string): CanteenStall[] {
     cuisine: spec.cuisine,
     halal: spec.halal,
     ...(spec.halalCheckedOn ? { halalCheckedOn: spec.halalCheckedOn } : {}),
-    mapCell: { col: spec.col, row: spec.row, w: spec.w, h: spec.h },
+    mapCell: { col: spec.col, row: spec.row, w: spec.w, h: spec.h, ...(spec.shape ? { shape: spec.shape } : {}) },
     wayfinding: spec.wayfinding,
   }));
 }
@@ -823,7 +830,7 @@ const ENTRANCES: CanteenEntrance[] = [
 ];
 
 const SEATING: CanteenSeatingZone[] = [
-  { _key: "west", label: { th: "ที่นั่งฝั่งตะวันตก ข้างร้าน 1 ถึง 7", en: "West seating, by stalls 1 to 7" }, col: 2, row: 1, w: 5, h: 6 },
+  { _key: "west", label: { th: "ที่นั่งฝั่งตะวันตก ข้างร้าน 1 ถึง 7", en: "West seating, by stalls 1 to 7" }, col: 2, row: 2, w: 5, h: 5 },
   { _key: "east", label: { th: "ที่นั่งฝั่งตะวันออก ร้าน 8 ถึง 16", en: "East seating, stalls 8 to 16" }, col: 12, row: 0, w: 3, h: 5 },
   { _key: "south", label: { th: "โต๊ะแถวใต้ ทางตะวันออกเฉียงใต้", en: "South tables, south-east" }, col: 9, row: 6, w: 8, h: 1 },
 ];
@@ -849,6 +856,8 @@ function buildSettings(stamp: string): CanteenSettings {
     gridRows: 7,
     entrances: ENTRANCES,
     seatingZones: SEATING,
+    // เทศกาลกินเจ 2569 runs 10 to 18 October 2569 (2026), as reported by Thai press
+    // (bangkokbiznews.com/lifestyle/travel/1255815, ktc.co.th/article/lifestyle/misc/vegetarian-festival).
     jayFestivalStart: "2026-10-10",
     jayFestivalEnd: "2026-10-18",
   };

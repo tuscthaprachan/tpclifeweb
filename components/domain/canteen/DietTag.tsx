@@ -35,10 +35,10 @@ export function DietTag({ tag, locale, showDate = false, className }: DietTagPro
     >
       <DietIcon diet={tag.diet} />
       <span>{DIET_TAG_LABEL[tag.key][locale]}</span>
-      {showDate && tag.checkedOn ? (
+      {showDate && tag.checkedOn?.trim() ? (
         <span className="font-normal">
           {" "}
-          · {EAT.halalAsked[locale]} <Timestamp value={tag.checkedOn} locale={locale} />
+          · {EAT.halalAsked[locale]} <Timestamp value={tag.checkedOn.trim()} locale={locale} />
         </span>
       ) : null}
     </span>

@@ -35,6 +35,27 @@ export function readFilters(raw: RawParams): CanteenFilters {
   return parse(params);
 }
 
+/**
+ * The tidy form of a request's query, or null when it is already tidy.
+ * A plain GET of the filter form sends every field, so the address fills with
+ * empty values such as `max=&maxOther=`. Tidy drops empty values and folds a
+ * typed amount (`maxOther`) into `max`, and leaves everything else, in order,
+ * alone. Returns the query string without the leading `?`.
+ */
+export function tidyQuery(raw: RawParams): string | null {
+  const before = toSearchParams(raw);
+  const other = before.get("maxOther")?.trim();
+  const after = new URLSearchParams();
+  for (const [name, value] of before) {
+    if (name === "maxOther") continue;
+    if (value.trim() === "") continue;
+    if (name === "max" && other) continue;
+    after.append(name, value);
+  }
+  if (other) after.append("max", other);
+  return before.toString() === after.toString() ? null : after.toString();
+}
+
 /** Query parameters the filter form leaves alone: everything it does not own. */
 const FORM_OWNED = new Set([
   "max",

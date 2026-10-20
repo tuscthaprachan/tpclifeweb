@@ -11,9 +11,10 @@
 # hours             optional, only if different from the canteen. Format: days HH:mm-HH:mm, separate blocks with ;  Days: 1-5 or 1,3,5 (0 Sunday to 6 Saturday)
 # map_col, map_row  position on the floor plan grid, counting from 0 at the top left
 # map_w, map_h      size in grid cells, default 1
+# map_shape         optional: rect (default) | triangleBottomRight | triangleBottomLeft (a triangular kiosk; right angle at that corner of its cells)
 # wayfinding_th, wayfinding_en  optional, both or neither
 # photo_filename    optional, noted only. Upload photos in the Studio.
 #
 # Example of the row format, with placeholder values only (delete this line in your copy):
-# 1,ชื่อร้านภาษาไทย,Stall name in English,,thaiRice;madeToOrder,none,,no,,0,0,2,1,,,
-number,name_th,name_en,slug,cuisine,halal,halal_checked_on,vegetarian_stall,hours,map_col,map_row,map_w,map_h,wayfinding_th,wayfinding_en,photo_filename
+# 1,ชื่อร้านภาษาไทย,Stall name in English,,thaiRice;madeToOrder,none,,no,,0,0,2,1,,,,
+number,name_th,name_en,slug,cuisine,halal,halal_checked_on,vegetarian_stall,hours,map_col,map_row,map_w,map_h,map_shape,wayfinding_th,wayfinding_en,photo_filename

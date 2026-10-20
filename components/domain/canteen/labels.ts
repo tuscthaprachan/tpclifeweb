@@ -120,7 +120,6 @@ export const SPICE_FILTER_LABEL: Record<"any" | "0" | "1" | "2", Bilingual> = {
 
 export const SORT_LABEL: Record<SortKey, Bilingual> = {
   price: { th: "ราคาถูกก่อน", en: "Cheapest first" },
-  walk: { th: "ลำดับที่เดินผ่าน", en: "Walking order" },
   name: { th: "ชื่อ ก ถึง ฮ", en: "Name, A to Z" },
   stall: { th: "เลขร้าน", en: "Stall number" },
 };

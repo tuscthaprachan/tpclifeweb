@@ -13,7 +13,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { EAT, EatFilteredLayout, eatHref, readFilters, t, type Bilingual } from "@/components/domain/canteen";
+import { EAT, EatFilteredLayout, eatHref, readFilters, redirectToTidyQuery, t, type Bilingual } from "@/components/domain/canteen";
 import { SaveWeekButton } from "@/components/domain/canteen/budget/SaveWeekButton";
 import { SpendThisWeek } from "@/components/domain/canteen/budget/SpendThisWeek";
 import { WeekForm } from "@/components/domain/canteen/budget/WeekForm";
@@ -65,6 +65,7 @@ export default async function EatWeekPage({
   const locale: Locale = rawLocale;
 
   const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, ROUTE), query);
   const filters = readFilters(query);
   const request = parseWeekRequest(query);
   const path = localePath(locale, ROUTE);

@@ -44,6 +44,7 @@
   fill: var(--cmap-tile-fill);
   stroke: var(--line-strong);
   stroke-width: 1.5;
+  stroke-linejoin: round;
 }
 
 .cmap-tile-none {
@@ -135,12 +136,14 @@
 
 .cmap-hl-inner {
   fill: none;
+  stroke-linejoin: round;
   stroke: var(--colour-action);
   stroke-width: 5;
 }
 
 .cmap-hl-outer {
   fill: none;
+  stroke-linejoin: round;
   stroke: var(--ink-900);
   stroke-width: 2;
   stroke-dasharray: 7 4;
@@ -198,6 +201,7 @@
 .cmap-ring-outer,
 .cmap-ring-inner {
   fill: none;
+  stroke-linejoin: round;
   opacity: 0;
   pointer-events: none;
 }

@@ -14,6 +14,8 @@ interface PickControlsProps {
   filters: CanteenFilters;
   mode: PickMode;
   bias: Bias;
+  /** Keep `same=1` through a new spin. */
+  sameStall?: boolean;
 }
 
 /**
@@ -21,7 +23,7 @@ interface PickControlsProps {
  * a hidden field and leaves out `seed`, `lock`, `of` and `not`, so submitting
  * starts a fresh spin (the page adds a new seed). Works without JavaScript.
  */
-export function PickControls({ locale, filters, mode, bias }: PickControlsProps) {
+export function PickControls({ locale, filters, mode, bias, sameStall = false }: PickControlsProps) {
   // The budget is the visible box below, so it is left out of the hidden fields.
   const hidden = new URLSearchParams(serialise({ ...filters, max: undefined }));
   return (
@@ -29,6 +31,7 @@ export function PickControls({ locale, filters, mode, bias }: PickControlsProps)
       {[...hidden.entries()].map(([name, value]) => (
         <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
       ))}
+      {sameStall ? <input type="hidden" name="same" value="1" /> : null}
 
       <ChoiceGroup
         id="pick-mode"

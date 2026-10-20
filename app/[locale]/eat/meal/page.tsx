@@ -18,6 +18,7 @@ import {
   RelaxSuggestions,
   eatHref,
   readFilters,
+  redirectToTidyQuery,
   t,
 } from "@/components/domain/canteen";
 import { ComboCard } from "@/components/domain/canteen/budget/ComboCard";
@@ -29,7 +30,7 @@ import { mealCombos } from "@/lib/canteen/combos";
 import { effectivePrice, indexCanteen } from "@/lib/canteen/derive";
 import { facetCounts, matchesFilters, relaxSuggestions } from "@/lib/canteen/filter";
 import { MAX_BUDGET } from "@/lib/canteen/params";
-import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/sanity/queries";
@@ -60,6 +61,7 @@ export default async function EatMealPage({
   const locale: Locale = rawLocale;
 
   const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, ROUTE), query);
   const filters = readFilters(query);
   const sameValue = Array.isArray(query.same) ? query.same[0] : query.same;
   const sameStall = sameValue === "1";

@@ -9,7 +9,7 @@
  *   row 0:  stall 1 (0,0)   stall 2 (2,0)   stall 3 (4,0)
  *   row 2:  stall 4 (0,2)   stall 5 (2,2)   stall 6 (4,2)
  *
- * so the walking order is 1, 2, 3, 4, 5, 6.
+ * The walking order is by stall number, 1 to 6, wherever a stall is drawn.
  */
 
 import type {

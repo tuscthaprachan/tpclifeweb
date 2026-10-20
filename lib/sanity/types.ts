@@ -649,12 +649,21 @@ export type DietAvailability = "no" | "canAsk" | "yes";
 /** Which edge of the floor plan something sits on. */
 export type FloorSide = "north" | "south" | "east" | "west";
 
+/**
+ * The outline of a stall on the plan. `rect` fills its cell. The triangles
+ * fill half of it, with the right angle at the named corner of the cell and
+ * the hypotenuse on the opposite diagonal.
+ */
+export type MapShape = "rect" | "triangleBottomRight" | "triangleBottomLeft";
+
 /** A rectangle on the floor plan grid. Columns and rows count from 0 at the top left. */
 export interface MapCell {
   col: number;
   row: number;
   w: number;
   h: number;
+  /** Optional. Defaults to `rect`. */
+  shape?: MapShape;
 }
 
 export interface CanteenStall extends DocumentMeta {

@@ -39,7 +39,7 @@ describe("mealCombos", () => {
     for (const combo of combos) {
       const numbers = combo.stalls.map((s) => s.number);
       expect(new Set(numbers).size).toBe(numbers.length);
-      expect(numbers).toEqual([...numbers].sort((a, b) => a - b)); // fixture walking order equals number order
+      expect(numbers).toEqual([...numbers].sort((a, b) => a - b)); // walking order is stall number order
     }
   });
 

@@ -22,6 +22,7 @@ import {
   paginateGroups,
   parsePage,
   readFilters,
+  redirectToTidyQuery,
   t,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -29,7 +30,7 @@ import { Container, EmptyState, Heading, InsetText, Pagination, Stack } from "@/
 import { applyFilters, countStalls, facetCounts, groupDishes, relaxSuggestions } from "@/lib/canteen/filter";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { countActiveValues } from "@/lib/canteen/params";
-import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/sanity/queries";
@@ -58,6 +59,7 @@ export default async function EatDishesPage({
   const locale: Locale = rawLocale;
 
   const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, ROUTE), query);
   const filters = readFilters(query);
   const page = parsePage(query.page);
   const data = await getCanteenData();
