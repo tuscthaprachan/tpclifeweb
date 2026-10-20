@@ -141,7 +141,7 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
   const heading = shapeThai(clip(title, 110));
   const lede = description ? shapeThai(clip(description, 160)) : undefined;
   const serviceName = pick(SERVICE_NAME, locale);
-  const tail = locale === "th" ? "#ท้าย" : "";
+  const lead = locale === "th" ? "#ท้าย" : "#tpc";
 
   return new ImageResponse(
     (
@@ -211,9 +211,19 @@ export async function renderOgImage({ locale, title, kicker, description, tone =
               paddingTop: 28,
             }}
           >
-            <div style={{ display: "flex", fontSize: 40, fontWeight: 700, color: BRAND_PURPLE }}>
-              {tail ? <span style={{ color: BRAND_ORANGE }}>{shapeThai(tail)}</span> : null}
-              <span>{shapeThai(serviceName.slice(tail.length))}</span>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "baseline",
+                fontSize: 40,
+                fontWeight: 700,
+                lineHeight: 1,
+                fontFamily: locale === "th" ? "Sarabun" : "Lexend",
+                color: BRAND_PURPLE,
+              }}
+            >
+              <span style={{ color: BRAND_ORANGE }}>{shapeThai(lead)}</span>
+              <span>{shapeThai(serviceName.slice(lead.length))}</span>
             </div>
             <div style={{ display: "flex", fontSize: 28, color: "#554f51" }}>{shapeThai(pick(CAMPUS, locale))}</div>
           </div>
