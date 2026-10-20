@@ -1,0 +1,23 @@
+/*
+ * The "reveal" for Random for all. Each person's card fades and rises in turn.
+ * Only when the reader has not asked for reduced motion; otherwise the cards
+ * are simply there. Nothing here carries meaning, it is decoration.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .group-reveal > li {
+    animation: group-reveal 450ms var(--easing, ease-out) both;
+    animation-delay: calc(var(--reveal-index, 0) * 160ms);
+  }
+
+  @keyframes group-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
