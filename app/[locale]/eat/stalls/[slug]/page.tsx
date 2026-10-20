@@ -18,13 +18,13 @@ import {
   TYPE_LABEL,
   eat,
   eatHref,
-  mapHref,
   readFilters,
   stallHalalTag,
   t,
 } from "@/components/domain/canteen";
+import { StallMiniMap } from "@/components/domain/canteen/pick/StallMiniMap";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Button, Container, Grid, Heading, InsetText, Stack, Tag } from "@/components/ui";
+import { Container, Grid, Heading, InsetText, Stack, Tag } from "@/components/ui";
 import { indexCanteen, priceRange } from "@/lib/canteen/derive";
 import { matchesFilters } from "@/lib/canteen/filter";
 import { DISH_TYPES } from "@/lib/canteen/options";
@@ -129,11 +129,8 @@ export default async function EatStallPage({
               <PinIcon className="mt-[4px] shrink-0 text-ink-600" size={18} />
               {stall.wayfinding ? pick(stall.wayfinding, locale) : t(EAT.noWayfinding, locale)}
             </p>
-            {/* Mini map slot: the map agent's mini map goes here. Until then, a link to the full map with this stall highlighted. */}
             <div data-slot="mini-map">
-              <Button href={mapHref(locale, filters, stall.slug.current)} variant="secondary">
-                {t(EAT.showOnMap, locale)}
-              </Button>
+              <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="stall" />
             </div>
           </Stack>
         </section>

@@ -22,11 +22,11 @@ import {
   dishDietTags,
   eat,
   eatHref,
-  mapHref,
   readFilters,
   stallHref,
   t,
 } from "@/components/domain/canteen";
+import { StallMiniMap } from "@/components/domain/canteen/pick/StallMiniMap";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Button, Container, Grid, Heading, InsetText, Stack } from "@/components/ui";
 import { canonicalOf, dishesInCanonical, indexCanteen, stallOf } from "@/lib/canteen/derive";
@@ -124,11 +124,8 @@ export default async function EatDishPage({
                     <Link href={stallHref(locale, stall.slug.current, filters)}>{eat.stallFull(locale, stall.number, pick(stall.name, locale))}</Link>
                   </p>
                   <p className="m-0 text-ink-900">{stall.wayfinding ? pick(stall.wayfinding, locale) : t(EAT.noWayfinding, locale)}</p>
-                  {/* Mini map slot: the map agent's mini map goes here. Until then, a link to the full map with this stall highlighted. */}
                   <div data-slot="mini-map">
-                    <Link href={mapHref(locale, filters, stall.slug.current)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
-                      {t(EAT.showOnMap, locale)}
-                    </Link>
+                    <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="dish" />
                   </div>
                 </>
               ) : null}

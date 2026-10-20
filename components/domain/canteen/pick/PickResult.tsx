@@ -1,0 +1,427 @@
+import Link from "next/link";
+
+import { Button } from "@/components/ui/Button";
+import { Heading } from "@/components/ui/Heading";
+import { InsetText } from "@/components/ui/InsetText";
+import type { MealCombo } from "@/lib/canteen/combos";
+import { canonicalOf, indexCanteen } from "@/lib/canteen/derive";
+import type { PickResult as PickOutcome, Relaxation } from "@/lib/canteen/random";
+import type { CanteenFilters } from "@/lib/canteen/params";
+import { OTHER_LOCALE, pick as localised, type Locale } from "@/lib/i18n/config";
+import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
+
+import { DietTags } from "../DietTag";
+import { DishTypeIcon, PinIcon } from "../icons";
+import { dishDietTags } from "../diet";
+import { TYPE_LABEL } from "../labels";
+import { dishHref, mapHref, stallHref } from "../links";
+import { PriceTag } from "../PriceTag";
+import { SpiceMeter } from "../SpiceMeter";
+import { EAT, eat, t } from "../strings";
+import { EatThisButton } from "./EatThisButton";
+import { filterLabels, joinLabels, pickHref, type PickParams } from "./helpers";
+import { ShareButton } from "./ShareButton";
+import { StallMiniMap } from "./StallMiniMap";
+import { PICK, pickText } from "./strings";
+
+export interface MealPickView {
+  combo: MealCombo;
+  budget: number;
+  /** The vetoes were dropped because every combination contained a vetoed dish. */
+  vetoRelaxed: boolean;
+}
+
+export interface PickResultProps {
+  locale: Locale;
+  data: CanteenData;
+  filters: CanteenFilters;
+  /** The URL state this result belongs to. `seed` must be set. */
+  params: PickParams;
+  /** A fresh seed for the links that spin again. Made by the page, so this component stays pure. */
+  nextSeed: string;
+  /** The result of `pick()`, for the dish and stall modes. */
+  outcome?: PickOutcome;
+  /** The result for the meal mode. */
+  meal?: MealPickView;
+  /** Stall mode: the dishes at the picked stall that match the filters. */
+  stallDishes?: readonly CanteenDish[];
+}
+
+const CHIP =
+  "inline-flex min-h-[var(--target-min)] items-center rounded-pill border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-1)] text-sm font-medium text-ink-900 no-underline hover:bg-surface-alt";
+const SECONDARY =
+  "inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center rounded-control border border-line-strong bg-surface px-[var(--space-4)] py-[var(--space-2)] font-medium text-ink-900 no-underline hover:bg-surface-alt";
+
+const RELAXED_TEXT: Record<Relaxation, keyof typeof PICK> = {
+  repeat: "relaxedRepeat",
+  lock: "relaxedLock",
+  veto: "relaxedVeto",
+};
+
+/**
+ * The result card of "Decide for me", for all three modes. Pure and
+ * server renderable; it is also rendered by the client island when the
+ * device history changes the pick. Everything it links to is a plain link
+ * with a seed in it, so every action works without JavaScript. The only
+ * client parts are "Go with this" (logs to the device) and "Share".
+ */
+export function PickResult(props: PickResultProps) {
+  const { params } = props;
+  if (params.mode === "meal" && props.meal) return <MealCard {...props} meal={props.meal} />;
+  if (props.outcome?.dish && props.outcome.stall) {
+    return params.mode === "stall" ? (
+      <StallCard {...props} outcome={props.outcome} />
+    ) : (
+      <DishCard {...props} outcome={props.outcome} />
+    );
+  }
+  return null;
+}
+
+/* ------------------------------------------------------------------ *
+ * Shared pieces
+ * ------------------------------------------------------------------ */
+
+function Relaxed({ locale, relaxed }: { locale: Locale; relaxed: Relaxation[] | null }) {
+  if (!relaxed || relaxed.length === 0) return null;
+  return (
+    <InsetText>
+      <p className="m-0 font-medium">{PICK.relaxedTitle[locale]}</p>
+      <ul className="m-0 mt-[var(--space-1)] list-disc pl-[var(--space-5)] text-sm">
+        {relaxed.map((item) => (
+          <li key={item}>{PICK[RELAXED_TEXT[item]][locale]}</li>
+        ))}
+      </ul>
+      <p className="m-0 mt-[var(--space-1)] text-sm text-ink-600">{PICK.relaxedFilters[locale]}</p>
+    </InsetText>
+  );
+}
+
+function Card({ labelledBy, children }: { labelledBy: string; children: React.ReactNode }) {
+  return (
+    <article aria-labelledby={labelledBy} className="rounded-panel border border-line bg-surface p-[var(--space-4)] sm:p-[var(--space-6)]">
+      <div className="flex flex-col gap-[var(--space-5)]">{children}</div>
+    </article>
+  );
+}
+
+function StallLine({ locale, stall, filters }: { locale: Locale; stall: CanteenStall; filters: CanteenFilters }) {
+  return (
+    <div className="flex flex-col gap-[var(--space-1)]">
+      <p className="m-0 flex items-start gap-[var(--space-1)] text-lg font-medium">
+        <PinIcon className="mt-[4px] shrink-0 text-ink-600" size={18} />
+        <Link href={stallHref(locale, stall.slug.current, filters)}>{eat.stallFull(locale, stall.number, localised(stall.name, locale))}</Link>
+      </p>
+      <p className="m-0 text-ink-900">{stall.wayfinding ? localised(stall.wayfinding, locale) : t(EAT.noWayfinding, locale)}</p>
+    </div>
+  );
+}
+
+function Why({ locale, data, filters, lines }: { locale: Locale; data: CanteenData; filters: CanteenFilters; lines: string[] }) {
+  const index = indexCanteen(data);
+  const labels = filterLabels(filters, locale, (slug) => {
+    const stall = index.stallBySlug.get(slug);
+    return stall ? localised(stall.name, locale) : undefined;
+  });
+  const first = labels.length > 0 ? pickText.whyFilters(locale, joinLabels(labels, locale)) : PICK.whyNoFilters[locale];
+  return (
+    <div className="flex flex-col gap-[var(--space-1)]">
+      <p className="m-0 text-sm font-medium text-ink-600">{PICK.whyTitle[locale]}</p>
+      <p className="m-0 text-ink-900">{[first, ...lines].join(" ")}</p>
+    </div>
+  );
+}
+
+function Actions({
+  locale,
+  filters,
+  params,
+  nextSeed,
+  vetoSlugs,
+  eat: eatNode,
+  locks,
+}: {
+  locale: Locale;
+  filters: CanteenFilters;
+  params: PickParams;
+  nextSeed: string;
+  vetoSlugs: string[];
+  eat: React.ReactNode;
+  locks?: React.ReactNode;
+}) {
+  const not = [...new Set([...params.not, ...vetoSlugs])];
+  return (
+    <div className="flex flex-col gap-[var(--space-4)]" role="group" aria-label={PICK.actionsLabel[locale]}>
+      {eatNode}
+      <div className="flex flex-wrap items-center gap-[var(--space-3)]">
+        <Link href={pickHref(locale, filters, params, { seed: nextSeed, not })} className={SECONDARY}>
+          {PICK.notThis[locale]}
+        </Link>
+        <Link href={pickHref(locale, filters, params, { seed: nextSeed, lock: [], of: undefined })} className={SECONDARY}>
+          {PICK.spinAgain[locale]}
+        </Link>
+      </div>
+      {locks}
+      <ShareButton locale={locale} href={pickHref(locale, filters, params)} id="pick-share" />
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * Dish
+ * ------------------------------------------------------------------ */
+
+function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResultProps & { outcome: PickOutcome }) {
+  const dish = outcome.dish!;
+  const stall = outcome.stall!;
+  const canonical = canonicalOf(data, dish);
+  const index = indexCanteen(data);
+  const other = OTHER_LOCALE[locale];
+  const name = localised(dish.name, locale);
+  const otherName = localised(dish.name, other);
+  const tags = dishDietTags(dish, stall);
+  const typeName = TYPE_LABEL[dish.type][locale];
+  const previous = params.of ? index.dishBySlug.get(params.of) : undefined;
+  const phrases = canonical?.howToOrder ?? [];
+
+  const why: string[] = [];
+  if (outcome.reason.bias === "cheap") why.push(PICK.whyCheap[locale]);
+  if (previous) {
+    if (outcome.reason.locks.includes("stall")) why.push(PICK.whyKeepStall[locale]);
+    if (outcome.reason.locks.includes("type")) why.push(pickText.whyKeepType(locale, TYPE_LABEL[previous.type][locale]));
+    if (outcome.reason.locks.includes("canonical")) why.push(PICK.whyKeepCanonical[locale]);
+  }
+  why.push(pickText.whyPool(locale, outcome.poolSize));
+
+  const lockLink = (label: string, lock: PickParams["lock"]) => (
+    <li key={label}>
+      <Link href={pickHref(locale, filters, params, { seed: nextSeed, lock, of: dish.slug.current })} className={CHIP}>
+        {label}
+      </Link>
+    </li>
+  );
+
+  return (
+    <Card labelledBy="pick-result-title">
+      <div className="flex flex-col gap-[var(--space-2)]">
+        <p className="m-0 inline-flex items-center gap-[var(--space-1)] text-sm text-ink-600">
+          <DishTypeIcon type={dish.type} />
+          {typeName}
+        </p>
+        <Heading level={2} id="pick-result-title" visualLevel={1} className="m-0">
+          <Link href={dishHref(locale, dish.slug.current, filters)} className="text-ink-900 no-underline hover:underline">
+            {name}
+          </Link>
+        </Heading>
+        {otherName && otherName !== name ? (
+          <p lang={other} className="m-0 text-lg text-ink-600">
+            {otherName}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="grid gap-[var(--space-6)] md:grid-cols-2">
+        <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
+          <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} />
+          {dish.type !== "drink" && dish.type !== "dessert" ? <SpiceMeter level={dish.spice} locale={locale} /> : null}
+          <DietTags tags={tags} locale={locale} />
+          <Why locale={locale} data={data} filters={filters} lines={why} />
+        </div>
+        <div className="flex min-w-0 flex-col gap-[var(--space-3)]">
+          <p className="m-0 text-sm font-medium text-ink-600">{PICK.whereTitle[locale]}</p>
+          <StallLine locale={locale} stall={stall} filters={filters} />
+          <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="pickmap" />
+        </div>
+      </div>
+
+      {phrases.length > 0 ? (
+        <div className="flex flex-col gap-[var(--space-2)]">
+          <p className="m-0 text-sm font-medium text-ink-600">
+            {PICK.orderTitle[locale]}. {PICK.orderShow[locale]}
+          </p>
+          <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
+            {phrases.map((phrase) => (
+              <li key={phrase._key} className="rounded-control bg-surface-alt px-[var(--space-3)] py-[var(--space-2)]">
+                <span lang="th" className="block text-lg font-medium text-ink-900">
+                  {phrase.th}
+                </span>
+                <span className="block text-sm text-ink-600">{phrase.romanised}</span>
+                <span lang="en" className="block text-sm text-ink-900">
+                  {phrase.en}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      <Relaxed locale={locale} relaxed={outcome.relaxed} />
+
+      <Actions
+        locale={locale}
+        filters={filters}
+        params={params}
+        nextSeed={nextSeed}
+        vetoSlugs={[dish.slug.current]}
+        eat={
+          <EatThisButton
+            key={`${params.seed}-${dish.slug.current}`}
+            locale={locale}
+            items={[{ slug: dish.slug.current, price: dish.price }]}
+            href={stallHref(locale, stall.slug.current, filters)}
+          />
+        }
+        locks={
+          <div className="flex flex-col gap-[var(--space-2)]">
+            <p className="m-0 text-sm text-ink-600">{PICK.lockLabel[locale]}</p>
+            <ul className="m-0 flex list-none flex-wrap gap-[var(--space-2)] p-0">
+              {lockLink(PICK.keepStall[locale], ["stall"])}
+              {lockLink(pickText.keepType(locale, typeName), ["type"])}
+              {canonical ? lockLink(PICK.keepCanonical[locale], ["canonical"]) : null}
+            </ul>
+          </div>
+        }
+      />
+    </Card>
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * Stall
+ * ------------------------------------------------------------------ */
+
+function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDishes = [] }: PickResultProps & { outcome: PickOutcome }) {
+  const stall = outcome.stall!;
+  const name = localised(stall.name, locale);
+  const why = [pickText.whyPool(locale, outcome.poolSize)];
+
+  return (
+    <Card labelledBy="pick-result-title">
+      <div className="flex flex-col gap-[var(--space-2)]">
+        <p className="m-0 text-sm text-ink-600">{PICK.stallPickTitle[locale]}</p>
+        <Heading level={2} id="pick-result-title" visualLevel={1} className="m-0">
+          <Link href={stallHref(locale, stall.slug.current, filters)} className="text-ink-900 no-underline hover:underline">
+            {name}
+          </Link>
+        </Heading>
+        <p className="m-0 text-lg text-ink-600">{eat.stallNumber(locale, stall.number)}</p>
+      </div>
+
+      <div className="grid gap-[var(--space-6)] md:grid-cols-2">
+        <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
+          <div className="flex flex-col gap-[var(--space-2)]">
+            <p className="m-0 text-sm font-medium text-ink-600">{PICK.stallDishes[locale]}</p>
+            <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">
+              {stallDishes.slice(0, 5).map((dish) => (
+                <li key={dish._id} className="flex flex-col gap-[var(--space-1)]">
+                  <Link href={dishHref(locale, dish.slug.current, filters)} className="font-medium">
+                    {localised(dish.name, locale)}
+                  </Link>
+                  <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} />
+                </li>
+              ))}
+            </ul>
+          </div>
+          <Why locale={locale} data={data} filters={filters} lines={why} />
+        </div>
+        <div className="flex min-w-0 flex-col gap-[var(--space-3)]">
+          <p className="m-0 text-sm font-medium text-ink-600">{PICK.whereTitle[locale]}</p>
+          <StallLine locale={locale} stall={stall} filters={filters} />
+          <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="pickmap" />
+        </div>
+      </div>
+
+      <Relaxed locale={locale} relaxed={outcome.relaxed} />
+
+      <Actions
+        locale={locale}
+        filters={filters}
+        params={params}
+        nextSeed={nextSeed}
+        vetoSlugs={stallDishes.map((dish) => dish.slug.current)}
+        eat={
+          <div className="flex flex-wrap items-center gap-[var(--space-3)]">
+            <Button href={stallHref(locale, stall.slug.current, filters)}>{PICK.seeStall[locale]}</Button>
+          </div>
+        }
+      />
+    </Card>
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * Meal
+ * ------------------------------------------------------------------ */
+
+function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultProps & { meal: MealPickView }) {
+  const { combo, budget } = meal;
+  const names = combo.items.map((dish) => localised(dish.name, locale));
+  const slugs = combo.stalls.map((stall) => stall.slug.current).join(",");
+  const relaxed: Relaxation[] | null = meal.vetoRelaxed ? ["veto"] : null;
+
+  return (
+    <Card labelledBy="pick-result-title">
+      <div className="flex flex-col gap-[var(--space-2)]">
+        <p className="m-0 text-sm text-ink-600">{PICK.mealPickTitle[locale]}</p>
+        <Heading level={2} id="pick-result-title" visualLevel={2} className="m-0">
+          {pickText.mealTotal(locale, combo.total, combo.change, budget)}
+        </Heading>
+      </div>
+
+      <div className="grid gap-[var(--space-6)] md:grid-cols-2">
+        <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
+          <ul className="m-0 flex list-none flex-col gap-[var(--space-4)] p-0">
+            {combo.items.map((dish, position) => {
+              const stall = data.stalls.find((item) => item._id === dish.stall._ref);
+              return (
+                <li key={dish._id} className="flex flex-col gap-[var(--space-1)]">
+                  <Link href={dishHref(locale, dish.slug.current, filters)} className="text-lg font-medium">
+                    {names[position]}
+                  </Link>
+                  {stall ? (
+                    <p className="m-0 text-sm text-ink-900">
+                      {PICK.alsoWord[locale]} {eat.stallFull(locale, stall.number, localised(stall.name, locale))}
+                    </p>
+                  ) : null}
+                  <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} />
+                </li>
+              );
+            })}
+          </ul>
+          <Why locale={locale} data={data} filters={filters} lines={[pickText.mealWhy(locale, budget)]} />
+        </div>
+        <div className="flex min-w-0 flex-col gap-[var(--space-3)]">
+          <p className="m-0 text-sm font-medium text-ink-600">{PICK.mealWalk[locale]}</p>
+          <ol className="m-0 flex list-decimal flex-col gap-[var(--space-1)] pl-[var(--space-5)]">
+            {combo.stalls.map((stall) => (
+              <li key={stall._id} className="text-ink-900">
+                <Link href={stallHref(locale, stall.slug.current, filters)}>{eat.stallFull(locale, stall.number, localised(stall.name, locale))}</Link>
+                {stall.wayfinding ? <span className="block text-sm text-ink-600">{localised(stall.wayfinding, locale)}</span> : null}
+              </li>
+            ))}
+          </ol>
+          <StallMiniMap locale={locale} data={data} stalls={combo.stalls} filters={filters} idPrefix="pickmap" />
+        </div>
+      </div>
+
+      <Relaxed locale={locale} relaxed={relaxed} />
+
+      <Actions
+        locale={locale}
+        filters={filters}
+        params={params}
+        nextSeed={nextSeed}
+        vetoSlugs={[combo.main.slug.current]}
+        eat={
+          <EatThisButton
+            key={`${params.seed}-${combo.main.slug.current}`}
+            locale={locale}
+            items={combo.items.map((dish) => ({ slug: dish.slug.current, price: dish.price }))}
+            href={combo.stalls.length === 1 ? stallHref(locale, slugs, filters) : mapHref(locale, filters, slugs)}
+            seeLabel={combo.stalls.length === 1 ? PICK.seeStall[locale] : PICK.seeOnMap[locale]}
+          />
+        }
+      />
+    </Card>
+  );
+}
