@@ -48,6 +48,12 @@ describe("group encoding", () => {
     expect(encodeGroup([person({ name: "A", diet: ["jay", "nopork"], avoid: ["egg", "pork"] })])).toBe("A..np-j..pk-eg");
   });
 
+  it("round trips the allergen leave-outs", () => {
+    const people: Person[] = [{ name: "Nut", diet: [], avoid: ["peanut", "treeNut", "milk", "wheat", "soy", "sesame"] }];
+    expect(encodeGroup(people)).toBe("Nut....pn-tn-mk-wh-so-se");
+    expect(decodeGroup(encodeGroup(people))).toEqual(people);
+  });
+
   it("limits the group to eight people and the names to 24 characters", () => {
     const many = Array.from({ length: 12 }, (_, i) => person({ name: `P${i}` }));
     expect(decodeGroup(encodeGroup(many))).toHaveLength(MAX_PEOPLE);

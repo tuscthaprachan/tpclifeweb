@@ -626,6 +626,9 @@ export type DishCourse = "main" | "side" | "drink" | "dessert";
 
 export type Protein = "pork" | "chicken" | "beef" | "seafood" | "fish" | "egg" | "tofu" | "none";
 
+/** Allergens a dish probably contains, inferred from its name and usual recipe. Never a guarantee. */
+export type Allergen = "peanut" | "treeNut" | "milk" | "egg" | "wheat" | "soy" | "sesame" | "fish" | "shellfish";
+
 export type CookingStyle =
   | "stirFried"
   | "deepFried"
@@ -716,6 +719,8 @@ export interface CanteenDish extends DocumentMeta {
   type: DishType;
   course: DishCourse;
   protein: Protein[];
+  /** Allergens it probably contains, sauces and batters included. Inferred, not asked. */
+  contains?: Allergen[];
   /** Absent for drinks, desserts and anything not cooked to order. */
   style?: CookingStyle;
   spice: SpiceLevel;

@@ -15,6 +15,7 @@ import {
   EAT,
   PinIcon,
   PriceTag,
+  ALLERGEN_LABEL,
   PROTEIN_LABEL,
   SpiceMeter,
   STYLE_LABEL,
@@ -143,6 +144,13 @@ export default async function EatDishPage({
                 <dt className="text-sm font-medium text-ink-600">{t(EAT.proteinLine, locale)}</dt>
                 <dd className="m-0 text-ink-900">{dish.protein.map((protein) => PROTEIN_LABEL[protein][locale]).join(", ")}</dd>
               </div>
+              {dish.contains && dish.contains.length > 0 ? (
+                <div className="sm:col-span-2">
+                  <dt className="text-sm font-medium text-ink-600">{t(EAT.containsLine, locale)}</dt>
+                  <dd className="m-0 text-ink-900">{dish.contains.map((allergen) => ALLERGEN_LABEL[allergen][locale]).join(", ")}</dd>
+                  <dd className="m-0 text-sm text-ink-600">{t(EAT.allergyNote, locale)}</dd>
+                </div>
+              ) : null}
               {dish.style ? (
                 <div>
                   <dt className="text-sm font-medium text-ink-600">{t(EAT.styleLine, locale)}</dt>

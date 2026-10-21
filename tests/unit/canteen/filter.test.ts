@@ -46,6 +46,20 @@ describe("applyFilters", () => {
     expect(run({ avoid: ["pork", "egg"] }).some((id) => ["a", "b", "d", "m", "s", "t"].includes(id))).toBe(false);
   });
 
+  it("avoid also removes dishes by inferred allergen, seafood by shellfish", () => {
+    const tagged = {
+      ...data,
+      dishes: data.dishes.map((dish) =>
+        dish.slug.current === "fixture-dish-c" ? { ...dish, contains: ["peanut" as const] } : dish.slug.current === "fixture-dish-e" ? { ...dish, contains: ["shellfish" as const] } : dish,
+      ),
+    };
+    const without = (avoid: CanteenFilters["avoid"]) => slugs(applyFilters(tagged, f({ avoid }), NOW));
+    expect(without(["peanut"])).not.toContain("c");
+    expect(without(["peanut"])).toHaveLength(20);
+    expect(without(["seafood"])).not.toContain("e");
+    expect(without(["milk"])).toHaveLength(21);
+  });
+
   it("spice is a ceiling", () => {
     expect(run({ spice: 1 })).toHaveLength(14);
     expect(run({ spice: 0 }).sort()).toEqual(["c", "d", "g", "l", "n", "o", "p", "q", "r"]);

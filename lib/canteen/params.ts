@@ -14,14 +14,18 @@
  */
 
 import { DISH_TYPES } from "./options";
-import type { DishType, Protein } from "@/lib/sanity/types";
+import type { Allergen, DishType, Protein } from "@/lib/sanity/types";
 
 /** Diet filter keys. `halal` is "stall says or certified", `certified` is the stronger tag alone. */
 export const DIET_KEYS = ["nopork", "halal", "certified", "vegetarian", "vegan", "jay"] as const;
 export type DietKey = (typeof DIET_KEYS)[number];
 
-/** Proteins a student can choose to avoid. A preference, never an allergy tool. */
-export const AVOID_KEYS = ["pork", "beef", "seafood", "fish", "egg"] as const satisfies readonly Protein[];
+/**
+ * What a student can leave out. Pork and beef go by the dish's protein. The
+ * rest also go by its inferred allergens (seafood by shellfish), which are
+ * guesses from names and usual recipes: a strong hint, never allergy-safe.
+ */
+export const AVOID_KEYS = ["pork", "beef", "seafood", "fish", "egg", "peanut", "treeNut", "milk", "wheat", "soy", "sesame"] as const satisfies readonly (Protein | Allergen)[];
 export type AvoidKey = (typeof AVOID_KEYS)[number];
 
 /** Feel chips. Opposite pairs (hot or cold, soupy or dry, fried or not) never contradict each other: choosing both means no constraint. */

@@ -108,6 +108,14 @@ describe("surveyed canteen data", () => {
     for (const dish of data.dishes) for (const tag of [dish.vegetarian, dish.vegan, dish.jay]) expect(tag).not.toBe("canAsk");
   });
 
+  it("tags allergens on the dishes that obviously have them", () => {
+    const tagged = (th: string) => data.dishes.filter((dish) => dish.name.th.includes(th));
+    for (const dish of tagged("ผัดไทย")) expect(dish.contains).toContain("peanut");
+    for (const dish of [...tagged("ราเมน"), ...tagged("ราเม็ง")]) expect(dish.contains).toContain("wheat");
+    for (const dish of tagged("กุ้ง")) expect(dish.contains).toContain("shellfish");
+    expect(applyFilters(data, { ...defaultFilters(), avoid: ["peanut", "milk", "wheat"] }, NOW).length).toBeGreaterThan(0);
+  });
+
   it("keeps prices whole and plausible, with non-negative variants", () => {
     for (const dish of data.dishes) {
       expect(Number.isInteger(dish.price)).toBe(true);

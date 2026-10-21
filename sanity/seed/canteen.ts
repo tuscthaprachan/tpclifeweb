@@ -56,6 +56,7 @@ import { surveyCanteenData } from "../../lib/canteen/dataset";
 import type { CampusPlace } from "../../lib/sanity/types";
 import { apiVersion, dataset, projectId } from "../../lib/sanity/env";
 import {
+  ALLERGENS,
   COOKING_STYLES,
   CUISINES,
   DIET_AVAILABILITIES,
@@ -455,6 +456,7 @@ function buildDishes(
     const course = enumValue(file, row, "course", DISH_COURSES);
     const protein = enumList(file, row, "protein", PROTEINS);
     if (protein.includes("none") && protein.length > 1) problem(file, row, 'protein: remove "none" or the other values');
+    const contains = enumList(file, row, "contains", ALLERGENS, 0);
     const style = row.cells.style ? enumValue(file, row, "style", COOKING_STYLES) : undefined;
     const spice = wholeNumber(file, row, "spice", 0);
     if (spice !== undefined && spice > 3) problem(file, row, "spice must be 0 to 3");
@@ -486,6 +488,7 @@ function buildDishes(
       type,
       course,
       protein,
+      ...(contains.length > 0 ? { contains } : {}),
       ...(style ? { style } : {}),
       spice,
       temperature,

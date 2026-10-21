@@ -6,6 +6,7 @@ import {
   DISH_COURSE_OPTIONS,
   DISH_TYPE_OPTIONS,
   PROTEIN_OPTIONS,
+  ALLERGEN_OPTIONS,
   SPICE_OPTIONS,
   TEMPERATURE_OPTIONS,
 } from "../constants";
@@ -121,6 +122,16 @@ export const canteenDish = defineType({
           }
           return true;
         }),
+    }),
+    defineField({
+      name: "contains",
+      title: "Probably contains",
+      type: "array",
+      of: [defineArrayMember({ type: "string" })],
+      group: "tags",
+      options: { list: ALLERGEN_OPTIONS },
+      description:
+        "Allergens the dish probably contains as normally made, sauces, pastes and batter included (fish sauce, soy sauce, shrimp paste, wheat flour). Err towards ticking. Drives the leave-out filters, which are never allergy-safe.",
     }),
     defineField({
       name: "style",

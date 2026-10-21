@@ -94,6 +94,19 @@ export const PROTEIN_OPTIONS = [
   { title: "None", value: "none" },
 ];
 
+/** Matches `Allergen`. */
+export const ALLERGEN_OPTIONS = [
+  { title: "Peanuts", value: "peanut" },
+  { title: "Tree nuts", value: "treeNut" },
+  { title: "Milk", value: "milk" },
+  { title: "Egg", value: "egg" },
+  { title: "Wheat", value: "wheat" },
+  { title: "Soy", value: "soy" },
+  { title: "Sesame", value: "sesame" },
+  { title: "Fish or fish sauce", value: "fish" },
+  { title: "Shellfish or shrimp paste", value: "shellfish" },
+];
+
 /** Matches `CookingStyle`. */
 export const COOKING_STYLE_OPTIONS = [
   { title: "Stir-fried", value: "stirFried" },

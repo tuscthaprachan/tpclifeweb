@@ -11,6 +11,7 @@
 # type              rice noodles soup curryOverRice madeToOrder singlePlate snack drink dessert
 # course            main side drink dessert
 # protein           one or more of: pork chicken beef seafood fish egg tofu none (separate with ;)
+# contains          optional. Allergens it probably contains, sauces and batter included: peanut treeNut milk egg wheat soy sesame fish shellfish (separate with ;)
 # style             optional. stirFried deepFried boiled grilled steamed salad curry. Leave empty for drinks and desserts
 # spice             0 to 3, as made by default
 # temperature       hot | cold
@@ -21,4 +22,4 @@
 #
 # Example of the row format, with placeholder values only (delete this line in your copy):
 # 1,ชื่อเมนูภาษาไทย,Dish description in English (transliteration),,,40,,rice,main,chicken,stirFried,1,hot,no,no,no,no,2026-01-01,
-stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,protein,style,spice,temperature,wet,vegetarian,vegan,jay,checked_on,photo_filename
+stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,protein,contains,style,spice,temperature,wet,vegetarian,vegan,jay,checked_on,photo_filename

@@ -9,6 +9,7 @@
  */
 
 import type {
+  Allergen,
   CanteenCuisine,
   CookingStyle,
   DietAvailability,
@@ -63,6 +64,18 @@ export const PROTEINS: readonly Protein[] = [
   "egg",
   "tofu",
   "none",
+];
+
+export const ALLERGENS: readonly Allergen[] = [
+  "peanut",
+  "treeNut",
+  "milk",
+  "egg",
+  "wheat",
+  "soy",
+  "sesame",
+  "fish",
+  "shellfish",
 ];
 
 export const COOKING_STYLES: readonly CookingStyle[] = [

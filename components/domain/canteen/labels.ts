@@ -12,6 +12,7 @@
 
 import type { Locale } from "@/lib/i18n/config";
 import type {
+  Allergen,
   CanteenCuisine,
   CookingStyle,
   DishType,
@@ -91,6 +92,24 @@ export const AVOID_LABEL: Record<AvoidKey, Bilingual> = {
   seafood: { th: "ไม่เอาอาหารทะเล", en: "No seafood" },
   fish: { th: "ไม่เอาปลา", en: "No fish" },
   egg: { th: "ไม่เอาไข่", en: "No egg" },
+  peanut: { th: "ไม่เอาถั่วลิสง", en: "No peanuts" },
+  treeNut: { th: "ไม่เอาถั่วเปลือกแข็ง", en: "No tree nuts" },
+  milk: { th: "ไม่เอานมและผลิตภัณฑ์นม", en: "No milk or dairy" },
+  wheat: { th: "ไม่เอาแป้งสาลี", en: "No wheat or gluten" },
+  soy: { th: "ไม่เอาถั่วเหลือง", en: "No soy" },
+  sesame: { th: "ไม่เอางา", en: "No sesame" },
+};
+
+export const ALLERGEN_LABEL: Record<Allergen, Bilingual> = {
+  peanut: { th: "ถั่วลิสง", en: "Peanuts" },
+  treeNut: { th: "ถั่วเปลือกแข็ง", en: "Tree nuts" },
+  milk: { th: "นม", en: "Milk" },
+  egg: { th: "ไข่", en: "Egg" },
+  wheat: { th: "แป้งสาลี", en: "Wheat" },
+  soy: { th: "ถั่วเหลือง", en: "Soy" },
+  sesame: { th: "งา", en: "Sesame" },
+  fish: { th: "ปลาหรือน้ำปลา", en: "Fish or fish sauce" },
+  shellfish: { th: "กุ้ง ปู หอย หมึก หรือกะปิ", en: "Shellfish or shrimp paste" },
 };
 
 export const FEEL_LABEL: Record<FeelKey, Bilingual> = {

@@ -362,6 +362,7 @@ function buildDishes(stamp: string): CanteenDish[] {
     type: spec.type,
     course: spec.course,
     protein: spec.protein,
+    ...(spec.contains ? { contains: spec.contains } : {}),
     ...(spec.style ? { style: spec.style } : {}),
     spice: spec.spice,
     temperature: spec.temperature,

@@ -47,8 +47,8 @@ export const EAT = {
     en: "Diet tags are what the stall told us, not a guarantee, unless marked certified. Broths and sauces are not tracked, so ask the stall before you order.",
   },
   allergyNote: {
-    th: "นี่คือความชอบ ไม่ใช่เครื่องมือสำหรับคนแพ้อาหาร ถามร้านโดยตรงเสมอ",
-    en: "Preferences, not an allergy tool. If you have an allergy, ask the stall.",
+    th: "เดาจากชื่อเมนูและสูตรทั่วไป รวมซอสและแป้งชุบ จึงอาจพลาดได้ ร้านไม่ได้ยืนยัน ถ้าแพ้อาหาร ถามร้านก่อนสั่งเสมอ",
+    en: "Guessed from dish names and usual recipes, sauces and batters included, so some will be missed. The stalls have not confirmed them. If you have an allergy, always ask the stall before you order.",
   },
 
   /* ---- Tabs and tools ---- */
@@ -164,7 +164,8 @@ export const EAT = {
   priceTitle: { th: "ราคา", en: "Price" },
   whereTitle: { th: "ไปกินที่ไหน", en: "Where to find it" },
   aboutTitle: { th: "เกี่ยวกับเมนูนี้", en: "About this dish" },
-  proteinLine: { th: "โปรตีนที่ร้านแจ้ง", en: "Protein, as the stall says" },
+  proteinLine: { th: "โปรตีน", en: "Protein" },
+  containsLine: { th: "น่าจะมี (เดาจากชื่อเมนู)", en: "Probably contains (guessed from the name)" },
   typeLine: { th: "ประเภท", en: "Type" },
   styleLine: { th: "วิธีปรุง", en: "Cooking style" },
   temperatureLine: { th: "อุณหภูมิ", en: "Served" },

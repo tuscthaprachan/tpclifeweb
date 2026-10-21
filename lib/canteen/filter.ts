@@ -58,6 +58,13 @@ function matchesFeel(dish: CanteenDish, feel: readonly FeelKey[]): boolean {
  * checked against `effectivePrice`, and `open` removes only stalls whose
  * scheduled hours say they are closed (unknown hours stay in).
  */
+/** Whether a dish has what the student wants to leave out, by protein or by inferred allergen. */
+function contains(dish: CanteenDish, key: AvoidKey): boolean {
+  if ((dish.protein as string[]).includes(key)) return true;
+  const allergens = dish.contains ?? [];
+  return key === "seafood" ? allergens.includes("shellfish") : (allergens as string[]).includes(key);
+}
+
 export function matchesFilters(
   data: CanteenData,
   dish: CanteenDish,
@@ -71,7 +78,7 @@ export function matchesFilters(
   if (filters.type.length > 0 && !filters.type.includes(dish.type)) return false;
   if (filters.spice !== undefined && dish.spice > filters.spice) return false;
   if (filters.stall !== undefined && stall.slug.current !== filters.stall) return false;
-  if (filters.avoid.some((protein) => dish.protein.includes(protein))) return false;
+  if (filters.avoid.some((key) => contains(dish, key))) return false;
   if (!filters.diet.every((diet) => meetsDiet(dish, stall, diet))) return false;
   if (filters.feel.length > 0 && !matchesFeel(dish, filters.feel)) return false;
   if (filters.open && isOpenNow(data.settings, stall, now) === false) return false;
