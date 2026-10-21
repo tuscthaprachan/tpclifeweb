@@ -250,55 +250,70 @@
 }
 
 /*
- * Dark theme. Ink, surfaces, action/accent and the focus bar all invert in
- * lightness while keeping the same balance rule: near-neutral ink, an
- * alternating (now purple-then-orange) surface tint, and action/accent
- * matched to each other in OKLCH lightness and chroma. Measured against
- * --surface #171214, --surface-alt #1F1D22 and --surface-sunk #2B2522.
+ * Dark theme. One coherent, slightly cool near-neutral family: every surface
+ * carries a hint of the brand purple hue at very low chroma, and the three
+ * steps are evenly spaced in lightness (page < alt < sunk < overlay) with no
+ * pure black and no warm/brown drift. Ink is a cool off-white. Action and
+ * accent keep the purple/orange pairing but sit at a toned-down lightness so
+ * the primary button does not glare. Saturated fills and brand primitives are
+ * re-tuned darker than their light values; soft tints are clean desaturated
+ * washes a step above --surface-alt. Measured against --surface #141218,
+ * --surface-alt #1c1a21 and --surface-sunk #24212b. The two dark blocks
+ * (media query and data-theme="dark") must keep identical values.
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink-900: #ede6e8; /* 15.08:1 --surface, 13.59:1 --surface-alt, 12.29:1 --surface-sunk */
-    --ink-600: #bcb5b7; /*  9.21:1 --surface,  8.30:1 --surface-alt,  7.50:1 --surface-sunk */
-    --ink-500: #9b9597; /*  6.30:1 --surface,  5.68:1 --surface-alt,  5.13:1 --surface-sunk */
-    --ink-inverse: #171214;
+    --ink-900: #ece8f0; /* 15.38:1 --surface, 14.25:1 --surface-alt, 13.08:1 --surface-sunk */
+    --ink-600: #bab5c1; /* 9.27:1 --surface, 8.59:1 --surface-alt, 7.89:1 --surface-sunk */
+    --ink-500: #9994a2; /* 6.30:1 --surface, 5.83:1 --surface-alt, 5.36:1 --surface-sunk */
+    --ink-inverse: #141218;
 
-    --surface: #171214;
-    --surface-alt: #1f1d22; /* cool purple tint */
-    --surface-sunk: #2b2522; /* warm orange tint */
-    --surface-overlay: #242227; /* follows --surface-alt's purple family */
+    --surface: #141218; /* page */
+    --surface-alt: #1c1a21; /* page banding */
+    --surface-sunk: #24212b; /* inset panels, code */
+    --surface-overlay: #2a2731; /* dialogs, search overlay; one step above sunk */
 
-    --line: #3b3638;
-    --line-strong: #857e80; /* 4.67:1 --surface, 4.21:1 --surface-alt, 3.81:1 --surface-sunk */
+    --line: #38353f; /* decorative only, 1.55:1 --surface, 1.43:1 --surface-alt, 1.32:1 --surface-sunk */
+    --line-strong: #7d7886; /* 4.34:1 --surface, 4.02:1 --surface-alt, 3.69:1 --surface-sunk */
 
-    --colour-action: #d7b9ff; /* 10.83:1 --surface, 9.76:1 --surface-alt, 8.83:1 --surface-sunk */
-    --colour-action-hover: #e7d8fe; /* 13.81:1 --surface, 12.45:1 --surface-alt, 11.26:1 --surface-sunk */
-    --colour-action-ink: #171214;
+    --colour-action: #c4a8ee; /* 9.02:1 --surface, 8.35:1 --surface-alt, 7.67:1 --surface-sunk */
+    --colour-action-hover: #dccaf8; /* 12.26:1 --surface, 11.36:1 --surface-alt, 10.43:1 --surface-sunk */
+    --colour-action-ink: #141218; /* 9.02:1 on --colour-action, 12.26:1 on hover */
 
-    --colour-accent: #ffb68f; /* 10.89:1 --surface, 9.82:1 --surface-alt, 8.87:1 --surface-sunk */
-    --colour-accent-strong: #ffd6c1; /* 13.80:1 --surface, 12.44:1 --surface-alt, 11.25:1 --surface-sunk */
+    --colour-accent: #e8a27c; /* 8.76:1 --surface, 8.11:1 --surface-alt, 7.45:1 --surface-sunk */
+    --colour-accent-strong: #f5c6ab; /* 12.00:1 --surface, 11.11:1 --surface-alt, 10.21:1 --surface-sunk */
 
-    /* Saturated fills are NOT overridden. They stay light in both themes
-       and keep carrying --ink-on-fill, so a tag reads identically either
-       way. Only the soft tints flip, because they carry --ink-900. */
-    --fill-transport-soft: #3c2414; /* ink-900 11.75:1 */
-    --fill-welfare-soft: #3d1e15; /* ink-900 12.25:1 */
-    --fill-activity-soft: #31243c; /* ink-900 11.80:1 */
-    --fill-governance-soft: #27243f; /* ink-900 12.11:1 */
+    /* Saturated fills are re-tuned for dark: the same hues as the light theme,
+       but less luminous so they do not glare against the dark page. They still
+       carry --ink-on-fill (#1f1a1c, unchanged). The brand primitives are
+       overridden to match, so anything referencing them stays in step. */
+    --brand-orange: #d98650; /* fill only, ink-on-fill 6.11:1 */
+    --brand-coral: #d27058; /* fill only, ink-on-fill 5.07:1 */
+    --brand-lilac: #b585d9; /* fill only, ink-on-fill 5.99:1 */
+    --fill-transport: #d98650; /* ink-on-fill 6.11:1 */
+    --fill-welfare: #d27058; /* ink-on-fill 5.07:1 */
+    --fill-activity: #b585d9; /* ink-on-fill 5.99:1 */
+    --fill-governance: #8c82da; /* ink-on-fill 5.17:1 */
 
-    --status-success: #6fd3a8;
-    --status-success-soft: #14301f;
-    --status-warning: #f0b45c;
-    --status-warning-soft: #3a2a10;
-    --status-error: #f7938c;
-    --status-error-soft: #3a1a1a;
-    --status-info: #b3a9f2;
-    --status-info-soft: #27243f;
-    --status-neutral: #bcb5b7; /* == --ink-600 */
-    --status-neutral-soft: #302d2e;
+    /* Soft tints: clean, desaturated, a step above --surface-alt. */
+    --fill-transport-soft: #3a2f2b; /* ink-900 10.71:1 */
+    --fill-welfare-soft: #3b2d2f; /* ink-900 10.84:1 */
+    --fill-activity-soft: #38294a; /* ink-900 10.96:1 */
+    --fill-governance-soft: #2e2f4f; /* ink-900 10.62:1 */
 
-    --focus-fill: #e7935b;
-    --focus-bar: #e7d8fe;
+    --status-success: #6fcfa6; /* 9.87:1 --surface, 9.15:1 --surface-alt, 8.40:1 --surface-sunk, 6.53:1 on its soft */
+    --status-success-soft: #1f3a31; /* ink-900 10.17:1 */
+    --status-warning: #e8b25e; /* 9.70:1 --surface, 8.99:1 --surface-alt, 8.26:1 --surface-sunk, 6.29:1 on its soft */
+    --status-warning-soft: #403519; /* ink-900 9.97:1 */
+    --status-error: #f2908a; /* 8.09:1 --surface, 7.49:1 --surface-alt, 6.88:1 --surface-sunk, 5.65:1 on its soft */
+    --status-error-soft: #442a2d; /* ink-900 10.75:1 */
+    --status-info: #aaa6f0; /* 8.34:1 --surface, 7.73:1 --surface-alt, 7.10:1 --surface-sunk, 5.76:1 on its soft */
+    --status-info-soft: #2e2f4f; /* ink-900 10.62:1 */
+    --status-neutral: #bab5c1; /* == --ink-600 */
+    --status-neutral-soft: #2c2a33; /* ink-900 11.69:1 */
+
+    --focus-fill: #d98650; /* 6.62:1 --surface */
+    --focus-bar: #dccaf8; /* 12.26:1 --surface */
 
     --elevation: 0 4px 16px -2px rgb(0 0 0 / 0.6), 0 1px 3px rgb(0 0 0 / 0.4);
   }
@@ -325,44 +340,52 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ink-900: #ede6e8;
-  --ink-600: #bcb5b7;
-  --ink-500: #9b9597;
-  --ink-inverse: #171214;
+  --ink-900: #ece8f0;
+  --ink-600: #bab5c1;
+  --ink-500: #9994a2;
+  --ink-inverse: #141218;
 
-  --surface: #171214;
-  --surface-alt: #1f1d22;
-  --surface-sunk: #2b2522;
-  --surface-overlay: #242227;
+  --surface: #141218;
+  --surface-alt: #1c1a21;
+  --surface-sunk: #24212b;
+  --surface-overlay: #2a2731;
 
-  --line: #3b3638;
-  --line-strong: #857e80;
+  --line: #38353f;
+  --line-strong: #7d7886;
 
-  --colour-action: #d7b9ff;
-  --colour-action-hover: #e7d8fe;
-  --colour-action-ink: #171214;
+  --colour-action: #c4a8ee;
+  --colour-action-hover: #dccaf8;
+  --colour-action-ink: #141218;
 
-  --colour-accent: #ffb68f;
-  --colour-accent-strong: #ffd6c1;
+  --colour-accent: #e8a27c;
+  --colour-accent-strong: #f5c6ab;
 
-  --fill-transport-soft: #3c2414;
-  --fill-welfare-soft: #3d1e15;
-  --fill-activity-soft: #31243c;
-  --fill-governance-soft: #27243f;
+  --brand-orange: #d98650;
+  --brand-coral: #d27058;
+  --brand-lilac: #b585d9;
+  --fill-transport: #d98650;
+  --fill-welfare: #d27058;
+  --fill-activity: #b585d9;
+  --fill-governance: #8c82da;
 
-  --status-success: #6fd3a8;
-  --status-success-soft: #14301f;
-  --status-warning: #f0b45c;
-  --status-warning-soft: #3a2a10;
-  --status-error: #f7938c;
-  --status-error-soft: #3a1a1a;
-  --status-info: #b3a9f2;
-  --status-info-soft: #27243f;
-  --status-neutral: #bcb5b7;
-  --status-neutral-soft: #302d2e;
+  --fill-transport-soft: #3a2f2b;
+  --fill-welfare-soft: #3b2d2f;
+  --fill-activity-soft: #38294a;
+  --fill-governance-soft: #2e2f4f;
 
-  --focus-fill: #e7935b;
-  --focus-bar: #e7d8fe;
+  --status-success: #6fcfa6;
+  --status-success-soft: #1f3a31;
+  --status-warning: #e8b25e;
+  --status-warning-soft: #403519;
+  --status-error: #f2908a;
+  --status-error-soft: #442a2d;
+  --status-info: #aaa6f0;
+  --status-info-soft: #2e2f4f;
+  --status-neutral: #bab5c1;
+  --status-neutral-soft: #2c2a33;
+
+  --focus-fill: #d98650;
+  --focus-bar: #dccaf8;
 
   --elevation: 0 4px 16px -2px rgb(0 0 0 / 0.6), 0 1px 3px rgb(0 0 0 / 0.4);
 }

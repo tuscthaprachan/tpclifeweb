@@ -123,6 +123,17 @@ function assertions() {
     out.push(["--ink-on-fill", fill, 4.5, "ink on saturated fill"]);
   }
 
+  // Brand primitives are fills too (and are re-tuned in the dark theme).
+  for (const fill of ["--brand-orange", "--brand-coral", "--brand-lilac", "--focus-fill"]) {
+    out.push(["--ink-on-fill", fill, 4.5, "ink on brand fill"]);
+  }
+
+  // Text on the overlay surface (dialogs, search).
+  for (const ink of ["--ink-900", "--ink-600", "--ink-500", "--colour-action", "--colour-accent"]) {
+    out.push([ink, "--surface-overlay", 4.5, "text on overlay"]);
+  }
+  out.push(["--line-strong", "--surface-overlay", 3, "control border on overlay"]);
+
   // Button label on the action fill.
   out.push(["--colour-action-ink", "--colour-action", 4.5, "button label"]);
   out.push(["--colour-action-ink", "--colour-action-hover", 4.5, "button label hover"]);
@@ -158,6 +169,19 @@ const TEXT_ROLES = [
 
 let failures = 0;
 let checks = 0;
+
+// The media-query dark block must match the explicit data-theme="dark" block.
+{
+  const mediaDark = parseBlock(css, ':root:not([data-theme="light"])');
+  const keys = new Set([...Object.keys(mediaDark), ...Object.keys(dark)]);
+  for (const k of keys) {
+    checks += 1;
+    if (mediaDark[k] !== dark[k]) {
+      console.error(`  FAIL  dark blocks differ on ${k}: ${mediaDark[k]} vs ${dark[k]}`);
+      failures += 1;
+    }
+  }
+}
 
 for (const [themeName, tokens] of [
   ["light", light],
