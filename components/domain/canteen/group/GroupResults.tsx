@@ -360,7 +360,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
           <p className="m-0 text-sm text-ink-600">{GROUP.seatingNote[locale]}</p>
           {byStall.size > 0 ? (
             <>
-              <Heading level={4} className="m-0 mt-[var(--space-2)] text-base">
+              <Heading level={4} className="m-0 text-base">
                 {GROUP.stallPicksTitle[locale]}
               </Heading>
               <ul className="m-0 flex list-none flex-col gap-[var(--space-1)] p-0 text-ink-900">

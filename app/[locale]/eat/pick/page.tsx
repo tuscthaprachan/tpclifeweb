@@ -112,7 +112,7 @@ export default async function EatPickPage({
 
   if (data.dishes.length === 0) {
     return (
-      <Container className="py-8">
+      <Container className="pb-8 pt-2">
         {crumbs}
         <Stack space={8}>
           {header}
@@ -199,7 +199,7 @@ export default async function EatPickPage({
   const hasResult = announce !== "";
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       {crumbs}
       <Stack space={8}>
         {header}

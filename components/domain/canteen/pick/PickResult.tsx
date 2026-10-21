@@ -88,7 +88,7 @@ function Relaxed({ locale, relaxed }: { locale: Locale; relaxed: Relaxation[] | 
   return (
     <InsetText>
       <p className="m-0 font-medium">{PICK.relaxedTitle[locale]}</p>
-      <ul className="m-0 mt-[var(--space-1)] list-disc pl-[var(--space-5)] text-base">
+      <ul className="m-0 mt-[var(--space-1)] list-disc pl-[var(--space-6)] text-base">
         {relaxed.map((item) => (
           <li key={item}>{PICK[RELAXED_TEXT[item]][locale]}</li>
         ))}
@@ -101,7 +101,7 @@ function Relaxed({ locale, relaxed }: { locale: Locale; relaxed: Relaxation[] | 
 function Card({ labelledBy, children }: { labelledBy: string; children: React.ReactNode }) {
   return (
     <article aria-labelledby={labelledBy} className="rounded-panel border border-line bg-surface p-[var(--space-4)] sm:p-[var(--space-6)]">
-      <div className="flex flex-col gap-[var(--space-5)]">{children}</div>
+      <div className="flex flex-col gap-[var(--space-4)] md:gap-[var(--space-6)]">{children}</div>
     </article>
   );
 }
@@ -183,7 +183,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
 
   return (
     <Card labelledBy="pick-result-title">
-      <div className="flex flex-col gap-[var(--space-2)]">
+      <div className="flex flex-col gap-[var(--space-1)]">
         <p className="m-0 inline-flex items-center gap-[var(--space-1)] text-sm text-ink-600">
           <DishTypeIcon type={dish.type} />
           {typeName}
@@ -200,7 +200,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
         ) : null}
       </div>
 
-      <div className="grid gap-[var(--space-6)] md:grid-cols-2">
+      <div className="grid gap-[var(--space-4)] md:grid-cols-2 md:gap-[var(--space-6)]">
         <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
           <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} inlineExtras hideChecked />
           {dish.type !== "drink" && dish.type !== "dessert" ? <SpiceMeter level={dish.spice} locale={locale} /> : null}
@@ -253,7 +253,7 @@ function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDish
 
   return (
     <Card labelledBy="pick-result-title">
-      <div className="flex flex-col gap-[var(--space-2)]">
+      <div className="flex flex-col gap-[var(--space-1)]">
         <p className="m-0 text-sm text-ink-600">{PICK.stallPickTitle[locale]}</p>
         <Heading level={2} id="pick-result-title" className="m-0 text-2xl">
           <Link href={stallHref(locale, stall.slug.current, filters)} className="text-ink-900 no-underline hover:underline">
@@ -263,7 +263,7 @@ function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDish
         <p className="m-0 text-lg text-ink-600">{eat.stallNumber(locale, stall.number)}</p>
       </div>
 
-      <div className="grid gap-[var(--space-6)] md:grid-cols-2">
+      <div className="grid gap-[var(--space-4)] md:grid-cols-2 md:gap-[var(--space-6)]">
         <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
           <div className="flex flex-col gap-[var(--space-2)]">
             <p className="m-0 text-base font-medium text-ink-600">{PICK.stallDishes[locale]}</p>
@@ -315,14 +315,14 @@ function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultP
 
   return (
     <Card labelledBy="pick-result-title">
-      <div className="flex flex-col gap-[var(--space-2)]">
+      <div className="flex flex-col gap-[var(--space-1)]">
         <p className="m-0 text-sm text-ink-600">{PICK.mealPickTitle[locale]}</p>
         <Heading level={2} id="pick-result-title" className="m-0 text-2xl">
           {pickText.mealTotal(locale, combo.total, combo.change, budget)}
         </Heading>
       </div>
 
-      <div className="grid gap-[var(--space-6)] md:grid-cols-2">
+      <div className="grid gap-[var(--space-4)] md:grid-cols-2 md:gap-[var(--space-6)]">
         <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
           <ul className="m-0 flex list-none flex-col gap-[var(--space-4)] p-0">
             {combo.items.map((dish, position) => {
@@ -345,7 +345,7 @@ function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultP
         </div>
         <div className="flex min-w-0 flex-col gap-[var(--space-3)]">
           <p className="m-0 text-base font-medium text-ink-600">{PICK.mealWalk[locale]}</p>
-          <ol className="m-0 flex list-decimal flex-col gap-[var(--space-1)] pl-[var(--space-5)]">
+          <ol className="m-0 flex list-decimal flex-col gap-[var(--space-1)] pl-[var(--space-6)]">
             {combo.stalls.map((stall) => (
               <li key={stall._id} className="text-ink-900">
                 <Link href={stallHref(locale, stall.slug.current, filters)}>{eat.stallFull(locale, stall.number, localised(stall.name, locale))}</Link>

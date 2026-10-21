@@ -97,7 +97,7 @@ export default async function EatWeekPage({
 
   if (data.dishes.length === 0) {
     return (
-      <Container className="py-8">
+      <Container className="pb-8 pt-2">
         {breadcrumbs}
         <Stack space={8}>
           {header}
@@ -157,7 +157,7 @@ export default async function EatWeekPage({
   const carry = Object.fromEntries(new URLSearchParams(weekQuery(request, defaultFilters())).entries());
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       <div className="no-print">{breadcrumbs}</div>
       <Stack space={6}>
         <div className="no-print">{header}</div>

@@ -79,7 +79,7 @@ export default async function EatStallPage({
   })).filter((section) => section.dishes.length > 0);
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       <Breadcrumbs
         locale={locale}
         items={[

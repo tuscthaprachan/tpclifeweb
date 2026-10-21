@@ -48,7 +48,7 @@ export default async function WhatIsIndexPage({
   );
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       <Breadcrumbs
         locale={locale}
         items={[

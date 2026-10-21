@@ -57,7 +57,7 @@ export default async function WhatIsDishPage({
   const explainer = pick(canonical.explainer, locale);
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       <Breadcrumbs
         locale={locale}
         items={[

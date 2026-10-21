@@ -85,7 +85,7 @@ export default async function EatGroupPage({
 
   if (data.dishes.length === 0) {
     return (
-      <Container className="py-8">
+      <Container className="pb-8 pt-2">
         {breadcrumbs}
         <Stack space={8}>
           {header}
@@ -98,7 +98,7 @@ export default async function EatGroupPage({
   const people = state.people.length > 0 ? state.people : [blankPerson()];
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       {breadcrumbs}
       <Stack space={8}>
         {header}

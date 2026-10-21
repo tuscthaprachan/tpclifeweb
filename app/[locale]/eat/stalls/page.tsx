@@ -76,7 +76,7 @@ export default async function EatStallsPage({
 
   if (data.stalls.length === 0) {
     return (
-      <Container className="py-8">
+      <Container className="pb-8 pt-2">
         {breadcrumbs}
         <Stack space={8}>
           {header}
@@ -97,7 +97,7 @@ export default async function EatStallsPage({
   const withMatches = rows.filter((row) => row.matchCount === undefined || row.matchCount > 0).length;
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       {breadcrumbs}
       <Stack space={4}>
         {header}

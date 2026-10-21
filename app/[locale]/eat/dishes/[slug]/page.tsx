@@ -76,7 +76,7 @@ export default async function EatDishPage({
   const otherName = pick(dish.name, other);
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       <Breadcrumbs
         locale={locale}
         items={[

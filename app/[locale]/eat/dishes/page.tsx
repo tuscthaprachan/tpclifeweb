@@ -84,7 +84,7 @@ export default async function EatDishesPage({
 
   if (data.dishes.length === 0) {
     return (
-      <Container className="py-8">
+      <Container className="pb-8 pt-2">
         {breadcrumbs}
         <Stack space={8}>
           {header}
@@ -103,7 +103,7 @@ export default async function EatDishesPage({
   };
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       {breadcrumbs}
       <Stack space={4}>
         {header}

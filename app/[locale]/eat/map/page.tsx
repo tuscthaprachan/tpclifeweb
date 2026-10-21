@@ -86,7 +86,7 @@ export default async function CanteenMapPage({
 
   if (!hasFloorPlan(data.settings, data.stalls)) {
     return (
-      <Container className="py-8">
+      <Container className="pb-8 pt-2">
         <Breadcrumbs locale={locale} items={crumbs} />
         <Stack space={6}>
           <Heading level={1} className="text-3xl">{MAP_STRINGS.pageTitle[locale]}</Heading>
@@ -132,7 +132,7 @@ export default async function CanteenMapPage({
   const highlights: MapHighlight[] = route.map((stall, position) => ({ stallId: stall._id, order: position + 1 }));
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       <Breadcrumbs locale={locale} items={crumbs} />
       <Stack space={6}>
         <Stack space={2}>

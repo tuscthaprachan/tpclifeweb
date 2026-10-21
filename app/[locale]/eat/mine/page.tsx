@@ -66,7 +66,7 @@ export default async function EatMinePage({
   const stallNames = Object.fromEntries(data.stalls.map((stall) => [stall.slug.current, stall.name]));
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       <Breadcrumbs
         locale={locale}
         items={[

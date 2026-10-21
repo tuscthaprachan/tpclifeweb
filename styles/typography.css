@@ -47,12 +47,12 @@ html[lang^="th"] body {
  * language's face and leading, so a Thai phrase quoted inside an English page
  * renders correctly rather than falling back at the glyph level.
  */
-:lang(th) {
+[lang]:lang(th) {
   font-family: var(--font-th);
   line-height: var(--leading-th);
 }
 
-:lang(en) {
+[lang]:lang(en) {
   font-family: var(--font-en);
   line-height: var(--leading-en);
 }
