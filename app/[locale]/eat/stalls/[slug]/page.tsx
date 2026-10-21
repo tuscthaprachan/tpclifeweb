@@ -11,7 +11,7 @@ import { notFound } from "next/navigation";
 import {
   CUISINE_LABEL,
   DietTag,
-  DishCard,
+  DishRow,
   DishTypeIcon,
   EAT,
   PinIcon,
@@ -24,7 +24,7 @@ import {
 } from "@/components/domain/canteen";
 import { StallMiniMap } from "@/components/domain/canteen/pick/StallMiniMap";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Grid, Heading, InsetText, Stack, Tag } from "@/components/ui";
+import { Container, Heading, InsetText, Stack, Tag } from "@/components/ui";
 import { indexCanteen, priceRange } from "@/lib/canteen/derive";
 import { matchesFilters } from "@/lib/canteen/filter";
 import { DISH_TYPES } from "@/lib/canteen/options";
@@ -153,13 +153,13 @@ export default async function EatStallPage({
                     {TYPE_LABEL[section.type][locale]}
                     <span className="text-sm font-normal text-ink-600"> ({formatNumber(section.dishes.length, locale)})</span>
                   </Heading>
-                  <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">
+                  <ul className="m-0 list-none divide-y divide-line border-y border-line p-0">
                     {section.dishes.map((dish) => (
-                      <li key={dish._id} className="min-w-0">
-                        <DishCard dish={dish} stall={stall} locale={locale} filters={filters} headingLevel={4} />
+                      <li key={dish._id}>
+                        <DishRow dish={dish} stall={stall} locale={locale} filters={filters} />
                       </li>
                     ))}
-                  </Grid>
+                  </ul>
                 </Stack>
               </section>
             ))}
