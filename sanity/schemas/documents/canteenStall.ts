@@ -1,6 +1,6 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
-import { CANTEEN_CUISINE_OPTIONS } from "../constants";
+import { CANTEEN_CUISINE_OPTIONS, DISH_COURSE_OPTIONS } from "../constants";
 import { bilingualStringMessage, bilingualStringMessageOptional } from "../objects/locale";
 
 /** A whole, non-negative number of grid cells. */
@@ -67,6 +67,41 @@ export const canteenStall = defineType({
       type: "boolean",
       initialValue: false,
       description: "Turn this on only if the whole stall is vegetarian.",
+    }),
+    defineField({
+      name: "addOns",
+      title: "Add-ons",
+      type: "array",
+      description: "Toppings and extras sold only with another item, such as boba, an extra egg or a takeaway box. Leave both lists empty when it goes with everything the stall sells.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "stallAddOn",
+          fields: [
+            defineField({ name: "label", title: "Label", type: "localeString", validation: (rule) => rule.required().custom(bilingualStringMessage) }),
+            defineField({
+              name: "delta",
+              title: "Extra baht",
+              type: "number",
+              validation: (rule) => rule.required().min(0).integer(),
+            }),
+            defineField({
+              name: "courses",
+              title: "Only with these courses",
+              type: "array",
+              of: [defineArrayMember({ type: "string" })],
+              options: { list: DISH_COURSE_OPTIONS },
+            }),
+            defineField({
+              name: "dishes",
+              title: "Only with these dishes",
+              type: "array",
+              of: [defineArrayMember({ type: "reference", to: [{ type: "canteenDish" }] })],
+            }),
+          ],
+          preview: { select: { title: "label.en", subtitle: "label.th" } },
+        }),
+      ],
     }),
     defineField({
       name: "hours",

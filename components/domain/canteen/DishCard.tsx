@@ -58,7 +58,7 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
           </Link>
         </Heading>
         {otherName && otherName !== name ? (
-          <p lang={other} className="pointer-events-none -mt-[var(--space-1)] text-sm text-ink-600">
+          <p lang={other} className="pointer-events-none -mt-[var(--space-1)] text-base text-ink-600">
             {otherName}
           </p>
         ) : null}

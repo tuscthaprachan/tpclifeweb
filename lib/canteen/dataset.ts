@@ -46,9 +46,10 @@ import type {
   CanteenSettings,
   CanteenStall,
   MapShape,
+  StallAddOn,
 } from "@/lib/sanity/types";
 
-import { SURVEY_DATE, SURVEY_DISHES } from "./survey-2569";
+import { SURVEY_ADD_ONS, SURVEY_DATE, SURVEY_DISHES } from "./survey-2569";
 
 const SETTINGS_ID = "survey-canteen-settings";
 
@@ -132,6 +133,17 @@ function buildStalls(stamp: string): CanteenStall[] {
     halal: spec.halal,
     mapCell: { col: spec.col, row: spec.row, w: spec.w, h: spec.h, ...(spec.shape ? { shape: spec.shape } : {}) },
     wayfinding: spec.wayfinding,
+    ...(SURVEY_ADD_ONS[spec.number] ? { addOns: buildAddOns(spec.number) } : {}),
+  }));
+}
+
+function buildAddOns(number: number): StallAddOn[] {
+  return (SURVEY_ADD_ONS[number] ?? []).map((addOn, i) => ({
+    _key: `a${i}`,
+    label: { th: addOn.th, en: addOn.en },
+    delta: addOn.delta,
+    ...(addOn.courses ? { courses: addOn.courses } : {}),
+    ...(addOn.dishes ? { dishes: addOn.dishes.map((dishSlug) => ref(`survey-dish-${dishSlug}`)) } : {}),
   }));
 }
 
@@ -351,7 +363,7 @@ function buildDishes(stamp: string): CanteenDish[] {
     _createdAt: stamp,
     _updatedAt: stamp,
     name: { th: spec.th, en: spec.en },
-    ...(spec.romanised ? { romanised: spec.romanised } : {}),
+    ...(spec.sayAs ? { sayAs: spec.sayAs.map((phrase, i) => ({ _key: `s${i}`, ...phrase })) } : {}),
     ...(spec.menuNumber ? { menuNumber: spec.menuNumber } : {}),
     slug: slug(spec.slug),
     stall: ref(stallId(spec.stall)),

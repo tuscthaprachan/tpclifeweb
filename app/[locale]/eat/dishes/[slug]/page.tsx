@@ -30,7 +30,7 @@ import {
 import { StallMiniMap } from "@/components/domain/canteen/pick/StallMiniMap";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Button, Container, Grid, Heading, InsetText, Stack } from "@/components/ui";
-import { canonicalOf, dishesInCanonical, indexCanteen, stallOf } from "@/lib/canteen/derive";
+import { addOnsFor, canonicalOf, dishesInCanonical, indexCanteen, stallOf } from "@/lib/canteen/derive";
 import { DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
@@ -109,7 +109,7 @@ export default async function EatDishPage({
               <Heading level={2} id="eat-dish-price" className="m-0 text-xl">
                 {t(EAT.priceTitle, locale)}
               </Heading>
-              <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} size="full" />
+              <PriceTag price={dish.price} variants={dish.variants} addOns={addOnsFor(dish, stall)} checkedOn={dish.checkedOn} locale={locale} size="full" />
               <p className="m-0 text-sm text-ink-600">{t(EAT.surveyNote, locale)}</p>
             </Stack>
           </section>

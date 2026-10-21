@@ -72,7 +72,7 @@ export function canteenSearchRecords(data: CanteenData): SearchRecord[] {
       haystack: join(
         dish.name?.th,
         dish.name?.en,
-        dish.romanised,
+        (dish.sayAs ?? []).map((phrase) => phrase.romanised).join(" "),
         stall?.name?.th,
         stall?.name?.en,
         canonical?.name?.th,

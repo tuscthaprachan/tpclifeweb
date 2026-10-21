@@ -14,6 +14,7 @@ import type {
   CanteenData,
   CanteenDish,
   CanteenSettings,
+  StallAddOn,
   CanteenStall,
   DishType,
   OpeningHours,
@@ -152,6 +153,15 @@ export function canonicalOf(data: CanteenData, dish: CanteenDish): CanonicalDish
  */
 export function noPork(dish: CanteenDish): boolean {
   return !dish.protein.includes("pork");
+}
+
+/** The stall's add-ons that go with this dish. */
+export function addOnsFor(dish: CanteenDish, stall: CanteenStall | undefined): StallAddOn[] {
+  return (stall?.addOns ?? []).filter((addOn) => {
+    if (addOn.dishes) return addOn.dishes.some((ref) => ref._ref === dish._id);
+    if (addOn.courses) return addOn.courses.includes(dish.course);
+    return true;
+  });
 }
 
 /** Whether the dish is vegetarian, by itself or because its whole stall is. */

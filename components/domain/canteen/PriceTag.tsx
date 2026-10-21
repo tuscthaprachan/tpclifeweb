@@ -2,13 +2,15 @@ import { Details } from "@/components/ui/Details";
 import { Timestamp } from "@/components/ui/Timestamp";
 import { cx } from "@/components/ui/cx";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { DishVariant } from "@/lib/sanity/types";
+import type { DishVariant, StallAddOn } from "@/lib/sanity/types";
 import { EAT, eat, t } from "./strings";
 
 interface PriceTagProps {
   /** Base price in baht, as surveyed. */
   price: number;
   variants?: DishVariant[];
+  /** The stall's toppings and extras that go with this dish. Shown on the full tag only. */
+  addOns?: StallAddOn[];
   /** "YYYY-MM-DD", the day the price was read off the board. Always shown when given, and it should always be given. */
   checkedOn?: string;
   locale: Locale;
@@ -28,8 +30,9 @@ interface PriceTagProps {
  * A surveyed price. It always carries the day it was checked and never says
  * "current" or "live": the figure is what the board said on that day.
  */
-export function PriceTag({ price, variants = [], checkedOn, locale, size = "compact", inlineExtras = false, hideChecked = false, className }: PriceTagProps) {
+export function PriceTag({ price, variants = [], addOns = [], checkedOn, locale, size = "compact", inlineExtras = false, hideChecked = false, className }: PriceTagProps) {
   const hasVariants = variants.length > 0;
+  const options = variants;
   return (
     <div className={cx("flex flex-col gap-[var(--space-1)]", className)}>
       <p className={cx("m-0 font-semibold text-ink-900", size === "full" ? "text-2xl" : "text-lg")}>
@@ -47,19 +50,32 @@ export function PriceTag({ price, variants = [], checkedOn, locale, size = "comp
         </p>
       ) : null}
 
-      {size === "full" && hasVariants ? (
+      {size === "full" && options.length > 0 ? (
         <Details summary={t(EAT.optionsTitle, locale)} className="mt-[var(--space-2)]">
           <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
             <li className="flex flex-wrap justify-between gap-x-[var(--space-4)]">
               <span>{t(EAT.baseWord, locale)}</span>
               <span className="font-medium">{eat.baht(locale, price)}</span>
             </li>
-            {variants.map((variant) => (
+            {options.map((variant) => (
               <li key={variant._key} className="flex flex-wrap justify-between gap-x-[var(--space-4)]">
                 <span>
                   {pick(variant.label, locale)} ({eat.plusBaht(locale, variant.delta)})
                 </span>
                 <span className="font-medium">{eat.baht(locale, price + variant.delta)}</span>
+              </li>
+            ))}
+          </ul>
+        </Details>
+      ) : null}
+
+      {size === "full" && addOns.length > 0 ? (
+        <Details summary={t(EAT.addOnsTitle, locale)} className="mt-[var(--space-2)]">
+          <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
+            {addOns.map((variant) => (
+              <li key={variant._key} className="flex flex-wrap justify-between gap-x-[var(--space-4)]">
+                <span>{pick(variant.label, locale)}</span>
+                <span className="font-medium">{eat.plusBaht(locale, variant.delta)}</span>
               </li>
             ))}
           </ul>

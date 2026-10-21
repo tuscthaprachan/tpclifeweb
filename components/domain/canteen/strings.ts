@@ -148,6 +148,7 @@ export const EAT = {
   priceCheckedOn: { th: "ตรวจราคาเมื่อ", en: "Price checked on" },
   checkedShort: { th: "ตรวจเมื่อ", en: "Checked" },
   optionsTitle: { th: "ตัวเลือกและราคาเพิ่ม", en: "Options and extras" },
+  addOnsTitle: { th: "ท็อปปิ้งและของเพิ่ม", en: "Add-ons" },
   extrasFrom: { th: "มีราคาเพิ่ม", en: "Extras available" },
   baseWord: { th: "ราคาปกติ", en: "Base price" },
   stallWord: { th: "ร้าน", en: "Stall" },
@@ -187,6 +188,8 @@ export const EAT = {
   /* ---- Favourite toggle ---- */
   favouriteLabel: { th: "เมนูโปรด", en: "Favourite" },
   sayLabel: { th: "สั่งว่า", en: "To order, say" },
+  sayOneOf: { th: "เลือกแล้วสั่งว่า", en: "Pick one and say" },
+  orWord: { th: "หรือ", en: "or" },
   hearLabel: { th: "ฟังเสียงภาษาไทย", en: "Hear it in Thai" },
   menuNumberLabel: { th: "เมนูหมายเลข", en: "Number on the board:" },
   favouriteFailed: { th: "เก็บไม่ได้ ที่เก็บข้อมูลในเบราว์เซอร์ถูกปิดอยู่", en: "Could not save. Browser storage is switched off." },

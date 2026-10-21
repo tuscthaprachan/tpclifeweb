@@ -44,10 +44,23 @@ export const canteenDish = defineType({
       validation: (rule) => rule.required().custom(bilingualStringMessage),
     }),
     defineField({
-      name: "romanised",
-      title: "How to say it",
-      type: "string",
-      description: 'The Thai name in Latin letters (RTGS, no tone marks), for example "khao phat kai". Shown on English pages with a button that reads the Thai aloud.',
+      name: "sayAs",
+      title: "How to order it",
+      type: "array",
+      group: "basics",
+      description:
+        'What to say to order it, in Thai and in Latin letters (RTGS, no tone marks), for example "ข้าวผัดไก่" and "khao phat kai". One phrase per choice when the name offers one, so "pork or chicken" becomes two phrases. Shown on English pages with a button that reads the Thai aloud.',
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "sayPhrase",
+          fields: [
+            defineField({ name: "th", title: "Thai", type: "string", validation: (rule) => rule.required() }),
+            defineField({ name: "romanised", title: "Romanised", type: "string", validation: (rule) => rule.required() }),
+          ],
+          preview: { select: { title: "romanised", subtitle: "th" } },
+        }),
+      ],
     }),
     defineField({
       name: "menuNumber",

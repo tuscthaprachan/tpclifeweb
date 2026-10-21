@@ -92,7 +92,7 @@ export function WeekPlanner({ locale, plan, request, filters, path }: WeekPlanne
                     {name}
                   </Link>
                   {otherName && otherName !== name ? (
-                    <span lang={other} className="block text-sm text-ink-600">
+                    <span lang={other} className="block text-base text-ink-600">
                       {otherName}
                     </span>
                   ) : null}
@@ -105,7 +105,7 @@ export function WeekPlanner({ locale, plan, request, filters, path }: WeekPlanne
                 <td data-label={t(BUDGET.colPrice, locale)}>
                   <span className="font-semibold text-ink-900">{eat.baht(locale, day.price)}</span>
                   {day.dish.checkedOn ? (
-                    <span className="block text-sm text-ink-600">
+                    <span className="block text-base text-ink-600">
                       {t(EAT.priceCheckedOn, locale)} <Timestamp value={day.dish.checkedOn} locale={locale} />
                     </span>
                   ) : null}

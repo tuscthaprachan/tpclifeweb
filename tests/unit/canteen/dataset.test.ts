@@ -13,6 +13,7 @@ import {
   type Person,
 } from "@/lib/canteen";
 import { surveyCanteenData } from "@/lib/canteen/dataset";
+import { addOnsFor } from "@/lib/canteen/derive";
 import { SURVEY_DISHES } from "@/lib/canteen/survey-2569";
 
 const NOW = new Date("2026-10-20T12:00:00+07:00"); // a Tuesday at noon in Bangkok
@@ -101,6 +102,18 @@ describe("surveyed canteen data", () => {
 
   it("marks only stall 14 halal", () => {
     expect(data.stalls.filter((stall) => stall.halal).map((stall) => stall.number)).toEqual([14]);
+  });
+
+  it("lists add-ons on the stall, not as dishes, and splits choices into phrases to say", () => {
+    const stall = (number: number) => data.stalls.find((s) => s.number === number)!;
+    const atStall = (number: number) => data.dishes.filter((dish) => dish.stall._ref === stall(number)._id);
+    expect(atStall(17).some((dish) => dish.name.th === "ไข่มุก")).toBe(false);
+    const drink = atStall(17).find((dish) => dish.course === "drink")!;
+    expect(addOnsFor(drink, stall(17)).some((addOn) => addOn.label.th === "เพิ่มไข่มุก")).toBe(true);
+    expect(addOnsFor(atStall(17).find((dish) => dish.course === "dessert") ?? drink, stall(5))).toEqual([]);
+    const choice = data.dishes.find((dish) => dish.name.th === "ข้าวผัดหมูหรือไก่")!;
+    expect(choice.sayAs?.map((phrase) => phrase.romanised)).toEqual(["khao phat mu", "khao phat kai"]);
+    for (const dish of data.dishes) for (const phrase of dish.sayAs ?? []) expect(phrase.th).not.toMatch(/หรือ/);
   });
 
   it("tags allergens on the dishes that obviously have them", () => {

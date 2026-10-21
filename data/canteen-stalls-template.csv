@@ -7,6 +7,8 @@
 # cuisine           one or more of: thaiRice madeToOrder noodles isan chickenRice curryOverRice muslim drinks desserts fruit (separate with ;)
 # halal             yes | no   (yes for a halal stall: everything it sells is halal)
 # vegetarian_stall  yes | no   (yes only if the whole stall is vegetarian)
+# add_ons           optional. Toppings and extras sold only with another item: label_th|label_en|extra baht|scope, separate several with ;
+#                   scope is all, course:drink (or course:main+side) or dishes:slug+slug   example: เพิ่มไข่มุก|Boba|5|course:drink
 # hours             optional, only if different from the canteen. Format: days HH:mm-HH:mm, separate blocks with ;  Days: 1-5 or 1,3,5 (0 Sunday to 6 Saturday)
 # map_col, map_row  position on the floor plan grid, counting from 0 at the top left
 # map_w, map_h      size in grid cells, default 1
@@ -16,4 +18,4 @@
 #
 # Example of the row format, with placeholder values only (delete this line in your copy):
 # 1,ชื่อร้านภาษาไทย,Stall name in English,,thaiRice;madeToOrder,none,,no,,0,0,2,1,,,,
-number,name_th,name_en,slug,cuisine,halal,vegetarian_stall,hours,map_col,map_row,map_w,map_h,map_shape,wayfinding_th,wayfinding_en,photo_filename
+number,name_th,name_en,slug,cuisine,halal,vegetarian_stall,add_ons,hours,map_col,map_row,map_w,map_h,map_shape,wayfinding_th,wayfinding_en,photo_filename

@@ -389,6 +389,26 @@ function buildStalls(file: string, rows: Row[]): { docs: SeedDoc[]; idByNumber: 
     const wayfinding = bilingual(file, row, "wayfinding", false);
     const hours = row.cells.hours ? parseHours(file, row, row.cells.hours) : [];
 
+    const addOns = list(row.cells.add_ons ?? "").flatMap((entry) => {
+      const [th = "", en = "", delta = "", scope = "all"] = entry.split("|").map((part) => part.trim());
+      if (!th || !en || !/^\d+$/.test(delta)) {
+        problem(file, row, `add_ons "${entry}" needs label_th|label_en|extra baht|scope`);
+        return [];
+      }
+      const addOn = { _type: "stallAddOn" as const, _key: key(), label: localeString(th, en), delta: Number(delta) };
+      if (scope === "all") return [addOn];
+      if (scope.startsWith("course:")) {
+        const courses = scope.slice(7).split("+").filter((course): course is (typeof DISH_COURSES)[number] => (DISH_COURSES as readonly string[]).includes(course));
+        return [{ ...addOn, courses }];
+      }
+      if (scope.startsWith("dishes:")) {
+        const dishes = scope.slice(7).split("+").map((dishSlug) => ({ ...reference(docId("canteenDish", `${number}-${dishSlug}`)), _key: key() }));
+        return [{ ...addOn, dishes }];
+      }
+      problem(file, row, `add_ons scope "${scope}" should be all, course:drink+main or dishes:slug+slug`);
+      return [];
+    });
+
     const id = docId("canteenStall", String(number));
     idByNumber.set(number, id);
     docs.push({
@@ -400,6 +420,7 @@ function buildStalls(file: string, rows: Row[]): { docs: SeedDoc[]; idByNumber: 
       cuisine,
       halal: yesNo(file, row, "halal"),
       vegetarianStall: yesNo(file, row, "vegetarian_stall"),
+      ...(addOns.length > 0 ? { addOns } : {}),
       ...(hours.length > 0 ? { hours } : {}),
       mapCell: {
         col: col ?? 0,
@@ -466,14 +487,21 @@ function buildDishes(
 
     if (price === undefined || checkedOn === undefined) continue;
 
-    const romanised = (row.cells.romanised ?? "").trim();
+    const sayAs = list(row.cells.say ?? "").flatMap((phrase) => {
+      const [th = "", romanised = ""] = phrase.split("|").map((part) => part.trim());
+      if (!th || !romanised) {
+        problem(file, row, `say "${phrase}" needs thai|romanised`);
+        return [];
+      }
+      return [{ _type: "sayPhrase" as const, _key: key(), th, romanised }];
+    });
     const menuNumber = (row.cells.menu_number ?? "").trim();
 
     docs.push({
       _id: docId("canteenDish", `${stallNumber}-${dishSlug}`),
       _type: "canteenDish",
       name: localeString(name.th, name.en),
-      ...(romanised ? { romanised } : {}),
+      ...(sayAs.length > 0 ? { sayAs } : {}),
       ...(menuNumber ? { menuNumber } : {}),
       slug: slug(dishSlug),
       stall: reference(stallId),

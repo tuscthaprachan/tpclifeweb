@@ -664,6 +664,8 @@ export interface CanteenStall extends DocumentMeta {
   halal: boolean;
   /** The whole stall is vegetarian. */
   vegetarianStall?: boolean;
+  /** Toppings and extras, sold only with another item. Never counted in a budget. */
+  addOns?: StallAddOn[];
   /** Optional. When absent the canteen's hours apply. */
   hours?: OpeningHours[];
   mapCell: MapCell;
@@ -681,6 +683,29 @@ export interface CanonicalDish extends DocumentMeta {
   explainer?: LocaleText;
 }
 
+/** A phrase to order with: the Thai, and the same in Latin letters (RTGS, no tones). */
+export interface SayPhrase {
+  _key: string;
+  th: string;
+  romanised: string;
+}
+
+/**
+ * A topping or extra a stall sells only with something else (boba, an extra
+ * egg, a takeaway box). With neither `courses` nor `dishes` it goes with
+ * every item at the stall.
+ */
+export interface StallAddOn {
+  _key: string;
+  label: LocaleString;
+  /** Baht it adds. */
+  delta: number;
+  /** Only items of these courses, for example drinks. */
+  courses?: DishCourse[];
+  /** Only these dishes. */
+  dishes?: SanityRef[];
+}
+
 /** A priced variant, for example "special" +10 or "add egg" +10. */
 export interface DishVariant {
   _key: string;
@@ -693,8 +718,8 @@ export interface CanteenDish extends DocumentMeta {
   _type: "canteenDish";
   /** As the stall writes it. */
   name: LocaleString;
-  /** The Thai name in Latin letters (RTGS, no tones), for ordering out loud. */
-  romanised?: string;
+  /** What to say to order it: one phrase, or one per choice (pork or chicken). */
+  sayAs?: SayPhrase[];
   /** The number the stall's board gives the dish, when it numbers its menu. */
   menuNumber?: string;
   slug: SanitySlug;
