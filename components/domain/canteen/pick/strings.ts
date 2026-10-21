@@ -119,10 +119,6 @@ export const PICK = {
     th: "ยังไม่มีประวัติในเครื่องนี้ ผลนี้จึงสุ่มจากตัวกรองอย่างเดียว กด เอาอันนี้แหละ เพื่อจดไว้ให้สุ่มรอบหน้าเลี่ยงซ้ำ",
     en: "Nothing is kept on this device yet, so this pick came from your filters alone. Tap Go with this and next time we will skip repeats.",
   },
-  surveyNote: {
-    th: "ราคาและตำแหน่งมาจากการสำรวจ ไม่ใช่ข้อมูลสด",
-    en: "Prices and positions come from our survey, not a live feed.",
-  },
 } as const satisfies Record<string, Pair>;
 
 export const pickText = {

@@ -36,10 +36,6 @@ export const BUDGET = {
   },
   allowAnyStall: { th: "ไม่จำกัดร้านเดียว", en: "Allow different stalls" },
   mealLimitNote: { th: "แสดงมื้อที่ใช้งบได้คุ้มที่สุดก่อน", en: "Best use of your money comes first." },
-  mealPriceNote: {
-    th: "ราคาทุกรายการมาจากการสำรวจ บอกวันที่ตรวจไว้ ไม่ใช่ราคาปัจจุบันแบบสด",
-    en: "Every price is from our survey and shows the day it was checked. It is not a live price.",
-  },
   mealMapLabel: { th: "แผนที่ร้านที่ต้องแวะ", en: "Map of the stalls to visit" },
 
   /* ---- Week ---- */
@@ -74,10 +70,6 @@ export const BUDGET = {
   shareNote: {
     th: "แชร์แผนนี้ได้โดยส่งที่อยู่หน้านี้ เปิดซ้ำแล้วได้แผนเดิม",
     en: "To share this plan, send the page address. Opening it again gives the same plan.",
-  },
-  weekPriceNote: {
-    th: "ราคามาจากการสำรวจ บอกวันที่ตรวจไว้ ไม่ใช่ราคาสด ถ้าร้านปรับราคา ยอดรวมอาจต่างไป",
-    en: "Prices are from our survey and show the day they were checked. They are not live, so the total can differ if a stall changed its price.",
   },
   printHeading: { th: "แผนมื้อกลางวันของฉัน", en: "My lunch plan" },
   printButton: { th: "พิมพ์แผนนี้", en: "Print this plan" },
@@ -165,7 +157,6 @@ export const BUDGET = {
   savedWeekOpen: { th: "เปิดแผนนี้", en: "Open this plan" },
   savedWeekClear: { th: "ลบแผนที่เก็บไว้", en: "Remove saved week" },
   savedWeekSavedOn: { th: "เก็บไว้เมื่อ", en: "Saved on" },
-  savedWeekPriceNote: { th: "ราคาคือราคาตอนที่เก็บ อาจเปลี่ยนไปแล้ว", en: "Prices are as they were when you saved. They may have changed." },
   staleDish: { th: "ไม่มีในเมนูแล้ว", en: "No longer on the menu" },
   remove: { th: "เอาออก", en: "Remove" },
   clearTitle: { th: "ล้างทุกอย่าง", en: "Clear everything" },

@@ -132,7 +132,6 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
       <ChoiceGroup
         id={id("avoid")}
         legend={t(EAT.avoidLegend, locale)}
-        hint={t(EAT.allergyNote, locale)}
         name="avoid"
         kind="checkbox"
         selected={filters.avoid}

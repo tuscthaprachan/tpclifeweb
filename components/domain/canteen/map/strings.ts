@@ -34,10 +34,6 @@ export const MAP_STRINGS = {
     th: "วงกลมเลขในผังคือลำดับที่แนะนำให้เดินไปแต่ละร้าน",
     en: "Numbered circles on the plan give a suggested order to visit the stalls.",
   },
-  surveyNote: {
-    th: "ตำแหน่งมาจากการสำรวจ ร้านอาจย้ายที่ภายหลัง",
-    en: "Positions come from a survey. A stall may have moved since.",
-  },
   stall: { th: "ร้านที่", en: "Stall" },
   stallNumber: (n: number, locale: Locale) => (locale === "th" ? `ร้านที่ ${n}` : `Stall ${n}`),
   openStall: { th: "ดูรายละเอียดร้าน", en: "View stall" },

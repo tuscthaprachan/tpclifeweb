@@ -36,18 +36,6 @@ export const EAT = {
     th: "เลือกเมนูในโรงอาหารจากราคา อาหารที่กินได้ และอารมณ์ตอนนี้ หรือให้เราสุ่มให้ก็ได้",
     en: "Pick something at the canteen by price, diet and mood. Or let us choose for you.",
   },
-  surveyNote: {
-    th: "ราคามาจากการสำรวจ ไม่ใช่ข้อมูลสด ทุกราคาบอกวันที่ตรวจไว้",
-    en: "Prices come from our survey, not a live feed. Every price shows the day it was checked.",
-  },
-  dietNote: {
-    th: "ทุกเมนูของร้านฮาลาลเป็นฮาลาล ป้ายมังสวิรัติดูจากเมนู ไม่ได้ถามร้าน น้ำซุปและซอสไม่ได้ถูกบันทึก ถ้าสำคัญ ถามร้านก่อนสั่ง",
-    en: "Everything a halal stall sells is halal. The vegetarian tag is our reading of the menu, not the stall's word, and broths and sauces are not tracked, so ask the stall if it matters.",
-  },
-  allergyNote: {
-    th: "เดาจากชื่อเมนูและสูตรทั่วไป รวมซอสและแป้งชุบ จึงอาจพลาดได้ ร้านไม่ได้ยืนยัน ถ้าแพ้อาหาร ถามร้านก่อนสั่งเสมอ",
-    en: "Guessed from dish names and usual recipes, sauces and batters included, so some will be missed. The stalls have not confirmed them. If you have an allergy, always ask the stall before you order.",
-  },
 
   /* ---- Tabs and tools ---- */
   tabsLabel: { th: "วิธีดูเมนู", en: "Ways to browse" },
@@ -138,8 +126,8 @@ export const EAT = {
   thisOne: { th: "จานนี้", en: "This one" },
   compareTitle: { th: "เมนูเดียวกัน ร้านอื่น", en: "Same dish, other stalls" },
   compareNote: {
-    th: "เรียงจากราคาถูกไปแพง เป็นราคาที่สำรวจ ไม่ได้ยืนยันวันนี้",
-    en: "Cheapest first. Surveyed prices, not confirmed today.",
+    th: "เรียงจากราคาถูกไปแพง",
+    en: "Cheapest first.",
   },
   otherDishes: { th: "เมนูอื่น ๆ", en: "Other dishes" },
   pageWord: { th: "หน้า", en: "Page" },
@@ -156,7 +144,7 @@ export const EAT = {
   whereTitle: { th: "ไปกินที่ไหน", en: "Where to find it" },
   aboutTitle: { th: "เกี่ยวกับเมนูนี้", en: "About this dish" },
   proteinLine: { th: "โปรตีน", en: "Protein" },
-  containsLine: { th: "น่าจะมี (เดาจากชื่อเมนู)", en: "Probably contains (guessed from the name)" },
+  containsLine: { th: "อาจมีส่วนผสมของ", en: "May contain" },
   typeLine: { th: "ประเภท", en: "Type" },
   styleLine: { th: "วิธีปรุง", en: "Cooking style" },
   temperatureLine: { th: "อุณหภูมิ", en: "Served" },

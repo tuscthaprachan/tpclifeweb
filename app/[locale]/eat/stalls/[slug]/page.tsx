@@ -166,11 +166,6 @@ export default async function EatStallPage({
           </Stack>
         </section>
 
-        <InsetText>
-          <p className="m-0 text-sm text-ink-900">{t(EAT.surveyNote, locale)}</p>
-          <p className="m-0 mt-[var(--space-2)] text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
-        </InsetText>
-
         <p className="m-0">
           <Link href={eatHref(locale, "/eat/stalls", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
             {t(EAT.backToStalls, locale)}

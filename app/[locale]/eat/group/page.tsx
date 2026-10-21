@@ -11,7 +11,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { EAT, t } from "@/components/domain/canteen";
 import { GroupBuilder } from "@/components/domain/canteen/group/GroupBuilder";
-import { GroupNotes, GroupResults } from "@/components/domain/canteen/group/GroupResults";
+import { GroupResults } from "@/components/domain/canteen/group/GroupResults";
 import { GROUP } from "@/components/domain/canteen/group/strings";
 import {
   blankPerson,
@@ -131,14 +131,10 @@ export default async function EatGroupPage({
             strategy={state.strategy}
             seed={state.seed}
           />
-          <p className="m-0 text-sm text-ink-600">{GROUP.dietPreferenceNote[locale]}</p>
         </section>
 
         {state.people.length > 0 ? (
-          <>
-            <GroupResults locale={locale} data={data} state={state} path={path} now={now} />
-            <GroupNotes locale={locale} />
-          </>
+          <GroupResults locale={locale} data={data} state={state} path={path} now={now} />
         ) : null}
       </Stack>
     </Container>

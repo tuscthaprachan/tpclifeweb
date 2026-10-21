@@ -23,7 +23,7 @@ import {
   t,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Grid, Heading, InsetText, Stack } from "@/components/ui";
+import { Container, EmptyState, Grid, Heading, Stack } from "@/components/ui";
 import { applyFilters, isMealDish } from "@/lib/canteen/filter";
 import { indexCanteen, stallOf } from "@/lib/canteen/derive";
 import { countActiveValues } from "@/lib/canteen/params";
@@ -166,10 +166,6 @@ export default async function EatHubPage({
             </Grid>
           </Stack>
         </section>
-
-        <InsetText>
-          <p className="m-0 text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
-        </InsetText>
       </Stack>
     </Container>
   );

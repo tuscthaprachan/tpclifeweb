@@ -25,7 +25,7 @@ import { ComboCard } from "@/components/domain/canteen/budget/ComboCard";
 import { MealForm } from "@/components/domain/canteen/budget/MealForm";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Button, Container, EmptyState, Heading, InsetText, Stack } from "@/components/ui";
+import { Button, Container, EmptyState, Heading, Stack } from "@/components/ui";
 import { mealCombos } from "@/lib/canteen/combos";
 import { effectivePrice, indexCanteen } from "@/lib/canteen/derive";
 import { facetCounts, matchesFilters, relaxSuggestions } from "@/lib/canteen/filter";
@@ -199,10 +199,6 @@ export default async function EatMealPage({
         <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry}>
           <Stack space={6}>
             {results}
-            <InsetText>
-              <p className="m-0 text-sm text-ink-600">{t(BUDGET.mealPriceNote, locale)}</p>
-              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
-            </InsetText>
           </Stack>
         </EatFilteredLayout>
       </Stack>

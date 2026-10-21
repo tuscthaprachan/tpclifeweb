@@ -10,7 +10,7 @@ import { notFound } from "next/navigation";
 import { CanonicalCompare, EAT, eatHref, readFilters, t } from "@/components/domain/canteen";
 import { EXTRAS } from "@/components/domain/canteen/extras";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Heading, InsetText, Stack } from "@/components/ui";
+import { Container, Heading, Stack } from "@/components/ui";
 import { dishesInCanonical, indexCanteen } from "@/lib/canteen/derive";
 import { DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -94,7 +94,6 @@ export default async function WhatIsDishPage({
             </Heading>
             {dishes.length > 0 ? (
               <>
-                <p className="m-0 text-sm text-ink-600">{EXTRAS.stallsNote[locale]}</p>
                 <CanonicalCompare data={data} dishes={dishes} locale={locale} filters={filters} />
               </>
             ) : (
@@ -102,10 +101,6 @@ export default async function WhatIsDishPage({
             )}
           </Stack>
         </section>
-
-        <InsetText>
-          <p className="m-0 text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
-        </InsetText>
 
         <div className="flex flex-wrap items-center gap-[var(--space-4)]">
           <Link href={eatHref(locale, "/eat/what-is", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">

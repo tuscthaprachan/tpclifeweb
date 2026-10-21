@@ -19,7 +19,7 @@ import {
   t,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Grid, Heading, InsetText, Stack } from "@/components/ui";
+import { Container, EmptyState, Grid, Heading, Stack } from "@/components/ui";
 import { indexCanteen, priceRange } from "@/lib/canteen/derive";
 import { facetCounts, matchesFilters } from "@/lib/canteen/filter";
 import { countActiveValues } from "@/lib/canteen/params";
@@ -123,10 +123,6 @@ export default async function EatStallsPage({
                 </li>
               ))}
             </Grid>
-            <InsetText>
-              <p className="m-0 text-sm text-ink-900">{t(EAT.surveyNote, locale)}</p>
-              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
-            </InsetText>
           </Stack>
         </EatFilteredLayout>
       </Stack>

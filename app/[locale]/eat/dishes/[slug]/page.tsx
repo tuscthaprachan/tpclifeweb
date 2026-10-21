@@ -29,7 +29,7 @@ import {
 } from "@/components/domain/canteen";
 import { StallMiniMap } from "@/components/domain/canteen/pick/StallMiniMap";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Button, Container, Grid, Heading, InsetText, Stack } from "@/components/ui";
+import { Button, Container, Grid, Heading, Stack } from "@/components/ui";
 import { addOnsFor, canonicalOf, dishesInCanonical, indexCanteen, stallOf } from "@/lib/canteen/derive";
 import { DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -110,7 +110,6 @@ export default async function EatDishPage({
                 {t(EAT.priceTitle, locale)}
               </Heading>
               <PriceTag price={dish.price} variants={dish.variants} addOns={addOnsFor(dish, stall)} checkedOn={dish.checkedOn} locale={locale} size="full" />
-              <p className="m-0 text-sm text-ink-600">{t(EAT.surveyNote, locale)}</p>
             </Stack>
           </section>
 
@@ -149,7 +148,6 @@ export default async function EatDishPage({
                 <div className="sm:col-span-2">
                   <dt className="text-sm font-medium text-ink-600">{t(EAT.containsLine, locale)}</dt>
                   <dd className="m-0 text-ink-900">{dish.contains.map((allergen) => ALLERGEN_LABEL[allergen][locale]).join(", ")}</dd>
-                  <dd className="m-0 text-sm text-ink-600">{t(EAT.allergyNote, locale)}</dd>
                 </div>
               ) : null}
               {dish.style ? (
@@ -176,9 +174,6 @@ export default async function EatDishPage({
                 {t(EAT.dietTitle, locale)}
               </Heading>
               <DietTags tags={dishDietTags(dish, stall)} locale={locale} />
-              <InsetText>
-                <p className="m-0 text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
-              </InsetText>
             </Stack>
           </section>
         ) : null}

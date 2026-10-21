@@ -38,7 +38,7 @@ import {
   type PickParams,
 } from "@/components/domain/canteen/pick";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, InsetText, Stack } from "@/components/ui";
+import { Container, EmptyState, Heading, Stack } from "@/components/ui";
 import { mealCombos } from "@/lib/canteen/combos";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { applyFilters } from "@/lib/canteen/filter";
@@ -233,10 +233,6 @@ export default async function EatPickPage({
           </Stack>
         </section>
 
-        <InsetText>
-          <p className="m-0 text-sm text-ink-600">{PICK.surveyNote[locale]}</p>
-          <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
-        </InsetText>
       </Stack>
     </Container>
   );

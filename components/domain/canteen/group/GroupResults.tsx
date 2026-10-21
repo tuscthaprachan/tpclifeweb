@@ -23,7 +23,7 @@ import { DishCard } from "../DishCard";
 import { PriceTag } from "../PriceTag";
 import { AVOID_LABEL, DIET_SHORT_LABEL, label } from "../labels";
 import { dishHref, stallHref } from "../links";
-import { EAT, eat, t } from "../strings";
+import { eat } from "../strings";
 import { GROUP, group } from "./strings";
 import {
   applyChange,
@@ -387,12 +387,3 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
   }
 }
 
-/** The shared reminder under the results: diet tags are the stall's word. Kept here so the page stays short. */
-export function GroupNotes({ locale }: { locale: Locale }) {
-  return (
-    <div className="flex flex-col gap-[var(--space-1)] text-sm text-ink-600">
-      <p className="m-0">{t(EAT.dietNote, locale)}</p>
-      <p className="m-0">{t(EAT.allergyNote, locale)}</p>
-    </div>
-  );
-}

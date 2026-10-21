@@ -26,7 +26,7 @@ import {
   t,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, InsetText, Pagination, Stack } from "@/components/ui";
+import { Container, EmptyState, Heading, Pagination, Stack } from "@/components/ui";
 import { applyFilters, countStalls, facetCounts, groupDishes, relaxSuggestions } from "@/lib/canteen/filter";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { countActiveValues } from "@/lib/canteen/params";
@@ -141,10 +141,6 @@ export default async function EatDishesPage({
               </Stack>
             )}
 
-            <InsetText>
-              <p className="m-0 text-sm text-ink-900">{t(EAT.surveyNote, locale)}</p>
-              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
-            </InsetText>
           </Stack>
         </EatFilteredLayout>
       </Stack>

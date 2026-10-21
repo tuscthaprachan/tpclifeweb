@@ -58,10 +58,6 @@ export const GROUP = {
     th: "คุณแก้กลุ่มแล้ว กด \"ดูผลลัพธ์\" เพื่ออัปเดตร้านด้านล่าง",
     en: "You changed the group. Press Show results to update the stalls below.",
   } satisfies Bilingual,
-  dietPreferenceNote: {
-    th: "ตัวเลือกเหล่านี้เป็นความชอบ ไม่ใช่เครื่องมือสำหรับคนแพ้อาหาร ป้ายอาหารเป็นคำบอกของร้าน ถามร้านก่อนสั่งเสมอ",
-    en: "These are preferences, not an allergy tool. Diet tags are what the stall says, so ask before you order.",
-  } satisfies Bilingual,
 
   /* ---- Share ---- */
   shareTitle: { th: "ส่งกลุ่มนี้ให้เพื่อน", en: "Share this group" } satisfies Bilingual,

@@ -281,7 +281,6 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
                   </li>
                 ))}
             </ul>
-            <p className="m-0 text-sm text-ink-600">{t(BUDGET.savedWeekPriceNote, locale)}</p>
             <div className="flex flex-wrap gap-[var(--space-3)]">
               <Button variant="secondary" href={savedWeekHref(locale, savedWeek)}>
                 {t(BUDGET.savedWeekOpen, locale)}

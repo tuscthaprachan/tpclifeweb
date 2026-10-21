@@ -29,10 +29,6 @@ export const EXTRAS = {
 
   /* ---- What is this dish: page ---- */
   stallsTitle: { th: "ร้านไหนทำ ราคาเท่าไร", en: "Who makes it, and for how much" },
-  stallsNote: {
-    th: "ราคามาจากการสำรวจ ไม่ใช่ข้อมูลสด ทุกราคาบอกวันที่ตรวจไว้",
-    en: "Prices come from our survey, not a live feed. Every price shows the day it was checked.",
-  },
   aboutTitle: { th: "คืออะไร", en: "What it is" },
   seeDishes: { th: "ดูเมนูของร้านทั้งหมด", en: "See every dish" },
 } as const satisfies Record<string, Bilingual>;

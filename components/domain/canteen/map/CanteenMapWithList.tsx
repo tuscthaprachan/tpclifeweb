@@ -63,7 +63,6 @@ function MapKey({
       {start ? <p className="m-0 font-semibold text-ink-900">{MAP_STRINGS.routeFrom(pick(start.label, locale), locale)}</p> : null}
       {hasSeating ? <p className="m-0">{MAP_STRINGS.keySeating[locale]}</p> : null}
       {routed ? <p className="m-0">{MAP_STRINGS.keyStops[locale]}</p> : null}
-      <p className="m-0">{MAP_STRINGS.surveyNote[locale]}</p>
     </div>
   );
 }

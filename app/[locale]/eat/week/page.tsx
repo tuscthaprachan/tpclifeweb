@@ -21,7 +21,7 @@ import { WeekPlanner } from "@/components/domain/canteen/budget/WeekPlanner";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
 import { allPins, clearPins, parseWeekRequest, weekHref, weekQuery, type WeekRequest } from "@/components/domain/canteen/budget/week-params";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, InsetText, Stack, WarningText } from "@/components/ui";
+import { Container, EmptyState, Heading, Stack, WarningText } from "@/components/ui";
 import { facetCounts } from "@/lib/canteen/filter";
 import { countActiveValues, defaultFilters, type CanteenFilters } from "@/lib/canteen/params";
 import { newSeed } from "@/lib/canteen/random";
@@ -171,10 +171,6 @@ export default async function EatWeekPage({
         <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry}>
           <Stack space={6}>
             {body}
-            <InsetText className="no-print">
-              <p className="m-0 text-sm text-ink-600">{t(BUDGET.weekPriceNote, locale)}</p>
-              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
-            </InsetText>
           </Stack>
         </EatFilteredLayout>
       </Stack>
