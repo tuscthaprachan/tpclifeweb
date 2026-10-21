@@ -32,11 +32,11 @@ export function DishRow({ dish, stall, locale, filters, className }: DishRowProp
   return (
     <div className={cx("flex items-start justify-between gap-[var(--space-4)] py-[var(--space-3)]", className)}>
       <div className="flex min-w-0 flex-col gap-[var(--space-1)]">
-        <Link href={dishHref(locale, dish.slug.current, filters)} className="font-semibold text-ink-900 no-underline hover:text-action hover:underline">
+        <Link href={dishHref(locale, dish.slug.current, filters)} className="text-lg font-semibold text-ink-900 no-underline hover:text-action hover:underline">
           {name}
         </Link>
         {otherName && otherName !== name ? (
-          <p lang={other} className="m-0 text-base text-ink-600">
+          <p lang={other} className="m-0 text-sm text-ink-600">
             {otherName}
           </p>
         ) : null}

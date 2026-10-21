@@ -54,13 +54,13 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
       </div>
 
       <div className="flex flex-col">
-        <Heading level={headingLevel} visualLevel={4} className="m-0 leading-tight">
+        <Heading level={headingLevel} visualLevel={3} className="m-0 leading-tight">
           <Link href={dishHref(locale, dish.slug.current, filters)} className="inline-flex min-h-[var(--target-min)] items-center text-ink-900 no-underline hover:text-action hover:underline">
             {name}
           </Link>
         </Heading>
         {otherName && otherName !== name ? (
-          <p lang={other} className="pointer-events-none -mt-[var(--space-1)] text-base text-ink-600">
+          <p lang={other} className="pointer-events-none -mt-[var(--space-1)] text-sm text-ink-600">
             {otherName}
           </p>
         ) : null}

@@ -194,7 +194,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
           </Link>
         </Heading>
         {otherName && otherName !== name ? (
-          <p lang={other} className="m-0 text-lg text-ink-600">
+          <p lang={other} className="m-0 text-base text-ink-600">
             {otherName}
           </p>
         ) : null}

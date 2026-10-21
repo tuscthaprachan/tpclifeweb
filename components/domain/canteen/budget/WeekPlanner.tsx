@@ -92,7 +92,7 @@ export function WeekPlanner({ locale, plan, request, filters, path }: WeekPlanne
                     {name}
                   </Link>
                   {otherName && otherName !== name ? (
-                    <span lang={other} className="block text-base text-ink-600">
+                    <span lang={other} className="block text-sm text-ink-600">
                       {otherName}
                     </span>
                   ) : null}

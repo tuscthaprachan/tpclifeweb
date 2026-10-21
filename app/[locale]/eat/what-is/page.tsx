@@ -81,7 +81,7 @@ export default async function WhatIsIndexPage({
                         <Link href={eatHref(locale, `/eat/what-is/${canonical.slug.current}`, filters)} className="inline-flex min-h-[var(--target-min)] items-center">{pick(canonical.name, locale)}</Link>
                       </Heading>
                       {otherName && otherName !== pick(canonical.name, locale) ? (
-                        <p lang={other} className="m-0 text-ink-600">
+                        <p lang={other} className="m-0 text-sm text-ink-600">
                           {otherName}
                         </p>
                       ) : null}
