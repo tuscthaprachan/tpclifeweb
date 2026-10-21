@@ -66,6 +66,17 @@ const FONT_FILES = [
 ] as const;
 
 let fonts: ReturnType<typeof readFonts> | undefined;
+let logo: Promise<string> | undefined;
+
+function loadLogo() {
+  logo ??= readFile(join(FONT_DIR, "logo.png")).then((data) => `data:image/png;base64,${data.toString("base64")}`);
+  return logo;
+}
+
+function Logo({ src, size }: { src: string; size: number }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} width={size} height={size} alt="" />;
+}
 
 function readFonts() {
   return Promise.all(
@@ -192,7 +203,8 @@ async function frame(soft: string, children: React.ReactNode[]): Promise<ImageRe
   );
 }
 
-function renderOgHero({ locale, title }: OgContent): Promise<ImageResponse> {
+async function renderOgHero({ locale, title }: OgContent): Promise<ImageResponse> {
+  const logoSrc = await loadLogo();
   return frame(
     TONE.brand.soft,
     [
@@ -211,13 +223,17 @@ function renderOgHero({ locale, title }: OgContent): Promise<ImageResponse> {
           {shapeThai(clip(title, 120))}
         </div>
       </div>,
-      <div key="campus" style={{ display: "flex", fontSize: 28, color: palette.inkMuted }}>{shapeThai(pick(CAMPUS, locale))}</div>,
+      <div key="campus" style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 28, color: palette.inkMuted }}>
+        <Logo src={logoSrc} size={72} />
+        {shapeThai(pick(CAMPUS, locale))}
+      </div>,
     ],
   );
 }
 
-export function renderOgImage(content: OgContent): Promise<ImageResponse> {
+export async function renderOgImage(content: OgContent): Promise<ImageResponse> {
   if (content.hero) return renderOgHero(content);
+  const logoSrc = await loadLogo();
   const { locale, title, kicker, description, tone = "brand" } = content;
   const { fill, soft, ink } = TONE[tone];
   const heading = shapeThai(clip(title, 110));
@@ -269,7 +285,10 @@ export function renderOgImage(content: OgContent): Promise<ImageResponse> {
           paddingTop: 28,
         }}
       >
-        <Wordmark locale={locale} size={40} />
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <Logo src={logoSrc} size={56} />
+          <Wordmark locale={locale} size={40} />
+        </div>
         <div style={{ display: "flex", fontSize: 28, color: palette.inkMuted }}>{shapeThai(pick(CAMPUS, locale))}</div>
       </div>,
     ],

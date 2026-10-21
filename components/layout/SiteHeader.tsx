@@ -50,6 +50,7 @@ import type { NavItem } from "@/lib/sanity/types";
 import { LanguageToggle } from "./LanguageToggle";
 import { ServiceNavigation } from "./ServiceNavigation";
 import { ShellContainer } from "./ShellContainer";
+import { SiteLogo } from "./SiteLogo";
 import { ThemeToggle } from "./ThemeToggle";
 
 /*
@@ -158,8 +159,9 @@ export function SiteHeader({
       <ShellContainer className="flex items-center justify-between gap-4 py-3">
         <Link
           href={localePath(locale, "/")}
-          className="inline-flex min-h-[var(--target-min)] shrink-0 items-center text-lg font-semibold text-ink-900 no-underline"
+          className="inline-flex min-h-[var(--target-min)] shrink-0 items-center gap-2 text-lg font-semibold text-ink-900 no-underline"
         >
+          <SiteLogo size={36} priority />
           {pick(serviceName, locale)}
         </Link>
 

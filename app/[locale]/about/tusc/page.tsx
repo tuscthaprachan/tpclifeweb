@@ -8,6 +8,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { SiteLogo } from "@/components/layout/SiteLogo";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Heading } from "@/components/ui/Heading";
@@ -75,7 +76,10 @@ export default async function AboutTuscPage({
 
       <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
         <Stack space={2}>
-          <Heading level={1}>{body.name[locale]}</Heading>
+          <div className="flex items-center gap-4">
+            <SiteLogo size={64} />
+            <Heading level={1}>{body.name[locale]}</Heading>
+          </div>
           <p className="m-0 text-ink-600">
             {ESTABLISHED_LABEL[locale]}: {establishedYearLabel(body.established, locale)}
           </p>

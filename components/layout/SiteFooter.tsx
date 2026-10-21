@@ -10,6 +10,7 @@ import type { HelpContact, NavItem } from "@/lib/sanity/types";
 import { HelpBlock } from "./HelpBlock";
 import { ServiceNavigation } from "./ServiceNavigation";
 import { ShellContainer } from "./ShellContainer";
+import { SiteLogo } from "./SiteLogo";
 
 export function SiteFooter({
   locale,
@@ -39,7 +40,10 @@ export function SiteFooter({
 
         <HelpBlock locale={locale} contacts={helpContacts} />
 
-        <p className="mt-4 text-sm text-ink-600">{pick(serviceName, locale)}</p>
+        <p className="mt-4 flex items-center gap-2 text-sm text-ink-600">
+          <SiteLogo size={28} />
+          {pick(serviceName, locale)}
+        </p>
       </ShellContainer>
     </footer>
   );
