@@ -51,20 +51,6 @@ import type {
 
 import { SURVEY_DATE, SURVEY_DISHES } from "./survey-2569";
 
-/** Shown above every /eat page while this dataset is in use. Both languages, no em dashes. */
-export const SURVEY_NOTICE = {
-  title: { th: "เมนูจากป้ายหน้าร้าน", en: "Menus from the stall boards" },
-  body: {
-    th: "เมนูและราคาอ่านจากรูปป้ายเมนูหน้าร้านที่ถ่ายเมื่อ 21 ตุลาคม 2569 ราคาอาจเปลี่ยนไปแล้ว ป้ายมังสวิรัติ ฮาลาลและอาหารเจเป็นการอ่านจากเมนู ไม่ได้สอบถามร้าน ถ้าสำคัญกับคุณ ถามที่ร้านก่อนสั่ง",
-    en: "Menus and prices were read from photos of the stall boards taken on 21 October 2026. Prices may have changed since. Vegetarian, halal and jay tags are our reading of the menus: the stalls were not asked. If it matters to you, ask at the counter before you order.",
-  },
-} as const;
-
-/** True when the dataset is this file's, not Sanity's. */
-export function isSurveyDataset(data: CanteenData): boolean {
-  return data.settings?._id === SETTINGS_ID;
-}
-
 const SETTINGS_ID = "survey-canteen-settings";
 
 const slug = (current: string) => ({ _type: "slug" as const, current });

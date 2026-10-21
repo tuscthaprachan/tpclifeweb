@@ -93,7 +93,7 @@ Each change lists the field, why, and the migration. `lib/sanity/types.ts` is a 
 - Stall 18 shows "not yet confirmed" until photographed.
 
 ### 4.6 Honesty copy
-- The banner added in this change states the photo date and that diet tags were not asked. Once data comes from Sanity it disappears, so per-dish "checked on" and diet source must carry that message instead.
+- There is no site-wide notice about the photo survey, so per-dish "checked on" and diet source must say when a price was read and that diet tags were not asked.
 
 ## 5. Order of work
 

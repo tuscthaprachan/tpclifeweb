@@ -12,7 +12,7 @@ import {
   planWeek,
   type Person,
 } from "@/lib/canteen";
-import { SURVEY_NOTICE, isSurveyDataset, surveyCanteenData } from "@/lib/canteen/dataset";
+import { surveyCanteenData } from "@/lib/canteen/dataset";
 import { SURVEY_DISHES } from "@/lib/canteen/survey-2569";
 
 const NOW = new Date("2026-10-20T12:00:00+07:00"); // a Tuesday at noon in Bangkok
@@ -27,7 +27,6 @@ describe("surveyed canteen data", () => {
     expect(data.dishes).toHaveLength(SURVEY_DISHES.length);
     expect(data.canonicals).toHaveLength(raw.canonicals.length);
     expect(data.stalls).toHaveLength(18);
-    expect(isSurveyDataset(data)).toBe(true);
   });
 
   it("has unique slugs and survey-prefixed ids", () => {
@@ -57,7 +56,6 @@ describe("surveyed canteen data", () => {
 
   it("has no em or en dashes", () => {
     const dashes = new RegExp(`[${String.fromCharCode(0x2014, 0x2013)}]`);
-    expect(JSON.stringify(SURVEY_NOTICE)).not.toMatch(dashes);
     expect(JSON.stringify(raw)).not.toMatch(dashes);
   });
 
