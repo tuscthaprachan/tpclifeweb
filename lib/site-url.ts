@@ -1,5 +1,6 @@
-const production = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+const PRODUCTION_SITE_URL = "https://tpclife.vercel.app";
 
-export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || (production ? `https://${production}` : "http://localhost:3000")
-).replace(/\/+$/, "");
+export const SITE_URL =
+  process.env.VERCEL_ENV === "production"
+    ? PRODUCTION_SITE_URL
+    : (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/+$/, "");

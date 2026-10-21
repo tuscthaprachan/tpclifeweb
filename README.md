@@ -42,9 +42,9 @@ The site is at `http://localhost:3000` and the CMS at `http://localhost:3000/stu
 | `SANITY_API_READ_TOKEN` | Viewer role token. Server only, never exposed to the browser |
 | `SANITY_API_WRITE_TOKEN` | Editor role token. Server only. Used only by the lost and found report form |
 | `SANITY_REVALIDATE_SECRET` | any long random string, reused in the webhook below |
-| `NEXT_PUBLIC_SITE_URL` | the production origin, with no trailing slash |
+| `NEXT_PUBLIC_SITE_URL` | the origin for non-production builds, with no trailing slash (production always uses `https://tpclife.vercel.app`, set in `lib/site-url.ts`) |
 
-Only the first two are needed for the build to pass. The rest decide whether the deployed site actually works: without `NEXT_PUBLIC_SITE_URL` the canonical, hreflang and Open Graph URLs all point at `http://localhost:3000`, and without `SANITY_REVALIDATE_SECRET` the revalidation webhook refuses every request with a 500.
+Only the first two are needed for the build to pass. The rest decide whether the deployed site actually works: without `SANITY_REVALIDATE_SECRET` the revalidation webhook refuses every request with a 500.
 
 To show the What to eat service with data before any real survey exists, set `CANTEEN_DEMO=1` on a Preview deployment. The `/eat` pages then read a canteen from `lib/canteen/demo.ts` instead of Sanity: the structure is real (17 shops in 18 numbered stalls with stall 10 not let, the opening hours and the floor plan, all from the university's 2569 canteen selection documents) and the menus are not (about 80 dishes with their prices, diet tags and price history are made-up examples). Which shop has which number is assumed from the selection ranking wherever a type has several stalls, and the stall pages say so. Every `/eat` page carries an "Example menus" banner, search results and the home page say "example menus", the pages are `noindex` and they are left out of the sitemap. The real stall list, ready for the importer, is `data/canteen-stalls-2569.csv` (copy it to `data/canteen-stalls.csv` and run `sanity/seed/canteen.ts`). Leave `CANTEEN_DEMO` unset on Production.
 
