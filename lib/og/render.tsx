@@ -138,7 +138,7 @@ export function ogAlt({ locale, title, kicker, description, hero }: OgContent): 
 
 function Wordmark({ locale, size }: { locale: Locale; size: number }) {
   const name = pick(SERVICE_NAME, locale);
-  const lead = locale === "th" ? "#ท้าย" : "#tpc";
+  const lead = locale === "th" ? "#ท้าย" : "#try";
   return (
     <div
       style={{
