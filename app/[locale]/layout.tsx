@@ -24,6 +24,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { HTML_LANG, LOCALES, DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { SITE_URL } from "@/lib/site-url";
 import { isStoredTheme, THEME_COOKIE, type ThemeChoice } from "@/lib/theme/config";
 
 // Every request path outside these two locales 404s instead of silently
@@ -34,12 +35,6 @@ export const dynamicParams = false;
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
-
-// Read directly from process.env rather than lib/sanity/env.ts: that module
-// throws at import time if the Sanity project id or dataset env vars are
-// unset (by design, so a misconfigured deploy fails loudly), which would
-// take the whole site down over a value this layout does not need.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export async function generateMetadata({
   params,

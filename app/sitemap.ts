@@ -22,8 +22,7 @@ import type { MetadataRoute } from "next";
 import { LOCALES, localePath } from "@/lib/i18n/config";
 import { isCanteenDemo } from "@/lib/canteen/demo";
 import { getCanteenData, getLostFoundPage } from "@/lib/sanity/queries";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+import { SITE_URL } from "@/lib/site-url";
 
 const STATIC_ROUTES = [
   "/",
