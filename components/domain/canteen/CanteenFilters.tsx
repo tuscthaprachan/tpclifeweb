@@ -93,9 +93,9 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
             className="min-h-[var(--target-min)] w-full max-w-[10rem] rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
           />
         </div>
-        <div className="flex items-start gap-[var(--space-2)]">
-          <input id={id("variants")} type="checkbox" name="variants" value="1" defaultChecked={filters.variants} className="mt-[3px] h-[1.25rem] w-[1.25rem] shrink-0" />
-          <label htmlFor={id("variants")} className="text-base text-ink-900">
+        <div className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+          <input id={id("variants")} type="checkbox" name="variants" value="1" defaultChecked={filters.variants} className="m-0 size-5 min-h-0 min-w-0 shrink-0" />
+          <label htmlFor={id("variants")} className="flex min-h-[var(--target-min)] flex-1 items-center text-base text-ink-900">
             {t(EAT.variantsLabel, locale)}
           </label>
         </div>

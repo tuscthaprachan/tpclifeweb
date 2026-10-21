@@ -156,7 +156,7 @@ export function SiteHeader({
       <ShellContainer className="flex items-center justify-between gap-4 py-3">
         <Link
           href={localePath(locale, "/")}
-          className="min-h-[var(--target-min)] shrink-0 text-lg font-semibold text-ink-900 no-underline"
+          className="inline-flex min-h-[var(--target-min)] shrink-0 items-center text-lg font-semibold text-ink-900 no-underline"
         >
           {pick(serviceName, locale)}
         </Link>

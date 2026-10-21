@@ -84,7 +84,7 @@ export function ChoiceGroup({ id, legend, hint, name, kind, choices, selected, l
           }
 
           return (
-            <div key={choice.value} className={cx("flex items-start gap-[var(--space-2)]", disabled && "opacity-60")}>
+            <div key={choice.value} className={cx("flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]", disabled && "opacity-60")}>
               <input
                 id={optionId}
                 type={kind}
@@ -92,10 +92,10 @@ export function ChoiceGroup({ id, legend, hint, name, kind, choices, selected, l
                 value={choice.value}
                 defaultChecked={checked}
                 disabled={disabled}
-                className="mt-[3px] h-[1.25rem] w-[1.25rem] shrink-0"
+                className="m-0 size-5 min-h-0 min-w-0 shrink-0"
               />
-              <label htmlFor={optionId} className="inline-flex items-start gap-[var(--space-2)] text-base text-ink-900">
-                {choice.icon ? <span className="mt-[3px] inline-flex shrink-0 text-ink-600">{choice.icon}</span> : null}
+              <label htmlFor={optionId} className="flex min-h-[var(--target-min)] flex-1 items-center gap-[var(--space-2)] text-base text-ink-900">
+                {choice.icon ? <span className="inline-flex shrink-0 items-center text-ink-600 [&>svg]:size-[1.25em]">{choice.icon}</span> : null}
                 <span>
                   {choice.label}
                   {countText}
