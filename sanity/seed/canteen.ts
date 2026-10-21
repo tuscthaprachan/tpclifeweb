@@ -13,9 +13,12 @@
  * WHAT THIS CREATES
  *   `canteenStall`, `canonicalDish` and `canteenDish` documents, with
  *   deterministic dot-free ids, so running it again replaces the same
- *   documents instead of duplicating them. It does not create
- *   `canteenSettings`: the floor plan grid, entrances, seating zones and the
- *   canteen place link are set once in the Studio.
+ *   documents instead of duplicating them. It also fills in the
+ *   `canteenSettings` singleton (floor plan grid, entrances, seating zones,
+ *   jay festival dates) from `lib/canteen/dataset.ts`, and links it to the
+ *   canteen `place`, creating that place with its opening hours if no place
+ *   is linked yet. Settings fields already set in the Studio are never
+ *   overwritten.
  *
  * WHAT IT LEAVES ALONE ON PURPOSE
  *   `lastReviewed` is left UNSET on every dish, so the Studio list of
@@ -49,6 +52,8 @@ import { join } from "node:path";
 
 import { createClient } from "@sanity/client";
 
+import { surveyCanteenData } from "../../lib/canteen/dataset";
+import type { CampusPlace } from "../../lib/sanity/types";
 import { apiVersion, dataset, projectId } from "../../lib/sanity/env";
 import {
   COOKING_STYLES,
@@ -378,7 +383,7 @@ function buildStalls(file: string, rows: Row[]): { docs: SeedDoc[]; idByNumber: 
 
     const cuisine = enumList(file, row, "cuisine", CUISINES);
     const halalStatus = row.cells.halal ? enumValue(file, row, "halal", HALAL_STATUSES) : "none";
-    const halalCheckedOn = dateValue(file, row, "halal_checked_on", halalStatus !== undefined && halalStatus !== "none");
+    const halalCheckedOn = dateValue(file, row, "halal_checked_on", halalStatus === "certified");
     const col = wholeNumber(file, row, "map_col", 0);
     const mapRow = wholeNumber(file, row, "map_row", 0);
     const w = wholeNumber(file, row, "map_w", 1, 1);
@@ -538,6 +543,17 @@ async function run(): Promise<void> {
     perspective: "raw",
   });
 
+  if (DRY_RUN) {
+    console.log(`  would fill   ${SETTINGS_ID} (only fields not already set) and link the canteen place`);
+  } else {
+    try {
+      await writeSettings(client);
+    } catch (error) {
+      console.error(`  FAIL    ${SETTINGS_ID}`, error instanceof Error ? error.message : error);
+      process.exitCode = 1;
+    }
+  }
+
   let written = 0;
   const failures: string[] = [];
   for (const doc of docs) {
@@ -561,6 +577,62 @@ async function run(): Promise<void> {
     console.error(`${failures.length} failed: ${failures.join(", ")}`);
     process.exitCode = 1;
   }
+}
+
+/* ------------------------------------------------------------------ *
+ * Canteen settings
+ * ------------------------------------------------------------------ */
+
+/** The singleton's id, as fixed by the desk structure. */
+const SETTINGS_ID = "canteenSettings";
+const PLACE_ID = "place-thammasat-60-years-canteen";
+
+type WriteClient = ReturnType<typeof createClient>;
+
+/**
+ * Creates the canteen settings if missing and fills only the fields that are
+ * not set, so an editor's changes in the Studio survive a re-import. The
+ * canteen place is linked if the settings have none: an existing place with
+ * the canteen's slug is reused, otherwise one is created with the hours.
+ */
+async function writeSettings(client: WriteClient): Promise<void> {
+  const source = surveyCanteenData().settings!;
+  const place = source.canteen as CampusPlace;
+  const existing = await client.fetch<{ canteen?: string } | null>(`*[_id == $id][0]{ "canteen": canteen._ref }`, { id: SETTINGS_ID });
+
+  let placeId = existing?.canteen;
+  if (!placeId) {
+    placeId =
+      (await client.fetch<string | null>(`*[_type == "place" && slug.current == $slug && !(_id in path("drafts.**"))][0]._id`, {
+        slug: place.slug.current,
+      })) ?? PLACE_ID;
+    if (placeId === PLACE_ID) {
+      await client.createIfNotExists({
+        _id: PLACE_ID,
+        _type: "place",
+        name: localeString(place.name.th, place.name.en),
+        slug: slug(place.slug.current),
+        category: place.category,
+        openingHours: (place.openingHours ?? []).map((hours) => ({ ...hours, _type: "openingHours", _key: key() })),
+      });
+      console.log(`  ok      ${PLACE_ID}`);
+    }
+  }
+
+  await client.createIfNotExists({ _id: SETTINGS_ID, _type: "canteenSettings" });
+  await client
+    .patch(SETTINGS_ID)
+    .setIfMissing({
+      canteen: reference(placeId),
+      gridCols: source.gridCols,
+      gridRows: source.gridRows,
+      entrances: (source.entrances ?? []).map((entrance) => ({ ...entrance, _type: "canteenEntrance", label: localeString(entrance.label.th, entrance.label.en) })),
+      seatingZones: (source.seatingZones ?? []).map((zone) => ({ ...zone, _type: "canteenSeatingZone", label: localeString(zone.label.th, zone.label.en) })),
+      ...(source.jayFestivalStart ? { jayFestivalStart: source.jayFestivalStart } : {}),
+      ...(source.jayFestivalEnd ? { jayFestivalEnd: source.jayFestivalEnd } : {}),
+    })
+    .commit();
+  console.log(`  ok      ${SETTINGS_ID}`);
 }
 
 function requireWriteToken(): string {

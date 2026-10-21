@@ -6,7 +6,7 @@
 # slug              optional, lowercase letters digits and hyphens. Default: stall-<number>
 # cuisine           one or more of: thaiRice madeToOrder noodles isan chickenRice curryOverRice muslim drinks desserts fruit (separate with ;)
 # halal             none | stallDeclared | certified   (asked and recorded as the stall's own word, certified only with a certificate on file)
-# halal_checked_on  YYYY-MM-DD, required when halal is not none
+# halal_checked_on  YYYY-MM-DD, the day the stall was asked or the certificate seen. Required when halal is certified
 # vegetarian_stall  yes | no   (yes only if the whole stall is vegetarian or jay)
 # hours             optional, only if different from the canteen. Format: days HH:mm-HH:mm, separate blocks with ;  Days: 1-5 or 1,3,5 (0 Sunday to 6 Saturday)
 # map_col, map_row  position on the floor plan grid, counting from 0 at the top left
