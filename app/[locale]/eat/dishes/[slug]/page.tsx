@@ -88,12 +88,12 @@ export default async function EatDishPage({
       />
 
       <Stack space={8}>
-        <Stack space={3}>
+        <Stack space={1}>
           <p className="m-0 inline-flex items-center gap-[var(--space-1)] text-sm text-ink-600">
             <DishTypeIcon type={dish.type} />
             {TYPE_LABEL[dish.type][locale]}
           </p>
-          <Heading level={1} className="text-3xl">{name}</Heading>
+          <Heading level={1} className="text-3xl leading-tight">{name}</Heading>
           {otherName && otherName !== name ? (
             <p lang={other} className="m-0 text-lg text-ink-600">
               {otherName}
@@ -101,7 +101,7 @@ export default async function EatDishPage({
           ) : null}
         </Stack>
 
-        <Grid minColumnWidth="18rem" space={6}>
+        <Grid minColumnWidth="18rem" space={4}>
           <section aria-labelledby="eat-dish-price" className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
             <Stack space={3}>
               <Heading level={2} id="eat-dish-price" className="m-0 text-xl">
@@ -138,7 +138,7 @@ export default async function EatDishPage({
             <Heading level={2} id="eat-dish-about" className="m-0 text-xl">
               {t(EAT.aboutTitle, locale)}
             </Heading>
-            <dl className="m-0 grid gap-[var(--space-4)] sm:grid-cols-2">
+            <dl className="m-0 grid gap-[var(--space-3)] sm:grid-cols-2">
               <div>
                 <dt className="text-sm font-medium text-ink-600">{t(EAT.proteinLine, locale)}</dt>
                 <dd className="m-0 text-ink-900">{dish.protein.map((protein) => PROTEIN_LABEL[protein][locale]).join(", ")}</dd>

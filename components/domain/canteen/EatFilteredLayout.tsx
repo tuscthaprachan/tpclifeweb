@@ -63,7 +63,7 @@ export function EatFilteredLayout({ locale, data, filters, counts, route, displa
         The summary bar is sticky under the sticky header, so anything focused below it needs room for both
         (2.4.11 Focus Not Obscured). The global rule only clears the header.
       */}
-      <div className="mt-[var(--space-6)] grid gap-[var(--space-8)] md:grid-cols-[17rem_minmax(0,1fr)] md:items-start [&_:is(a,button,input,select,summary)]:scroll-mt-[calc(var(--header-height,4rem)+9rem)]">
+      <div className="mt-[var(--space-4)] grid gap-[var(--space-8)] md:grid-cols-[17rem_minmax(0,1fr)] md:items-start [&_:is(a,button,input,select,summary)]:scroll-mt-[calc(var(--header-height,4rem)+9rem)]">
         <section aria-labelledby="eat-filters-column-title" className="hidden md:block">
           <Heading level={2} id="eat-filters-column-title" className="m-0 mb-[var(--space-4)] text-xl">
             {t(EAT.filtersTitle, locale)}

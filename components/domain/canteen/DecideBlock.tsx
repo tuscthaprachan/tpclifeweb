@@ -41,7 +41,7 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
   const customMax = filters.max !== undefined && !DECIDE_BUDGETS.includes(filters.max as 40 | 50 | 60) ? String(filters.max) : undefined;
 
   return (
-    <section aria-labelledby="eat-decide-title" className="rounded-panel bg-welfare-soft p-[var(--space-6)]">
+    <section aria-labelledby="eat-decide-title" className="rounded-panel bg-welfare-soft p-[var(--space-4)] md:p-[var(--space-6)]">
       <div className="flex flex-col gap-[var(--space-2)]">
         <Heading level={headingLevel} id="eat-decide-title" className="m-0 text-xl">
           {t(EAT.decideTitle, locale)}

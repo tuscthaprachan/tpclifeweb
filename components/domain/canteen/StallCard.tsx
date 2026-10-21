@@ -44,7 +44,7 @@ export function StallCard({ stall, locale, filters, dishCount, matchCount, price
           <span className="visually-hidden">{t(EAT.stallNumberWord, locale)} </span>
           {formatNumber(stall.number, locale)}
         </span>
-        <Heading level={headingLevel} visualLevel={4} className="m-0">
+        <Heading level={headingLevel} visualLevel={4} className="m-0 leading-tight">
           <Link href={stallHref(locale, stall.slug.current, filters)} className="inline-flex min-h-[var(--target-min)] items-center text-ink-900 no-underline hover:text-action hover:underline">
             {pick(stall.name, locale)}
           </Link>

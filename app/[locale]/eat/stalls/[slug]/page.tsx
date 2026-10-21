@@ -91,11 +91,11 @@ export default async function EatStallPage({
       />
 
       <Stack space={8}>
-        <Stack space={3}>
+        <Stack space={2}>
           <p className="m-0 inline-flex w-fit items-center rounded-control bg-welfare px-[var(--space-3)] py-[var(--space-1)] text-lg font-semibold text-ink-on-fill">
             {eat.stallNumber(locale, stall.number)}
           </p>
-          <Heading level={1} className="text-3xl">{name}</Heading>
+          <Heading level={1} className="text-3xl leading-tight">{name}</Heading>
           <ul className="m-0 flex list-none flex-wrap gap-[var(--space-2)] p-0">
             {stall.cuisine.map((cuisine) => (
               <li key={cuisine}>

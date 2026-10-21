@@ -99,12 +99,12 @@ export default async function EatStallsPage({
   return (
     <Container className="py-8">
       {breadcrumbs}
-      <Stack space={6}>
+      <Stack space={4}>
         {header}
         <EatTabs locale={locale} current="stalls" filters={filters} />
 
         <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none">
-          <Stack space={6}>
+          <Stack space={4}>
             <p role="status" aria-live="polite" aria-atomic="true" className="m-0 text-base font-medium text-ink-900">
               {eat.stallsShown(locale, withMatches, rows.length, filtered)}
             </p>

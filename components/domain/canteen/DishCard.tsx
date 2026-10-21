@@ -52,14 +52,14 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
         {showFavourite ? <FavouriteToggle slug={dish.slug.current} name={name} locale={locale} /> : null}
       </div>
 
-      <div className="flex flex-col gap-[var(--space-1)]">
-        <Heading level={headingLevel} visualLevel={4} className="m-0">
+      <div className="flex flex-col">
+        <Heading level={headingLevel} visualLevel={4} className="m-0 leading-tight">
           <Link href={dishHref(locale, dish.slug.current, filters)} className="inline-flex min-h-[var(--target-min)] items-center text-ink-900 no-underline hover:text-action hover:underline">
             {name}
           </Link>
         </Heading>
         {otherName && otherName !== name ? (
-          <p lang={other} className="m-0 text-sm text-ink-600">
+          <p lang={other} className="pointer-events-none -mt-[var(--space-1)] text-sm text-ink-600">
             {otherName}
           </p>
         ) : null}
@@ -68,7 +68,7 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
       <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} />
 
       {stall ? (
-        <p className="m-0 flex items-start gap-[var(--space-1)] text-sm">
+        <p className="-my-[var(--space-1)] flex items-start gap-[var(--space-1)] text-sm">
           <PinIcon className="mt-[2px] shrink-0 text-ink-600" />
           <Link href={stallHref(locale, stall.slug.current, filters)} className="inline-flex min-h-[var(--target-min)] items-center">{eat.stallFull(locale, stall.number, stallName)}</Link>
         </p>

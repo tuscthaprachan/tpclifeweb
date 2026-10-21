@@ -105,16 +105,16 @@ export default async function EatDishesPage({
   return (
     <Container className="py-8">
       {breadcrumbs}
-      <Stack space={6}>
+      <Stack space={4}>
         {header}
         <EatTabs locale={locale} current="dishes" filters={filters} />
 
         <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE}>
-          <Stack space={6}>
+          <Stack space={4}>
             <ResultCount locale={locale} dishes={matched.length} stalls={countStalls(data, matched)} />
 
             {matched.length === 0 ? (
-              <Stack space={6}>
+              <Stack space={4}>
                 <EmptyState title={t(EAT.noResultsTitle, locale)} />
                 {countActiveValues(filters) > 0 ? (
                   <RelaxSuggestions
@@ -127,7 +127,7 @@ export default async function EatDishesPage({
                 ) : null}
               </Stack>
             ) : (
-              <Stack space={6}>
+              <Stack space={4}>
                 <DishResults data={data} locale={locale} filters={filters} groups={paged.groups} headingLevel={2} />
                 <Stack space={2}>
                   {paged.totalPages > 1 ? <p className="m-0 text-sm text-ink-600">{eat.showingRange(locale, paged.from, paged.to, paged.total)}</p> : null}
