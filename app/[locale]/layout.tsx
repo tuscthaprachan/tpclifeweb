@@ -13,7 +13,7 @@
  */
 
 import { cookies } from "next/headers";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import "@/styles/globals.css";
@@ -31,6 +31,9 @@ import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, type ThemeChoice } fr
 // rendering. Paired with the explicit isLocale check below, which TypeScript
 // needs anyway since `params.locale` is a plain string.
 export const dynamicParams = false;
+
+const LIGHT_THEME_COLOR = "#ffffff";
+const DARK_THEME_COLOR = "#141218";
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -69,6 +72,20 @@ export async function generateMetadata({
       type: "website",
     },
     twitter: { card: "summary_large_image" },
+  };
+}
+
+export async function generateViewport(): Promise<Viewport> {
+  const cookieStore = await cookies();
+  const stored = (cookieStore.get(THEME_COOKIE) ?? cookieStore.get(LEGACY_THEME_COOKIE))?.value;
+  if (stored === "light") return { themeColor: LIGHT_THEME_COLOR, colorScheme: "light" };
+  if (stored === "dark") return { themeColor: DARK_THEME_COLOR, colorScheme: "dark" };
+  return {
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: LIGHT_THEME_COLOR },
+      { media: "(prefers-color-scheme: dark)", color: DARK_THEME_COLOR },
+    ],
+    colorScheme: "light dark",
   };
 }
 

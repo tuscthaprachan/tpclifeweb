@@ -41,7 +41,7 @@ export function Dialog({ open, onClose, title, headingLevel, locale, children, c
       aria-labelledby={titleId}
       onClose={onClose}
       className={cx(
-        "rounded-panel border border-line bg-surface p-0 text-ink-900 shadow-[var(--shadow-elevation)] backdrop:bg-[color-mix(in_srgb,var(--ink-900)_50%,transparent)]",
+        "rounded-panel border border-line bg-surface p-0 text-ink-900 shadow-[var(--shadow-elevation)] backdrop:bg-[rgb(31_26_28/0.5)]",
         className,
       )}
     >

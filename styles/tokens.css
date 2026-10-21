@@ -261,7 +261,7 @@
  * --surface-alt #1c1a21 and --surface-sunk #24212b. The two dark blocks
  * (media query and data-theme="dark") must keep identical values.
  */
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --ink-900: #ece8f0; /* 15.38:1 --surface, 14.25:1 --surface-alt, 13.08:1 --surface-sunk */
     --ink-600: #bab5c1; /* 9.27:1 --surface, 8.59:1 --surface-alt, 7.89:1 --surface-sunk */
@@ -338,54 +338,56 @@
   color-scheme: light;
 }
 
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --ink-900: #ece8f0;
-  --ink-600: #bab5c1;
-  --ink-500: #9994a2;
-  --ink-inverse: #141218;
+@media screen {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ink-900: #ece8f0;
+    --ink-600: #bab5c1;
+    --ink-500: #9994a2;
+    --ink-inverse: #141218;
 
-  --surface: #141218;
-  --surface-alt: #1c1a21;
-  --surface-sunk: #24212b;
-  --surface-overlay: #2a2731;
+    --surface: #141218;
+    --surface-alt: #1c1a21;
+    --surface-sunk: #24212b;
+    --surface-overlay: #2a2731;
 
-  --line: #38353f;
-  --line-strong: #7d7886;
+    --line: #38353f;
+    --line-strong: #7d7886;
 
-  --colour-action: #c4a8ee;
-  --colour-action-hover: #dccaf8;
-  --colour-action-ink: #141218;
+    --colour-action: #c4a8ee;
+    --colour-action-hover: #dccaf8;
+    --colour-action-ink: #141218;
 
-  --colour-accent: #e8a27c;
-  --colour-accent-strong: #f5c6ab;
+    --colour-accent: #e8a27c;
+    --colour-accent-strong: #f5c6ab;
 
-  --brand-orange: #d98650;
-  --brand-coral: #d27058;
-  --brand-lilac: #b585d9;
-  --fill-transport: #d98650;
-  --fill-welfare: #d27058;
-  --fill-activity: #b585d9;
-  --fill-governance: #8c82da;
+    --brand-orange: #d98650;
+    --brand-coral: #d27058;
+    --brand-lilac: #b585d9;
+    --fill-transport: #d98650;
+    --fill-welfare: #d27058;
+    --fill-activity: #b585d9;
+    --fill-governance: #8c82da;
 
-  --fill-transport-soft: #3a2f2b;
-  --fill-welfare-soft: #3b2d2f;
-  --fill-activity-soft: #38294a;
-  --fill-governance-soft: #2e2f4f;
+    --fill-transport-soft: #3a2f2b;
+    --fill-welfare-soft: #3b2d2f;
+    --fill-activity-soft: #38294a;
+    --fill-governance-soft: #2e2f4f;
 
-  --status-success: #6fcfa6;
-  --status-success-soft: #1f3a31;
-  --status-warning: #e8b25e;
-  --status-warning-soft: #403519;
-  --status-error: #f2908a;
-  --status-error-soft: #442a2d;
-  --status-info: #aaa6f0;
-  --status-info-soft: #2e2f4f;
-  --status-neutral: #bab5c1;
-  --status-neutral-soft: #2c2a33;
+    --status-success: #6fcfa6;
+    --status-success-soft: #1f3a31;
+    --status-warning: #e8b25e;
+    --status-warning-soft: #403519;
+    --status-error: #f2908a;
+    --status-error-soft: #442a2d;
+    --status-info: #aaa6f0;
+    --status-info-soft: #2e2f4f;
+    --status-neutral: #bab5c1;
+    --status-neutral-soft: #2c2a33;
 
-  --focus-fill: #d98650;
-  --focus-bar: #dccaf8;
+    --focus-fill: #d98650;
+    --focus-bar: #dccaf8;
 
-  --elevation: 0 4px 16px -2px rgb(0 0 0 / 0.6), 0 1px 3px rgb(0 0 0 / 0.4);
+    --elevation: 0 4px 16px -2px rgb(0 0 0 / 0.6), 0 1px 3px rgb(0 0 0 / 0.4);
+  }
 }
