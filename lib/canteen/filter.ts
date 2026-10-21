@@ -94,7 +94,7 @@ export function matchesFilters(
  * Browsing with `applyFilters` is not restricted by it.
  */
 export function isMealDish(dish: CanteenDish, filters: CanteenFilters): boolean {
-  return filters.type.length > 0 || dish.course === "main";
+  return filters.type.length > 0 || (dish.course === "main" && dish.type !== "snack");
 }
 
 /* ------------------------------------------------------------------ *

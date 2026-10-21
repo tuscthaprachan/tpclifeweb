@@ -136,7 +136,7 @@ export default async function EatHubPage({
                 {suggestedChecked ? <CheckedOnNote checkedOn={suggestedChecked} locale={locale} /> : null}
                 <SuggestedMenu
                   locale={locale}
-                  candidates={suggestedDishes.map((dish) => ({ _id: dish._id, course: dish.course, stall: { _ref: dish.stall._ref } }))}
+                  candidates={suggestedDishes.map((dish) => ({ _id: dish._id, course: dish.course, type: dish.type, stall: { _ref: dish.stall._ref } }))}
                   cards={Object.fromEntries(
                     suggestedDishes.map((dish) => [
                       dish._id,

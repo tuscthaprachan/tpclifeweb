@@ -81,19 +81,20 @@ export function shuffle<T>(items: readonly T[], rng: Rng): T[] {
 export interface SuggestedCandidate {
   _id: string;
   course: CanteenDish["course"];
+  type: CanteenDish["type"];
   stall: { _ref: string };
 }
 
 /**
  * A seeded draw of up to `count` main courses with at most one per stall.
- * Anything that is not a main course is ignored. The same seed and the same
+ * Anything that is not a main course, and snacks, are ignored. The same seed and the same
  * candidates always give the same list, whatever order they arrive in.
  */
 export function pickSuggested<T extends SuggestedCandidate>(dishes: readonly T[], count: number, seed: string): T[] {
   const rng = createRng(seed);
   const byStall = new Map<string, T[]>();
   for (const dish of [...dishes].sort((a, b) => a._id.localeCompare(b._id))) {
-    if (dish.course !== "main") continue;
+    if (dish.course !== "main" || dish.type === "snack") continue;
     const list = byStall.get(dish.stall._ref);
     if (list) list.push(dish);
     else byStall.set(dish.stall._ref, [dish]);
@@ -107,12 +108,12 @@ export function pickSuggested<T extends SuggestedCandidate>(dishes: readonly T[]
   return chosen;
 }
 
-/** At most `perStall` main courses per stall, chosen by `seed`, for a pool the client redraws from. */
+/** At most `perStall` main courses (no snacks) per stall, chosen by `seed`, for a pool the client redraws from. */
 export function suggestedPool<T extends SuggestedCandidate>(dishes: readonly T[], perStall: number, seed: string): T[] {
   const rng = createRng(seed);
   const byStall = new Map<string, T[]>();
   for (const dish of [...dishes].sort((a, b) => a._id.localeCompare(b._id))) {
-    if (dish.course !== "main") continue;
+    if (dish.course !== "main" || dish.type === "snack") continue;
     const list = byStall.get(dish.stall._ref);
     if (list) list.push(dish);
     else byStall.set(dish.stall._ref, [dish]);
@@ -217,7 +218,7 @@ function weightedIndex(weights: readonly number[], rng: Rng): number {
 }
 
 /**
- * Chooses one dish. See `PickOptions` for the knobs. Only main courses are
+ * Chooses one dish. See `PickOptions` for the knobs. Only main courses, not snacks, are
  * considered unless the filters name dish types (see `isMealDish`).
  *
  * If locks, vetoes or repeat avoidance leave nothing, they are relaxed
