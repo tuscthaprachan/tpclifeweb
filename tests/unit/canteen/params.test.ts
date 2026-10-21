@@ -99,8 +99,8 @@ describe("params", () => {
   });
 
   it("encodes extras that need it", () => {
-    expect(withFilters("/en/eat/group", defaultFilters(), { p: "Mint.50~Ben ก" })).toBe(
-      "/en/eat/group?p=Mint.50~Ben%20%E0%B8%81",
+    expect(withFilters("/en/eat/plan", defaultFilters(), { p: "Mint.50~Ben ก" })).toBe(
+      "/en/eat/plan?p=Mint.50~Ben%20%E0%B8%81",
     );
   });
 

@@ -18,7 +18,7 @@ interface MealFormProps {
 }
 
 /**
- * "I have X baht": a plain GET form to /eat/meal. The chips and the box both
+ * "I have X baht": a plain GET form to /eat/plan, the default mode. The chips and the box both
  * write the budget (`max`, the same parameter the filter form uses, so the
  * two never disagree). The box wins when it holds a number, as in the filter
  * form. Every other filter rides along as a hidden field.
@@ -32,7 +32,7 @@ export function MealForm({ locale, filters, sameStall }: MealFormProps) {
       <Heading level={2} id="meal-form-title" className="m-0 mb-[var(--space-4)] text-xl">
         {t(BUDGET.mealFormTitle, locale)}
       </Heading>
-      <form method="get" action={localePath(locale, "/eat/meal")} className="flex flex-col gap-[var(--space-4)]">
+      <form method="get" action={localePath(locale, "/eat/plan")} className="flex flex-col gap-[var(--space-4)]">
         {[...hidden.entries()].map(([name, value]) => (
           <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
         ))}

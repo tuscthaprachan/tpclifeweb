@@ -7,7 +7,7 @@ import { Select, type SelectOption } from "@/components/ui/Select";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { Category, Owner } from "@/lib/sanity/types";
-import { CATEGORY_LABEL_KEY, OWNER_LABEL_KEY } from "./labels";
+import { CATEGORY_LABEL_KEY, NO_SIGN_IN_ON_FORM, OWNER_LABEL_KEY, SIGN_IN_ON_FORM } from "./labels";
 
 export interface FormFiltersValue {
   category: Category | "";
@@ -58,8 +58,8 @@ export function FormFilters({ locale, value, hasActiveFilters, className }: Form
 
   const signInOptions: SelectOption[] = [
     { value: "", label: UI.all[locale] },
-    { value: "required", label: UI.requiresSignIn[locale] },
-    { value: "none", label: UI.noSignInNeeded[locale] },
+    { value: "required", label: SIGN_IN_ON_FORM[locale] },
+    { value: "none", label: NO_SIGN_IN_ON_FORM[locale] },
   ];
 
   function submitOnChange() {
@@ -88,9 +88,8 @@ export function FormFilters({ locale, value, hasActiveFilters, className }: Form
         <Select
           id="forms-filter-sign-in"
           name="signIn"
-          // TODO: add to UI strings. UI.requiresSignIn is the fact stated on
-          // a form ("Sign in required"), not a name for this filter control;
-          // no shared label exists for "filter by sign-in requirement".
+          // TODO: add to UI strings. No shared label exists for "filter by
+          // sign-in requirement".
           label={locale === "th" ? "การเข้าสู่ระบบ" : "Sign-in requirement"}
           options={signInOptions}
           defaultValue={value.signIn}

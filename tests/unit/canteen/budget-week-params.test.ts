@@ -46,7 +46,8 @@ describe("weekQuery", () => {
     const query = weekQuery(request, defaultFilters());
     const again = parseWeekRequest(new URLSearchParams(query));
     expect(again).toEqual(request);
-    expect(weekHref("/en/eat/week", request, defaultFilters(), "week-plan")).toBe(`/en/eat/week?${query}#week-plan`);
+    expect(query.startsWith("mode=week")).toBe(true);
+    expect(weekHref("/en/eat/plan", request, defaultFilters(), "week-plan")).toBe(`/en/eat/plan?${query}#week-plan`);
   });
 });
 

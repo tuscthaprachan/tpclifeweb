@@ -1,9 +1,10 @@
 /**
- * The URL scheme of /eat/week, and the pure moves on it (lock, unlock,
+ * The URL scheme of the week mode of /eat/plan, and the pure moves on it (lock, unlock,
  * reroll one day). Plain module: safe from server and client.
  *
- *   /eat/week?budget=400&days=1,2,3,4,5&seed=k7m2qx&lock.2=slug&keep.4=slug&<filters>
+ *   /eat/plan?mode=week&budget=400&days=1,2,3,4,5&seed=k7m2qx&lock.2=slug&keep.4=slug&<filters>
  *
+ *   mode       always `week`, which picks this planner on /eat/plan
  *   budget     weekly budget in baht (1 to 20000)
  *   days       weekdays on campus, 0 Sunday to 6 Saturday, comma separated.
  *              The form sends one `days` per ticked box plus an empty one,
@@ -84,7 +85,7 @@ export function allPins(request: WeekRequest): Pins {
 
 /** The query string (no leading `?`) for a request plus filters. Fixed order, so equal plans give equal links. */
 export function weekQuery(request: WeekRequest, filters: CanteenFilters): string {
-  const parts: string[] = [];
+  const parts: string[] = ["mode=week"];
   const base = serialise(filters);
   if (base) parts.push(base);
   if (request.budget !== undefined) parts.push(`budget=${request.budget}`);

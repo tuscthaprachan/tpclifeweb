@@ -118,9 +118,9 @@ for (const locale of LOCALES as readonly Locale[]) {
   }
 }
 
-/* ---- Budget tools and personal data (/eat/meal, /eat/week, /eat/mine) ---- */
+/* ---- Budget tools and personal data (/eat/plan, /eat/mine) ---- */
 for (const locale of LOCALES as readonly Locale[]) {
-  for (const route of ["/eat/meal", "/eat/meal?max=60", "/eat/week", "/eat/week?budget=300&days=1,2,3,4,5&seed=abc234", "/eat/mine"]) {
+  for (const route of ["/eat/plan", "/eat/plan?max=60", "/eat/plan?mode=week", "/eat/plan?mode=week&budget=300&days=1,2,3,4,5&seed=abc234", "/eat/mine"]) {
     test(`axe budget pages: ${locale} ${route}`, async ({ page }) => {
       const path = localePath(locale, route);
       const response = await page.goto(path);
@@ -131,12 +131,12 @@ for (const locale of LOCALES as readonly Locale[]) {
   }
 }
 
-/* ---- Eat as a group (/eat/group): builder and each strategy ---- */
+/* ---- Eat as a group (/eat/plan?mode=group): builder and each strategy ---- */
 const GROUP_PEOPLE = "p=Mint.50.np-v.s1~Ben.80..s3";
 for (const locale of LOCALES as readonly Locale[]) {
   test(`axe eat group: ${locale}`, async ({ page }) => {
-    for (const query of ["", `?${GROUP_PEOPLE}`, `?${GROUP_PEOPLE}&strat=own&seed=abc`, `?${GROUP_PEOPLE}&strat=random&seed=abc`]) {
-      const path = `${localePath(locale, "/eat/group")}${query}`;
+    for (const query of ["", `&${GROUP_PEOPLE}`, `&${GROUP_PEOPLE}&strat=own&seed=abc`, `&${GROUP_PEOPLE}&strat=random&seed=abc`]) {
+      const path = `${localePath(locale, "/eat/plan")}?mode=group${query}`;
       await test.step(path, async () => {
         const response = await page.goto(path);
         expect(response?.ok(), `${path} did not respond with an ok status`).toBeTruthy();

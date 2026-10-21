@@ -1,5 +1,5 @@
 /**
- * Copy for the budget tools (/eat/meal, /eat/week) and personal data
+ * Copy for the budget tools (/eat/plan) and personal data
  * (/eat/mine). Thai and English, written separately. No em dashes.
  */
 

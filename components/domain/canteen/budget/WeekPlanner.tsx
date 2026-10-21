@@ -17,7 +17,7 @@ interface WeekPlannerProps {
   plan: Extract<WeekResult, { ok: true }>;
   request: WeekRequest;
   filters: CanteenFilters;
-  /** The page's own path with the locale, for example "/en/eat/week". */
+  /** The page's own path with the locale, for example "/en/eat/plan". */
   path: string;
 }
 

@@ -26,7 +26,7 @@ describe("group url state", () => {
   });
 
   it("round trips people, strategy, seed and rerolls", () => {
-    const href = groupHref("/en/eat/group", { people: [mint, ben], strategy: "own", seed: "k7m2qx", rerolls: [1, 0] }, "results");
+    const href = groupHref("/en/eat/plan?mode=group", { people: [mint, ben], strategy: "own", seed: "k7m2qx", rerolls: [1, 0] }, "results");
     const params = new URLSearchParams(href.split("#")[0]!.split("?")[1]);
     const state = readGroupState(params);
     expect(state.people).toEqual(decodeGroup("Mint.50.np-v~Ben.80"));
@@ -34,6 +34,12 @@ describe("group url state", () => {
     expect(state.seed).toBe("k7m2qx");
     expect(state.rerolls).toEqual([1]);
     expect(href.endsWith("#results")).toBe(true);
+  });
+
+  it("appends to a path that already has a query", () => {
+    expect(groupHref("/en/eat/plan?mode=group", { people: [ben], strategy: "one" }, "results")).toBe(
+      "/en/eat/plan?mode=group&p=Ben.80#results",
+    );
   });
 
   it("leaves seed and rerolls off for the one stall strategy", () => {

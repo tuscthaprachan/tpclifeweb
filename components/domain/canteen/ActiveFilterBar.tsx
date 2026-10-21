@@ -15,6 +15,8 @@ interface ActiveFilterBarProps {
   /** The route the chips link to, locale free, for example "/eat/dishes". Removing a chip stays on this page. */
   route: string;
   stallName?: StallNamer;
+  /** Parameters every chip link keeps, for example `mode` on a page that has several. */
+  extra?: Record<string, string>;
   /**
    * The filter form (a `CanteenFilters` element). When given, small screens
    * get an Edit button that opens it in a Dialog. When the form is also a
@@ -34,7 +36,7 @@ interface ActiveFilterBarProps {
  * desktops, in flow on phones, where a sticky bar of wrapped chips would eat
  * the screen (2.4.11 Focus Not Obscured).
  */
-export function ActiveFilterBar({ locale, filters, route, stallName, editor, editHref, className }: ActiveFilterBarProps) {
+export function ActiveFilterBar({ locale, filters, route, stallName, extra, editor, editHref, className }: ActiveFilterBarProps) {
   const chips = activeChips(filters, locale, stallName);
   const count = countActiveValues(filters);
   const cleared = { ...defaultFilters(), sort: filters.sort, group: filters.group };
@@ -67,7 +69,7 @@ export function ActiveFilterBar({ locale, filters, route, stallName, editor, edi
           {chips.map((chip) => (
             <li key={chip.id}>
               <Link
-                href={eatHref(locale, route, chip.without)}
+                href={eatHref(locale, route, chip.without, extra)}
                 scroll={false}
                 className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)] rounded-pill border border-line-strong bg-surface-alt px-[var(--space-3)] py-[var(--space-1)] text-sm font-medium text-ink-900 no-underline hover:border-action hover:text-action"
               >
@@ -80,7 +82,7 @@ export function ActiveFilterBar({ locale, filters, route, stallName, editor, edi
             </li>
           ))}
           <li>
-            <Link href={eatHref(locale, route, cleared)} scroll={false} className="inline-flex min-h-[var(--target-min)] items-center text-sm">
+            <Link href={eatHref(locale, route, cleared, extra)} scroll={false} className="inline-flex min-h-[var(--target-min)] items-center text-sm">
               {t(EAT.clearAll, locale)}
             </Link>
           </li>

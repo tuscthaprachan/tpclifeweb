@@ -43,9 +43,7 @@ const STATIC_ROUTES = [
   "/eat/dishes",
   "/eat/stalls",
   "/eat/map",
-  "/eat/meal",
-  "/eat/week",
-  "/eat/group",
+  "/eat/plan",
   "/eat/what-is",
 ];
 

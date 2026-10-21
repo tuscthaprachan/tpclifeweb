@@ -16,6 +16,7 @@ import {
   DecideBlock,
   DishCard,
   ActiveFilterBar,
+  CheckedOnNote,
   EAT,
   EatTabs,
   eatHref,
@@ -24,8 +25,8 @@ import {
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Grid, Heading, Stack } from "@/components/ui";
-import { applyFilters, isMealDish } from "@/lib/canteen/filter";
-import { indexCanteen, stallOf } from "@/lib/canteen/derive";
+import { applyFilters, isMealDish, pickStarters } from "@/lib/canteen/filter";
+import { commonCheckedOn, indexCanteen, stallOf } from "@/lib/canteen/derive";
 import { countActiveValues } from "@/lib/canteen/params";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -45,9 +46,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const TOOLS = [
-  { route: "/eat/meal", title: "toolMeal", hint: "toolMealHint" },
-  { route: "/eat/week", title: "toolWeek", hint: "toolWeekHint" },
-  { route: "/eat/group", title: "toolGroup", hint: "toolGroupHint" },
+  { route: "/eat/plan", title: "toolPlan", hint: "toolPlanHint" },
   { route: "/eat/what-is", title: "toolWhatIs", hint: "toolWhatIsHint" },
   { route: "/eat/mine", title: "toolMine", hint: "toolMineHint" },
 ] as const;
@@ -96,9 +95,13 @@ export default async function EatHubPage({
     return stall ? pick(stall.name, locale) : undefined;
   };
 
-  const starters = applyFilters(data, filters, now, { locale })
-    .filter((dish) => isMealDish(dish, filters))
-    .slice(0, STARTER_COUNT);
+  const starters = pickStarters(
+    data,
+    applyFilters(data, filters, now, { locale }).filter((dish) => isMealDish(dish, filters)),
+    STARTER_COUNT,
+    filters,
+  );
+  const startersChecked = commonCheckedOn(starters);
   const filtered = countActiveValues(filters) > 0;
 
   return (
@@ -130,10 +133,11 @@ export default async function EatHubPage({
                 <Heading level={3} className="m-0 text-lg">
                   {t(EAT.startersTitle, locale)}
                 </Heading>
+                {startersChecked ? <CheckedOnNote checkedOn={startersChecked} locale={locale} /> : null}
                 <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">
                   {starters.map((dish) => (
                     <li key={dish._id} className="min-w-0">
-                      <DishCard dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={4} />
+                      <DishCard dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={4} hideChecked={dish.checkedOn === startersChecked} />
                     </li>
                   ))}
                 </Grid>

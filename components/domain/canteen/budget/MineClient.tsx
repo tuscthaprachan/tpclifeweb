@@ -293,7 +293,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
         ) : (
           <p className="m-0 text-ink-600">
             {t(BUDGET.savedWeekEmpty, locale)}{" "}
-            <Link href={localePath(locale, "/eat/week")}>{t(BUDGET.weekTitle, locale)}</Link>
+            <Link href={localePath(locale, "/eat/plan?mode=week")}>{t(BUDGET.weekTitle, locale)}</Link>
           </p>
         ),
       )}
@@ -341,7 +341,7 @@ function defaultsFrom(query: string) {
 
 /** The link that reopens a saved week: its seed and budget, its days and its dishes (kept, not locked). */
 function savedWeekHref(locale: Locale, week: SavedWeek): string {
-  const parts = [`budget=${week.budget}`, `days=${week.days.map((day) => day.weekday).join(",")}`, `seed=${encodeURIComponent(week.seed)}`];
+  const parts = ["mode=week", `budget=${week.budget}`, `days=${week.days.map((day) => day.weekday).join(",")}`, `seed=${encodeURIComponent(week.seed)}`];
   for (const day of week.days) parts.push(`keep.${day.weekday}=${encodeURIComponent(day.slug)}`);
-  return `${localePath(locale, "/eat/week")}?${parts.join("&")}`;
+  return `${localePath(locale, "/eat/plan")}?${parts.join("&")}`;
 }

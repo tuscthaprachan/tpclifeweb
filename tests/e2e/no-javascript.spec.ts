@@ -195,15 +195,15 @@ test("Decide for me redirects to a seeded URL and every action is a plain link",
 });
 
 /* ---- Budget tools and personal data ---- */
-test("/eat/meal budget form is a GET form and works without JavaScript", async ({ page }) => {
-  await page.goto(localePath("en", "/eat/meal?max=60"));
-  const form = page.locator('form[action$="/eat/meal"]').first();
+test("/eat/plan budget form is a GET form and works without JavaScript", async ({ page }) => {
+  await page.goto(localePath("en", "/eat/plan?max=60"));
+  const form = page.locator('form[action$="/eat/plan"]').first();
   await expect(form).toHaveAttribute("method", "get");
   await expect(form.getByRole("button", { name: "Find meals" })).toBeVisible();
 });
 
-test("/eat/week redirects to a shareable seed and locks work as links", async ({ page }) => {
-  await page.goto(localePath("en", "/eat/week?budget=300"));
+test("/eat/plan?mode=week redirects to a shareable seed and locks work as links", async ({ page }) => {
+  await page.goto(localePath("en", "/eat/plan?mode=week&budget=300"));
   await expect(page).toHaveURL(/seed=[a-z0-9]+/);
   const lock = page.getByRole("link", { name: /^Lock: Monday/ });
   test.skip((await lock.count()) === 0, "No canteen data in this environment, so there is no plan.");
@@ -220,7 +220,7 @@ test("/eat/mine explains that it needs JavaScript", async ({ page }) => {
 
 /* ---- Eat as a group: the builder round trips as a plain GET form ---- */
 test("Eat as a group: Add another person works without JavaScript", async ({ page }) => {
-  await page.goto(localePath("en", "/eat/group?p=Mint.50~Ben"));
+  await page.goto(localePath("en", "/eat/plan?mode=group&p=Mint.50~Ben"));
   const add = page.getByRole("button", { name: "Add another person" });
   test.skip((await add.count()) === 0, "No canteen data in this environment, so there is no group builder.");
 

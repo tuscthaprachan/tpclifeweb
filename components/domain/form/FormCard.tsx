@@ -8,7 +8,7 @@ import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { FormRecord } from "@/lib/sanity/types";
-import { CATEGORY_LABEL_KEY } from "./labels";
+import { CATEGORY_LABEL_KEY, signInBadgeLabel } from "./labels";
 
 interface FormCardProps {
   form: FormRecord;
@@ -43,7 +43,7 @@ export function FormCard({ form, locale, headingLevel, className }: FormCardProp
       </Stack>
 
       {form.requiresSignIn ? (
-        <StatusTag tone="warning" label={UI.requiresSignIn[locale]} className="mt-[var(--space-3)] self-start" />
+        <StatusTag tone="warning" label={signInBadgeLabel(form.signInType, locale)} className="mt-[var(--space-3)] self-start" />
       ) : null}
     </div>
   );

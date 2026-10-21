@@ -58,7 +58,9 @@ import { ThemeToggle } from "./ThemeToggle";
  * with long Thai labels ("ทำเนียบชุมนุมและหน่วยงาน", "ความคืบหน้านโยบาย"),
  * measuring ~956px including gaps. That does not fit in a 768–1024px row at
  * any reasonable type size, so `lg` is the point this component switches
- * away from the mobile disclosure menu.
+ * away from the mobile disclosure menu. (The desktop row itself now shows
+ * only the pinned items plus a "More" disclosure, see nav-groups.ts, but
+ * the mobile menu still lists every item.)
  *
  * At `lg` and up the header is deliberately TWO rows, not one:
  *

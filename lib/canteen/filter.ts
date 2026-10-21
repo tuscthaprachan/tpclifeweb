@@ -148,6 +148,36 @@ export function sortDishes(
 }
 
 /**
+ * The first `count` dishes, cheapest first, with at most one per stall. The
+ * order uses only the price, the stall number and the slug, never a name, so
+ * every language picks the same dishes.
+ */
+export function pickStarters(
+  data: CanteenData,
+  dishes: readonly CanteenDish[],
+  count: number,
+  filters: Pick<CanteenFilters, "variants">,
+): CanteenDish[] {
+  const price = (dish: CanteenDish) => effectivePrice(dish, filters.variants);
+  const ordered = [...dishes].sort(
+    (a, b) =>
+      price(a) - price(b) ||
+      stallNumberOf(data, a) - stallNumberOf(data, b) ||
+      a.slug.current.localeCompare(b.slug.current) ||
+      a._id.localeCompare(b._id),
+  );
+  const seen = new Set<string>();
+  const starters: CanteenDish[] = [];
+  for (const dish of ordered) {
+    if (seen.has(dish.stall._ref)) continue;
+    seen.add(dish.stall._ref);
+    starters.push(dish);
+    if (starters.length >= count) break;
+  }
+  return starters;
+}
+
+/**
  * The dishes that pass every filter, sorted as the filters ask. `now` is
  * only used by the `open` filter and is passed in so the result is
  * reproducible.

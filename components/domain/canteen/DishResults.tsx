@@ -2,11 +2,12 @@ import Link from "next/link";
 import { Grid } from "@/components/ui/Grid";
 import { Heading } from "@/components/ui/Heading";
 import type { HeadingLevel } from "@/lib/a11y";
-import { canonicalOf, stallOf } from "@/lib/canteen/derive";
+import { canonicalOf, commonCheckedOn, stallOf } from "@/lib/canteen/derive";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { CanteenData, CanteenDish } from "@/lib/sanity/types";
 import { CanonicalCompare } from "./CanonicalCompare";
+import { CheckedOnNote } from "./CheckedOnNote";
 import { DishCard } from "./DishCard";
 import type { PagedGroup } from "./paginate";
 import { stallHref } from "./links";
@@ -23,12 +24,12 @@ interface DishResultsProps {
 }
 
 /** A dish list as a grid of cards. */
-function DishGrid({ data, locale, filters, dishes, headingLevel }: { data: CanteenData; locale: Locale; filters: CanteenFilters; dishes: CanteenDish[]; headingLevel: HeadingLevel }) {
+function DishGrid({ data, locale, filters, dishes, headingLevel, checkedOn }: { data: CanteenData; locale: Locale; filters: CanteenFilters; dishes: CanteenDish[]; headingLevel: HeadingLevel; checkedOn: string | undefined }) {
   return (
     <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">
       {dishes.map((dish) => (
         <li key={dish._id} className="min-w-0">
-          <DishCard dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={headingLevel} />
+          <DishCard dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={headingLevel} hideChecked={dish.checkedOn === checkedOn} />
         </li>
       ))}
     </Grid>
@@ -43,14 +44,25 @@ function DishGrid({ data, locale, filters, dishes, headingLevel }: { data: Cante
  */
 export function DishResults({ data, locale, filters, groups, headingLevel = 3 }: DishResultsProps) {
   const cardLevel = Math.min(6, headingLevel + 1) as HeadingLevel;
+  const cardDishes = groups
+    .filter((group) => filters.group !== "canonical" || !group.dishes[0] || !canonicalOf(data, group.dishes[0]))
+    .flatMap((group) => group.dishes);
+  const checkedOn = commonCheckedOn(cardDishes);
+  const note = checkedOn ? <CheckedOnNote checkedOn={checkedOn} locale={locale} /> : null;
 
   if (filters.group === "none") {
     const dishes = groups.flatMap((group) => group.dishes);
-    return <DishGrid data={data} locale={locale} filters={filters} dishes={dishes} headingLevel={headingLevel} />;
+    return (
+      <div className="flex flex-col gap-[var(--space-3)]">
+        {note}
+        <DishGrid data={data} locale={locale} filters={filters} dishes={dishes} headingLevel={headingLevel} checkedOn={checkedOn} />
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-col gap-[var(--space-8)]">
+      {note}
       {groups.map((group) => {
         if (filters.group === "stall") {
           const stall = group.stall;
@@ -63,7 +75,7 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
                   t(EAT.stallThing, locale)
                 )}
               </Heading>
-              <DishGrid data={data} locale={locale} filters={filters} dishes={group.dishes} headingLevel={cardLevel} />
+              <DishGrid data={data} locale={locale} filters={filters} dishes={group.dishes} headingLevel={cardLevel} checkedOn={checkedOn} />
             </section>
           );
         }
@@ -76,7 +88,7 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
               <Heading level={headingLevel} visualLevel={3} className="m-0">
                 {t(EAT.otherDishes, locale)}
               </Heading>
-              <DishGrid data={data} locale={locale} filters={filters} dishes={group.dishes} headingLevel={cardLevel} />
+              <DishGrid data={data} locale={locale} filters={filters} dishes={group.dishes} headingLevel={cardLevel} checkedOn={checkedOn} />
             </section>
           );
         }

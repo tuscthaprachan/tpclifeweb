@@ -56,8 +56,11 @@ export function ShuttleCountdown({ locale, targetStopMinutesOfDay, initialMinute
   }, [targetStopMinutesOfDay]);
 
   return (
-    <span {...liveRegionProps("polite")}>
-      {minutesUntil <= 0 ? UI.departingNow[locale] : `${UI.departsIn[locale]} ${minutesUntil} ${UI.minutes[locale]}`}
-    </span>
+    <>
+      <span className="text-ink-600">{UI.scheduledShort[locale]} · </span>
+      <span {...liveRegionProps("polite")}>
+        {minutesUntil <= 0 ? UI.departingNow[locale] : `${UI.departsIn[locale]} ${minutesUntil} ${UI.minutes[locale]}`}
+      </span>
+    </>
   );
 }

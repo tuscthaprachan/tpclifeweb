@@ -57,7 +57,7 @@ export function EatFilteredLayout({ locale, data, filters, counts, route, displa
 
   return (
     <>
-      <ActiveFilterBar locale={locale} filters={filters} route={route} stallName={stallName} editor={form("dlg")} />
+      <ActiveFilterBar locale={locale} filters={filters} route={route} stallName={stallName} extra={carry} editor={form("dlg")} />
 
       {/*
         The summary bar is sticky under the sticky header, so anything focused below it needs room for both
