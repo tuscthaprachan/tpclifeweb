@@ -693,6 +693,10 @@ export interface CanteenDish extends DocumentMeta {
   _type: "canteenDish";
   /** As the stall writes it. */
   name: LocaleString;
+  /** The Thai name in Latin letters (RTGS, no tones), for ordering out loud. */
+  romanised?: string;
+  /** The number the stall's board gives the dish, when it numbers its menu. */
+  menuNumber?: string;
   slug: SanitySlug;
   stall: SanityRef;
   canonical?: SanityRef;

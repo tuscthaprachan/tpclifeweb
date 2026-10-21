@@ -44,6 +44,18 @@ export const canteenDish = defineType({
       validation: (rule) => rule.required().custom(bilingualStringMessage),
     }),
     defineField({
+      name: "romanised",
+      title: "How to say it",
+      type: "string",
+      description: 'The Thai name in Latin letters (RTGS, no tone marks), for example "khao phat kai". Shown on English pages with a button that reads the Thai aloud.',
+    }),
+    defineField({
+      name: "menuNumber",
+      title: "Number on the board",
+      type: "string",
+      description: "Optional. The number the stall's board gives this dish, if it numbers its menu.",
+    }),
+    defineField({
       name: "slug",
       title: "Slug",
       type: "slug",

@@ -466,10 +466,15 @@ function buildDishes(
 
     if (price === undefined || checkedOn === undefined) continue;
 
+    const romanised = (row.cells.romanised ?? "").trim();
+    const menuNumber = (row.cells.menu_number ?? "").trim();
+
     docs.push({
       _id: docId("canteenDish", `${stallNumber}-${dishSlug}`),
       _type: "canteenDish",
       name: localeString(name.th, name.en),
+      ...(romanised ? { romanised } : {}),
+      ...(menuNumber ? { menuNumber } : {}),
       slug: slug(dishSlug),
       stall: reference(stallId),
       ...(canonicalSlug ? { canonical: reference(docId("canonicalDish", canonicalSlug)) } : {}),

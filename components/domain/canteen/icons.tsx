@@ -38,6 +38,17 @@ function Svg({ className, size = 16, children }: IconProps & { children: React.R
 /* ---- Dish types ---- */
 
 /** A bowl with a mound of rice. */
+/** A speaker with sound waves: hear a name read aloud. */
+export function SpeakerIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M3 8h3l4-3.5v11L6 12H3z" />
+      <path d="M13 7.5a3.5 3.5 0 010 5" />
+      <path d="M15 5.5a6.5 6.5 0 010 9" />
+    </Svg>
+  );
+}
+
 export function RiceIcon(props: IconProps) {
   return (
     <Svg {...props}>

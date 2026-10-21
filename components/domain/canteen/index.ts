@@ -20,6 +20,8 @@ export * from "./paginate";
 export * from "./DietTag";
 export * from "./PriceTag";
 export * from "./FavouriteToggle";
+export * from "./SpeakButton";
+export * from "./HowToSay";
 export * from "./DishCard";
 export * from "./StallCard";
 export * from "./CanonicalCompare";

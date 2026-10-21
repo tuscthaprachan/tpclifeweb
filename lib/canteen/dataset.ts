@@ -351,6 +351,8 @@ function buildDishes(stamp: string): CanteenDish[] {
     _createdAt: stamp,
     _updatedAt: stamp,
     name: { th: spec.th, en: spec.en },
+    ...(spec.romanised ? { romanised: spec.romanised } : {}),
+    ...(spec.menuNumber ? { menuNumber: spec.menuNumber } : {}),
     slug: slug(spec.slug),
     stall: ref(stallId(spec.stall)),
     ...(spec.canonical ? { canonical: ref(`survey-canonical-${spec.canonical}`) } : {}),

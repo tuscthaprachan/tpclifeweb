@@ -12,6 +12,7 @@ import { OTHER_LOCALE, pick as localised, type Locale } from "@/lib/i18n/config"
 import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
 
 import { DietTags } from "../DietTag";
+import { HowToSay } from "../HowToSay";
 import { DishTypeIcon, PinIcon } from "../icons";
 import { dishDietTags } from "../diet";
 import { TYPE_LABEL } from "../labels";
@@ -197,6 +198,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
             {otherName}
           </p>
         ) : null}
+        <HowToSay dish={dish} locale={locale} className="text-base" />
       </div>
 
       <div className="grid gap-[var(--space-4)] md:grid-cols-2 md:gap-[var(--space-6)]">

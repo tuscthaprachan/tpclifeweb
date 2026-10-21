@@ -13,6 +13,7 @@ import {
   DietTags,
   DishTypeIcon,
   EAT,
+  HowToSay,
   PinIcon,
   PriceTag,
   ALLERGEN_LABEL,
@@ -99,6 +100,7 @@ export default async function EatDishPage({
               {otherName}
             </p>
           ) : null}
+          <HowToSay dish={dish} locale={locale} className="text-base" />
         </Stack>
 
         <Grid minColumnWidth="18rem" space={4}>

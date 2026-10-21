@@ -7,6 +7,7 @@ import { pick, OTHER_LOCALE, type Locale } from "@/lib/i18n/config";
 import type { CanteenDish, CanteenStall } from "@/lib/sanity/types";
 import { DietTags } from "./DietTag";
 import { FavouriteToggle } from "./FavouriteToggle";
+import { HowToSay } from "./HowToSay";
 import { PriceTag } from "./PriceTag";
 import { dishDietTags } from "./diet";
 import { DishTypeIcon, PinIcon } from "./icons";
@@ -61,6 +62,7 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
             {otherName}
           </p>
         ) : null}
+        <HowToSay dish={dish} locale={locale} />
       </div>
 
       <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} />

@@ -186,6 +186,9 @@ export const EAT = {
 
   /* ---- Favourite toggle ---- */
   favouriteLabel: { th: "เมนูโปรด", en: "Favourite" },
+  sayLabel: { th: "สั่งว่า", en: "To order, say" },
+  hearLabel: { th: "ฟังเสียงภาษาไทย", en: "Hear it in Thai" },
+  menuNumberLabel: { th: "เมนูหมายเลข", en: "Number on the board:" },
   favouriteFailed: { th: "เก็บไม่ได้ ที่เก็บข้อมูลในเบราว์เซอร์ถูกปิดอยู่", en: "Could not save. Browser storage is switched off." },
 
 } as const satisfies Record<string, Bilingual>;

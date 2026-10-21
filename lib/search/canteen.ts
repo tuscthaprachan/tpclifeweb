@@ -72,6 +72,7 @@ export function canteenSearchRecords(data: CanteenData): SearchRecord[] {
       haystack: join(
         dish.name?.th,
         dish.name?.en,
+        dish.romanised,
         stall?.name?.th,
         stall?.name?.en,
         canonical?.name?.th,
