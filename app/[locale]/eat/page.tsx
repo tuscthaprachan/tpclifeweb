@@ -5,8 +5,7 @@
  * week, group, explainers). Everything carries the current filters.
  *
  * Reads the whole canteen dataset once (`getCanteenData`) and works without
- * JavaScript. Honest by construction: the glance line is computed from the
- * surveyed dishes, hours are labelled as scheduled, and nothing says live.
+ * JavaScript. Nothing on it says live.
  */
 
 import type { Metadata } from "next";
@@ -19,15 +18,14 @@ import {
   ActiveFilterBar,
   EAT,
   EatTabs,
-  eat,
   eatHref,
   readFilters,
   t,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Grid, Heading, InsetText, Stack, Timestamp } from "@/components/ui";
+import { Container, EmptyState, Grid, Heading, InsetText, Stack } from "@/components/ui";
 import { applyFilters, isMealDish } from "@/lib/canteen/filter";
-import { closesAt, indexCanteen, medianRicePrice, priceRange, stallOf } from "@/lib/canteen/derive";
+import { indexCanteen, stallOf } from "@/lib/canteen/derive";
 import { countActiveValues } from "@/lib/canteen/params";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -98,14 +96,6 @@ export default async function EatHubPage({
     return stall ? pick(stall.name, locale) : undefined;
   };
 
-  // The glance line. Each piece is left out when it cannot be known.
-  const closes = closesAt(data.settings, undefined, now);
-  const range = priceRange(data.dishes);
-  const rice = medianRicePrice(data);
-  const checked = data.dishes.map((dish) => dish.checkedOn).filter(Boolean).sort();
-  const oldest = checked[0];
-  const newest = checked[checked.length - 1];
-
   const starters = applyFilters(data, filters, now, { locale })
     .filter((dish) => isMealDish(dish, filters))
     .slice(0, STARTER_COUNT);
@@ -128,38 +118,6 @@ export default async function EatHubPage({
         ) : null}
 
         <DecideBlock locale={locale} filters={filters} />
-
-        <section aria-labelledby="eat-glance-title">
-          <Stack space={2}>
-            <Heading level={2} id="eat-glance-title" className="m-0 text-xl">
-              {t(EAT.glanceTitle, locale)}
-            </Heading>
-            <p className="m-0 text-ink-900">
-              {[
-                closes ? eat.openUntil(locale, closes) : null,
-                range ? eat.dishesFrom(locale, data.dishes.length, range.min) : null,
-                rice !== null ? eat.ricePlate(locale, rice) : null,
-              ]
-                .filter(Boolean)
-                .join(" ")}
-            </p>
-            <p className="m-0 text-sm text-ink-600">
-              {oldest && newest ? (
-                oldest === newest ? (
-                  <>
-                    {t(EAT.priceCheckedOn, locale)} <Timestamp value={newest} locale={locale} />.{" "}
-                  </>
-                ) : (
-                  <>
-                    {t(EAT.pricesCheckedBetween, locale)} <Timestamp value={oldest} locale={locale} /> {t(EAT.andWord, locale)}{" "}
-                    <Timestamp value={newest} locale={locale} />.{" "}
-                  </>
-                )
-              ) : null}
-              {t(EAT.surveyNote, locale)}
-            </p>
-          </Stack>
-        </section>
 
         <section aria-labelledby="eat-browse-title">
           <Stack space={4}>

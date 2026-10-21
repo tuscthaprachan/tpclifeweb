@@ -36,8 +36,6 @@ export const EAT = {
     th: "เลือกเมนูในโรงอาหารจากราคา อาหารที่กินได้ และอารมณ์ตอนนี้ หรือให้เราสุ่มให้ก็ได้",
     en: "Pick something at the canteen by price, diet and mood. Or let us choose for you.",
   },
-  pricesCheckedBetween: { th: "ตรวจราคาระหว่าง", en: "Prices checked between" },
-  andWord: { th: "ถึง", en: "and" },
   surveyNote: {
     th: "ราคามาจากการสำรวจ ไม่ใช่ข้อมูลสด ทุกราคาบอกวันที่ตรวจไว้",
     en: "Prices come from our survey, not a live feed. Every price shows the day it was checked.",
@@ -82,7 +80,6 @@ export const EAT = {
   dietLegend: { th: "อาหารที่กินได้", en: "Diet" },
 
   /* ---- Hub ---- */
-  glanceTitle: { th: "โรงอาหารโดยสรุป", en: "The canteen at a glance" },
   browseTitle: { th: "เลือกดูเอง", en: "Browse" },
   startersTitle: { th: "เมนูราคาเบา ๆ ให้เริ่ม", en: "Easy on the wallet" },
   seeAllDishes: { th: "ดูเมนูทั้งหมด", en: "See all dishes" },
@@ -275,20 +272,6 @@ export const eat = {
   /** "Scheduled hours: open until 15:00". Never "open now": hours are a published schedule. */
   openUntil(locale: Locale, time: string): string {
     return locale === "th" ? `ตามเวลาทำการ เปิดถึง ${time} น.` : `Scheduled hours: open until ${time}.`;
-  },
-
-  /** "214 dishes from 25 baht". */
-  dishesFrom(locale: Locale, count: number, price: number): string {
-    return locale === "th"
-      ? `${n(count, locale)} เมนู เริ่มต้น ${n(price, locale)} บาท`
-      : `${n(count, locale)} ${count === 1 ? "dish" : "dishes"} from ${n(price, locale)} baht.`;
-  },
-
-  /** "A plate of rice usually costs about 45 baht". */
-  ricePlate(locale: Locale, price: number): string {
-    return locale === "th"
-      ? `ข้าวหนึ่งจานราคากลางประมาณ ${n(price, locale)} บาท`
-      : `A plate of rice usually costs about ${n(price, locale)} baht.`;
   },
 
   /** "Stall 3". */
