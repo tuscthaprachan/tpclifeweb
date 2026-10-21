@@ -1,5 +1,5 @@
 /**
- * Budget tools and personal data for /eat/meal, /eat/week and /eat/mine.
+ * Budget tools and personal data for /eat/plan and /eat/mine.
  * `SpendThisWeek` is a client island that works anywhere.
  */
 

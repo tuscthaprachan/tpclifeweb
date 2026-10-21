@@ -41,7 +41,7 @@ interface GroupResultsProps {
   locale: Locale;
   data: CanteenData;
   state: GroupState;
-  /** The page path, for example "/th/eat/group". */
+  /** The page path, for example "/th/eat/plan?mode=group". */
   path: string;
   now: Date;
 }

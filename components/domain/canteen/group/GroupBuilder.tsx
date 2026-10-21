@@ -20,7 +20,7 @@ import {
 
 interface GroupBuilderProps {
   locale: Locale;
-  /** The page path, for example "/th/eat/group". The form is a GET to it. */
+  /** The page path, for example "/th/eat/plan?mode=group". The form is a GET to it, and its query rides along as hidden fields. */
   action: string;
   /** The people in the URL. At least one (a blank one when the URL has none). */
   initialPeople: Person[];
@@ -127,12 +127,16 @@ export function GroupBuilder({ locale, action, initialPeople, strategy, seed }: 
     () => window.location.origin,
     () => "",
   );
+  const [formAction = action, actionQuery = ""] = action.split("?");
   const shareValue = `${origin}${groupHref(action, { people, strategy, seed })}`;
 
   return (
-    <form method="get" action={action} onSubmit={onSubmit} className="flex flex-col gap-[var(--space-6)]" aria-labelledby="builder">
+    <form method="get" action={formAction} onSubmit={onSubmit} className="flex flex-col gap-[var(--space-6)]" aria-labelledby="builder">
       {/* Enter in a text box must mean "Show results", not the first Remove button. */}
       <button type="submit" name="act" value="show" hidden tabIndex={-1} aria-hidden="true" />
+      {[...new URLSearchParams(actionQuery).entries()].map(([name, value]) => (
+        <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
+      ))}
       <input type="hidden" name="strat" value={strategy} />
       {seed ? <input type="hidden" name="seed" value={seed} /> : null}
 

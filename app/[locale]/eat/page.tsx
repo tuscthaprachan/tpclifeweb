@@ -46,9 +46,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const TOOLS = [
-  { route: "/eat/meal", title: "toolMeal", hint: "toolMealHint" },
-  { route: "/eat/week", title: "toolWeek", hint: "toolWeekHint" },
-  { route: "/eat/group", title: "toolGroup", hint: "toolGroupHint" },
+  { route: "/eat/plan", title: "toolPlan", hint: "toolPlanHint" },
   { route: "/eat/what-is", title: "toolWhatIs", hint: "toolWhatIsHint" },
   { route: "/eat/mine", title: "toolMine", hint: "toolMineHint" },
 ] as const;

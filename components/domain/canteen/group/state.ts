@@ -118,14 +118,15 @@ export function groupQuery(state: Pick<GroupState, "people" | "strategy"> & Part
   return parts.join("&");
 }
 
-/** A path with the canonical query and an optional fragment. */
+/** A path with the canonical query and an optional fragment. The path may carry a query of its own, such as `?mode=group`. */
 export function groupHref(
   path: string,
   state: Pick<GroupState, "people" | "strategy"> & Partial<GroupState>,
   hash?: string,
 ): string {
   const query = groupQuery(state);
-  return `${path}${query ? `?${query}` : ""}${hash ? `#${hash}` : ""}`;
+  const joiner = path.includes("?") ? "&" : "?";
+  return `${path}${query ? `${joiner}${query}` : ""}${hash ? `#${hash}` : ""}`;
 }
 
 /* ------------------------------------------------------------------ *

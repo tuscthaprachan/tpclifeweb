@@ -16,7 +16,7 @@ interface WeekFormProps {
 }
 
 /**
- * The week's form: a plain GET to /eat/week. The days send an empty `days`
+ * The week's form: a plain GET to the week mode of /eat/plan. The days send an empty `days`
  * first, so unticking every day reads as "no days" and not "use the default".
  * The seed, the pins and the filters ride along as hidden fields, so changing
  * the budget or the days keeps the plan as stable as the change allows.
@@ -31,7 +31,7 @@ export function WeekForm({ locale, request, filters }: WeekFormProps) {
       <Heading level={2} id="week-form-title" className="m-0 mb-[var(--space-4)] text-xl">
         {t(BUDGET.weekFormTitle, locale)}
       </Heading>
-      <form method="get" action={localePath(locale, "/eat/week")} className="flex flex-col gap-[var(--space-4)]">
+      <form method="get" action={localePath(locale, "/eat/plan")} className="flex flex-col gap-[var(--space-4)]">
         {[...hidden.entries()].map(([name, value]) => (
           <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
         ))}

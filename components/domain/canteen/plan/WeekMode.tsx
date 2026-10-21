@@ -9,9 +9,8 @@
  * this week to my device" and a print button.
  */
 
-import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { EAT, EatFilteredLayout, eatHref, readFilters, redirectToTidyQuery, t, type Bilingual } from "@/components/domain/canteen";
 import { SaveWeekButton } from "@/components/domain/canteen/budget/SaveWeekButton";
@@ -20,28 +19,17 @@ import { WeekForm } from "@/components/domain/canteen/budget/WeekForm";
 import { WeekPlanner } from "@/components/domain/canteen/budget/WeekPlanner";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
 import { allPins, clearPins, parseWeekRequest, weekHref, weekQuery, type WeekRequest } from "@/components/domain/canteen/budget/week-params";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, InsetText, Stack, WarningText } from "@/components/ui";
+import { EmptyState, Heading, InsetText, Stack, WarningText } from "@/components/ui";
 import { facetCounts } from "@/lib/canteen/filter";
 import { countActiveValues, defaultFilters, type CanteenFilters } from "@/lib/canteen/params";
 import { newSeed } from "@/lib/canteen/random";
 import { planWeek, type WeekFailure, type WeekResult } from "@/lib/canteen/week";
-import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
-import { alternatesFor } from "@/lib/i18n/metadata";
-import { UI } from "@/lib/i18n/strings";
+import { localePath, type Locale } from "@/lib/i18n/config";
 import { getCanteenData } from "@/lib/sanity/queries";
 
-const ROUTE = "/eat/week";
+import { PLAN_ROUTE } from "./mode";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale: rawLocale } = await params;
-  const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
-  return {
-    alternates: alternatesFor(locale, ROUTE),
-    title: t(BUDGET.weekTitle, locale),
-    description: t(BUDGET.weekIntro, locale),
-  };
-}
+const ROUTE = PLAN_ROUTE;
 
 const FAILURE_TEXT: Record<WeekFailure, Bilingual> = {
   noDays: BUDGET.failNoDays,
@@ -53,18 +41,13 @@ const FAILURE_TEXT: Record<WeekFailure, Bilingual> = {
   noPlan: BUDGET.failNoPlan,
 };
 
-export default async function EatWeekPage({
-  params,
-  searchParams,
+export async function WeekMode({
+  locale,
+  query,
 }: {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  locale: Locale;
+  query: Record<string, string | string[] | undefined>;
 }) {
-  const { locale: rawLocale } = await params;
-  if (!isLocale(rawLocale)) notFound();
-  const locale: Locale = rawLocale;
-
-  const query = await searchParams;
   redirectToTidyQuery(localePath(locale, ROUTE), query);
   const filters = readFilters(query);
   const request = parseWeekRequest(query);
@@ -78,33 +61,8 @@ export default async function EatWeekPage({
   const data = await getCanteenData();
   const now = new Date();
 
-  const breadcrumbs = (
-    <Breadcrumbs
-      locale={locale}
-      items={[
-        { label: UI.home[locale], path: "/" },
-        { label: t(EAT.title, locale), path: "/eat" },
-        { label: t(BUDGET.weekTitle, locale) },
-      ]}
-    />
-  );
-  const header = (
-    <Stack space={2}>
-      <Heading level={1} className="text-3xl">{t(BUDGET.weekTitle, locale)}</Heading>
-      <p className="m-0 text-ink-600">{t(BUDGET.weekIntro, locale)}</p>
-    </Stack>
-  );
-
   if (data.dishes.length === 0) {
-    return (
-      <Container className="pb-8 pt-2">
-        {breadcrumbs}
-        <Stack space={8}>
-          {header}
-          <EmptyState title={t(EAT.noDataTitle, locale)}>{t(EAT.noDataBody, locale)}</EmptyState>
-        </Stack>
-      </Container>
-    );
+    return <EmptyState title={t(EAT.noDataTitle, locale)}>{t(EAT.noDataBody, locale)}</EmptyState>;
   }
 
   const counts = facetCounts(data, filters, now);
@@ -157,28 +115,24 @@ export default async function EatWeekPage({
   const carry = Object.fromEntries(new URLSearchParams(weekQuery(request, defaultFilters())).entries());
 
   return (
-    <Container className="pb-8 pt-2">
-      <div className="no-print">{breadcrumbs}</div>
-      <Stack space={6}>
-        <div className="no-print">{header}</div>
-        <WeekForm locale={locale} request={request} filters={filters} />
-        <div className="no-print">
-          <SpendThisWeek locale={locale} explain={false} />
-          <p className="m-0 mt-[var(--space-2)] text-base">
-            <Link href={localePath(locale, "/eat/mine")}>{t(BUDGET.mineTitle, locale)}</Link>
-          </p>
-        </div>
-        <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry}>
-          <Stack space={6}>
-            {body}
-            <InsetText className="no-print">
-              <p className="m-0 text-sm text-ink-600">{t(BUDGET.weekPriceNote, locale)}</p>
-              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
-            </InsetText>
-          </Stack>
-        </EatFilteredLayout>
-      </Stack>
-    </Container>
+    <Stack space={6}>
+      <WeekForm locale={locale} request={request} filters={filters} />
+      <div className="no-print">
+        <SpendThisWeek locale={locale} explain={false} />
+        <p className="m-0 mt-[var(--space-2)] text-base">
+          <Link href={localePath(locale, "/eat/mine")}>{t(BUDGET.mineTitle, locale)}</Link>
+        </p>
+      </div>
+      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry}>
+        <Stack space={6}>
+          {body}
+          <InsetText className="no-print">
+            <p className="m-0 text-sm text-ink-600">{t(BUDGET.weekPriceNote, locale)}</p>
+            <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
+          </InsetText>
+        </Stack>
+      </EatFilteredLayout>
+    </Stack>
   );
 }
 
@@ -269,7 +223,7 @@ function FailureBlock({
             {countActiveValues(filters) > 0 ? (
               <li>
                 <Link
-                  href={eatHref(locale, ROUTE, defaultFilters(), { budget: request.budget, days: request.days.join(","), seed: request.seed })}
+                  href={eatHref(locale, ROUTE, defaultFilters(), { mode: "week", budget: request.budget, days: request.days.join(","), seed: request.seed })}
                   className="inline-flex min-h-[var(--target-min)] items-center font-medium"
                 >
                   {t(EAT.clearAll, locale)}

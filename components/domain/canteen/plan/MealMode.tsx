@@ -8,9 +8,7 @@
  * main's stall. Server rendered end to end: it works with JavaScript off.
  */
 
-import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 import {
   EAT,
@@ -24,43 +22,27 @@ import {
 import { ComboCard } from "@/components/domain/canteen/budget/ComboCard";
 import { MealForm } from "@/components/domain/canteen/budget/MealForm";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Button, Container, EmptyState, Heading, InsetText, Stack } from "@/components/ui";
+import { Button, EmptyState, Heading, InsetText, Stack } from "@/components/ui";
 import { mealCombos } from "@/lib/canteen/combos";
 import { effectivePrice, indexCanteen } from "@/lib/canteen/derive";
 import { facetCounts, matchesFilters, relaxSuggestions } from "@/lib/canteen/filter";
 import { MAX_BUDGET } from "@/lib/canteen/params";
-import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
-import { alternatesFor } from "@/lib/i18n/metadata";
-import { UI } from "@/lib/i18n/strings";
+import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { getCanteenData } from "@/lib/sanity/queries";
 
-const ROUTE = "/eat/meal";
+import { PLAN_ROUTE } from "./mode";
+
+const ROUTE = PLAN_ROUTE;
 /** Meals shown. The list is already ordered best first. */
 const SHOWN = 12;
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale: rawLocale } = await params;
-  const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
-  return {
-    alternates: alternatesFor(locale, ROUTE),
-    title: t(BUDGET.mealTitle, locale),
-    description: t(BUDGET.mealIntro, locale),
-  };
-}
-
-export default async function EatMealPage({
-  params,
-  searchParams,
+export async function MealMode({
+  locale,
+  query,
 }: {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  locale: Locale;
+  query: Record<string, string | string[] | undefined>;
 }) {
-  const { locale: rawLocale } = await params;
-  if (!isLocale(rawLocale)) notFound();
-  const locale: Locale = rawLocale;
-
-  const query = await searchParams;
   redirectToTidyQuery(localePath(locale, ROUTE), query);
   const filters = readFilters(query);
   const sameValue = Array.isArray(query.same) ? query.same[0] : query.same;
@@ -68,33 +50,8 @@ export default async function EatMealPage({
   const data = await getCanteenData();
   const now = new Date();
 
-  const breadcrumbs = (
-    <Breadcrumbs
-      locale={locale}
-      items={[
-        { label: UI.home[locale], path: "/" },
-        { label: t(EAT.title, locale), path: "/eat" },
-        { label: t(BUDGET.mealTitle, locale) },
-      ]}
-    />
-  );
-  const header = (
-    <Stack space={2}>
-      <Heading level={1} className="text-3xl">{t(BUDGET.mealTitle, locale)}</Heading>
-      <p className="m-0 text-ink-600">{t(BUDGET.mealIntro, locale)}</p>
-    </Stack>
-  );
-
   if (data.dishes.length === 0) {
-    return (
-      <Container className="pb-8 pt-2">
-        {breadcrumbs}
-        <Stack space={8}>
-          {header}
-          <EmptyState title={t(EAT.noDataTitle, locale)}>{t(EAT.noDataBody, locale)}</EmptyState>
-        </Stack>
-      </Container>
-    );
+    return <EmptyState title={t(EAT.noDataTitle, locale)}>{t(EAT.noDataBody, locale)}</EmptyState>;
   }
 
   const index = indexCanteen(data);
@@ -191,21 +148,17 @@ export default async function EatMealPage({
   }
 
   return (
-    <Container className="pb-8 pt-2">
-      {breadcrumbs}
-      <Stack space={6}>
-        {header}
-        <MealForm locale={locale} filters={filters} sameStall={sameStall} />
-        <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry}>
-          <Stack space={6}>
-            {results}
-            <InsetText>
-              <p className="m-0 text-sm text-ink-600">{t(BUDGET.mealPriceNote, locale)}</p>
-              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
-            </InsetText>
-          </Stack>
-        </EatFilteredLayout>
-      </Stack>
-    </Container>
+    <Stack space={6}>
+      <MealForm locale={locale} filters={filters} sameStall={sameStall} />
+      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry}>
+        <Stack space={6}>
+          {results}
+          <InsetText>
+            <p className="m-0 text-sm text-ink-600">{t(BUDGET.mealPriceNote, locale)}</p>
+            <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
+          </InsetText>
+        </Stack>
+      </EatFilteredLayout>
+    </Stack>
   );
 }

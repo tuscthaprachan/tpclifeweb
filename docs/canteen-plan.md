@@ -36,9 +36,7 @@ New top-level section, `/eat` (Thai label "กินอะไรดี", English
 /[locale]/eat/stalls               Stall list in stall number order
 /[locale]/eat/stalls/[slug]        Stall page: full menu, position on map
 /[locale]/eat/pick                 Randomiser result (?seed=&mode= + filter params)
-/[locale]/eat/meal                 Budget combos: "I have X baht"
-/[locale]/eat/week                 Week planner
-/[locale]/eat/group                Group mode builder and result
+/[locale]/eat/plan                 Planners, switched by ?mode=: meal (default), week, group
 /[locale]/eat/map                  Full canteen map
 /[locale]/eat/what-is              Dish explainer index (canonical dishes, for non-Thai readers)
 /[locale]/eat/mine                 Favourites, history, dislikes (device only)
@@ -190,7 +188,9 @@ Lives at `/eat/pick`. Takes every filter param plus:
 
 **Copy** (casual voice allowed here): "เอาอันนี้ไป", "Go with this", "Not feeling it", "Spin again". Still no em dashes, both languages written natively.
 
-### 7.2 Meal for my budget (`/eat/meal`)
+### 7.2 Meal for my budget (`/eat/plan`, `mode=meal`)
+
+One page, three planners: `/eat/plan` has a segmented control of links (`?mode=meal` the default, `week`, `group`) and each mode keeps its own query parameters. The old /eat/meal, /eat/week and /eat/group addresses are gone and return 404.
 
 "I have 60 baht." Enumerates combinations of one main, plus optionally one drink and one dessert, whose total is at or under the budget, honouring every other filter.
 - Ranked by how close the total gets to the budget without going over (best use of money), then by fewest stalls to walk to.
@@ -199,7 +199,7 @@ Lives at `/eat/pick`. Takes every filter param plus:
 - "Random combo" uses the randomiser in `mode=meal`.
 - Pure function `lib/canteen/combos.ts`, at most a few thousand combinations, fine on the server and the client.
 
-### 7.3 Plan my week (`/eat/week`)
+### 7.3 Plan my week (`/eat/plan?mode=week`)
 
 Set a weekly budget and the days you are on campus. The planner picks one lunch per day:
 - total under budget, no stall twice, no canonical dish twice, respecting all filters
@@ -209,7 +209,7 @@ Set a weekly budget and the days you are on campus. The planner picks one lunch 
 
 **Spend log** (device only): every "I'll eat this" adds the price to this week's tally. The hub shows "You've logged 230 of 400 baht this week". Clearly labelled as only counting what you tapped.
 
-### 7.4 Eat as a group (`/eat/group`)
+### 7.4 Eat as a group (`/eat/plan?mode=group`)
 
 No server state, everything in the URL.
 
