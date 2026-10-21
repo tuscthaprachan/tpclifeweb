@@ -17,6 +17,10 @@ interface PriceTagProps {
    * "full" is for the dish page: the price and a Details with every option.
    */
   size?: "compact" | "full";
+  /** Put the extras note on the price line instead of under it. */
+  inlineExtras?: boolean;
+  /** Leave out the "Price checked on" line. */
+  hideChecked?: boolean;
   className?: string;
 }
 
@@ -24,15 +28,20 @@ interface PriceTagProps {
  * A surveyed price. It always carries the day it was checked and never says
  * "current" or "live": the figure is what the board said on that day.
  */
-export function PriceTag({ price, variants = [], checkedOn, locale, size = "compact", className }: PriceTagProps) {
+export function PriceTag({ price, variants = [], checkedOn, locale, size = "compact", inlineExtras = false, hideChecked = false, className }: PriceTagProps) {
   const hasVariants = variants.length > 0;
   return (
     <div className={cx("flex flex-col gap-[var(--space-1)]", className)}>
-      <p className={cx("m-0 font-semibold text-ink-900", size === "full" ? "text-2xl" : "text-lg")}>{eat.baht(locale, price)}</p>
+      <p className={cx("m-0 font-semibold text-ink-900", size === "full" ? "text-2xl" : "text-lg")}>
+        {eat.baht(locale, price)}
+        {inlineExtras && size === "compact" && hasVariants ? (
+          <span className="text-sm font-normal text-ink-600"> · {t(EAT.extrasFrom, locale)}</span>
+        ) : null}
+      </p>
 
-      {size === "compact" && hasVariants ? <p className="m-0 text-sm text-ink-600">{t(EAT.extrasFrom, locale)}</p> : null}
+      {size === "compact" && hasVariants && !inlineExtras ? <p className="m-0 text-sm text-ink-600">{t(EAT.extrasFrom, locale)}</p> : null}
 
-      {checkedOn ? (
+      {checkedOn && !hideChecked ? (
         <p className="m-0 text-sm text-ink-600">
           {t(EAT.priceCheckedOn, locale)} <Timestamp value={checkedOn} locale={locale} />
         </p>

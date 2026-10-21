@@ -107,7 +107,6 @@ export default async function EatPickPage({
   const header = (
     <Stack space={2}>
       <Heading level={1} className="text-3xl">{PICK.title[locale]}</Heading>
-      <p className="m-0 text-ink-600">{PICK.intro[locale]}</p>
     </Stack>
   );
 

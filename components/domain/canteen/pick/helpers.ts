@@ -11,7 +11,6 @@
  * device data and replace the result; see `Randomiser.tsx`.
  */
 
-import { activeChips, type StallNamer } from "../chips";
 import { eatHref } from "../links";
 import { BIASES, createRng, type Bias, type LockKey, type PickLock } from "@/lib/canteen/random";
 import type { MealCombo } from "@/lib/canteen/combos";
@@ -151,14 +150,4 @@ export function reelNames(names: readonly string[], final: string, seed: string,
     [unique[i], unique[j]] = [unique[j]!, unique[i]!];
   }
   return [...unique.slice(0, Math.max(0, max - 1)), final];
-}
-
-/** The active filters as plain labels, for the "why it matched" line. */
-export function filterLabels(filters: CanteenFilters, locale: Locale, stallName?: StallNamer): string[] {
-  return activeChips(filters, locale, stallName).map((chip) => chip.label);
-}
-
-/** Joins labels the way the language reads a list. */
-export function joinLabels(labels: readonly string[], locale: Locale): string {
-  return labels.join(locale === "th" ? " " : ", ");
 }

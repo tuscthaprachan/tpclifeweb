@@ -180,6 +180,13 @@ test("Decide for me redirects to a seeded URL and every action is a plain link",
   const seeded = page.url();
   await page.reload();
   await expect(page).toHaveURL(seeded);
+  const stall = page.locator("article details").first();
+  await expect(stall).not.toHaveAttribute("open", "");
+  await stall.locator("summary").click();
+  await expect(stall).toHaveAttribute("open", "");
+  await expect(stall.getByRole("link", { name: "See the stall" })).toHaveAttribute("href", /\/eat\/stalls\//);
+  await expect(page.getByText("Price checked on")).toHaveCount(0);
+  await expect(page.getByText("Why it matched")).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Spin again" })).toHaveAttribute("href", /seed=/);
   await expect(page.getByRole("link", { name: "Not feeling it" })).toHaveAttribute("href", /not=/);
   await expect(page.getByRole("link", { name: "Go with this" })).toHaveAttribute("href", /\/eat\/stalls\//);

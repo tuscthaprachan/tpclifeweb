@@ -63,12 +63,6 @@ export const PICK = {
   shareHint: { th: "ใครเปิดลิงก์นี้ก็เจอผลเดียวกัน", en: "Anyone who opens this link sees the same pick." },
 
   /* ---- Result ---- */
-  whereTitle: { th: "ไปหาได้ที่ไหน", en: "Where to find it" },
-  whyTitle: { th: "ทำไมถึงตรง", en: "Why it matched" },
-  whyNoFilters: { th: "ไม่ได้ตั้งตัวกรอง เมนูไหนก็เข้าเงื่อนไข", en: "No filters are set, so anything counted." },
-  whyCheap: { th: "เมนูราคาถูกมีโอกาสถูกสุ่มมากกว่า", en: "Cheaper dishes were more likely to come up." },
-  whyKeepStall: { th: "ล็อกร้านเดิมไว้", en: "Kept the same stall." },
-  whyKeepCanonical: { th: "ล็อกเมนูแบบเดิมไว้", en: "Kept the same dish." },
   relaxedTitle: { th: "ผ่อนเงื่อนไขให้นิดหน่อย", en: "We relaxed something" },
   relaxedRepeat: {
     th: "เมนูนี้เพิ่งกินไปไม่นาน แต่ไม่มีอย่างอื่นที่ตรงเงื่อนไข เลยยอมให้ซ้ำ",
@@ -139,29 +133,14 @@ export const pickText = {
   announceMeal(locale: Locale, text: string): string {
     return locale === "th" ? `สุ่มชุดอาหารได้ ${text}` : `Picked a meal: ${text}`;
   },
-  /** "Matches under 50 baht, no pork". */
-  whyFilters(locale: Locale, list: string): string {
-    return locale === "th" ? `ตรงกับ ${list}` : `Matches ${list}.`;
-  },
-  whyPool(locale: Locale, count: number): string {
-    return locale === "th" ? `สุ่มจาก ${n(count, locale)} เมนู` : `Drawn from ${n(count, locale)} ${count === 1 ? "dish" : "dishes"}.`;
-  },
   /** "Keep noodles, change the stall". */
   keepType(locale: Locale, type: string): string {
     return locale === "th" ? `ขอ${type}เหมือนเดิม เปลี่ยนร้าน` : `Keep ${type.toLowerCase()}, change the stall`;
-  },
-  whyKeepType(locale: Locale, type: string): string {
-    return locale === "th" ? `ล็อกประเภทเดิมไว้ (${type})` : `Kept the same type (${type.toLowerCase()}).`;
   },
   mealTotal(locale: Locale, total: number, change: number, budget: number): string {
     return locale === "th"
       ? `รวม ${n(total, locale)} บาท จากงบ ${n(budget, locale)} บาท เหลือ ${n(change, locale)} บาท`
       : `${n(total, locale)} baht of your ${n(budget, locale)} baht, ${n(change, locale)} baht left`;
-  },
-  mealWhy(locale: Locale, budget: number): string {
-    return locale === "th"
-      ? `เลือกมาจากชุดที่ใช้งบ ${n(budget, locale)} บาทได้คุ้มที่สุด`
-      : `Drawn from the combinations that use ${n(budget, locale)} baht best.`;
   },
   reelLabel(locale: Locale): string {
     return locale === "th" ? "กำลังสุ่ม" : "Spinning";
