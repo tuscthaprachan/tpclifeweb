@@ -20,7 +20,6 @@
 
 import type { MetadataRoute } from "next";
 import { LOCALES, localePath } from "@/lib/i18n/config";
-import { isCanteenDemo } from "@/lib/canteen/demo";
 import { getCanteenData, getLostFoundPage } from "@/lib/sanity/queries";
 import { SITE_URL } from "@/lib/site-url";
 
@@ -59,10 +58,8 @@ const MAX_SITEMAP_ITEMS = 1000;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
 
-  // The /eat pages are noindex while demo data is on, so they are left out as well.
-  const routes = isCanteenDemo() ? STATIC_ROUTES.filter((route) => !route.startsWith("/eat")) : STATIC_ROUTES;
   const staticEntries = LOCALES.flatMap((locale) =>
-    routes.map((route) => ({
+    STATIC_ROUTES.map((route) => ({
       url: `${SITE_URL}${localePath(locale, route)}`,
       lastModified,
     })),
@@ -76,10 +73,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  // What to eat: one page per dish and per stall. `getCanteenData` returns an empty dataset
-  // when the CMS has none or cannot be reached, so this adds nothing rather than failing.
-  // Demo data is fictional, so none of its pages are listed.
-  const canteen = isCanteenDemo() ? { dishes: [], stalls: [], canonicals: [] } : await getCanteenData();
+  // What to eat: one page per dish and per stall, from Sanity or, until the survey is imported, the surveyed dataset.
+  const canteen = await getCanteenData();
   const canteenEntries = LOCALES.flatMap((locale) => [
     ...canteen.dishes.map((dish) => ({
       url: `${SITE_URL}${localePath(locale, `/eat/dishes/${dish.slug.current}`)}`,

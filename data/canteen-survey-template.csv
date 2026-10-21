@@ -11,7 +11,7 @@
 # type              rice noodles soup curryOverRice madeToOrder singlePlate snack drink dessert
 # course            main side drink dessert
 # protein           one or more of: pork chicken beef seafood fish egg tofu none (separate with ;)
-# style             stirFried deepFried boiled grilled steamed salad curry
+# style             optional. stirFried deepFried boiled grilled steamed salad curry. Leave empty for drinks and desserts
 # spice             0 to 3, as made by default
 # temperature       hot | cold
 # wet               yes | no   (soupy or with sauce)

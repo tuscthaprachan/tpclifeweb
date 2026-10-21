@@ -128,7 +128,6 @@ export const canteenDish = defineType({
       type: "string",
       group: "tags",
       options: { list: COOKING_STYLE_OPTIONS },
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "spice",

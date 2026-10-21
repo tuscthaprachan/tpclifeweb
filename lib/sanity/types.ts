@@ -716,7 +716,8 @@ export interface CanteenDish extends DocumentMeta {
   type: DishType;
   course: DishCourse;
   protein: Protein[];
-  style: CookingStyle;
+  /** Absent for drinks, desserts and anything not cooked to order. */
+  style?: CookingStyle;
   spice: SpiceLevel;
   temperature: Temperature;
   /** Soupy or with sauce. */

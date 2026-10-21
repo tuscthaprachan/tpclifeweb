@@ -19,7 +19,7 @@ import { defineQuery } from "next-sanity";
 import { client } from "./client";
 import { CACHE_TAGS } from "./env";
 import { safeFetch } from "./safe-fetch";
-import { demoCanteenData, isCanteenDemo } from "@/lib/canteen/demo";
+import { surveyCanteenData } from "@/lib/canteen/dataset";
 import { emptyCanteenData, normaliseCanteenData } from "@/lib/canteen/derive";
 import { canteenSearchRecords } from "@/lib/search/canteen";
 import type {
@@ -810,14 +810,13 @@ export const CANTEEN_DATA_QUERY = defineQuery(`
 `);
 
 /**
- * Fetches the canteen dataset. Returns an empty but valid `CanteenData` when
- * nothing exists yet or when the CMS cannot be reached, so every canteen page
- * can render its empty state. The result is normalised: missing arrays become
- * empty arrays and dishes that point at a missing stall are dropped.
+ * Fetches the canteen dataset. When Sanity holds no canteen stalls, or cannot
+ * be reached, it returns the surveyed canteen from `lib/canteen/dataset.ts`,
+ * so /eat always shows the real stalls and menus. The result is normalised:
+ * missing arrays become empty arrays and dishes that point at a missing stall
+ * are dropped.
  */
 export async function getCanteenData(): Promise<CanteenData> {
-  // Preview only: a clearly labelled fictional dataset, never fetched from Sanity.
-  if (isCanteenDemo()) return normaliseCanteenData(demoCanteenData());
   if (process.env.NODE_ENV !== "production" && process.env.CANTEEN_FIXTURE === "1") {
     const { makeData } = await import("@/tests/unit/canteen/fixture");
     return makeData();
@@ -831,5 +830,6 @@ export async function getCanteenData(): Promise<CanteenData> {
     ),
     null,
   );
-  return raw ? normaliseCanteenData(raw) : emptyCanteenData();
+  const data = raw ? normaliseCanteenData(raw) : emptyCanteenData();
+  return data.stalls.length > 0 ? data : normaliseCanteenData(surveyCanteenData());
 }

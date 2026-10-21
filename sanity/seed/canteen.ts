@@ -450,7 +450,7 @@ function buildDishes(
     const course = enumValue(file, row, "course", DISH_COURSES);
     const protein = enumList(file, row, "protein", PROTEINS);
     if (protein.includes("none") && protein.length > 1) problem(file, row, 'protein: remove "none" or the other values');
-    const style = enumValue(file, row, "style", COOKING_STYLES);
+    const style = row.cells.style ? enumValue(file, row, "style", COOKING_STYLES) : undefined;
     const spice = wholeNumber(file, row, "spice", 0);
     if (spice !== undefined && spice > 3) problem(file, row, "spice must be 0 to 3");
     const temperature = enumValue(file, row, "temperature", TEMPERATURES);
@@ -481,7 +481,7 @@ function buildDishes(
       type,
       course,
       protein,
-      style,
+      ...(style ? { style } : {}),
       spice,
       temperature,
       wet: yesNo(file, row, "wet"),

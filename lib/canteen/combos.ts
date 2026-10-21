@@ -2,8 +2,9 @@
  * Meal for my budget: combinations of one main plus an optional drink and an
  * optional dessert whose total is at or under the budget.
  *
- * Pure. With a few hundred dishes the enumeration is a few thousand
- * combinations at most, fine on the server and the client.
+ * Pure. The real canteen has hundreds of mains and drinks, so the search
+ * keeps only the best `limit` combos as it goes and skips any drink or
+ * dessert that could not beat the worst of them.
  */
 
 import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
@@ -72,47 +73,80 @@ export function mealCombos(
   const drinks = pickCourse("drink", sideFilters);
   const desserts = pickCourse("dessert", sideFilters);
 
-  const combos: MealCombo[] = [];
+  const limit = Math.max(0, options.limit ?? 30);
+  if (limit === 0) return [];
+
+  interface Candidate {
+    main: CanteenDish;
+    drink?: CanteenDish;
+    dessert?: CanteenDish;
+    items: CanteenDish[];
+    change: number;
+    stallCount: number;
+    key: string;
+  }
+
+  const rank = (dish: CanteenDish) => walkRank.get(dish.stall._ref) ?? 0;
+  const candidate = (main: CanteenDish, drink: CanteenDish | undefined, dessert: CanteenDish | undefined, change: number): Candidate => {
+    const items = [main, drink, dessert]
+      .filter((dish): dish is CanteenDish => dish !== undefined)
+      .sort((a, b) => rank(a) - rank(b));
+    const stallCount = new Set(items.map((dish) => dish.stall._ref)).size;
+    return { main, drink, dessert, items, change, stallCount, key: items.map((dish) => dish.slug.current).join("|") };
+  };
+  const compare = (a: Candidate, b: Candidate) =>
+    a.change - b.change ||
+    a.stallCount - b.stallCount ||
+    b.items.length - a.items.length ||
+    a.key.localeCompare(b.key);
+
+  const best: Candidate[] = [];
+  const worstChange = () => (best.length < limit ? Infinity : best[best.length - 1]!.change);
+  const consider = (next: Candidate) => {
+    if (best.length === limit && compare(next, best[best.length - 1]!) >= 0) return;
+    let at = best.length;
+    while (at > 0 && compare(next, best[at - 1]!) < 0) at -= 1;
+    best.splice(at, 0, next);
+    if (best.length > limit) best.pop();
+  };
+
+  /** Dishes from `sorted` (cheapest first) costing at most `cap`, dearest first, then "none". */
+  const affordable = (sorted: CanteenDish[], cap: number, main: CanteenDish): Array<CanteenDish | undefined> => {
+    const out: Array<CanteenDish | undefined> = [];
+    for (let i = sorted.length - 1; i >= 0; i -= 1) {
+      const dish = sorted[i]!;
+      if (price(dish) > cap) continue;
+      if (!options.sameStallOnly || dish.stall._ref === main.stall._ref) out.push(dish);
+    }
+    out.push(undefined);
+    return out;
+  };
 
   for (const main of mains) {
     const left = budget - price(main);
-    const drinkOptions: Array<CanteenDish | undefined> = [undefined];
-    const dessertOptions: Array<CanteenDish | undefined> = [undefined];
-    for (const drink of drinks) {
-      if (price(drink) > left) break;
-      if (!options.sameStallOnly || drink.stall._ref === main.stall._ref) drinkOptions.push(drink);
-    }
-    for (const dessert of desserts) {
-      if (price(dessert) > left) break;
-      if (!options.sameStallOnly || dessert.stall._ref === main.stall._ref) dessertOptions.push(dessert);
-    }
+    const dessertOptions = affordable(desserts, left, main);
+    const dearestDessert = dessertOptions[0] ? price(dessertOptions[0]) : 0;
 
-    for (const drink of drinkOptions) {
+    for (const drink of affordable(drinks, left, main)) {
+      const afterDrink = left - (drink ? price(drink) : 0);
+      // Drinks run dearest first, so once even the dearest dessert cannot close the gap, no cheaper drink can.
+      if (Math.max(0, afterDrink - dearestDessert) > worstChange()) break;
+
       for (const dessert of dessertOptions) {
-        const total = price(main) + (drink ? price(drink) : 0) + (dessert ? price(dessert) : 0);
-        if (total > budget) continue;
-
-        const items = [main, drink, dessert]
-          .filter((dish): dish is CanteenDish => dish !== undefined)
-          .sort((a, b) => (walkRank.get(a.stall._ref) ?? 0) - (walkRank.get(b.stall._ref) ?? 0));
-        const stalls: CanteenStall[] = [];
-        for (const item of items) {
-          const stall = stallOf(data, item);
-          if (stall && !stalls.includes(stall)) stalls.push(stall);
-        }
-        combos.push({ main, ...(drink ? { drink } : {}), ...(dessert ? { dessert } : {}), items, total, change: budget - total, stalls });
+        const change = afterDrink - (dessert ? price(dessert) : 0);
+        if (change < 0) continue;
+        if (change > worstChange()) break;
+        consider(candidate(main, drink, dessert, change));
       }
     }
   }
 
-  const key = (combo: MealCombo) => combo.items.map((dish) => dish.slug.current).join("|");
-  combos.sort(
-    (a, b) =>
-      a.change - b.change ||
-      a.stalls.length - b.stalls.length ||
-      b.items.length - a.items.length ||
-      key(a).localeCompare(key(b)),
-  );
-
-  return combos.slice(0, Math.max(0, options.limit ?? 30));
+  return best.map(({ main, drink, dessert, items, change }) => {
+    const stalls: CanteenStall[] = [];
+    for (const item of items) {
+      const stall = stallOf(data, item);
+      if (stall && !stalls.includes(stall)) stalls.push(stall);
+    }
+    return { main, ...(drink ? { drink } : {}), ...(dessert ? { dessert } : {}), items, total: budget - change, change, stalls };
+  });
 }

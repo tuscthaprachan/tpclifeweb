@@ -143,10 +143,12 @@ export default async function EatDishPage({
                 <dt className="text-sm font-medium text-ink-600">{t(EAT.proteinLine, locale)}</dt>
                 <dd className="m-0 text-ink-900">{dish.protein.map((protein) => PROTEIN_LABEL[protein][locale]).join(", ")}</dd>
               </div>
-              <div>
-                <dt className="text-sm font-medium text-ink-600">{t(EAT.styleLine, locale)}</dt>
-                <dd className="m-0 text-ink-900">{STYLE_LABEL[dish.style][locale]}</dd>
-              </div>
+              {dish.style ? (
+                <div>
+                  <dt className="text-sm font-medium text-ink-600">{t(EAT.styleLine, locale)}</dt>
+                  <dd className="m-0 text-ink-900">{STYLE_LABEL[dish.style][locale]}</dd>
+                </div>
+              ) : null}
               <div>
                 <dt className="text-sm font-medium text-ink-600">{t(EAT.temperatureLine, locale)}</dt>
                 <dd className="m-0 text-ink-900">

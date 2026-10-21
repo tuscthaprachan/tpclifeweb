@@ -1,0 +1,27 @@
+# Canteen stalls, 2569 (2026-27). The REAL stall list: shop names as signed, stall numbers, positions. No dishes, no prices.
+# Sources: photos of every stall's sign and menu board, taken 21 October 2569 and named by stall number (stalls 1 to 17),
+# memo อว 67.06.1/ส177 dated 27 August 2569 (floor plan) and the selection results of 2 September 2569 (contract 1 October 2569 to 30 September 2570).
+# Canteen hours (Monday to Friday 07:00 to 16:00, closed Saturday, Sunday and public holidays) are set on the canteen place, so the hours column is empty.
+# Stall 18 was not photographed. It is given the one selected shop that no photo showed; its number is not confirmed.
+# Stall 14 shows a halal sign and holds the university's halal slot. It has no halal_checked_on: nobody asked. No stall was asked about halal or vegetarian food.
+# map_col, map_row, map_w, map_h, map_shape match the floor plan grid in lib/canteen/dataset.ts (17 columns by 7 rows).
+#
+number,name_th,name_en,slug,cuisine,halal,halal_checked_on,vegetarian_stall,hours,map_col,map_row,map_w,map_h,map_shape,wayfinding_th,wayfinding_en,photo_filename
+1,พาพริ้ว ข้าวแกงสารพัดนึก,Pha Phriu curry over rice,1-pha-phriu-curry-over-rice,curryOverRice,none,,no,,0,0,2,1,,ร้านแรกที่ปลายด้านเหนือในแถวร้านฝั่งตะวันตก หันหน้าเข้าหาโถงโรงอาหาร,"First stall at the north end in the west column, facing east into the hall.",1A.jpg
+2,ก๋วยเตี๋ยวสองพี่น้อง,Song Phi Nong Noodles,2-song-phi-nong-noodles,noodles,none,,no,,0,1,2,1,,ร้านที่สองจากทางเหนือในแถวร้านฝั่งตะวันตก หันหน้าเข้าหาโถงโรงอาหาร,"Second stall from the north in the west column, facing east into the hall.",2A.jpg
+3,แม่พิมพ์ อาหารตามสั่ง,"Mama Pim, made to order",3-mae-phim-made-to-order,madeToOrder,none,,no,,0,2,2,1,,ร้านที่สามจากทางเหนือในแถวร้านฝั่งตะวันตก หันหน้าเข้าหาโถงโรงอาหาร,"Third stall from the north in the west column, facing east into the hall.",3A.jpg
+4,คงคา GaNGa,GaNGa,4-ganga-drinks,drinks,none,,no,,0,3,2,1,,ร้านกลางแถวฝั่งตะวันตก หันหน้าเข้าหาโถง ด้านหลังแถวร้านฝั่งตะวันตกเป็นห้องน้ำ บันไดและทางหนีไฟ,"Middle of the west column, facing the hall. Behind the west column are toilets, stairs and a fire exit.",4A.jpg
+5,BM HEALTH CLUB,BM Health Club,5-bm-health-club,drinks;desserts,none,,no,,0,4,2,1,,ร้านที่ห้าจากทางเหนือในแถวร้านฝั่งตะวันตก หันหน้าเข้าหาโถงโรงอาหาร,"Fifth stall from the north in the west column, facing east into the hall.",5A.jpg
+6,ข้าวมันไก่คุณหญิง โดยแม่ปราณีต,Khun Ying Chicken Rice by Mae Pranit,6-khun-ying-chicken-rice,chickenRice,none,,no,,0,5,2,1,,ร้านที่หกจากทางเหนือในแถวร้านฝั่งตะวันตก หันหน้าเข้าหาโถงโรงอาหาร,"Sixth stall from the north in the west column, facing east into the hall.",6A.jpg
+7,Tamasato ราเม็ง,Tamasato Ramen,7-tamasato-ramen,international;noodles,none,,no,,0,6,2,1,,ร้านสุดท้ายที่ปลายด้านใต้ในแถวร้านฝั่งตะวันตก หันหน้าเข้าหาโถงโรงอาหาร,"Last stall at the south end in the west column, facing east into the hall.",7A.jpg
+8,ลุงกับป้า,Lung Kap Pa,8-lung-kap-pa-drinks,drinks,none,,no,,10,0,2,1,,ร้านบนสุดในกลุ่มร้านกลางโถง,Top stall in the middle block of the hall.,8A.jpg
+9,ขนมหวานป้าหมู,Pa Mu Desserts,9-pa-mu-desserts,desserts;fruit,none,,no,,10,1,2,1,,ร้านที่สองจากทางเหนือในกลุ่มร้านกลางโถง,Second stall from the north in the middle block of the hall.,9A.jpg
+10,สเต็ก โปรเจกต์,Steak Project,10-steak-project,international,none,,no,,10,2,2,1,,ร้านที่สามจากทางเหนือในกลุ่มร้านกลางโถง,Third stall from the north in the middle block of the hall.,10A.jpg
+11,เส้นหมี่ไก่ฉีก Chicken Man,Chicken Man,11-chicken-man,noodles,none,,no,,10,3,2,1,,ร้านล่างสุดในกลุ่มร้านกลางโถง,Bottom stall in the middle block of the hall.,11A.jpg
+12,อาหารอีสาน,Isan food,12-isan-food,isan,none,,no,,15,0,2,1,,ร้านแรกที่ปลายด้านเหนือในแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก,"First stall at the north end in the east column, facing west into the hall.",12A.jpg
+13,เทียนทอง อาหารตามสั่ง,"Thian Thong, made to order",13-thian-thong-made-to-order,madeToOrder,none,,no,,15,1,2,1,,ร้านที่สองจากทางเหนือในแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก,"Second stall from the north in the east column, facing west into the hall.",13A.jpg
+14,ร้านมุมกินฮาลาล,Mum Kin Halal,14-mum-kin-halal,muslim;madeToOrder,stallDeclared,,no,,15,2,2,1,,ร้านกลางแถวในแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก,"Middle stall in the east column, facing west into the hall.",14A.jpg
+15,ข้าวมันไก่-ขาหมู TU,TU Chicken Rice and Pork Leg,15-tu-chicken-rice-pork-leg,chickenRice,none,,no,,15,3,2,1,,ร้านที่สี่จากทางเหนือในแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก,"Fourth stall from the north in the east column, facing west into the hall.",15A.jpg
+16,Yum Yum Snackie,Yum Yum Snackie,16-yum-yum-snackie,international,none,,no,,15,4,2,1,,ร้านสุดท้ายที่ปลายด้านใต้ของแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก ด้านหลังแถวร้านฝั่งตะวันออกเป็นห้องน้ำและบันได,"Last stall at the south end of the east column, facing west. Behind the east column are toilets and stairs.",16A.jpg
+17,แอมที,Am Tea,17-am-tea,drinks;desserts,none,,no,,4,0,2,2,triangleBottomRight,แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางซ้ายของทางเข้ากลางด้านเหนือ,"Triangular corner kiosk on the north wall, left of the central north entrance.",17A.jpg
+18,ร้านกัลยาผลไม้ปอกพร้อมทาน,Kanlaya Peeled Fruit,18-kanlaya-peeled-fruit,fruit,none,,no,,8,0,2,2,triangleBottomLeft,แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางขวาของทางเข้ากลางด้านเหนือ ยังไม่ได้ถ่ายรูปเมนู และยังไม่ได้ยืนยันว่าร้านนี้อยู่ที่แผงนี้,"Triangular corner kiosk on the north wall, right of the central north entrance. Its menu has not been photographed and the shop at this kiosk is not yet confirmed.",

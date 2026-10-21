@@ -40,15 +40,15 @@ describe("survey CSV reader", () => {
   });
 });
 
-describe("2569 stall sheet", () => {
-  it("gives the triangular kiosks their shape and size, matching the demo floor plan", async () => {
+describe("stall sheet", () => {
+  it("gives the triangular kiosks their shape and size, matching the surveyed floor plan", async () => {
     const parseCsv = await loadParser();
     const { readFileSync } = await import("node:fs");
-    const { demoCanteenData } = await import("@/lib/canteen/demo");
-    const rows = parseCsv(readFileSync("data/canteen-stalls-2569.csv", "utf8"));
-    const demo = demoCanteenData().stalls;
+    const { surveyCanteenData } = await import("@/lib/canteen/dataset");
+    const rows = parseCsv(readFileSync("data/canteen-stalls.csv", "utf8"));
+    const surveyed = surveyCanteenData().stalls;
     for (const row of rows) {
-      const cell = demo.find((stall) => stall.number === Number(row.cells.number))!.mapCell;
+      const cell = surveyed.find((stall) => stall.number === Number(row.cells.number))!.mapCell;
       expect(Number(row.cells.map_col)).toBe(cell.col);
       expect(Number(row.cells.map_row)).toBe(cell.row);
       expect(Number(row.cells.map_w)).toBe(cell.w);

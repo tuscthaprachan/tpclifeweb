@@ -1,6 +1,6 @@
 # What to eat: canteen service plan
 
-Status: built. The real stall line-up and floor plan, from the 2569 canteen selection documents, are in the demo dataset (`lib/canteen/demo.ts`) and in `data/canteen-stalls-2569.csv`. Menus and prices are still to be surveyed: until then the dishes are made-up examples, shown only when `CANTEEN_DEMO=1` is set (for previews).
+Status: built, with real data. The stalls and menus were surveyed from photos on 21 October 2026 and live in `lib/canteen/dataset.ts` and `lib/canteen/survey-2569.ts` (mirrored in `data/canteen-*.csv` for the importer). What the survey changed is in `docs/canteen-plan-v2.md`.
 
 ## 1. Decisions already made
 
