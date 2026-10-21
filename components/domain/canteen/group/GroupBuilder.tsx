@@ -8,13 +8,12 @@ import { AVOID_KEYS, DIET_KEYS, type AvoidKey, type DietKey } from "@/lib/cantee
 import { MAX_NAME_LENGTH, MAX_PEOPLE, type Person } from "@/lib/canteen/group";
 import type { Locale } from "@/lib/i18n/config";
 
-import { AVOID_LABEL, DIET_SHORT_LABEL, SPICE_FILTER_LABEL } from "../labels";
+import { AVOID_LABEL, DIET_SHORT_LABEL } from "../labels";
 import { GROUP, group } from "./strings";
 import {
   blankPerson,
   groupHref,
   personLabel,
-  spiceValue,
   toggleKey,
   type Strategy,
 } from "./state";
@@ -33,13 +32,6 @@ interface Row {
   key: number;
   person: Person;
 }
-
-const SPICE_OPTIONS = [
-  { value: "", label: SPICE_FILTER_LABEL.any },
-  { value: "0", label: SPICE_FILTER_LABEL["0"] },
-  { value: "1", label: SPICE_FILTER_LABEL["1"] },
-  { value: "2", label: SPICE_FILTER_LABEL["2"] },
-] as const;
 
 const noopSubscribe = () => () => {};
 
@@ -212,7 +204,6 @@ function PersonFieldset({ locale, index, rowKey, person, canRemove, onChange, on
   const num = index + 1;
   const legend = group.person(num, locale);
   const id = `group-${rowKey}`;
-  const spice = spiceValue(person);
 
   return (
     <fieldset
@@ -284,28 +275,6 @@ function PersonFieldset({ locale, index, rowKey, person, canRemove, onChange, on
         selected={person.avoid}
         onToggle={(value, on) => onChange({ avoid: toggleKey<AvoidKey>(person.avoid, value as AvoidKey, on, AVOID_KEYS) })}
       />
-
-      <fieldset className="m-0 border-0 p-0">
-        <legend className="mb-[var(--space-2)] text-lg font-semibold text-ink-900">{GROUP.spiceLegend[locale]}</legend>
-        <div className="flex flex-wrap gap-x-[var(--space-4)] gap-y-[var(--space-2)]">
-          {SPICE_OPTIONS.map((option) => (
-            <div key={option.value} className="flex items-center gap-[var(--space-2)]">
-              <input
-                type="radio"
-                id={`${id}-spice-${option.value || "any"}`}
-                name={`s${index}`}
-                value={option.value}
-                checked={spice === option.value}
-                onChange={() => onChange({ spice: option.value === "" ? undefined : (Number(option.value) as 0 | 1 | 2) })}
-                className="h-[1.25rem] w-[1.25rem] scroll-my-24"
-              />
-              <label htmlFor={`${id}-spice-${option.value || "any"}`} className="text-base text-ink-900">
-                {option.label[locale]}
-              </label>
-            </div>
-          ))}
-        </div>
-      </fieldset>
 
       {canRemove ? (
         <div>

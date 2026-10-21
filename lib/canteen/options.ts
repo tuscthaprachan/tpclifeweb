@@ -19,7 +19,6 @@ import type {
   HalalStatus,
   MapShape,
   Protein,
-  SpiceLevel,
   Temperature,
 } from "@/lib/sanity/types";
 
@@ -90,7 +89,6 @@ export const COOKING_STYLES: readonly CookingStyle[] = [
 
 export const TEMPERATURES: readonly Temperature[] = ["hot", "cold"];
 
-export const SPICE_LEVELS: readonly SpiceLevel[] = [0, 1, 2, 3];
 
 export const DIET_AVAILABILITIES: readonly DietAvailability[] = ["no", "canAsk", "yes"];
 

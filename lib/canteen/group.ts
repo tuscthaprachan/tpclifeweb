@@ -4,19 +4,20 @@
  * ENCODING (`p`)
  * People are joined with `~`. Each person is five fields joined with `.`:
  *
- *     name . max . diet . spice . avoid
+ *     name . max . diet . (retired) . avoid
  *
  * - `name`: free text. The characters `\`, `.` and `~` are escaped with a
  *   backslash, nothing else is, so Thai names and emoji stay readable.
  * - `max`: the budget in whole baht, or empty.
  * - `diet`: codes joined with `-`: np (no pork), h (halal), c (certified
  *   halal), v (vegetarian), vg (vegan), j (jay).
- * - `spice`: `s` and a digit 0 to 3, the highest spice accepted, or empty.
+ * - the fourth field once held a spice limit. It is always written empty
+ *   and ignored when read, so old links still decode.
  * - `avoid`: codes joined with `-`: pk (pork), bf (beef), sf (seafood),
  *   fi (fish), eg (egg), nu (all nuts), pn (peanut), tn (tree nuts), mk (milk), wh (wheat),
  *   so (soy), se (sesame).
  *
- * Trailing empty fields are left off, so `Mint.50.np-v.s1~Ben.80..s3` is two
+ * Trailing empty fields are left off, so `Mint.50.np-v~Ben.80` is two
  * people. At most eight people, names at most 24 characters. Decoding never
  * throws: unknown codes and bad numbers are dropped, extra people ignored.
  *
@@ -45,8 +46,6 @@ export interface Person {
   max?: number;
   diet: DietKey[];
   avoid: AvoidKey[];
-  /** Highest spice accepted, 0 to 3 (3 means any). */
-  spice?: 0 | 1 | 2 | 3;
 }
 
 export const MAX_PEOPLE = 8;
@@ -119,7 +118,7 @@ export function encodeGroup(people: readonly Person[]): string {
         escapeName(cleanName(person.name)),
         person.max !== undefined ? String(person.max) : "",
         diet.join("-"),
-        person.spice !== undefined ? `s${person.spice}` : "",
+        "",
         avoid.join("-"),
       ];
       while (fields.length > 1 && fields[fields.length - 1] === "") fields.pop();
@@ -136,7 +135,7 @@ export function decodeGroup(encoded: string | null | undefined): Person[] {
   // An empty chunk (a stray or doubled "~") is not a person. A person with nothing set is ".".
   const chunks = splitUnescaped(encoded, "~").filter((chunk) => chunk !== "");
   for (const chunk of chunks.slice(0, MAX_PEOPLE)) {
-    const [name = "", max = "", diet = "", spice = "", avoid = ""] = splitUnescaped(chunk, ".");
+    const [name = "", max = "", diet = "", , avoid = ""] = splitUnescaped(chunk, ".");
     const person: Person = {
       name: cleanName(unescapeName(name)),
       diet: [],
@@ -145,7 +144,6 @@ export function decodeGroup(encoded: string | null | undefined): Person[] {
     if (/^\d{1,5}$/.test(max) && Number(max) >= 1) person.max = Number(max);
     const dietCodes = new Set(diet.split("-"));
     person.diet = DIET_KEYS.filter((key) => dietCodes.has(DIET_CODES[key]));
-    if (/^s[0-3]$/.test(spice)) person.spice = Number(spice[1]) as 0 | 1 | 2 | 3;
     const avoidCodes = new Set(avoid.split("-"));
     person.avoid = AVOID_KEYS.filter((key) => avoidCodes.has(AVOID_CODES[key]));
     people.push(person);
@@ -168,19 +166,15 @@ export function groupFromParams(
 /**
  * The filters one person's dishes must pass: the shared `base` filters (for
  * example a type or a stall everyone agreed on) plus the person's own budget,
- * diet, avoid and spice. The tighter budget and spice win; diet and avoid are
+ * diet and avoid. The tighter budget wins; diet and avoid are
  * unioned.
  */
 export function personFilters(person: Person, base: CanteenFilters = defaultFilters()): CanteenFilters {
   const max =
     person.max !== undefined && base.max !== undefined ? Math.min(person.max, base.max) : (person.max ?? base.max);
-  const personSpice = person.spice !== undefined && person.spice < 3 ? (person.spice as 0 | 1 | 2) : undefined;
-  const spice =
-    personSpice !== undefined && base.spice !== undefined ? (Math.min(personSpice, base.spice) as 0 | 1 | 2) : (personSpice ?? base.spice);
   return {
     ...base,
     max,
-    spice,
     diet: DIET_KEYS.filter((key) => base.diet.includes(key) || person.diet.includes(key)),
     avoid: AVOID_KEYS.filter((key) => base.avoid.includes(key) || person.avoid.includes(key)),
   };
@@ -329,8 +323,7 @@ export function eachTheirOwn(data: CanteenData, people: readonly Person[], optio
 export type GroupChange =
   | { kind: "raiseBudget"; to: number }
   | { kind: "dropDiet"; value: DietKey }
-  | { kind: "dropAvoid"; value: AvoidKey }
-  | { kind: "raiseSpice"; to: 1 | 2 | 3 };
+  | { kind: "dropAvoid"; value: AvoidKey };
 
 /** A person who has nothing at the stall, and what would fix it (null if nothing small would). */
 export interface Blocker {
@@ -372,13 +365,6 @@ function smallestChange(
   }
   for (const value of filters.avoid) {
     if (fits({ ...filters, avoid: filters.avoid.filter((entry) => entry !== value) })) return { kind: "dropAvoid", value };
-  }
-  if (filters.spice !== undefined) {
-    for (const level of [1, 2, 3] as const) {
-      if (level > filters.spice && fits({ ...filters, spice: level === 3 ? undefined : level })) {
-        return { kind: "raiseSpice", to: level };
-      }
-    }
   }
   return null;
 }

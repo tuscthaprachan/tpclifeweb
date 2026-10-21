@@ -62,11 +62,6 @@ describe("applyFilters", () => {
     expect(without(["milk"])).toHaveLength(21);
   });
 
-  it("spice is a ceiling", () => {
-    expect(run({ spice: 1 })).toHaveLength(14);
-    expect(run({ spice: 0 }).sort()).toEqual(["c", "d", "g", "l", "n", "o", "p", "q", "r"]);
-  });
-
   it("feel works pairwise: choosing both sides of a pair means no constraint", () => {
     expect(run({ feel: ["soupy"] }).sort()).toEqual(["e", "f", "g", "i", "m", "o", "p"]);
     expect(run({ feel: ["notFried"] })).toHaveLength(10);

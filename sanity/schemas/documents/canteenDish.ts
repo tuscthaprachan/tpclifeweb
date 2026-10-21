@@ -7,7 +7,6 @@ import {
   DISH_TYPE_OPTIONS,
   PROTEIN_OPTIONS,
   ALLERGEN_OPTIONS,
-  SPICE_OPTIONS,
   TEMPERATURE_OPTIONS,
 } from "../constants";
 import { bilingualStringMessage } from "../objects/locale";
@@ -139,16 +138,6 @@ export const canteenDish = defineType({
       type: "string",
       group: "tags",
       options: { list: COOKING_STYLE_OPTIONS },
-    }),
-    defineField({
-      name: "spice",
-      title: "Spice",
-      type: "number",
-      group: "tags",
-      options: { list: SPICE_OPTIONS, layout: "radio" },
-      initialValue: 0,
-      description: "How spicy it typically is as made by default.",
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "temperature",

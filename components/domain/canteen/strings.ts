@@ -12,7 +12,7 @@
  *   t(EAT.tabDishes, locale)      // static string
  *   eat.resultCount(locale, 23, 9) // string with numbers in it
  *
- * Option labels (diet, type, avoid, feel, spice, sort, group, cuisine,
+ * Option labels (diet, type, avoid, feel, sort, group, cuisine,
  * protein, style, halal) live in `labels.ts`.
  */
 
@@ -114,7 +114,6 @@ export const EAT = {
   dietFilterHint: { th: "ตามที่ร้านแจ้ง", en: "As the stall says" },
   typeLegend: { th: "ประเภทเมนู", en: "Type of dish" },
   avoidLegend: { th: "ไม่เอา", en: "Leave out" },
-  spiceLegend: { th: "ความเผ็ด", en: "Spice" },
   feelLegend: { th: "อารมณ์ตอนนี้", en: "Feel" },
   stallLabel: { th: "ร้าน", en: "Stall" },
   stallAny: { th: "ทุกร้าน", en: "All stalls" },
@@ -169,7 +168,6 @@ export const EAT = {
   typeLine: { th: "ประเภท", en: "Type" },
   styleLine: { th: "วิธีปรุง", en: "Cooking style" },
   temperatureLine: { th: "อุณหภูมิ", en: "Served" },
-  spiceLine: { th: "ความเผ็ดปกติ", en: "Usual spice" },
   dietTitle: { th: "อาหารที่กินได้", en: "Diet" },
   noDietTags: { th: "ร้านไม่ได้แจ้งป้ายอาหารพิเศษ", en: "The stall gave no special diet tags." },
   whatIsLink: { th: "เมนูนี้คืออะไร", en: "What is this dish" },
@@ -201,8 +199,6 @@ export const EAT = {
   favouriteLabel: { th: "เมนูโปรด", en: "Favourite" },
   favouriteFailed: { th: "เก็บไม่ได้ ที่เก็บข้อมูลในเบราว์เซอร์ถูกปิดอยู่", en: "Could not save. Browser storage is switched off." },
 
-  /* ---- Spice ---- */
-  spiceWord: { th: "ความเผ็ด", en: "Spice" },
 } as const satisfies Record<string, Bilingual>;
 
 export type EatKey = keyof typeof EAT;
@@ -277,7 +273,7 @@ export const eat = {
       : `Drop "${label}" for ${n(count, locale)} ${count === 1 ? "dish" : "dishes"}`;
   },
 
-  /** A relax suggestion with no named value, for example the budget or the spice limit. */
+  /** A relax suggestion with no named value, for example the budget. */
   relaxGeneric(locale: Locale, action: string, count: number): string {
     return locale === "th"
       ? `${action} ได้ ${n(count, locale)} เมนู`

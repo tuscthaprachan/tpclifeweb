@@ -45,7 +45,7 @@ export interface MealCombo {
  * The filters apply to the main in full. For the drink and dessert the budget
  * is replaced by the combo total, and `type` and `feel` are ignored, since
  * "noodles" or "hot" describe the main and would otherwise rule out every
- * drink and dessert. Diet, avoid, spice, stall and open still apply to all
+ * drink and dessert. Diet, avoid, stall and open still apply to all
  * three, so a no-pork, halal-only filter holds for the whole meal. When
  * `filters.stall` is set, all three come from that stall.
  */

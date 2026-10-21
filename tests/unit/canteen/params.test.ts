@@ -4,8 +4,8 @@ import { defaultFilters, normalise, parse, serialise, withFilters, activeFilterP
 
 describe("params", () => {
   it("parses the documented example", () => {
-    const filters = parse(new URLSearchParams("max=50&diet=nopork&type=noodles,soup&spice=1&sort=price"));
-    expect(filters).toMatchObject({ max: 50, diet: ["nopork"], type: ["noodles", "soup"], spice: 1, sort: "price" });
+    const filters = parse(new URLSearchParams("max=50&diet=nopork&type=noodles,soup&sort=price"));
+    expect(filters).toMatchObject({ max: 50, diet: ["nopork"], type: ["noodles", "soup"], sort: "price" });
   });
 
   it("reads the old sort=walk link as stall number order", () => {
@@ -18,13 +18,12 @@ describe("params", () => {
       type: ["soup", "noodles"],
       diet: ["jay", "nopork"],
       max: 50,
-      spice: 1,
       sort: "stall",
       group: "stall",
       variants: true,
       open: true,
     });
-    expect(text).toBe("max=50&diet=nopork,jay&type=noodles,soup&spice=1&open=1&sort=stall&group=stall&variants=1");
+    expect(text).toBe("max=50&diet=nopork,jay&type=noodles,soup&open=1&sort=stall&group=stall&variants=1");
     expect(serialise(defaultFilters())).toBe("");
   });
 
@@ -35,7 +34,6 @@ describe("params", () => {
       diet: ["nopork", "halal"] as const,
       type: ["rice", "dessert"] as const,
       avoid: ["pork", "egg"] as const,
-      spice: 0 as const,
       feel: ["hot", "notFried"] as const,
       stall: "fixture-stall-2",
       open: true,
@@ -59,7 +57,6 @@ describe("params", () => {
       diet: "nopork,martian,,NOPORK",
       type: ["noodles", "pizza"],
       avoid: "pork,chicken",
-      spice: "9",
       feel: "hot,lukewarm",
       stall: "Not A Slug!",
       sort: "random",
@@ -76,9 +73,8 @@ describe("params", () => {
     expect(parse({ max: "50" }).max).toBe(50);
   });
 
-  it("treats spice 3 as no limit and normalises it away", () => {
-    expect(parse({ spice: "3" }).spice).toBeUndefined();
-    expect(parse({ spice: "0" }).spice).toBe(0);
+  it("ignores the retired spice parameter in old links", () => {
+    expect(parse({ spice: "1", max: "50" })).toEqual({ ...defaultFilters(), max: 50 });
   });
 
   it("accepts the values a native checkbox form submits", () => {

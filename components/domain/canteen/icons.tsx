@@ -231,29 +231,7 @@ export function DietIcon({ diet, ...props }: IconProps & { diet: DietKey }) {
   return <Icon {...props} />;
 }
 
-/* ---- Spice, and small marks ---- */
-
-/** A chilli. `filled` draws it solid, otherwise an outline. */
-export function ChilliIcon({ filled, className, size = 16 }: IconProps & { filled?: boolean }) {
-  return (
-    <svg
-      aria-hidden="true"
-      focusable="false"
-      viewBox="0 0 20 20"
-      width={size}
-      height={size}
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M13 4.5c-1 .2-1.8.8-2.2 1.7C9.5 9 8 11.5 3.5 14c3.5 3 8.5 2 10.5-1.5 1.2-2.2 1.2-5 .5-7" />
-      <path d="M13 4.5c0-1.2.8-2 2-2" />
-    </svg>
-  );
-}
+/* ---- Small marks ---- */
 
 /** A coin: used to mark the cheapest price, always beside the word "Cheapest". */
 export function CoinIcon(props: IconProps) {

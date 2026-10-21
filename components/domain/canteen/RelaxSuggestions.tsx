@@ -39,8 +39,6 @@ export function relaxText(suggestion: RelaxSuggestion, locale: Locale, stallName
       return eat.relaxDrop(locale, FEEL_LABEL[value as keyof typeof FEEL_LABEL][locale], count);
     case "stall":
       return eat.relaxDrop(locale, (typeof value === "string" ? stallName?.(value) : undefined) ?? String(value), count);
-    case "spice":
-      return eat.relaxGeneric(locale, locale === "th" ? "ไม่จำกัดความเผ็ด" : "Allow any spice", count);
     case "open":
       return eat.relaxGeneric(locale, locale === "th" ? "ไม่ดูเวลาทำการ" : "Ignore opening hours", count);
   }

@@ -31,7 +31,7 @@ describe("dishDietTags", () => {
   });
   it("gives a stall halal tag only when the stall gave an answer", () => {
     expect(stallHalalTag(stallOf("a"))).toBeNull();
-    expect(stallHalalTag(stallOf("e"))?.key).toBe("halalStall");
+    expect(stallHalalTag(stallOf("e"))?.key).toBe("halalWholeStall");
   });
 });
 

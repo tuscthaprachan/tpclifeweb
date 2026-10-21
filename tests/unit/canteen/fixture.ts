@@ -90,7 +90,6 @@ function dish(stallNumber: number, price: number, extra: Partial<CanteenDish> & 
     course: "main",
     protein: ["chicken"],
     style: "stirFried",
-    spice: 1,
     temperature: "hot",
     wet: false,
     vegetarian: "no",
@@ -105,32 +104,32 @@ const ref = (id: string) => ({ _type: "reference" as const, _ref: id });
 
 export const DISHES: CanteenDish[] = [
   // Stall 1: rice, a pork dish, a chicken dish, one with a special.
-  dish(1, 40, { id: "a", protein: ["pork"], canonical: ref("canon-basil"), spice: 2 }),
-  dish(1, 45, { id: "b", protein: ["chicken", "egg"], canonical: ref("canon-basil"), spice: 2, variants: [{ _key: "v1", label: { th: "พิเศษ", en: "Special" }, delta: 10 }] }),
-  dish(1, 50, { id: "c", protein: ["beef"], style: "grilled", type: "singlePlate", spice: 0 }),
-  dish(1, 35, { id: "d", protein: ["egg"], type: "madeToOrder", spice: 0, vegetarian: "canAsk" }),
+  dish(1, 40, { id: "a", protein: ["pork"], canonical: ref("canon-basil") }),
+  dish(1, 45, { id: "b", protein: ["chicken", "egg"], canonical: ref("canon-basil"), variants: [{ _key: "v1", label: { th: "พิเศษ", en: "Special" }, delta: 10 }] }),
+  dish(1, 50, { id: "c", protein: ["beef"], style: "grilled", type: "singlePlate" }),
+  dish(1, 35, { id: "d", protein: ["egg"], type: "madeToOrder", vegetarian: "canAsk" }),
   // Stall 2: noodles and soup, halal (stall says).
-  dish(2, 45, { id: "e", type: "noodles", protein: ["chicken"], wet: true, style: "boiled", canonical: ref("canon-noodle"), spice: 1 }),
-  dish(2, 55, { id: "f", type: "noodles", protein: ["beef"], wet: true, style: "boiled", spice: 2 }),
-  dish(2, 40, { id: "g", type: "soup", protein: ["fish"], wet: true, style: "boiled", spice: 0 }),
-  dish(2, 50, { id: "h", type: "noodles", protein: ["seafood"], wet: false, style: "stirFried", spice: 3 }),
+  dish(2, 45, { id: "e", type: "noodles", protein: ["chicken"], wet: true, style: "boiled", canonical: ref("canon-noodle") }),
+  dish(2, 55, { id: "f", type: "noodles", protein: ["beef"], wet: true, style: "boiled" }),
+  dish(2, 40, { id: "g", type: "soup", protein: ["fish"], wet: true, style: "boiled" }),
+  dish(2, 50, { id: "h", type: "noodles", protein: ["seafood"], wet: false, style: "stirFried" }),
   // Stall 3: certified halal, curry over rice and rice.
-  dish(3, 60, { id: "i", type: "curryOverRice", protein: ["beef"], style: "curry", wet: true, spice: 2 }),
-  dish(3, 45, { id: "j", type: "rice", protein: ["chicken"], canonical: ref("canon-basil"), spice: 2 }),
-  dish(3, 70, { id: "k", type: "madeToOrder", protein: ["seafood"], spice: 1 }),
+  dish(3, 60, { id: "i", type: "curryOverRice", protein: ["beef"], style: "curry", wet: true }),
+  dish(3, 45, { id: "j", type: "rice", protein: ["chicken"], canonical: ref("canon-basil") }),
+  dish(3, 70, { id: "k", type: "madeToOrder", protein: ["seafood"] }),
   // Stall 4: vegetarian stall, own hours 10:00 to 12:00.
-  dish(4, 40, { id: "l", protein: ["tofu"], vegetarian: "yes", vegan: "yes", jay: "yes", spice: 0 }),
-  dish(4, 50, { id: "m", type: "noodles", protein: ["egg"], vegetarian: "yes", vegan: "canAsk", jay: "canAsk", wet: true, style: "boiled", spice: 1 }),
-  dish(4, 30, { id: "n", type: "snack", course: "side", protein: ["tofu"], style: "deepFried", vegetarian: "yes", vegan: "yes", spice: 0 }),
+  dish(4, 40, { id: "l", protein: ["tofu"], vegetarian: "yes", vegan: "yes", jay: "yes" }),
+  dish(4, 50, { id: "m", type: "noodles", protein: ["egg"], vegetarian: "yes", vegan: "canAsk", jay: "canAsk", wet: true, style: "boiled" }),
+  dish(4, 30, { id: "n", type: "snack", course: "side", protein: ["tofu"], style: "deepFried", vegetarian: "yes", vegan: "yes" }),
   // Stall 5: drinks and desserts.
-  dish(5, 15, { id: "o", type: "drink", course: "drink", protein: ["none"], temperature: "cold", style: "steamed", spice: 0, vegetarian: "yes", wet: true }),
-  dish(5, 20, { id: "p", type: "drink", course: "drink", protein: ["none"], temperature: "cold", style: "steamed", spice: 0, vegetarian: "yes", vegan: "yes", jay: "yes", wet: true }),
-  dish(5, 25, { id: "q", type: "dessert", course: "dessert", protein: ["none"], temperature: "cold", style: "steamed", spice: 0, vegetarian: "yes" }),
-  dish(5, 10, { id: "r", type: "dessert", course: "dessert", protein: ["none"], style: "steamed", spice: 0, vegetarian: "yes", vegan: "yes" }),
+  dish(5, 15, { id: "o", type: "drink", course: "drink", protein: ["none"], temperature: "cold", style: "steamed", vegetarian: "yes", wet: true }),
+  dish(5, 20, { id: "p", type: "drink", course: "drink", protein: ["none"], temperature: "cold", style: "steamed", vegetarian: "yes", vegan: "yes", jay: "yes", wet: true }),
+  dish(5, 25, { id: "q", type: "dessert", course: "dessert", protein: ["none"], temperature: "cold", style: "steamed", vegetarian: "yes" }),
+  dish(5, 10, { id: "r", type: "dessert", course: "dessert", protein: ["none"], style: "steamed", vegetarian: "yes", vegan: "yes" }),
   // Stall 6: a second basil dish, pork, and a cheap rice.
-  dish(6, 50, { id: "s", protein: ["pork", "egg"], canonical: ref("canon-basil"), spice: 3 }),
-  dish(6, 38, { id: "t", protein: ["pork"], spice: 1 }),
-  dish(6, 65, { id: "u", type: "singlePlate", protein: ["fish"], style: "deepFried", spice: 1 }),
+  dish(6, 50, { id: "s", protein: ["pork", "egg"], canonical: ref("canon-basil") }),
+  dish(6, 38, { id: "t", protein: ["pork"] }),
+  dish(6, 65, { id: "u", type: "singlePlate", protein: ["fish"], style: "deepFried" }),
 ];
 
 export const SETTINGS: CanteenSettings = {

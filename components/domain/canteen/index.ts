@@ -18,7 +18,6 @@ export * from "./tidy";
 export * from "./paginate";
 
 export * from "./DietTag";
-export * from "./SpiceMeter";
 export * from "./PriceTag";
 export * from "./FavouriteToggle";
 export * from "./DishCard";

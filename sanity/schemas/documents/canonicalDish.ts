@@ -47,7 +47,7 @@ export const canonicalDish = defineType({
       name: "howToOrder",
       title: "How to order",
       type: "array",
-      description: 'Optional. Phrases a student can show or say at the stall, for example "ไม่เผ็ด, mai phet, not spicy".',
+      description: 'Optional. Phrases a student can show or say at the stall, for example "ไข่ดาว, khai dao, fried egg on top".',
       of: [
         defineArrayMember({
           type: "object",

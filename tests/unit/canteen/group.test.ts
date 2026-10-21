@@ -22,18 +22,25 @@ const person = (change: Partial<Person> = {}): Person => ({ name: "", diet: [], 
 
 describe("group encoding", () => {
   it("matches the example in the plan", () => {
-    const people = decodeGroup("Mint.50.np-v.s1~Ben.80..s3");
+    const people = decodeGroup("Mint.50.np-v~Ben.80");
     expect(people).toEqual([
-      { name: "Mint", max: 50, diet: ["nopork", "vegetarian"], avoid: [], spice: 1 },
-      { name: "Ben", max: 80, diet: [], avoid: [], spice: 3 },
+      { name: "Mint", max: 50, diet: ["nopork", "vegetarian"], avoid: [] },
+      { name: "Ben", max: 80, diet: [], avoid: [] },
     ]);
-    expect(encodeGroup(people)).toBe("Mint.50.np-v.s1~Ben.80..s3");
+    expect(encodeGroup(people)).toBe("Mint.50.np-v~Ben.80");
+  });
+
+  it("still reads old links that carried a spice limit, ignoring it", () => {
+    expect(decodeGroup("Mint.50.np-v.s1.eg~Ben.80..s3")).toEqual([
+      { name: "Mint", max: 50, diet: ["nopork", "vegetarian"], avoid: ["egg"] },
+      { name: "Ben", max: 80, diet: [], avoid: [] },
+    ]);
   });
 
   it("round trips awkward names without ambiguity", () => {
     const people: Person[] = [
       person({ name: "a.b~c\\d", max: 40 }),
-      person({ name: "มิ้นท์", diet: ["halal", "certified"], avoid: ["pork", "egg"], spice: 0 }),
+      person({ name: "มิ้นท์", diet: ["halal", "certified"], avoid: ["pork", "egg"] }),
       person({ name: "🍜" }),
       person({ name: "~", diet: ["jay"] }),
       person({ name: "", max: 55 }),
@@ -82,12 +89,11 @@ describe("group encoding", () => {
 });
 
 describe("personFilters", () => {
-  it("combines base filters with the person's own, tightest budget and spice winning", () => {
-    const base = { ...defaultFilters(), max: 60, diet: ["halal" as const], spice: 2 as const, type: ["rice" as const] };
-    const filters = personFilters(person({ max: 50, diet: ["nopork"], avoid: ["egg"], spice: 1 }), base);
-    expect(filters).toMatchObject({ max: 50, diet: ["nopork", "halal"], avoid: ["egg"], spice: 1, type: ["rice"] });
-    expect(personFilters(person({ max: 70, spice: 3 }), base)).toMatchObject({ max: 60, spice: 2 });
-    expect(personFilters(person({ spice: 3 })).spice).toBeUndefined();
+  it("combines base filters with the person's own, the tightest budget winning", () => {
+    const base = { ...defaultFilters(), max: 60, diet: ["halal" as const], type: ["rice" as const] };
+    const filters = personFilters(person({ max: 50, diet: ["nopork"], avoid: ["egg"] }), base);
+    expect(filters).toMatchObject({ max: 50, diet: ["nopork", "halal"], avoid: ["egg"], type: ["rice"] });
+    expect(personFilters(person({ max: 70 }), base)).toMatchObject({ max: 60 });
   });
 });
 

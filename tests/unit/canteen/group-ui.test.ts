@@ -14,23 +14,22 @@ import {
   peopleFromForm,
   personBadge,
   readGroupState,
-  spiceValue,
   stateFromForm,
 } from "@/components/domain/canteen/group/state";
 
-const mint: Person = { name: "Mint", max: 50, diet: ["nopork", "vegetarian"], avoid: [], spice: 1 };
-const ben: Person = { name: "Ben", max: 80, diet: [], avoid: [], spice: 3 };
+const mint: Person = { name: "Mint", max: 50, diet: ["nopork", "vegetarian"], avoid: [] };
+const ben: Person = { name: "Ben", max: 80, diet: [], avoid: [] };
 
 describe("group url state", () => {
   it("keeps the p parameter compact and readable", () => {
-    expect(groupQuery({ people: [mint, ben], strategy: "one" })).toBe("p=Mint.50.np-v.s1~Ben.80..s3");
+    expect(groupQuery({ people: [mint, ben], strategy: "one" })).toBe("p=Mint.50.np-v~Ben.80");
   });
 
   it("round trips people, strategy, seed and rerolls", () => {
     const href = groupHref("/en/eat/group", { people: [mint, ben], strategy: "own", seed: "k7m2qx", rerolls: [1, 0] }, "results");
     const params = new URLSearchParams(href.split("#")[0]!.split("?")[1]);
     const state = readGroupState(params);
-    expect(state.people).toEqual(decodeGroup("Mint.50.np-v.s1~Ben.80..s3"));
+    expect(state.people).toEqual(decodeGroup("Mint.50.np-v~Ben.80"));
     expect(state.strategy).toBe("own");
     expect(state.seed).toBe("k7m2qx");
     expect(state.rerolls).toEqual([1]);
@@ -38,7 +37,7 @@ describe("group url state", () => {
   });
 
   it("leaves seed and rerolls off for the one stall strategy", () => {
-    expect(groupQuery({ people: [ben], strategy: "one", seed: "abc", rerolls: [2] })).toBe("p=Ben.80..s3");
+    expect(groupQuery({ people: [ben], strategy: "one", seed: "abc", rerolls: [2] })).toBe("p=Ben.80");
   });
 
   it("drops a seed that is not plain letters and digits", () => {
@@ -140,13 +139,6 @@ describe("group helpers", () => {
     expect(applyChange(mint, { kind: "raiseBudget", to: 55 }).max).toBe(55);
     expect(applyChange(mint, { kind: "dropDiet", value: "nopork" }).diet).toEqual(["vegetarian"]);
     expect(applyChange({ ...mint, avoid: ["beef"] }, { kind: "dropAvoid", value: "beef" }).avoid).toEqual([]);
-    expect(applyChange(mint, { kind: "raiseSpice", to: 2 }).spice).toBe(2);
-  });
-
-  it("reads the spice radio value", () => {
-    expect(spiceValue(mint)).toBe("1");
-    expect(spiceValue(ben)).toBe("");
-    expect(spiceValue({ name: "", diet: [], avoid: [] })).toBe("");
   });
 
   it("makes a badge from the first character, keeping emoji whole", () => {

@@ -159,8 +159,8 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     en: "Holy basil stir-fry over rice",
     aliases: ["krapow", "kaprao", "gaprao", "kra pao", "pad kaprao", "กะเพา", "กระเพรา"],
     explainer: {
-      th: "ผัดกะเพราคือเนื้อสัตว์สับผัดกับใบกะเพรา พริกและกระเทียม ราดบนข้าวสวย มักเสิร์ฟพร้อมไข่ดาวกรอบ เป็นเมนูตามสั่งที่คนสั่งมากที่สุด และรสเผ็ดกว่าที่คิดเสมอ",
-      en: "Minced meat stir-fried with holy basil, chilli and garlic, served over rice and usually topped with a crispy fried egg. It is the most ordered made to order dish, and it is spicier than you expect.",
+      th: "ผัดกะเพราคือเนื้อสัตว์สับผัดกับใบกะเพรา พริกและกระเทียม ราดบนข้าวสวย มักเสิร์ฟพร้อมไข่ดาวกรอบ เป็นเมนูตามสั่งที่คนสั่งมากที่สุด",
+      en: "Minced meat stir-fried with holy basil, chilli and garlic, served over rice and usually topped with a crispy fried egg. It is the most ordered made to order dish.",
     },
   },
   {
@@ -170,7 +170,7 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     en: "Hainanese chicken rice",
     aliases: ["khao man kai", "khaomangai", "chicken rice", "ข้าวมัน"],
     explainer: {
-      th: "ไก่ต้มหรือไก่ทอดเสิร์ฟกับข้าวที่หุงในน้ำมันไก่ น้ำจิ้มเต้าเจี้ยวรสเค็มหวานเผ็ดเล็กน้อย และน้ำซุปใส ไม่เผ็ดและกินง่าย เหมาะกับคนที่เพิ่งมาลองอาหารไทย",
+      th: "ไก่ต้มหรือไก่ทอดเสิร์ฟกับข้าวที่หุงในน้ำมันไก่ น้ำจิ้มเต้าเจี้ยวรสเค็มหวาน และน้ำซุปใส กินง่าย เหมาะกับคนที่เพิ่งมาลองอาหารไทย",
       en: "Poached or fried chicken over rice cooked in chicken fat, with a salty-sweet fermented bean dipping sauce and a clear broth. It is mild and easy, a good first Thai meal.",
     },
   },
@@ -192,8 +192,8 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     en: "Green papaya salad",
     aliases: ["som tum", "somtam", "papaya salad", "ตำไทย"],
     explainer: {
-      th: "สลัดมะละกอดิบตำกับพริก กระเทียม มะนาว น้ำปลาและน้ำตาลปี๊บ รสเปรี้ยว เค็ม หวานและเผ็ดจัด กินคู่กับข้าวเหนียวและไก่ย่าง",
-      en: "Shredded unripe papaya pounded with chilli, garlic, lime, fish sauce and palm sugar. Sour, salty, sweet and very hot, eaten with sticky rice and grilled chicken.",
+      th: "สลัดมะละกอดิบตำกับพริก กระเทียม มะนาว น้ำปลาและน้ำตาลปี๊บ รสเปรี้ยว เค็มและหวาน กินคู่กับข้าวเหนียวและไก่ย่าง",
+      en: "Shredded unripe papaya pounded with chilli, garlic, lime, fish sauce and palm sugar. Sour, salty and sweet, eaten with sticky rice and grilled chicken.",
     },
   },
   {
@@ -214,8 +214,8 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     en: "Fried rice",
     aliases: ["khao phat", "khaopad", "fried rice"],
     explainer: {
-      th: "ข้าวสวยผัดกับไข่และเนื้อสัตว์ปรุงด้วยซีอิ๊วและน้ำมันหอย เสิร์ฟพร้อมแตงกวา มะนาวและพริกน้ำปลา ไม่เผ็ด",
-      en: "Rice stir-fried with egg and your choice of meat, seasoned with soy and oyster sauce, served with cucumber, a lime wedge and chilli in fish sauce on the side. Not spicy.",
+      th: "ข้าวสวยผัดกับไข่และเนื้อสัตว์ปรุงด้วยซีอิ๊วและน้ำมันหอย เสิร์ฟพร้อมแตงกวา มะนาวและพริกน้ำปลา",
+      en: "Rice stir-fried with egg and your choice of meat, seasoned with soy and oyster sauce, served with cucumber, a lime wedge and chilli in fish sauce on the side.",
     },
   },
   {
@@ -225,8 +225,8 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     en: "Stir-fried wide noodles in soy sauce",
     aliases: ["pad si ew", "pad siew", "phat si io", "ผัดซีอิ้ว"],
     explainer: {
-      th: "เส้นใหญ่ผัดกับซีอิ๊วดำ ไข่ และผักคะน้า ได้กลิ่นไหม้อ่อนจากกระทะร้อน รสหวานเค็ม ไม่เผ็ด",
-      en: "Wide rice noodles fried with dark soy sauce, egg and Chinese broccoli. Smoky from a very hot wok, sweet and salty, not spicy.",
+      th: "เส้นใหญ่ผัดกับซีอิ๊วดำ ไข่ และผักคะน้า ได้กลิ่นไหม้อ่อนจากกระทะร้อน รสหวานเค็ม",
+      en: "Wide rice noodles fried with dark soy sauce, egg and Chinese broccoli. Smoky from a very hot wok, sweet and salty.",
     },
   },
   {
@@ -237,7 +237,7 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     aliases: ["rat na", "lad na", "rad nah"],
     explainer: {
       th: "เส้นใหญ่ผัดหรือเส้นหมี่กรอบราดน้ำเกรวี่ข้นจากแป้งมัน ใส่ผักคะน้าและเนื้อสัตว์ รสออกหวานมัน กินแล้วอุ่นท้อง",
-      en: "Pan-fried wide noodles or crispy noodles under a thick, glossy gravy with Chinese broccoli and meat. Savoury and comforting, not spicy.",
+      en: "Pan-fried wide noodles or crispy noodles under a thick, glossy gravy with Chinese broccoli and meat. Savoury and comforting.",
     },
   },
   {
@@ -247,7 +247,7 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     en: "Tom yum, hot and sour soup",
     aliases: ["tom yam", "tomyum", "tom yum goong"],
     explainer: {
-      th: "ซุปเปรี้ยวเผ็ดหอมตะไคร้ ข่าและใบมะกรูด จะเป็นน้ำใสหรือน้ำข้นก็ได้ ใส่เป็นซุปถ้วยเดียว หรือใส่ในก๋วยเตี๋ยว",
+      th: "ซุปเปรี้ยวหอมตะไคร้ ข่าและใบมะกรูด จะเป็นน้ำใสหรือน้ำข้นก็ได้ ใส่เป็นซุปถ้วยเดียว หรือใส่ในก๋วยเตี๋ยว",
       en: "A hot and sour soup scented with lemongrass, galangal and makrut lime leaf, clear or creamy. Ordered as a bowl of soup or as the broth for noodles.",
     },
   },
@@ -269,8 +269,8 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     en: "Rice porridge",
     aliases: ["joke", "jook", "congee"],
     explainer: {
-      th: "ข้าวต้มเละร้อน ๆ กินกับขิง ต้นหอมและไข่ลวก อาหารเช้าที่ย่อยง่าย ไม่เผ็ด",
-      en: "Hot, smooth rice porridge with ginger, spring onion and a soft egg. A gentle breakfast that is not spicy.",
+      th: "ข้าวต้มเละร้อน ๆ กินกับขิง ต้นหอมและไข่ลวก อาหารเช้าที่ย่อยง่าย",
+      en: "Hot, smooth rice porridge with ginger, spring onion and a soft egg. A gentle breakfast.",
     },
   },
   {
@@ -324,8 +324,8 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     en: "Thai omelette",
     aliases: ["kai jiew", "khai jeow", "thai omelet"],
     explainer: {
-      th: "ไข่ตีแล้วทอดในน้ำมันร้อนจนฟูกรอบ กินกับข้าวสวยและน้ำพริกหรือซอสพริก ใส่หมูสับได้ ไม่เผ็ด",
-      en: "Beaten eggs fried in plenty of hot oil until puffed and crispy at the edges, eaten over rice with chilli sauce. Often made with minced pork. Not spicy.",
+      th: "ไข่ตีแล้วทอดในน้ำมันร้อนจนฟูกรอบ กินกับข้าวสวยและน้ำพริกหรือซอสพริก ใส่หมูสับได้",
+      en: "Beaten eggs fried in plenty of hot oil until puffed and crispy at the edges, eaten over rice with chilli sauce. Often made with minced pork.",
     },
   },
 ];
@@ -364,7 +364,6 @@ function buildDishes(stamp: string): CanteenDish[] {
     protein: spec.protein,
     ...(spec.contains ? { contains: spec.contains } : {}),
     ...(spec.style ? { style: spec.style } : {}),
-    spice: spec.spice,
     temperature: spec.temperature,
     wet: spec.wet,
     vegetarian: spec.vegetarian,

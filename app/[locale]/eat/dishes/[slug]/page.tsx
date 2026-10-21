@@ -1,6 +1,6 @@
 /**
  * One dish: the surveyed price with its date and every option, the stall and
- * how to find it, diet and spice, and the same dish at other stalls with the
+ * how to find it, diet, and the same dish at other stalls with the
  * cheapest marked. Carries the reader's filters into every link.
  */
 
@@ -17,7 +17,6 @@ import {
   PriceTag,
   ALLERGEN_LABEL,
   PROTEIN_LABEL,
-  SpiceMeter,
   STYLE_LABEL,
   TYPE_LABEL,
   dishDietTags,
@@ -164,14 +163,6 @@ export default async function EatDishPage({
                   {dish.wet ? `, ${t(EAT.soupyWord, locale)}` : ""}
                 </dd>
               </div>
-              {dish.type !== "drink" && dish.type !== "dessert" ? (
-                <div>
-                  <dt className="text-sm font-medium text-ink-600">{t(EAT.spiceLine, locale)}</dt>
-                  <dd className="m-0">
-                    <SpiceMeter level={dish.spice} locale={locale} />
-                  </dd>
-                </div>
-              ) : null}
             </dl>
           </Stack>
         </section>

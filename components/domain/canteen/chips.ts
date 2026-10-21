@@ -11,7 +11,6 @@ import {
   DIET_SHORT_LABEL,
   FEEL_LABEL,
   OPEN_CHIP_LABEL,
-  SPICE_FILTER_LABEL,
   TYPE_LABEL,
   VARIANTS_CHIP_LABEL,
 } from "./labels";
@@ -28,7 +27,7 @@ export interface FilterChip {
 /** Looks up a stall's display name from its slug. */
 export type StallNamer = (slug: string) => string | undefined;
 
-/** One chip per filter value, in the canonical order: diet, budget, type, avoid, spice, feel, stall, open. */
+/** One chip per filter value, in the canonical order: diet, budget, type, avoid, feel, stall, open. */
 export function activeChips(filters: CanteenFilters, locale: Locale, stallName?: StallNamer): FilterChip[] {
   const chips: FilterChip[] = [];
 
@@ -61,13 +60,6 @@ export function activeChips(filters: CanteenFilters, locale: Locale, stallName?:
       id: `avoid-${value}`,
       label: AVOID_LABEL[value][locale],
       without: { ...filters, avoid: filters.avoid.filter((v) => v !== value) },
-    });
-  }
-  if (filters.spice !== undefined) {
-    chips.push({
-      id: "spice",
-      label: SPICE_FILTER_LABEL[String(filters.spice) as "0" | "1" | "2"][locale],
-      without: { ...filters, spice: undefined },
     });
   }
   for (const value of filters.feel) {

@@ -10,7 +10,7 @@
  *
  * Pure, so the server (no JavaScript) and the client run identical code.
  *
- * Example: `?max=50&diet=nopork&type=noodles,soup&spice=1&sort=price`
+ * Example: `?max=50&diet=nopork&type=noodles,soup&sort=price`
  */
 
 import { DISH_TYPES } from "./options";
@@ -45,8 +45,6 @@ export const DEFAULT_GROUP: GroupKey = "none";
 /** Highest budget accepted from a URL, in baht. Anything above is dropped as not meaningful. */
 export const MAX_BUDGET = 5000;
 
-/** The "any" end of the spice scale. A spice filter of 3 means no limit and is normalised away. */
-const SPICE_NO_LIMIT = 3;
 
 /**
  * Every filter the canteen understands. Optional fields mean "not set".
@@ -63,8 +61,6 @@ export interface CanteenFilters {
   type: DishType[];
   /** None of the listed proteins may be present. */
   avoid: AvoidKey[];
-  /** Highest typical spice level accepted, 0 to 2. Unset means any. */
-  spice?: 0 | 1 | 2;
   feel: FeelKey[];
   /** One stall, by slug. */
   stall?: string;
@@ -147,12 +143,6 @@ export function parse(raw: RawParams): CanteenFilters {
   filters.avoid = canonicalList(tokens(raw, "avoid"), AVOID_KEYS);
   filters.feel = canonicalList(tokens(raw, "feel"), FEEL_KEYS);
 
-  const spiceText = first(raw, "spice");
-  if (spiceText !== undefined && /^[0-3]$/.test(spiceText)) {
-    const spice = Number(spiceText);
-    if (spice < SPICE_NO_LIMIT) filters.spice = spice as 0 | 1 | 2;
-  }
-
   const stall = first(raw, "stall");
   if (stall !== undefined && SLUG_PATTERN.test(stall)) filters.stall = stall;
 
@@ -190,7 +180,6 @@ export function serialise(filters: CanteenFilters): string {
   if (filters.diet.length > 0) add("diet", canonicalList(filters.diet, DIET_KEYS).join(","));
   if (filters.type.length > 0) add("type", canonicalList(filters.type, DISH_TYPES).join(","));
   if (filters.avoid.length > 0) add("avoid", canonicalList(filters.avoid, AVOID_KEYS).join(","));
-  if (filters.spice !== undefined && filters.spice < SPICE_NO_LIMIT) add("spice", String(filters.spice));
   if (filters.feel.length > 0) add("feel", canonicalList(filters.feel, FEEL_KEYS).join(","));
   if (filters.stall !== undefined) add("stall", filters.stall);
   if (filters.open) add("open", "1");
@@ -241,7 +230,6 @@ export function activeFilterParams(filters: CanteenFilters): FilterParam[] {
   if (filters.diet.length > 0) active.push("diet");
   if (filters.type.length > 0) active.push("type");
   if (filters.avoid.length > 0) active.push("avoid");
-  if (filters.spice !== undefined) active.push("spice");
   if (filters.feel.length > 0) active.push("feel");
   if (filters.stall !== undefined) active.push("stall");
   if (filters.open) active.push("open");
@@ -249,7 +237,7 @@ export function activeFilterParams(filters: CanteenFilters): FilterParam[] {
 }
 
 /** The URL parameters that narrow the result set. */
-export type FilterParam = "max" | "diet" | "type" | "avoid" | "spice" | "feel" | "stall" | "open";
+export type FilterParam = "max" | "diet" | "type" | "avoid" | "feel" | "stall" | "open";
 
 /** How many individual filter values are on: each diet, type, avoid and feel counts one. */
 export function countActiveValues(filters: CanteenFilters): number {
@@ -258,7 +246,6 @@ export function countActiveValues(filters: CanteenFilters): number {
     filters.diet.length +
     filters.type.length +
     filters.avoid.length +
-    (filters.spice !== undefined ? 1 : 0) +
     filters.feel.length +
     (filters.stall !== undefined ? 1 : 0) +
     (filters.open ? 1 : 0)

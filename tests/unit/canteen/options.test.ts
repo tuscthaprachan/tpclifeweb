@@ -9,7 +9,6 @@ import {
   FLOOR_SIDES,
   HALAL_STATUSES,
   PROTEINS,
-  SPICE_LEVELS,
   TEMPERATURES,
 } from "@/lib/canteen";
 import {
@@ -21,7 +20,6 @@ import {
   FLOOR_SIDE_OPTIONS,
   HALAL_OPTIONS,
   PROTEIN_OPTIONS,
-  SPICE_OPTIONS,
   TEMPERATURE_OPTIONS,
 } from "@/sanity/schemas/constants";
 
@@ -40,7 +38,6 @@ describe("canteen option lists", () => {
     ["protein", PROTEINS, PROTEIN_OPTIONS],
     ["style", COOKING_STYLES, COOKING_STYLE_OPTIONS],
     ["temperature", TEMPERATURES, TEMPERATURE_OPTIONS],
-    ["spice", SPICE_LEVELS, SPICE_OPTIONS],
     ["diet availability", DIET_AVAILABILITIES, DIET_AVAILABILITY_OPTIONS],
     ["floor side", FLOOR_SIDES, FLOOR_SIDE_OPTIONS],
   ];

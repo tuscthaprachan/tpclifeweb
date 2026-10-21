@@ -47,7 +47,6 @@ export const GROUP = {
   budgetHint: { th: "ว่างไว้ถ้าไม่จำกัด", en: "Leave empty for no limit." } satisfies Bilingual,
   dietLegend: { th: "อาหารที่กินได้", en: "Diet" } satisfies Bilingual,
   avoidLegend: { th: "ไม่เอา", en: "Skip these" } satisfies Bilingual,
-  spiceLegend: { th: "ระดับเผ็ดสูงสุดที่รับได้", en: "Spice, at most" } satisfies Bilingual,
   remove: { th: "เอาออก", en: "Remove" } satisfies Bilingual,
   addPerson: { th: "เพิ่มอีกคน", en: "Add another person" } satisfies Bilingual,
   showResults: { th: "ดูผลลัพธ์", en: "Show results" } satisfies Bilingual,
@@ -205,8 +204,5 @@ export const group = {
   },
   changeDropAvoid(name: string, avoid: string, locale: Locale): string {
     return locale === "th" ? `${name} เลิกเลือก "${avoid}"` : `${name} dropped "${avoid}"`;
-  },
-  changeSpice(name: string, spice: string, locale: Locale): string {
-    return locale === "th" ? `${name} รับเผ็ดได้ถึงระดับ "${spice}"` : `${name} took spice up to "${spice}"`;
   },
 } as const;

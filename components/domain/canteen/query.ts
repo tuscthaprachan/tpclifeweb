@@ -64,7 +64,6 @@ const FORM_OWNED = new Set([
   "diet",
   "type",
   "avoid",
-  "spice",
   "feel",
   "stall",
   "open",

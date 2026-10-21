@@ -17,9 +17,9 @@ interface DietTagProps {
 /**
  * One diet tag: icon, word and a soft fill (1.4.1: never colour alone).
  *
- * The words say whose claim it is. "Stall says halal" is the stall's own word;
- * only a certificate on file earns "Certified halal", which is drawn on the
- * solid fill so it reads as the stronger claim. An "ask for it" tag has a
+ * "Halal" marks every dish at a halal stall; a certificate on file earns
+ * "Certified halal", drawn on the solid fill so it reads as the stronger
+ * claim. An "ask for it" tag has a
  * dashed outline, because that dish is not made that way until you ask.
  */
 export function DietTag({ tag, locale, showDate = false, className }: DietTagProps) {

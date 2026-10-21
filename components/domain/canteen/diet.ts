@@ -1,14 +1,12 @@
 /**
  * Which diet tags a dish wears, and in what words. Pure.
  *
- * HONESTY. Every tag here is the stall's word. `halalStall` reads "stall says
- * halal"; only `halalCertified` (a certificate on file) drops the "stall
- * says". `canAsk` dishes are shown as "ask for veggie", never as vegetarian.
- * A "no pork" tag only means no pork is in the dish's recorded proteins:
- * broths and sauces are not tracked.
+ * A halal stall's whole menu is halal, so every dish there carries the halal
+ * tag. `canAsk` dishes are shown as "ask for veggie", never as vegetarian.
+ * There is no "no pork" tag: the "no pork" filter still works.
  */
 
-import { noPork, vegetarianAvailability } from "@/lib/canteen/derive";
+import { vegetarianAvailability } from "@/lib/canteen/derive";
 import type { DietKey } from "@/lib/canteen/params";
 import type { CanteenDish, CanteenStall } from "@/lib/sanity/types";
 import type { DIET_TAG_LABEL } from "./labels";
@@ -27,7 +25,7 @@ export interface DishDietTag {
 }
 
 /**
- * The tags to show for a dish, in a fixed order: halal, no pork, then the
+ * The tags to show for a dish, in a fixed order: halal, then the
  * vegetarian family. When a dish is vegan the vegetarian tag is left out,
  * because vegan already says it. Stalls with no halal answer give no tag.
  */
@@ -39,8 +37,6 @@ export function dishDietTags(dish: CanteenDish, stall: CanteenStall | undefined)
   } else if (stall?.halal === "stallDeclared") {
     tags.push({ key: "halalStall", diet: "halal", canAsk: false, checkedOn: stall.halalCheckedOn });
   }
-
-  if (noPork(dish)) tags.push({ key: "nopork", diet: "nopork", canAsk: false });
 
   const vegetarian = stall ? vegetarianAvailability(dish, stall) : dish.vegetarian;
   if (dish.vegan !== "yes") {
@@ -60,6 +56,6 @@ export function dishDietTags(dish: CanteenDish, stall: CanteenStall | undefined)
 /** The halal tag for a stall as a whole (not one dish), or null when the stall gave no halal answer. */
 export function stallHalalTag(stall: CanteenStall): DishDietTag | null {
   if (stall.halal === "certified") return { key: "halalCertified", diet: "certified", canAsk: false, checkedOn: stall.halalCheckedOn };
-  if (stall.halal === "stallDeclared") return { key: "halalStall", diet: "halal", canAsk: false, checkedOn: stall.halalCheckedOn };
+  if (stall.halal === "stallDeclared") return { key: "halalWholeStall", diet: "halal", canAsk: false, checkedOn: stall.halalCheckedOn };
   return null;
 }

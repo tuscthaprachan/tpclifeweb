@@ -18,7 +18,6 @@ import type {
   DishType,
   HalalStatus,
   Protein,
-  SpiceLevel,
 } from "@/lib/sanity/types";
 import type { AvoidKey, DietKey, FeelKey, GroupKey, SortKey } from "@/lib/canteen/params";
 import type { Bilingual } from "./strings";
@@ -31,7 +30,7 @@ export function label<K extends string>(labels: Record<K, Bilingual>, key: K, lo
 /** Diet filter options, as they read on the filter form and on filter chips. */
 export const DIET_LABEL: Record<DietKey, Bilingual> = {
   nopork: { th: "ไม่มีหมู", en: "No pork" },
-  halal: { th: "ฮาลาล (ร้านแจ้งหรือมีใบรับรอง)", en: "Halal (stall says or certified)" },
+  halal: { th: "ฮาลาล", en: "Halal" },
   certified: { th: "ฮาลาลมีใบรับรอง", en: "Halal (certified only)" },
   vegetarian: { th: "มังสวิรัติ (หรือขอทำได้)", en: "Vegetarian (or ask for it)" },
   vegan: { th: "วีแกน (หรือขอทำได้)", en: "Vegan (or ask for it)" },
@@ -48,10 +47,10 @@ export const DIET_SHORT_LABEL: Record<DietKey, Bilingual> = {
   jay: { th: "เจ", en: "Jay" },
 };
 
-/** What a diet tag on a dish says. "Stall says" unless certified, "ask" when the stall will make it that way on request. */
+/** What a diet tag on a dish says. "Ask" when the stall will make it that way on request. */
 export const DIET_TAG_LABEL = {
-  nopork: { th: "ไม่มีหมูในรายการ", en: "No pork listed" },
-  halalStall: { th: "ร้านแจ้งว่าฮาลาล", en: "Stall says halal" },
+  halalStall: { th: "ฮาลาล", en: "Halal" },
+  halalWholeStall: { th: "ร้านฮาลาล ทุกเมนูเป็นฮาลาล", en: "Halal stall: everything it sells is halal" },
   halalCertified: { th: "ฮาลาลมีใบรับรอง", en: "Certified halal" },
   vegetarianYes: { th: "ร้านแจ้งว่ามังสวิรัติ", en: "Stall says vegetarian" },
   vegetarianAsk: { th: "ขอทำแบบมังสวิรัติได้", en: "Ask for veggie" },
@@ -122,22 +121,6 @@ export const FEEL_LABEL: Record<FeelKey, Bilingual> = {
   notFried: { th: "ไม่ผัดไม่ทอด", en: "Not fried" },
 };
 
-/** The spice scale as a word: how hot a dish is by default. */
-export const SPICE_LABEL: Record<SpiceLevel, Bilingual> = {
-  0: { th: "ไม่เผ็ด", en: "Not spicy" },
-  1: { th: "เผ็ดน้อย", en: "Mild" },
-  2: { th: "เผ็ดกลาง", en: "Medium" },
-  3: { th: "เผ็ดมาก", en: "Hot" },
-};
-
-/** The spice FILTER options. The value is the ceiling: "1" means mild or less. */
-export const SPICE_FILTER_LABEL: Record<"any" | "0" | "1" | "2", Bilingual> = {
-  any: { th: "ได้ทุกระดับ", en: "Any spice" },
-  "0": { th: "ไม่เผ็ดเท่านั้น", en: "Not spicy only" },
-  "1": { th: "เผ็ดน้อยหรือต่ำกว่า", en: "Mild or less" },
-  "2": { th: "เผ็ดกลางหรือต่ำกว่า", en: "Up to medium" },
-};
-
 export const SORT_LABEL: Record<SortKey, Bilingual> = {
   price: { th: "ราคาถูกก่อน", en: "Cheapest first" },
   name: { th: "ชื่อ ก ถึง ฮ", en: "Name, A to Z" },
@@ -185,10 +168,10 @@ export const STYLE_LABEL: Record<CookingStyle, Bilingual> = {
   curry: { th: "แกง", en: "Curry" },
 };
 
-/** The halal status of a stall, in the stall's own words unless certified. */
+/** The halal status of a stall. A halal stall's whole menu is halal. */
 export const HALAL_LABEL: Record<HalalStatus, Bilingual> = {
   none: { th: "ไม่ได้แจ้งว่าฮาลาล", en: "Not marked halal" },
-  stallDeclared: { th: "ร้านแจ้งว่าฮาลาล", en: "Stall says halal" },
+  stallDeclared: { th: "ร้านฮาลาล ทุกเมนูเป็นฮาลาล", en: "Halal stall: everything it sells is halal" },
   certified: { th: "ฮาลาลมีใบรับรอง", en: "Certified halal" },
 };
 

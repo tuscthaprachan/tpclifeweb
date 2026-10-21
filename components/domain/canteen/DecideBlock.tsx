@@ -24,7 +24,7 @@ const DECIDE_DIETS: readonly DietKey[] = ["nopork", "halal", "vegetarian", "vega
 /**
  * The "Decide for me" block of the hub: a budget chip row, a diet chip row and
  * one big button. A plain `<form method="get">` to `/eat/pick`, so it works
- * without JavaScript. Every other active filter (type, avoid, spice, feel,
+ * without JavaScript. Every other active filter (type, avoid, feel,
  * stall, open, and any diet not offered as a chip) is sent along as a hidden
  * field, so "Decide for me" respects the whole filter state.
  */

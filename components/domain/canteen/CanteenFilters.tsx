@@ -16,7 +16,7 @@ import type { CanteenStall } from "@/lib/sanity/types";
 import { ChoiceGroup } from "./ChoiceGroup";
 import { FilterForm } from "./FilterForm";
 import { DietIcon, DishTypeIcon } from "./icons";
-import { AVOID_LABEL, DIET_LABEL, FEEL_LABEL, GROUP_LABEL, SORT_LABEL, SPICE_FILTER_LABEL, TYPE_LABEL } from "./labels";
+import { AVOID_LABEL, DIET_LABEL, FEEL_LABEL, GROUP_LABEL, SORT_LABEL, TYPE_LABEL } from "./labels";
 import { EAT, eat, t } from "./strings";
 
 interface CanteenFiltersProps {
@@ -42,7 +42,6 @@ interface CanteenFiltersProps {
   hide?: ReadonlyArray<"stall" | "open">;
 }
 
-const SPICE_VALUES = ["any", "0", "1", "2"] as const;
 
 /**
  * The filter form, used as a column on desktop and inside the Dialog on
@@ -138,20 +137,6 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
         kind="checkbox"
         selected={filters.avoid}
         choices={AVOID_KEYS.map((key) => ({ value: key, label: AVOID_LABEL[key][locale], count: counts.avoid[key] }))}
-      />
-
-      <ChoiceGroup
-        id={id("spice")}
-        legend={t(EAT.spiceLegend, locale)}
-        name="spice"
-        kind="radio"
-        selected={[filters.spice === undefined ? "any" : String(filters.spice)]}
-        choices={SPICE_VALUES.map((key) => ({
-          // "any" is submitted as 3, which `parse` reads as no limit.
-          value: key === "any" ? "3" : key,
-          label: SPICE_FILTER_LABEL[key][locale],
-          count: counts.spice[key],
-        }))}
       />
 
       <ChoiceGroup

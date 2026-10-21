@@ -10,7 +10,7 @@
  *    reproducible. `r` holds each person's reroll count, joined with `-`.
  * 2. The FORM URL a plain GET submit of the builder produces: one set of
  *    fields per person (`n0` name, `max0` budget, `d0` diet (repeated),
- *    `a0` avoid (repeated), `s0` spice ceiling `0|1|2` or empty for any) plus
+ *    `a0` avoid (repeated)) plus
  *    `strat`, `seed` and `act` (`show`, `add` or `remove-2`). The server turns
  *    it into the canonical URL with a redirect.
  *
@@ -160,7 +160,7 @@ export function peopleFromForm(raw: RawParams): Person[] {
   const indexes = [
     ...new Set(
       names
-        .map((name) => /^(?:n|max|d|a|s)(\d+)$/.exec(name)?.[1])
+        .map((name) => /^(?:n|max|d|a)(\d+)$/.exec(name)?.[1])
         .filter((value): value is string => value !== undefined)
         .map(Number)
         .filter((index) => index < MAX_PEOPLE * 2),
@@ -168,7 +168,6 @@ export function peopleFromForm(raw: RawParams): Person[] {
   ].sort((a, b) => a - b);
 
   return indexes.slice(0, MAX_PEOPLE).map((index) => {
-    const spiceRaw = firstValue(raw, `s${index}`);
     const person: Person = {
       name: cleanName(firstValue(raw, `n${index}`) ?? ""),
       diet: DIET_KEYS.filter((key) => allValues(raw, `d${index}`).includes(key)),
@@ -176,7 +175,6 @@ export function peopleFromForm(raw: RawParams): Person[] {
     };
     const max = parseBudget(firstValue(raw, `max${index}`));
     if (max !== undefined) person.max = max;
-    if (spiceRaw === "0" || spiceRaw === "1" || spiceRaw === "2") person.spice = Number(spiceRaw) as 0 | 1 | 2;
     return person;
   });
 }
@@ -219,11 +217,6 @@ export function stateFromForm(raw: RawParams): { state: GroupState; hash: string
  * Small helpers for the views
  * ------------------------------------------------------------------ */
 
-/** The spice radio value a person shows: "" for any, else "0", "1" or "2". */
-export function spiceValue(person: Person): "" | "0" | "1" | "2" {
-  return person.spice === 0 || person.spice === 1 || person.spice === 2 ? (String(person.spice) as "0" | "1" | "2") : "";
-}
-
 /** Toggles one value in a sorted option list. */
 export function toggleKey<T extends DietKey | AvoidKey>(list: readonly T[], key: T, on: boolean, order: readonly T[]): T[] {
   const set = new Set(list);
@@ -241,8 +234,6 @@ export function applyChange(person: Person, change: GroupChange): Person {
       return { ...person, diet: person.diet.filter((key) => key !== change.value) };
     case "dropAvoid":
       return { ...person, avoid: person.avoid.filter((key) => key !== change.value) };
-    case "raiseSpice":
-      return { ...person, spice: change.to };
   }
 }
 

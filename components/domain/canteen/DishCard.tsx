@@ -8,7 +8,6 @@ import type { CanteenDish, CanteenStall } from "@/lib/sanity/types";
 import { DietTags } from "./DietTag";
 import { FavouriteToggle } from "./FavouriteToggle";
 import { PriceTag } from "./PriceTag";
-import { SpiceMeter } from "./SpiceMeter";
 import { dishDietTags } from "./diet";
 import { DishTypeIcon, PinIcon } from "./icons";
 import { TYPE_TAG_LABEL } from "./labels";
@@ -31,7 +30,7 @@ interface DishCardProps {
 
 /**
  * One dish: name in both languages (the reader's own first), the surveyed
- * price with its date, which stall, diet tags and spice. A server component:
+ * price with its date, which stall, diet tags. A server component:
  * everything works without JavaScript except the favourite toggle, which is
  * the only client island and simply is not there until JavaScript runs.
  */
@@ -40,7 +39,6 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
   const name = pick(dish.name, locale);
   const otherName = pick(dish.name, other);
   const stallName = stall ? pick(stall.name, locale) : "";
-  const showSpice = dish.type !== "drink" && dish.type !== "dessert";
 
   return (
     <article className={cx("flex h-full flex-col gap-[var(--space-3)] rounded-panel border border-line bg-surface p-[var(--space-4)]", className)}>
@@ -76,7 +74,6 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
 
       <div className="mt-auto flex flex-col gap-[var(--space-2)]">
         <DietTags tags={dishDietTags(dish, stall)} locale={locale} />
-        {showSpice ? <SpiceMeter level={dish.spice} locale={locale} /> : null}
       </div>
     </article>
   );

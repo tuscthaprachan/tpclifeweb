@@ -640,9 +640,6 @@ export type CookingStyle =
 
 export type Temperature = "hot" | "cold";
 
-/** Typical spice as made by default: 0 not spicy, 1 mild, 2 medium, 3 hot. */
-export type SpiceLevel = 0 | 1 | 2 | 3;
-
 /**
  * Whether a dish suits a diet. `canAsk` means the stall will make it that
  * way on request. It is the stall's word, not a guarantee.
@@ -723,7 +720,6 @@ export interface CanteenDish extends DocumentMeta {
   contains?: Allergen[];
   /** Absent for drinks, desserts and anything not cooked to order. */
   style?: CookingStyle;
-  spice: SpiceLevel;
   temperature: Temperature;
   /** Soupy or with sauce. */
   wet: boolean;

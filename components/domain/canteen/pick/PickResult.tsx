@@ -17,7 +17,6 @@ import { dishDietTags } from "../diet";
 import { TYPE_LABEL } from "../labels";
 import { dishHref, mapHref, stallHref } from "../links";
 import { PriceTag } from "../PriceTag";
-import { SpiceMeter } from "../SpiceMeter";
 import { EAT, eat, t } from "../strings";
 import { EatThisButton } from "./EatThisButton";
 import { pickHref, type PickParams } from "./helpers";
@@ -203,7 +202,6 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
       <div className="grid gap-[var(--space-4)] md:grid-cols-2 md:gap-[var(--space-6)]">
         <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
           <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} inlineExtras hideChecked />
-          {dish.type !== "drink" && dish.type !== "dessert" ? <SpiceMeter level={dish.spice} locale={locale} /> : null}
           <DietTags tags={tags} locale={locale} />
         </div>
         <div className="flex min-w-0 flex-col gap-[var(--space-3)]">

@@ -60,7 +60,7 @@ A sticky summary bar under the header on every `/eat` page: "No pork · under 50
 ## 4. Data collection
 
 ### Survey kit
-- A spreadsheet template, one row per dish: stall number, Thai name as written on the board, price, price variants (พิเศษ, add egg), dish type, base, protein, cooking style, spice, hot or cold, soup or dry, vegetarian or vegan possible, photo filename.
+- A spreadsheet template, one row per dish: stall number, Thai name as written on the board, price, price variants (พิเศษ, add egg), dish type, base, protein, cooking style, hot or cold, soup or dry, vegetarian or vegan possible, photo filename.
 - A stall sheet: stall number, name, owner's preferred stall name, cuisine, hours if different from the canteen, halal (asked, certified, no), vegetarian stall (yes, no), position on the floor plan.
 - A floor plan sketch with entrances, stall positions and seating zones.
 
@@ -101,7 +101,7 @@ The taxonomy layer. One per real-world dish, not per stall.
 | slug | slug | `pad-kra-pao` |
 | aliases | string[] | krapow, kaprao, gaprao, กะเพา (common misspelling) |
 | explainer | localeText | What it is, for someone who has never had it |
-| howToOrder | array of `{ th, romanised, en }` | "ไม่เผ็ด, mai phet, not spicy"; "ไข่ดาว, khai dao, fried egg on top" |
+| howToOrder | array of `{ th, romanised, en }` | "ไข่ดาว, khai dao, fried egg on top" |
 
 ### `canteenDish`
 | Field | Type | Notes |
@@ -116,7 +116,6 @@ The taxonomy layer. One per real-world dish, not per stall.
 | course | enum | main, side, drink, dessert (drives meal combos) |
 | protein | enum[] | pork, chicken, beef, seafood, fish, egg, tofu, none |
 | style | enum | stir-fried, deep-fried, boiled or soup, grilled, steamed, salad, curry |
-| spice | 0 to 3 | Typical, as made by default |
 | temperature | hot \| cold | |
 | wet | boolean | Soupy or with sauce |
 | vegetarian / vegan / jay | `no` \| `canAsk` \| `yes` | "canAsk" means the stall will make it without meat on request |
@@ -148,13 +147,12 @@ Add `CanteenStall`, `CanteenDish`, `CanonicalDish`, `CanteenSettings` to `lib/sa
 | Diet | `diet` | Checkboxes | no pork, halal (stall says), halal (certified), vegetarian, vegan, jay |
 | Type | `type` | Checkboxes with icons | rice, noodles, soup, curry over rice, made to order, snack, drink, dessert |
 | Avoid | `avoid` | Checkboxes | pork, beef, seafood, fish, egg. Labelled "Preferences. Not for allergies, ask the stall." |
-| Spice | `spice` | Radios: any, mild only, up to medium | |
 | Feel | `feel` | Chips | hot, cold, soupy, dry, fried, not fried |
 | Stall | `stall` | Select | |
 | Open now | `open` | Checkbox | Scheduled hours |
 | Sort | `sort` | Select | cheapest, A to Z, stall number (the hall is numbered in walking order; the old `sort=walk` link still works) |
 
-Example: `/th/eat/dishes?max=50&diet=nopork&type=noodles,soup&spice=1&sort=price`
+Example: `/th/eat/dishes?max=50&diet=nopork&type=noodles,soup&sort=price`
 
 ### Behaviour
 - **Counts on every option**, computed against the other active filters: "Noodles (14)". Options that would give zero are shown disabled with "(0)", not hidden, so the layout does not jump.
@@ -216,7 +214,7 @@ Set a weekly budget and the days you are on campus. The planner picks one lunch 
 
 No server state, everything in the URL.
 
-1. The host names the group and adds people. Each person is a small fieldset: name or emoji, budget, diet, avoid, spice.
+1. The host names the group and adds people. Each person is a small fieldset: name or emoji, budget, diet, avoid.
 2. Two ways to fill it: **pass the phone** (everyone edits on one device), or **share the link**, where each friend adds themselves and sends the growing link on. People encode compactly, for example `p=Mint.50.np-v.s1~Ben.80..s3`.
 3. The result offers three strategies:
    - **One stall for everyone**: stalls where every person has at least one matching dish, ranked by how many choices the most constrained person gets. Each person's options listed under their name.
@@ -266,10 +264,9 @@ Reuse: `Checkboxes`, `Radios`, `Fieldset`, `Select`, `Tag`, `StatusTag`, `Panel`
 New, in `components/domain/canteen/`:
 | Component | Role |
 |---|---|
-| `DishCard` | Name, price, stall, diet tags, spice, favourite toggle |
+| `DishCard` | Name, price, stall, diet tags, favourite toggle |
 | `PriceTag` | Price, variants on expand, "checked on" date |
 | `DietTag` | Icon plus word plus fill, "stall says" wording built in |
-| `SpiceMeter` | Up to three chilli icons plus a word ("mild") |
 | `CanteenFilters` | The GET form, used as a column or inside the Dialog |
 | `ActiveFilterBar` | Sticky summary with removable chips |
 | `RelaxSuggestions` | Zero-result recovery |

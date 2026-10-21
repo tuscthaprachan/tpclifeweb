@@ -124,14 +124,6 @@ export const TEMPERATURE_OPTIONS = [
   { title: "Cold", value: "cold" },
 ];
 
-/** Typical spice as made by default. Stored as a number 0 to 3. */
-export const SPICE_OPTIONS = [
-  { title: "0, not spicy", value: 0 },
-  { title: "1, mild", value: 1 },
-  { title: "2, medium", value: 2 },
-  { title: "3, hot", value: 3 },
-];
-
 /** Matches `DietAvailability`. "Can ask" means the stall will make it without meat on request. */
 export const DIET_AVAILABILITY_OPTIONS = [
   { title: "No", value: "no" },

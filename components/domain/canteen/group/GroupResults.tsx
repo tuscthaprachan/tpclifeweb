@@ -21,7 +21,7 @@ import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types"
 
 import { DishCard } from "../DishCard";
 import { PriceTag } from "../PriceTag";
-import { AVOID_LABEL, DIET_SHORT_LABEL, SPICE_FILTER_LABEL, label } from "../labels";
+import { AVOID_LABEL, DIET_SHORT_LABEL, label } from "../labels";
 import { dishHref, stallHref } from "../links";
 import { EAT, eat, t } from "../strings";
 import { GROUP, group } from "./strings";
@@ -252,10 +252,6 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
         return group.changeDropDiet(who, label(DIET_SHORT_LABEL, change.value, locale), locale);
       case "dropAvoid":
         return group.changeDropAvoid(who, label(AVOID_LABEL, change.value, locale), locale);
-      case "raiseSpice": {
-        const key = change.to === 3 ? "any" : (String(change.to) as "0" | "1" | "2");
-        return group.changeSpice(who, label(SPICE_FILTER_LABEL, key, locale), locale);
-      }
     }
   }
 

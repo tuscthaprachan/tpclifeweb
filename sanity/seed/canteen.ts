@@ -458,8 +458,6 @@ function buildDishes(
     if (protein.includes("none") && protein.length > 1) problem(file, row, 'protein: remove "none" or the other values');
     const contains = enumList(file, row, "contains", ALLERGENS, 0);
     const style = row.cells.style ? enumValue(file, row, "style", COOKING_STYLES) : undefined;
-    const spice = wholeNumber(file, row, "spice", 0);
-    if (spice !== undefined && spice > 3) problem(file, row, "spice must be 0 to 3");
     const temperature = enumValue(file, row, "temperature", TEMPERATURES);
     const vegetarian = enumValue(file, row, "vegetarian", DIET_AVAILABILITIES);
     const vegan = enumValue(file, row, "vegan", DIET_AVAILABILITIES);
@@ -490,7 +488,6 @@ function buildDishes(
       protein,
       ...(contains.length > 0 ? { contains } : {}),
       ...(style ? { style } : {}),
-      spice,
       temperature,
       wet: yesNo(file, row, "wet"),
       vegetarian,

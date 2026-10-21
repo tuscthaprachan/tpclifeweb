@@ -54,7 +54,7 @@ function matchesFeel(dish: CanteenDish, feel: readonly FeelKey[]): boolean {
 /**
  * Whether one dish passes every filter. Sort and group are display choices
  * and play no part. Within a facet: diet is AND, type is OR, avoid excludes
- * any listed protein, feel works pairwise, spice is a ceiling, the budget is
+ * any listed protein, feel works pairwise, the budget is
  * checked against `effectivePrice`, and `open` removes only stalls whose
  * scheduled hours say they are closed (unknown hours stay in).
  */
@@ -78,7 +78,6 @@ export function matchesFilters(
 
   if (filters.max !== undefined && effectivePrice(dish, filters.variants) > filters.max) return false;
   if (filters.type.length > 0 && !filters.type.includes(dish.type)) return false;
-  if (filters.spice !== undefined && dish.spice > filters.spice) return false;
   if (filters.stall !== undefined && stall.slug.current !== filters.stall) return false;
   if (filters.avoid.some((key) => contains(dish, key))) return false;
   if (!filters.diet.every((diet) => meetsDiet(dish, stall, diet))) return false;
@@ -229,7 +228,7 @@ export function groupDishes(data: CanteenData, dishes: readonly CanteenDish[], g
  * "Noodles (14)" and disable an option that would give 0 without hiding it.
  * For a facet that narrows (diet, avoid) the count includes the options
  * already chosen in that facet; for one that widens (type) or replaces
- * (stall, spice, budget) it counts that option alone.
+ * (stall, budget) it counts that option alone.
  */
 export interface FacetCounts {
   /** Dishes passing every active filter. */
@@ -242,7 +241,6 @@ export interface FacetCounts {
   type: Record<DishType, number>;
   avoid: Record<AvoidKey, number>;
   /** Keyed "0", "1", "2" and "any". */
-  spice: Record<string, number>;
   feel: Record<FeelKey, number>;
   /** Keyed by stall slug. */
   stall: Record<string, number>;
@@ -270,8 +268,6 @@ export function facetCounts(data: CanteenData, filters: CanteenFilters, now: Dat
   const avoid = {} as Record<AvoidKey, number>;
   for (const key of AVOID_KEYS) avoid[key] = count(withChange({ avoid: [...new Set([...filters.avoid, key])] }));
 
-  const spice: Record<string, number> = { any: count(withChange({ spice: undefined })) };
-  for (const level of [0, 1, 2] as const) spice[String(level)] = count(withChange({ spice: level }));
 
   const feel = {} as Record<FeelKey, number>;
   for (const key of FEEL_KEYS) {
@@ -292,7 +288,6 @@ export function facetCounts(data: CanteenData, filters: CanteenFilters, now: Dat
     diet,
     type,
     avoid,
-    spice,
     feel,
     stall,
     open: count(withChange({ open: true })),
@@ -354,9 +349,6 @@ export function relaxSuggestions(
   }
   for (const value of filters.avoid) {
     candidates.push({ kind: "drop", param: "avoid", value, filters: { ...filters, avoid: filters.avoid.filter((v) => v !== value) } });
-  }
-  if (filters.spice !== undefined) {
-    candidates.push({ kind: "drop", param: "spice", value: null, filters: { ...filters, spice: undefined } });
   }
   for (const value of filters.feel) {
     candidates.push({ kind: "drop", param: "feel", value, filters: { ...filters, feel: filters.feel.filter((v) => v !== value) } });
