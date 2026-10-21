@@ -178,8 +178,8 @@ export const BUDGET = {
   clearFailed: { th: "ล้างไม่สำเร็จ เบราว์เซอร์ไม่ให้เข้าถึงข้อมูล", en: "Could not clear. The browser did not allow access to the data." },
   saveFailed: { th: "บันทึกไม่สำเร็จ", en: "Could not save that." },
   storageNote: {
-    th: "ข้อมูลเก็บในเครื่องนี้ใต้ชื่อที่ขึ้นต้นด้วย tpclife.eat.v1. และไม่ส่งไปที่ไหน",
-    en: "Kept on this device under names starting tpclife.eat.v1. and never sent anywhere.",
+    th: "ข้อมูลเก็บในเครื่องนี้ใต้ชื่อที่ขึ้นต้นด้วย trytpc.eat.v1. และไม่ส่งไปที่ไหน",
+    en: "Kept on this device under names starting trytpc.eat.v1. and never sent anywhere.",
   },
   backToEat: { th: "กลับไปกินอะไรดี", en: "Back to What to eat" },
 } as const satisfies Record<string, Bilingual>;

@@ -17,7 +17,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { isStoredTheme, THEME_COOKIE, THEME_COOKIE_MAX_AGE } from "@/lib/theme/config";
+import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, THEME_COOKIE_MAX_AGE } from "@/lib/theme/config";
 
 /**
  * `redirectTo` is reader-supplied (it is the current page's own path, sent
@@ -78,6 +78,7 @@ export async function GET(request: Request) {
     // take over again in tokens.css.
     response.cookies.delete(THEME_COOKIE);
   }
+  response.cookies.delete(LEGACY_THEME_COOKIE);
 
   return response;
 }

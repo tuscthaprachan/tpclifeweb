@@ -114,7 +114,9 @@ export function negotiateLocale(acceptLanguage: string | null | undefined): Loca
 }
 
 /** Cookie the language toggle writes so the choice survives the next visit. */
-export const LOCALE_COOKIE = "tpclife_locale";
+export const LOCALE_COOKIE = "trytpc_locale";
+/** The cookie name before the rebrand. Still read as a fallback, and deleted whenever the new one is written. */
+export const LEGACY_LOCALE_COOKIE = "tpclife_locale";
 export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 /** Asia/Bangkok. The shuttle timetable and every published date are local time. */

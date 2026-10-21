@@ -32,5 +32,7 @@ export function isStoredTheme(value: unknown): value is StoredTheme {
 }
 
 /** Cookie the theme toggle writes so the choice survives the next visit and can be read during SSR, avoiding a flash of the wrong theme. */
-export const THEME_COOKIE = "tpclife_theme";
+export const THEME_COOKIE = "trytpc_theme";
+/** The cookie name before the rebrand. Still read as a fallback, and deleted whenever the new one is written. */
+export const LEGACY_THEME_COOKIE = "tpclife_theme";
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;

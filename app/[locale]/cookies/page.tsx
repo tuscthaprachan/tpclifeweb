@@ -69,8 +69,8 @@ const CONTROL_BODY: LocaleString = {
 
 const EAT_STORAGE_HEADING: LocaleString = { th: "ข้อมูลในเครื่องของคุณ จาก \"กินอะไรดี\"", en: "Data kept on your device by What to eat" };
 const EAT_STORAGE_BODY: LocaleString = {
-  th: "ส่วน \"กินอะไรดี\" เก็บข้อมูลส่วนตัวไว้ในหน่วยความจำของเบราว์เซอร์ (localStorage) เท่านั้น ใช้ชื่อที่ขึ้นต้นด้วย tpclife.eat.v1. ได้แก่ เมนูโปรด เมนูที่ไม่เอา ประวัติที่คุณกด \"กินมื้อนี้\" พร้อมราคา ณ ตอนกด ตัวกรองที่ตั้งไว้ และแผนสัปดาห์ที่เก็บไว้ ไม่มีการส่งไปที่ไหนและไม่มีบัญชี ลบได้ทุกเมื่อด้วยปุ่ม \"ล้างทุกอย่าง\" ในหน้า ของฉัน (/eat/mine) หรือด้วยการล้างข้อมูลเว็บไซต์ในเบราว์เซอร์",
-  en: "The What to eat section keeps personal data only in your browser's own storage (localStorage), under names that start with tpclife.eat.v1. That is your favourites, dishes you never want suggested, what you tapped \"I'll eat this\" for with the price at that moment, your saved filters and a saved week plan. None of it is sent anywhere and there is no account. Clear it any time with the \"Clear everything\" button on Your stuff (/eat/mine), or by clearing this site's data in your browser.",
+  th: "ส่วน \"กินอะไรดี\" เก็บข้อมูลส่วนตัวไว้ในหน่วยความจำของเบราว์เซอร์ (localStorage) เท่านั้น ใช้ชื่อที่ขึ้นต้นด้วย trytpc.eat.v1. ได้แก่ เมนูโปรด เมนูที่ไม่เอา ประวัติที่คุณกด \"กินมื้อนี้\" พร้อมราคา ณ ตอนกด ตัวกรองที่ตั้งไว้ และแผนสัปดาห์ที่เก็บไว้ ไม่มีการส่งไปที่ไหนและไม่มีบัญชี ลบได้ทุกเมื่อด้วยปุ่ม \"ล้างทุกอย่าง\" ในหน้า ของฉัน (/eat/mine) หรือด้วยการล้างข้อมูลเว็บไซต์ในเบราว์เซอร์",
+  en: "The What to eat section keeps personal data only in your browser's own storage (localStorage), under names that start with trytpc.eat.v1. That is your favourites, dishes you never want suggested, what you tapped \"I'll eat this\" for with the price at that moment, your saved filters and a saved week plan. None of it is sent anywhere and there is no account. Clear it any time with the \"Clear everything\" button on Your stuff (/eat/mine), or by clearing this site's data in your browser.",
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {

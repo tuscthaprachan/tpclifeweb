@@ -18,6 +18,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  LEGACY_LOCALE_COOKIE,
   LOCALE_COOKIE,
   LOCALE_COOKIE_MAX_AGE,
   LOCALE_LABEL,
@@ -41,6 +42,7 @@ export function LanguageToggle({ locale, className = "" }: { locale: Locale; cla
       hrefLang={target}
       onClick={() => {
         document.cookie = `${LOCALE_COOKIE}=${target}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; samesite=lax`;
+        document.cookie = `${LEGACY_LOCALE_COOKIE}=; path=/; max-age=0; samesite=lax`;
       }}
       className={`inline-flex min-h-[var(--target-min)] items-center rounded-control border border-line-strong px-3 py-1 text-sm font-medium text-ink-900 no-underline hover:text-action ${className}`.trim()}
     >

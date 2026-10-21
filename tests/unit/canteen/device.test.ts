@@ -51,7 +51,7 @@ describe("device storage", () => {
   it("stars and unstars dishes under the versioned prefix", () => {
     expect(device.toggleFavourite("fixture-dish-a")).toBe(true);
     expect(device.isFavourite("fixture-dish-a")).toBe(true);
-    expect([...store.map.keys()]).toEqual(["tpclife.eat.v1.favourites"]);
+    expect([...store.map.keys()]).toEqual(["trytpc.eat.v1.favourites"]);
     device.toggleFavourite("fixture-dish-a");
     expect(device.getFavourites()).toEqual([]);
   });
@@ -85,9 +85,9 @@ describe("device storage", () => {
   });
 
   it("ignores corrupt or tampered storage", () => {
-    store.map.set("tpclife.eat.v1.favourites", "{not json");
-    store.map.set("tpclife.eat.v1.history", JSON.stringify([{ slug: 1 }, { slug: "ok", price: 40, at: "2026-08-10T00:00:00Z" }, null]));
-    store.map.set("tpclife.eat.v1.week", JSON.stringify({ seed: 1 }));
+    store.map.set("trytpc.eat.v1.favourites", "{not json");
+    store.map.set("trytpc.eat.v1.history", JSON.stringify([{ slug: 1 }, { slug: "ok", price: 40, at: "2026-08-10T00:00:00Z" }, null]));
+    store.map.set("trytpc.eat.v1.week", JSON.stringify({ seed: 1 }));
     expect(device.getFavourites()).toEqual([]);
     expect(device.getHistory()).toEqual([{ slug: "ok", price: 40, at: "2026-08-10T00:00:00Z" }]);
     expect(device.getSavedWeek()).toBeNull();
@@ -158,6 +158,46 @@ describe("device storage", () => {
     expect(device.clearAll()).toBe(true);
     expect([...store.map.keys()]).toEqual(["something.else"]);
     expect(device.getFavourites()).toEqual([]);
+  });
+
+  it("moves legacy-prefixed keys to the new prefix on first use and removes the old ones", () => {
+    store.map.set("tpclife.eat.v1.favourites", JSON.stringify(["old-dish"]));
+    store.map.set("tpclife.eat.v1.dislikes", JSON.stringify(["bad-dish"]));
+    store.map.set("unrelated", "keep");
+    expect(device.getFavourites()).toEqual(["old-dish"]);
+    expect(device.getDislikes()).toEqual(["bad-dish"]);
+    expect([...store.map.keys()].sort()).toEqual(["trytpc.eat.v1.dislikes", "trytpc.eat.v1.favourites", "unrelated"]);
+  });
+
+  it("migrates before the first write and never overwrites an existing new key", () => {
+    store.map.set("tpclife.eat.v1.favourites", JSON.stringify(["old-dish"]));
+    store.map.set("tpclife.eat.v1.dislikes", JSON.stringify(["old-bad"]));
+    store.map.set("trytpc.eat.v1.dislikes", JSON.stringify(["new-bad"]));
+    device.toggleFavourite("added");
+    expect(device.getFavourites()).toEqual(["old-dish", "added"]);
+    expect(device.getDislikes()).toEqual(["new-bad"]);
+    expect([...store.map.keys()].some((key) => key.startsWith("tpclife."))).toBe(false);
+  });
+
+  it("migrates only once, so legacy keys written afterwards are left alone", () => {
+    device.getFavourites();
+    store.map.set("tpclife.eat.v1.favourites", JSON.stringify(["late"]));
+    expect(device.getFavourites()).toEqual([]);
+    expect(store.map.has("tpclife.eat.v1.favourites")).toBe(true);
+  });
+
+  it("clears leftover legacy keys too", () => {
+    device.toggleFavourite("a");
+    store.map.set("tpclife.eat.v1.history", "[]");
+    store.map.set("unrelated", "keep");
+    expect(device.clearAll()).toBe(true);
+    expect([...store.map.keys()]).toEqual(["unrelated"]);
+  });
+
+  it("survives storage that throws during migration", () => {
+    device.setStorageProvider(() => throwingStorage());
+    expect(device.getFavourites()).toEqual([]);
+    expect(device.toggleFavourite("a")).toBe(false);
   });
 });
 

@@ -9,7 +9,8 @@
  * saved something it did not. Use `isStorageAvailable()` to hide the pages
  * and options that need it. The rest of the service works without it.
  *
- * Keys carry the prefix `tpclife.eat.v1.`. Change the version if a stored
+ * Keys carry the prefix `trytpc.eat.v1.`. Keys under the pre-rebrand prefix
+ * `tpclife.eat.v1.` are moved across once, before the first read or write. Change the version if a stored
  * shape ever changes incompatibly.
  *
  * REACT. `subscribe` and the getters work with `useSyncExternalStore`.
@@ -27,7 +28,10 @@ import { addDays, bangkokDayStart, weekStartKey } from "./derive";
 import { parse, serialise, type CanteenFilters } from "./params";
 
 /** Every key this module writes starts with this. */
-export const STORAGE_PREFIX = "tpclife.eat.v1.";
+export const STORAGE_PREFIX = "trytpc.eat.v1.";
+
+/** The prefix before the rebrand. Migrated to `STORAGE_PREFIX` on first use and removed by `clearAll`. */
+export const LEGACY_STORAGE_PREFIX = "tpclife.eat.v1.";
 
 const KEYS = {
   favourites: `${STORAGE_PREFIX}favourites`,
@@ -60,6 +64,7 @@ let provider: () => StorageLike | null = browserStorage;
 /** Replaces where storage comes from. For tests. Pass null to restore the browser's `localStorage`. */
 export function setStorageProvider(next: (() => StorageLike | null) | null): void {
   provider = next ?? browserStorage;
+  migrated = false;
   cache.clear();
   defaultsCache.clear();
   notify();
@@ -73,7 +78,33 @@ function storage(): StorageLike | null {
   }
 }
 
+let migrated = false;
+
+/** Moves legacy-prefixed keys to the current prefix without overwriting an existing new key. Runs once per provider. */
+function migrateLegacyKeys(): void {
+  if (migrated) return;
+  migrated = true;
+  try {
+    const store = storage();
+    if (!store) return;
+    const legacy: string[] = [];
+    for (let i = 0; i < store.length; i += 1) {
+      const key = store.key(i);
+      if (key !== null && key.startsWith(LEGACY_STORAGE_PREFIX)) legacy.push(key);
+    }
+    for (const key of legacy) {
+      const next = `${STORAGE_PREFIX}${key.slice(LEGACY_STORAGE_PREFIX.length)}`;
+      const value = store.getItem(key);
+      if (value !== null && store.getItem(next) === null) store.setItem(next, value);
+      store.removeItem(key);
+    }
+  } catch {
+    // Migration is best effort; a failure leaves the old keys where they were.
+  }
+}
+
 function readRaw(key: string): string | null {
+  migrateLegacyKeys();
   try {
     return storage()?.getItem(key) ?? null;
   } catch {
@@ -82,6 +113,7 @@ function readRaw(key: string): string | null {
 }
 
 function writeRaw(key: string, value: string | null): boolean {
+  migrateLegacyKeys();
   try {
     const store = storage();
     if (!store) return false;
@@ -123,7 +155,7 @@ function notify(): void {
 }
 
 function onStorageEvent(event: StorageEvent): void {
-  if (event.key === null || event.key.startsWith(STORAGE_PREFIX)) notify();
+  if (event.key === null || event.key.startsWith(STORAGE_PREFIX) || event.key.startsWith(LEGACY_STORAGE_PREFIX)) notify();
 }
 
 /**
@@ -376,7 +408,7 @@ export function clearSavedWeek(): boolean {
 
 /**
  * Removes every canteen key from this device (anything starting with the
- * prefix, including keys from this version that were added later). Returns
+ * prefix or the legacy prefix, including keys from this version that were added later). Returns
  * false if storage could not be reached; true otherwise.
  */
 export function clearAll(): boolean {
@@ -386,7 +418,7 @@ export function clearAll(): boolean {
     const found: string[] = [];
     for (let i = 0; i < store.length; i += 1) {
       const key = store.key(i);
-      if (key !== null && key.startsWith(STORAGE_PREFIX)) found.push(key);
+      if (key !== null && (key.startsWith(STORAGE_PREFIX) || key.startsWith(LEGACY_STORAGE_PREFIX))) found.push(key);
     }
     for (const key of found) store.removeItem(key);
     cache.clear();

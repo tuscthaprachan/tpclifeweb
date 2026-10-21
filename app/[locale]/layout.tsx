@@ -25,7 +25,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { HTML_LANG, LOCALES, DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { SITE_URL } from "@/lib/site-url";
-import { isStoredTheme, THEME_COOKIE, type ThemeChoice } from "@/lib/theme/config";
+import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, type ThemeChoice } from "@/lib/theme/config";
 
 // Every request path outside these two locales 404s instead of silently
 // rendering. Paired with the explicit isLocale check below, which TypeScript
@@ -101,7 +101,7 @@ export default async function RootLayout({
    * this toggle existed.
    */
   const cookieStore = await cookies();
-  const storedTheme = cookieStore.get(THEME_COOKIE)?.value;
+  const storedTheme = (cookieStore.get(THEME_COOKIE) ?? cookieStore.get(LEGACY_THEME_COOKIE))?.value;
   const theme: ThemeChoice = isStoredTheme(storedTheme) ? storedTheme : "system";
 
   return (

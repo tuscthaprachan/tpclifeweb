@@ -41,7 +41,7 @@ import { CheckIcon } from "@/components/ui/icons";
 import { cx } from "@/components/ui/cx";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { THEME_CHOICES, THEME_COOKIE, THEME_COOKIE_MAX_AGE, type ThemeChoice } from "@/lib/theme/config";
+import { LEGACY_THEME_COOKIE, THEME_CHOICES, THEME_COOKIE, THEME_COOKIE_MAX_AGE, type ThemeChoice } from "@/lib/theme/config";
 
 const THEME_LABEL_KEY: Record<ThemeChoice, "themeLight" | "themeDark" | "themeSystem"> = {
   light: "themeLight",
@@ -65,6 +65,7 @@ function applyThemeOnClient(choice: ThemeChoice) {
     root.style.colorScheme = choice;
     document.cookie = `${THEME_COOKIE}=${choice}; path=/; max-age=${THEME_COOKIE_MAX_AGE}; samesite=lax`;
   }
+  document.cookie = `${LEGACY_THEME_COOKIE}=; path=/; max-age=0; samesite=lax`;
   document.dispatchEvent(new CustomEvent<ThemeChoice>(THEME_CHANGE_EVENT, { detail: choice }));
 }
 

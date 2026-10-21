@@ -10,7 +10,36 @@
  */
 
 import { NextResponse, type NextRequest } from "next/server";
-import { isLocale, negotiateLocale, LOCALE_COOKIE, type Locale } from "@/lib/i18n/config";
+import {
+  isLocale,
+  negotiateLocale,
+  LEGACY_LOCALE_COOKIE,
+  LOCALE_COOKIE,
+  LOCALE_COOKIE_MAX_AGE,
+  type Locale,
+} from "@/lib/i18n/config";
+import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, THEME_COOKIE_MAX_AGE } from "@/lib/theme/config";
+
+/**
+ * Copies a cookie still held under its pre-rebrand name to the new name (same
+ * attributes the writers use) and deletes the old one. A valid new cookie is
+ * never overwritten.
+ */
+function migrateLegacyCookies(request: NextRequest, response: NextResponse) {
+  const pairs = [
+    { legacy: LEGACY_LOCALE_COOKIE, current: LOCALE_COOKIE, maxAge: LOCALE_COOKIE_MAX_AGE, valid: isLocale },
+    { legacy: LEGACY_THEME_COOKIE, current: THEME_COOKIE, maxAge: THEME_COOKIE_MAX_AGE, valid: isStoredTheme },
+  ];
+  for (const { legacy, current, maxAge, valid } of pairs) {
+    const legacyValue = request.cookies.get(legacy)?.value;
+    if (legacyValue === undefined) continue;
+    if (!request.cookies.has(current) && valid(legacyValue)) {
+      response.cookies.set(current, legacyValue, { path: "/", maxAge, sameSite: "lax" });
+    }
+    response.cookies.delete(legacy);
+  }
+  return response;
+}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -18,17 +47,17 @@ export function middleware(request: NextRequest) {
   const [, firstSegment] = pathname.split("/");
   if (isLocale(firstSegment)) {
     // Already locale-prefixed. Nothing to negotiate.
-    return NextResponse.next();
+    return migrateLegacyCookies(request, NextResponse.next());
   }
 
-  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
+  const cookieLocale = (request.cookies.get(LOCALE_COOKIE) ?? request.cookies.get(LEGACY_LOCALE_COOKIE))?.value;
   const locale: Locale = isLocale(cookieLocale)
     ? cookieLocale
     : negotiateLocale(request.headers.get("accept-language"));
 
   const redirectUrl = request.nextUrl.clone();
   redirectUrl.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
-  return NextResponse.redirect(redirectUrl);
+  return migrateLegacyCookies(request, NextResponse.redirect(redirectUrl));
 }
 
 export const config = {
