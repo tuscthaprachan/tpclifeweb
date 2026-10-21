@@ -339,11 +339,11 @@ export function CanteenMap({
         const showNumber = !mini || highlighted;
         const showMark = highlighted && !(mini && stops.size <= 1);
         const counted = compact && count !== undefined;
-        const pillAt = triangle ? (mini ? spot(40, 34) : compact ? (counted ? spot(42, 56) : spot(44, 44)) : spot(22, 16)) : null;
-        const badgeAt = triangle ? (compact ? spot(28, 20) : spot(22, 40)) : null;
-        const markAt = triangle ? spot(compact ? 84 : 56, compact ? 18 : 17) : null;
-        const markX = markAt ? markAt.x : rect.x + rect.w - (compact ? 16 : 17);
-        const markY = markAt ? markAt.y : rect.y + rect.h - (compact ? 16 : 17);
+        const pillAt = triangle ? (mini ? spot(40, 34) : compact ? (counted ? spot(42, 56) : spot(44, 44)) : spot(28, 22)) : null;
+        const badgeAt = triangle ? (compact ? spot(28, 20) : spot(28, 56)) : null;
+        const markAt = triangle ? spot(compact ? 84 : 64, compact ? 18 : 20) : null;
+        const markX = markAt ? markAt.x : rect.x + rect.w - (compact ? 16 : 18);
+        const markY = markAt ? markAt.y : rect.y + rect.h - (compact ? 16 : 18);
 
         const body = (
           <>
@@ -394,13 +394,13 @@ export function CanteenMap({
                 </>
               ) : (
                 <>
-                  <rect className="cmap-pill" x={pillAt.x - 14} y={pillAt.y - 10} width={28} height={20} rx={10} />
+                  <rect className="cmap-pill" x={pillAt.x - 19} y={pillAt.y - 15} width={38} height={30} rx={15} />
                   <text className="cmap-number" x={pillAt.x} y={pillAt.y + 0.5}>
                     {stall.number}
                   </text>
                   {count !== undefined ? (
                     <>
-                      <rect className="cmap-badge" x={badgeAt.x - 14} y={badgeAt.y - 10} width={28} height={20} rx={5} />
+                      <rect className="cmap-badge" x={badgeAt.x - 11} y={badgeAt.y - 11} width={22} height={22} rx={5} />
                       <text className="cmap-badge-text" x={badgeAt.x} y={badgeAt.y + 0.5}>
                         {count}
                       </text>
@@ -429,15 +429,15 @@ export function CanteenMap({
               </>
             ) : (
               <>
-                <rect className="cmap-pill" x={rect.x + 6} y={rect.y + 6} width={28} height={20} rx={10} />
-                <text className="cmap-number" x={rect.x + 20} y={rect.y + 16.5}>
+                <rect className="cmap-pill" x={rect.x + 4} y={rect.y + 4} width={38} height={30} rx={15} />
+                <text className="cmap-number" x={rect.x + 23} y={rect.y + 19.5}>
                   {stall.number}
                 </text>
                 {glyphs.map((cuisine, position) => (
                   <g
                     key={cuisine}
                     className="cmap-glyph"
-                    transform={`translate(${rect.x + 8 + position * 16} ${rect.y + 31})`}
+                    transform={`translate(${rect.x + 8 + position * 16} ${rect.y + 36})`}
                     aria-hidden="true"
                   >
                     {GLYPHS[cuisine]}
@@ -448,8 +448,8 @@ export function CanteenMap({
                 </text>
                 {count !== undefined ? (
                   <>
-                    <rect className="cmap-badge" x={rect.x + rect.w - 34} y={rect.y + 6} width={28} height={20} rx={5} />
-                    <text className="cmap-badge-text" x={rect.x + rect.w - 20} y={rect.y + 16.5}>
+                    <rect className="cmap-badge" x={rect.x + rect.w - 26} y={rect.y + 8} width={22} height={22} rx={5} />
+                    <text className="cmap-badge-text" x={rect.x + rect.w - 15} y={rect.y + 19.5}>
                       {count}
                     </text>
                     {none && wide ? (
@@ -464,7 +464,7 @@ export function CanteenMap({
 
             {showMark ? (
               <>
-                <circle className="cmap-mark" cx={markX} cy={markY} r={compact ? 15 : 12} />
+                <circle className="cmap-mark" cx={markX} cy={markY} r={compact ? 15 : 16} />
                 <text className="cmap-mark-text" x={markX} y={markY + 1}>
                   {stop}
                 </text>

@@ -36,8 +36,8 @@ export const PICK = {
   biasCheap: { th: "เน้นราคาถูก", en: "Lean cheap" },
   biasUsual: { th: "เมนูโปรดของฉัน", en: "My usual" },
   biasHint: {
-    th: "ตัวเลือก ของใหม่ และ เมนูโปรด ใช้ประวัติในเครื่องนี้ ต้องเปิด JavaScript",
-    en: "Something new and My usual use the history kept on this device, so they need JavaScript.",
+    th: "ใช้สิ่งที่คุณเคยเลือกไว้ในเครื่องนี้",
+    en: "Uses what you've picked before on this phone.",
   },
   budgetLabel: { th: "งบรวมทั้งมื้อ (บาท)", en: "Budget for the whole meal (baht)" },
   spin: { th: "สุ่มเลย", en: "Spin" },
@@ -45,18 +45,13 @@ export const PICK = {
   /* ---- Actions ---- */
   actionsLabel: { th: "ทำอะไรต่อ", en: "What next" },
   eatThis: { th: "เอาอันนี้แหละ", en: "Go with this" },
-  notThis: { th: "ไม่เอาอันนี้", en: "Not feeling it" },
+  notThis: { th: "ไม่เอาอันนี้ สุ่มใหม่", en: "Not this one, spin again" },
+  moreOptions: { th: "ตัวเลือกเพิ่มเติม", en: "More options" },
   spinAgain: { th: "สุ่มใหม่", en: "Spin again" },
   keepStall: { th: "ขอร้านเดิม เปลี่ยนเมนู", en: "Keep this stall, change the dish" },
   keepCanonical: { th: "ขอเมนูแบบเดิม เปลี่ยนร้าน", en: "Same dish, different stall" },
   lockLabel: { th: "ล็อกบางอย่างแล้วสุ่มใหม่", en: "Lock something and spin again" },
-  eatenDone: { th: "จดไว้ในเครื่องนี้แล้ว กินให้อร่อย", en: "Noted on this device. Enjoy." },
-  eatenFailed: {
-    th: "เครื่องนี้บันทึกไม่ได้ แต่ไปที่ร้านได้เลย",
-    en: "This device would not save that, but you can still head to the stall.",
-  },
   seeStall: { th: "ไปดูหน้าร้าน", en: "See the stall" },
-  seeOnMap: { th: "ดูทางเดินบนแผนที่", en: "See the walk on the map" },
   share: { th: "แชร์ผลนี้", en: "Share this pick" },
   shareCopied: { th: "คัดลอกลิงก์แล้ว ใครเปิดก็เจออันเดียวกัน", en: "Link copied. Anyone who opens it sees the same pick." },
   shareManual: { th: "คัดลอกลิงก์นี้ไปแชร์", en: "Copy this link to share" },
@@ -105,21 +100,15 @@ export const PICK = {
   startOver: { th: "ล้างตัวกรองแล้วสุ่มใหม่", en: "Clear the filters and spin" },
   browseDishes: { th: "ดูเมนูทั้งหมด", en: "Browse all dishes" },
   noteServer: {
-    th: "ประวัติ เมนูโปรด และรายการ ไม่เอา เก็บไว้ในเครื่องนี้เท่านั้น เมื่อเปิด JavaScript เราใช้มันตอนสุ่มและเลี่ยงเมนูที่เพิ่งกิน ถ้าปิดไว้ ผลนี้ไม่ได้ใช้ข้อมูลเหล่านั้น",
-    en: "Your history, favourites and never-suggest list stay on this device. With JavaScript on, we use them when picking and skip what you ate recently. Without it, this pick does not use them.",
+    th: "ถ้าไม่เปิด JavaScript ผลนี้จะไม่เลี่ยงเมนูที่เพิ่งกิน",
+    en: "Turn on JavaScript and we will skip what you had recently.",
   },
   noteServerBias: {
-    th: "แบบ ของใหม่ และ เมนูโปรด ต้องใช้ประวัติในเครื่องนี้ ซึ่งเซิร์ฟเวอร์มองไม่เห็น เมื่อไม่เปิด JavaScript ผลนี้จึงสุ่มแบบแฟร์แทน",
-    en: "Something new and My usual need the history kept on this device, which the server cannot see. Without JavaScript this pick is a fair one instead.",
+    th: "ของใหม่และเมนูโปรดต้องเปิด JavaScript ผลนี้จึงสุ่มแบบแฟร์แทน",
+    en: "Something new and My usual need JavaScript, so this pick is a fair one.",
   },
-  noteApplied: {
-    th: "ผลนี้ใช้ข้อมูลในเครื่องนี้แล้ว (ประวัติ เมนูโปรด หรือรายการ ไม่เอา) ไม่มีอะไรถูกส่งออกไป",
-    en: "This pick used what is kept on this device (history, favourites or the never-suggest list). Nothing is sent anywhere.",
-  },
-  noteNothingToApply: {
-    th: "ยังไม่มีประวัติในเครื่องนี้ ผลนี้จึงสุ่มจากตัวกรองอย่างเดียว กด เอาอันนี้แหละ เพื่อจดไว้ให้สุ่มรอบหน้าเลี่ยงซ้ำ",
-    en: "Nothing is kept on this device yet, so this pick came from your filters alone. Tap Go with this and next time we will skip repeats.",
-  },
+  noteApplied: { th: "เลี่ยงเมนูที่เพิ่งกินแล้ว", en: "Skipping what you had recently." },
+  noteAppliedLink: { th: "ดูของฉัน", en: "See your stuff" },
 } as const satisfies Record<string, Pair>;
 
 export const pickText = {

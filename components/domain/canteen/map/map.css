@@ -87,7 +87,7 @@
 .cmap-number {
   fill: var(--ink-on-fill);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 21px;
   text-anchor: middle;
   dominant-baseline: central;
 }
@@ -119,7 +119,7 @@
 .cmap-badge-text {
   fill: var(--ink-inverse);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 14px;
   text-anchor: middle;
   dominant-baseline: central;
 }
@@ -133,7 +133,7 @@
 .cmap-mark-text {
   fill: var(--colour-action-ink);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 19px;
   text-anchor: middle;
   dominant-baseline: central;
 }

@@ -2,6 +2,7 @@
  * One stall: who it is, how to find it, and its full menu grouped by type.
  * With filters on, a line says how many of its dishes match, but the whole
  * menu is always shown: a stall page is the place to see everything.
+ * Matching dishes carry a tag and come first within each type.
  */
 
 import type { Metadata } from "next";
@@ -71,13 +72,15 @@ export default async function EatStallPage({
   const dishes = data.dishes.filter((dish) => dish.stall._ref === stall._id);
   const range = priceRange(dishes);
   const checkedOn = commonCheckedOn(dishes);
-  const matching = dishes.filter((dish) => matchesFilters(data, dish, filters, now)).length;
+  const filtered = countActiveValues(filters) > 0;
+  const matchingIds = new Set(dishes.filter((dish) => matchesFilters(data, dish, filters, now)).map((dish) => dish._id));
+  const matching = matchingIds.size;
   const halalTag = stallHalalTag(stall);
   const name = pick(stall.name, locale);
 
   const sections = DISH_TYPES.map((type) => ({
     type,
-    dishes: dishes.filter((dish) => dish.type === type).sort((a, b) => a.price - b.price || pick(a.name, locale).localeCompare(pick(b.name, locale), locale)),
+    dishes: dishes.filter((dish) => dish.type === type).sort((a, b) => (filtered ? Number(matchingIds.has(b._id)) - Number(matchingIds.has(a._id)) : 0) || a.price - b.price || pick(a.name, locale).localeCompare(pick(b.name, locale), locale)),
   })).filter((section) => section.dishes.length > 0);
 
   return (
@@ -119,7 +122,16 @@ export default async function EatStallPage({
             {eat.dishCount(locale, dishes.length)}
             {range ? ` · ${eat.priceRange(locale, range.min, range.max)}` : ""}
           </p>
-          {countActiveValues(filters) > 0 ? <p className="m-0 text-ink-900">{eat.stallMatchCount(locale, matching, dishes.length)}</p> : null}
+          {filtered ? (
+            <>
+              <p className="m-0 text-ink-900">{eat.stallMatchCount(locale, matching, dishes.length)}</p>
+              <p className="m-0">
+                <Link href={eatHref(locale, "/eat/dishes", { ...filters, stall: stall.slug.current })} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
+                  {t(EAT.showOnlyMatching, locale)}
+                </Link>
+              </p>
+            </>
+          ) : null}
         </Stack>
 
         <section aria-labelledby="eat-stall-where" className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
@@ -159,7 +171,7 @@ export default async function EatStallPage({
                   <ul className="m-0 list-none divide-y divide-line border-y border-line p-0">
                     {section.dishes.map((dish) => (
                       <li key={dish._id}>
-                        <DishRow dish={dish} stall={stall} locale={locale} filters={filters} />
+                        <DishRow dish={dish} stall={stall} locale={locale} filters={filters} matches={filtered ? matchingIds.has(dish._id) : undefined} />
                       </li>
                     ))}
                   </ul>

@@ -3,27 +3,33 @@ import { cx } from "@/components/ui/cx";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { pick, OTHER_LOCALE, type Locale } from "@/lib/i18n/config";
 import type { CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import { TickIcon } from "./icons";
 import { DietTags } from "./DietTag";
 import { HowToSay } from "./HowToSay";
 import { dishDietTags } from "./diet";
 import { dishHref } from "./links";
 import { priceText } from "./PriceTag";
+import { EAT, t } from "./strings";
 
 interface DishRowProps {
   dish: CanteenDish;
   stall: CanteenStall | undefined;
   locale: Locale;
   filters: CanteenFilters;
+  /** With filters on: whether this dish passes them. Left out when no filter is on, so no row is marked or dimmed. */
+  matches?: boolean;
   className?: string;
 }
 
 /**
  * One line of a stall's menu: the name in both languages, how to order it,
- * diet tags and the price. A plain list row rather than a card, for long
+ * diet tags and the price. With filters on, a matching row carries a
+ * "Matches" tag (text and a tick, not colour) and the rest are set in a
+ * quieter ink that still passes 4.5:1. A plain list row rather than a card, for long
  * menus where the stall is already known, so the stall's own halal badge is
  * not repeated on every row. The dish page holds the rest.
  */
-export function DishRow({ dish, stall, locale, filters, className }: DishRowProps) {
+export function DishRow({ dish, stall, locale, filters, matches, className }: DishRowProps) {
   const other = OTHER_LOCALE[locale];
   const name = pick(dish.name, locale);
   const otherName = pick(dish.name, other);
@@ -31,7 +37,7 @@ export function DishRow({ dish, stall, locale, filters, className }: DishRowProp
   return (
     <div className={cx("flex items-start justify-between gap-[var(--space-4)] py-[var(--space-3)]", className)}>
       <div className="flex min-w-0 flex-col gap-[var(--space-1)]">
-        <Link href={dishHref(locale, dish.slug.current, filters)} className="text-lg font-semibold text-ink-900 no-underline hover:text-action hover:underline">
+        <Link href={dishHref(locale, dish.slug.current, filters)} className={cx("text-lg font-semibold no-underline hover:text-action hover:underline", matches === false ? "text-ink-600" : "text-ink-900")}>
           {name}
         </Link>
         {otherName && otherName !== name ? (
@@ -39,10 +45,16 @@ export function DishRow({ dish, stall, locale, filters, className }: DishRowProp
             {otherName}
           </p>
         ) : null}
+        {matches ? (
+          <p className="m-0 inline-flex w-fit items-center gap-[var(--space-1)] text-sm font-medium text-ink-900">
+            <TickIcon />
+            {t(EAT.matchesTag, locale)}
+          </p>
+        ) : null}
         <HowToSay dish={dish} locale={locale} />
         <DietTags tags={dishDietTags(dish, stall).filter((tag) => tag.key !== "halal")} locale={locale} />
       </div>
-      <p className="m-0 shrink-0 text-right font-semibold text-ink-900">{priceText(locale, dish.price, dish.variants)}</p>
+      <p className={cx("m-0 shrink-0 text-right font-semibold", matches === false ? "text-ink-600" : "text-ink-900")}>{priceText(locale, dish.price, dish.variants)}</p>
     </div>
   );
 }

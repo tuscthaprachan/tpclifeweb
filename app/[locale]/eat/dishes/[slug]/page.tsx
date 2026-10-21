@@ -23,6 +23,7 @@ import {
   dishDietTags,
   eat,
   eatHref,
+  mapHref,
   readFilters,
   stallHref,
   t,
@@ -126,7 +127,10 @@ export default async function EatDishPage({
                   </p>
                   <p className="m-0 text-ink-900">{stall.wayfinding ? pick(stall.wayfinding, locale) : t(EAT.noWayfinding, locale)}</p>
                   <div data-slot="mini-map">
-                    <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="dish" />
+                    <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="dish" showLink={false} />
+                  </div>
+                  <div>
+                    <Button href={mapHref(locale, filters, stall.slug.current)}>{t(EAT.showOnMap, locale)}</Button>
                   </div>
                 </>
               ) : null}
@@ -191,7 +195,9 @@ export default async function EatDishPage({
         ) : null}
 
         <div className="flex flex-wrap items-center gap-[var(--space-4)]">
-          <Button href={eatHref(locale, "/eat/pick", filters)}>{t(EAT.decideWithThese, locale)}</Button>
+          <Link href={eatHref(locale, "/eat/pick", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
+            {t(EAT.decideWithThese, locale)}
+          </Link>
           {canonical ? (
             <Link href={eatHref(locale, `/eat/what-is/${canonical.slug.current}`, filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
               {t(EAT.whatIsLink, locale)}

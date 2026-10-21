@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/Button";
 import { ChevronDownIcon } from "@/components/ui/icons";
+import { Details } from "@/components/ui/Details";
 import { Heading } from "@/components/ui/Heading";
 import { InsetText } from "@/components/ui/InsetText";
 import type { MealCombo } from "@/lib/canteen/combos";
@@ -51,8 +52,6 @@ export interface PickResultProps {
 
 const CHIP =
   "inline-flex min-h-[var(--target-min)] items-center rounded-pill border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-1)] text-base font-medium text-ink-900 no-underline hover:bg-surface-alt";
-const SECONDARY =
-  "inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center rounded-control border border-line-strong bg-surface px-[var(--space-4)] py-[var(--space-2)] font-medium text-ink-900 no-underline hover:bg-surface-alt";
 
 const RELAXED_TEXT: Record<Relaxation, keyof typeof PICK> = {
   repeat: "relaxedRepeat",
@@ -65,7 +64,9 @@ const RELAXED_TEXT: Record<Relaxation, keyof typeof PICK> = {
  * server renderable; it is also rendered by the client island when the
  * device history changes the pick. Everything it links to is a plain link
  * with a seed in it, so every action works without JavaScript. The only
- * client parts are "Go with this" (logs to the device) and "Share".
+ * client parts are "Go with this" (logs to the device) and "Share". One filled
+ * button per card: the accept action. Spinning again is outlined, vetoing is a
+ * text link, and the rest sits in "More options".
  */
 export function PickResult(props: PickResultProps) {
   const { params } = props;
@@ -146,19 +147,23 @@ function Actions({
   return (
     <div className="flex flex-col gap-[var(--space-4)]" role="group" aria-label={PICK.actionsLabel[locale]}>
       {eatNode}
-      <div className="flex flex-wrap items-center gap-[var(--space-3)]">
-        <Link href={pickHref(locale, filters, params, { seed: nextSeed, not })} className={SECONDARY}>
-          {PICK.notThis[locale]}
-        </Link>
-        <Button href={pickHref(locale, filters, params, { seed: nextSeed, lock: [], of: undefined })} className="fun-roll">
+      <div className="flex flex-wrap items-center gap-x-[var(--space-4)] gap-y-[var(--space-2)]">
+        <Button variant="secondary" href={pickHref(locale, filters, params, { seed: nextSeed, lock: [], of: undefined })} className="fun-spin">
           <span aria-hidden="true" className="fun-die">
-            <DiceIcon size={26} />
+            <DiceIcon size={22} />
           </span>
           {PICK.spinAgain[locale]}
         </Button>
+        <Button variant="quiet" href={pickHref(locale, filters, params, { seed: nextSeed, not })}>
+          {PICK.notThis[locale]}
+        </Button>
       </div>
-      {locks}
-      <ShareButton locale={locale} href={pickHref(locale, filters, params)} id="pick-share" />
+      <Details summary={PICK.moreOptions[locale]}>
+        <div className="flex flex-col gap-[var(--space-4)]">
+          {locks}
+          <ShareButton locale={locale} href={pickHref(locale, filters, params)} id="pick-share" />
+        </div>
+      </Details>
     </div>
   );
 }
@@ -234,7 +239,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
         }
         locks={
           <div className="flex flex-col gap-[var(--space-2)]">
-            <p className="m-0 text-sm text-ink-600">{PICK.lockLabel[locale]}</p>
+            <p className="m-0 text-base font-medium text-ink-900">{PICK.lockLabel[locale]}</p>
             <ul className="m-0 flex list-none flex-wrap gap-[var(--space-2)] p-0">
               {lockLink(PICK.keepStall[locale], ["stall"])}
               {lockLink(pickText.keepType(locale, typeName), ["type"])}
@@ -298,9 +303,9 @@ function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDish
         nextSeed={nextSeed}
         vetoSlugs={stallDishes.map((dish) => dish.slug.current)}
         eat={
-          <div className="flex flex-wrap items-center gap-[var(--space-3)]">
-            <Button href={stallHref(locale, stall.slug.current, filters)}>{PICK.seeStall[locale]}</Button>
-          </div>
+          <Button href={stallHref(locale, stall.slug.current, filters)} className="fun-roll w-full sm:w-auto">
+            {PICK.seeStall[locale]}
+          </Button>
         }
       />
     </Card>
@@ -375,7 +380,6 @@ function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultP
             locale={locale}
             items={combo.items.map((dish) => ({ slug: dish.slug.current, price: dish.price }))}
             href={combo.stalls.length === 1 ? stallHref(locale, slugs, filters) : mapHref(locale, filters, slugs)}
-            seeLabel={combo.stalls.length === 1 ? PICK.seeStall[locale] : PICK.seeOnMap[locale]}
           />
         }
       />

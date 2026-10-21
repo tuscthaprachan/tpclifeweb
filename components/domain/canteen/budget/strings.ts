@@ -78,7 +78,7 @@ export const BUDGET = {
   saveWeek: { th: "เก็บสัปดาห์นี้ไว้ในเครื่องของฉัน", en: "Save this week to my device" },
   saveWeekDone: { th: "เก็บไว้ในเครื่องนี้แล้ว ดูได้ที่หน้า ของฉัน", en: "Saved on this device. You can see it on Your stuff." },
   saveWeekFailed: { th: "เก็บไม่สำเร็จ เบราว์เซอร์นี้ไม่ยอมให้เก็บข้อมูลในเครื่อง", en: "Could not save. This browser is not letting the page keep data on your device." },
-  saveWeekNote: { th: "เก็บในเครื่องนี้เท่านั้น ไม่ส่งไปที่ไหน", en: "Kept on this device only. Nothing is sent anywhere." },
+  saveWeekNote: { th: "เก็บในเครื่องนี้เท่านั้น ไม่ส่งไปที่ไหน", en: "Stays on this device. Not sent anywhere." },
   replacesWeek: { th: "จะแทนที่สัปดาห์ที่เก็บไว้ก่อนหน้า", en: "This replaces the week you saved before." },
   openMine: { th: "ดูของฉัน", en: "Open Your stuff" },
   failNoDays: {
@@ -114,27 +114,27 @@ export const BUDGET = {
   /* ---- Spend ---- */
   spendTitle: { th: "ที่บันทึกไว้สัปดาห์นี้", en: "Logged this week" },
   spendOnlyNote: {
-    th: `นับเฉพาะมื้อที่คุณกด "${PICK.eatThis.th}" ไว้ ไม่ใช่ทุกอย่างที่คุณกินหรือจ่ายจริง สัปดาห์เริ่มวันจันทร์ ตามเวลาประเทศไทย`,
-    en: `This only counts what you tapped "${PICK.eatThis.en}" for. It is not everything you ate or paid. The week starts on Monday, Thailand time.`,
+    th: `นับเฉพาะมื้อที่คุณกด "${PICK.eatThis.th}" ไว้ สัปดาห์เริ่มวันจันทร์`,
+    en: `Counts only what you tapped "${PICK.eatThis.en}" for. The week starts on Monday.`,
   },
   spendNoTarget: { th: "ยังไม่ได้เก็บแผนสัปดาห์ไว้ จึงแสดงยอดรวมอย่างเดียว", en: "No saved week, so this is just the total." },
 
   /* ---- Mine ---- */
   mineTitle: { th: "ของฉัน", en: "Your stuff" },
   mineIntro: {
-    th: "เมนูโปรด ประวัติ ตัวกรองที่ตั้งไว้ และแผนสัปดาห์ ทุกอย่างเก็บในเครื่องนี้เท่านั้น ไม่มีบัญชี ไม่ส่งไปที่ไหน",
-    en: "Favourites, history, saved filters and your week. All of it lives on this device only. No account, and nothing is sent anywhere.",
+    th: "เมนูโปรด ประวัติ และแผนสัปดาห์ของคุณ เก็บในเครื่องนี้เท่านั้น ไม่ส่งไปที่ไหน",
+    en: "Your favourites, history and week. They stay on this device and are not sent anywhere.",
   },
-  mineNoJsTitle: { th: "หน้านี้ต้องใช้ JavaScript", en: "This page needs JavaScript" },
+  mineNoJsTitle: { th: "ต้องเปิด JavaScript", en: "JavaScript is off" },
   mineNoJsBody: {
-    th: "ข้อมูลของคุณอยู่ในเครื่องนี้เท่านั้น เว็บไซต์เห็นไม่ได้ จึงแสดงได้ก็ต่อเมื่อเบราว์เซอร์เปิด JavaScript ส่วนหน้าอื่นของ \"กินอะไรดี\" ใช้ได้ตามปกติ",
-    en: "Your data only exists on your device, and the server cannot see it. So this page can only show it when your browser runs JavaScript. The rest of What to eat works as usual.",
+    th: "เปิด JavaScript เพื่อดูหน้านี้",
+    en: "Turn on JavaScript to see this page.",
   },
   mineLoading: { th: "กำลังอ่านจากเครื่องของคุณ", en: "Reading from your device" },
   mineNoStorageTitle: { th: "เครื่องนี้เก็บข้อมูลให้ไม่ได้", en: "This device cannot keep data" },
   mineNoStorageBody: {
-    th: "เบราว์เซอร์ของคุณไม่ยอมให้หน้านี้เก็บข้อมูล อาจเป็นเพราะโหมดส่วนตัวหรือบล็อกข้อมูลเว็บไซต์ จึงไม่มีอะไรให้แสดง และปุ่มเมนูโปรดหรือบันทึกจะไม่ทำงาน ส่วนอื่นของ \"กินอะไรดี\" ใช้ได้ตามปกติ",
-    en: "Your browser is not letting this page keep data. It may be a private window or blocked site data. So there is nothing to show, and favourites and saves will not work. The rest of What to eat works as usual.",
+    th: "เบราว์เซอร์ไม่ยอมให้เก็บข้อมูล อาจเป็นเพราะโหมดส่วนตัว จึงยังไม่มีอะไรให้แสดง",
+    en: "This browser will not keep data, perhaps because of a private window, so there is nothing to show.",
   },
   favouritesTitle: { th: "เมนูโปรด", en: "Favourites" },
   favouritesEmpty: { th: "ยังไม่มีเมนูโปรด กดปุ่มหัวใจบนการ์ดเมนูเพื่อเก็บไว้", en: "No favourites yet. Use the heart on any dish card to keep one." },

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Details } from "@/components/ui/Details";
 import { Heading } from "@/components/ui/Heading";
 import { Timestamp } from "@/components/ui/Timestamp";
 import type { HeadingLevel } from "@/lib/a11y";
@@ -26,9 +27,10 @@ interface ComboCardProps {
 }
 
 /**
- * One meal: the items with their surveyed prices, the total, the change left,
- * how many stalls it takes, and a small map with the stops numbered in
- * walking order. The same route is written out as a list, so the map is never
+ * One meal: headed by its main dish and the total, then the items with their
+ * surveyed prices, the change left and how many stalls it takes. The walking
+ * order and a small map with only the stops numbered sit in a collapsed
+ * "Where to go". The same route is written out as a list, so the map is never
  * the only way to read it.
  */
 export function ComboCard({ combo, data, locale, filters, position, headingLevel = 3 }: ComboCardProps) {
@@ -40,9 +42,9 @@ export function ComboCard({ combo, data, locale, filters, position, headingLevel
     <article className="flex h-full flex-col gap-[var(--space-4)] rounded-panel border border-line bg-surface p-[var(--space-4)]">
       <div className="flex flex-wrap items-baseline justify-between gap-x-[var(--space-4)] gap-y-[var(--space-1)]">
         <Heading level={headingLevel} className="m-0 text-lg">
-          {budget.comboHeading(locale, position)}
+          {pick(combo.main.name, locale)}
         </Heading>
-        <p className="m-0 text-sm text-ink-600">{budget.stalls(locale, combo.stalls.length)}</p>
+        <p className="m-0 text-lg font-semibold text-ink-900">{eat.baht(locale, combo.total)}</p>
       </div>
 
       <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0" aria-label={t(BUDGET.comboItems, locale)}>
@@ -74,32 +76,33 @@ export function ComboCard({ combo, data, locale, filters, position, headingLevel
       </ul>
 
       <div className="flex flex-wrap items-baseline justify-between gap-x-[var(--space-4)] border-t border-line pt-[var(--space-3)]">
-        <p className="m-0 text-lg font-semibold text-ink-900">
-          {t(BUDGET.comboTotal, locale)} {eat.baht(locale, combo.total)}
-        </p>
+        <p className="m-0 text-ink-900">{budget.stalls(locale, combo.stalls.length)}</p>
         <p className="m-0 font-medium text-ink-900">{budget.left(locale, combo.change)}</p>
       </div>
 
-      <div className="mt-auto flex flex-col gap-[var(--space-2)]">
-        <p className="m-0 text-base font-medium text-ink-900">{t(BUDGET.comboWalk, locale)}</p>
-        <ol className="m-0 flex list-decimal flex-col gap-[var(--space-1)] pl-[var(--space-6)] text-base text-ink-900">
-          {stops.map((stall) => (
-            <li key={stall._id}>{eat.stallFull(locale, stall.number, pick(stall.name, locale))}</li>
-          ))}
-        </ol>
-        {route ? (
-          <div className="max-w-[16rem]">
-            <CanteenMap
-              locale={locale}
-              data={data}
-              compact
-              highlights={route.highlights}
-              entranceIndex={route.entranceIndex}
-              idPrefix={`combo-${position}`}
-            />
-          </div>
-        ) : null}
-      </div>
+      <Details summary={t(EAT.comboWhere, locale)} className="mt-auto">
+        <div className="flex flex-col gap-[var(--space-2)]">
+          <p className="m-0 text-base font-medium text-ink-900">{t(BUDGET.comboWalk, locale)}</p>
+          <ol className="m-0 flex list-decimal flex-col gap-[var(--space-1)] pl-[var(--space-6)] text-base text-ink-900">
+            {stops.map((stall) => (
+              <li key={stall._id}>{eat.stallFull(locale, stall.number, pick(stall.name, locale))}</li>
+            ))}
+          </ol>
+          {route ? (
+            <div className="max-w-[16rem]">
+              <CanteenMap
+                locale={locale}
+                data={data}
+                compact
+                numbers="highlighted"
+                highlights={route.highlights}
+                entranceIndex={route.entranceIndex}
+                idPrefix={`combo-${position}`}
+              />
+            </div>
+          ) : null}
+        </div>
+      </Details>
     </article>
   );
 }

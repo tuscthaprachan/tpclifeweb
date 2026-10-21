@@ -187,12 +187,12 @@
     animation: fun-wobble 2s ease-in-out 2;
   }
 
-  .fun-roll:hover .fun-die,
-  .fun-roll:focus-visible .fun-die {
+  :is(.fun-roll, .fun-spin):hover .fun-die,
+  :is(.fun-roll, .fun-spin):focus-visible .fun-die {
     animation: fun-wobble-fast 0.6s ease-in-out 3;
   }
 
-  .fun-roll:active .fun-die {
+  :is(.fun-roll, .fun-spin):active .fun-die {
     animation: fun-roll 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) both;
   }
 

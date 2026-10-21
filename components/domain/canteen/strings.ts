@@ -169,6 +169,9 @@ export const EAT = {
   dietTitle: { th: "อาหารที่กินได้", en: "Diet" },
   whatIsLink: { th: "เมนูนี้คืออะไร", en: "What is this dish" },
   showOnMap: { th: "ดูตำแหน่งบนแผนที่", en: "Show on the map" },
+  matchesTag: { th: "ตรงกับตัวกรอง", en: "Matches" },
+  showOnlyMatching: { th: "ดูเฉพาะเมนูที่ตรงกับตัวกรอง", en: "Show only matching dishes" },
+  comboWhere: { th: "ไปที่ไหนบ้าง", en: "Where to go" },
   backToStalls: { th: "กลับไปรายการร้านค้า", en: "Back to all stalls" },
   backToDishes: { th: "กลับไปรายการเมนู", en: "Back to all dishes" },
   hot: { th: "ร้อน", en: "Hot" },
@@ -345,6 +348,11 @@ export const eat = {
     return locale === "th"
       ? `แสดงเมนูที่ ${n(from, locale)} ถึง ${n(to, locale)} จาก ${n(total, locale)}`
       : `Showing ${n(from, locale)} to ${n(to, locale)} of ${n(total, locale)}`;
+  },
+
+  /** "Show 6 more meals". The link under the meal list. */
+  showMoreMeals(locale: Locale, count: number): string {
+    return locale === "th" ? `แสดงเพิ่มอีก ${n(count, locale)} มื้อ` : `Show ${n(count, locale)} more ${count === 1 ? "meal" : "meals"}`;
   },
 
   /** "Show 20 more dishes". The link under the list. */

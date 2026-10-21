@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, type MouseEvent } from "react";
-
 import { Button } from "@/components/ui/Button";
 import { device } from "@/lib/canteen";
 import type { Locale } from "@/lib/i18n/config";
@@ -13,44 +11,24 @@ interface EatThisButtonProps {
   items: ReadonlyArray<{ slug: string; price: number }>;
   /** Where the link goes. Without JavaScript this is all the button is: a link to the stall. */
   href: string;
-  /** The words of the link when it goes somewhere other than the stall page. */
-  seeLabel?: string;
 }
 
 /**
- * "Go with this". A real link first, so without JavaScript it simply opens
- * the stall page. With JavaScript, a plain click first logs the dish to the
- * device history (nothing leaves the device), then says so, and offers the
- * stall link instead of jumping away. It never claims it saved something it
- * could not.
+ * "Go with this", the one primary action of the result. A real link first, so
+ * without JavaScript it simply opens the stall page. With JavaScript, a click
+ * first logs the dish to the device history (a synchronous write, nothing
+ * leaves the device) and then the link's own navigation carries on, so it is
+ * one tap to go. If the device will not keep it, the navigation still happens.
  */
-export function EatThisButton({ locale, items, href, seeLabel }: EatThisButtonProps) {
-  const [state, setState] = useState<"idle" | "done" | "failed">("idle");
-
-  function onClick(event: MouseEvent<HTMLAnchorElement>) {
+export function EatThisButton({ locale, items, href }: EatThisButtonProps) {
+  function onClick() {
     const at = new Date().toISOString();
-    const saved = items.map((item) => device.addHistory({ slug: item.slug, price: item.price, at })).every(Boolean);
-    const plain = event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
-    if (plain) {
-      event.preventDefault();
-      setState(saved ? "done" : "failed");
-    }
+    items.forEach((item) => device.addHistory({ slug: item.slug, price: item.price, at }));
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-[var(--space-3)]">
-      {state === "idle" ? (
-        <Button href={href} onClick={onClick}>
-          {P.eatThis[locale]}
-        </Button>
-      ) : (
-        <Button href={href} variant="secondary">
-          {seeLabel ?? P.seeStall[locale]}
-        </Button>
-      )}
-      <p role="status" className="m-0 text-ink-900">
-        {state === "done" ? P.eatenDone[locale] : state === "failed" ? P.eatenFailed[locale] : ""}
-      </p>
-    </div>
+    <Button href={href} onClick={onClick} className="fun-roll w-full sm:w-auto">
+      {P.eatThis[locale]}
+    </Button>
   );
 }

@@ -136,7 +136,7 @@ export function CanteenMapWithList({
   return (
     <div className="flex flex-col gap-4">
       {viewLinks ? <ViewSwitch locale={locale} current={view} links={viewLinks} /> : null}
-      <div className="grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:items-start">
+      <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:items-start">
         <section className={`min-w-0 flex-col gap-3 ${showList ? "flex" : "hidden md:flex"}`} aria-labelledby={listId}>
           <Heading level={headingLevel} id={listId} className={headingLevel === 2 ? "text-xl" : "text-lg"}>
             {MAP_STRINGS.listHeading[locale]}

@@ -18,18 +18,20 @@ interface StallMiniMapProps {
   filters: CanteenFilters;
   /** Needed only when two maps share a page. */
   idPrefix?: string;
+  /** False when the page puts its own, more prominent, link to the full map beside the plan. */
+  showLink?: boolean;
   className?: string;
 }
 
 /**
  * A compact floor plan with the stall (or stalls) marked, and the link to the
- * full map with the same stalls highlighted. Only the marked stalls carry a
+ * full map with the same stalls highlighted (unless the page supplies its own). Only the marked stalls carry a
  * number, drawn large enough to read at phone width; the rest are shapes. The
  * plan is supplementary: its text alternative names the marked stalls, and
  * the stall name, number and wayfinding sentence beside it say the same
  * in words. Without a drawable floor plan only the link shows.
  */
-export function StallMiniMap({ locale, data, stalls, filters, idPrefix = "mini", className }: StallMiniMapProps) {
+export function StallMiniMap({ locale, data, stalls, filters, idPrefix = "mini", showLink = true, className }: StallMiniMapProps) {
   const slugs = stalls.map((stall) => stall.slug.current).join(",");
   return (
     <div className={cx("flex flex-col gap-[var(--space-2)]", className)}>
@@ -45,9 +47,11 @@ export function StallMiniMap({ locale, data, stalls, filters, idPrefix = "mini",
           />
         </div>
       ) : null}
-      <Link href={mapHref(locale, filters, slugs)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
-        {t(EAT.showOnMap, locale)}
-      </Link>
+      {showLink ? (
+        <Link href={mapHref(locale, filters, slugs)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
+          {t(EAT.showOnMap, locale)}
+        </Link>
+      ) : null}
     </div>
   );
 }

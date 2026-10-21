@@ -12,7 +12,7 @@
  * `usual` biases), it re-runs `pick()` here with the same seed, filters, lock
  * and vetoes plus the device data, and shows that result instead. Repeat
  * avoidance (default 2 days) therefore only exists on the client. The page
- * says so in a small note, in words for each case.
+ * says so in one short line, only when the device changed something.
  *
  * The device is read once per result (keyed by the URL) and then frozen, so
  * tapping "Go with this" does not make the dish just chosen swap itself out
@@ -34,7 +34,7 @@ import { device } from "@/lib/canteen";
 import { applyFilters } from "@/lib/canteen/filter";
 import { pick, type HistoryEntry } from "@/lib/canteen/random";
 import type { CanteenFilters } from "@/lib/canteen/params";
-import { pick as localised, type Locale } from "@/lib/i18n/config";
+import { localePath, pick as localised, type Locale } from "@/lib/i18n/config";
 import type { CanteenData } from "@/lib/sanity/types";
 
 import { eat } from "../strings";
@@ -204,17 +204,8 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
     );
   }
 
-  // Meal picks never use the device, so there is nothing to say about it.
-  const note =
-    params.mode === "meal"
-      ? null
-      : !hydrated
-        ? biasNeedsDevice(params.bias)
-          ? PICK.noteServerBias[locale]
-          : PICK.noteServer[locale]
-        : hasDeviceData
-          ? PICK.noteApplied[locale]
-          : PICK.noteNothingToApply[locale];
+  // Meal picks never use the device. The no-JavaScript notes live in <noscript>; with JavaScript only a device-applied pick says anything.
+  const applied = hydrated && snapshot !== null && params.mode !== "meal" && (snapshot.history.length > 0 || snapshot.dislikes.length > 0);
 
   return (
     <div className="flex flex-col gap-[var(--space-4)]">
@@ -240,7 +231,16 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
         <div className={playing ? "opacity-0 [grid-area:1/1]" : celebrate ? "fun-pop [grid-area:1/1]" : "[grid-area:1/1]"}>{content}</div>
         {celebrate ? <Confetti /> : null}
       </div>
-      {note ? <p className="m-0 text-sm text-ink-600">{note}</p> : null}
+      {params.mode === "meal" ? null : (
+        <noscript>
+          <p className="m-0 text-sm text-ink-600">{biasNeedsDevice(params.bias) ? PICK.noteServerBias[locale] : PICK.noteServer[locale]}</p>
+        </noscript>
+      )}
+      {applied ? (
+        <p className="m-0 text-sm text-ink-600">
+          {PICK.noteApplied[locale]} <a href={localePath(locale, "/eat/mine")}>{PICK.noteAppliedLink[locale]}</a>
+        </p>
+      ) : null}
     </div>
   );
 }

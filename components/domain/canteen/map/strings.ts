@@ -13,8 +13,8 @@ type Pair = { th: string; en: string };
 export const MAP_STRINGS = {
   pageTitle: { th: "ผังโรงอาหาร", en: "Canteen map" },
   pageIntro: {
-    th: "ดูว่าร้านแต่ละร้านอยู่ตรงไหนในโรงอาหาร เรียงตามเลขร้าน",
-    en: "See where each stall is in the canteen, listed in stall number order.",
+    th: "หาร้านแต่ละร้านบนผังโรงอาหาร หรือสลับไปดูเป็นรายชื่อก็ได้",
+    en: "Find each stall on the floor plan, or switch to the list.",
   },
   svgTitle: { th: "ผังพื้นของโรงอาหาร", en: "Canteen floor plan" },
   svgDesc: {
