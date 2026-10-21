@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/sanity/queries", () => ({ getSiteSettings: async () => null }));
 
+import { splitPrimaryNav } from "@/components/layout/nav-groups";
 import { withRequiredNav } from "@/components/layout/site-settings";
 import type { SiteSettings } from "@/lib/sanity/types";
 
@@ -26,5 +27,23 @@ describe("withRequiredNav", () => {
   it("leaves an editor's own entry alone", () => {
     const input = settings(["/eat", "/forms"]);
     expect(withRequiredNav(input)).toBe(input);
+  });
+});
+
+describe("splitPrimaryNav", () => {
+  const items = settings(["/forms", "/welfare", "/news", "/eat", "/directory"]).primaryNav;
+
+  it("pins What to eat then Student welfare regardless of CMS order", () => {
+    expect(splitPrimaryNav(items).pinned.map((item) => item.path)).toEqual(["/eat", "/welfare"]);
+  });
+
+  it("keeps every other item in CMS order under More", () => {
+    expect(splitPrimaryNav(items).more.map((item) => item.path)).toEqual(["/forms", "/news", "/directory"]);
+  });
+
+  it("skips a pinned path that the CMS does not list", () => {
+    const result = splitPrimaryNav(settings(["/forms", "/eat"]).primaryNav);
+    expect(result.pinned.map((item) => item.path)).toEqual(["/eat"]);
+    expect(result.more.map((item) => item.path)).toEqual(["/forms"]);
   });
 });

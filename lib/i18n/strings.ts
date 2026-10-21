@@ -26,6 +26,8 @@ export const UI = {
   footerMenu: { th: "เมนูท้ายเว็บไซต์", en: "Footer navigation" },
   openMenu: { th: "เปิดเมนู", en: "Open menu" },
   closeMenu: { th: "ปิดเมนู", en: "Close menu" },
+  moreNav: { th: "เพิ่มเติม", en: "More" },
+  currentSection: { th: "(หน้าปัจจุบันอยู่ในเมนูนี้)", en: "(contains the current page)" },
   close: { th: "ปิด", en: "Close" },
   changeLanguage: { th: "เปลี่ยนภาษา", en: "Change language" },
   breadcrumb: { th: "เส้นทางหน้า", en: "Breadcrumb" },
@@ -58,7 +60,7 @@ export const UI = {
   /* At a glance */
   atAGlance: { th: "ข้อมูลวันนี้", en: "Today at a glance" },
   nextDeparture: { th: "รอบถัดไป", en: "Next departure" },
-  departsIn: { th: "อีก", en: "In" },
+  departsIn: { th: "อีกประมาณ", en: "about" },
   minutes: { th: "นาที", en: "min" },
   hours: { th: "ชั่วโมง", en: "hr" },
   departingNow: { th: "กำลังออก", en: "Departing now" },
@@ -68,9 +70,10 @@ export const UI = {
    * Do not replace this with "live" under any circumstances.
    */
   scheduled: { th: "ตามตารางเวลา", en: "Scheduled" },
+  scheduledShort: { th: "ตามตาราง", en: "Scheduled" },
   scheduledExplainer: {
-    th: "เวลานี้คำนวณจากตารางเวลาที่ประกาศไว้ ไม่ใช่ตำแหน่งรถจริง",
-    en: "These times come from the published timetable, not from vehicle tracking",
+    th: "เวลานี้มาจากตารางเวลาที่ประกาศไว้ ไม่ใช่ตำแหน่งรถจริง",
+    en: "Times come from the published timetable, not from vehicle tracking",
   },
   noServiceToday: { th: "วันนี้ไม่มีให้บริการ", en: "No service today" },
   lastDeparted: { th: "รอบสุดท้ายออกแล้ว", en: "Last departure has gone" },
