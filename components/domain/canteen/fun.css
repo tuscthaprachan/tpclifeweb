@@ -1,0 +1,339 @@
+/*
+ * The playful layer for "Can't decide?" and the pick reveal. Everything that
+ * moves sits inside `prefers-reduced-motion: no-preference`; the rest is
+ * static colour and shape. All colours are theme tokens, and every fill that
+ * carries text uses --ink-on-fill or --ink-900 on a soft tint, so contrast
+ * holds in both themes. Emoji and confetti are decoration (aria-hidden).
+ */
+
+.fun-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 100% 0%, var(--fill-activity-soft) 0, transparent 55%),
+    radial-gradient(circle at 0% 100%, var(--fill-transport-soft) 0, transparent 60%), var(--fill-welfare-soft);
+}
+
+.fun-floaters {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: -1;
+  display: flex;
+  gap: var(--space-1);
+  font-size: 1.75rem;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.fun-floaters > span {
+  display: inline-block;
+}
+
+.fun-badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1rem;
+  background: var(--fill-transport);
+  color: var(--ink-on-fill);
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--fill-transport) 55%, black);
+  transform: rotate(-8deg);
+}
+
+.fun-squiggle {
+  background-image: linear-gradient(var(--fill-transport), var(--fill-transport));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.3em;
+  border-radius: 0.2em;
+}
+
+.fun-chips label > input:not(:checked) + span {
+  background: var(--fun-chip, var(--surface));
+}
+
+.fun-chips label:nth-child(4n + 1) {
+  --fun-chip: var(--fill-transport-soft);
+}
+.fun-chips label:nth-child(4n + 2) {
+  --fun-chip: var(--fill-activity-soft);
+}
+.fun-chips label:nth-child(4n + 3) {
+  --fun-chip: var(--fill-governance-soft);
+}
+.fun-chips label:nth-child(4n) {
+  --fun-chip: var(--fill-welfare-soft);
+}
+
+.fun-chips label > input:checked + span {
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--colour-action) 55%, black);
+}
+
+.fun-roll {
+  position: relative;
+  overflow: hidden;
+  min-height: 3.5rem;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-pill);
+  font-size: 1.25rem;
+  font-weight: 700;
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--colour-action) 55%, black);
+}
+
+.fun-roll:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--colour-action) 55%, black);
+}
+
+.fun-die {
+  display: inline-flex;
+  transform-origin: 50% 55%;
+}
+
+.fun-reel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-panel);
+  background: var(--fill-welfare-soft);
+  box-shadow: inset 0 0 0 4px var(--fill-transport);
+  --row: 3.5rem;
+  height: calc(var(--row) * 3);
+}
+
+.fun-reel::before,
+.fun-reel::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  z-index: 2;
+  height: var(--row);
+  pointer-events: none;
+}
+
+.fun-reel::before {
+  top: 0;
+  background: linear-gradient(var(--fill-welfare-soft), transparent);
+}
+
+.fun-reel::after {
+  bottom: 0;
+  background: linear-gradient(transparent, var(--fill-welfare-soft));
+}
+
+.fun-reel-line {
+  position: absolute;
+  inset-inline: var(--space-2);
+  top: var(--row);
+  z-index: 1;
+  height: var(--row);
+  border-block: 3px solid var(--colour-action);
+  pointer-events: none;
+}
+
+.fun-reel-strip {
+  padding-top: var(--row);
+  will-change: transform;
+}
+
+.fun-reel-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--row);
+  padding-inline: var(--space-6);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+
+.fun-confetti {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  z-index: 20;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.fun-confetti > i {
+  position: absolute;
+  display: block;
+  width: 0.6rem;
+  height: 0.9rem;
+  border-radius: 2px;
+  background: var(--fun-hue);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fun-floaters > span {
+    animation: fun-float 3.2s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -0.9s);
+  }
+
+  .fun-badge {
+    animation: fun-wobble 4s ease-in-out infinite;
+  }
+
+  .fun-roll:hover .fun-die,
+  .fun-roll:focus-visible .fun-die {
+    animation: fun-wobble-fast 0.6s ease-in-out infinite;
+  }
+
+  .fun-roll:active .fun-die {
+    animation: fun-roll 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  }
+
+  .fun-roll::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    left: -40%;
+    width: 30%;
+    background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.28), transparent);
+    transform: skewX(-20deg);
+    animation: fun-shine 4.5s ease-in-out infinite;
+  }
+
+  .fun-chips label > input:not(:disabled) + span {
+    transition: transform 150ms var(--easing);
+  }
+
+  .fun-chips label:hover > input:not(:disabled) + span {
+    transform: translateY(-2px) rotate(-1.5deg);
+  }
+
+  .fun-chips label > input:checked + span {
+    animation: fun-pop 280ms var(--easing);
+  }
+
+  .fun-reel-strip {
+    animation: fun-spin var(--fun-ms, 1700ms) cubic-bezier(0.12, 0.72, 0.18, 1) both;
+  }
+
+  .fun-reel-item {
+    animation: fun-blur var(--fun-ms, 1700ms) ease-out both;
+  }
+
+  .fun-pop {
+    animation: fun-reveal 520ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  }
+
+  .fun-confetti > i {
+    animation: fun-burst 1300ms cubic-bezier(0.1, 0.7, 0.3, 1) both;
+    animation-delay: calc(var(--n) * 12ms);
+  }
+
+  @keyframes fun-float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-6deg);
+    }
+    50% {
+      transform: translateY(-6px) rotate(6deg);
+    }
+  }
+
+  @keyframes fun-wobble {
+    0%,
+    100% {
+      transform: rotate(-8deg);
+    }
+    50% {
+      transform: rotate(4deg) scale(1.05);
+    }
+  }
+
+  @keyframes fun-wobble-fast {
+    0%,
+    100% {
+      transform: rotate(-14deg);
+    }
+    50% {
+      transform: rotate(14deg) scale(1.12);
+    }
+  }
+
+  @keyframes fun-roll {
+    from {
+      transform: rotate(0) scale(1);
+    }
+    to {
+      transform: rotate(720deg) scale(1.2);
+    }
+  }
+
+  @keyframes fun-shine {
+    0%,
+    70% {
+      left: -40%;
+    }
+    100% {
+      left: 130%;
+    }
+  }
+
+  @keyframes fun-pop {
+    50% {
+      transform: scale(1.12);
+    }
+  }
+
+  @keyframes fun-spin {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(var(--row) * var(--last) * -1));
+    }
+  }
+
+  @keyframes fun-blur {
+    from {
+      opacity: 0.55;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fun-reveal {
+    0% {
+      opacity: 0;
+      transform: scale(0.85) translateY(0.5rem);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.04);
+    }
+    100% {
+      transform: none;
+    }
+  }
+
+  @keyframes fun-burst {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) rotate(0);
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx), calc(var(--dy) + 9rem)) rotate(var(--rot));
+    }
+  }
+}

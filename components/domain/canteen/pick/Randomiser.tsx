@@ -18,14 +18,16 @@
  * tapping "Go with this" does not make the dish just chosen swap itself out
  * for avoiding the repeat.
  *
- * MOTION. On a new result (and when the page first opens) a reel of dish
- * names plays for about 900 ms, then settles. It is `aria-hidden` and it is
- * skipped under `prefers-reduced-motion`. The settled result is announced once
- * in a polite live region. The result stays in the DOM (only invisible during
- * the reel), so a focused link keeps focus while the reel plays.
+ * MOTION. On a new result (and when the page first opens) a slot machine
+ * reel of dish names spins for about 1.7 s, slows down and lands on the
+ * result, which then pops in with a confetti burst. The reel is one CSS
+ * transform animation (no per-frame React renders), `aria-hidden`, and
+ * skipped under `prefers-reduced-motion`. The settled result is announced
+ * once in a polite live region. The result stays in the DOM (only invisible
+ * during the reel), so a focused link keeps focus while the reel plays.
  */
 
-import { useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 
 import { device } from "@/lib/canteen";
 import { applyFilters } from "@/lib/canteen/filter";
@@ -35,6 +37,7 @@ import { pick as localised, type Locale } from "@/lib/i18n/config";
 import type { CanteenData } from "@/lib/sanity/types";
 
 import { eat } from "../strings";
+import "../fun.css";
 import { biasNeedsDevice, reelNames, toPickLock, type PickParams } from "./helpers";
 import { PickEmpty } from "./PickEmpty";
 import { PickResult } from "./PickResult";
@@ -63,8 +66,37 @@ interface DeviceSnapshot {
   now: Date;
 }
 
-const REEL_MS = 900;
-const FRAME_MS = 75;
+const REEL_MS = 1700;
+const STRIP_LENGTH = 18;
+const CONFETTI_PIECES = 30;
+const CONFETTI_HUES = ["--fill-transport", "--fill-welfare", "--fill-activity", "--fill-governance", "--colour-action"] as const;
+
+/** Builds the strip the reel scrolls: the names cycled to a fixed length, the final one last. */
+function reelStrip(names: readonly string[]): string[] {
+  const last = names[names.length - 1] ?? "";
+  const rest = names.slice(0, -1);
+  if (rest.length === 0) return [last];
+  return [...Array.from({ length: STRIP_LENGTH - 1 }, (_, index) => rest[index % rest.length]!), last];
+}
+
+function Confetti() {
+  return (
+    <div aria-hidden="true" className="fun-confetti">
+      {Array.from({ length: CONFETTI_PIECES }, (_, n) => {
+        const angle = (n * 137.5 * Math.PI) / 180;
+        const reach = 4 + (n % 5) * 1.6;
+        const style = {
+          "--n": n,
+          "--dx": `${(Math.cos(angle) * reach * 1.4).toFixed(2)}rem`,
+          "--dy": `${(-Math.abs(Math.sin(angle)) * reach * 1.2 - 2).toFixed(2)}rem`,
+          "--rot": `${(n % 2 ? 1 : -1) * (180 + n * 23)}deg`,
+          "--fun-hue": `var(${CONFETTI_HUES[n % CONFETTI_HUES.length]})`,
+        } as CSSProperties;
+        return <i key={n} style={style} />;
+      })}
+    </div>
+  );
+}
 
 const subscribeNever = () => () => {};
 
@@ -134,17 +166,14 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
 
   // The reel plays until `doneKey` catches up with the key of this result.
   const [doneKey, setDoneKey] = useState<string | null>(null);
-  const [frame, setFrame] = useState(0);
   const playing = hydrated && !reduced && names.length > 1 && doneKey !== pickKey;
+  const celebrate = hydrated && !reduced && names.length > 1 && doneKey === pickKey;
+  const strip = useMemo(() => reelStrip(names), [names]);
 
   useEffect(() => {
     if (!playing) return;
-    const spin = window.setInterval(() => setFrame((value) => value + 1), FRAME_MS);
-    const stop = window.setTimeout(() => setDoneKey(pickKey), REEL_MS);
-    return () => {
-      window.clearInterval(spin);
-      window.clearTimeout(stop);
-    };
+    const stop = window.setTimeout(() => setDoneKey(pickKey), REEL_MS + 400);
+    return () => window.clearTimeout(stop);
   }, [playing, pickKey]);
 
   let content: ReactNode = children;
@@ -181,16 +210,23 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
       <p role="status" className="visually-hidden">
         {hydrated && !playing ? spoken : ""}
       </p>
-      <div className="grid">
+      <div className="relative grid grid-cols-[minmax(0,1fr)] overflow-x-clip">
         {playing ? (
-          <div
-            aria-hidden="true"
-            className="pointer-events-none z-10 flex min-h-[14rem] items-center justify-center rounded-panel border border-line bg-welfare-soft p-[var(--space-6)] text-center [grid-area:1/1]"
-          >
-            <p className="m-0 text-2xl font-semibold text-ink-900">{names[frame % names.length]}</p>
+          <div aria-hidden="true" className="pointer-events-none z-10 [grid-area:1/1]">
+            <div className="fun-reel" style={{ "--last": strip.length - 1, "--fun-ms": `${REEL_MS}ms` } as CSSProperties}>
+              <div className="fun-reel-line" />
+              <div key={pickKey} className="fun-reel-strip" onAnimationEnd={() => setDoneKey(pickKey)}>
+                {strip.map((name, index) => (
+                  <p key={index} className="fun-reel-item m-0">
+                    {name}
+                  </p>
+                ))}
+              </div>
+            </div>
           </div>
         ) : null}
-        <div className={playing ? "opacity-0 [grid-area:1/1]" : "[grid-area:1/1]"}>{content}</div>
+        <div className={playing ? "opacity-0 [grid-area:1/1]" : celebrate ? "fun-pop [grid-area:1/1]" : "[grid-area:1/1]"}>{content}</div>
+        {celebrate ? <Confetti /> : null}
       </div>
       {note ? <p className="m-0 text-sm text-ink-600">{note}</p> : null}
     </div>

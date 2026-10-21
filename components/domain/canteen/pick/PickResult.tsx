@@ -13,7 +13,8 @@ import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types"
 
 import { DietTags } from "../DietTag";
 import { HowToSay } from "../HowToSay";
-import { DishTypeIcon, PinIcon } from "../icons";
+import { DiceIcon, DishTypeIcon, PinIcon } from "../icons";
+import "../fun.css";
 import { dishDietTags } from "../diet";
 import { TYPE_LABEL } from "../labels";
 import { dishHref, mapHref, stallHref } from "../links";
@@ -149,9 +150,12 @@ function Actions({
         <Link href={pickHref(locale, filters, params, { seed: nextSeed, not })} className={SECONDARY}>
           {PICK.notThis[locale]}
         </Link>
-        <Link href={pickHref(locale, filters, params, { seed: nextSeed, lock: [], of: undefined })} className={SECONDARY}>
+        <Button href={pickHref(locale, filters, params, { seed: nextSeed, lock: [], of: undefined })} className="fun-roll">
+          <span aria-hidden="true" className="fun-die">
+            <DiceIcon size={26} />
+          </span>
           {PICK.spinAgain[locale]}
-        </Link>
+        </Button>
       </div>
       {locks}
       <ShareButton locale={locale} href={pickHref(locale, filters, params)} id="pick-share" />

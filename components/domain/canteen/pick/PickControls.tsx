@@ -5,6 +5,7 @@ import { localePath, type Locale } from "@/lib/i18n/config";
 
 import { ChoiceGroup } from "../ChoiceGroup";
 import { DiceIcon } from "../icons";
+import "../fun.css";
 import { PICK_ROUTE, type PickMode } from "./helpers";
 import { PICK } from "./strings";
 import type { Bias } from "@/lib/canteen/random";
@@ -72,8 +73,10 @@ export function PickControls({ locale, filters, mode, bias, sameStall = false }:
         className="max-w-[16rem]"
       />
       <div>
-        <Button type="submit" className="gap-[var(--space-2)]">
-          <DiceIcon size={20} />
+        <Button type="submit" className="fun-roll">
+          <span aria-hidden="true" className="fun-die">
+            <DiceIcon size={26} />
+          </span>
           {PICK.spin[locale]}
         </Button>
       </div>

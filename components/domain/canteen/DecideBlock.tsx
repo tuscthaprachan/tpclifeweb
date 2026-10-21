@@ -7,6 +7,9 @@ import { ChoiceGroup } from "./ChoiceGroup";
 import { DiceIcon, DietIcon } from "./icons";
 import { DIET_SHORT_LABEL } from "./labels";
 import { EAT, eat, t } from "./strings";
+import "./fun.css";
+
+const FLOATERS = ["🍜", "🍛", "🥢", "🍤"] as const;
 
 interface DecideBlockProps {
   locale: Locale;
@@ -41,12 +44,24 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
   const customMax = filters.max !== undefined && !DECIDE_BUDGETS.includes(filters.max as 40 | 50 | 60) ? String(filters.max) : undefined;
 
   return (
-    <section aria-labelledby="eat-decide-title" className="rounded-panel bg-welfare-soft p-[var(--space-4)] md:p-[var(--space-6)]">
-      <div className="flex flex-col gap-[var(--space-2)]">
-        <Heading level={headingLevel} id="eat-decide-title" className="m-0 text-xl">
-          {t(EAT.decideTitle, locale)}
-        </Heading>
-        <p className="m-0 text-ink-900">{t(EAT.decideHint, locale)}</p>
+    <section aria-labelledby="eat-decide-title" className="fun-panel rounded-panel p-[var(--space-4)] md:p-[var(--space-6)]">
+      <div aria-hidden="true" className="fun-floaters">
+        {FLOATERS.map((emoji, index) => (
+          <span key={emoji} style={{ "--i": index } as React.CSSProperties}>
+            {emoji}
+          </span>
+        ))}
+      </div>
+      <div className="flex items-start gap-[var(--space-3)] pt-[var(--space-6)] sm:pt-0 sm:pr-[10rem]">
+        <span aria-hidden="true" className="fun-badge">
+          <DiceIcon size={32} />
+        </span>
+        <div className="flex min-w-0 flex-col gap-[var(--space-1)]">
+          <Heading level={headingLevel} id="eat-decide-title" className="m-0 text-2xl">
+            <span className="fun-squiggle">{t(EAT.decideTitle, locale)}</span>
+          </Heading>
+          <p className="m-0 text-ink-900">{t(EAT.decideHint, locale)}</p>
+        </div>
       </div>
 
       <form method="get" action={localePath(locale, "/eat/pick")} className="mt-[var(--space-4)] flex flex-col gap-[var(--space-4)]">
@@ -62,6 +77,7 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
             name="max"
             kind="radio"
             layout="chips"
+            className="fun-chips"
             selected={[filters.max === undefined ? "" : String(filters.max)]}
             choices={[
               ...DECIDE_BUDGETS.map((step) => ({ value: String(step), label: eat.baht(locale, step) })),
@@ -76,6 +92,7 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
           name="diet"
           kind="checkbox"
           layout="chips"
+          className="fun-chips"
           selected={filters.diet}
           choices={DECIDE_DIETS.map((diet) => ({
             value: diet,
@@ -85,8 +102,10 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
         />
 
         <div>
-          <Button type="submit" className="w-full gap-[var(--space-2)] py-[var(--space-3)] sm:w-auto">
-            <DiceIcon size={22} />
+          <Button type="submit" className="fun-roll w-full gap-[var(--space-3)] sm:w-auto">
+            <span aria-hidden="true" className="fun-die">
+              <DiceIcon size={28} />
+            </span>
             {t(EAT.decideButton, locale)}
           </Button>
         </div>
