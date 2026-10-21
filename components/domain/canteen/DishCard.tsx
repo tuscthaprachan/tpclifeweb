@@ -71,7 +71,7 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
 
       {stall ? (
         <p className="-my-[var(--space-1)] flex items-start gap-[var(--space-1)] text-sm">
-          <PinIcon className="mt-[2px] shrink-0 text-ink-600" />
+          <PinIcon className="mt-[calc((1lh-16px)/2)] shrink-0 text-ink-600" />
           <Link href={stallHref(locale, stall.slug.current, filters)} className="inline-flex min-h-[var(--target-min)] items-center">{eat.stallFull(locale, stall.number, stallName)}</Link>
         </p>
       ) : null}

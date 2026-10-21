@@ -128,7 +128,7 @@ export default async function EatStallPage({
               {t(EAT.wayfindingTitle, locale)}
             </Heading>
             <p className="m-0 flex items-start gap-[var(--space-1)] text-ink-900">
-              <PinIcon className="mt-[4px] shrink-0 text-ink-600" size={18} />
+              <PinIcon className="mt-[calc((1lh-18px)/2)] shrink-0 text-ink-600" size={18} />
               {stall.wayfinding ? pick(stall.wayfinding, locale) : t(EAT.noWayfinding, locale)}
             </p>
             <div data-slot="mini-map">

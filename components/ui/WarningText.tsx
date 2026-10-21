@@ -17,7 +17,7 @@ interface WarningTextProps {
 export function WarningText({ children, className }: WarningTextProps) {
   return (
     <div className={cx("flex items-start gap-[var(--space-2)] border-l-[var(--border-width-thick)] border-warning bg-warning-soft px-[var(--space-4)] py-[var(--space-3)]", className)}>
-      <WarningIcon className="mt-[3px] shrink-0 text-warning" />
+      <WarningIcon className="mt-[calc((1lh-16px)/2)] shrink-0 text-warning" />
       <p className="m-0 font-semibold text-ink-900">{children}</p>
     </div>
   );

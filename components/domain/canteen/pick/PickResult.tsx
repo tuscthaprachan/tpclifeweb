@@ -111,9 +111,9 @@ function StallLine({ locale, stall, filters }: { locale: Locale; stall: CanteenS
   return (
     <details className="group">
       <summary className="flex cursor-pointer list-none items-start gap-[var(--space-1)] text-lg font-medium text-ink-900 [&::-webkit-details-marker]:hidden">
-        <PinIcon className="mt-[4px] shrink-0 text-ink-600" size={18} />
+        <PinIcon className="mt-[calc((1lh-18px)/2)] shrink-0 text-ink-600" size={18} />
         <span className="min-w-0 flex-1">{eat.stallFull(locale, stall.number, localised(stall.name, locale))}</span>
-        <ChevronDownIcon className="mt-[4px] shrink-0 text-ink-600 transition-transform duration-[var(--motion-state)] ease-[var(--easing)] group-open:rotate-180" />
+        <ChevronDownIcon className="mt-[calc((1lh-16px)/2)] shrink-0 text-ink-600 transition-transform duration-[var(--motion-state)] ease-[var(--easing)] group-open:rotate-180" />
       </summary>
       <div className="mt-[var(--space-2)] flex flex-col gap-[var(--space-2)] pl-[calc(18px+var(--space-1))]">
         <p className="m-0 text-base text-ink-900">{stall.wayfinding ? localised(stall.wayfinding, locale) : t(EAT.noWayfinding, locale)}</p>

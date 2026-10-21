@@ -22,7 +22,7 @@ export function FormRequirements({ prerequisites, locale, className }: FormRequi
     <ul className={cx("m-0 list-none divide-y divide-line p-0", className)}>
       {prerequisites.map((item) => (
         <li key={item._key} className="flex items-start gap-[var(--space-2)] py-[var(--space-2)]">
-          <CheckIcon className="mt-[3px] shrink-0 text-action" />
+          <CheckIcon className="mt-[calc((1lh-16px)/2)] shrink-0 text-action" />
           <span>
             <span className="font-medium text-ink-900">{pick(item.label, locale)}</span>
             {item.detail ? <span className="block text-sm text-ink-600">{pick(item.detail, locale)}</span> : null}

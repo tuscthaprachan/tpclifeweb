@@ -10,6 +10,8 @@
  * always renders `kindLabel` beside it), the icon is reinforcement only.
  */
 
+import { cx } from "@/components/ui/cx";
+
 interface IconProps {
   className?: string;
 }
@@ -17,11 +19,12 @@ interface IconProps {
 /** A tag with a broken corner, standing in for something gone missing. */
 export function LostItemIcon({ className }: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 20 20" width="16" height="16" fill="none" className={className}>
+    <svg aria-hidden="true" viewBox="0 0 20 20" width="16" height="16" fill="none" className={cx("shrink-0 align-[-0.125em]", className)}>
       <path
         d="M9 3.5H4.5v4.5L11 14.5a1.5 1.5 0 002.1 0l1.9-1.9a1.5 1.5 0 000-2.1L9 4"
         stroke="currentColor"
         strokeWidth="1.6"
+        strokeDasharray="2.5 2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -34,7 +37,7 @@ export function LostItemIcon({ className }: IconProps) {
 /** A hand holding a tag, standing in for something recovered and held safe. */
 export function FoundItemIcon({ className }: IconProps) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 20 20" width="16" height="16" fill="none" className={className}>
+    <svg aria-hidden="true" viewBox="0 0 20 20" width="16" height="16" fill="none" className={cx("shrink-0 align-[-0.125em]", className)}>
       <path
         d="M9 2.5H4.5V7L11 13.5a1.5 1.5 0 002.1 0l1.9-1.9a1.5 1.5 0 000-2.1L9 3"
         stroke="currentColor"

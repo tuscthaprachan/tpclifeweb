@@ -7,6 +7,7 @@
  * never the only thing that says what something is.
  */
 
+import { cx } from "@/components/ui/cx";
 import type { DishType } from "@/lib/sanity/types";
 import type { DietKey } from "@/lib/canteen/params";
 
@@ -28,7 +29,7 @@ function Svg({ className, size = 16, children }: IconProps & { children: React.R
       strokeWidth="1.6"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className}
+      className={cx("shrink-0 align-[-0.125em]", className)}
     >
       {children}
     </svg>
@@ -37,7 +38,6 @@ function Svg({ className, size = 16, children }: IconProps & { children: React.R
 
 /* ---- Dish types ---- */
 
-/** A bowl with a mound of rice. */
 /** A speaker with sound waves: hear a name read aloud. */
 export function SpeakerIcon(props: IconProps) {
   return (
@@ -49,6 +49,7 @@ export function SpeakerIcon(props: IconProps) {
   );
 }
 
+/** A bowl with a mound of rice. */
 export function RiceIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -266,7 +267,7 @@ export function HeartIcon({ filled, className, size = 16 }: IconProps & { filled
       strokeWidth="1.6"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className}
+      className={cx("shrink-0 align-[-0.125em]", className)}
     >
       <path d="M10 16.5S3 12.5 3 7.8A3.8 3.8 0 0110 6a3.8 3.8 0 017 1.8c0 4.7-7 8.7-7 8.7z" />
     </svg>
@@ -286,7 +287,7 @@ export function RemoveIcon(props: IconProps) {
 export function TickIcon(props: IconProps) {
   return (
     <Svg {...props} size={props.size ?? 14}>
-      <path d="M4 10.5l4 4L16 6" strokeWidth="2" />
+      <path d="M4 10.5l3.5 3.5L16 5.5" strokeWidth="2" />
     </Svg>
   );
 }
