@@ -175,6 +175,37 @@ export function NoPorkIcon(props: IconProps) {
   );
 }
 
+/** A cow head with a slash: left out. Used for "no beef". */
+export function NoBeefIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M3 4.5c0 2 1 3 2.5 3M17 4.5c0 2-1 3-2.5 3" />
+      <path d="M5.5 7.5h9v5.5a3 3 0 01-3 3h-3a3 3 0 01-3-3z" />
+      <path d="M3 17L17 3" />
+    </Svg>
+  );
+}
+
+/** A drumstick with a slash: left out. Used for "no chicken". */
+export function NoChickenIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M11.5 4.5a4 4 0 11-5.7 5.7l-2.3 2.3a1.2 1.2 0 101.7 1.7l1-1" />
+      <path d="M3 17L17 3" />
+    </Svg>
+  );
+}
+
+/** A fish with a slash: left out. Used for "no seafood". */
+export function NoSeafoodIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M2.5 10c2-3 5-4.5 8-4.5s5 2 7 4.5c-2 2.5-4 4.5-7 4.5s-6-1.5-8-4.5z" />
+      <path d="M3 17L17 3" />
+    </Svg>
+  );
+}
+
 /** A crescent moon: halal. */
 export function HalalIcon(props: IconProps) {
   return (
@@ -196,6 +227,9 @@ export function VegetarianIcon(props: IconProps) {
 
 const DIET_ICON: Record<DietKey, (props: IconProps) => React.JSX.Element> = {
   nopork: NoPorkIcon,
+  nobeef: NoBeefIcon,
+  nochicken: NoChickenIcon,
+  noseafood: NoSeafoodIcon,
   halal: HalalIcon,
   vegetarian: VegetarianIcon,
 };

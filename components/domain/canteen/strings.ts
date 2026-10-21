@@ -77,7 +77,9 @@ export const EAT = {
 
   /* ---- Hub ---- */
   browseTitle: { th: "เลือกดูเอง", en: "Browse" },
-  startersTitle: { th: "เมนูราคาเบา ๆ ให้เริ่ม", en: "Easy on the wallet" },
+  suggestedTitle: { th: "เมนูแนะนำ", en: "Suggested menu" },
+  suggestedShuffle: { th: "แนะนำเมนูอื่น", en: "Suggest others" },
+  suggestedUpdated: { th: "อัปเดตเมนูแนะนำแล้ว", en: "Suggested menu updated" },
   seeAllDishes: { th: "ดูเมนูทั้งหมด", en: "See all dishes" },
   noDataTitle: { th: "เรายังไม่ได้สำรวจโรงอาหาร", en: "We have not surveyed the canteen yet" },
   noDataBody: {
@@ -98,7 +100,7 @@ export const EAT = {
   budgetFilterHint: { th: "ราคาสูงสุดต่อจาน", en: "Highest price per dish" },
   variantsLabel: { th: "นับราคาพิเศษและท็อปปิ้งด้วย", en: "Count the special and extras price too" },
   dietFilterLegend: { th: "อาหารที่กินได้", en: "Diet" },
-  dietFilterHint: { th: "ตามที่ร้านแจ้ง", en: "As the stall says" },
+  dietFilterHint: { th: "ดูจากเมนูหน้าร้าน ไม่ได้ถามร้าน", en: "From the menu board, not checked with the stall" },
   typeLegend: { th: "ประเภทเมนู", en: "Type of dish" },
   avoidLegend: { th: "ไม่เอา", en: "Leave out" },
   feelLegend: { th: "อารมณ์ตอนนี้", en: "Feel" },

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createRng, defaultFilters, hashSeed, mulberry32, newSeed, pick, shuffle, type CanteenFilters, type PickOptions } from "@/lib/canteen";
+import { createRng, defaultFilters, hashSeed, mulberry32, newSeed, pick, pickSuggested, shuffle, suggestedPool, type CanteenFilters, type PickOptions } from "@/lib/canteen";
 
 import { NOW, makeData } from "./fixture";
 
@@ -170,5 +170,40 @@ describe("pick", () => {
   it("returns null cleanly on an empty dataset", () => {
     const result = pick({ settings: null, stalls: [], dishes: [], canonicals: [] }, f(), opts("x"));
     expect(result).toMatchObject({ dish: null, stall: null, relaxed: null, poolSize: 0 });
+  });
+});
+
+describe("pickSuggested", () => {
+  const mains = data.dishes.filter((dish) => dish.course === "main");
+
+  it("only offers main courses, one per stall", () => {
+    const chosen = pickSuggested(data.dishes, 50, "abc");
+    expect(chosen.length).toBeGreaterThan(0);
+    expect(chosen.every((dish) => dish.course === "main")).toBe(true);
+    expect(new Set(chosen.map((dish) => dish.stall._ref)).size).toBe(chosen.length);
+  });
+
+  it("respects the count", () => {
+    expect(pickSuggested(data.dishes, 2, "abc")).toHaveLength(2);
+    expect(pickSuggested(data.dishes, 0, "abc")).toHaveLength(0);
+  });
+
+  it("is reproducible and independent of input order", () => {
+    const ids = (seed: string, list = data.dishes) => pickSuggested(list, 3, seed).map((dish) => dish._id);
+    expect(ids("abc")).toEqual(ids("abc"));
+    expect(ids("abc", [...data.dishes].reverse())).toEqual(ids("abc"));
+  });
+
+  it("differs between seeds", () => {
+    const draws = new Set(["a", "b", "c", "d", "e", "f"].map((seed) => pickSuggested(mains, 3, seed).map((dish) => dish._id).join()));
+    expect(draws.size).toBeGreaterThan(1);
+  });
+
+  it("builds a pool of at most perStall mains per stall", () => {
+    const pool = suggestedPool(data.dishes, 2, "abc");
+    const perStall = new Map<string, number>();
+    for (const dish of pool) perStall.set(dish.stall._ref, (perStall.get(dish.stall._ref) ?? 0) + 1);
+    expect(pool.every((dish) => dish.course === "main")).toBe(true);
+    expect(Math.max(...perStall.values())).toBeLessThanOrEqual(2);
   });
 });

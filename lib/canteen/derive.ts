@@ -169,11 +169,18 @@ export function isVegetarian(dish: CanteenDish, stall: CanteenStall): boolean {
   return dish.vegetarian || stall.vegetarianStall === true;
 }
 
-/** Whether a dish meets one diet filter. Everything a halal stall sells is halal. */
+/** Whether a dish meets one diet filter. Diets are about food, so drinks never match. Everything a halal stall sells is halal. */
 export function meetsDiet(dish: CanteenDish, stall: CanteenStall, diet: DietKey): boolean {
+  if (dish.course === "drink") return false;
   switch (diet) {
     case "nopork":
       return noPork(dish);
+    case "nobeef":
+      return !dish.protein.includes("beef");
+    case "nochicken":
+      return !dish.protein.includes("chicken");
+    case "noseafood":
+      return !dish.protein.includes("seafood") && !dish.protein.includes("fish");
     case "halal":
       return stall.halal;
     case "vegetarian":

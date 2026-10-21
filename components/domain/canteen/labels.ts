@@ -28,6 +28,9 @@ export function label<K extends string>(labels: Record<K, Bilingual>, key: K, lo
 /** Diet filter options, as they read on the filter form and on filter chips. */
 export const DIET_LABEL: Record<DietKey, Bilingual> = {
   nopork: { th: "ไม่มีหมู", en: "No pork" },
+  nobeef: { th: "ไม่มีเนื้อวัว", en: "No beef" },
+  nochicken: { th: "ไม่มีไก่", en: "No chicken" },
+  noseafood: { th: "ไม่มีอาหารทะเล", en: "No seafood" },
   halal: { th: "ฮาลาล", en: "Halal" },
   vegetarian: { th: "มังสวิรัติ", en: "Vegetarian" },
 };
@@ -35,6 +38,9 @@ export const DIET_LABEL: Record<DietKey, Bilingual> = {
 /** Short diet names for a chip row where space is tight, for example the Decide for me block. */
 export const DIET_SHORT_LABEL: Record<DietKey, Bilingual> = {
   nopork: { th: "ไม่มีหมู", en: "No pork" },
+  nobeef: { th: "ไม่มีเนื้อวัว", en: "No beef" },
+  nochicken: { th: "ไม่มีไก่", en: "No chicken" },
+  noseafood: { th: "ไม่มีอาหารทะเล", en: "No seafood" },
   halal: { th: "ฮาลาล", en: "Halal" },
   vegetarian: { th: "มังสวิรัติ", en: "Vegetarian" },
 };

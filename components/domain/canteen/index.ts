@@ -38,3 +38,4 @@ export * from "./RelaxSuggestions";
 export * from "./ResultCount";
 export * from "./EatTabs";
 export * from "./DecideBlock";
+export * from "./SuggestedMenu";

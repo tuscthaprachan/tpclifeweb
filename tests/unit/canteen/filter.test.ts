@@ -7,7 +7,6 @@ import {
   facetCounts,
   groupDishes,
   parse,
-  pickStarters,
   relaxSuggestions,
   type CanteenFilters,
 } from "@/lib/canteen";
@@ -30,9 +29,12 @@ describe("applyFilters", () => {
   });
 
   it("diet is AND", () => {
-    expect(run({ diet: ["nopork"] })).toHaveLength(18);
+    expect(run({ diet: ["nopork"] })).toHaveLength(16);
+    expect(run({ diet: ["nobeef"] })).toEqual(expect.not.arrayContaining(["c", "f", "i"]));
+    expect(run({ diet: ["nochicken"] })).toEqual(expect.not.arrayContaining(["b", "e", "j"]));
+    expect(run({ diet: ["noseafood"] })).toEqual(expect.not.arrayContaining(["g", "h", "k", "u"]));
     expect(run({ diet: ["halal"] }).sort()).toEqual(["i", "j", "k"]);
-    expect(run({ diet: ["vegetarian"] }).sort()).toEqual(["d", "l", "m", "n", "o", "p", "q", "r"]);
+    expect(run({ diet: ["vegetarian"] }).sort()).toEqual(["d", "l", "m", "n", "q", "r"]);
     expect(run({ diet: ["halal", "vegetarian"] })).toEqual([]);
   });
 
@@ -127,7 +129,7 @@ describe("facetCounts", () => {
     expect(counts.total).toBe(17);
     expect(counts.stalls).toBe(6);
     expect(counts.type.noodles).toBe(3); // e, h, m (f is 55)
-    expect(counts.diet.nopork).toBe(14);
+    expect(counts.diet.nopork).toBe(12);
     expect(counts.max["40"]).toBe(10);
     expect(counts.max.any).toBe(21);
     expect(counts.stall["fixture-stall-3"]).toBe(1);
@@ -206,29 +208,6 @@ describe("relaxSuggestions", () => {
   it("works from parsed URL filters", () => {
     const filters = parse(new URLSearchParams("max=40&type=noodles"));
     expect(relaxSuggestions(data, filters, NOW)[0]!.count).toBe(10);
-  });
-});
-
-describe("pickStarters", () => {
-  const all = applyFilters(data, f({}), NOW);
-
-  it("takes at most one dish per stall, cheapest first", () => {
-    const starters = pickStarters(data, all, 6, f());
-    expect(new Set(starters.map((d) => d.stall._ref)).size).toBe(starters.length);
-    const prices = starters.map((d) => d.price);
-    expect(prices).toEqual([...prices].sort((a, b) => a - b));
-    expect(starters[0]?.price).toBe(Math.min(...all.map((d) => d.price)));
-  });
-
-  it("respects the count", () => {
-    expect(pickStarters(data, all, 2, f())).toHaveLength(2);
-  });
-
-  it("is the same whatever the locale sorted the input in", () => {
-    const th = applyFilters(data, f(), NOW, { locale: "th" });
-    const en = applyFilters(data, f(), NOW, { locale: "en" });
-    expect(slugs(pickStarters(data, th, 6, f()))).toEqual(slugs(pickStarters(data, en, 6, f())));
-    expect(slugs(pickStarters(data, [...en].reverse(), 6, f()))).toEqual(slugs(pickStarters(data, en, 6, f())));
   });
 });
 

@@ -77,6 +77,49 @@ export function shuffle<T>(items: readonly T[], rng: Rng): T[] {
   return copy;
 }
 
+/** The least a dish needs for `pickSuggested`, so the client can draw from slim records. */
+export interface SuggestedCandidate {
+  _id: string;
+  course: CanteenDish["course"];
+  stall: { _ref: string };
+}
+
+/**
+ * A seeded draw of up to `count` main courses with at most one per stall.
+ * Anything that is not a main course is ignored. The same seed and the same
+ * candidates always give the same list, whatever order they arrive in.
+ */
+export function pickSuggested<T extends SuggestedCandidate>(dishes: readonly T[], count: number, seed: string): T[] {
+  const rng = createRng(seed);
+  const byStall = new Map<string, T[]>();
+  for (const dish of [...dishes].sort((a, b) => a._id.localeCompare(b._id))) {
+    if (dish.course !== "main") continue;
+    const list = byStall.get(dish.stall._ref);
+    if (list) list.push(dish);
+    else byStall.set(dish.stall._ref, [dish]);
+  }
+  const stalls = shuffle([...byStall.keys()].sort(), rng);
+  const chosen: T[] = [];
+  for (const stall of stalls.slice(0, Math.max(0, count))) {
+    const group = byStall.get(stall)!;
+    chosen.push(group[Math.floor(rng() * group.length)]!);
+  }
+  return chosen;
+}
+
+/** At most `perStall` main courses per stall, chosen by `seed`, for a pool the client redraws from. */
+export function suggestedPool<T extends SuggestedCandidate>(dishes: readonly T[], perStall: number, seed: string): T[] {
+  const rng = createRng(seed);
+  const byStall = new Map<string, T[]>();
+  for (const dish of [...dishes].sort((a, b) => a._id.localeCompare(b._id))) {
+    if (dish.course !== "main") continue;
+    const list = byStall.get(dish.stall._ref);
+    if (list) list.push(dish);
+    else byStall.set(dish.stall._ref, [dish]);
+  }
+  return [...byStall.keys()].sort().flatMap((stall) => shuffle(byStall.get(stall)!, rng).slice(0, perStall));
+}
+
 /* ------------------------------------------------------------------ *
  * Picking
  * ------------------------------------------------------------------ */

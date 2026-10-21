@@ -54,6 +54,9 @@ export const MAX_NAME_LENGTH = 24;
 
 const DIET_CODES: Record<DietKey, string> = {
   nopork: "np",
+  nobeef: "nb",
+  nochicken: "nc",
+  noseafood: "ns",
   halal: "h",
   vegetarian: "v",
 };

@@ -19,7 +19,7 @@ interface DecideBlockProps {
 const DECIDE_BUDGETS = [40, 50, 60] as const;
 
 /** The diets offered as chips. */
-const DECIDE_DIETS: readonly DietKey[] = ["nopork", "halal", "vegetarian"];
+const DECIDE_DIETS: readonly DietKey[] = ["nopork", "nobeef", "nochicken", "noseafood", "halal", "vegetarian"];
 
 /**
  * The "Decide for me" block of the hub: a budget chip row, a diet chip row and

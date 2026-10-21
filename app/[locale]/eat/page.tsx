@@ -21,19 +21,23 @@ import {
   EatTabs,
   eatHref,
   readFilters,
+  SuggestedMenu,
   t,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Grid, Heading, Stack } from "@/components/ui";
-import { applyFilters, isMealDish, pickStarters } from "@/lib/canteen/filter";
+import { applyFilters } from "@/lib/canteen/filter";
 import { commonCheckedOn, indexCanteen, stallOf } from "@/lib/canteen/derive";
 import { countActiveValues } from "@/lib/canteen/params";
+import { pickSuggested, suggestedPool } from "@/lib/canteen/random";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/sanity/queries";
 
-const STARTER_COUNT = 6;
+const SUGGESTED_COUNT = 6;
+const SUGGESTED_PER_STALL = 3;
+const SUGGESTED_SEED = "eat";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
@@ -95,13 +99,9 @@ export default async function EatHubPage({
     return stall ? pick(stall.name, locale) : undefined;
   };
 
-  const starters = pickStarters(
-    data,
-    applyFilters(data, filters, now, { locale }).filter((dish) => isMealDish(dish, filters)),
-    STARTER_COUNT,
-    filters,
-  );
-  const startersChecked = commonCheckedOn(starters);
+  const suggestedDishes = suggestedPool(applyFilters(data, filters, now, { locale }), SUGGESTED_PER_STALL, SUGGESTED_SEED);
+  const suggestedFirst = pickSuggested(suggestedDishes, SUGGESTED_COUNT, SUGGESTED_SEED);
+  const suggestedChecked = commonCheckedOn(suggestedDishes);
   const filtered = countActiveValues(filters) > 0;
 
   return (
@@ -128,19 +128,24 @@ export default async function EatHubPage({
               {t(EAT.browseTitle, locale)}
             </Heading>
             <EatTabs locale={locale} filters={filters} />
-            {starters.length > 0 ? (
+            {suggestedFirst.length > 0 ? (
               <Stack space={4}>
                 <Heading level={3} className="m-0 text-lg">
-                  {t(EAT.startersTitle, locale)}
+                  {t(EAT.suggestedTitle, locale)}
                 </Heading>
-                {startersChecked ? <CheckedOnNote checkedOn={startersChecked} locale={locale} /> : null}
-                <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">
-                  {starters.map((dish) => (
-                    <li key={dish._id} className="min-w-0">
-                      <DishCard dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={4} hideChecked={dish.checkedOn === startersChecked} />
-                    </li>
-                  ))}
-                </Grid>
+                {suggestedChecked ? <CheckedOnNote checkedOn={suggestedChecked} locale={locale} /> : null}
+                <SuggestedMenu
+                  locale={locale}
+                  candidates={suggestedDishes.map((dish) => ({ _id: dish._id, course: dish.course, stall: { _ref: dish.stall._ref } }))}
+                  cards={Object.fromEntries(
+                    suggestedDishes.map((dish) => [
+                      dish._id,
+                      <DishCard key={dish._id} dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={4} hideChecked={dish.checkedOn === suggestedChecked} />,
+                    ]),
+                  )}
+                  count={SUGGESTED_COUNT}
+                  initialSeed={SUGGESTED_SEED}
+                />
                 <p className="m-0">
                   <Link href={eatHref(locale, "/eat/dishes", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
                     {t(EAT.seeAllDishes, locale)}

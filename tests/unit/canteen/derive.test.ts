@@ -69,6 +69,23 @@ describe("derive: diet", () => {
     expect(noPork(dishById(data, "b"))).toBe(true);
   });
 
+  it("diets never match a drink, and the meat exclusions read the recorded proteins", () => {
+    const o = dishById(data, "o");
+    for (const diet of ["nopork", "nobeef", "nochicken", "noseafood", "halal", "vegetarian"] as const) {
+      expect(meetsDiet(o, stallOf(data, o)!, diet)).toBe(false);
+    }
+    const c = dishById(data, "c");
+    const g = dishById(data, "g");
+    const h = dishById(data, "h");
+    const b = dishById(data, "b");
+    expect(meetsDiet(c, stallOf(data, c)!, "nobeef")).toBe(false);
+    expect(meetsDiet(b, stallOf(data, b)!, "nobeef")).toBe(true);
+    expect(meetsDiet(b, stallOf(data, b)!, "nochicken")).toBe(false);
+    expect(meetsDiet(g, stallOf(data, g)!, "noseafood")).toBe(false);
+    expect(meetsDiet(h, stallOf(data, h)!, "noseafood")).toBe(false);
+    expect(meetsDiet(c, stallOf(data, c)!, "noseafood")).toBe(true);
+  });
+
   it("halal comes from the stall: everything a halal stall sells is halal", () => {
     const e = dishById(data, "e");
     const i = dishById(data, "i");
