@@ -29,7 +29,7 @@ async function watchForReel(page: Page): Promise<void> {
 const reelSeen = (page: Page) => page.evaluate(() => (window as unknown as { __reelSeen: boolean }).__reelSeen);
 
 test.describe("motion allowed", () => {
-  test.use({ reducedMotion: "no-preference" });
+  test.use({ contextOptions: { reducedMotion: "no-preference" } });
 
   for (const url of ["/en/eat", "/en/eat/pick?seed=abc"]) {
     test(`2.2.2 Pause, Stop, Hide: nothing loops or keeps running without input on ${url}`, async ({ page }) => {
@@ -67,7 +67,7 @@ test.describe("motion allowed", () => {
 });
 
 test.describe("reduced motion", () => {
-  test.use({ reducedMotion: "reduce" });
+  test.use({ contextOptions: { reducedMotion: "reduce" } });
 
   test("the reel never appears, even after Spin again", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
