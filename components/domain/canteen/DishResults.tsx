@@ -9,6 +9,7 @@ import type { CanteenData, CanteenDish } from "@/lib/sanity/types";
 import { CanonicalCompare } from "./CanonicalCompare";
 import { CheckedOnNote } from "./CheckedOnNote";
 import { DishCard } from "./DishCard";
+import type { DishGroup } from "@/lib/canteen/filter";
 import type { PagedGroup } from "./paginate";
 import { stallHref } from "./links";
 import { EAT, eat, t } from "./strings";
@@ -17,18 +18,38 @@ interface DishResultsProps {
   data: CanteenData;
   locale: Locale;
   filters: CanteenFilters;
-  /** From `paginateGroups`. One group keyed "all" when not grouped. */
+  /** From `showGroups`: the first dishes of the list, from position 1. One group keyed "all" when not grouped. */
   groups: PagedGroup[];
   /** The outline depth for group headings. Dish cards sit one level below. Defaults to 3. */
   headingLevel?: HeadingLevel;
 }
 
-/** A dish list as a grid of cards. */
-function DishGrid({ data, locale, filters, dishes, headingLevel, checkedOn }: { data: CanteenData; locale: Locale; filters: CanteenFilters; dishes: CanteenDish[]; headingLevel: HeadingLevel; checkedOn: string | undefined }) {
+/** Whether a group is shown as a price comparison rather than as cards. Those have no card ids. */
+function isCompareGroup(data: CanteenData, filters: CanteenFilters, group: DishGroup): boolean {
+  return filters.group === "canonical" && group.dishes[0] !== undefined && canonicalOf(data, group.dishes[0]) !== undefined;
+}
+
+/**
+ * The 1 based position whose id the "show more" link should end in: the
+ * first dish it adds, or, when that dish sits in a price comparison (which
+ * has no card of its own), the comparison's id, which is its first dish.
+ * `groups` is the whole, unsliced list.
+ */
+export function showMoreTarget(data: CanteenData, filters: CanteenFilters, groups: readonly DishGroup[], next: number): number {
+  let start = 0;
+  for (const group of groups) {
+    if (next <= start + group.dishes.length) return isCompareGroup(data, filters, group) ? start + 1 : next;
+    start += group.dishes.length;
+  }
+  return next;
+}
+
+/** A dish list as a grid of cards. Each item has an id from its position in the whole list, so a link can land on it. */
+function DishGrid({ data, locale, filters, dishes, headingLevel, checkedOn, first }: { data: CanteenData; locale: Locale; filters: CanteenFilters; dishes: CanteenDish[]; headingLevel: HeadingLevel; checkedOn: string | undefined; first: number }) {
   return (
     <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">
-      {dishes.map((dish) => (
-        <li key={dish._id} className="min-w-0">
+      {dishes.map((dish, position) => (
+        <li key={dish._id} id={eat.itemId(first + position)} className="min-w-0 scroll-mt-[calc(var(--header-height,4rem)+9rem)]">
           <DishCard dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={headingLevel} hideChecked={dish.checkedOn === checkedOn} />
         </li>
       ))}
@@ -49,13 +70,14 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
     .flatMap((group) => group.dishes);
   const checkedOn = commonCheckedOn(cardDishes);
   const note = checkedOn ? <CheckedOnNote checkedOn={checkedOn} locale={locale} /> : null;
+  const firsts = groups.map((_, index) => groups.slice(0, index).reduce((sum, group) => sum + group.dishes.length, 0) + 1);
 
   if (filters.group === "none") {
     const dishes = groups.flatMap((group) => group.dishes);
     return (
       <div className="flex flex-col gap-[var(--space-3)]">
         {note}
-        <DishGrid data={data} locale={locale} filters={filters} dishes={dishes} headingLevel={headingLevel} checkedOn={checkedOn} />
+        <DishGrid data={data} locale={locale} filters={filters} dishes={dishes} headingLevel={headingLevel} checkedOn={checkedOn} first={1} />
       </div>
     );
   }
@@ -63,7 +85,8 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
   return (
     <div className="flex flex-col gap-[var(--space-8)]">
       {note}
-      {groups.map((group) => {
+      {groups.map((group, groupIndex) => {
+        const first = firsts[groupIndex] ?? 1;
         if (filters.group === "stall") {
           const stall = group.stall;
           return (
@@ -75,7 +98,7 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
                   t(EAT.stallThing, locale)
                 )}
               </Heading>
-              <DishGrid data={data} locale={locale} filters={filters} dishes={group.dishes} headingLevel={cardLevel} checkedOn={checkedOn} />
+              <DishGrid data={data} locale={locale} filters={filters} dishes={group.dishes} headingLevel={cardLevel} checkedOn={checkedOn} first={first} />
             </section>
           );
         }
@@ -88,14 +111,14 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
               <Heading level={headingLevel} visualLevel={3} className="m-0">
                 {t(EAT.otherDishes, locale)}
               </Heading>
-              <DishGrid data={data} locale={locale} filters={filters} dishes={group.dishes} headingLevel={cardLevel} checkedOn={checkedOn} />
+              <DishGrid data={data} locale={locale} filters={filters} dishes={group.dishes} headingLevel={cardLevel} checkedOn={checkedOn} first={first} />
             </section>
           );
         }
         const byPrice = [...group.dishes].sort((a, b) => a.price - b.price);
         const stallCount = new Set(byPrice.map((dish) => dish.stall._ref)).size;
         return (
-          <section key={`${group.key}-${group.continued}`} className="flex flex-col gap-[var(--space-3)]">
+          <section key={`${group.key}-${group.continued}`} id={eat.itemId(first)} className="flex scroll-mt-[calc(var(--header-height,4rem)+9rem)] flex-col gap-[var(--space-3)]">
             <Heading level={headingLevel} visualLevel={3} className="m-0">
               {pick(canonical.name, locale)}
               <span className="text-sm font-normal text-ink-600"> · {eat.atStalls(locale, stallCount)}</span>

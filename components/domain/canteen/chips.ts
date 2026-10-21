@@ -115,6 +115,9 @@ export function activeChips(filters: CanteenFilters, locale: Locale, stallName?:
   if (filters.open) {
     chips.push({ id: "open", label: OPEN_CHIP_LABEL[locale], without: { ...filters, open: false } });
   }
+  if (filters.q !== undefined) {
+    chips.push({ id: "q", label: `"${filters.q}"`, without: { ...filters, q: undefined } });
+  }
   return chips;
 }
 

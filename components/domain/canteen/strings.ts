@@ -72,7 +72,8 @@ export const EAT = {
   decideWithThese: { th: "เลือกให้ จากตัวกรองนี้", en: "Decide for me with these" },
   budgetLegend: { th: "งบต่อจาน", en: "Budget per dish" },
   budgetAny: { th: "ไม่จำกัด", en: "Any" },
-  budgetOther: { th: "หรือใส่จำนวนเอง (บาท)", en: "Or type an amount (baht)" },
+  budgetOther: { th: "จำนวนเงิน (บาท)", en: "Amount in baht" },
+  budgetOtherChoice: { th: "จำนวนอื่น", en: "Other" },
   dietLegend: { th: "อาหารที่กินได้", en: "Diet" },
 
   /* ---- Hub ---- */
@@ -93,12 +94,15 @@ export const EAT = {
   filterBarLabel: { th: "ตัวกรองที่ใช้อยู่", en: "Active filters" },
   noFilters: { th: "กำลังแสดงทุกเมนู", en: "Showing everything" },
   clearAll: { th: "ล้างตัวกรองทั้งหมด", en: "Clear all filters" },
+  avoidSection: { th: "ภูมิแพ้และของที่ไม่กิน", en: "Allergies and dislikes" },
+  stallSection: { th: "ร้าน", en: "Stall" },
+  displaySection: { th: "เรียงและจัดกลุ่ม", en: "Sort and group" },
   removeFilter: { th: "เอาตัวกรองออก", en: "Remove filter" },
   applyShort: { th: "ใช้ตัวกรอง", en: "Apply filters" },
   displayLegend: { th: "การแสดงผล", en: "Display" },
   budgetFilterLegend: { th: "งบ", en: "Budget" },
   budgetFilterHint: { th: "ราคาสูงสุดต่อจาน", en: "Highest price per dish" },
-  variantsLabel: { th: "นับราคาพิเศษและท็อปปิ้งด้วย", en: "Count the special and extras price too" },
+  variantsLabel: { th: "รวมราคาของเมนูพิเศษและท็อปปิ้งด้วย", en: "Include the price of specials and extras" },
   dietFilterLegend: { th: "อาหารที่กินได้", en: "Diet" },
   dietFilterHint: { th: "ดูจากเมนูหน้าร้าน ไม่ได้ถามร้าน", en: "From the menu board, not checked with the stall" },
   typeLegend: { th: "ประเภทเมนู", en: "Type of dish" },
@@ -196,6 +200,17 @@ export const EAT = {
   menuNumberLabel: { th: "เมนูหมายเลข", en: "Number on the board:" },
   favouriteFailed: { th: "เก็บไม่ได้ ที่เก็บข้อมูลในเบราว์เซอร์ถูกปิดอยู่", en: "Could not save. Browser storage is switched off." },
 
+  /* ---- Search and show more ---- */
+  searchLabel: { th: "ค้นหาเมนู", en: "Search dishes" },
+  searchHint: {
+    th: "พิมพ์ชื่อเมนูภาษาไทยหรืออังกฤษ หรือคำอ่านที่ใช้สั่ง",
+    en: "A dish name in Thai or English, or how you say it.",
+  },
+  searchButton: { th: "ค้นหา", en: "Search" },
+  searchClear: { th: "ล้างคำค้น", en: "Clear search" },
+  hubDishesHint: { th: "ทุกเมนู พร้อมราคาและตัวกรอง", en: "Every dish, with prices and filters." },
+  hubStallsHint: { th: "ดูว่าร้านไหนขายอะไร เรียงตามเลขร้าน", en: "Who sells what, in stall number order." },
+  hubMapHint: { th: "ผังโรงอาหาร หาร้านที่อยากไป", en: "The hall plan, to find your stall." },
 } as const satisfies Record<string, Bilingual>;
 
 export type EatKey = keyof typeof EAT;
@@ -330,5 +345,27 @@ export const eat = {
     return locale === "th"
       ? `แสดงเมนูที่ ${n(from, locale)} ถึง ${n(to, locale)} จาก ${n(total, locale)}`
       : `Showing ${n(from, locale)} to ${n(to, locale)} of ${n(total, locale)}`;
+  },
+
+  /** "Show 20 more dishes". The link under the list. */
+  showMore(locale: Locale, count: number): string {
+    return locale === "th" ? `แสดงเพิ่มอีก ${n(count, locale)} เมนู` : `Show ${n(count, locale)} more ${count === 1 ? "dish" : "dishes"}`;
+  },
+
+  /** `Clear the search "noodle" for 752 dishes`. */
+  relaxSearch(locale: Locale, query: string, count: number): string {
+    return locale === "th"
+      ? `ล้างคำค้น "${query}" ได้ ${n(count, locale)} เมนู`
+      : `Clear the search "${query}" for ${n(count, locale)} ${count === 1 ? "dish" : "dishes"}`;
+  },
+
+  /** `No dishes match "noodle"`. The empty state when the search is what removed everything. */
+  noSearchResults(locale: Locale, query: string): string {
+    return locale === "th" ? `ไม่เจอเมนูที่ตรงกับ "${query}"` : `No dishes match "${query}"`;
+  },
+
+  /** The id of the list item at a 1 based position, the target of the "show more" link's fragment. */
+  itemId(position: number): string {
+    return `dish-${position}`;
   },
 };

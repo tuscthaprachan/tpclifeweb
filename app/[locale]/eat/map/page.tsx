@@ -12,8 +12,10 @@
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ActiveFilterBar, EAT, EatTabs, eatHref, readFilters, redirectToTidyQuery, t } from "@/components/domain/canteen";
 import { CanteenMapWithList, MAP_STRINGS, cellCentre, entrancePoint, gridExtent, hasFloorPlan, routeOrder } from "@/components/domain/canteen/map";
 import type { MapHighlight } from "@/components/domain/canteen/map";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -22,11 +24,14 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Heading } from "@/components/ui/Heading";
 import { Stack } from "@/components/ui/Stack";
 import { liveRegionProps } from "@/lib/a11y";
-import { activeFilterParams, applyFilters, indexCanteen, parse, serialise, withFilters } from "@/lib/canteen";
+import { applyFilters, countActiveValues, indexCanteen, serialise } from "@/lib/canteen";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
+import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/sanity/queries";
 import type { CanteenStall } from "@/lib/sanity/types";
+
+const ROUTE = "/eat/map";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -74,28 +79,37 @@ export default async function CanteenMapPage({
   const locale: Locale = rawLocale;
 
   const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, ROUTE), query);
   const data = await getCanteenData();
-  const filters = parse(query);
-  const filtersActive = activeFilterParams(filters).length > 0;
+  const filters = readFilters(query);
+  const filtersActive = countActiveValues(filters) > 0;
   const filterQuery = serialise(filters);
 
   const crumbs = [
-    { label: MAP_STRINGS.eatTitle[locale], path: "/eat" },
+    { label: UI.home[locale], path: "/" },
+    { label: t(EAT.title, locale), path: "/eat" },
     { label: MAP_STRINGS.pageTitle[locale] },
   ];
+  const header = (
+    <Stack space={2}>
+      <Heading level={1} className="text-3xl">{MAP_STRINGS.pageTitle[locale]}</Heading>
+      <p className="m-0 text-ink-600">{MAP_STRINGS.pageIntro[locale]}</p>
+    </Stack>
+  );
 
   if (!hasFloorPlan(data.settings, data.stalls)) {
     return (
       <Container className="pb-8 pt-2">
         <Breadcrumbs locale={locale} items={crumbs} />
         <Stack space={6}>
-          <Heading level={1} className="text-3xl">{MAP_STRINGS.pageTitle[locale]}</Heading>
+          {header}
+          <EatTabs locale={locale} current="map" filters={filters} />
           <EmptyState
             title={MAP_STRINGS.emptyTitle[locale]}
             action={
-              <a href={localePath(locale, "/eat")} className="text-action underline">
+              <Link href={localePath(locale, "/eat")} className="text-action underline">
                 {MAP_STRINGS.backToEat[locale]}
-              </a>
+              </Link>
             }
           >
             {MAP_STRINGS.emptyBody[locale]}
@@ -129,29 +143,33 @@ export default async function CanteenMapPage({
   const origin = entranceIndex !== undefined ? entrances[entranceIndex] : undefined;
   const start = origin ? entrancePoint(origin, cols, rows) : named[0] ? cellCentre(named[0].mapCell) : undefined;
   const route = start ? routeOrder(named, start) : named;
+  const view = firstParam(query.view) === "list" ? "list" : "plan";
+  const carried: Record<string, string> = {};
+  for (const name of ["highlight", "from", "view"]) {
+    const value = name === "highlight" ? parseHighlightSlugs(query.highlight).join(",") : firstParam(query[name]);
+    if (value) carried[name] = value;
+  }
+  const viewHref = (next: "list" | undefined) => {
+    const { view: _view, ...rest } = carried;
+    return eatHref(locale, ROUTE, filters, next ? { ...rest, view: next } : rest);
+  };
   const highlights: MapHighlight[] = route.map((stall, position) => ({ stallId: stall._id, order: position + 1 }));
 
   return (
     <Container className="pb-8 pt-2">
       <Breadcrumbs locale={locale} items={crumbs} />
-      <Stack space={6}>
-        <Stack space={2}>
-          <Heading level={1} className="text-3xl">{MAP_STRINGS.pageTitle[locale]}</Heading>
-          <p className="m-0 text-ink-600">{MAP_STRINGS.pageIntro[locale]}</p>
-        </Stack>
+      <Stack space={4}>
+        {header}
+        <EatTabs locale={locale} current="map" filters={filters} />
 
         {filtersActive ? (
-          <Stack space={2}>
-            {/* 4.1.3: the sentence is announced politely when the filters change. */}
-            <p {...liveRegionProps("polite")} className="m-0 font-semibold text-ink-900">
-              {MAP_STRINGS.matchSummary(matchingStalls, locale)}
-            </p>
-            <p className="m-0">
-              <a href={withFilters(localePath(locale, "/eat/dishes"), filters)} className="text-action underline">
-                {MAP_STRINGS.changeFilters[locale]}
-              </a>
-            </p>
-          </Stack>
+          <ActiveFilterBar locale={locale} filters={filters} route={ROUTE} extra={carried} editHref={eatHref(locale, "/eat/dishes", filters)} />
+        ) : null}
+
+        {filtersActive ? (
+          <p {...liveRegionProps("polite")} className="m-0 font-semibold text-ink-900">
+            {MAP_STRINGS.matchSummary(matchingStalls, locale)}
+          </p>
         ) : null}
 
         <CanteenMapWithList
@@ -161,6 +179,8 @@ export default async function CanteenMapPage({
           highlights={highlights}
           entranceIndex={entranceIndex}
           query={filterQuery}
+          phoneView={view}
+          viewLinks={{ plan: viewHref(undefined), list: viewHref("list") }}
         />
       </Stack>
     </Container>

@@ -22,6 +22,7 @@ import {
   type FeelKey,
   type FilterParam,
   type GroupKey,
+  normaliseQuery,
 } from "./params";
 import type { DishType } from "@/lib/sanity/types";
 
@@ -51,10 +52,54 @@ function matchesFeel(dish: CanteenDish, feel: readonly FeelKey[]): boolean {
   });
 }
 
+/** Lowercases and turns every run of punctuation or space into one space, so "Kra-pao" and "kra pao" read alike. Thai tone marks and vowels are kept. */
+function fold(text: string): string {
+  return text.normalize("NFKC").toLocaleLowerCase("en").replace(/[^\p{L}\p{N}\p{M}]+/gu, " ").trim();
+}
+
+const searchTextCache = new WeakMap<CanteenDish, string>();
+
+/**
+ * The text a search runs over for one dish, folded: its name in both
+ * languages, the way to say it (the Thai and the Latin letters), and the
+ * names and aliases of the canonical dish it maps to, so "kaprao" finds
+ * every stall's version.
+ */
+export function dishSearchText(data: CanteenData, dish: CanteenDish): string {
+  const cached = searchTextCache.get(dish);
+  if (cached !== undefined) return cached;
+  const canonical = dish.canonical ? indexCanteen(data).canonicalById.get(dish.canonical._ref) : undefined;
+  const text = fold(
+    [
+      dish.name.th,
+      dish.name.en,
+      ...(dish.sayAs ?? []).flatMap((phrase) => [phrase.romanised, phrase.th]),
+      canonical?.name.th,
+      canonical?.name.en,
+      ...(canonical?.aliases ?? []),
+    ]
+      .filter(Boolean)
+      .join(" "),
+  );
+  searchTextCache.set(dish, text);
+  return text;
+}
+
+/** Whether every word of the search text `q` appears in the dish's search text. An empty search matches everything. */
+export function matchesQuery(data: CanteenData, dish: CanteenDish, q: string | undefined): boolean {
+  const cleaned = normaliseQuery(q);
+  if (cleaned === undefined) return true;
+  const words = fold(cleaned).split(" ").filter(Boolean);
+  if (words.length === 0) return true;
+  const text = dishSearchText(data, dish);
+  return words.every((word) => text.includes(word));
+}
+
 /**
  * Whether one dish passes every filter. Sort and group are display choices
  * and play no part. Within a facet: diet is AND, type is OR, avoid excludes
- * any listed protein, feel works pairwise, the budget is
+ * any listed protein, feel works pairwise, the search text
+ * must match (every word), the budget is
  * checked against `effectivePrice`, and `open` removes only stalls whose
  * scheduled hours say they are closed (unknown hours stay in).
  */
@@ -83,6 +128,7 @@ export function matchesFilters(
   if (!filters.diet.every((diet) => meetsDiet(dish, stall, diet))) return false;
   if (filters.feel.length > 0 && !matchesFeel(dish, filters.feel)) return false;
   if (filters.open && isOpenNow(data.settings, stall, now) === false) return false;
+  if (filters.q !== undefined && !matchesQuery(data, dish, filters.q)) return false;
   return true;
 }
 
@@ -297,6 +343,24 @@ export function facetCounts(data: CanteenData, filters: CanteenFilters, now: Dat
 /* ------------------------------------------------------------------ *
  * Relax suggestions
  * ------------------------------------------------------------------ */
+
+/**
+ * The one way to relax a search: the same filters without the search text,
+ * and how many dishes that gives. Null when there is no search text or
+ * dropping it would not give more dishes. Kept apart from
+ * `relaxSuggestions` because it is worded by the page, not by `relaxText`.
+ */
+export function relaxSearch(
+  data: CanteenData,
+  filters: CanteenFilters,
+  now: Date,
+): { count: number; filters: CanteenFilters } | null {
+  if (normaliseQuery(filters.q) === undefined) return null;
+  const without: CanteenFilters = { ...filters, q: undefined };
+  const count = data.dishes.reduce((n, dish) => n + (matchesFilters(data, dish, without, now) ? 1 : 0), 0);
+  const current = data.dishes.reduce((n, dish) => n + (matchesFilters(data, dish, filters, now) ? 1 : 0), 0);
+  return count > current ? { count, filters: without } : null;
+}
 
 /**
  * One way to get more results, as data the UI turns into words and a link.

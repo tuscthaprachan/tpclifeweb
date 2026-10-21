@@ -7,7 +7,7 @@ import { DietTags } from "./DietTag";
 import { HowToSay } from "./HowToSay";
 import { dishDietTags } from "./diet";
 import { dishHref } from "./links";
-import { EAT, eat, t } from "./strings";
+import { priceText } from "./PriceTag";
 
 interface DishRowProps {
   dish: CanteenDish;
@@ -27,7 +27,6 @@ export function DishRow({ dish, stall, locale, filters, className }: DishRowProp
   const other = OTHER_LOCALE[locale];
   const name = pick(dish.name, locale);
   const otherName = pick(dish.name, other);
-  const hasExtras = (dish.variants ?? []).length > 0;
 
   return (
     <div className={cx("flex items-start justify-between gap-[var(--space-4)] py-[var(--space-3)]", className)}>
@@ -43,10 +42,7 @@ export function DishRow({ dish, stall, locale, filters, className }: DishRowProp
         <HowToSay dish={dish} locale={locale} />
         <DietTags tags={dishDietTags(dish, stall).filter((tag) => tag.key !== "halal")} locale={locale} />
       </div>
-      <p className="m-0 shrink-0 text-right">
-        <span className="block font-semibold text-ink-900">{eat.baht(locale, dish.price)}</span>
-        {hasExtras ? <span className="block text-sm text-ink-600">{t(EAT.extrasFrom, locale)}</span> : null}
-      </p>
+      <p className="m-0 shrink-0 text-right font-semibold text-ink-900">{priceText(locale, dish.price, dish.variants)}</p>
     </div>
   );
 }

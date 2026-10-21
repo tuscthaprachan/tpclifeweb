@@ -24,8 +24,11 @@ export interface Paged {
   to: number;
 }
 
-/** The dishes per page on the dish list. */
-export const DISH_PAGE_SIZE = 48;
+/** The dishes the dish list shows at first, and how many each "show more" adds. */
+export const DISH_PAGE_SIZE = 20;
+
+/** The page size the numbered pages used, kept so an old `?page=` link lands on the dishes it used to show. */
+const LEGACY_PAGE_SIZE = 48;
 
 /** Slices `groups` to page `page` (1 based, clamped into range) of `size` dishes. */
 export function paginateGroups(groups: readonly DishGroup[], page: number, size = DISH_PAGE_SIZE): Paged {
@@ -55,4 +58,31 @@ export function parsePage(raw: string | string[] | undefined): number {
   const value = Array.isArray(raw) ? raw[0] : raw;
   const parsed = value !== undefined ? Number.parseInt(value, 10) : 1;
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+}
+
+/**
+ * How many dishes the list shows, from `?show=` (the count so far) or an
+ * old `?page=` link (which becomes everything up to the end of that page).
+ * At least one page of `size` and at most `total`.
+ */
+export function parseShow(show: string | string[] | undefined, page: string | string[] | undefined, total: number, size = DISH_PAGE_SIZE): number {
+  const value = Array.isArray(show) ? show[0] : show;
+  const parsed = value !== undefined ? Number.parseInt(value, 10) : Number.NaN;
+  const wanted = Number.isFinite(parsed) && parsed > 0 ? parsed : page !== undefined ? parsePage(page) * LEGACY_PAGE_SIZE : size;
+  return Math.min(Math.max(size, wanted), Math.max(size, total));
+}
+
+export interface Shown {
+  groups: PagedGroup[];
+  /** How many dishes are in `groups`. */
+  shown: number;
+  total: number;
+  /** How many the next "show more" adds. 0 when everything is shown. */
+  nextCount: number;
+}
+
+/** The first `show` dishes of `groups`, cut across group boundaries like `paginateGroups`. The rest are `total - shown`. */
+export function showGroups(groups: readonly DishGroup[], show: number, size = DISH_PAGE_SIZE): Shown {
+  const paged = paginateGroups(groups, 1, Math.max(1, Math.trunc(show) || size));
+  return { groups: paged.groups, shown: paged.to, total: paged.total, nextCount: Math.min(size, paged.total - paged.to) };
 }

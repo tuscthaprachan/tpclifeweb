@@ -61,9 +61,13 @@ export interface CanteenMapProps {
   highlights?: readonly MapHighlight[];
   /** Index into `settings.entrances`: where the route starts. */
   entranceIndex?: number;
-  /** A small static mini-map: numbers only, no labels. Tiles are not links unless `linkStalls` says so. */
+  /** A plan with numbers only, no labels. Tiles are not links unless `linkStalls` says so. */
   compact?: boolean;
-  /** Each tile is a link to the stall page. Defaults to true, except in `compact`, where tiles are too small to be good targets. */
+  /** In `compact`: number every stall (the default) or only the highlighted ones, drawn larger, so a mini map reads at a small width. */
+  numbers?: "all" | "highlighted";
+  /** Draw at this many CSS pixels per view unit instead of filling the width, for a plan that scrolls sideways at a readable size. */
+  fixedScale?: number;
+  /** Each tile is a link to the stall page. Defaults to true, except in `compact`, where tiles are small. Linked tiles must be at least 24 CSS px across. */
   linkStalls?: boolean;
   /** A query string (with or without the leading `?`) kept on stall links, for example the active filters. */
   query?: string;
@@ -228,6 +232,8 @@ export function CanteenMap({
   highlights = [],
   entranceIndex,
   compact = false,
+  numbers = "all",
+  fixedScale,
   linkStalls,
   query,
   idPrefix,
@@ -237,6 +243,7 @@ export function CanteenMap({
   if (!settings || stalls.length === 0) return null;
 
   const links = linkStalls ?? !compact;
+  const mini = compact && numbers === "highlighted";
   const id = idPrefix ?? (compact ? "cmap-c" : "cmap");
   const layout = planLayout(settings, stalls, { compact });
   const entrances = compact ? [] : (settings.entrances ?? []);
@@ -268,16 +275,22 @@ export function CanteenMap({
   const labelProps = links
     ? ({ role: "group", "aria-labelledby": `${titleId} ${descId}` } as const)
     : ({ role: "img", "aria-labelledby": `${titleId} ${descId}` } as const);
+  const marked = ordered
+    .filter((stall) => stops.has(stall._id))
+    .sort((a, b) => (stops.get(a._id) ?? 0) - (stops.get(b._id) ?? 0))
+    .map((stall) => `${MAP_STRINGS.stallNumber(stall.number, locale)}, ${stallName(stall, locale)}`);
+  const description = !links && marked.length > 0 ? `${MAP_STRINGS.svgDesc[locale]} ${MAP_STRINGS.svgMarked(marked, locale)}` : MAP_STRINGS.svgDesc[locale];
 
   return (
     <svg
       {...labelProps}
-      className={compact ? `cmap cmap-compact ${className ?? ""}`.trim() : `cmap ${className ?? ""}`.trim()}
+      className={compact ? `cmap cmap-compact${mini ? " cmap-mini" : ""} ${className ?? ""}`.trim() : `cmap ${className ?? ""}`.trim()}
+      style={fixedScale ? { inlineSize: Math.round(layout.width * fixedScale), maxInlineSize: "none" } : undefined}
       viewBox={`0 0 ${layout.width} ${layout.height}`}
       xmlns="http://www.w3.org/2000/svg"
     >
       <title id={titleId}>{MAP_STRINGS.svgTitle[locale]}</title>
-      <desc id={descId}>{MAP_STRINGS.svgDesc[locale]}</desc>
+      <desc id={descId}>{description}</desc>
       <defs>
         <pattern id={hatchId} width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <line className="cmap-hatch-line" x1="0" y1="0" x2="0" y2="8" />
@@ -323,9 +336,14 @@ export function CanteenMap({
         const tileClass = none ? "cmap-tile cmap-tile-none" : "cmap-tile";
         // Where a triangle's numbers go, measured in from the right angle (across the base, up the side).
         const spot = (along: number, up: number) => fromRightAngle(rect, shape, along, up) ?? { x: rect.x, y: rect.y };
-        const pillAt = triangle ? spot(compact ? 44 : 22, compact ? 44 : 16) : null;
-        const badgeAt = triangle ? spot(22, 40) : null;
+        const showNumber = !mini || highlighted;
+        const showMark = highlighted && !(mini && stops.size <= 1);
+        const counted = compact && count !== undefined;
+        const pillAt = triangle ? (mini ? spot(40, 34) : compact ? (counted ? spot(42, 56) : spot(44, 44)) : spot(22, 16)) : null;
+        const badgeAt = triangle ? (compact ? spot(28, 20) : spot(22, 40)) : null;
         const markAt = triangle ? spot(compact ? 84 : 56, compact ? 18 : 17) : null;
+        const markX = markAt ? markAt.x : rect.x + rect.w - (compact ? 16 : 17);
+        const markY = markAt ? markAt.y : rect.y + rect.h - (compact ? 16 : 17);
 
         const body = (
           <>
@@ -357,10 +375,22 @@ export function CanteenMap({
             {triangle && pillAt && badgeAt ? (
               compact ? (
                 <>
-                  <rect className="cmap-pill" x={pillAt.x - 20} y={pillAt.y - 14} width={40} height={28} rx={14} />
-                  <text className="cmap-number" x={pillAt.x} y={pillAt.y + 1}>
-                    {stall.number}
-                  </text>
+                  {showNumber ? (
+                    <>
+                      <rect className="cmap-pill" x={pillAt.x - (mini ? 34 : 26)} y={pillAt.y - (mini ? 24 : 17)} width={mini ? 68 : 52} height={mini ? 48 : 34} rx={mini ? 24 : 17} />
+                      <text className={mini ? "cmap-number cmap-number-tri" : "cmap-number"} x={pillAt.x} y={pillAt.y + 1}>
+                        {stall.number}
+                      </text>
+                    </>
+                  ) : null}
+                  {counted ? (
+                    <>
+                      <rect className="cmap-badge" x={badgeAt.x - 19} y={badgeAt.y - 15} width={38} height={30} rx={6} />
+                      <text className="cmap-badge-text" x={badgeAt.x} y={badgeAt.y + 1}>
+                        {count}
+                      </text>
+                    </>
+                  ) : null}
                 </>
               ) : (
                 <>
@@ -380,10 +410,22 @@ export function CanteenMap({
               )
             ) : compact ? (
               <>
-                <rect className="cmap-pill" x={rect.x + rect.w / 2 - 20} y={rect.y + rect.h / 2 - 14} width={40} height={28} rx={14} />
-                <text className="cmap-number" x={rect.x + rect.w / 2} y={rect.y + rect.h / 2 + 1}>
-                  {stall.number}
-                </text>
+                {showNumber ? (
+                  <>
+                    <rect className="cmap-pill" x={rect.x + (counted ? 8 : rect.w / 2 - (mini ? 43 : 26))} y={rect.y + rect.h / 2 - (mini ? 27 : 17)} width={mini ? 86 : 52} height={mini ? 54 : 34} rx={mini ? 27 : 17} />
+                    <text className="cmap-number" x={rect.x + (counted ? 34 : rect.w / 2)} y={rect.y + rect.h / 2 + 1}>
+                      {stall.number}
+                    </text>
+                  </>
+                ) : null}
+                {counted ? (
+                  <>
+                    <rect className="cmap-badge" x={rect.x + 66} y={rect.y + rect.h / 2 - 15} width={38} height={30} rx={6} />
+                    <text className="cmap-badge-text" x={rect.x + 85} y={rect.y + rect.h / 2 + 1}>
+                      {count}
+                    </text>
+                  </>
+                ) : null}
               </>
             ) : (
               <>
@@ -420,19 +462,10 @@ export function CanteenMap({
               </>
             )}
 
-            {highlighted ? (
+            {showMark ? (
               <>
-                <circle
-                  className="cmap-mark"
-                  cx={markAt ? markAt.x : rect.x + rect.w - (compact ? 18 : 17)}
-                  cy={markAt ? markAt.y : rect.y + rect.h - (compact ? 18 : 17)}
-                  r={compact ? 14 : 12}
-                />
-                <text
-                  className="cmap-mark-text"
-                  x={markAt ? markAt.x : rect.x + rect.w - (compact ? 18 : 17)}
-                  y={markAt ? markAt.y + 1 : rect.y + rect.h - (compact ? 17 : 16)}
-                >
+                <circle className="cmap-mark" cx={markX} cy={markY} r={compact ? 15 : 12} />
+                <text className="cmap-mark-text" x={markX} y={markY + 1}>
                   {stop}
                 </text>
               </>

@@ -1,8 +1,8 @@
 /**
  * What to eat: the hub. One page that answers "what do I eat" three ways:
  * let the site decide (the block at the top, a plain GET form to /eat/pick),
- * browse (Dishes, Stalls and Map, each a real link) or use a tool (budget,
- * week, group, explainers). Everything carries the current filters.
+ * browse (Dishes, Stalls and Map, each a card that is one real link), look at
+ * a few suggested dishes, or use a tool (budget, week, group, explainers). Everything carries the current filters.
  *
  * Reads the whole canteen dataset once (`getCanteenData`) and works without
  * JavaScript. Nothing on it says live.
@@ -18,11 +18,13 @@ import {
   ActiveFilterBar,
   CheckedOnNote,
   EAT,
-  EatTabs,
   eatHref,
+  PinIcon,
+  PlateIcon,
   readFilters,
   SuggestedMenu,
   t,
+  WokIcon,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Grid, Heading, Stack } from "@/components/ui";
@@ -48,6 +50,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: t(EAT.intro, locale),
   };
 }
+
+const BROWSE = [
+  { route: "/eat/dishes", title: "tabDishes", hint: "hubDishesHint", Icon: PlateIcon },
+  { route: "/eat/stalls", title: "tabStalls", hint: "hubStallsHint", Icon: WokIcon },
+  { route: "/eat/map", title: "tabMap", hint: "hubMapHint", Icon: PinIcon },
+] as const;
 
 const TOOLS = [
   { route: "/eat/plan", title: "toolPlan", hint: "toolPlanHint" },
@@ -127,34 +135,57 @@ export default async function EatHubPage({
             <Heading level={2} id="eat-browse-title" className="m-0 text-xl">
               {t(EAT.browseTitle, locale)}
             </Heading>
-            <EatTabs locale={locale} filters={filters} />
-            {suggestedFirst.length > 0 ? (
-              <Stack space={4}>
-                <Heading level={3} className="m-0 text-lg">
-                  {t(EAT.suggestedTitle, locale)}
-                </Heading>
-                {suggestedChecked ? <CheckedOnNote checkedOn={suggestedChecked} locale={locale} /> : null}
-                <SuggestedMenu
-                  locale={locale}
-                  candidates={suggestedDishes.map((dish) => ({ _id: dish._id, course: dish.course, type: dish.type, stall: { _ref: dish.stall._ref } }))}
-                  cards={Object.fromEntries(
-                    suggestedDishes.map((dish) => [
-                      dish._id,
-                      <DishCard key={dish._id} dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={4} hideChecked={dish.checkedOn === suggestedChecked} />,
-                    ]),
-                  )}
-                  count={SUGGESTED_COUNT}
-                  initialSeed={SUGGESTED_SEED}
-                />
-                <p className="m-0">
-                  <Link href={eatHref(locale, "/eat/dishes", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
-                    {t(EAT.seeAllDishes, locale)}
-                  </Link>
-                </p>
-              </Stack>
-            ) : null}
+            <Grid as="ul" minColumnWidth="13rem" className="m-0 list-none p-0">
+              {BROWSE.map(({ route, title, hint, Icon }) => (
+                <li
+                  key={route}
+                  className="relative flex min-w-0 items-center gap-[var(--space-3)] rounded-panel border border-line bg-surface p-[var(--space-3)] hover:border-line-strong hover:bg-surface-alt has-[:focus-visible]:[box-shadow:0_0_0_6px_var(--focus-bar)] has-[:focus-visible]:[outline:var(--focus-width)_solid_var(--focus-fill)]"
+                >
+                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-control bg-welfare-soft text-ink-900">
+                    <Icon size={24} />
+                  </span>
+                  <span className="flex min-w-0 flex-col">
+                    <Link
+                      href={eatHref(locale, route, filters)}
+                      className="inline-flex min-h-[var(--target-min)] items-center font-semibold text-ink-900 no-underline after:absolute after:inset-0 after:content-[''] hover:text-action hover:underline focus-visible:shadow-none focus-visible:outline-none"
+                    >
+                      {t(EAT[title], locale)}
+                    </Link>
+                    <span className="text-sm text-ink-600">{t(EAT[hint], locale)}</span>
+                  </span>
+                </li>
+              ))}
+            </Grid>
           </Stack>
         </section>
+
+        {suggestedFirst.length > 0 ? (
+          <section aria-labelledby="eat-suggested-title">
+            <Stack space={4}>
+              <Heading level={2} id="eat-suggested-title" className="m-0 text-xl">
+                {t(EAT.suggestedTitle, locale)}
+              </Heading>
+              {suggestedChecked ? <CheckedOnNote checkedOn={suggestedChecked} locale={locale} /> : null}
+              <SuggestedMenu
+                locale={locale}
+                candidates={suggestedDishes.map((dish) => ({ _id: dish._id, course: dish.course, type: dish.type, stall: { _ref: dish.stall._ref } }))}
+                cards={Object.fromEntries(
+                  suggestedDishes.map((dish) => [
+                    dish._id,
+                    <DishCard key={dish._id} dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={3} hideChecked={dish.checkedOn === suggestedChecked} />,
+                  ]),
+                )}
+                count={SUGGESTED_COUNT}
+                initialSeed={SUGGESTED_SEED}
+              />
+              <p className="m-0">
+                <Link href={eatHref(locale, "/eat/dishes", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
+                  {t(EAT.seeAllDishes, locale)}
+                </Link>
+              </p>
+            </Stack>
+          </section>
+        ) : null}
 
         <section aria-labelledby="eat-tools-title">
           <Stack space={4}>

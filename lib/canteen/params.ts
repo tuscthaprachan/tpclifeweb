@@ -10,7 +10,7 @@
  *
  * Pure, so the server (no JavaScript) and the client run identical code.
  *
- * Example: `?max=50&diet=nopork&type=noodles,soup&sort=price`
+ * Example: `?max=50&diet=nopork&type=noodles,soup&q=basil&sort=price`
  */
 
 import { DISH_TYPES } from "./options";
@@ -45,6 +45,9 @@ export const DEFAULT_GROUP: GroupKey = "none";
 /** Highest budget accepted from a URL, in baht. Anything above is dropped as not meaningful. */
 export const MAX_BUDGET = 5000;
 
+/** Longest search text kept from a URL, in characters. Longer text is cut. */
+export const MAX_QUERY_LENGTH = 80;
+
 
 /**
  * Every filter the canteen understands. Optional fields mean "not set".
@@ -66,6 +69,8 @@ export interface CanteenFilters {
   stall?: string;
   /** Only stalls not known to be closed right now, by scheduled hours. */
   open: boolean;
+  /** Search text. Every word must appear in the dish's names (either language), the way to say it, or its canonical dish's names and aliases. */
+  q?: string;
   sort: SortKey;
   group: GroupKey;
 }
@@ -120,6 +125,13 @@ function flag(raw: RawParams, name: string): boolean {
   return value === "1" || value === "true" || value === "on" || value === "yes";
 }
 
+/** Search text as the filters keep it: whitespace collapsed, trimmed and cut to `MAX_QUERY_LENGTH`. Undefined when nothing is left. */
+export function normaliseQuery(text: string | undefined): string | undefined {
+  if (text === undefined) return undefined;
+  const cleaned = [...text.replace(/\s+/g, " ").trim()].slice(0, MAX_QUERY_LENGTH).join("").trim();
+  return cleaned === "" ? undefined : cleaned;
+}
+
 /** A slug as it appears in a URL: lowercase letters, digits and hyphens. */
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,79}$/;
 
@@ -162,6 +174,9 @@ export function parse(raw: RawParams): CanteenFilters {
 
   filters.open = flag(raw, "open");
 
+  const q = normaliseQuery(first(raw, "q"));
+  if (q !== undefined) filters.q = q;
+
   // `walk` is the old name of the stall number order, kept so saved links still work.
   const sort = first(raw, "sort") === "walk" ? "stall" : first(raw, "sort");
   if (sort !== undefined && (SORT_KEYS as readonly string[]).includes(sort)) filters.sort = sort as SortKey;
@@ -197,6 +212,8 @@ export function serialise(filters: CanteenFilters): string {
   if (filters.feel.length > 0) add("feel", canonicalList(filters.feel, FEEL_KEYS).join(","));
   if (filters.stall !== undefined) add("stall", filters.stall);
   if (filters.open) add("open", "1");
+  const q = normaliseQuery(filters.q);
+  if (q !== undefined) add("q", q);
   if (filters.sort !== DEFAULT_SORT) add("sort", filters.sort);
   if (filters.group !== DEFAULT_GROUP) add("group", filters.group);
   if (filters.variants) add("variants", "1");
@@ -213,7 +230,8 @@ function encodeValue(value: string): string {
  * Builds a link that carries the filters. `extra` adds parameters after the
  * filters (for example `seed`, `mode`, `p`); entries that are undefined,
  * null or empty are skipped. A `path` that already has a query string gets
- * the parameters appended to it. Pass the path with its locale prefix, for
+ * the parameters appended to it. The search text `q` belongs to the filters,
+ * so an `extra` entry named `q` is ignored. Pass the path with its locale prefix, for
  * example `localePath(locale, "/eat/pick")`.
  */
 export function withFilters(
@@ -225,7 +243,7 @@ export function withFilters(
   const base = serialise(filters);
   if (base) parts.push(base);
   for (const [name, value] of Object.entries(extra ?? {})) {
-    if (value === undefined || value === null || value === "" || value === false) continue;
+    if (value === undefined || value === null || value === "" || value === false || name === "q") continue;
     parts.push(`${encodeURIComponent(name)}=${encodeValue(value === true ? "1" : String(value))}`);
   }
   if (parts.length === 0) return path;
@@ -236,7 +254,8 @@ export function withFilters(
 /**
  * The filters that are switched on, as the names of their URL parameters, in
  * canonical order. Sort and group are display choices, not filters, and are
- * not counted. Drives "3 filters" on the summary bar.
+ * not counted, and nor is the search text `q`, which has no `FilterParam`
+ * (`countActiveValues` does count it). Drives "3 filters" on the summary bar.
  */
 export function activeFilterParams(filters: CanteenFilters): FilterParam[] {
   const active: FilterParam[] = [];
@@ -253,7 +272,7 @@ export function activeFilterParams(filters: CanteenFilters): FilterParam[] {
 /** The URL parameters that narrow the result set. */
 export type FilterParam = "max" | "diet" | "type" | "avoid" | "feel" | "stall" | "open";
 
-/** How many individual filter values are on: each diet, type, avoid and feel counts one. */
+/** How many individual filter values are on: each diet, type, avoid and feel counts one, and so does the search text. */
 export function countActiveValues(filters: CanteenFilters): number {
   return (
     (filters.max !== undefined ? 1 : 0) +
@@ -262,7 +281,8 @@ export function countActiveValues(filters: CanteenFilters): number {
     filters.avoid.length +
     filters.feel.length +
     (filters.stall !== undefined ? 1 : 0) +
-    (filters.open ? 1 : 0)
+    (filters.open ? 1 : 0) +
+    (normaliseQuery(filters.q) !== undefined ? 1 : 0)
   );
 }
 

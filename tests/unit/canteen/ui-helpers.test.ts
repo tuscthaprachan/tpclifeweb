@@ -76,7 +76,9 @@ describe("paginateGroups", () => {
 
 describe("form query", () => {
   it("lets the typed amount win over the chip", () => {
-    expect(readFilters({ max: "50", maxOther: "55" }).max).toBe(55);
+    expect(readFilters({ max: "other", maxOther: "55" }).max).toBe(55);
+    expect(readFilters({ maxOther: "55" }).max).toBe(55);
+    expect(readFilters({ max: "50", maxOther: "55" }).max).toBe(50);
     expect(readFilters({ max: "50", maxOther: "" }).max).toBe(50);
   });
   it("builds the same URL as serialise, drops page, keeps carried params", () => {
@@ -96,7 +98,9 @@ describe("tidyQuery", () => {
   });
 
   it("folds a typed amount into max and keeps other parameters in order", () => {
-    expect(tidyQuery({ max: "50", maxOther: "65", seed: "abc", same: "1" })).toBe("seed=abc&same=1&max=65");
+    expect(tidyQuery({ max: "other", maxOther: "65", seed: "abc", same: "1" })).toBe("seed=abc&same=1&max=65");
+    expect(tidyQuery({ max: "50", maxOther: "65", seed: "abc" })).toBe("max=50&seed=abc");
+    expect(tidyQuery({ max: "other", maxOther: "" })).toBe("");
   });
 
   it("is null when the query is already tidy, so nothing redirects twice", () => {

@@ -11,7 +11,6 @@ import type { CanteenCuisine } from "@/lib/sanity/types";
 type Pair = { th: string; en: string };
 
 export const MAP_STRINGS = {
-  eatTitle: { th: "กินอะไรดี", en: "What to eat" },
   pageTitle: { th: "ผังโรงอาหาร", en: "Canteen map" },
   pageIntro: {
     th: "ดูว่าร้านแต่ละร้านอยู่ตรงไหนในโรงอาหาร เรียงตามเลขร้าน",
@@ -22,11 +21,15 @@ export const MAP_STRINGS = {
     th: "ภาพประกอบเสริม รายชื่อร้านที่เรียงตามเลขร้านมีข้อมูลเดียวกัน",
     en: "A supplementary drawing. The list of stalls in stall number order holds the same information.",
   },
+  svgMarked: (names: readonly string[], locale: Locale) =>
+    locale === "th" ? `ร้านที่ทำเครื่องหมายในผัง: ${names.join(", ")}` : `Marked on the plan: ${names.join("; ")}.`,
+  viewSwitchLabel: { th: "มุมมองของหน้านี้", en: "View of this page" },
+  viewPlan: { th: "ผัง", en: "Plan" },
+  viewList: { th: "รายชื่อร้าน", en: "List" },
+  scrollRegion: { th: "ผังโรงอาหาร เลื่อนไปทางซ้ายและขวาเพื่อดูทั้งผัง", en: "Canteen floor plan. Scroll sideways to see all of it." },
+  scrollHint: { th: "เลื่อนผังไปทางซ้ายและขวาเพื่อดูทั้งผัง แตะร้านเพื่อดูรายละเอียด", en: "Scroll the plan sideways to see all of it. Tap a stall to open it." },
+  seeList: { th: "ดูร้านทั้งหมดเป็นรายชื่อ", en: "See every stall as a list" },
   listHeading: { th: "ร้านในโรงอาหาร ตามเลขร้าน", en: "Stalls in stall number order" },
-  listNote: {
-    th: "เรียงตามเลขร้าน ร้าน 1 ถึง 7 อยู่แถวฝั่งตะวันตก ร้าน 8 ถึง 11 อยู่กลางโถง ร้าน 12 ถึง 16 อยู่แถวฝั่งตะวันออก และร้าน 17 กับ 18 อยู่ที่ผนังด้านเหนือ",
-    en: "In stall number order. Stalls 1 to 7 are the west column, 8 to 11 the middle block, 12 to 16 the east column, and 17 and 18 the kiosks on the north wall.",
-  },
   mapHeading: { th: "ผังพื้น", en: "Floor plan" },
   key: { th: "คำอธิบายสัญลักษณ์", en: "Key" },
   keySeating: { th: "พื้นที่เส้นประคือโซนที่นั่ง", en: "Dashed areas are seating zones." },
@@ -63,7 +66,6 @@ export const MAP_STRINGS = {
     th: "ตัวเลขบนร้านคือจำนวนเมนูที่ตรงกับตัวกรอง ร้านที่จางและมีลายเส้นเฉียงไม่มีเมนูที่ตรง",
     en: "The number on a stall is how many dishes match your filters. A faded stall with diagonal lines has none.",
   },
-  changeFilters: { th: "เปลี่ยนตัวกรอง", en: "Change the filters" },
   backToEat: { th: "กลับไปหน้ากินอะไรดี", en: "Back to What to eat" },
   emptyTitle: { th: "ยังไม่ได้สำรวจผังโรงอาหาร", en: "The canteen floor plan has not been surveyed yet" },
   emptyBody: {

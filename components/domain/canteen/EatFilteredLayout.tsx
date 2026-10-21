@@ -43,7 +43,7 @@ export function EatFilteredLayout({ locale, data, filters, counts, route, displa
     return stall ? pick(stall.name, locale) : undefined;
   };
 
-  const form = (idPrefix: string) => (
+  const form = (idPrefix: string, sticky?: boolean) => (
     <CanteenFilters
       locale={locale}
       filters={filters}
@@ -54,18 +54,20 @@ export function EatFilteredLayout({ locale, data, filters, counts, route, displa
       display={display}
       carry={carry}
       hide={hide}
+      sticky={sticky}
     />
   );
 
   return (
     <>
-      <ActiveFilterBar locale={locale} filters={filters} route={route} stallName={stallName} extra={carry} editor={form("dlg")} />
+      <ActiveFilterBar locale={locale} filters={filters} route={route} stallName={stallName} extra={carry} editor={form("dlg", true)} />
 
       {/*
         The summary bar is sticky under the sticky header, so anything focused below it needs room for both
-        (2.4.11 Focus Not Obscured). The global rule only clears the header.
+        (2.4.11 Focus Not Obscured). The global rule only clears the header. On phones the floating Filters
+        button sits at the bottom, so the end of the page and the scroll margin leave room for it.
       */}
-      <div className="mt-[var(--space-4)] grid gap-[var(--space-8)] md:grid-cols-[17rem_minmax(0,1fr)] md:items-start [&_:is(a,button,input,select,summary)]:scroll-mt-[calc(var(--header-height,4rem)+9rem)]">
+      <div className="mt-[var(--space-4)] grid gap-[var(--space-8)] max-md:pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:grid-cols-[17rem_minmax(0,1fr)] md:items-start [&_:is(a,button,input,select,summary)]:scroll-mt-[calc(var(--header-height,4rem)+9rem)] max-md:[&_:is(a,button,input,select,summary)]:scroll-mb-[calc(5rem+env(safe-area-inset-bottom))]">
         <section aria-labelledby="eat-filters-column-title" className="hidden md:block">
           <Heading level={2} id="eat-filters-column-title" className="m-0 mb-[var(--space-4)] text-xl">
             {t(EAT.filtersTitle, locale)}

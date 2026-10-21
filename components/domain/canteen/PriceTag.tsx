@@ -15,34 +15,33 @@ interface PriceTagProps {
   checkedOn?: string;
   locale: Locale;
   /**
-   * "compact" is for cards: the price, a note that extras exist, the date.
+   * "compact" is for cards: the price (a range when there are extras), the date.
    * "full" is for the dish page: the price and a Details with every option.
    */
   size?: "compact" | "full";
-  /** Put the extras note on the price line instead of under it. */
-  inlineExtras?: boolean;
   /** Leave out the "Price checked on" line. */
   hideChecked?: boolean;
   className?: string;
+}
+
+/** "45 baht", or "45 to 60 baht" when the dish has priced extras, from the base price to the dearest one. */
+export function priceText(locale: Locale, price: number, variants: readonly DishVariant[] = []): string {
+  if (variants.length === 0) return eat.baht(locale, price);
+  const prices = variants.map((variant) => price + variant.delta);
+  return eat.priceRange(locale, Math.min(price, ...prices), Math.max(price, ...prices));
 }
 
 /**
  * A surveyed price. It always carries the day it was checked and never says
  * "current" or "live": the figure is what the board said on that day.
  */
-export function PriceTag({ price, variants = [], addOns = [], checkedOn, locale, size = "compact", inlineExtras = false, hideChecked = false, className }: PriceTagProps) {
-  const hasVariants = variants.length > 0;
+export function PriceTag({ price, variants = [], addOns = [], checkedOn, locale, size = "compact", hideChecked = false, className }: PriceTagProps) {
   const options = variants;
   return (
     <div className={cx("flex flex-col gap-[var(--space-1)]", className)}>
       <p className={cx("m-0 font-semibold text-ink-900", size === "full" ? "text-2xl" : "text-lg")}>
-        {eat.baht(locale, price)}
-        {inlineExtras && size === "compact" && hasVariants ? (
-          <span className="text-sm font-normal text-ink-600"> · {t(EAT.extrasFrom, locale)}</span>
-        ) : null}
+        {size === "compact" ? priceText(locale, price, variants) : eat.baht(locale, price)}
       </p>
-
-      {size === "compact" && hasVariants && !inlineExtras ? <p className="m-0 text-sm text-ink-600">{t(EAT.extrasFrom, locale)}</p> : null}
 
       {checkedOn && !hideChecked ? (
         <p className="m-0 text-sm text-ink-600">

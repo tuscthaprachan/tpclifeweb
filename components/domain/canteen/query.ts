@@ -3,9 +3,9 @@
  * (a plain GET) and the client (instant apply) agree on every URL.
  *
  * The form has one extra field that `lib/canteen/params.ts` does not know:
- * `maxOther`, the "type an amount" box beside the budget chips. When it holds
- * a number it wins over the chosen chip. Everything else is a straight read
- * through `parse`.
+ * `maxOther`, the amount box shown with the "Other" budget chip. It counts
+ * only when "Other" (or no chip) is chosen. Everything else is a straight
+ * read through `parse`.
  *
  * The whole-meal budget is the separate `meal` parameter. Its quick form
  * offers an "Other" choice (`meal=other`) with the amount in `mealOther`;
@@ -26,13 +26,19 @@ export function toSearchParams(raw: RawParams): URLSearchParams {
   return out;
 }
 
+function typedMax(params: URLSearchParams): string | undefined {
+  const chosen = params.get("max")?.trim();
+  return chosen && chosen !== "other" ? undefined : params.get("maxOther")?.trim() || undefined;
+}
+
 /**
  * Filters out of a request's query. Same as `parse`, plus the `maxOther`
- * box, which overrides the budget chip when it holds a number.
+ * box, which sets the budget when the "Other" chip (`max=other`) is chosen
+ * or no chip is.
  */
 export function readFilters(raw: RawParams): CanteenFilters {
   const params = toSearchParams(raw);
-  const other = params.get("maxOther")?.trim();
+  const other = typedMax(params);
   if (other) {
     params.delete("max");
     params.set("max", other);
@@ -50,13 +56,13 @@ export function readFilters(raw: RawParams): CanteenFilters {
  */
 export function tidyQuery(raw: RawParams): string | null {
   const before = toSearchParams(raw);
-  const other = before.get("maxOther")?.trim();
+  const other = typedMax(before);
   const mealOther = before.get("mealOther")?.trim();
   const after = new URLSearchParams();
   for (const [name, value] of before) {
     if (name === "maxOther" || name === "mealOther") continue;
     if (value.trim() === "") continue;
-    if (name === "max" && other) continue;
+    if (name === "max" && (other || value.trim() === "other")) continue;
     if (name === "meal" && value.trim() === "other") {
       if (mealOther) after.append("meal", mealOther);
       continue;
@@ -116,7 +122,9 @@ const FORM_OWNED = new Set([
   "open",
   "sort",
   "group",
+  "q",
   "page",
+  "show",
 ]);
 
 /**

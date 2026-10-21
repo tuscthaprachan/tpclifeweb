@@ -207,7 +207,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
 
       <div className="grid gap-[var(--space-4)] md:grid-cols-2 md:gap-[var(--space-6)]">
         <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
-          <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} inlineExtras hideChecked />
+          <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} hideChecked />
           <DietTags tags={tags} locale={locale} />
         </div>
         <div className="flex min-w-0 flex-col gap-[var(--space-3)]">
@@ -277,7 +277,7 @@ function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDish
                   <Link href={dishHref(locale, dish.slug.current, filters)} className="font-medium">
                     {localised(dish.name, locale)}
                   </Link>
-                  <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} inlineExtras hideChecked />
+                  <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} hideChecked />
                 </li>
               ))}
             </ul>
@@ -341,7 +341,7 @@ function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultP
                       {PICK.alsoWord[locale]} {eat.stallFull(locale, stall.number, localised(stall.name, locale))}
                     </p>
                   ) : null}
-                  <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} inlineExtras hideChecked />
+                  <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} hideChecked />
                 </li>
               );
             })}

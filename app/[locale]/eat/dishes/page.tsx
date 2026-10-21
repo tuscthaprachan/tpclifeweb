@@ -2,11 +2,13 @@
  * Every dish, filterable. This is where the filters live: a real GET form
  * (column on desktop, Dialog on phones, a copy inside <noscript>), counts on
  * every option, grouping by stall or by dish with a price comparison,
- * sorting, pagination at 48, and, when nothing matches, the best ways to get
- * dishes back. Server rendered end to end, so it works without JavaScript.
+ * sorting, a search box, twenty dishes at a time with a "Show more" link
+ * (`?show=40` is a plain server render, so Back and no JavaScript both work)
+ * and, when nothing matches, the best ways to get dishes back. Server rendered end to end, so it works without JavaScript.
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import {
@@ -19,17 +21,18 @@ import {
   ResultCount,
   eat,
   eatHref,
-  paginateGroups,
-  parsePage,
+  parseShow,
   readFilters,
   redirectToTidyQuery,
+  showGroups,
+  showMoreTarget,
   t,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, Pagination, Stack } from "@/components/ui";
-import { applyFilters, countStalls, facetCounts, groupDishes, relaxSuggestions } from "@/lib/canteen/filter";
+import { Button, Container, EmptyState, Heading, Stack } from "@/components/ui";
+import { applyFilters, countStalls, facetCounts, groupDishes, relaxSearch, relaxSuggestions } from "@/lib/canteen/filter";
 import { indexCanteen } from "@/lib/canteen/derive";
-import { countActiveValues } from "@/lib/canteen/params";
+import { MAX_QUERY_LENGTH, countActiveValues, serialise } from "@/lib/canteen/params";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
@@ -61,7 +64,6 @@ export default async function EatDishesPage({
   const query = await searchParams;
   redirectToTidyQuery(localePath(locale, ROUTE), query);
   const filters = readFilters(query);
-  const page = parsePage(query.page);
   const data = await getCanteenData();
   const now = new Date();
 
@@ -96,7 +98,12 @@ export default async function EatDishesPage({
 
   const matched = applyFilters(data, filters, now, { locale });
   const counts = facetCounts(data, filters, now);
-  const paged = paginateGroups(groupDishes(data, matched, filters.group), page, DISH_PAGE_SIZE);
+  const allGroups = groupDishes(data, matched, filters.group);
+  const shown = showGroups(allGroups, parseShow(query.show, query.page, matched.length, DISH_PAGE_SIZE), DISH_PAGE_SIZE);
+  const relaxQuery = relaxSearch(data, filters, now);
+  const hiddenFilters = [...new URLSearchParams(serialise({ ...filters, q: undefined })).entries()];
+  const searchId = "dish-search";
+  const loadMoreHref = `${eatHref(locale, ROUTE, filters, { show: shown.shown + shown.nextCount })}#${eat.itemId(showMoreTarget(data, filters, allGroups, shown.shown + 1))}`;
   const stallName = (slug: string) => {
     const stall = indexCanteen(data).stallBySlug.get(slug);
     return stall ? pick(stall.name, locale) : undefined;
@@ -109,13 +116,48 @@ export default async function EatDishesPage({
         {header}
         <EatTabs locale={locale} current="dishes" filters={filters} />
 
-        <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE}>
+        <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} carry={filters.q !== undefined ? { q: filters.q } : undefined}>
           <Stack space={4}>
+            <form method="get" action={localePath(locale, ROUTE)} role="search" aria-label={t(EAT.searchLabel, locale)} className="flex flex-col gap-[var(--space-1)]">
+              {hiddenFilters.map(([name, value]) => (
+                <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
+              ))}
+              <label htmlFor={searchId} className="text-base font-medium text-ink-900">
+                {t(EAT.searchLabel, locale)}
+              </label>
+              <p id={`${searchId}-hint`} className="m-0 text-sm text-ink-600">
+                {t(EAT.searchHint, locale)}
+              </p>
+              <div className="flex gap-[var(--space-2)]">
+                <input
+                  id={searchId}
+                  type="search"
+                  name="q"
+                  defaultValue={filters.q}
+                  enterKeyHint="search"
+                  autoComplete="off"
+                  maxLength={MAX_QUERY_LENGTH}
+                  aria-describedby={`${searchId}-hint`}
+                  className="min-h-[var(--target-min)] min-w-0 flex-1 rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
+                />
+                <Button type="submit" variant="secondary">
+                  {t(EAT.searchButton, locale)}
+                </Button>
+              </div>
+              {filters.q !== undefined ? (
+                <p className="m-0">
+                  <Link href={eatHref(locale, ROUTE, { ...filters, q: undefined })} className="inline-flex min-h-[var(--target-min)] items-center text-sm font-medium">
+                    {t(EAT.searchClear, locale)}
+                  </Link>
+                </p>
+              ) : null}
+            </form>
+
             <ResultCount locale={locale} dishes={matched.length} stalls={countStalls(data, matched)} />
 
             {matched.length === 0 ? (
               <Stack space={4}>
-                <EmptyState title={t(EAT.noResultsTitle, locale)} />
+                <EmptyState title={filters.q !== undefined ? eat.noSearchResults(locale, filters.q) : t(EAT.noResultsTitle, locale)} />
                 {countActiveValues(filters) > 0 ? (
                   <RelaxSuggestions
                     locale={locale}
@@ -125,18 +167,29 @@ export default async function EatDishesPage({
                     suggestions={relaxSuggestions(data, filters, now)}
                   />
                 ) : null}
+                {relaxQuery && filters.q !== undefined ? (
+                  <p className="m-0">
+                    <Link href={eatHref(locale, ROUTE, relaxQuery.filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
+                      {eat.relaxSearch(locale, filters.q, relaxQuery.count)}
+                    </Link>
+                  </p>
+                ) : null}
               </Stack>
             ) : (
               <Stack space={4}>
-                <DishResults data={data} locale={locale} filters={filters} groups={paged.groups} headingLevel={2} />
+                <DishResults data={data} locale={locale} filters={filters} groups={shown.groups} headingLevel={2} />
                 <Stack space={2}>
-                  {paged.totalPages > 1 ? <p className="m-0 text-sm text-ink-600">{eat.showingRange(locale, paged.from, paged.to, paged.total)}</p> : null}
-                  <Pagination
-                    currentPage={paged.page}
-                    totalPages={paged.totalPages}
-                    locale={locale}
-                    buildHref={(target) => eatHref(locale, ROUTE, filters, { page: target > 1 ? target : undefined })}
-                  />
+                  <p className="m-0 text-sm text-ink-600">{eat.showingRange(locale, 1, shown.shown, shown.total)}</p>
+                  {shown.nextCount > 0 ? (
+                    <p className="m-0">
+                      <Link
+                        href={loadMoreHref}
+                        className="inline-flex min-h-[var(--target-min)] items-center justify-center rounded-control border border-line-strong bg-surface px-[var(--space-4)] py-[var(--space-2)] font-medium text-ink-900 no-underline hover:bg-surface-alt"
+                      >
+                        {eat.showMore(locale, shown.nextCount)}
+                      </Link>
+                    </p>
+                  ) : null}
                 </Stack>
               </Stack>
             )}

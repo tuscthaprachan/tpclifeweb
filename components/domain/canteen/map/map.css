@@ -13,7 +13,7 @@
 }
 
 .cmap-compact {
-  max-inline-size: 22rem;
+  max-inline-size: 28rem;
 }
 
 .cmap-plan {
@@ -93,7 +93,15 @@
 }
 
 .cmap-compact .cmap-number {
-  font-size: 22px;
+  font-size: 26px;
+}
+
+.cmap-mini .cmap-number {
+  font-size: 46px;
+}
+
+.cmap-mini .cmap-number-tri {
+  font-size: 38px;
 }
 
 .cmap-glyph {
@@ -130,8 +138,21 @@
   dominant-baseline: central;
 }
 
+.cmap-compact .cmap-badge-text {
+  font-size: 24px;
+}
+
 .cmap-compact .cmap-mark-text {
-  font-size: 19px;
+  font-size: 22px;
+}
+
+/* A plan too wide to read at phone width scrolls sideways inside its own labelled region (the 2D content exception to 1.4.10 Reflow). */
+.cmap-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel, 0.5rem);
+  padding: 0.5rem;
 }
 
 .cmap-hl-inner {

@@ -23,20 +23,23 @@ interface StallMiniMapProps {
 
 /**
  * A compact floor plan with the stall (or stalls) marked, and the link to the
- * full map with the same stalls highlighted. The plan is supplementary: the
- * stall name, number and wayfinding sentence beside it carry the same
- * information in words. Without a drawable floor plan only the link shows.
+ * full map with the same stalls highlighted. Only the marked stalls carry a
+ * number, drawn large enough to read at phone width; the rest are shapes. The
+ * plan is supplementary: its text alternative names the marked stalls, and
+ * the stall name, number and wayfinding sentence beside it say the same
+ * in words. Without a drawable floor plan only the link shows.
  */
 export function StallMiniMap({ locale, data, stalls, filters, idPrefix = "mini", className }: StallMiniMapProps) {
   const slugs = stalls.map((stall) => stall.slug.current).join(",");
   return (
     <div className={cx("flex flex-col gap-[var(--space-2)]", className)}>
       {hasFloorPlan(data.settings, data.stalls) ? (
-        <div className="max-w-[24rem]">
+        <div className="max-w-[28rem]">
           <CanteenMap
             locale={locale}
             data={data}
             compact
+            numbers="highlighted"
             idPrefix={idPrefix}
             highlights={stalls.map((stall, position) => ({ stallId: stall._id, order: position + 1 }))}
           />
