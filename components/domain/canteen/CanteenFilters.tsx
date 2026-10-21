@@ -128,7 +128,7 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
             className="max-other max-w-[10rem]"
           />
           <div className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
-            <input id={id("variants")} type="checkbox" name="variants" value="1" defaultChecked={filters.variants} className="m-0 size-5 min-h-0 min-w-0 shrink-0" />
+            <input id={id("variants")} type="checkbox" name="variants" value="1" defaultChecked={filters.variants} className="m-0 size-6 min-h-0 min-w-0 shrink-0" />
             <label htmlFor={id("variants")} className="flex min-h-[var(--target-min)] flex-1 items-center text-base text-ink-900">
               {t(EAT.variantsLabel, locale)}
             </label>

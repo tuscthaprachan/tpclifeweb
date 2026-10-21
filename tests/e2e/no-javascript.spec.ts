@@ -7,13 +7,16 @@
  *
  * Restricted to the "desktop" project. Two reasons: the assertions are
  * about mechanism (does the plain HTML work), not layout, so one viewport
- * is enough; and `SiteHeader` renders its navigation, search link and
- * language toggle TWICE in the DOM (once for the desktop `nav`, once inside
- * the mobile `<details>` disclosure), so locating them by role/name always
- * resolves two elements. At the desktop viewport the desktop copy is the
- * one that is actually visible and, since it is written first in the JSX,
- * also `.first()` in DOM order, which is what every `.first()` below relies
- * on rather than being an arbitrary pick.
+ * is enough; and `SiteHeader` renders its navigation, search link, search
+ * box and language toggle TWICE in the DOM (once for the desktop `nav`, once
+ * inside the mobile `<details>` disclosure), so locating them by role/name
+ * always resolves two elements. At the desktop viewport the desktop copy is
+ * the one that is actually visible and, since it is written first in the
+ * JSX, also `.first()` in DOM order, which is what every `.first()` below
+ * relies on rather than being an arbitrary pick. The page's own search box
+ * is found inside `main`, away from the header's hidden copy. Most primary
+ * navigation items sit inside the "More" disclosure, which is a native
+ * `<details>` and so opens without JavaScript.
  */
 
 import { expect, test } from "@playwright/test";
@@ -29,6 +32,7 @@ test.beforeEach(async ({}, testInfo) => {
 test("navigation works with JavaScript disabled", async ({ page }) => {
   await page.goto(localePath("th", "/"));
 
+  await page.locator("header summary").filter({ hasText: UI.moreNav.th }).click();
   await page.locator("header").getByRole("link", { name: UI.forms.th, exact: true }).first().click();
 
   await expect(page).toHaveURL(new RegExp(`${localePath("th", "/forms")}$`));
@@ -55,8 +59,8 @@ for (const locale of LOCALES as readonly Locale[]) {
     await page.goto(localePath(locale, "/search"));
 
     const query = "หอพัก";
-    await page.getByLabel(UI.searchLabel[locale]).fill(query);
-    await page.getByRole("button", { name: UI.searchSubmit[locale], exact: true }).click();
+    await page.locator("main").getByLabel(UI.searchLabel[locale]).fill(query);
+    await page.locator("main").getByRole("button", { name: UI.searchSubmit[locale], exact: true }).click();
 
     await expect(page).toHaveURL(new RegExp(`${localePath(locale, "/search")}\\?q=`));
     expect(new URL(page.url()).searchParams.get("q")).toBe(query);
@@ -187,10 +191,10 @@ test("Decide for me redirects to a seeded URL and every action is a plain link",
   await expect(stall.getByRole("link", { name: "See the stall" })).toHaveAttribute("href", /\/eat\/stalls\//);
   await expect(page.getByText("Price checked on")).toHaveCount(0);
   await expect(page.getByText("Why it matched")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Spin again" })).toHaveAttribute("href", /seed=/);
-  await expect(page.getByRole("link", { name: "Not feeling it" })).toHaveAttribute("href", /not=/);
+  await expect(page.getByRole("link", { name: "Spin again", exact: true })).toHaveAttribute("href", /seed=/);
+  await expect(page.getByRole("link", { name: "Not this one, spin again", exact: true })).toHaveAttribute("href", /not=/);
   await expect(page.getByRole("link", { name: "Go with this" })).toHaveAttribute("href", /\/eat\/stalls\//);
-  await page.getByRole("link", { name: "Spin again" }).click();
+  await page.getByRole("link", { name: "Spin again", exact: true }).click();
   await expect(page).toHaveURL(/seed=/);
 });
 
@@ -215,7 +219,7 @@ test("/eat/plan?mode=week redirects to a shareable seed and locks work as links"
 test("/eat/mine explains that it needs JavaScript", async ({ page }) => {
   const response = await page.request.get(localePath("en", "/eat/mine"));
   const html = await response.text();
-  expect(html).toMatch(/<noscript>[\s\S]*This page needs JavaScript[\s\S]*<\/noscript>/);
+  expect(html).toMatch(/<noscript>[\s\S]*JavaScript is off[\s\S]*Turn on JavaScript to see this page\.[\s\S]*<\/noscript>/);
 });
 
 /* ---- Eat as a group: the builder round trips as a plain GET form ---- */

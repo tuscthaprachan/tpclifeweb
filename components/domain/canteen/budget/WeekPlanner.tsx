@@ -116,7 +116,7 @@ export function WeekPlanner({ locale, plan, request, filters, path }: WeekPlanne
                       <Link
                         href={href(unlockDay(request, pinDays, day.weekday))}
                         aria-label={budget.unlockLabel(locale, dayName)}
-                        className="inline-flex min-h-[var(--target-min)] items-center underline"
+                        className="inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center underline"
                         scroll={false}
                       >
                         {t(BUDGET.unlock, locale)}
@@ -126,7 +126,7 @@ export function WeekPlanner({ locale, plan, request, filters, path }: WeekPlanne
                         <Link
                           href={href(lockDay(request, pinDays, day.weekday))}
                           aria-label={budget.lockLabel(locale, dayName)}
-                          className="inline-flex min-h-[var(--target-min)] items-center underline"
+                          className="inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center underline"
                           scroll={false}
                         >
                           {t(BUDGET.lock, locale)}
@@ -134,7 +134,7 @@ export function WeekPlanner({ locale, plan, request, filters, path }: WeekPlanne
                         <Link
                           href={href(rerollDay(request, pinDays, day.weekday))}
                           aria-label={budget.rerollLabel(locale, dayName)}
-                          className="inline-flex min-h-[var(--target-min)] items-center underline"
+                          className="inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center underline"
                           scroll={false}
                         >
                           {t(BUDGET.reroll, locale)}

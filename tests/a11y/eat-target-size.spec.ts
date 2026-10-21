@@ -12,19 +12,10 @@ import { EAT_KEY_PAGES, findSmallTargets } from "./support/eat";
 
 const BREADCRUMB = `nav[aria-label="${UI.breadcrumb.en}"], nav[aria-label="${UI.breadcrumb.th}"]`;
 
-const KNOWN_COARSE_FAILURES: Record<string, string> = {
-  "/en/eat/stalls/2-song-phi-nong-noodles?diet=nopork": "the dish links in the stall's full menu list are 28.5px tall under a coarse pointer (need 44)",
-  "/en/eat/dishes/4-iced-chinese-tea": "the 'Stall 4 · GaNGa' link in the where-to-find-it block is 24.4px tall under a coarse pointer (need 44)",
-  "/en/eat/map": "the linked stall tiles on the floor plan are 72x36px under a coarse pointer (need 44); the plan only guarantees 24px",
-  "/en/eat/plan?mode=week&budget=400&days=1,2,3,4,5&seed=m4bpdq": "the 'Lock: Monday' to 'Lock: Friday' links are 37.3px wide under a coarse pointer (need 44)",
-};
-
 test.describe("eat target size", () => {
   for (const url of EAT_KEY_PAGES) {
     test(`eat target size, coarse pointer 44px: ${url}`, async ({ page }, testInfo) => {
       test.skip(testInfo.project.name !== "mobile", "The coarse pointer is emulated on the mobile project only.");
-
-      test.fail(url in KNOWN_COARSE_FAILURES, `Real bug: ${KNOWN_COARSE_FAILURES[url]}`);
 
       const session = await page.context().newCDPSession(page);
       await session.send("Emulation.setEmulatedMedia", {
@@ -59,7 +50,6 @@ test.describe("eat target size", () => {
 
   test("eat target size, breadcrumb Home link under a coarse pointer", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "mobile", "The coarse pointer is emulated on the mobile project only.");
-    test.fail(true, "Real bug: the breadcrumb 'Home' link is 41x44px under a coarse pointer (min-h is set, min-w is not), on every /eat page");
 
     const session = await page.context().newCDPSession(page);
     await session.send("Emulation.setEmulatedMedia", { features: [{ name: "pointer", value: "coarse" }, { name: "hover", value: "none" }] });

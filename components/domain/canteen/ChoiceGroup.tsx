@@ -92,7 +92,7 @@ export function ChoiceGroup({ id, legend, hint, name, kind, choices, selected, l
                 value={choice.value}
                 defaultChecked={checked}
                 disabled={disabled}
-                className="m-0 size-5 min-h-0 min-w-0 shrink-0"
+                className="m-0 size-6 min-h-0 min-w-0 shrink-0"
               />
               <label htmlFor={optionId} className="flex min-h-[var(--target-min)] flex-1 items-center gap-[var(--space-2)] text-base text-ink-900">
                 {choice.icon ? <span className="inline-flex shrink-0 items-center text-ink-600 [&>svg]:size-[1.25em]">{choice.icon}</span> : null}

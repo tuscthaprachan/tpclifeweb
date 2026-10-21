@@ -44,8 +44,8 @@ export interface CanteenMapWithListProps {
   viewLinks?: { plan: string; list: string };
 }
 
-/** CSS pixels per view unit for the phone plan: compact stall numbers (26 units) come out at 13 px. */
-const PHONE_SCALE = 0.5;
+/** CSS pixels per view unit for the phone plan: compact stall numbers (26 units) come out at 16 px and a 72 unit tall tile at 44.6 px, the touch target size. */
+const PHONE_SCALE = 0.62;
 
 function MapKey({
   locale,

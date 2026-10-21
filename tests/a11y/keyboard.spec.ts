@@ -115,13 +115,13 @@ for (const locale of LOCALES as readonly Locale[]) {
       test.skip(testInfo.project.name !== "mobile", "The disclosure menu is only visible below the sm breakpoint.");
 
       await page.goto(localePath(locale, "/"));
-      const trigger = page.getByText(UI.openMenu[locale], { exact: true });
+      const details = page.locator("header details").filter({ has: page.locator("summary svg") });
+      const trigger = details.locator("summary");
       await expect(trigger, "mobile menu trigger (<summary>) should be visible on the mobile project").toBeVisible();
 
       await trigger.focus();
       await page.keyboard.press("Enter");
 
-      const details = page.locator("details");
       await expect(details, "the disclosure should open").toHaveJSProperty("open", true);
 
       await page.keyboard.press("Escape");

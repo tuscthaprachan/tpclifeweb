@@ -121,9 +121,9 @@ export default async function EatDishPage({
               </Heading>
               {stall ? (
                 <>
-                  <p className="m-0 flex items-start gap-[var(--space-1)] text-base font-medium">
-                    <PinIcon className="mt-[calc((1lh-18px)/2)] shrink-0 text-ink-600" size={18} />
-                    <Link href={stallHref(locale, stall.slug.current, filters)}>{eat.stallFull(locale, stall.number, pick(stall.name, locale))}</Link>
+                  <p className="m-0 flex items-center gap-[var(--space-1)] text-base font-medium">
+                    <PinIcon className="shrink-0 text-ink-600" size={18} />
+                    <Link href={stallHref(locale, stall.slug.current, filters)} className="inline-flex min-h-[var(--target-min)] items-center">{eat.stallFull(locale, stall.number, pick(stall.name, locale))}</Link>
                   </p>
                   <p className="m-0 text-ink-900">{stall.wayfinding ? pick(stall.wayfinding, locale) : t(EAT.noWayfinding, locale)}</p>
                   <div data-slot="mini-map">

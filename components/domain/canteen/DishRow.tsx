@@ -35,9 +35,9 @@ export function DishRow({ dish, stall, locale, filters, matches, className }: Di
   const otherName = pick(dish.name, other);
 
   return (
-    <div className={cx("flex items-start justify-between gap-[var(--space-4)] py-[var(--space-3)]", className)}>
+    <div className={cx("relative flex items-start justify-between gap-[var(--space-4)] py-[var(--space-3)] [&_button]:relative [&_button]:z-10", className)}>
       <div className="flex min-w-0 flex-col gap-[var(--space-1)]">
-        <Link href={dishHref(locale, dish.slug.current, filters)} className={cx("text-lg font-semibold no-underline hover:text-action hover:underline", matches === false ? "text-ink-600" : "text-ink-900")}>
+        <Link href={dishHref(locale, dish.slug.current, filters)} className={cx("inline-flex min-h-[var(--target-min)] items-center text-lg font-semibold no-underline after:absolute after:inset-0 after:content-[''] hover:text-action hover:underline", matches === false ? "text-ink-600" : "text-ink-900")}>
           {name}
         </Link>
         {otherName && otherName !== name ? (

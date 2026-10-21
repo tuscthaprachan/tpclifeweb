@@ -39,7 +39,7 @@ export function Breadcrumbs({ locale, items }: { locale: Locale; items: Breadcru
               {item.path && !isLast ? (
                 <Link
                   href={localePath(locale, item.path)}
-                  className="inline-flex min-h-[var(--target-min)] items-center text-action"
+                  className="inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center text-action"
                 >
                   {item.label}
                 </Link>

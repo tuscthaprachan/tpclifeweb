@@ -64,7 +64,7 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
           <Heading level={headingLevel} visualLevel={3} className="m-0 leading-tight">
             <Link
               href={dishHref(locale, dish.slug.current, filters)}
-              className="text-ink-900 no-underline after:absolute after:inset-0 after:content-[''] hover:text-action hover:underline focus-visible:shadow-none focus-visible:outline-none"
+              className="inline-flex min-h-[var(--target-min)] items-center text-ink-900 no-underline after:absolute after:inset-0 after:content-[''] hover:text-action hover:underline focus-visible:shadow-none focus-visible:outline-none"
             >
               {name}
             </Link>

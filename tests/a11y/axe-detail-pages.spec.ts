@@ -140,6 +140,12 @@ for (const locale of LOCALES as readonly Locale[]) {
       await test.step(path, async () => {
         const response = await page.goto(path);
         expect(response?.ok(), `${path} did not respond with an ok status`).toBeTruthy();
+        /*
+         * The random strategy reveals each pick with a staggered fade (group-reveal). Axe reads the colour a
+         * pixel is painted with, so a pick caught mid-fade is blended with the page and reports a contrast
+         * failure that is not there at rest. Wait for every finite animation to end, as a reader does.
+         */
+        await page.evaluate(() => Promise.all(document.getAnimations().filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity).map((animation) => animation.finished.catch(() => undefined))));
         const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
         expect(results.violations, formatViolations(path, results.violations)).toEqual([]);
       });
