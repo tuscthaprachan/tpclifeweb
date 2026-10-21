@@ -168,7 +168,7 @@ export function SiteHeader({
         <div className="hidden items-center gap-6 lg:flex">
           <Link
             href={localePath(locale, "/search")}
-            className="inline-flex min-h-[var(--target-min)] items-center text-sm font-medium text-ink-900 no-underline hover:text-action"
+            className="inline-flex min-h-[var(--target-min)] items-center text-base font-medium text-ink-900 no-underline hover:text-action"
           >
             {UI.search[locale]}
           </Link>
@@ -198,7 +198,7 @@ export function SiteHeader({
               ref={summaryRef}
               aria-expanded={open}
               aria-controls={menuId}
-              className="flex min-h-[var(--target-min)] min-w-[var(--target-min)] cursor-pointer list-none items-center gap-2 rounded-control px-3 py-2 text-sm font-medium text-ink-900 [&::-webkit-details-marker]:hidden"
+              className="flex min-h-[var(--target-min)] min-w-[var(--target-min)] cursor-pointer list-none items-center gap-2 rounded-control px-3 py-2 text-base font-medium text-ink-900 [&::-webkit-details-marker]:hidden"
             >
               <MenuIcon />
               {open ? UI.closeMenu[locale] : UI.openMenu[locale]}

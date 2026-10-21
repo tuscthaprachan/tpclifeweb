@@ -19,7 +19,7 @@ interface CanteenGlanceProps {
 export function CanteenGlance({ locale, closesAt }: CanteenGlanceProps) {
   return (
     <div>
-      <Heading level={3} className="m-0 mb-[var(--space-2)] text-base">
+      <Heading level={3} className="m-0 mb-[var(--space-2)]">
         {t(EAT.title, locale)}
         {isCanteenDemo() ? <span className="ml-[var(--space-2)] font-normal">{t(DEMO_NOTICE.label, locale)}</span> : null}
       </Heading>

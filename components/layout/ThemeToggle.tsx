@@ -108,7 +108,7 @@ export function ThemeToggle({
               }}
               className={cx(
                 "inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center gap-[var(--space-1)]",
-                "rounded-control border px-[var(--space-3)] py-[var(--space-1)] text-sm font-medium no-underline",
+                "rounded-control border px-[var(--space-3)] py-[var(--space-1)] text-base font-medium no-underline",
                 /*
                  * 1.4.11 Non-text Contrast: the border colour change between
                  * states must itself clear 3:1 against the surrounding

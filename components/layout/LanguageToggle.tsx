@@ -44,7 +44,7 @@ export function LanguageToggle({ locale, className = "" }: { locale: Locale; cla
         document.cookie = `${LOCALE_COOKIE}=${target}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; samesite=lax`;
         document.cookie = `${LEGACY_LOCALE_COOKIE}=; path=/; max-age=0; samesite=lax`;
       }}
-      className={`inline-flex min-h-[var(--target-min)] items-center rounded-control border border-line-strong px-3 py-1 text-sm font-medium text-ink-900 no-underline hover:text-action ${className}`.trim()}
+      className={`inline-flex min-h-[var(--target-min)] items-center rounded-control border border-line-strong px-3 py-1 text-base font-medium text-ink-900 no-underline hover:text-action ${className}`.trim()}
     >
       {LOCALE_LABEL[target]}
       {/* Context for assistive tech, appended rather than replacing the

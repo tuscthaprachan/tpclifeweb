@@ -49,7 +49,7 @@ interface KeyOpeningHoursProps {
 export function KeyOpeningHours({ locale, places, headingLevel, now = new Date() }: KeyOpeningHoursProps) {
   return (
     <div>
-      <Heading level={headingLevel} className="m-0 mb-[var(--space-2)] text-base">
+      <Heading level={headingLevel} className="m-0 mb-[var(--space-2)]">
         {pick(KEY_OPENING_HOURS_TITLE, locale)}
       </Heading>
       {places.length === 0 ? (

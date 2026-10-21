@@ -37,7 +37,7 @@ export function Select({ id, label, hint, error, options, className, ...rest }: 
      * not, so short filters do not stretch across the row.
      */
     <div className={cx("flex min-w-0 flex-col gap-[var(--space-1)]", className)}>
-      <label htmlFor={id} className="text-sm font-medium text-ink-900">
+      <label htmlFor={id} className="text-base font-medium text-ink-900">
         {label}
       </label>
       {hint ? (

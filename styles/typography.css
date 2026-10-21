@@ -120,16 +120,16 @@ html[lang^="th"] body {
   }
 
   h1 {
-    font-size: var(--text-4xl);
+    font-size: var(--text-3xl);
   }
   h2 {
-    font-size: var(--text-2xl);
-  }
-  h3 {
     font-size: var(--text-xl);
   }
-  h4 {
+  h3 {
     font-size: var(--text-lg);
+  }
+  h4 {
+    font-size: var(--text-base);
   }
   h5,
   h6 {

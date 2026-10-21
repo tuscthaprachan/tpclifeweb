@@ -133,7 +133,7 @@ export default async function PolicyDetailPage({
             <StatusTag tone={STATUS_TONE[policy.status]} label={UI[STATUS_LABEL_KEY[policy.status]][locale]} />
           </div>
           <Heading level={1}>{title}</Heading>
-          <p className="m-0 text-lg text-ink-600">{pick(policy.summary, locale)}</p>
+          <p className="m-0 text-base text-ink-600">{pick(policy.summary, locale)}</p>
           {/* Honesty rule 2: staleness is shown unconditionally, regardless of whether PolicyProgress below is drawing a bar. */}
           <PolicyLastUpdated policy={policy} locale={locale} />
         </Stack>

@@ -29,7 +29,7 @@ export function SummaryList({ rows, className }: SummaryListProps) {
             "sm:grid sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] sm:items-baseline sm:gap-[var(--space-4)]",
           )}
         >
-          <dt className="text-sm font-medium text-ink-600 sm:text-base">{row.key}</dt>
+          <dt className="text-sm font-medium text-ink-600">{row.key}</dt>
           <dd className="m-0 text-ink-900">{row.value}</dd>
           {row.actions ? <dd className="m-0 sm:text-right">{row.actions}</dd> : null}
         </div>

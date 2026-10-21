@@ -20,7 +20,7 @@ export function Textarea({ id, label, hint, error, className, extraDescribedBy, 
 
   return (
     <div className={cx("flex flex-col gap-[var(--space-1)]", className)}>
-      <label htmlFor={id} className="text-sm font-medium text-ink-900">
+      <label htmlFor={id} className="text-base font-medium text-ink-900">
         {label}
       </label>
       {hint ? (

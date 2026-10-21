@@ -39,7 +39,7 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
-  sm: "px-[var(--space-3)] py-[var(--space-1)] text-sm",
+  sm: "px-[var(--space-3)] py-[var(--space-1)] text-base",
   md: "px-[var(--space-4)] py-[var(--space-2)] text-base",
 };
 

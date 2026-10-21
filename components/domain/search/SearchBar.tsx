@@ -160,7 +160,7 @@ export function SearchBar({ locale, defaultValue = "", className }: SearchBarPro
 
   return (
     <form role="search" action={localePath(locale, "/search")} method="get" className={className}>
-      <label htmlFor={inputId} className="mb-[var(--space-1)] block text-sm font-medium text-ink-900">
+      <label htmlFor={inputId} className="mb-[var(--space-1)] block text-base font-medium text-ink-900">
         {UI.searchLabel[locale]}
       </label>
       <p id={hintId} className="mb-[var(--space-2)] text-sm text-ink-600">

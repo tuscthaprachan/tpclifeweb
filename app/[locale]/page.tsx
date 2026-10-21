@@ -103,7 +103,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Stack space={16} className="py-[var(--space-8)]">
         {/* 1. Search: the largest, most prominent element on the page. */}
         <Stack space={4} as="section">
-          <Heading level={1}>{pick(settings.serviceName, locale)}</Heading>
+          <Heading level={1} className="text-4xl">{pick(settings.serviceName, locale)}</Heading>
           <p className="m-0 max-w-prose text-lg text-ink-600">{pick(settings.tagline, locale)}</p>
           <SearchBar locale={locale} className="mt-[var(--space-2)]" />
         </Stack>

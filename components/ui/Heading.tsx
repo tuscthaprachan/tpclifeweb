@@ -2,10 +2,10 @@ import type { ReactNode } from "react";
 import { headingTag, type HeadingLevel } from "@/lib/a11y";
 
 const TEXT_TOKEN: Record<HeadingLevel, string> = {
-  1: "var(--text-4xl)",
-  2: "var(--text-2xl)",
-  3: "var(--text-xl)",
-  4: "var(--text-lg)",
+  1: "var(--text-3xl)",
+  2: "var(--text-xl)",
+  3: "var(--text-lg)",
+  4: "var(--text-base)",
   5: "var(--text-base)",
   6: "var(--text-base)",
 };

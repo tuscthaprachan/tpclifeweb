@@ -38,13 +38,13 @@ export function Checkboxes({ id, legend, hint, error, name, options, value, defa
         {options.map((option, index) => {
           const optionId = `${id}-${index}`;
           return (
-            <div key={option.value} className="flex items-start gap-[var(--space-2)]">
+            <div key={option.value} className="flex min-h-[var(--target-min)] items-start gap-[var(--space-2)]">
               <input
                 type="checkbox"
                 id={optionId}
                 name={name}
                 value={option.value}
-                className="mt-[3px] h-[1.25rem] w-[1.25rem]"
+                className="m-0 mt-[calc((var(--target-min)-1.25rem)/2)] size-5 min-h-0 min-w-0 shrink-0"
                 {...(controlled
                   ? { checked: value.includes(option.value), onChange: (e: ChangeEvent<HTMLInputElement>) => toggle(option.value, e.target.checked) }
                   : {
@@ -52,7 +52,7 @@ export function Checkboxes({ id, legend, hint, error, name, options, value, defa
                       onChange: onValueChange ? (e: ChangeEvent<HTMLInputElement>) => toggle(option.value, e.target.checked) : undefined,
                     })}
               />
-              <label htmlFor={optionId} className="text-base text-ink-900">
+              <label htmlFor={optionId} className="flex min-h-[var(--target-min)] flex-1 flex-col justify-center text-base text-ink-900">
                 {option.label}
                 {option.hint ? <span className="block text-sm text-ink-600">{option.hint}</span> : null}
               </label>

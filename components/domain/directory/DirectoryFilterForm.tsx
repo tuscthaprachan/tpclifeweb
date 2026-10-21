@@ -74,7 +74,7 @@ export function DirectoryFilterForm({ locale, action, currentType, currentFacult
       />
       <Button type="submit">{UI.applyFilters[locale]}</Button>
       {hasActiveFilter ? (
-        <a href={action} className="text-sm text-action underline">
+        <a href={action} className="text-base text-action underline">
           {UI.clearFilters[locale]}
         </a>
       ) : null}

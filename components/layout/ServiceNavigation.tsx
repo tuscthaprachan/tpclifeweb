@@ -37,8 +37,8 @@ import type { NavItem } from "@/lib/sanity/types";
 export type ServiceNavigationVariant = "responsive" | "horizontal" | "vertical";
 
 const LIST_CLASS: Record<ServiceNavigationVariant, string> = {
-  responsive: "flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-6",
-  horizontal: "flex flex-wrap items-center gap-x-6 gap-y-2 text-sm",
+  responsive: "flex flex-col gap-2 text-base sm:flex-row sm:items-center sm:gap-6",
+  horizontal: "flex flex-wrap items-center gap-x-6 gap-y-2 text-base",
   vertical: "flex flex-col gap-2 text-base",
 };
 

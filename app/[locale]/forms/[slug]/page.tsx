@@ -202,7 +202,7 @@ export default async function FormDetailPage({
       <Stack space={8} className="max-w-[var(--width-narrow)]">
         <Stack space={2}>
           <Heading level={1}>{title}</Heading>
-          <p className="m-0 text-lg text-ink-600">{purpose}</p>
+          <p className="m-0 text-base text-ink-600">{purpose}</p>
         </Stack>
 
         {audience ? (

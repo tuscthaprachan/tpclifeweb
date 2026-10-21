@@ -78,7 +78,7 @@ export function DateInput({ id, legend, hint, error, dayLabel, monthLabel, yearL
       <div className="flex gap-[var(--space-4)]">
         {parts.map(({ key, label, autoComplete }) => (
           <div key={key} className="flex flex-col gap-[var(--space-1)]">
-            <label htmlFor={`${id}-${key}`} className="text-sm font-medium text-ink-900">
+            <label htmlFor={`${id}-${key}`} className="text-base font-medium text-ink-900">
               {label}
             </label>
             <input
