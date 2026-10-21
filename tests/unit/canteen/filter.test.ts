@@ -27,13 +27,10 @@ describe("applyFilters", () => {
     expect(run({ max: 50, variants: true })).not.toContain("b");
   });
 
-  it("diet is AND, with canAsk counted for vegetarian, vegan and jay", () => {
+  it("diet is AND", () => {
     expect(run({ diet: ["nopork"] })).toHaveLength(18);
-    expect(run({ diet: ["halal"] }).sort()).toEqual(["e", "f", "g", "h", "i", "j", "k"]);
-    expect(run({ diet: ["certified"] }).sort()).toEqual(["i", "j", "k"]);
+    expect(run({ diet: ["halal"] }).sort()).toEqual(["i", "j", "k"]);
     expect(run({ diet: ["vegetarian"] }).sort()).toEqual(["d", "l", "m", "n", "o", "p", "q", "r"]);
-    expect(run({ diet: ["vegan"] }).sort()).toEqual(["l", "m", "n", "p", "r"]);
-    expect(run({ diet: ["jay"] }).sort()).toEqual(["l", "m", "p"]);
     expect(run({ diet: ["halal", "vegetarian"] })).toEqual([]);
   });
 
@@ -149,7 +146,7 @@ describe("facetCounts", () => {
   });
 
   it("shows zero for an option that would empty the list, rather than omitting it", () => {
-    const counts = facetCounts(data, f({ diet: ["certified"] }), NOW);
+    const counts = facetCounts(data, f({ diet: ["halal"] }), NOW);
     expect(counts.type.noodles).toBe(0);
     expect("noodles" in counts.type).toBe(true);
   });
@@ -187,9 +184,9 @@ describe("relaxSuggestions", () => {
   });
 
   it("offers dropping the budget when it is already above the top step", () => {
-    const suggestions = relaxSuggestions(data, f({ max: 80, diet: ["certified"], type: ["noodles"] }), NOW);
+    const suggestions = relaxSuggestions(data, f({ max: 80, diet: ["halal"], type: ["noodles"] }), NOW);
     expect(suggestions.map((s) => [s.param, s.value, s.count])).toEqual([
-      ["diet", "certified", 4],
+      ["diet", "halal", 4],
       ["type", "noodles", 3],
     ]);
   });

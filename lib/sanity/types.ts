@@ -603,13 +603,6 @@ export type CanteenCuisine =
   | "desserts"
   | "fruit";
 
-/**
- * `stallDeclared` is the stall's own word, recorded with the date it was
- * asked (`halalCheckedOn`). `certified` is stronger and needs a certificate
- * on file. Shown as "stall says halal" and "certified halal".
- */
-export type HalalStatus = "none" | "stallDeclared" | "certified";
-
 export type DishType =
   | "rice"
   | "noodles"
@@ -640,12 +633,6 @@ export type CookingStyle =
 
 export type Temperature = "hot" | "cold";
 
-/**
- * Whether a dish suits a diet. `canAsk` means the stall will make it that
- * way on request. It is the stall's word, not a guarantee.
- */
-export type DietAvailability = "no" | "canAsk" | "yes";
-
 /** Which edge of the floor plan something sits on. */
 export type FloorSide = "north" | "south" | "east" | "west";
 
@@ -673,10 +660,9 @@ export interface CanteenStall extends DocumentMeta {
   /** As painted on the stall. */
   number: number;
   cuisine: CanteenCuisine[];
-  halal: HalalStatus;
-  /** The date the stall was asked about halal. Shown beside the tag. */
-  halalCheckedOn?: string;
-  /** The whole stall is vegetarian or jay. */
+  /** A halal stall: everything it sells is halal. */
+  halal: boolean;
+  /** The whole stall is vegetarian. */
   vegetarianStall?: boolean;
   /** Optional. When absent the canteen's hours apply. */
   hours?: OpeningHours[];
@@ -723,9 +709,8 @@ export interface CanteenDish extends DocumentMeta {
   temperature: Temperature;
   /** Soupy or with sauce. */
   wet: boolean;
-  vegetarian: DietAvailability;
-  vegan: DietAvailability;
-  jay: DietAvailability;
+  /** Made without meat, fish or seafood as it normally comes. */
+  vegetarian: boolean;
   photo?: SanityImage;
   /** "YYYY-MM-DD", the day the current price was last checked. */
   checkedOn: string;
@@ -751,7 +736,7 @@ export interface CanteenSeatingZone {
   h: number;
 }
 
-/** Singleton. Holds the floor plan and the jay festival window. */
+/** Singleton. Holds the floor plan. */
 export interface CanteenSettings extends DocumentMeta {
   _type: "canteenSettings";
   /** The canteen `place`, which carries the hours and the location. */
@@ -762,9 +747,6 @@ export interface CanteenSettings extends DocumentMeta {
   seatingZones?: CanteenSeatingZone[];
   /** Which edge of the plan faces the river. */
   riverSide?: FloorSide;
-  /** "YYYY-MM-DD". Inclusive. Turns on the jay banner and a default filter suggestion. */
-  jayFestivalStart?: string;
-  jayFestivalEnd?: string;
 }
 
 /**

@@ -1,6 +1,6 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
-import { CANTEEN_CUISINE_OPTIONS, HALAL_OPTIONS } from "../constants";
+import { CANTEEN_CUISINE_OPTIONS } from "../constants";
 import { bilingualStringMessage, bilingualStringMessageOptional } from "../objects/locale";
 
 /** A whole, non-negative number of grid cells. */
@@ -16,9 +16,8 @@ function wholeNumber(min: number) {
  * A food stall in the canteen. Registered as schema name `canteenStall`,
  * matching `_type: "canteenStall"` on `CanteenStall` in `lib/sanity/types.ts`.
  *
- * The stall's halal and vegetarian answers are the stall's own word. They
- * are recorded with the date they were asked and shown as "stall says",
- * never as a guarantee.
+ * A halal stall has everything it sells tagged halal. A vegetarian stall has
+ * every dish counted as vegetarian.
  */
 export const canteenStall = defineType({
   name: "canteenStall",
@@ -57,32 +56,17 @@ export const canteenStall = defineType({
     }),
     defineField({
       name: "halal",
-      title: "Halal",
-      type: "string",
-      options: { list: HALAL_OPTIONS, layout: "radio" },
-      initialValue: "none",
-      description:
-        'Use "Stall says" when the stall told you it is halal. Use "Certified" only when a halal certificate is on file. Never mark a stall halal from its name or menu.',
-      validation: (rule) => rule.required(),
-    }),
-    defineField({
-      name: "halalCheckedOn",
-      title: "Halal asked on",
-      type: "date",
-      description: "The date you asked the stall. Required when the stall is marked halal.",
-      validation: (rule) =>
-        rule.custom((value: string | undefined, context) => {
-          const halal = (context.parent as { halal?: string } | undefined)?.halal;
-          if (halal && halal !== "none" && !value) return "Add the date you asked the stall about halal.";
-          return true;
-        }),
+      title: "Halal stall",
+      type: "boolean",
+      initialValue: false,
+      description: "On for a halal stall. Everything it sells is then tagged halal.",
     }),
     defineField({
       name: "vegetarianStall",
       title: "Vegetarian stall",
       type: "boolean",
       initialValue: false,
-      description: "Turn this on only if the whole stall is vegetarian or jay.",
+      description: "Turn this on only if the whole stall is vegetarian.",
     }),
     defineField({
       name: "hours",

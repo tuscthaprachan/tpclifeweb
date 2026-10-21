@@ -4,7 +4,7 @@
  * Neither language is a translation of the other, and the casual voice that
  * CONTRIBUTING.md allows in this one section is used sparingly. No em dashes.
  * Honesty rules are built into the wording: prices are surveyed figures with
- * a date, diet tags are the stall's word unless certified, nothing is live.
+ * a date, diet tags are a guide to check at the stall, nothing is live.
  *
  * Plain module, no "use client": safe from server and client components.
  *
@@ -43,8 +43,8 @@ export const EAT = {
     en: "Prices come from our survey, not a live feed. Every price shows the day it was checked.",
   },
   dietNote: {
-    th: "ป้ายอาหารเป็นคำบอกของร้าน ไม่ใช่การรับรอง ยกเว้นที่ระบุว่ามีใบรับรอง น้ำซุปและซอสไม่ได้ถูกบันทึก ถามร้านก่อนสั่งเสมอ",
-    en: "Diet tags are what the stall told us, not a guarantee, unless marked certified. Broths and sauces are not tracked, so ask the stall before you order.",
+    th: "ทุกเมนูของร้านฮาลาลเป็นฮาลาล ป้ายมังสวิรัติดูจากเมนู ไม่ได้ถามร้าน น้ำซุปและซอสไม่ได้ถูกบันทึก ถ้าสำคัญ ถามร้านก่อนสั่ง",
+    en: "Everything a halal stall sells is halal. The vegetarian tag is our reading of the menu, not the stall's word, and broths and sauces are not tracked, so ask the stall if it matters.",
   },
   allergyNote: {
     th: "เดาจากชื่อเมนูและสูตรทั่วไป รวมซอสและแป้งชุบ จึงอาจพลาดได้ ร้านไม่ได้ยืนยัน ถ้าแพ้อาหาร ถามร้านก่อนสั่งเสมอ",
@@ -86,12 +86,6 @@ export const EAT = {
   browseTitle: { th: "เลือกดูเอง", en: "Browse" },
   startersTitle: { th: "เมนูราคาเบา ๆ ให้เริ่ม", en: "Easy on the wallet" },
   seeAllDishes: { th: "ดูเมนูทั้งหมด", en: "See all dishes" },
-  jayBannerTitle: { th: "ช่วงเทศกาลกินเจ", en: "It is jay festival time" },
-  jayBannerBody: {
-    th: "มองหาป้ายเจ และขอให้ร้านทำเมนูแบบไม่มีเนื้อสัตว์ได้ ร้านอาจต้องใช้เวลาเพิ่ม",
-    en: "Look for the jay tag, and ask stalls to make dishes without meat. Some stalls may need a little longer.",
-  },
-  jayBannerAction: { th: "ดูเมนูเจ", en: "Show jay dishes" },
   noDataTitle: { th: "เรายังไม่ได้สำรวจโรงอาหาร", en: "We have not surveyed the canteen yet" },
   noDataBody: {
     th: "เมนูและราคาจะขึ้นที่นี่หลังสำรวจเสร็จ ระหว่างนี้ดูป้ายเมนูหน้าร้านได้เลย",
@@ -169,7 +163,6 @@ export const EAT = {
   styleLine: { th: "วิธีปรุง", en: "Cooking style" },
   temperatureLine: { th: "อุณหภูมิ", en: "Served" },
   dietTitle: { th: "อาหารที่กินได้", en: "Diet" },
-  noDietTags: { th: "ร้านไม่ได้แจ้งป้ายอาหารพิเศษ", en: "The stall gave no special diet tags." },
   whatIsLink: { th: "เมนูนี้คืออะไร", en: "What is this dish" },
   showOnMap: { th: "ดูตำแหน่งบนแผนที่", en: "Show on the map" },
   backToStalls: { th: "กลับไปรายการร้านค้า", en: "Back to all stalls" },
@@ -191,7 +184,6 @@ export const EAT = {
     th: "แผงนี้ยังไม่มีร้าน จึงยังไม่มีเมนู",
     en: "There is no shop in this stall yet, so there is no menu.",
   },
-  halalAsked: { th: "ถามร้านเมื่อ", en: "asked on" },
   stallMatches: { th: "ตรงกับตัวกรองของคุณ", en: "match your filters" },
   viewStall: { th: "ดูเมนูร้านนี้", en: "See this stall's menu" },
 

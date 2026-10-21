@@ -16,14 +16,14 @@ describe("params", () => {
     const text = serialise({
       ...defaultFilters(),
       type: ["soup", "noodles"],
-      diet: ["jay", "nopork"],
+      diet: ["vegetarian", "nopork"],
       max: 50,
       sort: "stall",
       group: "stall",
       variants: true,
       open: true,
     });
-    expect(text).toBe("max=50&diet=nopork,jay&type=noodles,soup&open=1&sort=stall&group=stall&variants=1");
+    expect(text).toBe("max=50&diet=nopork,vegetarian&type=noodles,soup&open=1&sort=stall&group=stall&variants=1");
     expect(serialise(defaultFilters())).toBe("");
   });
 
@@ -46,8 +46,8 @@ describe("params", () => {
   });
 
   it("is order independent, so the same filters give the same URL", () => {
-    const a = serialise(parse(new URLSearchParams("type=soup,noodles&diet=jay,nopork&max=50")));
-    const b = serialise(parse(new URLSearchParams("max=50&diet=nopork&diet=jay&type=noodles&type=soup")));
+    const a = serialise(parse(new URLSearchParams("type=soup,noodles&diet=vegetarian,nopork&max=50")));
+    const b = serialise(parse(new URLSearchParams("max=50&diet=nopork&diet=vegetarian&type=noodles&type=soup")));
     expect(a).toBe(b);
   });
 
@@ -84,9 +84,9 @@ describe("params", () => {
   });
 
   it("normalise() fixes a hand built object", () => {
-    const filters = normalise({ type: ["soup", "noodles", "soup"], diet: ["jay", "nopork"] });
+    const filters = normalise({ type: ["soup", "noodles", "soup"], diet: ["vegetarian", "nopork"] });
     expect(filters.type).toEqual(["noodles", "soup"]);
-    expect(filters.diet).toEqual(["nopork", "jay"]);
+    expect(filters.diet).toEqual(["nopork", "vegetarian"]);
   });
 
   it("withFilters appends filters and extras, skipping empty extras", () => {
@@ -105,7 +105,7 @@ describe("params", () => {
   });
 
   it("counts active filters, not display choices", () => {
-    const filters = { ...defaultFilters(), max: 50, diet: ["nopork" as const, "jay" as const], sort: "name" as const, group: "stall" as const };
+    const filters = { ...defaultFilters(), max: 50, diet: ["nopork" as const, "vegetarian" as const], sort: "name" as const, group: "stall" as const };
     expect(activeFilterParams(filters)).toEqual(["max", "diet"]);
     expect(countActiveValues(filters)).toBe(3);
   });

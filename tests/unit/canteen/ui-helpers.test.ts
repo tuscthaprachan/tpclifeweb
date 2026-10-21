@@ -13,25 +13,19 @@ const dish = (id: string) => data.dishes.find((d) => d.slug.current === `fixture
 const stallOf = (id: string) => data.stalls.find((s) => s._id === dish(id).stall._ref)!;
 
 describe("dishDietTags", () => {
-  it("says stall says for a declared halal stall and certified only with a certificate", () => {
-    expect(dishDietTags(dish("e"), stallOf("e")).map((t) => t.key)).toContain("halalStall");
-    expect(dishDietTags(dish("i"), stallOf("i")).map((t) => t.key)).toContain("halalCertified");
-    expect(dishDietTags(dish("a"), stallOf("a")).map((t) => t.key)).not.toContain("halalStall");
+  it("tags everything a halal stall sells as halal, and nothing elsewhere", () => {
+    for (const id of ["i", "j", "k"]) expect(dishDietTags(dish(id), stallOf(id)).map((t) => t.key)).toContain("halal");
+    expect(dishDietTags(dish("e"), stallOf("e")).map((t) => t.key)).not.toContain("halal");
   });
-  it("shows canAsk as ask for it, never as already made that way", () => {
-    const tags = dishDietTags(dish("d"), stallOf("d"));
-    expect(tags.find((t) => t.key === "vegetarianAsk")?.canAsk).toBe(true);
-    expect(tags.some((t) => t.key === "vegetarianYes")).toBe(false);
+  it("tags vegetarian mains only, never drinks, desserts or sides", () => {
+    expect(dishDietTags(dish("l"), stallOf("l")).map((t) => t.key)).toEqual(["vegetarian"]);
+    for (const id of ["n", "o", "p", "q", "r"]) expect(dishDietTags(dish(id), stallOf(id))).toEqual([]);
+    expect(dishDietTags(dish("a"), stallOf("a"))).toEqual([]);
   });
-  it("leaves out vegetarian when the dish is vegan, and tags no pork only without pork", () => {
-    const keys = dishDietTags(dish("l"), stallOf("l")).map((t) => t.key);
-    expect(keys).toContain("veganYes");
-    expect(keys).not.toContain("vegetarianYes");
-    expect(dishDietTags(dish("a"), stallOf("a")).map((t) => t.key)).not.toContain("nopork");
-  });
-  it("gives a stall halal tag only when the stall gave an answer", () => {
+  it("gives a stall halal tag only to a halal stall", () => {
     expect(stallHalalTag(stallOf("a"))).toBeNull();
-    expect(stallHalalTag(stallOf("e"))?.key).toBe("halalWholeStall");
+    expect(stallHalalTag(stallOf("e"))).toBeNull();
+    expect(stallHalalTag(stallOf("i"))?.key).toBe("halalWholeStall");
   });
 });
 
@@ -55,8 +49,8 @@ describe("chips and summary", () => {
     expect(filterSummary(filters, "en")).toBe("No pork · Halal · under 50 baht · 4 filters");
   });
   it("each chip's without removes only that one", () => {
-    const filters = parse(new URLSearchParams("diet=nopork,vegan&max=50"));
-    const chip = activeChips(filters, "en").find((c) => c.id === "diet-vegan")!;
+    const filters = parse(new URLSearchParams("diet=nopork,vegetarian&max=50"));
+    const chip = activeChips(filters, "en").find((c) => c.id === "diet-vegetarian")!;
     expect(chip.without.diet).toEqual(["nopork"]);
     expect(chip.without.max).toBe(50);
   });

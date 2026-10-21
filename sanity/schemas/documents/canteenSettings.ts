@@ -12,7 +12,7 @@ function wholeNumber(min: number) {
 }
 
 /**
- * Canteen settings: the floor plan and the jay festival window. There is
+ * Canteen settings: the canteen place and the floor plan. There is
  * exactly one of these documents, opened directly from the Canteen group in
  * the desk structure. Registered as schema name `canteenSettings`, matching
  * `_type: "canteenSettings"` on `CanteenSettings` in `lib/sanity/types.ts`.
@@ -27,7 +27,6 @@ export const canteenSettings = defineType({
   groups: [
     { name: "place", title: "Place", default: true },
     { name: "plan", title: "Floor plan" },
-    { name: "jay", title: "Jay festival" },
   ],
   fields: [
     defineField({
@@ -121,28 +120,6 @@ export const canteenSettings = defineType({
           preview: { select: { title: "label.en", subtitle: "label.th" } },
         }),
       ],
-    }),
-
-    defineField({
-      name: "jayFestivalStart",
-      title: "Jay festival starts",
-      type: "date",
-      group: "jay",
-      description: "Optional. First day of the jay (เจ) festival. Inside the window the canteen section shows a jay banner and suggests the jay filter.",
-    }),
-    defineField({
-      name: "jayFestivalEnd",
-      title: "Jay festival ends",
-      type: "date",
-      group: "jay",
-      description: "Optional. Last day of the festival, included. Set both dates or neither.",
-      validation: (rule) =>
-        rule.custom((end: string | undefined, context) => {
-          const start = (context.document as { jayFestivalStart?: string } | undefined)?.jayFestivalStart;
-          if (Boolean(start) !== Boolean(end)) return "Set both the start and the end date, or clear both.";
-          if (start && end && end < start) return "The end date is before the start date.";
-          return true;
-        }),
     }),
   ],
   preview: {

@@ -109,7 +109,7 @@ export default async function EatStallPage({
             ) : null}
             {halalTag ? (
               <li>
-                <DietTag tag={halalTag} locale={locale} showDate />
+                <DietTag tag={halalTag} locale={locale} />
               </li>
             ) : null}
           </ul>

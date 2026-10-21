@@ -127,7 +127,7 @@ describe("pick", () => {
     const result = pick(data, only, opts("x", { dislikes: ["fixture-dish-l"] }));
     expect(result.dish).toBeNull();
     expect(result.reason.code).toBe("noMatches");
-    expect(pick(data, f({ diet: ["certified"], max: 40 }), opts("x")).dish).toBeNull();
+    expect(pick(data, f({ diet: ["halal"], max: 40 }), opts("x")).dish).toBeNull();
   });
 
   it("honours vetoes, relaxing them only as a last resort", () => {

@@ -40,9 +40,9 @@ describe("group encoding", () => {
   it("round trips awkward names without ambiguity", () => {
     const people: Person[] = [
       person({ name: "a.b~c\\d", max: 40 }),
-      person({ name: "มิ้นท์", diet: ["halal", "certified"], avoid: ["pork", "egg"] }),
+      person({ name: "มิ้นท์", diet: ["halal", "vegetarian"], avoid: ["pork", "egg"] }),
       person({ name: "🍜" }),
-      person({ name: "~", diet: ["jay"] }),
+      person({ name: "~", diet: ["vegetarian"] }),
       person({ name: "", max: 55 }),
       person({}),
     ];
@@ -52,7 +52,7 @@ describe("group encoding", () => {
   });
 
   it("writes diet and avoid in canonical order, so the same group is the same link", () => {
-    expect(encodeGroup([person({ name: "A", diet: ["jay", "nopork"], avoid: ["egg", "pork"] })])).toBe("A..np-j..pk-eg");
+    expect(encodeGroup([person({ name: "A", diet: ["vegetarian", "nopork"], avoid: ["egg", "pork"] })])).toBe("A..np-v..pk-eg");
   });
 
   it("round trips the allergen leave-outs", () => {
@@ -119,7 +119,7 @@ describe("oneStallForAll", () => {
 
   it("returns nothing for an empty group or when nobody can share", () => {
     expect(oneStallForAll(data, [], { now: NOW })).toEqual([]);
-    expect(oneStallForAll(data, [person({ diet: ["certified"] }), person({ diet: ["vegetarian"] })], { now: NOW })).toEqual([]);
+    expect(oneStallForAll(data, [person({ diet: ["halal"] }), person({ diet: ["vegetarian"] })], { now: NOW })).toEqual([]);
   });
 
   it("applies shared base filters to everyone", () => {
@@ -161,7 +161,7 @@ describe("eachTheirOwn", () => {
   });
 
   it("copes with someone nobody can feed and with no seating zones", () => {
-    const stuck = eachTheirOwn({ ...data, settings: null }, [person({ diet: ["certified"], max: 10 })], { now: NOW, seed: "x" });
+    const stuck = eachTheirOwn({ ...data, settings: null }, [person({ diet: ["halal"], max: 10 })], { now: NOW, seed: "x" });
     expect(stuck.picks[0]).toMatchObject({ dish: null, stall: null });
     expect(stuck.seating).toBeNull();
   });
@@ -176,7 +176,7 @@ describe("bindingConstraint", () => {
   it("names who blocks and the smallest budget change that unlocks a stall", () => {
     // A needs certified halal (stall 3: i 60, j 45, k 70). B is vegetarian, which stall 3 does not serve.
     // Budgets: C has 30 baht. At stall 3 nothing is that cheap.
-    const people = [person({ name: "A", diet: ["certified"] }), person({ name: "C", max: 30 })];
+    const people = [person({ name: "A", diet: ["halal"] }), person({ name: "C", max: 30 })];
     const result = bindingConstraint(data, people, { now: NOW });
     expect(result).not.toBeNull();
     expect(result!.stall.number).toBe(3);
@@ -188,7 +188,7 @@ describe("bindingConstraint", () => {
 
   it("falls back to dropping a diet or avoid choice when no budget would help", () => {
     // Only stall 3 is certified halal. B is vegetarian, and nothing at stall 3 is vegetarian, so no budget helps.
-    const people = [person({ name: "A", diet: ["certified"] }), person({ name: "B", diet: ["vegetarian"] })];
+    const people = [person({ name: "A", diet: ["halal"] }), person({ name: "B", diet: ["vegetarian"] })];
     const result = bindingConstraint(data, people, { now: NOW });
     expect(result).not.toBeNull();
     const blocker = result!.blockers.find((b) => b.personIndex === 1);
@@ -199,7 +199,7 @@ describe("bindingConstraint", () => {
   });
 
   it("reports a blocker with no fix as null rather than inventing one", () => {
-    const people = [person({ diet: ["certified"] }), person({ avoid: ["pork"], diet: ["certified"], max: 1 })];
+    const people = [person({ diet: ["halal"] }), person({ avoid: ["pork"], diet: ["halal"], max: 1 })];
     const result = bindingConstraint(data, people, { now: NOW });
     expect(result).not.toBeNull();
     expect(result!.blockers.some((b) => b.change === null || b.change.kind === "raiseBudget")).toBe(true);

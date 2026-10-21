@@ -12,11 +12,9 @@ import type {
   Allergen,
   CanteenCuisine,
   CookingStyle,
-  DietAvailability,
   DishCourse,
   DishType,
   FloorSide,
-  HalalStatus,
   MapShape,
   Protein,
   Temperature,
@@ -35,8 +33,6 @@ export const CUISINES: readonly CanteenCuisine[] = [
   "desserts",
   "fruit",
 ];
-
-export const HALAL_STATUSES: readonly HalalStatus[] = ["none", "stallDeclared", "certified"];
 
 export const MAP_SHAPES: readonly MapShape[] = ["rect", "triangleBottomRight", "triangleBottomLeft"];
 
@@ -88,9 +84,6 @@ export const COOKING_STYLES: readonly CookingStyle[] = [
 ];
 
 export const TEMPERATURES: readonly Temperature[] = ["hot", "cold"];
-
-
-export const DIET_AVAILABILITIES: readonly DietAvailability[] = ["no", "canAsk", "yes"];
 
 export const FLOOR_SIDES: readonly FloorSide[] = ["north", "south", "east", "west"];
 

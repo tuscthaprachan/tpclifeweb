@@ -14,8 +14,8 @@
  *   `canteenStall`, `canonicalDish` and `canteenDish` documents, with
  *   deterministic dot-free ids, so running it again replaces the same
  *   documents instead of duplicating them. It also fills in the
- *   `canteenSettings` singleton (floor plan grid, entrances, seating zones,
- *   jay festival dates) from `lib/canteen/dataset.ts`, and links it to the
+ *   `canteenSettings` singleton (floor plan grid, entrances and seating
+ *   zones) from `lib/canteen/dataset.ts`, and links it to the
  *   canteen `place`, creating that place with its opening hours if no place
  *   is linked yet. Settings fields already set in the Studio are never
  *   overwritten.
@@ -59,10 +59,8 @@ import {
   ALLERGENS,
   COOKING_STYLES,
   CUISINES,
-  DIET_AVAILABILITIES,
   DISH_COURSES,
   DISH_TYPES,
-  HALAL_STATUSES,
   MAP_SHAPES,
   PROTEINS,
   TEMPERATURES,
@@ -383,8 +381,6 @@ function buildStalls(file: string, rows: Row[]): { docs: SeedDoc[]; idByNumber: 
     slugs.add(stallSlug);
 
     const cuisine = enumList(file, row, "cuisine", CUISINES);
-    const halalStatus = row.cells.halal ? enumValue(file, row, "halal", HALAL_STATUSES) : "none";
-    const halalCheckedOn = dateValue(file, row, "halal_checked_on", halalStatus === "certified");
     const col = wholeNumber(file, row, "map_col", 0);
     const mapRow = wholeNumber(file, row, "map_row", 0);
     const w = wholeNumber(file, row, "map_w", 1, 1);
@@ -402,8 +398,7 @@ function buildStalls(file: string, rows: Row[]): { docs: SeedDoc[]; idByNumber: 
       slug: slug(stallSlug),
       number,
       cuisine,
-      halal: halalStatus ?? "none",
-      ...(halalCheckedOn ? { halalCheckedOn } : {}),
+      halal: yesNo(file, row, "halal"),
       vegetarianStall: yesNo(file, row, "vegetarian_stall"),
       ...(hours.length > 0 ? { hours } : {}),
       mapCell: {
@@ -459,9 +454,6 @@ function buildDishes(
     const contains = enumList(file, row, "contains", ALLERGENS, 0);
     const style = row.cells.style ? enumValue(file, row, "style", COOKING_STYLES) : undefined;
     const temperature = enumValue(file, row, "temperature", TEMPERATURES);
-    const vegetarian = enumValue(file, row, "vegetarian", DIET_AVAILABILITIES);
-    const vegan = enumValue(file, row, "vegan", DIET_AVAILABILITIES);
-    const jay = enumValue(file, row, "jay", DIET_AVAILABILITIES);
 
     const variants = list(row.cells.variants ?? "").flatMap((variant) => {
       const [th = "", en = "", delta = ""] = variant.split("|").map((part) => part.trim());
@@ -490,9 +482,7 @@ function buildDishes(
       ...(style ? { style } : {}),
       temperature,
       wet: yesNo(file, row, "wet"),
-      vegetarian,
-      vegan,
-      jay,
+      vegetarian: yesNo(file, row, "vegetarian"),
       checkedOn,
       // Seeded with the first surveyed price. Later changes append to this.
       priceHistory: [{ _type: "priceRecord" as const, _key: key(), price, checkedOn }],
@@ -628,8 +618,6 @@ async function writeSettings(client: WriteClient): Promise<void> {
       gridRows: source.gridRows,
       entrances: (source.entrances ?? []).map((entrance) => ({ ...entrance, _type: "canteenEntrance", label: localeString(entrance.label.th, entrance.label.en) })),
       seatingZones: (source.seatingZones ?? []).map((zone) => ({ ...zone, _type: "canteenSeatingZone", label: localeString(zone.label.th, zone.label.en) })),
-      ...(source.jayFestivalStart ? { jayFestivalStart: source.jayFestivalStart } : {}),
-      ...(source.jayFestivalEnd ? { jayFestivalEnd: source.jayFestivalEnd } : {}),
     })
     .commit();
   console.log(`  ok      ${SETTINGS_ID}`);

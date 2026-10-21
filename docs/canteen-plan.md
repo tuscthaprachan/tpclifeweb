@@ -10,7 +10,7 @@ Status: built, with real data. The stalls and menus were surveyed from photos on
 | Granularity | Dish level. Every stall has a menu of dishes, each with a price and tags. |
 | Maintenance | TUSU editors in Sanity. No owner logins, no student submissions, no ratings. |
 | Data | Does not exist yet. Collected by a field survey (section 4). |
-| Dietary | No pork, halal, vegetarian, vegan and jay (เจ). **No allergen data at all.** |
+| Dietary | No pork, halal (everything a halal stall sells) and vegetarian. Allergens are a broad guess from dish names, never a guarantee. |
 | Integrations | Budget tools, group mode, visual canteen map. |
 | Personal data | Device only (`localStorage`). No accounts. |
 | Tone | This section may use a warmer, casual voice. Every other CONTRIBUTING rule still applies: both languages, no em dashes, WCAG 2.2 AA, honesty. |
@@ -21,7 +21,7 @@ Status: built, with real data. The stalls and menus were surveyed from photos on
 1. **Students choose food, not stalls.** The dish is the primary object. Stalls are where you walk to.
 2. **One filter state, many views.** Browse, randomiser, map and budget tools all read the same URL parameters. Set "no pork, under 50 baht" once and every view respects it.
 3. **Surveyed, not live.** Every price shows "price checked on 12 Aug 2026". Never "current price", never "live".
-4. **Diet claims are the stall's word.** Halal and vegetarian tags read "stall says halal", with the date asked. Certified halal is a separate, stronger tag shown only with a certificate on file. No allergen claims anywhere, and the protein "avoid" filter is labelled as a preference, not an allergy tool.
+4. **Diet tags are simple and honest.** "Halal" goes on everything a halal stall sells; "Vegetarian" goes on vegetarian mains. Allergen tags are a broad guess from dish names and say so, and the leave-out filter is never presented as allergy-safe.
 5. **Works without JavaScript.** Filters are a `GET` form. The randomiser is a server-rendered page with a `seed` parameter. Group mode is a form. JavaScript makes everything instant and animated; it enables nothing.
 6. **Randomness is reproducible.** A seed in the URL means a pick can be shared and reopened and shows the same dish.
 
@@ -61,7 +61,7 @@ A sticky summary bar under the header on every `/eat` page: "No pork · under 50
 
 ### Survey kit
 - A spreadsheet template, one row per dish: stall number, Thai name as written on the board, price, price variants (พิเศษ, add egg), dish type, base, protein, cooking style, hot or cold, soup or dry, vegetarian or vegan possible, photo filename.
-- A stall sheet: stall number, name, owner's preferred stall name, cuisine, hours if different from the canteen, halal (asked, certified, no), vegetarian stall (yes, no), position on the floor plan.
+- A stall sheet: stall number, name, owner's preferred stall name, cuisine, hours if different from the canteen, halal stall (yes, no), vegetarian stall (yes, no), position on the floor plan.
 - A floor plan sketch with entrances, stall positions and seating zones.
 
 ### Method
@@ -86,8 +86,8 @@ A sticky summary bar under the header on every `/eat` page: "No pork · under 50
 | slug | slug | |
 | number | number | As painted on the stall |
 | cuisine | string[] | From a fixed list: Thai rice dishes, made to order (ตามสั่ง), noodles, Isan, chicken rice, curry over rice, Muslim food, drinks, desserts, fruit |
-| halal | `none` \| `stallDeclared` \| `certified` | With `halalCheckedOn` date |
-| vegetarianStall | boolean | Whole stall is vegetarian or jay |
+| halal | boolean | A halal stall: everything it sells is halal |
+| vegetarianStall | boolean | Whole stall is vegetarian |
 | hours | openingHours[] | Optional, inherits the canteen's |
 | mapCell | `{ col, row, w, h, shape? }` | Position on the floor plan grid. `shape` is `rect` (default), `triangleBottomRight` or `triangleBottomLeft` for a triangular kiosk |
 | wayfinding | localeString | "Second on the left from the river entrance" |
@@ -118,7 +118,7 @@ The taxonomy layer. One per real-world dish, not per stall.
 | style | enum | stir-fried, deep-fried, boiled or soup, grilled, steamed, salad, curry |
 | temperature | hot \| cold | |
 | wet | boolean | Soupy or with sauce |
-| vegetarian / vegan / jay | `no` \| `canAsk` \| `yes` | "canAsk" means the stall will make it without meat on request |
+| vegetarian | boolean | Made without meat, fish or seafood. Tagged on mains only |
 | photo | siteImage | Optional |
 | priceHistory | array of `{ price, checkedOn }` | Append only |
 | checkedOn | date | |
@@ -127,7 +127,6 @@ The taxonomy layer. One per real-world dish, not per stall.
 ### `canteenSettings` (singleton)
 - reference to the canteen `place` (hours, location)
 - floor plan: grid size, entrances, seating zones, river side, labels
-- jay festival window (start, end dates), turns on a jay banner and default filter suggestion
 - typical price figures are **computed**, never typed
 
 ### Derived values (computed in code, never stored)
@@ -144,7 +143,7 @@ Add `CanteenStall`, `CanteenDish`, `CanonicalDish`, `CanteenSettings` to `lib/sa
 | Facet | Param | Control | Notes |
 |---|---|---|---|
 | Budget | `max` | Chips (40, 50, 60, 80, any) plus number input | Includes variants toggle: "count พิเศษ price" |
-| Diet | `diet` | Checkboxes | no pork, halal (stall says), halal (certified), vegetarian, vegan, jay |
+| Diet | `diet` | Checkboxes | no pork, halal, vegetarian |
 | Type | `type` | Checkboxes with icons | rice, noodles, soup, curry over rice, made to order, snack, drink, dessert |
 | Avoid | `avoid` | Checkboxes | pork, beef, seafood, fish, egg. Labelled "Preferences. Not for allergies, ask the stall." |
 | Feel | `feel` | Chips | hot, cold, soupy, dry, fried, not fried |
@@ -266,7 +265,7 @@ New, in `components/domain/canteen/`:
 |---|---|
 | `DishCard` | Name, price, stall, diet tags, favourite toggle |
 | `PriceTag` | Price, variants on expand, "checked on" date |
-| `DietTag` | Icon plus word plus fill, "stall says" wording built in |
+| `DietTag` | Icon plus word plus fill: "Halal" or "Vegetarian" |
 | `CanteenFilters` | The GET form, used as a column or inside the Dialog |
 | `ActiveFilterBar` | Sticky summary with removable chips |
 | `RelaxSuggestions` | Zero-result recovery |
@@ -309,7 +308,7 @@ Every function in `lib/canteen` is pure apart from `device.ts`, so the server (n
 - Map has a list equivalent and logical keyboard order; badges carry numbers in text.
 - Target sizes at least 44 px on touch for chips and reroll buttons.
 - Nothing scrolls horizontally at 320 px; combo and week tables stack.
-- Prices always with "checked on". Diet tags always "stall says" or "certified". No allergen claims.
+- Prices always with "checked on". Two diet tags only: halal (every item at a halal stall) and vegetarian (mains). Allergen tags are labelled as guesses.
 - No "live", no countdown, no pulsing indicator implying real-time data.
 - `check:i18n` passes: every string in both languages, no em dashes, even in the casual voice.
 

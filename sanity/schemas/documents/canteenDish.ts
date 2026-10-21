@@ -2,7 +2,6 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 
 import {
   COOKING_STYLE_OPTIONS,
-  DIET_AVAILABILITY_OPTIONS,
   DISH_COURSE_OPTIONS,
   DISH_TYPE_OPTIONS,
   PROTEIN_OPTIONS,
@@ -17,23 +16,12 @@ function priceMessage(value: number | undefined): true | string {
   return value >= 1 ? true : "The price must be at least 1 baht.";
 }
 
-const dietField = (name: "vegetarian" | "vegan" | "jay", title: string, description: string) =>
-  defineField({
-    name,
-    title,
-    type: "string",
-    options: { list: DIET_AVAILABILITY_OPTIONS, layout: "radio" },
-    initialValue: "no",
-    description,
-    validation: (rule) => rule.required(),
-  });
-
 /**
  * One dish at one stall. Registered as schema name `canteenDish`, matching
  * `_type: "canteenDish"` on `CanteenDish` in `lib/sanity/types.ts`.
  *
- * There is deliberately no allergen field, and no field for whether the dish
- * is sold out today. This is a surveyed record of what the stall sells and
+ * Allergens are a broad guess ("contains"), and there is no field for
+ * whether the dish is sold out today. This is a surveyed record of what the stall sells and
  * what it cost on the day it was checked.
  */
 export const canteenDish = defineType({
@@ -155,9 +143,14 @@ export const canteenDish = defineType({
       group: "tags",
       initialValue: false,
     }),
-    dietField("vegetarian", "Vegetarian", 'Yes if it is normally made without meat. "Can ask" if the stall will make it without meat on request.'),
-    dietField("vegan", "Vegan", 'Yes if it is normally made without any animal product. "Can ask" if the stall will do it on request.'),
-    dietField("jay", "Jay (เจ)", 'Yes only if the stall serves it as jay. "Can ask" if the stall will make it jay on request.'),
+    defineField({
+      name: "vegetarian",
+      title: "Vegetarian",
+      type: "boolean",
+      group: "tags",
+      initialValue: false,
+      description: "On if it is normally made without meat, fish or seafood. Only mains show the vegetarian tag.",
+    }),
 
     defineField({
       name: "price",

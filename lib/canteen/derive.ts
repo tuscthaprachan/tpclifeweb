@@ -16,9 +16,7 @@ import type {
   CanteenSettings,
   CanteenStall,
   DishType,
-  HalalStatus,
   OpeningHours,
-  DietAvailability,
 } from "@/lib/sanity/types";
 
 import type { DietKey } from "./params";
@@ -149,53 +147,27 @@ export function canonicalOf(data: CanteenData, dish: CanteenDish): CanonicalDish
 /**
  * True when the dish has no pork in its recorded proteins. This is what the
  * dish is tagged with, not a guarantee about the kitchen: broths, sauces and
- * shared woks are not tracked, and a halal stall is shown through `halal`,
- * not folded in here.
+ * shared woks are not tracked, and a halal stall is shown through its own
+ * `halal` flag, not folded in here.
  */
 export function noPork(dish: CanteenDish): boolean {
   return !dish.protein.includes("pork");
 }
 
-/** The halal status of the stall that sells the dish. It is the stall's own word unless `certified`. */
-export function halal(stall: CanteenStall): HalalStatus {
-  return stall.halal;
+/** Whether the dish is vegetarian, by itself or because its whole stall is. */
+export function isVegetarian(dish: CanteenDish, stall: CanteenStall): boolean {
+  return dish.vegetarian || stall.vegetarianStall === true;
 }
 
-const AVAILABILITY_RANK: Record<DietAvailability, number> = { no: 0, canAsk: 1, yes: 2 };
-
-/** The better of two availabilities. */
-function best(a: DietAvailability, b: DietAvailability): DietAvailability {
-  return AVAILABILITY_RANK[a] >= AVAILABILITY_RANK[b] ? a : b;
-}
-
-/**
- * Whether the dish suits vegetarians. A dish from a stall flagged as a
- * vegetarian stall counts as `yes`. Vegan and jay are never inferred from
- * the stall, only from the dish.
- */
-export function vegetarianAvailability(dish: CanteenDish, stall: CanteenStall): DietAvailability {
-  return stall.vegetarianStall ? best(dish.vegetarian, "yes") : dish.vegetarian;
-}
-
-/**
- * Whether a dish meets one diet filter. `canAsk` counts as meeting the
- * vegetarian, vegan and jay filters, because the stall will make it that
- * way on request; the UI marks those dishes so the student knows to ask.
- */
+/** Whether a dish meets one diet filter. Everything a halal stall sells is halal. */
 export function meetsDiet(dish: CanteenDish, stall: CanteenStall, diet: DietKey): boolean {
   switch (diet) {
     case "nopork":
       return noPork(dish);
     case "halal":
-      return stall.halal !== "none";
-    case "certified":
-      return stall.halal === "certified";
+      return stall.halal;
     case "vegetarian":
-      return vegetarianAvailability(dish, stall) !== "no";
-    case "vegan":
-      return dish.vegan !== "no";
-    case "jay":
-      return dish.jay !== "no";
+      return isVegetarian(dish, stall);
   }
 }
 
@@ -307,15 +279,6 @@ export function closesAt(settings: CanteenSettings | null, stall: CanteenStall |
   const hours = hoursFor(settings, stall);
   if (!hours) return null;
   return blockAt(hours, bangkokTime(date))?.closes ?? null;
-}
-
-/** True when `date` falls inside the jay festival window (inclusive), by Bangkok date. */
-export function isJayFestival(settings: CanteenSettings | null, date: Date): boolean {
-  const start = settings?.jayFestivalStart;
-  const end = settings?.jayFestivalEnd;
-  if (!start || !end) return false;
-  const today = bangkokTime(date).dateKey;
-  return start <= today && today <= end;
 }
 
 /* ------------------------------------------------------------------ *

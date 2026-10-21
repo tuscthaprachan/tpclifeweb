@@ -54,13 +54,6 @@ export const CANTEEN_CUISINE_OPTIONS = [
   { title: "Fruit", value: "fruit" },
 ];
 
-/** Matches `HalalStatus`. "Stall says" is the stall's own word, "certified" needs a certificate on file. */
-export const HALAL_OPTIONS = [
-  { title: "None", value: "none" },
-  { title: "Stall says it is halal (asked, no certificate)", value: "stallDeclared" },
-  { title: "Certified halal (certificate on file)", value: "certified" },
-];
-
 /** Matches `DishType`. */
 export const DISH_TYPE_OPTIONS = [
   { title: "Rice", value: "rice" },
@@ -122,13 +115,6 @@ export const COOKING_STYLE_OPTIONS = [
 export const TEMPERATURE_OPTIONS = [
   { title: "Hot", value: "hot" },
   { title: "Cold", value: "cold" },
-];
-
-/** Matches `DietAvailability`. "Can ask" means the stall will make it without meat on request. */
-export const DIET_AVAILABILITY_OPTIONS = [
-  { title: "No", value: "no" },
-  { title: "Can ask (the stall will make it this way on request)", value: "canAsk" },
-  { title: "Yes (as it is normally made)", value: "yes" },
 ];
 
 /** Matches `FloorSide`. Which edge of the floor plan an entrance or the river is on. */

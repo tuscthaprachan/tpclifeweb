@@ -167,21 +167,19 @@ export default async function EatDishPage({
           </Stack>
         </section>
 
-        <section aria-labelledby="eat-dish-diet">
-          <Stack space={3}>
-            <Heading level={2} id="eat-dish-diet" className="m-0 text-xl">
-              {t(EAT.dietTitle, locale)}
-            </Heading>
-            {dishDietTags(dish, stall).length > 0 ? (
-              <DietTags tags={dishDietTags(dish, stall)} locale={locale} showDate />
-            ) : (
-              <p className="m-0 text-ink-900">{t(EAT.noDietTags, locale)}</p>
-            )}
-            <InsetText>
-              <p className="m-0 text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
-            </InsetText>
-          </Stack>
-        </section>
+        {dishDietTags(dish, stall).length > 0 ? (
+          <section aria-labelledby="eat-dish-diet">
+            <Stack space={3}>
+              <Heading level={2} id="eat-dish-diet" className="m-0 text-xl">
+                {t(EAT.dietTitle, locale)}
+              </Heading>
+              <DietTags tags={dishDietTags(dish, stall)} locale={locale} />
+              <InsetText>
+                <p className="m-0 text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
+              </InsetText>
+            </Stack>
+          </section>
+        ) : null}
 
         {canonical && sameDish.length > 1 ? (
           <section aria-labelledby="eat-dish-also" className="flex flex-col gap-[var(--space-3)]">

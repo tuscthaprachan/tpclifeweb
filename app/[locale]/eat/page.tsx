@@ -27,7 +27,7 @@ import {
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Grid, Heading, InsetText, Stack, Timestamp } from "@/components/ui";
 import { applyFilters, isMealDish } from "@/lib/canteen/filter";
-import { closesAt, indexCanteen, isJayFestival, medianRicePrice, priceRange, stallOf } from "@/lib/canteen/derive";
+import { closesAt, indexCanteen, medianRicePrice, priceRange, stallOf } from "@/lib/canteen/derive";
 import { countActiveValues } from "@/lib/canteen/params";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -109,7 +109,6 @@ export default async function EatHubPage({
   const starters = applyFilters(data, filters, now, { locale })
     .filter((dish) => isMealDish(dish, filters))
     .slice(0, STARTER_COUNT);
-  const jay = isJayFestival(data.settings, now);
   const filtered = countActiveValues(filters) > 0;
 
   return (
@@ -117,22 +116,6 @@ export default async function EatHubPage({
       {breadcrumbs}
       <Stack space={8}>
         {header}
-
-        {jay ? (
-          <section aria-labelledby="eat-jay-title" className="rounded-panel border border-line bg-welfare-soft p-[var(--space-4)]">
-            <Stack space={2}>
-              <Heading level={2} id="eat-jay-title" className="m-0 text-xl">
-                {t(EAT.jayBannerTitle, locale)}
-              </Heading>
-              <p className="m-0 text-ink-900">{t(EAT.jayBannerBody, locale)}</p>
-              <p className="m-0">
-                <Link href={eatHref(locale, "/eat/dishes", { ...filters, diet: [...new Set([...filters.diet, "jay" as const])] })} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
-                  {t(EAT.jayBannerAction, locale)}
-                </Link>
-              </p>
-            </Stack>
-          </section>
-        ) : null}
 
         {filtered ? (
           <ActiveFilterBar

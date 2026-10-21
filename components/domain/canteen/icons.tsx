@@ -173,16 +173,6 @@ export function HalalIcon(props: IconProps) {
   );
 }
 
-/** A crescent with a tick: certified halal. */
-export function CertifiedIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M11 4a6.5 6.5 0 100 12 5 5 0 010-12z" />
-      <path d="M12.5 9.5l2 2 3.5-4" />
-    </Svg>
-  );
-}
-
 /** A leaf: vegetarian. */
 export function VegetarianIcon(props: IconProps) {
   return (
@@ -193,36 +183,10 @@ export function VegetarianIcon(props: IconProps) {
   );
 }
 
-/** A sprout: vegan. */
-export function VeganIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M10 17v-7" />
-      <path d="M10 10C10 6.5 7.5 5 4 5c0 3.5 2.5 5 6 5z" />
-      <path d="M10 12.5c0-2.5 1.8-4 5-4 0 2.8-1.8 4-5 4z" />
-    </Svg>
-  );
-}
-
-/** A lotus: jay (เจ). */
-export function JayIcon(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M10 4c2 2 2.8 4.2 0 8-2.8-3.8-2-6 0-8z" />
-      <path d="M3.5 8.5c3 0 5 1.8 6.5 3.5-2.2 2.2-5.5 2-6.5-3.5z" />
-      <path d="M16.5 8.5c-3 0-5 1.8-6.5 3.5 2.2 2.2 5.5 2 6.5-3.5z" />
-      <path d="M4 16h12" />
-    </Svg>
-  );
-}
-
 const DIET_ICON: Record<DietKey, (props: IconProps) => React.JSX.Element> = {
   nopork: NoPorkIcon,
   halal: HalalIcon,
-  certified: CertifiedIcon,
   vegetarian: VegetarianIcon,
-  vegan: VeganIcon,
-  jay: JayIcon,
 };
 
 /** The icon for a diet. Always put the diet's word beside it. */

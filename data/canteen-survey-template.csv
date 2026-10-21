@@ -15,10 +15,10 @@
 # style             optional. stirFried deepFried boiled grilled steamed salad curry. Leave empty for drinks and desserts
 # temperature       hot | cold
 # wet               yes | no   (soupy or with sauce)
-# vegetarian, vegan, jay   no | canAsk | yes   (canAsk: the stall will make it that way on request)
+# vegetarian        yes | no   (made without meat, fish or seafood as it normally comes)
 # checked_on        YYYY-MM-DD, the day the price was read off the board
 # photo_filename    optional, noted only. Upload photos in the Studio.
 #
 # Example of the row format, with placeholder values only (delete this line in your copy):
 # 1,ชื่อเมนูภาษาไทย,Dish description in English (transliteration),,,40,,rice,main,chicken,stirFried,1,hot,no,no,no,no,2026-01-01,
-stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,protein,contains,style,temperature,wet,vegetarian,vegan,jay,checked_on,photo_filename
+stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,protein,contains,style,temperature,wet,vegetarian,checked_on,photo_filename

@@ -9,8 +9,9 @@
  * - `name`: free text. The characters `\`, `.` and `~` are escaped with a
  *   backslash, nothing else is, so Thai names and emoji stay readable.
  * - `max`: the budget in whole baht, or empty.
- * - `diet`: codes joined with `-`: np (no pork), h (halal), c (certified
- *   halal), v (vegetarian), vg (vegan), j (jay).
+ * - `diet`: codes joined with `-`: np (no pork), h (halal), v (vegetarian).
+ *   Retired codes from older links (c, vg, j) are ignored, except c
+ *   (certified halal), which reads as h.
  * - the fourth field once held a spice limit. It is always written empty
  *   and ignored when read, so old links still decode.
  * - `avoid`: codes joined with `-`: pk (pork), bf (beef), sf (seafood),
@@ -54,10 +55,7 @@ export const MAX_NAME_LENGTH = 24;
 const DIET_CODES: Record<DietKey, string> = {
   nopork: "np",
   halal: "h",
-  certified: "c",
   vegetarian: "v",
-  vegan: "vg",
-  jay: "j",
 };
 const AVOID_CODES: Record<AvoidKey, string> = {
   pork: "pk",
@@ -142,7 +140,7 @@ export function decodeGroup(encoded: string | null | undefined): Person[] {
       avoid: [],
     };
     if (/^\d{1,5}$/.test(max) && Number(max) >= 1) person.max = Number(max);
-    const dietCodes = new Set(diet.split("-"));
+    const dietCodes = new Set(diet.split("-").map((code) => (code === "c" ? "h" : code)));
     person.diet = DIET_KEYS.filter((key) => dietCodes.has(DIET_CODES[key]));
     const avoidCodes = new Set(avoid.split("-"));
     person.avoid = AVOID_KEYS.filter((key) => avoidCodes.has(AVOID_CODES[key]));

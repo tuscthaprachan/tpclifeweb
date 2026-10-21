@@ -55,15 +55,15 @@ describe("mealCombos", () => {
   });
 
   it("applies diet to every course", () => {
-    const combos = mealCombos(data, f({ diet: ["vegan"] }), 80, { now: NOW, limit: 500 });
+    const combos = mealCombos(data, f({ diet: ["vegetarian"] }), 80, { now: NOW, limit: 500 });
     expect(combos.length).toBeGreaterThan(0);
     for (const combo of combos) {
-      for (const dish of combo.items) expect(dish.vegan).not.toBe("no");
+      for (const dish of combo.items) expect(dish.vegetarian || dish.stall._ref === "stall-4").toBe(true);
     }
   });
 
-  it("certified halal leaves no drink or dessert at a stall that is not certified", () => {
-    const combos = mealCombos(data, f({ diet: ["certified"] }), 80, { now: NOW, limit: 500 });
+  it("halal leaves no drink or dessert from a stall that is not halal", () => {
+    const combos = mealCombos(data, f({ diet: ["halal"] }), 80, { now: NOW, limit: 500 });
     expect(combos.every((c) => c.items.length === 1)).toBe(true);
   });
 

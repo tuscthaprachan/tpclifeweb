@@ -90,10 +90,6 @@ describe("surveyed canteen data", () => {
     }
   });
 
-  it("uses the real 2569 jay festival dates", () => {
-    expect(data.settings?.jayFestivalStart).toBe("2026-10-10");
-    expect(data.settings?.jayFestivalEnd).toBe("2026-10-18");
-  });
 
   it("puts each column in walking order (stall number)", () => {
     for (const group of [[1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15, 16]]) {
@@ -103,9 +99,8 @@ describe("surveyed canteen data", () => {
     }
   });
 
-  it("marks only stall 14 halal, and never says a stall was asked", () => {
-    expect(data.stalls.filter((stall) => stall.halal !== "none").map((stall) => stall.number)).toEqual([14]);
-    for (const dish of data.dishes) for (const tag of [dish.vegetarian, dish.vegan, dish.jay]) expect(tag).not.toBe("canAsk");
+  it("marks only stall 14 halal", () => {
+    expect(data.stalls.filter((stall) => stall.halal).map((stall) => stall.number)).toEqual([14]);
   });
 
   it("tags allergens on the dishes that obviously have them", () => {
@@ -132,7 +127,7 @@ describe("the canteen logic on surveyed data", () => {
   it("filters", () => {
     expect(applyFilters(data, filters, NOW).length).toBe(data.dishes.length);
     expect(applyFilters(data, { ...filters, diet: ["halal"] }, NOW).length).toBeGreaterThan(0);
-    expect(applyFilters(data, { ...filters, diet: ["jay"] }, NOW).length).toBeGreaterThan(0);
+    expect(applyFilters(data, { ...filters, diet: ["vegetarian"] }, NOW).length).toBeGreaterThan(0);
     expect(applyFilters(data, { ...filters, max: 40 }, NOW).length).toBeGreaterThan(0);
   });
 
@@ -161,7 +156,7 @@ describe("the canteen logic on surveyed data", () => {
 
   it("never offers the vacant stall to a group", () => {
     const people: Person[] = [
-      { name: "A", diet: ["vegan"], avoid: [] },
+      { name: "A", diet: ["vegetarian"], avoid: [] },
       { name: "B", diet: ["halal"], avoid: [], max: 20 },
     ];
     const options = { base: filters, now: NOW };

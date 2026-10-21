@@ -45,7 +45,7 @@ Each change lists the field, why, and the migration. `lib/sanity/types.ts` is a 
 |---|---|---|
 | `cuisine` | Extend the list: `japanese`, `western`, `snacks`, `coffeeTea`, `smoothies`, `bakery`; retire `international` | Filtering and stall chips are meaningless while three unrelated stalls share one value |
 | `numberConfirmed` | New: `photo`, `documents`, `assumed` with a date | Replaces the free-text "assumed" sentence in wayfinding. Stall 18 is `documents` only |
-| `halalSource` | New: `sign`, `asked`, `certificate` | Today "stall says halal, asked on" is the only wording; stall 14's evidence is a sign |
+| `halal` | Done: one yes or no per stall | Everything a halal stall sells is tagged halal. The stall-says and certified levels are gone |
 | `surcharges[]` | New: `{ label, delta, appliesTo: "takeaway" | "large" }` | Stall 3's +5 take-away and +10 large apply to the whole menu, not per dish |
 | `platePricing` | New, optional: `[{ count, price }]` | Stall 1 prices plates by number of toppings. The curries are listed now as "over rice, 30" with +10 and +20 variants, which is right for one plate but clumsy |
 | `boardPhotos[]` | New, images | Shown on the stall page as "the menu board", so a reader can check anything we misread |

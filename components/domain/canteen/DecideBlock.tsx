@@ -18,8 +18,8 @@ interface DecideBlockProps {
 /** Budget chips on the hub, in baht. "Any" is added by the block. */
 const DECIDE_BUDGETS = [40, 50, 60] as const;
 
-/** The diets offered as chips. Certified halal is a filter on the dish list and rides along if already chosen. */
-const DECIDE_DIETS: readonly DietKey[] = ["nopork", "halal", "vegetarian", "vegan", "jay"];
+/** The diets offered as chips. */
+const DECIDE_DIETS: readonly DietKey[] = ["nopork", "halal", "vegetarian"];
 
 /**
  * The "Decide for me" block of the hub: a budget chip row, a diet chip row and

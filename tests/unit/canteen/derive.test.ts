@@ -8,7 +8,6 @@ import {
   effectivePrice,
   emptyCanteenData,
   indexCanteen,
-  isJayFestival,
   isOpenNow,
   meetsDiet,
   medianPrice,
@@ -70,24 +69,21 @@ describe("derive: diet", () => {
     expect(noPork(dishById(data, "b"))).toBe(true);
   });
 
-  it("halal comes from the stall, and certified is stronger than stall says", () => {
+  it("halal comes from the stall: everything a halal stall sells is halal", () => {
     const e = dishById(data, "e");
     const i = dishById(data, "i");
-    expect(meetsDiet(e, stallOf(data, e)!, "halal")).toBe(true);
-    expect(meetsDiet(e, stallOf(data, e)!, "certified")).toBe(false);
-    expect(meetsDiet(i, stallOf(data, i)!, "certified")).toBe(true);
+    expect(meetsDiet(e, stallOf(data, e)!, "halal")).toBe(false);
+    expect(meetsDiet(i, stallOf(data, i)!, "halal")).toBe(true);
   });
 
-  it("canAsk counts for vegetarian, vegan and jay, and a vegetarian stall implies vegetarian only", () => {
+  it("vegetarian comes from the dish, or from a vegetarian stall", () => {
     const d = dishById(data, "d");
     const m = dishById(data, "m");
     expect(meetsDiet(d, stallOf(data, d)!, "vegetarian")).toBe(true);
-    expect(meetsDiet(m, stallOf(data, m)!, "vegan")).toBe(true);
+    expect(meetsDiet(m, stallOf(data, m)!, "vegetarian")).toBe(true);
     const stall4 = data.stalls.find((s) => s.number === 4)!;
-    const plain = { ...dishById(data, "l"), vegetarian: "no" as const, vegan: "no" as const, jay: "no" as const };
+    const plain = { ...dishById(data, "l"), vegetarian: false };
     expect(meetsDiet(plain, stall4, "vegetarian")).toBe(true);
-    expect(meetsDiet(plain, stall4, "vegan")).toBe(false);
-    expect(meetsDiet(plain, stall4, "jay")).toBe(false);
   });
 });
 
@@ -123,12 +119,6 @@ describe("derive: time in Asia/Bangkok", () => {
     expect(closesAt(data.settings, stall(1), new Date("2026-08-10T16:00:00+07:00"))).toBeNull();
   });
 
-  it("knows the jay festival window, inclusive", () => {
-    expect(isJayFestival(data.settings, new Date("2026-10-18T00:00:00+07:00"))).toBe(true);
-    expect(isJayFestival(data.settings, new Date("2026-10-26T23:00:00+07:00"))).toBe(true);
-    expect(isJayFestival(data.settings, new Date("2026-10-27T00:00:00+07:00"))).toBe(false);
-    expect(isJayFestival(null, NOW)).toBe(false);
-  });
 });
 
 describe("derive: prices", () => {

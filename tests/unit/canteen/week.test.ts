@@ -73,7 +73,7 @@ describe("planWeek", () => {
     expect(plan("x", { locks: { 1: "no-such-dish" } })).toEqual({ ok: false, reason: "unknownLock" });
     expect(plan("x", { locks: { 1: "fixture-dish-a", 2: "fixture-dish-b" } })).toEqual({ ok: false, reason: "lockConflict" }); // same stall
     expect(plan("x", { locks: { 1: "fixture-dish-a", 2: "fixture-dish-j", 3: "fixture-dish-s" } })).toEqual({ ok: false, reason: "lockConflict" }); // basil twice
-    expect(plan("x", { days: [1, 2], budget: 200 }, f({ diet: ["certified"] }))).toEqual({ ok: false, reason: "notEnoughStalls" });
+    expect(plan("x", { days: [1, 2], budget: 200 }, f({ diet: ["halal"] }))).toEqual({ ok: false, reason: "notEnoughStalls" });
   });
 
   it("finds a tight plan by search, not luck", () => {

@@ -16,7 +16,7 @@
  *     dated 27 August 2569 and the selection results of 2 September 2569
  *     (contract period 1 October 2569 to 30 September 2570).
  *   - Halal: stall 14 shows a halal sign and holds the university's halal slot.
- *     No stall was asked about halal, vegetarian or jay food.
+ *     Everything it sells is halal. No stall was asked about vegetarian food.
  *
  * Floor plan (17 columns by 7 rows, top = north, landscape). Stalls are
  * 2 cells wide. Lifts, toilets, stairs and the ATM are not drawn on the map,
@@ -45,7 +45,6 @@ import type {
   CanteenSeatingZone,
   CanteenSettings,
   CanteenStall,
-  HalalStatus,
   MapShape,
 } from "@/lib/sanity/types";
 
@@ -66,8 +65,7 @@ interface StallSpec {
   th: string;
   en: string;
   cuisine: CanteenCuisine[];
-  halal: HalalStatus;
-  halalCheckedOn?: string;
+  halal: boolean;
   col: number;
   row: number;
   /** Cells wide and tall. */
@@ -93,30 +91,30 @@ const MIDDLE = (nth: { th: string; en: string }) => ({
 
 const STALL_SPECS: StallSpec[] = [
   /* West column, stalls 1 to 7. */
-  { number: 1, slug: "1-pha-phriu-curry-over-rice", th: "พาพริ้ว ข้าวแกงสารพัดนึก", en: "Pha Phriu curry over rice", cuisine: ["curryOverRice"], halal: "none", col: 0, row: 0, w: 2, h: 1, wayfinding: WEST({ th: "แรกที่ปลายด้านเหนือ", en: "First stall at the north end" }) },
-  { number: 2, slug: "2-song-phi-nong-noodles", th: "ก๋วยเตี๋ยวสองพี่น้อง", en: "Song Phi Nong Noodles", cuisine: ["noodles"], halal: "none", col: 0, row: 1, w: 2, h: 1, wayfinding: WEST({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
-  { number: 3, slug: "3-mae-phim-made-to-order", th: "แม่พิมพ์ อาหารตามสั่ง", en: "Mama Pim, made to order", cuisine: ["madeToOrder"], halal: "none", col: 0, row: 2, w: 2, h: 1, wayfinding: WEST({ th: "ที่สามจากทางเหนือ", en: "Third stall from the north" }) },
-  { number: 4, slug: "4-ganga-drinks", th: "คงคา GaNGa", en: "GaNGa", cuisine: ["drinks"], halal: "none", col: 0, row: 3, w: 2, h: 1, wayfinding: { th: "ร้านกลางแถวฝั่งตะวันตก หันหน้าเข้าหาโถง ด้านหลังแถวร้านฝั่งตะวันตกเป็นห้องน้ำ บันไดและทางหนีไฟ", en: "Middle of the west column, facing the hall. Behind the west column are toilets, stairs and a fire exit." } },
-  { number: 5, slug: "5-bm-health-club", th: "BM HEALTH CLUB", en: "BM Health Club", cuisine: ["drinks", "desserts"], halal: "none", col: 0, row: 4, w: 2, h: 1, wayfinding: WEST({ th: "ที่ห้าจากทางเหนือ", en: "Fifth stall from the north" }) },
-  { number: 6, slug: "6-khun-ying-chicken-rice", th: "ข้าวมันไก่คุณหญิง โดยแม่ปราณีต", en: "Khun Ying Chicken Rice by Mae Pranit", cuisine: ["chickenRice"], halal: "none", col: 0, row: 5, w: 2, h: 1, wayfinding: WEST({ th: "ที่หกจากทางเหนือ", en: "Sixth stall from the north" }) },
-  { number: 7, slug: "7-tamasato-ramen", th: "Tamasato ราเม็ง", en: "Tamasato Ramen", cuisine: ["international", "noodles"], halal: "none", col: 0, row: 6, w: 2, h: 1, wayfinding: WEST({ th: "สุดท้ายที่ปลายด้านใต้", en: "Last stall at the south end" }) },
+  { number: 1, slug: "1-pha-phriu-curry-over-rice", th: "พาพริ้ว ข้าวแกงสารพัดนึก", en: "Pha Phriu curry over rice", cuisine: ["curryOverRice"], halal: false, col: 0, row: 0, w: 2, h: 1, wayfinding: WEST({ th: "แรกที่ปลายด้านเหนือ", en: "First stall at the north end" }) },
+  { number: 2, slug: "2-song-phi-nong-noodles", th: "ก๋วยเตี๋ยวสองพี่น้อง", en: "Song Phi Nong Noodles", cuisine: ["noodles"], halal: false, col: 0, row: 1, w: 2, h: 1, wayfinding: WEST({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
+  { number: 3, slug: "3-mae-phim-made-to-order", th: "แม่พิมพ์ อาหารตามสั่ง", en: "Mama Pim, made to order", cuisine: ["madeToOrder"], halal: false, col: 0, row: 2, w: 2, h: 1, wayfinding: WEST({ th: "ที่สามจากทางเหนือ", en: "Third stall from the north" }) },
+  { number: 4, slug: "4-ganga-drinks", th: "คงคา GaNGa", en: "GaNGa", cuisine: ["drinks"], halal: false, col: 0, row: 3, w: 2, h: 1, wayfinding: { th: "ร้านกลางแถวฝั่งตะวันตก หันหน้าเข้าหาโถง ด้านหลังแถวร้านฝั่งตะวันตกเป็นห้องน้ำ บันไดและทางหนีไฟ", en: "Middle of the west column, facing the hall. Behind the west column are toilets, stairs and a fire exit." } },
+  { number: 5, slug: "5-bm-health-club", th: "BM HEALTH CLUB", en: "BM Health Club", cuisine: ["drinks", "desserts"], halal: false, col: 0, row: 4, w: 2, h: 1, wayfinding: WEST({ th: "ที่ห้าจากทางเหนือ", en: "Fifth stall from the north" }) },
+  { number: 6, slug: "6-khun-ying-chicken-rice", th: "ข้าวมันไก่คุณหญิง โดยแม่ปราณีต", en: "Khun Ying Chicken Rice by Mae Pranit", cuisine: ["chickenRice"], halal: false, col: 0, row: 5, w: 2, h: 1, wayfinding: WEST({ th: "ที่หกจากทางเหนือ", en: "Sixth stall from the north" }) },
+  { number: 7, slug: "7-tamasato-ramen", th: "Tamasato ราเม็ง", en: "Tamasato Ramen", cuisine: ["international", "noodles"], halal: false, col: 0, row: 6, w: 2, h: 1, wayfinding: WEST({ th: "สุดท้ายที่ปลายด้านใต้", en: "Last stall at the south end" }) },
 
   /* Middle block, stalls 8 to 11. */
-  { number: 8, slug: "8-lung-kap-pa-drinks", th: "ลุงกับป้า", en: "Lung Kap Pa", cuisine: ["drinks"], halal: "none", col: 10, row: 0, w: 2, h: 1, wayfinding: MIDDLE({ th: "บนสุด", en: "Top stall" }) },
-  { number: 9, slug: "9-pa-mu-desserts", th: "ขนมหวานป้าหมู", en: "Pa Mu Desserts", cuisine: ["desserts", "fruit"], halal: "none", col: 10, row: 1, w: 2, h: 1, wayfinding: MIDDLE({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
-  { number: 10, slug: "10-steak-project", th: "สเต็ก โปรเจกต์", en: "Steak Project", cuisine: ["international"], halal: "none", col: 10, row: 2, w: 2, h: 1, wayfinding: MIDDLE({ th: "ที่สามจากทางเหนือ", en: "Third stall from the north" }) },
-  { number: 11, slug: "11-chicken-man", th: "เส้นหมี่ไก่ฉีก Chicken Man", en: "Chicken Man", cuisine: ["noodles"], halal: "none", col: 10, row: 3, w: 2, h: 1, wayfinding: MIDDLE({ th: "ล่างสุด", en: "Bottom stall" }) },
+  { number: 8, slug: "8-lung-kap-pa-drinks", th: "ลุงกับป้า", en: "Lung Kap Pa", cuisine: ["drinks"], halal: false, col: 10, row: 0, w: 2, h: 1, wayfinding: MIDDLE({ th: "บนสุด", en: "Top stall" }) },
+  { number: 9, slug: "9-pa-mu-desserts", th: "ขนมหวานป้าหมู", en: "Pa Mu Desserts", cuisine: ["desserts", "fruit"], halal: false, col: 10, row: 1, w: 2, h: 1, wayfinding: MIDDLE({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
+  { number: 10, slug: "10-steak-project", th: "สเต็ก โปรเจกต์", en: "Steak Project", cuisine: ["international"], halal: false, col: 10, row: 2, w: 2, h: 1, wayfinding: MIDDLE({ th: "ที่สามจากทางเหนือ", en: "Third stall from the north" }) },
+  { number: 11, slug: "11-chicken-man", th: "เส้นหมี่ไก่ฉีก Chicken Man", en: "Chicken Man", cuisine: ["noodles"], halal: false, col: 10, row: 3, w: 2, h: 1, wayfinding: MIDDLE({ th: "ล่างสุด", en: "Bottom stall" }) },
 
   /* East column, stalls 12 to 16. */
-  { number: 12, slug: "12-isan-food", th: "อาหารอีสาน", en: "Isan food", cuisine: ["isan"], halal: "none", col: 15, row: 0, w: 2, h: 1, wayfinding: EAST({ th: "แรกที่ปลายด้านเหนือ", en: "First stall at the north end" }) },
-  { number: 13, slug: "13-thian-thong-made-to-order", th: "เทียนทอง อาหารตามสั่ง", en: "Thian Thong, made to order", cuisine: ["madeToOrder"], halal: "none", col: 15, row: 1, w: 2, h: 1, wayfinding: EAST({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
-  { number: 14, slug: "14-mum-kin-halal", th: "ร้านมุมกินฮาลาล", en: "Mum Kin Halal", cuisine: ["muslim", "madeToOrder"], halal: "stallDeclared", col: 15, row: 2, w: 2, h: 1, wayfinding: EAST({ th: "กลางแถว", en: "Middle stall" }) },
-  { number: 15, slug: "15-tu-chicken-rice-pork-leg", th: "ข้าวมันไก่-ขาหมู TU", en: "TU Chicken Rice and Pork Leg", cuisine: ["chickenRice"], halal: "none", col: 15, row: 3, w: 2, h: 1, wayfinding: EAST({ th: "ที่สี่จากทางเหนือ", en: "Fourth stall from the north" }) },
-  { number: 16, slug: "16-yum-yum-snackie", th: "Yum Yum Snackie", en: "Yum Yum Snackie", cuisine: ["international"], halal: "none", col: 15, row: 4, w: 2, h: 1, wayfinding: { th: "ร้านสุดท้ายที่ปลายด้านใต้ของแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก ด้านหลังแถวร้านฝั่งตะวันออกเป็นห้องน้ำและบันได", en: "Last stall at the south end of the east column, facing west. Behind the east column are toilets and stairs." } },
+  { number: 12, slug: "12-isan-food", th: "อาหารอีสาน", en: "Isan food", cuisine: ["isan"], halal: false, col: 15, row: 0, w: 2, h: 1, wayfinding: EAST({ th: "แรกที่ปลายด้านเหนือ", en: "First stall at the north end" }) },
+  { number: 13, slug: "13-thian-thong-made-to-order", th: "เทียนทอง อาหารตามสั่ง", en: "Thian Thong, made to order", cuisine: ["madeToOrder"], halal: false, col: 15, row: 1, w: 2, h: 1, wayfinding: EAST({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
+  { number: 14, slug: "14-mum-kin-halal", th: "ร้านมุมกินฮาลาล", en: "Mum Kin Halal", cuisine: ["muslim", "madeToOrder"], halal: true, col: 15, row: 2, w: 2, h: 1, wayfinding: EAST({ th: "กลางแถว", en: "Middle stall" }) },
+  { number: 15, slug: "15-tu-chicken-rice-pork-leg", th: "ข้าวมันไก่-ขาหมู TU", en: "TU Chicken Rice and Pork Leg", cuisine: ["chickenRice"], halal: false, col: 15, row: 3, w: 2, h: 1, wayfinding: EAST({ th: "ที่สี่จากทางเหนือ", en: "Fourth stall from the north" }) },
+  { number: 16, slug: "16-yum-yum-snackie", th: "Yum Yum Snackie", en: "Yum Yum Snackie", cuisine: ["international"], halal: false, col: 15, row: 4, w: 2, h: 1, wayfinding: { th: "ร้านสุดท้ายที่ปลายด้านใต้ของแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก ด้านหลังแถวร้านฝั่งตะวันออกเป็นห้องน้ำและบันได", en: "Last stall at the south end of the east column, facing west. Behind the east column are toilets and stairs." } },
 
   /* Corner kiosks on the north wall, either side of the central north lobby. */
-  { number: 17, slug: "17-am-tea", th: "แอมที", en: "Am Tea", cuisine: ["drinks", "desserts"], halal: "none", col: 4, row: 0, w: 2, h: 2, shape: "triangleBottomRight", wayfinding: { th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางซ้ายของทางเข้ากลางด้านเหนือ", en: "Triangular corner kiosk on the north wall, left of the central north entrance." } },
-  { number: 18, slug: "18-kanlaya-peeled-fruit", th: "ร้านกัลยาผลไม้ปอกพร้อมทาน", en: "Kanlaya Peeled Fruit", cuisine: ["fruit"], halal: "none", col: 8, row: 0, w: 2, h: 2, shape: "triangleBottomLeft", wayfinding: { th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางขวาของทางเข้ากลางด้านเหนือ ยังไม่ได้ถ่ายรูปเมนู และยังไม่ได้ยืนยันว่าร้านนี้อยู่ที่แผงนี้", en: "Triangular corner kiosk on the north wall, right of the central north entrance. Its menu has not been photographed and the shop at this kiosk is not yet confirmed." } },
+  { number: 17, slug: "17-am-tea", th: "แอมที", en: "Am Tea", cuisine: ["drinks", "desserts"], halal: false, col: 4, row: 0, w: 2, h: 2, shape: "triangleBottomRight", wayfinding: { th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางซ้ายของทางเข้ากลางด้านเหนือ", en: "Triangular corner kiosk on the north wall, left of the central north entrance." } },
+  { number: 18, slug: "18-kanlaya-peeled-fruit", th: "ร้านกัลยาผลไม้ปอกพร้อมทาน", en: "Kanlaya Peeled Fruit", cuisine: ["fruit"], halal: false, col: 8, row: 0, w: 2, h: 2, shape: "triangleBottomLeft", wayfinding: { th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางขวาของทางเข้ากลางด้านเหนือ ยังไม่ได้ถ่ายรูปเมนู และยังไม่ได้ยืนยันว่าร้านนี้อยู่ที่แผงนี้", en: "Triangular corner kiosk on the north wall, right of the central north entrance. Its menu has not been photographed and the shop at this kiosk is not yet confirmed." } },
 ];
 
 const stallId = (number: number) => `survey-stall-${number}`;
@@ -132,7 +130,6 @@ function buildStalls(stamp: string): CanteenStall[] {
     number: spec.number,
     cuisine: spec.cuisine,
     halal: spec.halal,
-    ...(spec.halalCheckedOn ? { halalCheckedOn: spec.halalCheckedOn } : {}),
     mapCell: { col: spec.col, row: spec.row, w: spec.w, h: spec.h, ...(spec.shape ? { shape: spec.shape } : {}) },
     wayfinding: spec.wayfinding,
   }));
@@ -367,8 +364,6 @@ function buildDishes(stamp: string): CanteenDish[] {
     temperature: spec.temperature,
     wet: spec.wet,
     vegetarian: spec.vegetarian,
-    vegan: spec.vegan,
-    jay: spec.jay,
     checkedOn: SURVEY_DATE,
   }));
 }
@@ -411,10 +406,6 @@ function buildSettings(stamp: string): CanteenSettings {
     gridRows: 7,
     entrances: ENTRANCES,
     seatingZones: SEATING,
-    // เทศกาลกินเจ 2569 runs 10 to 18 October 2569 (2026), as reported by Thai press
-    // (bangkokbiznews.com/lifestyle/travel/1255815, ktc.co.th/article/lifestyle/misc/vegetarian-festival).
-    jayFestivalStart: "2026-10-10",
-    jayFestivalEnd: "2026-10-18",
   };
 }
 
