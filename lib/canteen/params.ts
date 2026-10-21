@@ -51,7 +51,7 @@ export const MAX_BUDGET = 5000;
  * Arrays are always sorted in canonical order and free of duplicates.
  */
 export interface CanteenFilters {
-  /** Budget in baht, whole number. Dishes costing more are hidden. */
+  /** Highest price per dish in baht, whole number. Dishes costing more are hidden. The whole-meal budget is the separate `meal` parameter. */
   max?: number;
   /** Count the dearest variant (for example special, พิเศษ) as the price when checking the budget. */
   variants: boolean;
@@ -123,6 +123,23 @@ function flag(raw: RawParams, name: string): boolean {
 /** A slug as it appears in a URL: lowercase letters, digits and hyphens. */
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,79}$/;
 
+/** A whole number of baht from 1 to `MAX_BUDGET`, or undefined for anything else. */
+function budgetValue(text: string | undefined): number | undefined {
+  if (text === undefined || !/^\d{1,5}$/.test(text)) return undefined;
+  const amount = Number(text);
+  return amount >= 1 && amount <= MAX_BUDGET ? amount : undefined;
+}
+
+/**
+ * The whole-meal budget in baht from the `meal` parameter, used by meal mode
+ * on /eat/plan and /eat/pick. It is not a filter: `max` stays the highest
+ * price per dish, and `meal` is the total for main, drink and dessert.
+ * Undefined when absent or invalid.
+ */
+export function parseMealBudget(raw: RawParams): number | undefined {
+  return budgetValue(first(raw, "meal"));
+}
+
 /**
  * Reads the canteen filters out of URL parameters. Never throws. Anything
  * invalid is dropped, so a hand edited or stale link degrades to fewer
@@ -131,11 +148,8 @@ const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,79}$/;
 export function parse(raw: RawParams): CanteenFilters {
   const filters = defaultFilters();
 
-  const maxText = first(raw, "max");
-  if (maxText !== undefined && /^\d{1,5}$/.test(maxText)) {
-    const max = Number(maxText);
-    if (max >= 1 && max <= MAX_BUDGET) filters.max = max;
-  }
+  const max = budgetValue(first(raw, "max"));
+  if (max !== undefined) filters.max = max;
 
   filters.variants = flag(raw, "variants");
   filters.diet = canonicalList(tokens(raw, "diet"), DIET_KEYS);

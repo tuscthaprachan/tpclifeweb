@@ -3,12 +3,14 @@
  * optional dessert that together fit the budget, honouring every other
  * filter, best use of money first, with the stalls to walk to on a small map.
  *
- * The budget is the shared `max` parameter, so the filter column and the
- * quick form here never disagree. `same=1` keeps drink and dessert at the
- * main's stall. Server rendered end to end: it works with JavaScript off.
+ * The budget for the whole meal is its own `meal` parameter. `max` stays the
+ * filter column's highest price per dish and applies inside every combo, so
+ * the two never get mixed up. `same=1` keeps drink and dessert at the main's
+ * stall. An old link with the meal budget in `max` is redirected to `meal`. Server rendered end to end: it works with JavaScript off.
  */
 
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import {
   EAT,
@@ -16,17 +18,17 @@ import {
   RelaxSuggestions,
   eatHref,
   readFilters,
-  redirectToTidyQuery,
   t,
 } from "@/components/domain/canteen";
 import { ComboCard } from "@/components/domain/canteen/budget/ComboCard";
 import { MealForm } from "@/components/domain/canteen/budget/MealForm";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
+import { canonicalMealQuery } from "@/components/domain/canteen/query";
 import { Button, EmptyState, Heading, Stack } from "@/components/ui";
 import { mealCombos } from "@/lib/canteen/combos";
 import { effectivePrice, indexCanteen } from "@/lib/canteen/derive";
 import { facetCounts, matchesFilters, relaxSuggestions } from "@/lib/canteen/filter";
-import { MAX_BUDGET } from "@/lib/canteen/params";
+import { MAX_BUDGET, parseMealBudget } from "@/lib/canteen/params";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { getCanteenData } from "@/lib/sanity/queries";
 
@@ -43,7 +45,8 @@ export async function MealMode({
   locale: Locale;
   query: Record<string, string | string[] | undefined>;
 }) {
-  redirectToTidyQuery(localePath(locale, ROUTE), query);
+  const canonical = canonicalMealQuery(query);
+  if (canonical !== null) redirect(canonical ? `${localePath(locale, ROUTE)}?${canonical}` : localePath(locale, ROUTE));
   const filters = readFilters(query);
   const sameValue = Array.isArray(query.same) ? query.same[0] : query.same;
   const sameStall = sameValue === "1";
@@ -60,8 +63,11 @@ export async function MealMode({
     return stall ? pick(stall.name, locale) : undefined;
   };
   const counts = facetCounts(data, filters, now);
-  const carry: Record<string, string> = sameStall ? { same: "1" } : {};
-  const amount = filters.max;
+  const amount = parseMealBudget(query);
+  const carry: Record<string, string> = {
+    ...(amount !== undefined ? { meal: String(amount) } : {}),
+    ...(sameStall ? { same: "1" } : {}),
+  };
   const sameExtra = sameStall ? { same: 1 } : {};
 
   let results: React.ReactNode;
@@ -75,7 +81,7 @@ export async function MealMode({
     if (combos.length === 0) {
       // Why nothing fits: the cheapest main that passes the filters, and the smallest raise that works.
       const mains = data.dishes
-        .filter((dish) => dish.course === "main" && matchesFilters(data, dish, { ...filters, max: undefined }, now))
+        .filter((dish) => dish.course === "main" && matchesFilters(data, dish, filters, now))
         .map((dish) => effectivePrice(dish, filters.variants));
       const cheapest = mains.length > 0 ? Math.min(...mains) : undefined;
       let raiseTo: number | undefined;
@@ -85,7 +91,7 @@ export async function MealMode({
           break;
         }
       }
-      const others = relaxSuggestions(data, filters, now).filter((suggestion) => suggestion.param !== "max");
+      const others = relaxSuggestions(data, filters, now);
       results = (
         <Stack space={6}>
           <EmptyState title={t(BUDGET.mealZeroTitle, locale)}>
@@ -100,7 +106,7 @@ export async function MealMode({
               {raiseTo !== undefined ? (
                 <li>
                   <Link
-                    href={eatHref(locale, ROUTE, { ...filters, max: raiseTo }, sameExtra)}
+                    href={eatHref(locale, ROUTE, filters, { meal: raiseTo, ...sameExtra })}
                     className="inline-flex min-h-[var(--target-min)] items-center font-medium"
                   >
                     {budget.raiseTo(locale, raiseTo)}
@@ -109,13 +115,13 @@ export async function MealMode({
               ) : null}
               {sameStall ? (
                 <li>
-                  <Link href={eatHref(locale, ROUTE, filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
+                  <Link href={eatHref(locale, ROUTE, filters, { meal: amount })} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
                     {t(BUDGET.allowAnyStall, locale)}
                   </Link>
                 </li>
               ) : null}
             </ul>
-            <RelaxSuggestions locale={locale} route={ROUTE} headingLevel={3} stallName={stallName} suggestions={others} />
+            <RelaxSuggestions locale={locale} route={`${ROUTE}?meal=${amount}${sameStall ? "&same=1" : ""}`} headingLevel={3} stallName={stallName} suggestions={others} />
           </section>
         </Stack>
       );
@@ -131,7 +137,7 @@ export async function MealMode({
                 {combos.length >= SHOWN ? budget.mealsShown(locale, combos.length) : budget.mealsFound(locale, combos.length)}. {t(BUDGET.mealLimitNote, locale)}
               </p>
             </Stack>
-            <Button variant="secondary" href={eatHref(locale, "/eat/pick", filters, { mode: "meal", ...sameExtra })}>
+            <Button variant="secondary" href={eatHref(locale, "/eat/pick", filters, { mode: "meal", meal: amount, ...sameExtra })}>
               {t(BUDGET.randomCombo, locale)}
             </Button>
           </div>
@@ -149,8 +155,8 @@ export async function MealMode({
 
   return (
     <Stack space={6}>
-      <MealForm locale={locale} filters={filters} sameStall={sameStall} />
-      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry}>
+      <MealForm locale={locale} filters={filters} meal={amount} sameStall={sameStall} />
+      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry} hide={["max"]}>
         <Stack space={6}>
           {results}
         </Stack>

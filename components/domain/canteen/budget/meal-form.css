@@ -1,0 +1,5 @@
+@supports selector(:has(*)) {
+  .meal-form:not(:has(input[name="meal"][value="other"]:checked)) .meal-other {
+    display: none;
+  }
+}

@@ -6,6 +6,7 @@
 import { formatNumber } from "@/lib/i18n/format";
 import type { Locale } from "@/lib/i18n/config";
 import type { Bilingual } from "../strings";
+import { PICK } from "../pick/strings";
 
 const n = formatNumber;
 
@@ -18,13 +19,14 @@ export const BUDGET = {
   },
   mealFormTitle: { th: "งบของคุณ", en: "Your budget" },
   budgetLegend: { th: "มีกี่บาท", en: "How many baht do you have?" },
-  budgetOther: { th: "หรือพิมพ์จำนวนเงิน (บาท) ถ้ากรอกช่องนี้จะใช้ช่องนี้แทนปุ่ม", en: "Or type an amount (baht). If this box is filled, it is used instead of the buttons." },
+  budgetOtherChoice: { th: "จำนวนอื่น", en: "Other" },
+  budgetOther: { th: "จำนวนเงิน (บาท)", en: "Amount in baht" },
   sameStall: { th: "ร้านเดียวพอ", en: "Same stall only" },
   sameStallHint: { th: "เครื่องดื่มและของหวานต้องมาจากร้านเดียวกับจานหลัก จะได้ไม่ต้องต่อคิวสองที่", en: "Drink and dessert come from the same stall as the main, so you queue once." },
   mealSubmit: { th: "หามื้อให้พอดีงบ", en: "Find meals" },
   mealPromptTitle: { th: "ใส่งบก่อน แล้วเราจะจัดให้", en: "Pick a budget and we will put meals together" },
-  mealPromptBody: { th: "เลือกจำนวนเงินด้านบน หรือพิมพ์เองก็ได้", en: "Choose an amount above, or type your own." },
-  randomCombo: { th: "สุ่มมื้อให้เลย", en: "Random combo" },
+  mealPromptBody: { th: "เลือกจำนวนเงินด้านบน หรือเลือก \"จำนวนอื่น\" แล้วพิมพ์เอง", en: "Choose an amount above, or pick Other and type your own." },
+  randomCombo: { th: "สุ่มให้หนึ่งชุด", en: "Pick one for me" },
   comboListTitle: { th: "มื้อที่ได้", en: "Meals that fit" },
   comboTotal: { th: "รวม", en: "Total" },
   comboItems: { th: "เมนูในมื้อนี้", en: "In this meal" },
@@ -112,8 +114,8 @@ export const BUDGET = {
   /* ---- Spend ---- */
   spendTitle: { th: "ที่บันทึกไว้สัปดาห์นี้", en: "Logged this week" },
   spendOnlyNote: {
-    th: "นับเฉพาะมื้อที่คุณกด \"กินมื้อนี้\" ไว้ ไม่ใช่ทุกอย่างที่คุณกินหรือจ่ายจริง สัปดาห์เริ่มวันจันทร์ ตามเวลาประเทศไทย",
-    en: "This only counts what you tapped \"I'll eat this\" for. It is not everything you ate or paid. The week starts on Monday, Thailand time.",
+    th: `นับเฉพาะมื้อที่คุณกด "${PICK.eatThis.th}" ไว้ ไม่ใช่ทุกอย่างที่คุณกินหรือจ่ายจริง สัปดาห์เริ่มวันจันทร์ ตามเวลาประเทศไทย`,
+    en: `This only counts what you tapped "${PICK.eatThis.en}" for. It is not everything you ate or paid. The week starts on Monday, Thailand time.`,
   },
   spendNoTarget: { th: "ยังไม่ได้เก็บแผนสัปดาห์ไว้ จึงแสดงยอดรวมอย่างเดียว", en: "No saved week, so this is just the total." },
 
@@ -131,13 +133,13 @@ export const BUDGET = {
   mineLoading: { th: "กำลังอ่านจากเครื่องของคุณ", en: "Reading from your device" },
   mineNoStorageTitle: { th: "เครื่องนี้เก็บข้อมูลให้ไม่ได้", en: "This device cannot keep data" },
   mineNoStorageBody: {
-    th: "เบราว์เซอร์ของคุณไม่ยอมให้หน้านี้เก็บข้อมูล อาจเป็นเพราะโหมดส่วนตัวหรือบล็อกข้อมูลเว็บไซต์ จึงไม่มีอะไรให้แสดง และปุ่มดาวหรือบันทึกจะไม่ทำงาน ส่วนอื่นของ \"กินอะไรดี\" ใช้ได้ตามปกติ",
-    en: "Your browser is not letting this page keep data. It may be a private window or blocked site data. So there is nothing to show, and stars and saves will not work. The rest of What to eat works as usual.",
+    th: "เบราว์เซอร์ของคุณไม่ยอมให้หน้านี้เก็บข้อมูล อาจเป็นเพราะโหมดส่วนตัวหรือบล็อกข้อมูลเว็บไซต์ จึงไม่มีอะไรให้แสดง และปุ่มเมนูโปรดหรือบันทึกจะไม่ทำงาน ส่วนอื่นของ \"กินอะไรดี\" ใช้ได้ตามปกติ",
+    en: "Your browser is not letting this page keep data. It may be a private window or blocked site data. So there is nothing to show, and favourites and saves will not work. The rest of What to eat works as usual.",
   },
   favouritesTitle: { th: "เมนูโปรด", en: "Favourites" },
   favouritesEmpty: { th: "ยังไม่มีเมนูโปรด กดปุ่มหัวใจบนการ์ดเมนูเพื่อเก็บไว้", en: "No favourites yet. Use the heart on any dish card to keep one." },
   historyTitle: { th: "ประวัติที่กดกินมื้อนี้", en: "What you tapped to eat" },
-  historyEmpty: { th: "ยังไม่มีประวัติ จะขึ้นที่นี่เมื่อคุณกด \"กินมื้อนี้\"", en: "Nothing yet. It appears here when you tap \"I'll eat this\"." },
+  historyEmpty: { th: `ยังไม่มีประวัติ จะขึ้นที่นี่เมื่อคุณกด "${PICK.eatThis.th}"`, en: `Nothing yet. It appears here when you tap "${PICK.eatThis.en}".` },
   historyMore: { th: "แสดงล่าสุดเท่านั้น", en: "Showing the latest only" },
   dislikesTitle: { th: "ไม่เอาอีกแล้ว", en: "Never suggest" },
   dislikesEmpty: { th: "ยังไม่มีเมนูที่ซ่อน", en: "No dishes hidden." },

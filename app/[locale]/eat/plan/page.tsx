@@ -82,11 +82,11 @@ export default async function EatPlanPage({
       <Stack space={6}>
         <div className="no-print">
           <Stack space={4}>
-            <PlanModeSwitch locale={locale} current={mode} filters={readFilters(query)} />
             <Stack space={2}>
               <Heading level={1} className="text-3xl">{t(copy.title, locale)}</Heading>
               <p className="m-0 text-ink-600">{t(copy.intro, locale)}</p>
             </Stack>
+            <PlanModeSwitch locale={locale} current={mode} filters={readFilters(query)} />
           </Stack>
         </div>
         {mode === "week" ? (

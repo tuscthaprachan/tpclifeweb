@@ -8,7 +8,8 @@ import { AVOID_KEYS, DIET_KEYS, type AvoidKey, type DietKey } from "@/lib/cantee
 import { MAX_NAME_LENGTH, MAX_PEOPLE, type Person } from "@/lib/canteen/group";
 import type { Locale } from "@/lib/i18n/config";
 
-import { AVOID_LABEL, DIET_SHORT_LABEL } from "../labels";
+import { foldRetiredAvoid, OFFERED_AVOID_KEYS } from "../chips";
+import { AVOID_LABEL, DIET_LABEL } from "../labels";
 import { GROUP, group } from "./strings";
 import {
   blankPerson,
@@ -26,6 +27,8 @@ interface GroupBuilderProps {
   initialPeople: Person[];
   strategy: Strategy;
   seed?: string;
+  /** Whether the group has been submitted, so the link has everyone in it. */
+  showShare?: boolean;
 }
 
 interface Row {
@@ -48,9 +51,9 @@ const noopSubscribe = () => () => {};
  * results navigates to the compact URL. A Share box with a Copy button is
  * added; without JavaScript it is a read only input.
  */
-export function GroupBuilder({ locale, action, initialPeople, strategy, seed }: GroupBuilderProps) {
+export function GroupBuilder({ locale, action, initialPeople, strategy, seed, showShare = false }: GroupBuilderProps) {
   const nextKey = useRef(initialPeople.length);
-  const [rows, setRows] = useState<Row[]>(() => initialPeople.map((person, key) => ({ key, person })));
+  const [rows, setRows] = useState<Row[]>(() => initialPeople.map((person, key) => ({ key, person: { ...person, ...foldRetiredAvoid(person.diet, person.avoid) } })));
   const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState("");
   const statusRef = useRef<HTMLParagraphElement>(null);
@@ -189,7 +192,7 @@ export function GroupBuilder({ locale, action, initialPeople, strategy, seed }: 
         </p>
       ) : null}
 
-      <ShareBox locale={locale} value={shareValue} hydrated={origin !== ""} />
+      {showShare ? <ShareBox locale={locale} value={shareValue} hydrated={origin !== ""} /> : null}
     </form>
   );
 }
@@ -267,7 +270,7 @@ function PersonFieldset({ locale, index, rowKey, person, canRemove, onChange, on
         legend={GROUP.dietLegend[locale]}
         name={`d${index}`}
         idPrefix={`${id}-diet`}
-        options={DIET_KEYS.map((key) => ({ value: key, label: DIET_SHORT_LABEL[key][locale] }))}
+        options={DIET_KEYS.map((key) => ({ value: key, label: DIET_LABEL[key][locale] }))}
         selected={person.diet}
         onToggle={(value, on) => onChange({ diet: toggleKey<DietKey>(person.diet, value as DietKey, on, DIET_KEYS) })}
       />
@@ -275,7 +278,7 @@ function PersonFieldset({ locale, index, rowKey, person, canRemove, onChange, on
         legend={GROUP.avoidLegend[locale]}
         name={`a${index}`}
         idPrefix={`${id}-avoid`}
-        options={AVOID_KEYS.map((key) => ({ value: key, label: AVOID_LABEL[key][locale] }))}
+        options={OFFERED_AVOID_KEYS.map((key) => ({ value: key, label: AVOID_LABEL[key][locale] }))}
         selected={person.avoid}
         onToggle={(value, on) => onChange({ avoid: toggleKey<AvoidKey>(person.avoid, value as AvoidKey, on, AVOID_KEYS) })}
       />

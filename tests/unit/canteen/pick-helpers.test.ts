@@ -17,6 +17,16 @@ import { NOW, makeData } from "./fixture";
 
 const base: PickParams = { seed: "k7m2qx", mode: "dish", bias: "fair", lock: [], not: [], sameStall: false };
 
+describe("readPickParams meal budget", () => {
+  it("reads meal, and links carry it in meal mode only", () => {
+    const params = readPickParams({ mode: "meal", meal: "60", max: "40" });
+    expect(params.meal).toBe(60);
+    expect(pickExtras(params).meal).toBe("60");
+    expect(pickExtras({ ...params, mode: "dish" }).meal).toBeUndefined();
+    expect(readPickParams({ mode: "meal", meal: "x" }).meal).toBeUndefined();
+  });
+});
+
 describe("readPickParams", () => {
   it("defaults to a dish, fair, nothing locked or vetoed", () => {
     expect(readPickParams({})).toEqual({ mode: "dish", bias: "fair", lock: [], not: [], sameStall: false });

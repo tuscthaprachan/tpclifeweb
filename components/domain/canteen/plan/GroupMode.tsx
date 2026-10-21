@@ -18,7 +18,7 @@ import {
   readGroupState,
   stateFromForm,
 } from "@/components/domain/canteen/group/state";
-import { EmptyState, Heading, Stack } from "@/components/ui";
+import { Details, EmptyState, Heading, Stack } from "@/components/ui";
 import { newSeed } from "@/lib/canteen/random";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { getCanteenData } from "@/lib/sanity/queries";
@@ -57,23 +57,6 @@ export async function GroupMode({
 
   return (
     <Stack space={8}>
-      <section aria-labelledby="how" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="how" className="m-0 text-xl">
-          {GROUP.howTitle[locale]}
-        </Heading>
-        <ul className="m-0 grid list-none gap-[var(--space-4)] p-0 sm:grid-cols-2">
-          <li className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
-            <p className="m-0 font-semibold text-ink-900">{GROUP.passPhoneTitle[locale]}</p>
-            <p className="m-0 mt-[var(--space-1)] text-ink-600">{GROUP.passPhoneBody[locale]}</p>
-          </li>
-          <li className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
-            <p className="m-0 font-semibold text-ink-900">{GROUP.shareLinkTitle[locale]}</p>
-            <p className="m-0 mt-[var(--space-1)] text-ink-600">{GROUP.shareLinkBody[locale]}</p>
-          </li>
-        </ul>
-        <p className="m-0 text-sm text-ink-600">{GROUP.privacyNote[locale]}</p>
-      </section>
-
       <section aria-label={GROUP.builderTitle[locale]} className="flex flex-col gap-[var(--space-4)]">
         <Heading level={2} id="builder" className="m-0 scroll-mt-[var(--space-8)] text-xl">
           {GROUP.builderTitle[locale]}
@@ -84,7 +67,21 @@ export async function GroupMode({
           initialPeople={people}
           strategy={state.strategy}
           seed={state.seed}
+          showShare={state.people.length > 0}
         />
+        <p className="m-0 text-sm text-ink-600">{GROUP.privacyNote[locale]}</p>
+        <Details summary={GROUP.howTitle[locale]}>
+          <ul className="m-0 grid list-none gap-[var(--space-4)] p-0 sm:grid-cols-2">
+            <li>
+              <p className="m-0 font-semibold text-ink-900">{GROUP.passPhoneTitle[locale]}</p>
+              <p className="m-0 mt-[var(--space-1)] text-ink-600">{GROUP.passPhoneBody[locale]}</p>
+            </li>
+            <li>
+              <p className="m-0 font-semibold text-ink-900">{GROUP.shareLinkTitle[locale]}</p>
+              <p className="m-0 mt-[var(--space-1)] text-ink-600">{GROUP.shareLinkBody[locale]}</p>
+            </li>
+          </ul>
+        </Details>
       </section>
 
       {state.people.length > 0 ? (

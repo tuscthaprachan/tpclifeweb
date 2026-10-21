@@ -35,8 +35,8 @@ export const GROUP = {
     en: "Add yourself, press Show results, then send the new, longer link on. Each friend who opens it sees everyone so far and adds themselves.",
   } satisfies Bilingual,
   privacyNote: {
-    th: "ทั้งกลุ่มอยู่ในลิงก์ ไม่มีการเก็บบนเซิร์ฟเวอร์ ชื่อและอาหารที่กินได้จะอยู่ในลิงก์ด้วย ส่งให้เฉพาะคนที่จะไปกินด้วยกัน",
-    en: "The whole group lives in the link and nothing is saved on a server. Names and food preferences are in the link too, so only send it to the people you are eating with.",
+    th: "ทั้งกลุ่มอยู่ในลิงก์ ไม่เก็บบนเซิร์ฟเวอร์ ส่งให้เฉพาะคนที่จะไปกินด้วยกัน",
+    en: "The group lives in the link, not on a server. Only send it to the people you are eating with.",
   } satisfies Bilingual,
 
   /* ---- Builder ---- */
@@ -46,7 +46,7 @@ export const GROUP = {
   budgetLabel: { th: "งบต่อจาน (บาท)", en: "Budget per dish (baht)" } satisfies Bilingual,
   budgetHint: { th: "ว่างไว้ถ้าไม่จำกัด", en: "Leave empty for no limit." } satisfies Bilingual,
   dietLegend: { th: "อาหารที่กินได้", en: "Diet" } satisfies Bilingual,
-  avoidLegend: { th: "ไม่เอา", en: "Skip these" } satisfies Bilingual,
+  avoidLegend: { th: "ไม่เอา", en: "Leave out" } satisfies Bilingual,
   remove: { th: "เอาออก", en: "Remove" } satisfies Bilingual,
   addPerson: { th: "เพิ่มอีกคน", en: "Add another person" } satisfies Bilingual,
   showResults: { th: "ดูผลลัพธ์", en: "Show results" } satisfies Bilingual,
@@ -62,8 +62,8 @@ export const GROUP = {
   /* ---- Share ---- */
   shareTitle: { th: "ส่งกลุ่มนี้ให้เพื่อน", en: "Share this group" } satisfies Bilingual,
   shareHint: {
-    th: "กด \"ดูผลลัพธ์\" ก่อน ลิงก์จะได้มีทุกคนครบ",
-    en: "Press Show results first so the link has everyone in it.",
+    th: "ใครเปิดลิงก์นี้จะเห็นทุกคนในกลุ่ม และเพิ่มตัวเองต่อได้",
+    en: "Anyone who opens this link sees the whole group and can add themselves.",
   } satisfies Bilingual,
   shareLabel: { th: "ลิงก์ของกลุ่มนี้", en: "Link to this group" } satisfies Bilingual,
   copy: { th: "คัดลอกลิงก์", en: "Copy link" } satisfies Bilingual,
@@ -89,14 +89,14 @@ export const GROUP = {
 
   ownIntro: {
     th: "ทุกคนได้เมนูของตัวเอง แต่ไปนั่งกินด้วยกัน กดสุ่มใหม่ได้ทีละคน",
-    en: "Everyone gets their own pick, and you all sit together. Reroll one person at a time.",
+    en: "Everyone gets their own pick, and you all sit together. Spin again for one person at a time.",
   } satisfies Bilingual,
   randomIntro: {
-    th: "ทุกคนได้เมนูที่สุ่มมา ใครไม่ถูกใจกดสุ่มใหม่เฉพาะคนนั้นได้ หรือหมุนใหม่ทั้งกลุ่ม",
-    en: "A surprise for everyone. Reroll just one person if they are not feeling it, or spin the whole group again.",
+    th: "ทุกคนได้เมนูที่สุ่มมา ใครไม่ถูกใจกดสุ่มใหม่เฉพาะคนนั้นได้ หรือสุ่มใหม่ให้ทุกคน",
+    en: "A surprise for everyone. Spin again for just one person if they are not feeling it, or for everyone.",
   } satisfies Bilingual,
-  reroll: { th: "สุ่มใหม่", en: "Reroll" } satisfies Bilingual,
-  spinAgain: { th: "หมุนใหม่ทั้งกลุ่ม", en: "Spin everyone again" } satisfies Bilingual,
+  reroll: { th: "สุ่มใหม่ให้คนนี้", en: "Spin again for this person" } satisfies Bilingual,
+  spinAgain: { th: "สุ่มใหม่ให้ทุกคน", en: "Spin again for everyone" } satisfies Bilingual,
   revealTitle: { th: "ใครได้อะไร", en: "Who gets what" } satisfies Bilingual,
   pickedBy: { th: "เมนูของ", en: "Pick for" } satisfies Bilingual,
   seatingTitle: { th: "ที่นั่งที่ใกล้ที่สุด", en: "Where to sit" } satisfies Bilingual,
@@ -162,7 +162,7 @@ export const group = {
     return locale === "th" ? `และอีก ${n(count, locale)} เมนูที่ร้านนี้` : `and ${n(count, locale)} more at this stall`;
   },
   rerollFor(name: string, locale: Locale): string {
-    return locale === "th" ? `${group.reroll(locale)} ของ ${name}` : `${group.reroll(locale)} for ${name}`;
+    return locale === "th" ? `สุ่มใหม่ให้ ${name}` : `Spin again for ${name}`;
   },
   reroll(locale: Locale): string {
     return GROUP.reroll[locale];
@@ -173,7 +173,7 @@ export const group = {
       : `Nothing at the canteen fits ${name}'s settings.`;
   },
   rerollCount(count: number, locale: Locale): string {
-    return locale === "th" ? `สุ่มใหม่แล้ว ${n(count, locale)} ครั้ง` : `Rerolled ${n(count, locale)} ${count === 1 ? "time" : "times"}`;
+    return locale === "th" ? `สุ่มใหม่แล้ว ${n(count, locale)} ครั้ง` : `Spun again ${n(count, locale)} ${count === 1 ? "time" : "times"}`;
   },
   seatNear(zone: string, locale: Locale): string {
     return locale === "th" ? `ไปนั่งแถว ${zone}` : `Sit near: ${zone}`;

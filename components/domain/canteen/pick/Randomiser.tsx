@@ -18,8 +18,9 @@
  * tapping "Go with this" does not make the dish just chosen swap itself out
  * for avoiding the repeat.
  *
- * MOTION. On a new result (and when the page first opens) a slot machine
- * reel of dish names spins for about 1.7 s, slows down and lands on the
+ * MOTION. When the user arrived by spinning (see `SpinListener`; a shared
+ * link, Back or a reload does not count) a slot machine
+ * reel of dish names spins for about 1.0 s, slows down and lands on the
  * result, which then pops in with a confetti burst. The reel is one CSS
  * transform animation (no per-frame React renders), `aria-hidden`, and
  * skipped under `prefers-reduced-motion`. The settled result is announced
@@ -41,6 +42,7 @@ import "../fun.css";
 import { biasNeedsDevice, reelNames, toPickLock, type PickParams } from "./helpers";
 import { PickEmpty } from "./PickEmpty";
 import { PickResult } from "./PickResult";
+import { consumeSpin, SpinListener } from "./SpinListener";
 import { PICK, pickText } from "./strings";
 
 interface RandomiserProps {
@@ -66,7 +68,7 @@ interface DeviceSnapshot {
   now: Date;
 }
 
-const REEL_MS = 1700;
+const REEL_MS = 1000;
 const STRIP_LENGTH = 18;
 const CONFETTI_PIECES = 30;
 const CONFETTI_HUES = ["--fill-transport", "--fill-welfare", "--fill-activity", "--fill-governance", "--colour-action"] as const;
@@ -96,6 +98,14 @@ function Confetti() {
       })}
     </div>
   );
+}
+
+let consumedFor: { key: string; spun: boolean } = { key: "", spun: false };
+
+/** Reads and clears the spin flag once per result, so every later read of the same key agrees. */
+function spunFor(key: string): boolean {
+  if (consumedFor.key !== key) consumedFor = { key, spun: consumeSpin() };
+  return consumedFor.spun;
 }
 
 const subscribeNever = () => () => {};
@@ -164,10 +174,11 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
         : pickText.announce(locale, eat.dishAtStall(locale, localised(outcome.dish.name, locale), eat.stallFull(locale, outcome.stall.number, localised(outcome.stall.name, locale))))
       : announce;
 
-  // The reel plays until `doneKey` catches up with the key of this result.
+  // The reel plays only for a result the user spun for, until `doneKey` catches up with its key.
   const [doneKey, setDoneKey] = useState<string | null>(null);
-  const playing = hydrated && !reduced && names.length > 1 && doneKey !== pickKey;
-  const celebrate = hydrated && !reduced && names.length > 1 && doneKey === pickKey;
+  const spun = useSyncExternalStore(subscribeNever, () => spunFor(pickKey), () => false);
+  const playing = hydrated && spun && !reduced && names.length > 1 && doneKey !== pickKey;
+  const celebrate = hydrated && spun && !reduced && names.length > 1 && doneKey === pickKey;
   const strip = useMemo(() => reelStrip(names), [names]);
 
   useEffect(() => {
@@ -207,6 +218,7 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
 
   return (
     <div className="flex flex-col gap-[var(--space-4)]">
+      <SpinListener />
       <p role="status" className="visually-hidden">
         {hydrated && !playing ? spoken : ""}
       </p>

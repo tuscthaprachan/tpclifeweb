@@ -205,7 +205,7 @@ export function SiteHeader({
               className="flex min-h-[var(--target-min)] min-w-[var(--target-min)] cursor-pointer list-none items-center gap-2 rounded-control px-3 py-2 text-base font-medium text-ink-900 [&::-webkit-details-marker]:hidden"
             >
               <MenuIcon />
-              {open ? UI.closeMenu[locale] : UI.openMenu[locale]}
+              <span className="max-[26rem]:sr-only">{open ? UI.closeMenu[locale] : UI.openMenu[locale]}</span>
             </summary>
 
             <div

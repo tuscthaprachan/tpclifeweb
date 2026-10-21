@@ -42,7 +42,17 @@ export function PickEmpty({ locale, data, filters, reason, now }: PickEmptyProps
   const suggestions = reason === "budget" ? [] : relaxSuggestions(data, filters, now);
   return (
     <Stack space={6}>
-      <EmptyState title={PICK.emptyTitle[locale]}>{PICK[BODY[reason]][locale]}</EmptyState>
+      <EmptyState title={PICK.emptyTitle[locale]}>
+        {PICK[BODY[reason]][locale]}
+        {reason === "budget" ? (
+          <>
+            {" "}
+            <Link href="#pick-budget" className={linkClass}>
+              {PICK.emptyMealGoToBudget[locale]}
+            </Link>
+          </>
+        ) : null}
+      </EmptyState>
       {countActiveValues(filters) > 0 ? (
         <RelaxSuggestions
           locale={locale}

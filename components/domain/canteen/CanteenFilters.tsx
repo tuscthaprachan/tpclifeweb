@@ -3,7 +3,6 @@ import { cx } from "@/components/ui/cx";
 import type { FacetCounts } from "@/lib/canteen/filter";
 import { BUDGET_STEPS, DISH_TYPES } from "@/lib/canteen/options";
 import {
-  AVOID_KEYS,
   DIET_KEYS,
   FEEL_KEYS,
   GROUP_KEYS,
@@ -14,6 +13,7 @@ import {
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { CanteenStall } from "@/lib/sanity/types";
 import { ChoiceGroup } from "./ChoiceGroup";
+import { foldRetiredAvoid, OFFERED_AVOID_KEYS } from "./chips";
 import { FilterForm } from "./FilterForm";
 import { DietIcon, DishTypeIcon } from "./icons";
 import { AVOID_LABEL, DIET_LABEL, FEEL_LABEL, GROUP_LABEL, SORT_LABEL, TYPE_LABEL } from "./labels";
@@ -39,7 +39,7 @@ interface CanteenFiltersProps {
   /** Request parameters the form must not lose, for example `seed`. */
   carry?: Record<string, string>;
   /** Which facets to offer. Defaults to all. A page can leave some out, for example `stall` on a stall page. */
-  hide?: ReadonlyArray<"stall" | "open">;
+  hide?: ReadonlyArray<"max" | "stall" | "open">;
 }
 
 
@@ -57,48 +57,51 @@ interface CanteenFiltersProps {
  */
 export function CanteenFilters({ locale, filters, counts, stalls, action, idPrefix, display = "dishes", carry, hide = [] }: CanteenFiltersProps) {
   const id = (name: string) => `${idPrefix}-${name}`;
+  const shown = foldRetiredAvoid(filters.diet, filters.avoid);
   const maxIsChip = filters.max === undefined || BUDGET_STEPS.includes(filters.max);
 
   return (
     <FilterForm action={action} carry={carry} queryKey={serialise(filters)} submitLabel={eat.showDishes(locale, counts.total)}>
       {/* Budget */}
-      <div className="flex flex-col gap-[var(--space-3)]">
-        <ChoiceGroup
-          id={id("max")}
-          legend={t(EAT.budgetFilterLegend, locale)}
-          hint={t(EAT.budgetFilterHint, locale)}
-          name="max"
-          kind="radio"
-          layout="chips"
-          selected={[filters.max === undefined ? "" : String(filters.max)]}
-          choices={[
-            { value: "", label: t(EAT.budgetAny, locale), count: counts.max.any },
-            ...BUDGET_STEPS.map((step) => ({ value: String(step), label: eat.baht(locale, step), count: counts.max[String(step)] })),
-          ]}
-        />
-        <div className="flex flex-col gap-[var(--space-1)]">
-          <label htmlFor={id("max-other")} className="text-base font-medium text-ink-900">
-            {t(EAT.budgetOther, locale)}
-          </label>
-          <input
-            id={id("max-other")}
-            name="maxOther"
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={5000}
-            step={1}
-            defaultValue={maxIsChip ? undefined : filters.max}
-            className="min-h-[var(--target-min)] w-full max-w-[10rem] rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
+      {hide.includes("max") ? null : (
+        <div className="flex flex-col gap-[var(--space-3)]">
+          <ChoiceGroup
+            id={id("max")}
+            legend={t(EAT.budgetFilterLegend, locale)}
+            hint={t(EAT.budgetFilterHint, locale)}
+            name="max"
+            kind="radio"
+            layout="chips"
+            selected={[filters.max === undefined ? "" : String(filters.max)]}
+            choices={[
+              { value: "", label: t(EAT.budgetAny, locale), count: counts.max.any },
+              ...BUDGET_STEPS.map((step) => ({ value: String(step), label: eat.baht(locale, step), count: counts.max[String(step)] })),
+            ]}
           />
+          <div className="flex flex-col gap-[var(--space-1)]">
+            <label htmlFor={id("max-other")} className="text-base font-medium text-ink-900">
+              {t(EAT.budgetOther, locale)}
+            </label>
+            <input
+              id={id("max-other")}
+              name="maxOther"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={5000}
+              step={1}
+              defaultValue={maxIsChip ? undefined : filters.max}
+              className="min-h-[var(--target-min)] w-full max-w-[10rem] rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
+            />
+          </div>
+          <div className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+            <input id={id("variants")} type="checkbox" name="variants" value="1" defaultChecked={filters.variants} className="m-0 size-5 min-h-0 min-w-0 shrink-0" />
+            <label htmlFor={id("variants")} className="flex min-h-[var(--target-min)] flex-1 items-center text-base text-ink-900">
+              {t(EAT.variantsLabel, locale)}
+            </label>
+          </div>
         </div>
-        <div className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
-          <input id={id("variants")} type="checkbox" name="variants" value="1" defaultChecked={filters.variants} className="m-0 size-5 min-h-0 min-w-0 shrink-0" />
-          <label htmlFor={id("variants")} className="flex min-h-[var(--target-min)] flex-1 items-center text-base text-ink-900">
-            {t(EAT.variantsLabel, locale)}
-          </label>
-        </div>
-      </div>
+      )}
 
       <ChoiceGroup
         id={id("diet")}
@@ -106,7 +109,7 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
         hint={t(EAT.dietFilterHint, locale)}
         name="diet"
         kind="checkbox"
-        selected={filters.diet}
+        selected={shown.diet}
         choices={DIET_KEYS.map((key) => ({
           value: key,
           label: DIET_LABEL[key][locale],
@@ -132,10 +135,11 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
       <ChoiceGroup
         id={id("avoid")}
         legend={t(EAT.avoidLegend, locale)}
+        hint={t(EAT.avoidHint, locale)}
         name="avoid"
         kind="checkbox"
-        selected={filters.avoid}
-        choices={AVOID_KEYS.map((key) => ({ value: key, label: AVOID_LABEL[key][locale], count: counts.avoid[key] }))}
+        selected={shown.avoid}
+        choices={OFFERED_AVOID_KEYS.map((key) => ({ value: key, label: AVOID_LABEL[key][locale], count: counts.avoid[key] }))}
       />
 
       <ChoiceGroup
@@ -172,7 +176,7 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
         </div>
       )}
 
-      {hide.includes("open") ? null : (
+      {hide.includes("open") || (counts.open === 0 && !filters.open) ? null : (
         <ChoiceGroup
           id={id("open")}
           legend={t(EAT.openLegend, locale)}

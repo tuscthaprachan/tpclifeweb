@@ -3,9 +3,9 @@ import { dishDietTags, stallHalalTag } from "@/components/domain/canteen/diet";
 import { cheapestSlugs } from "@/components/domain/canteen/compare";
 import { activeChips, filterSummary } from "@/components/domain/canteen/chips";
 import { paginateGroups, parsePage } from "@/components/domain/canteen/paginate";
-import { carriedParams, formQuery, readFilters, tidyQuery } from "@/components/domain/canteen/query";
+import { canonicalMealQuery, carriedParams, formQuery, legacyMealQuery, readFilters, tidyQuery } from "@/components/domain/canteen/query";
 import { applyFilters, groupDishes } from "@/lib/canteen/filter";
-import { defaultFilters, parse } from "@/lib/canteen/params";
+import { MAX_BUDGET, defaultFilters, parse, parseMealBudget, serialise } from "@/lib/canteen/params";
 import { makeData, NOW } from "./fixture";
 
 const data = makeData();
@@ -103,5 +103,50 @@ describe("tidyQuery", () => {
     expect(tidyQuery({})).toBeNull();
     expect(tidyQuery({ max: "50", diet: "nopork,jay" })).toBeNull();
     expect(tidyQuery(new URLSearchParams(tidyQuery({ max: "", diet: "jay", maxOther: "40" })!))).toBeNull();
+  });
+});
+
+describe("meal budget parameter", () => {
+  it("reads meal as the whole-meal budget, separate from the per-dish max", () => {
+    expect(parseMealBudget({ meal: "60" })).toBe(60);
+    expect(parseMealBudget({ meal: "60", max: "40" })).toBe(60);
+    expect(parse({ meal: "60" }).max).toBeUndefined();
+    expect(parse({ meal: "60", max: "40" }).max).toBe(40);
+  });
+
+  it("drops an invalid meal budget", () => {
+    for (const meal of ["0", "-5", "abc", "5001", "60.5", "", "other"]) expect(parseMealBudget({ meal })).toBeUndefined();
+    expect(parseMealBudget({})).toBeUndefined();
+    expect(parseMealBudget({ meal: String(MAX_BUDGET) })).toBe(MAX_BUDGET);
+  });
+
+  it("does not serialise meal as a filter", () => {
+    expect(serialise(parse({ meal: "60", diet: "nopork" }))).toBe("diet=nopork");
+  });
+
+  it("folds meal=other and the typed amount into meal", () => {
+    expect(tidyQuery({ meal: "other", mealOther: "75", same: "1" })).toBe("meal=75&same=1");
+    expect(tidyQuery({ meal: "other", mealOther: "" })).toBe("");
+    expect(tidyQuery({ meal: "60", mealOther: "75" })).toBe("meal=60");
+    expect(tidyQuery({ meal: "60", mealOther: "" })).toBe("meal=60");
+    expect(tidyQuery({ meal: "60" })).toBeNull();
+  });
+
+  it("moves an old max meal budget to meal, once", () => {
+    expect(legacyMealQuery({ max: "60" })).toBe("meal=60");
+    expect(legacyMealQuery({ diet: "nopork", max: "60", same: "1" })).toBe("diet=nopork&meal=60&same=1");
+    expect(legacyMealQuery({ meal: "80", max: "40" })).toBeNull();
+    expect(legacyMealQuery({ meal: "abc", max: "40" })).toBe("meal=40");
+    expect(legacyMealQuery({ diet: "nopork" })).toBeNull();
+    expect(legacyMealQuery({ max: "abc" })).toBeNull();
+    expect(legacyMealQuery(new URLSearchParams(legacyMealQuery({ max: "60" })!))).toBeNull();
+  });
+
+  it("gives one canonical address for a messy old link", () => {
+    expect(canonicalMealQuery({ max: "", maxOther: "55" })).toBe("meal=55");
+    expect(canonicalMealQuery({ max: "60" })).toBe("meal=60");
+    expect(canonicalMealQuery({ max: "60" }, false)).toBeNull();
+    expect(canonicalMealQuery({ meal: "60", max: "40" })).toBeNull();
+    expect(canonicalMealQuery({ meal: "", max: "" })).toBe("");
   });
 });

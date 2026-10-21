@@ -14,7 +14,7 @@
 import { eatHref } from "../links";
 import { BIASES, createRng, type Bias, type LockKey, type PickLock } from "@/lib/canteen/random";
 import type { MealCombo } from "@/lib/canteen/combos";
-import type { CanteenFilters, RawParams } from "@/lib/canteen/params";
+import { parseMealBudget, type CanteenFilters, type RawParams } from "@/lib/canteen/params";
 import type { Locale } from "@/lib/i18n/config";
 
 export const PICK_ROUTE = "/eat/pick";
@@ -42,6 +42,8 @@ export interface PickParams {
   not: string[];
   /** Meal mode only: drink and dessert come from the main's stall (`same=1`). */
   sameStall: boolean;
+  /** Meal mode only: the budget for the whole meal in baht (`meal`). Not the per-dish `max` filter. */
+  meal?: number;
 }
 
 function all(raw: RawParams, name: string): string[] {
@@ -52,7 +54,7 @@ function all(raw: RawParams, name: string): string[] {
     .filter(Boolean);
 }
 
-/** Reads seed, mode, bias, lock, of and not. Anything invalid is dropped. Never throws. */
+/** Reads seed, mode, bias, lock, of, not, same and meal. Anything invalid is dropped. Never throws. */
 export function readPickParams(raw: RawParams): PickParams {
   const seed = all(raw, "seed")[0]?.toLowerCase();
   const mode = all(raw, "mode")[0];
@@ -64,6 +66,7 @@ export function readPickParams(raw: RawParams): PickParams {
 
   const lock = LOCK_KEYS.filter((key) => lockTokens.has(key));
   const validOf = of !== undefined && SLUG.test(of) ? of : undefined;
+  const meal = parseMealBudget(raw);
 
   return {
     ...(seed !== undefined && SEED.test(seed) ? { seed } : {}),
@@ -73,6 +76,7 @@ export function readPickParams(raw: RawParams): PickParams {
     ...(validOf ? { of: validOf } : {}),
     not,
     sameStall,
+    ...(meal !== undefined ? { meal } : {}),
   };
 }
 
@@ -114,6 +118,7 @@ export function pickExtras(params: PickParams, change: Partial<PickParams> = {})
     of: lock.length > 0 ? next.of : undefined,
     not: next.not.length > 0 ? next.not.slice(0, MAX_VETOES).join(",") : undefined,
     same: next.sameStall ? "1" : undefined,
+    meal: next.mode === "meal" && next.meal !== undefined ? String(next.meal) : undefined,
   };
 }
 

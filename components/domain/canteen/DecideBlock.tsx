@@ -7,6 +7,7 @@ import { ChoiceGroup } from "./ChoiceGroup";
 import { DiceIcon, DietIcon } from "./icons";
 import { DIET_SHORT_LABEL } from "./labels";
 import { EAT, eat, t } from "./strings";
+import { SpinListener } from "./pick/SpinListener";
 import "./fun.css";
 
 const FLOATERS = ["🍜", "🍛", "🥢", "🍤"] as const;
@@ -45,6 +46,7 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
 
   return (
     <section aria-labelledby="eat-decide-title" className="fun-panel rounded-panel p-[var(--space-4)] md:p-[var(--space-6)]">
+      <SpinListener />
       <div aria-hidden="true" className="fun-floaters">
         {FLOATERS.map((emoji, index) => (
           <span key={emoji} style={{ "--i": index } as React.CSSProperties}>

@@ -35,15 +35,8 @@ export const DIET_LABEL: Record<DietKey, Bilingual> = {
   vegetarian: { th: "มังสวิรัติ", en: "Vegetarian" },
 };
 
-/** Short diet names for a chip row where space is tight, for example the Decide for me block. */
-export const DIET_SHORT_LABEL: Record<DietKey, Bilingual> = {
-  nopork: { th: "ไม่มีหมู", en: "No pork" },
-  nobeef: { th: "ไม่มีเนื้อวัว", en: "No beef" },
-  nochicken: { th: "ไม่มีไก่", en: "No chicken" },
-  noseafood: { th: "ไม่มีอาหารทะเล", en: "No seafood" },
-  halal: { th: "ฮาลาล", en: "Halal" },
-  vegetarian: { th: "มังสวิรัติ", en: "Vegetarian" },
-};
+/** Kept so callers written against the short name still compile. */
+export const DIET_SHORT_LABEL = DIET_LABEL;
 
 /** What a diet tag on a dish says. */
 export const DIET_TAG_LABEL = {
@@ -105,8 +98,8 @@ export const ALLERGEN_LABEL: Record<Allergen, Bilingual> = {
 };
 
 export const FEEL_LABEL: Record<FeelKey, Bilingual> = {
-  hot: { th: "ร้อน", en: "Hot" },
-  cold: { th: "เย็น", en: "Cold" },
+  hot: { th: "เสิร์ฟร้อน", en: "Served hot" },
+  cold: { th: "เสิร์ฟเย็น", en: "Served cold" },
   soupy: { th: "มีน้ำ", en: "Soupy" },
   dry: { th: "แห้ง", en: "Dry" },
   fried: { th: "ผัดหรือทอด", en: "Fried" },

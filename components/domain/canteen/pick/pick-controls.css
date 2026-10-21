@@ -1,0 +1,5 @@
+@supports selector(:has(*)) {
+  .pick-form:not(:has(input[name="mode"][value="meal"]:checked)) .meal-only {
+    display: none;
+  }
+}

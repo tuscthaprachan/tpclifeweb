@@ -6,6 +6,7 @@
  * Parameters: every filter (read with `readFilters`) plus
  *   seed  short random string
  *   mode  dish (default) | meal | stall
+ *   meal  budget for the whole meal in baht, meal mode only (`max` is the per-dish filter)
  *   bias  fair (default) | new | cheap | usual
  *   lock  stall, type, canonical (kept from the dish named by `of`)
  *   of    slug of the previous dish the lock is relative to
@@ -21,7 +22,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { EAT, eat, eatHref, readFilters, redirectToTidyQuery, t } from "@/components/domain/canteen";
+import { EAT, eat, eatHref, readFilters, t } from "@/components/domain/canteen";
 import {
   PICK,
   PICK_ROUTE,
@@ -42,7 +43,7 @@ import { Container, EmptyState, Heading, Stack } from "@/components/ui";
 import { mealCombos } from "@/lib/canteen/combos";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { applyFilters } from "@/lib/canteen/filter";
-import { toSearchParams } from "@/components/domain/canteen/query";
+import { canonicalMealQuery, toSearchParams } from "@/components/domain/canteen/query";
 import { newSeed, pick as runPick } from "@/lib/canteen/random";
 import { DEFAULT_LOCALE, isLocale, localePath, pick as localised, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -76,8 +77,9 @@ export default async function EatPickPage({
   const locale: Locale = rawLocale;
 
   const query = await searchParams;
-  redirectToTidyQuery(localePath(locale, PICK_ROUTE), query);
   const parsed = readPickParams(query);
+  const canonical = canonicalMealQuery(query, parsed.mode === "meal");
+  if (canonical !== null) redirect(canonical ? `${localePath(locale, PICK_ROUTE)}?${canonical}` : localePath(locale, PICK_ROUTE));
 
   // No seed: make one and come back, so the address bar always holds a reproducible, shareable result.
   if (parsed.seed === undefined) {
@@ -132,7 +134,7 @@ export default async function EatPickPage({
   let announce = "";
 
   if (pickParams.mode === "meal") {
-    const budget = filters.max;
+    const budget = parsed.meal;
     if (budget === undefined) {
       result = <PickEmpty locale={locale} data={data} filters={filters} reason="budget" now={now} />;
     } else {
@@ -226,7 +228,7 @@ export default async function EatPickPage({
             <Heading level={2} id="pick-controls" className="m-0 text-xl">
               {PICK.controlsHeading[locale]}
             </Heading>
-            <PickControls locale={locale} filters={filters} mode={pickParams.mode} bias={pickParams.bias} sameStall={pickParams.sameStall} />
+            <PickControls locale={locale} filters={filters} mode={pickParams.mode} bias={pickParams.bias} meal={pickParams.meal} sameStall={pickParams.sameStall} />
             <Link href={eatHref(locale, "/eat/dishes", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
               {t(EAT.editFilters, locale)}
             </Link>

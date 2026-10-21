@@ -4,7 +4,14 @@
  * without this one", which the UI turns into links.
  */
 
-import { countActiveValues, type CanteenFilters } from "@/lib/canteen/params";
+import {
+  AVOID_KEYS,
+  DIET_KEYS,
+  countActiveValues,
+  type AvoidKey,
+  type CanteenFilters,
+  type DietKey,
+} from "@/lib/canteen/params";
 import type { Locale } from "@/lib/i18n/config";
 import {
   AVOID_LABEL,
@@ -15,6 +22,35 @@ import {
   VARIANTS_CHIP_LABEL,
 } from "./labels";
 import { eat } from "./strings";
+
+/**
+ * Old links can still say `avoid=pork`, `beef`, `seafood` or `nuts`. Those
+ * filter as before, but the forms no longer offer them: the Diet group has
+ * "No pork", "No beef" and "No seafood", and "No nuts of any kind" is just
+ * peanuts plus tree nuts.
+ */
+const AVOID_AS_DIET: Partial<Record<AvoidKey, DietKey>> = { pork: "nopork", beef: "nobeef", seafood: "noseafood" };
+
+/** The Leave out options the forms offer. */
+export const OFFERED_AVOID_KEYS: readonly AvoidKey[] = AVOID_KEYS.filter((key) => !(key in AVOID_AS_DIET) && key !== "nuts");
+
+/** A diet and avoid selection as the forms show it, with retired avoid options moved to the choice that replaces them. */
+export function foldRetiredAvoid(diet: readonly DietKey[], avoid: readonly AvoidKey[]): { diet: DietKey[]; avoid: AvoidKey[] } {
+  const dietSet = new Set(diet);
+  const avoidSet = new Set(avoid);
+  for (const key of avoid) {
+    const equivalent = AVOID_AS_DIET[key];
+    if (equivalent) dietSet.add(equivalent);
+  }
+  if (avoidSet.has("nuts")) {
+    avoidSet.add("peanut");
+    avoidSet.add("treeNut");
+  }
+  return {
+    diet: DIET_KEYS.filter((key) => dietSet.has(key)),
+    avoid: OFFERED_AVOID_KEYS.filter((key) => avoidSet.has(key)),
+  };
+}
 
 export interface FilterChip {
   /** Stable id, for React keys. */

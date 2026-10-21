@@ -19,6 +19,7 @@ interface EatFilteredLayoutProps {
   display?: "dishes" | "none";
   /** Request parameters the form must keep, for example `seed`. */
   carry?: Record<string, string>;
+  hide?: ReadonlyArray<"max" | "stall" | "open">;
   /** The results. They sit to the right of the filter column on desktop. */
   children: ReactNode;
 }
@@ -33,7 +34,7 @@ interface EatFilteredLayoutProps {
  * filtering works either way. The three copies of the form get different id
  * prefixes so no label ever points at another copy's input.
  */
-export function EatFilteredLayout({ locale, data, filters, counts, route, display = "dishes", carry, children }: EatFilteredLayoutProps) {
+export function EatFilteredLayout({ locale, data, filters, counts, route, display = "dishes", carry, hide, children }: EatFilteredLayoutProps) {
   const index = indexCanteen(data);
   const stalls = index.stallsInWalkOrder;
   const action = localePath(locale, route);
@@ -52,6 +53,7 @@ export function EatFilteredLayout({ locale, data, filters, counts, route, displa
       idPrefix={idPrefix}
       display={display}
       carry={carry}
+      hide={hide}
     />
   );
 

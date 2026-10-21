@@ -7,57 +7,63 @@ import { localePath, type Locale } from "@/lib/i18n/config";
 import { ChoiceGroup } from "../ChoiceGroup";
 import { eat, t } from "../strings";
 import { BUDGET } from "./strings";
+import "./meal-form.css";
 
-/** The quick amounts. Anything else goes in the box. */
+/** The quick amounts. Anything else is typed after choosing "Other". */
 export const MEAL_BUDGETS: readonly number[] = [40, 50, 60, 80, 100];
 
 interface MealFormProps {
   locale: Locale;
   filters: CanteenFilters;
+  /** The whole-meal budget in the address, if any. */
+  meal?: number;
   sameStall: boolean;
 }
 
 /**
- * "I have X baht": a plain GET form to /eat/plan, the default mode. The chips and the box both
- * write the budget (`max`, the same parameter the filter form uses, so the
- * two never disagree). The box wins when it holds a number, as in the filter
- * form. Every other filter rides along as a hidden field.
+ * "I have X baht": a plain GET form to /eat/plan, the default mode. The budget
+ * is one choice: a chip, or "Other" with an amount box. They write `meal`, the
+ * whole-meal budget, never `max`, which stays the filters' highest price per
+ * dish. The box is read only when "Other" is chosen, and a stylesheet hides it
+ * otherwise where `:has` is supported. Every filter rides along as a hidden
+ * field.
  */
-export function MealForm({ locale, filters, sameStall }: MealFormProps) {
-  const hidden = new URLSearchParams(serialise({ ...filters, max: undefined, variants: false }));
-  const custom = filters.max !== undefined && !MEAL_BUDGETS.includes(filters.max);
+export function MealForm({ locale, filters, meal, sameStall }: MealFormProps) {
+  const hidden = new URLSearchParams(serialise({ ...filters, variants: false }));
+  const custom = meal !== undefined && !MEAL_BUDGETS.includes(meal);
 
   return (
     <section aria-labelledby="meal-form-title" className="rounded-panel bg-welfare-soft p-[var(--space-4)] sm:p-[var(--space-6)]">
       <Heading level={2} id="meal-form-title" className="m-0 mb-[var(--space-4)] text-xl">
         {t(BUDGET.mealFormTitle, locale)}
       </Heading>
-      <form method="get" action={localePath(locale, "/eat/plan")} className="flex flex-col gap-[var(--space-4)]">
+      <form method="get" action={localePath(locale, "/eat/plan")} className="meal-form flex flex-col gap-[var(--space-4)]">
         {[...hidden.entries()].map(([name, value]) => (
           <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
         ))}
         {filters.variants ? <input type="hidden" name="variants" value="1" /> : null}
 
         <ChoiceGroup
-          id="meal-max"
+          id="meal-budget"
           legend={t(BUDGET.budgetLegend, locale)}
-          name="max"
+          name="meal"
           kind="radio"
           layout="chips"
-          selected={[filters.max !== undefined && !custom ? String(filters.max) : ""]}
-          choices={MEAL_BUDGETS.map((amount) => ({ value: String(amount), label: eat.baht(locale, amount) }))}
+          selected={[meal === undefined ? "" : custom ? "other" : String(meal)]}
+          choices={[
+            ...MEAL_BUDGETS.map((amount) => ({ value: String(amount), label: eat.baht(locale, amount) })),
+            { value: "other", label: t(BUDGET.budgetOtherChoice, locale) },
+          ]}
         />
         <TextInput
-          id="meal-max-other"
-          name="maxOther"
-          type="number"
+          id="meal-other"
+          name="mealOther"
+          type="text"
           inputMode="numeric"
-          min={1}
-          max={5000}
-          step={1}
+          pattern="[0-9]*"
           label={t(BUDGET.budgetOther, locale)}
-          defaultValue={custom ? filters.max : undefined}
-          className="max-w-[14rem]"
+          defaultValue={custom ? meal : undefined}
+          className="meal-other max-w-[14rem]"
         />
 
         <div className="flex items-start gap-[var(--space-2)]">

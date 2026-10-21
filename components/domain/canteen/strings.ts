@@ -59,7 +59,7 @@ export const EAT = {
   planModeGroup: { th: "กินเป็นกลุ่ม", en: "A group" },
   toolWhatIs: { th: "เมนูนี้คืออะไร", en: "What is this dish" },
   toolWhatIsHint: { th: "อธิบายเมนูสำหรับคนที่ไม่เคยกิน", en: "Explainers for dishes you have never had." },
-  toolMine: { th: "ของฉัน", en: "My stuff" },
+  toolMine: { th: "ของฉัน", en: "Your stuff" },
   toolMineHint: { th: "เมนูโปรดและประวัติ เก็บไว้ในเครื่องนี้", en: "Favourites and history, kept on this device." },
 
   /* ---- Decide for me ---- */
@@ -103,6 +103,10 @@ export const EAT = {
   dietFilterHint: { th: "ดูจากเมนูหน้าร้าน ไม่ได้ถามร้าน", en: "From the menu board, not checked with the stall" },
   typeLegend: { th: "ประเภทเมนู", en: "Type of dish" },
   avoidLegend: { th: "ไม่เอา", en: "Leave out" },
+  avoidHint: {
+    th: "เดาจากสูตรทั่วไป ไม่ใช่เครื่องมือเช็กการแพ้",
+    en: "Guessed from usual recipes, so not allergy-safe",
+  },
   feelLegend: { th: "อารมณ์ตอนนี้", en: "Feel" },
   stallLabel: { th: "ร้าน", en: "Stall" },
   stallAny: { th: "ทุกร้าน", en: "All stalls" },
@@ -119,8 +123,8 @@ export const EAT = {
   resultsTitle: { th: "ผลลัพธ์", en: "Results" },
   dishesTitle: { th: "เมนูทั้งหมด", en: "All dishes" },
   dishesIntro: {
-    th: "กรองตามราคา อาหารที่กินได้ และประเภท ตัวเลขในวงเล็บคือจำนวนเมนูที่จะได้",
-    en: "Filter by price, diet and type. The number in brackets is how many dishes you would get.",
+    th: "กรองตามราคา อาหารที่กินได้ และประเภท",
+    en: "Filter by price, diet and type.",
   },
   stallsTitle: { th: "ร้านค้าในโรงอาหาร", en: "Stalls in the canteen" },
   stallsIntro: {

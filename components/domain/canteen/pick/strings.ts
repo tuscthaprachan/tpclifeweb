@@ -94,9 +94,10 @@ export const PICK = {
     en: "Everything that matches is on the never-suggest list kept on this device. Try loosening a filter.",
   },
   emptyMealNeedsBudget: {
-    th: "ชุดอาหารต้องมีงบ ใส่งบในช่องด้านบนแล้วกดสุ่ม",
-    en: "A meal needs a budget. Enter one above and spin.",
+    th: "ชุดอาหารต้องมีงบ ใส่งบในช่องด้านล่างแล้วกดสุ่ม",
+    en: "A meal needs a budget. Enter one below and spin.",
   },
+  emptyMealGoToBudget: { th: "ไปที่ช่องใส่งบ", en: "Go to the budget box" },
   emptyMeal: {
     th: "ไม่มีชุดอาหารที่ลงตัวกับงบและตัวกรองนี้",
     en: "No meal fits that budget and those filters.",
