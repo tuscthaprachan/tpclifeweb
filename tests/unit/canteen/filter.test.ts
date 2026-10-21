@@ -56,6 +56,8 @@ describe("applyFilters", () => {
     const without = (avoid: CanteenFilters["avoid"]) => slugs(applyFilters(tagged, f({ avoid }), NOW));
     expect(without(["peanut"])).not.toContain("c");
     expect(without(["peanut"])).toHaveLength(20);
+    expect(without(["nuts"])).not.toContain("fixture-dish-c");
+    expect(without(["treeNut"])).toHaveLength(21);
     expect(without(["seafood"])).not.toContain("e");
     expect(without(["milk"])).toHaveLength(21);
   });

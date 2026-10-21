@@ -49,8 +49,8 @@ describe("group encoding", () => {
   });
 
   it("round trips the allergen leave-outs", () => {
-    const people: Person[] = [{ name: "Nut", diet: [], avoid: ["peanut", "treeNut", "milk", "wheat", "soy", "sesame"] }];
-    expect(encodeGroup(people)).toBe("Nut....pn-tn-mk-wh-so-se");
+    const people: Person[] = [{ name: "Nut", diet: [], avoid: ["nuts", "peanut", "treeNut", "milk", "wheat", "soy", "sesame"] }];
+    expect(encodeGroup(people)).toBe("Nut....nu-pn-tn-mk-wh-so-se");
     expect(decodeGroup(encodeGroup(people))).toEqual(people);
   });
 

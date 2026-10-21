@@ -13,7 +13,7 @@
  *   halal), v (vegetarian), vg (vegan), j (jay).
  * - `spice`: `s` and a digit 0 to 3, the highest spice accepted, or empty.
  * - `avoid`: codes joined with `-`: pk (pork), bf (beef), sf (seafood),
- *   fi (fish), eg (egg), pn (peanut), tn (tree nuts), mk (milk), wh (wheat),
+ *   fi (fish), eg (egg), nu (all nuts), pn (peanut), tn (tree nuts), mk (milk), wh (wheat),
  *   so (soy), se (sesame).
  *
  * Trailing empty fields are left off, so `Mint.50.np-v.s1~Ben.80..s3` is two
@@ -66,6 +66,7 @@ const AVOID_CODES: Record<AvoidKey, string> = {
   seafood: "sf",
   fish: "fi",
   egg: "eg",
+  nuts: "nu",
   peanut: "pn",
   treeNut: "tn",
   milk: "mk",

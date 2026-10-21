@@ -22,10 +22,11 @@ export type DietKey = (typeof DIET_KEYS)[number];
 
 /**
  * What a student can leave out. Pork and beef go by the dish's protein. The
- * rest also go by its inferred allergens (seafood by shellfish), which are
+ * rest also go by its inferred allergens (seafood by shellfish, nuts by
+ * peanuts or tree nuts), which are
  * guesses from names and usual recipes: a strong hint, never allergy-safe.
  */
-export const AVOID_KEYS = ["pork", "beef", "seafood", "fish", "egg", "peanut", "treeNut", "milk", "wheat", "soy", "sesame"] as const satisfies readonly (Protein | Allergen)[];
+export const AVOID_KEYS = ["pork", "beef", "seafood", "fish", "egg", "nuts", "peanut", "treeNut", "milk", "wheat", "soy", "sesame"] as const satisfies readonly (Protein | Allergen | "nuts")[];
 export type AvoidKey = (typeof AVOID_KEYS)[number];
 
 /** Feel chips. Opposite pairs (hot or cold, soupy or dry, fried or not) never contradict each other: choosing both means no constraint. */

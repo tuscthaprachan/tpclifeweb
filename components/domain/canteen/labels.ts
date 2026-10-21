@@ -92,6 +92,7 @@ export const AVOID_LABEL: Record<AvoidKey, Bilingual> = {
   seafood: { th: "ไม่เอาอาหารทะเล", en: "No seafood" },
   fish: { th: "ไม่เอาปลา", en: "No fish" },
   egg: { th: "ไม่เอาไข่", en: "No egg" },
+  nuts: { th: "ไม่เอาถั่วทุกชนิด", en: "No nuts of any kind" },
   peanut: { th: "ไม่เอาถั่วลิสง", en: "No peanuts" },
   treeNut: { th: "ไม่เอาถั่วเปลือกแข็ง", en: "No tree nuts" },
   milk: { th: "ไม่เอานมและผลิตภัณฑ์นม", en: "No milk or dairy" },

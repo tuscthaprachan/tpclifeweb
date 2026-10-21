@@ -162,8 +162,8 @@ stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,prot
 3,ผัดวุ้นเส้นหมูสับหรือไก่,Stir-fried glass noodles with minced pork or chicken and veggies [No.46],3-stir-fried-glass-noodles-with-minced-pork,,40,,noodles,main,pork;chicken,egg;wheat;soy;fish;shellfish,stirFried,0,hot,no,no,no,no,2026-10-21,3G.jpg
 3,ลาบวุ้นเส้นหมูสับหรือไก่,Spicy minced pork or chicken with glass noodles and ground roasted rice salad (larb) [No.47],3-spicy-minced-pork-or-chicken-with-glass,larb,40,,noodles,main,pork;chicken,fish;shellfish,salad,2,hot,no,no,no,no,2026-10-21,3G.jpg
 3,ลาบมาม่าหมูสับหรือไก่,Spicy minced pork or chicken with instant noodles and ground roasted rice salad (larb) [No.48],3-spicy-minced-pork-or-chicken-with-instant,larb,40,,noodles,main,pork;chicken,wheat;fish;shellfish,salad,2,hot,no,no,no,no,2026-10-21,3G.jpg
-3,ยำวุ้นเส้นหมูสับหรือไก่,Spicy pork or chicken with glass noodle salad [No.49],3-spicy-pork-or-chicken-with-glass-noodle,,40,,noodles,main,pork;chicken,fish;shellfish,salad,2,hot,no,no,no,no,2026-10-21,3G.jpg
-3,ยำมาม่าทะเล,Spicy seafood with instant noodle salad [No.50],3-spicy-seafood-with-instant-noodle-salad-no,,60,,noodles,main,seafood,wheat;fish;shellfish,salad,2,hot,no,no,no,no,2026-10-21,3G.jpg
+3,ยำวุ้นเส้นหมูสับหรือไก่,Spicy pork or chicken with glass noodle salad [No.49],3-spicy-pork-or-chicken-with-glass-noodle,,40,,noodles,main,pork;chicken,peanut;fish;shellfish,salad,2,hot,no,no,no,no,2026-10-21,3G.jpg
+3,ยำมาม่าทะเล,Spicy seafood with instant noodle salad [No.50],3-spicy-seafood-with-instant-noodle-salad-no,,60,,noodles,main,seafood,peanut;wheat;fish;shellfish,salad,2,hot,no,no,no,no,2026-10-21,3G.jpg
 3,เส้นหมี่ผัดซีอิ๊วหมูหรือไก่,"Thin rice noodles with pork or chicken, kale and black soy sauce [No.52]",3-thin-rice-noodles-with-pork-or-chicken,pad-see-ew,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,0,hot,no,no,no,no,2026-10-21,3G.jpg
 3,สปาเก็ตตี้เขียวหวานไก่หรือหมู,Spaghetti with pork or chicken and green curry paste [No.57],3-spaghetti-with-pork-or-chicken-and-green,,40,,noodles,main,chicken;pork,wheat;soy;fish;shellfish,stirFried,2,hot,no,no,no,no,2026-10-21,3G.jpg
 3,เส้นใหญ่ผัดขี้เมาหมูหรือไก่,Spicy flat rice noodles with pork or chicken and Thai herbs [No.58],3-spicy-flat-rice-noodles-with-pork-or,,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,3,hot,no,no,no,no,2026-10-21,3G.jpg
@@ -291,9 +291,9 @@ stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,prot
 5,Mix berry,Mix berry smoothie,5-mix-berry-smoothie,,60,,drink,drink,none,,,0,cold,no,yes,yes,yes,2026-10-21,5B.jpg
 5,Berry+Yogurt,Berry+Yogurt,5-berry-yogurt,,75,,drink,drink,none,milk,,0,cold,no,no,no,no,2026-10-21,5B.jpg
 5,BerryCheese,BerryCheese,5-berrycheese,,90,,drink,drink,none,milk,,0,cold,no,no,no,no,2026-10-21,5B.jpg
-5,Coconut,Coconut smoothie,5-coconut-smoothie,,35,,drink,drink,none,,,0,cold,no,yes,yes,yes,2026-10-21,5B.jpg
-5,Coconut+Milk,Coconut+Milk,5-coconut-milk,,40,,drink,drink,none,milk,,0,cold,no,no,no,no,2026-10-21,5B.jpg
-5,Coconut+Avocado,Coconut+Avocado,5-coconut-avocado,,55,,drink,drink,none,,,0,cold,no,yes,yes,yes,2026-10-21,5B.jpg
+5,Coconut,Coconut smoothie,5-coconut-smoothie,,35,,drink,drink,none,treeNut,,0,cold,no,yes,yes,yes,2026-10-21,5B.jpg
+5,Coconut+Milk,Coconut+Milk,5-coconut-milk,,40,,drink,drink,none,treeNut;milk,,0,cold,no,no,no,no,2026-10-21,5B.jpg
+5,Coconut+Avocado,Coconut+Avocado,5-coconut-avocado,,55,,drink,drink,none,treeNut,,0,cold,no,yes,yes,yes,2026-10-21,5B.jpg
 5,Blueberry,Blueberry smoothie,5-blueberry-smoothie,,80,,drink,drink,none,,,0,cold,no,yes,yes,yes,2026-10-21,5B.jpg
 5,Blueberry+Yogurt,Blueberry+Yogurt,5-blueberry-yogurt,,95,,drink,drink,none,milk,,0,cold,no,no,no,no,2026-10-21,5B.jpg
 5,BlueberryBanana,BlueberryBanana smoothie,5-blueberrybanana-smoothie,,90,,drink,drink,none,,,0,cold,no,yes,yes,yes,2026-10-21,5B.jpg
@@ -409,7 +409,7 @@ stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,prot
 5,Americano Honey,Americano Honey,5-americano-honey,,45,เย็น|Iced|5,drink,drink,none,,,0,hot,no,no,no,no,2026-10-21,5D.jpg
 5,Americano Honey Lime,Americano Honey Lime,5-americano-honey-lime,,55,เย็น|Iced|5,drink,drink,none,,,0,hot,no,no,no,no,2026-10-21,5D.jpg
 5,Americano Yuzu,Americano Yuzu,5-americano-yuzu,,60,,drink,drink,none,,,0,cold,no,no,no,no,2026-10-21,5D.jpg
-5,Americano Coconut,Americano Coconut,5-americano-coconut,,60,,drink,drink,none,,,0,cold,no,no,no,no,2026-10-21,5D.jpg
+5,Americano Coconut,Americano Coconut,5-americano-coconut,,60,,drink,drink,none,treeNut,,0,cold,no,no,no,no,2026-10-21,5D.jpg
 5,Americano เสาวรส,Americano เสาวรส,5-americano,,60,,drink,drink,none,,,0,cold,no,no,no,no,2026-10-21,5D.jpg
 5,Americano มะนาว,Americano มะนาว,5-americano-2,,40,เย็น|Iced|5,drink,drink,none,,,0,hot,no,no,no,no,2026-10-21,5D.jpg
 5,Espresso เอสเปซโซ,Espresso เอสเปซโซ,5-espresso,,30,เย็น|Iced|15,drink,drink,none,,,0,hot,no,yes,yes,yes,2026-10-21,5D.jpg
@@ -418,7 +418,7 @@ stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,prot
 5,Latte ลาเต้,Latte ลาเต้,5-latte,,45,เย็น|Iced|5,drink,drink,none,milk,,0,hot,no,no,no,no,2026-10-21,5D.jpg
 5,Latte with Almond Milk,Latte with Almond Milk,5-latte-with-almond-milk,,70,เย็น|Iced|5,drink,drink,none,treeNut;milk,,0,hot,no,no,no,no,2026-10-21,5D.jpg
 5,Latte with Oat Milk,Latte with Oat Milk,5-latte-with-oat-milk,,70,เย็น|Iced|5,drink,drink,none,,,0,hot,no,no,no,no,2026-10-21,5D.jpg
-5,"Latte+Caramel,Vanila, Hezelnut","Latte+Caramel,Vanila, Hezelnut",5-latte-caramel-vanila-hezelnut,,60,เย็น|Iced|5,drink,drink,none,milk,,0,hot,no,no,no,no,2026-10-21,5D.jpg
+5,"Latte+Caramel,Vanila, Hezelnut","Latte+Caramel,Vanila, Hezelnut",5-latte-caramel-vanila-hezelnut,,60,เย็น|Iced|5,drink,drink,none,treeNut;milk,,0,hot,no,no,no,no,2026-10-21,5D.jpg
 5,Latte+Brownsugar,Latte+Brownsugar,5-latte-brownsugar,,60,เย็น|Iced|5,drink,drink,none,milk,,0,hot,no,no,no,no,2026-10-21,5D.jpg
 5,Caramel Macchiato มัคคิอาโต้,Caramel Macchiato มัคคิอาโต้,5-caramel-macchiato,,70,,drink,drink,none,,,0,cold,no,no,no,no,2026-10-21,5D.jpg
 5,Matcha & Espresso,Matcha & Espresso,5-matcha-and-espresso,,75,,drink,drink,none,milk,,0,cold,no,no,no,no,2026-10-21,5D.jpg
@@ -427,8 +427,8 @@ stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,prot
 5,Thai Tea Yuzu ชาไทยยูซุ,Thai Tea Yuzu ชาไทยยูซุ,5-thai-tea-yuzu,cha-yen,60,,drink,drink,none,milk,,0,cold,no,no,no,no,2026-10-21,5D.jpg
 5,Ceylon Tea,Ceylon Tea,5-ceylon-tea,,45,,drink,drink,none,,,0,hot,no,yes,yes,yes,2026-10-21,5D.jpg
 5,Greentea Yuzu ชาเขียวยูซุ,Greentea Yuzu ชาเขียวยูซุ,5-greentea-yuzu,,60,,drink,drink,none,milk,,0,cold,no,no,no,no,2026-10-21,5D.jpg
-5,Greentea Coconut ชาเขียวมะพร้าว,Greentea Coconut ชาเขียวมะพร้าว,5-greentea-coconut,,60,,drink,drink,none,milk,,0,cold,no,no,no,no,2026-10-21,5D.jpg
-5,Matcha Coconut มัทฉะมะพร้าว,Matcha Coconut มัทฉะมะพร้าว,5-matcha-coconut,,70,,drink,drink,none,milk,,0,cold,no,no,no,no,2026-10-21,5D.jpg
+5,Greentea Coconut ชาเขียวมะพร้าว,Greentea Coconut ชาเขียวมะพร้าว,5-greentea-coconut,,60,,drink,drink,none,treeNut;milk,,0,cold,no,no,no,no,2026-10-21,5D.jpg
+5,Matcha Coconut มัทฉะมะพร้าว,Matcha Coconut มัทฉะมะพร้าว,5-matcha-coconut,,70,,drink,drink,none,treeNut;milk,,0,cold,no,no,no,no,2026-10-21,5D.jpg
 5,Green Tea ชาเขียว,Green Tea ชาเขียว,5-green-tea,,45,,drink,drink,none,,,0,hot,no,yes,yes,yes,2026-10-21,5D.jpg
 5,Matcha Latte,Matcha Latte,5-matcha-latte,,55,,drink,drink,none,milk,,0,hot,no,no,no,no,2026-10-21,5D.jpg
 5,Pure Matcha,Pure Matcha,5-pure-matcha,,55,,drink,drink,none,milk,,0,hot,no,no,no,no,2026-10-21,5D.jpg
@@ -618,11 +618,11 @@ stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,prot
 12,แกงเห็ดรวมสมุนไพร,Spicy mixed mushroom soup with herbs,12-spicy-mixed-mushroom-soup-with-herbs,,45,,soup,main,none,fish;shellfish,curry,2,hot,yes,no,no,no,2026-10-21,12A.jpg
 12,ต้มแซ่บ,Hot and sour Isan spicy soup (tom saep),12-hot-and-sour-isan-spicy-soup,,45,,soup,main,pork,fish;shellfish,curry,3,hot,yes,no,no,no,2026-10-21,12A.jpg
 12,ลาบวุ้นเส้น - ลาบมาม่า,Spicy glass noodle or instant noodle salad with minced pork/chicken (larb style),12-spicy-glass-noodle-or-instant-noodle-salad,larb,40,,singlePlate,main,pork;chicken,wheat;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12A.jpg
-12,ยำวุ้นเส้น - ยำมาม่า,Spicy glass noodle or instant noodle salad (yum),12-spicy-glass-noodle-or-instant-noodle-salad-2,,40,,singlePlate,main,pork;seafood,wheat;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12A.jpg
-12,ยำรวมมิตร,Spicy mixed seafood and meat salad,12-spicy-mixed-seafood-and-meat-salad,,45,ราคาสูงสุดตามป้าย|Upper price on the board|5,singlePlate,main,seafood;pork,fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12A.jpg
+12,ยำวุ้นเส้น - ยำมาม่า,Spicy glass noodle or instant noodle salad (yum),12-spicy-glass-noodle-or-instant-noodle-salad-2,,40,,singlePlate,main,pork;seafood,peanut;wheat;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12A.jpg
+12,ยำรวมมิตร,Spicy mixed seafood and meat salad,12-spicy-mixed-seafood-and-meat-salad,,45,ราคาสูงสุดตามป้าย|Upper price on the board|5,singlePlate,main,seafood;pork,peanut;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12A.jpg
 12,ตำไทย - ปู - ปลาร้า,Thai papaya salad / with blue crab / with fermented fish sauce,12-thai-papaya-salad-with-blue-crab-with,som-tam,35,,singlePlate,main,none,peanut;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12A.jpg
-12,ตำข้าวโพด,Spicy corn salad,12-spicy-corn-salad,som-tam,40,ราคาสูงสุดตามป้าย|Upper price on the board|5,singlePlate,main,none,fish;shellfish,salad,2,hot,no,no,no,no,2026-10-21,12A.jpg
-12,ตำซั่ว,Spicy papaya salad with rice vermicelli,12-spicy-papaya-salad-with-rice-vermicelli,som-tam,40,,singlePlate,main,none,fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12A.jpg
+12,ตำข้าวโพด,Spicy corn salad,12-spicy-corn-salad,som-tam,40,ราคาสูงสุดตามป้าย|Upper price on the board|5,singlePlate,main,none,peanut;fish;shellfish,salad,2,hot,no,no,no,no,2026-10-21,12A.jpg
+12,ตำซั่ว,Spicy papaya salad with rice vermicelli,12-spicy-papaya-salad-with-rice-vermicelli,som-tam,40,,singlePlate,main,none,peanut;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12A.jpg
 12,ซุปหน่อไม้,Spicy bamboo shoot salad (sup no mai),12-spicy-bamboo-shoot-salad,,40,,singlePlate,main,none,fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12A.jpg
 12,ไก่ย่าง,Grilled chicken,12-grilled-chicken,,35,,singlePlate,main,chicken,wheat;soy;fish;shellfish,grilled,0,hot,no,no,no,no,2026-10-21,12B.jpg
 12,ข้าวเหนียว,Sticky rice,12-sticky-rice,,10,,rice,side,none,,steamed,0,hot,no,no,no,no,2026-10-21,12A.jpg
@@ -633,11 +633,11 @@ stall_number,name_th,name_en,slug,canonical_slug,price,variants,type,course,prot
 12,ข้าวไก่ทอด,Fried chicken with rice,12-fried-chicken-with-rice,,45,,rice,main,chicken,wheat;soy;fish;shellfish,deepFried,0,hot,no,no,no,no,2026-10-21,12B.jpg
 12,ตำไทยไข่เค็ม,Thai-style papaya salad with salted egg,12-thai-style-papaya-salad-with-salted-egg,som-tam,40,,singlePlate,main,egg,peanut;egg;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12B.jpg
 12,ต้มแซ่บ (ป้ายภาพ),Hot and spicy soup (tom saab) - photo poster,12-hot-and-spicy-soup-photo-poster,,50,,soup,main,pork,fish;shellfish,curry,3,hot,yes,no,no,no,2026-10-21,12B.jpg
-12,ยำขนมจีน,Spicy rice vermicelli salad (yum khanom jeen),12-spicy-rice-vermicelli-salad,,40,,singlePlate,main,none,fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12B.jpg
-12,ตำกุ้งสด,Spicy papaya salad with fresh shrimp,12-spicy-papaya-salad-with-fresh-shrimp,som-tam,50,,singlePlate,main,seafood,fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12B.jpg
+12,ยำขนมจีน,Spicy rice vermicelli salad (yum khanom jeen),12-spicy-rice-vermicelli-salad,,40,,singlePlate,main,none,peanut;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12B.jpg
+12,ตำกุ้งสด,Spicy papaya salad with fresh shrimp,12-spicy-papaya-salad-with-fresh-shrimp,som-tam,50,,singlePlate,main,seafood,peanut;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12B.jpg
 12,ลวกจิ้มรวมมิตร,Mixed blanched meat and seafood with spicy dipping sauce,12-mixed-blanched-meat-and-seafood-with-spicy,,50,,singlePlate,main,seafood;pork,fish;shellfish,boiled,2,hot,no,no,no,no,2026-10-21,12B.jpg
-12,ยำหมูยอ,Spicy pork sausage salad,12-spicy-pork-sausage-salad,,40,,singlePlate,main,pork,wheat;soy;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12B.jpg
-12,ตำแตง,Spicy cucumber salad (tam taeng),12-spicy-cucumber-salad,som-tam,40,,singlePlate,main,none,fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12B.jpg
+12,ยำหมูยอ,Spicy pork sausage salad,12-spicy-pork-sausage-salad,,40,,singlePlate,main,pork,peanut;wheat;soy;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12B.jpg
+12,ตำแตง,Spicy cucumber salad (tam taeng),12-spicy-cucumber-salad,som-tam,40,,singlePlate,main,none,peanut;fish;shellfish,salad,3,hot,no,no,no,no,2026-10-21,12B.jpg
 13,ข้าวราดไข่เจียวหมูสับ,Rice with minced pork omelette,13-rice-with-minced-pork-omelette,khai-jiao,35,,madeToOrder,main,pork;egg,egg;wheat;soy;fish;shellfish,deepFried,0,hot,no,no,no,no,2026-10-21,13A.jpg
 13,ข้าวราดกะเพราหมู,Rice with stir-fried pork and holy basil (khao rat kra pao mu),13-rice-with-stir-fried-pork-and-holy,pad-kra-pao,40,,madeToOrder,main,pork,wheat;soy;fish;shellfish,stirFried,2,hot,no,no,no,no,2026-10-21,13A.jpg
 13,ข้าวราดกะเพราไก่,Rice with stir-fried chicken and holy basil (khao rat kra pao gai),13-rice-with-stir-fried-chicken-and-holy,pad-kra-pao,40,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,2,hot,no,no,no,no,2026-10-21,13A.jpg

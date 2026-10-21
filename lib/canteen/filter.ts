@@ -62,7 +62,9 @@ function matchesFeel(dish: CanteenDish, feel: readonly FeelKey[]): boolean {
 function contains(dish: CanteenDish, key: AvoidKey): boolean {
   if ((dish.protein as string[]).includes(key)) return true;
   const allergens = dish.contains ?? [];
-  return key === "seafood" ? allergens.includes("shellfish") : (allergens as string[]).includes(key);
+  if (key === "seafood") return allergens.includes("shellfish");
+  if (key === "nuts") return allergens.includes("peanut") || allergens.includes("treeNut");
+  return (allergens as string[]).includes(key);
 }
 
 export function matchesFilters(
