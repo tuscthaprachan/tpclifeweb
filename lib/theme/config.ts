@@ -1,5 +1,5 @@
 /**
- * Theme contract for TPC Life.
+ * Theme contract for TryTPC.
  *
  * Deliberately a small, dedicated module rather than an addition to
  * `lib/i18n/config.ts`. That file is a fixed shared contract for locale, and

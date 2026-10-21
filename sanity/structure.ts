@@ -17,7 +17,7 @@ export const structure: StructureResolver = (S) => {
   stalePriceCutoff.setDate(stalePriceCutoff.getDate() - CANTEEN_PRICE_STALE_DAYS);
 
   return S.list()
-    .title("TPC Life")
+    .title("TryTPC")
     .items([
       S.listItem()
         .title("Live now")

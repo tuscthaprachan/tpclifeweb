@@ -10,7 +10,7 @@ import "server-only";
  * error boundary, so a student looking for the next shuttle gets a blank error
  * page instead of the page they asked for.
  *
- * That is the wrong failure mode for this service. Most of what TPC Life shows
+ * That is the wrong failure mode for this service. Most of what TryTPC shows
  * degrades gracefully: a news list with no items reads as "nothing here yet",
  * which is a normal state the components already handle and already say in both
  * languages. Losing the whole page loses the navigation, the search box and the

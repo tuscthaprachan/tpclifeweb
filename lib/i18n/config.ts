@@ -1,5 +1,5 @@
 /**
- * Locale contract for TPC Life.
+ * Locale contract for TryTPC.
  *
  * The site is natively bilingual, not a translated English site. Thai is the
  * default because the majority of Thammasat Tha Prachan students read Thai first, but

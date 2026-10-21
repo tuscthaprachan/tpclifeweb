@@ -1,8 +1,8 @@
 {
-  "name": "tpclife",
+  "name": "trytpc",
   "version": "0.1.0",
   "private": true,
-  "description": "#tpclife (#ท้ายท่าพระจันทร์), a one-stop student life portal for Thammasat Tha Prachan",
+  "description": "#trytpc (#ท้ายท่าพระจันทร์), a one-stop student life portal for Thammasat Tha Prachan",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

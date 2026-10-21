@@ -606,7 +606,7 @@ function navItem(th: string, en: string, path: string) {
 const SITE_SETTINGS_DOC = {
   _id: "siteSettings",
   _type: "siteSettings" as const,
-  serviceName: { th: "#ท้ายท่าพระจันทร์", en: "#tpclife" },
+  serviceName: { th: "#ท้ายท่าพระจันทร์", en: "#trytpc" },
   tagline: {
     th: "ข้อมูลชีวิตนักศึกษาธรรมศาสตร์ท่าพระจันทร์ ทุกเรื่องในที่เดียว",
     en: "Everything a Thammasat Tha Prachan student needs, in one place",

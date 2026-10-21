@@ -28,8 +28,8 @@ import { alternatesFor } from "@/lib/i18n/metadata";
  * agent's final report rather than invented as a synonym of something else.
  */
 const INTRO: LocaleString = {
-  th: "เว็บไซต์ #ท้ายท่าพระจันทร์ (#tpclife) มีเป้าหมายให้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA นี่คือแถลงการณ์ที่ตรงไปตรงมาว่าส่วนใดเป็นไปตามมาตรฐานแล้ว ส่วนใดยังไม่เป็น และเหตุใด บริการนี้ยังอยู่ในระยะทดลอง เนื้อหาและฟังก์ชันบางส่วนจึงยังไม่สมบูรณ์",
-  en: "#tpclife aims to meet WCAG 2.2 level AA. This is a plain account of what already conforms, what does not yet, and why. The service is still in an early phase, so some content and functionality remain incomplete.",
+  th: "เว็บไซต์ #ท้ายท่าพระจันทร์ (#trytpc) มีเป้าหมายให้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA นี่คือแถลงการณ์ที่ตรงไปตรงมาว่าส่วนใดเป็นไปตามมาตรฐานแล้ว ส่วนใดยังไม่เป็น และเหตุใด บริการนี้ยังอยู่ในระยะทดลอง เนื้อหาและฟังก์ชันบางส่วนจึงยังไม่สมบูรณ์",
+  en: "#trytpc aims to meet WCAG 2.2 level AA. This is a plain account of what already conforms, what does not yet, and why. The service is still in an early phase, so some content and functionality remain incomplete.",
 };
 
 const CONFORMANCE_HEADING: LocaleString = { th: "สถานะการปฏิบัติตามมาตรฐาน", en: "Conformance status" };

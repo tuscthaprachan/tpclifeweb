@@ -22,7 +22,7 @@ export const siteSettings = defineType({
       title: "Service name",
       type: "localeString",
       group: "identity",
-      description: 'The site name as shown in the header, in Thai and English, for example "TPC Life".',
+      description: 'The site name as shown in the header, in Thai and English, for example "TryTPC".',
       validation: (rule) => rule.required().custom(bilingualStringMessage),
     }),
     defineField({

@@ -7,8 +7,8 @@ import { schemaTypes } from "@/sanity/schemas";
 import { structure } from "@/sanity/structure";
 
 export default defineConfig({
-  name: "tpclife",
-  title: "TPC Life Studio",
+  name: "trytpc",
+  title: "TryTPC Studio",
 
   projectId,
   dataset,

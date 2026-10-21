@@ -20,7 +20,7 @@ import type { Locale, LocaleString } from "./config";
 
 export const UI = {
   /* Global chrome */
-  serviceName: { th: "#ท้ายท่าพระจันทร์", en: "#tpclife" },
+  serviceName: { th: "#ท้ายท่าพระจันทร์", en: "#trytpc" },
   skipToContent: { th: "ข้ามไปยังเนื้อหาหลัก", en: "Skip to main content" },
   mainMenu: { th: "เมนูหลัก", en: "Main menu" },
   footerMenu: { th: "เมนูท้ายเว็บไซต์", en: "Footer navigation" },

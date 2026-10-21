@@ -1,4 +1,4 @@
-# #tpclife (#ท้ายท่าพระจันทร์)
+# #trytpc (#ท้ายท่าพระจันทร์)
 
 A one-stop student life portal for Thammasat Tha Prachan, built for and with the Thammasat University Student Union Tha Prachan (อมธ. ท่าพระจันทร์) and the Thammasat University Student Council Tha Prachan (สภานักศึกษา ท่าพระจันทร์).
 

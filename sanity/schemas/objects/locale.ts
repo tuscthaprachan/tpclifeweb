@@ -3,7 +3,7 @@ import { defineField, defineType } from "sanity";
 /**
  * Bilingual field types.
  *
- * Every user-facing string in TPC Life exists in Thai and English, and
+ * Every user-facing string in TryTPC exists in Thai and English, and
  * neither is a translation of the other. Thai is shown first because it is
  * the site's default locale.
  *

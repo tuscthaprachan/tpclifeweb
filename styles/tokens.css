@@ -1,5 +1,5 @@
 /*
- * TPC Life design tokens.
+ * TryTPC design tokens.
  *
  * Every colour value here has a measured WCAG 2.2 contrast ratio recorded beside it.
  * Do not add, change or invent a colour without re-running `npm run check:contrast`.

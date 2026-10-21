@@ -1,5 +1,5 @@
 /**
- * The shape of every document TPC Life reads out of Sanity.
+ * The shape of every document TryTPC reads out of Sanity.
  *
  * This file is a shared contract between the CMS schemas and every page that
  * renders them. The Sanity schema definitions in `sanity/schemas` must produce

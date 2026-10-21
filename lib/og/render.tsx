@@ -40,7 +40,7 @@ export type OgTone = "brand" | "transport" | "welfare" | "activity" | "governanc
 
 const TONE: Record<OgTone, { fill: string; soft: string; ink: string }> = palette.tones;
 
-const SERVICE_NAME: LocaleString = { th: "#ท้ายท่าพระจันทร์", en: "#tpclife" };
+const SERVICE_NAME: LocaleString = { th: "#ท้ายท่าพระจันทร์", en: "#trytpc" };
 const CAMPUS: LocaleString = {
   th: "ธรรมศาสตร์ ท่าพระจันทร์",
   en: "Thammasat Tha Prachan",
