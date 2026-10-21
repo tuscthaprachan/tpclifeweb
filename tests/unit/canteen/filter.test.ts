@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import {
   applyFilters,
+  commonCheckedOn,
   defaultFilters,
   facetCounts,
   groupDishes,
   parse,
+  pickStarters,
   relaxSuggestions,
   type CanteenFilters,
 } from "@/lib/canteen";
@@ -204,5 +206,36 @@ describe("relaxSuggestions", () => {
   it("works from parsed URL filters", () => {
     const filters = parse(new URLSearchParams("max=40&type=noodles"));
     expect(relaxSuggestions(data, filters, NOW)[0]!.count).toBe(10);
+  });
+});
+
+describe("pickStarters", () => {
+  const all = applyFilters(data, f({}), NOW);
+
+  it("takes at most one dish per stall, cheapest first", () => {
+    const starters = pickStarters(data, all, 6, f());
+    expect(new Set(starters.map((d) => d.stall._ref)).size).toBe(starters.length);
+    const prices = starters.map((d) => d.price);
+    expect(prices).toEqual([...prices].sort((a, b) => a - b));
+    expect(starters[0]?.price).toBe(Math.min(...all.map((d) => d.price)));
+  });
+
+  it("respects the count", () => {
+    expect(pickStarters(data, all, 2, f())).toHaveLength(2);
+  });
+
+  it("is the same whatever the locale sorted the input in", () => {
+    const th = applyFilters(data, f(), NOW, { locale: "th" });
+    const en = applyFilters(data, f(), NOW, { locale: "en" });
+    expect(slugs(pickStarters(data, th, 6, f()))).toEqual(slugs(pickStarters(data, en, 6, f())));
+    expect(slugs(pickStarters(data, [...en].reverse(), 6, f()))).toEqual(slugs(pickStarters(data, en, 6, f())));
+  });
+});
+
+describe("commonCheckedOn", () => {
+  it("returns the shared date, or undefined when dates differ or the list is empty", () => {
+    expect(commonCheckedOn(data.dishes)).toBe("2026-08-01");
+    expect(commonCheckedOn([])).toBeUndefined();
+    expect(commonCheckedOn([data.dishes[0]!, { ...data.dishes[1]!, checkedOn: "2026-08-02" }])).toBeUndefined();
   });
 });

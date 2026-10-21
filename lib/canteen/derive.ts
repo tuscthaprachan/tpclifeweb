@@ -344,3 +344,9 @@ export function dishesInCanonical(data: CanteenData, canonicalId: string): Cante
 export function cheapestInCanonical(data: CanteenData, canonicalId: string): CanteenDish | null {
   return dishesInCanonical(data, canonicalId)[0] ?? null;
 }
+
+/** The "YYYY-MM-DD" every dish shares, or undefined when the list is empty or the dates differ. */
+export function commonCheckedOn(dishes: readonly CanteenDish[]): string | undefined {
+  const first = dishes[0]?.checkedOn;
+  return first && dishes.every((dish) => dish.checkedOn === first) ? first : undefined;
+}

@@ -19,6 +19,7 @@ export * from "./paginate";
 
 export * from "./DietTag";
 export * from "./PriceTag";
+export * from "./CheckedOnNote";
 export * from "./FavouriteToggle";
 export * from "./DishCard";
 export * from "./StallCard";

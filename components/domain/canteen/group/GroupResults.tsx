@@ -5,7 +5,7 @@ import { CanteenMapWithList } from "@/components/domain/canteen/map";
 import type { MapHighlight } from "@/components/domain/canteen/map";
 import { Heading } from "@/components/ui/Heading";
 import { cx } from "@/components/ui/cx";
-import { stallOf } from "@/lib/canteen/derive";
+import { commonCheckedOn, stallOf } from "@/lib/canteen/derive";
 import {
   bindingConstraint,
   eachTheirOwn,
@@ -19,6 +19,7 @@ import { newSeed } from "@/lib/canteen/random";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
 
+import { CheckedOnNote } from "../CheckedOnNote";
 import { DishCard } from "../DishCard";
 import { PriceTag } from "../PriceTag";
 import { AVOID_LABEL, DIET_SHORT_LABEL, label } from "../labels";
@@ -278,6 +279,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
       label: entry.who.map((index) => `${personBadge(people[index]!, index)} ${name(index)}`).join(", "),
     }));
     const spinHref = groupHref(path, { ...state, strategy: "random", seed: newSeed(), rerolls: [] }, "results");
+    const ownChecked = commonCheckedOn(own.picks.flatMap((entry) => (entry.dish ? [entry.dish] : [])));
     const zoneName = own.seating ? pick(own.seating.zone.label, locale) : null;
 
     return (
@@ -288,6 +290,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
           <Heading level={3} className="m-0 text-lg">
             {GROUP.revealTitle[locale]}
           </Heading>
+          {ownChecked ? <CheckedOnNote checkedOn={ownChecked} locale={locale} /> : null}
           <ol className={cx("m-0 grid list-none gap-[var(--space-4)] p-0 sm:grid-cols-2", reveal && "group-reveal")}>
             {own.picks.map((entry) => {
               const person = people[entry.personIndex]!;
@@ -311,6 +314,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
                       filters={filters}
                       headingLevel={5}
                       showFavourite={false}
+                      hideChecked={entry.dish.checkedOn === ownChecked}
                     />
                   ) : (
                     <p className="m-0 rounded-panel border border-line bg-surface-alt p-[var(--space-4)] text-ink-900">

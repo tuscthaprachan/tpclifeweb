@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 
 import {
   CUISINE_LABEL,
+  CheckedOnNote,
   DietTag,
   DishCard,
   DishTypeIcon,
@@ -25,7 +26,7 @@ import {
 import { StallMiniMap } from "@/components/domain/canteen/pick/StallMiniMap";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Grid, Heading, InsetText, Stack, Tag } from "@/components/ui";
-import { indexCanteen, priceRange } from "@/lib/canteen/derive";
+import { commonCheckedOn, indexCanteen, priceRange } from "@/lib/canteen/derive";
 import { matchesFilters } from "@/lib/canteen/filter";
 import { DISH_TYPES } from "@/lib/canteen/options";
 import { countActiveValues } from "@/lib/canteen/params";
@@ -69,6 +70,7 @@ export default async function EatStallPage({
   const now = new Date();
   const dishes = data.dishes.filter((dish) => dish.stall._ref === stall._id);
   const range = priceRange(dishes);
+  const checkedOn = commonCheckedOn(dishes);
   const matching = dishes.filter((dish) => matchesFilters(data, dish, filters, now)).length;
   const halalTag = stallHalalTag(stall);
   const name = pick(stall.name, locale);
@@ -140,6 +142,7 @@ export default async function EatStallPage({
             <Heading level={2} id="eat-stall-menu" className="m-0 text-xl">
               {t(EAT.menuTitle, locale)}
             </Heading>
+            {checkedOn ? <CheckedOnNote checkedOn={checkedOn} locale={locale} className="-mt-[var(--space-4)]" /> : null}
             {dishes.length === 0 ? (
               <InsetText>
                 <p className="m-0 text-ink-900">{t(EAT.noMenuYet, locale)}</p>
@@ -156,7 +159,7 @@ export default async function EatStallPage({
                   <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">
                     {section.dishes.map((dish) => (
                       <li key={dish._id} className="min-w-0">
-                        <DishCard dish={dish} stall={stall} locale={locale} filters={filters} headingLevel={4} />
+                        <DishCard dish={dish} stall={stall} locale={locale} filters={filters} headingLevel={4} hideChecked={dish.checkedOn === checkedOn} />
                       </li>
                     ))}
                   </Grid>

@@ -25,6 +25,8 @@ interface DishCardProps {
   headingLevel?: HeadingLevel;
   /** Show the favourite toggle (a client island that only appears when the device can keep data). Defaults to true. */
   showFavourite?: boolean;
+  /** Leave out the "Price checked on" line because the list shows it once. */
+  hideChecked?: boolean;
   className?: string;
 }
 
@@ -34,7 +36,7 @@ interface DishCardProps {
  * everything works without JavaScript except the favourite toggle, which is
  * the only client island and simply is not there until JavaScript runs.
  */
-export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showFavourite = true, className }: DishCardProps) {
+export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showFavourite = true, hideChecked = false, className }: DishCardProps) {
   const other = OTHER_LOCALE[locale];
   const name = pick(dish.name, locale);
   const otherName = pick(dish.name, other);
@@ -63,7 +65,7 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
         ) : null}
       </div>
 
-      <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} />
+      <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} inlineExtras hideChecked={hideChecked} />
 
       {stall ? (
         <p className="-my-[var(--space-1)] flex items-start gap-[var(--space-1)] text-sm">
