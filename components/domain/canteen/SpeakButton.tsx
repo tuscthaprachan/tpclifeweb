@@ -17,9 +17,27 @@ interface SpeakButtonProps {
 const subscribeNever = () => () => {};
 const canSpeak = () => typeof window !== "undefined" && "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
 
-/** A Thai voice if the device has one. Without one the browser still tries with `lang` set. */
+const isThai = (voice: SpeechSynthesisVoice) => /^th([-_]|$)/i.test(voice.lang);
+
+/** A Thai voice if the device has one, preferring one installed on the device. */
 function thaiVoice(): SpeechSynthesisVoice | undefined {
-  return window.speechSynthesis.getVoices().find((voice) => voice.lang.toLowerCase().startsWith("th"));
+  const voices = window.speechSynthesis.getVoices().filter(isThai);
+  return voices.find((voice) => voice.localService) ?? voices[0];
+}
+
+/** Chrome loads its voice list after the page does, so the first read waits briefly for it. */
+function whenVoicesLoad(then: () => void) {
+  const synth = window.speechSynthesis;
+  if (synth.getVoices().length > 0) return then();
+  let fired = false;
+  const done = () => {
+    if (fired) return;
+    fired = true;
+    synth.removeEventListener("voiceschanged", done);
+    then();
+  };
+  synth.addEventListener("voiceschanged", done);
+  window.setTimeout(done, 1000);
 }
 
 /**
@@ -34,12 +52,14 @@ export function SpeakButton({ text, label, name, className }: SpeakButtonProps) 
   const speak = () => {
     const synth = window.speechSynthesis;
     synth.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "th-TH";
-    utterance.rate = 0.8;
-    const voice = thaiVoice();
-    if (voice) utterance.voice = voice;
-    synth.speak(utterance);
+    whenVoicesLoad(() => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "th-TH";
+      utterance.rate = 0.8;
+      const voice = thaiVoice();
+      if (voice) utterance.voice = voice;
+      synth.speak(utterance);
+    });
   };
 
   return (
