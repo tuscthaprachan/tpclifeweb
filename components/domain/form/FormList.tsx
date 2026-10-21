@@ -7,7 +7,7 @@ import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { FormRecord } from "@/lib/sanity/types";
-import { CATEGORY_LABEL_KEY, OWNER_LABEL_KEY } from "./labels";
+import { CATEGORY_LABEL_KEY, NO_SIGN_IN_ON_FORM, OWNER_LABEL_KEY, signInBadgeLabel } from "./labels";
 
 interface FormListProps {
   forms: FormRecord[];
@@ -39,9 +39,9 @@ export function FormList({ forms, locale, headingLevel, className }: FormListPro
               <Tag tone={form.category}>{UI[CATEGORY_LABEL_KEY[form.category]][locale]}</Tag>
               <span className="text-sm text-ink-600">{UI[OWNER_LABEL_KEY[form.owner]][locale]}</span>
               {form.requiresSignIn ? (
-                <StatusTag tone="warning" label={UI.requiresSignIn[locale]} />
+                <StatusTag tone="warning" label={signInBadgeLabel(form.signInType, locale)} />
               ) : (
-                <StatusTag tone="success" label={UI.noSignInNeeded[locale]} />
+                <StatusTag tone="success" label={NO_SIGN_IN_ON_FORM[locale]} />
               )}
             </div>
           </li>

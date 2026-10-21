@@ -14,7 +14,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ShellContainer } from "@/components/layout/ShellContainer";
-import { FormRequirements, OWNER_LABEL_KEY } from "@/components/domain/form";
+import { FormRequirements, NO_SIGN_IN_ON_FORM, OWNER_LABEL_KEY, SIGN_IN_ON_FORM } from "@/components/domain/form";
 import { Button } from "@/components/ui/Button";
 import { Heading } from "@/components/ui/Heading";
 import { NotificationBanner } from "@/components/ui/NotificationBanner";
@@ -38,14 +38,18 @@ import type { FormRecord, HelpContact } from "@/lib/sanity/types";
  * rather than invented into the shared file, and reported as a gap.
  */
 // TODO: add to UI strings.
-const SIGN_IN_ACCOUNT_NOTE: Record<"tuAccount" | "other", LocaleString> = {
+const SIGN_IN_ACCOUNT_NOTE: Record<"google" | "tuAccount" | "other", LocaleString> = {
+  google: {
+    th: "การเข้าสู่ระบบทำในแบบฟอร์มภายนอก ไม่ใช่บนเว็บไซต์นี้ ใช้บัญชี Google ของมหาวิทยาลัยธรรมศาสตร์ (บัญชี TU) ก่อนกรอก",
+    en: "Signing in happens on the external form, not on this website. Use your Thammasat (TU) Google account before filling it in",
+  },
   tuAccount: {
-    th: "ต้องเข้าสู่ระบบด้วยบัญชีนักศึกษามหาวิทยาลัยธรรมศาสตร์ก่อนกรอก",
-    en: "You must sign in with your Thammasat University account before filling this in",
+    th: "การเข้าสู่ระบบทำในแบบฟอร์มภายนอก ไม่ใช่บนเว็บไซต์นี้ ใช้บัญชีมหาวิทยาลัยธรรมศาสตร์ (บัญชี TU) ก่อนกรอก",
+    en: "Signing in happens on the external form, not on this website. Use your Thammasat (TU) account before filling it in",
   },
   other: {
-    th: "ต้องเข้าสู่ระบบก่อนกรอก โปรดตรวจสอบบัญชีที่ต้องใช้กับผู้รับผิดชอบด้านล่าง",
-    en: "You must sign in before filling this in. Check which account you need with the contact below",
+    th: "การเข้าสู่ระบบทำในแบบฟอร์มภายนอก ไม่ใช่บนเว็บไซต์นี้ โปรดตรวจสอบบัญชีที่ต้องใช้กับผู้รับผิดชอบด้านล่าง",
+    en: "Signing in happens on the external form, not on this website. Check which account you need with the contact below",
   },
 };
 // TODO: add to UI strings.
@@ -222,15 +226,12 @@ export default async function FormDetailPage({
         <Stack space={2}>
           <Heading level={2}>{UI.beforeYouStart[locale]}</Heading>
           {form.requiresSignIn ? (
-            <NotificationBanner variant="warning" title={UI.requiresSignIn[locale]}>
-              {signInType === "google"
-                ? UI.requiresGoogleSignIn[locale]
-                : form.signInNote
-                  ? pick(form.signInNote, locale)
-                  : pick(SIGN_IN_ACCOUNT_NOTE[signInType ?? "other"], locale)}
+            <NotificationBanner variant="warning" title={SIGN_IN_ON_FORM[locale]}>
+              {pick(SIGN_IN_ACCOUNT_NOTE[signInType ?? "other"], locale)}
+              {form.signInNote ? ` ${pick(form.signInNote, locale)}` : null}
             </NotificationBanner>
           ) : (
-            <StatusTag tone="success" label={UI.noSignInNeeded[locale]} />
+            <StatusTag tone="success" label={NO_SIGN_IN_ON_FORM[locale]} />
           )}
         </Stack>
 

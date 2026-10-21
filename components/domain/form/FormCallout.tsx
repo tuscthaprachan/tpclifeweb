@@ -4,8 +4,8 @@ import { StatusTag } from "@/components/ui/StatusTag";
 import { cx } from "@/components/ui/cx";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import { UI } from "@/lib/i18n/strings";
 import type { FormRecord } from "@/lib/sanity/types";
+import { signInBadgeLabel } from "./labels";
 
 export interface FormCalloutProps {
   /** An already-resolved form, not a `SanityRef`. The `relatedForms[]->{...}` / `relatedForm->{...}` projections in lib/sanity/queries.ts resolve the reference before this component ever sees it. */
@@ -41,7 +41,7 @@ export function FormCallout({ form, locale, headingLevel, className }: FormCallo
       </Heading>
       <p className="m-0 mt-[var(--space-1)] text-ink-600">{pick(form.purpose, locale)}</p>
       {form.requiresSignIn ? (
-        <StatusTag tone="warning" label={UI.requiresSignIn[locale]} className="mt-[var(--space-2)]" />
+        <StatusTag tone="warning" label={signInBadgeLabel(form.signInType, locale)} className="mt-[var(--space-2)]" />
       ) : null}
     </div>
   );
