@@ -26,7 +26,7 @@ export default async function EventsIndexPage({ params }: { params: Promise<{ lo
   return (
     <Container>
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.events[locale] }]} />
-      <Stack space={8} className="py-[var(--space-8)]">
+      <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Heading level={1}>{UI.upcomingEvents[locale]}</Heading>
 
         {events.length === 0 ? (

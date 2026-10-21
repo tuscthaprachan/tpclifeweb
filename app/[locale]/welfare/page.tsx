@@ -48,7 +48,7 @@ export default async function WelfareIndexPage({ params }: { params: Promise<{ l
   return (
     <Container width="narrow">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.welfare[locale] }]} />
-      <Stack space={8} className="py-[var(--space-8)]">
+      <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Heading level={1}>{UI.welfare[locale]}</Heading>
 
         {pages.length === 0 ? (

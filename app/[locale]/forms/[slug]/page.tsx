@@ -189,7 +189,7 @@ export default async function FormDetailPage({
   const contactExternal = contactUrl ? isExternalUrl(contactUrl) : false;
 
   return (
-    <ShellContainer className="py-8">
+    <ShellContainer className="pb-8 pt-2">
       <Breadcrumbs
         locale={locale}
         items={[

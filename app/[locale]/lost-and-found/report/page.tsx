@@ -81,7 +81,7 @@ export default async function LostFoundReportPage({
     return (
       <Container width="narrow">
         {breadcrumbs}
-        <Stack space={4} className="py-[var(--space-8)]">
+        <Stack space={4} className="pb-[var(--space-8)] pt-[var(--space-2)]">
           <Heading level={1}>{initialKind === "found" ? UI.reportFoundItem[locale] : UI.reportLostItem[locale]}</Heading>
           <NotificationBanner variant="warning" title={UI.serviceUnavailableTitle[locale]}>
             {UI.reportUnavailable[locale]}
@@ -96,7 +96,7 @@ export default async function LostFoundReportPage({
   return (
     <Container width="narrow">
       {breadcrumbs}
-      <Stack space={6} className="py-[var(--space-8)]">
+      <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Stack space={2}>
           <Heading level={1}>{initialKind === "found" ? UI.reportFoundItem[locale] : UI.reportLostItem[locale]}</Heading>
           <p className="m-0 text-ink-600">{UI.reportLostFoundIntro[locale]}</p>

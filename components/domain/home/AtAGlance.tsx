@@ -44,7 +44,7 @@ interface AtAGlanceProps {
  */
 export function AtAGlance({ locale, alerts, routes, places, now = new Date(), canteen }: AtAGlanceProps) {
   return (
-    <Stack space={6} as="section">
+    <Stack space={4} as="section">
       <Heading level={2}>{UI.atAGlance[locale]}</Heading>
 
       {alerts.length > 0 ? (

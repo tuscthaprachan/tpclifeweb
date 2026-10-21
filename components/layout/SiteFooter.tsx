@@ -23,8 +23,8 @@ export function SiteFooter({
   helpContacts: HelpContact[];
 }) {
   return (
-    <footer className="mt-12 border-t border-line bg-surface-alt">
-      <ShellContainer className="py-8">
+    <footer className="mt-8 border-t border-line bg-surface-alt">
+      <ShellContainer className="py-6">
         {/*
          * TODO: add to UI strings. There is no existing shared vocabulary
          * entry for the footer navigation's accessible name (UI.mainMenu is
@@ -39,7 +39,7 @@ export function SiteFooter({
 
         <HelpBlock locale={locale} contacts={helpContacts} />
 
-        <p className="mt-8 text-sm text-ink-600">{pick(serviceName, locale)}</p>
+        <p className="mt-4 text-sm text-ink-600">{pick(serviceName, locale)}</p>
       </ShellContainer>
     </footer>
   );

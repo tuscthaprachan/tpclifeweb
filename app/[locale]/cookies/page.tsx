@@ -91,7 +91,7 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
   return (
     <Container width="narrow">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.cookies[locale] }]} />
-      <Stack space={8} className="py-[var(--space-8)]">
+      <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Stack space={4}>
           <Heading level={1}>{UI.cookies[locale]}</Heading>
           <Prose locale={locale}>

@@ -116,7 +116,7 @@ export default async function PolicyDetailPage({
   }
 
   return (
-    <ShellContainer className="py-8">
+    <ShellContainer className="pb-8 pt-2">
       <Breadcrumbs
         locale={locale}
         items={[

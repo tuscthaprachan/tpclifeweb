@@ -118,7 +118,7 @@ export default async function LostAndFoundIndexPage({
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <Container className="py-8">
+    <Container className="pb-8 pt-2">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.lostAndFound[locale] }]} />
 
       <Stack space={8}>

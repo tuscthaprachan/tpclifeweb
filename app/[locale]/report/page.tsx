@@ -75,7 +75,7 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
   return (
     <Container width="narrow">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.report[locale] }]} />
-      <Stack space={8} className="py-[var(--space-8)]">
+      <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Stack space={2}>
           <Heading level={1}>{UI.report[locale]}</Heading>
           <p className="m-0 text-ink-600">{PAGE_INTRO[locale]}</p>

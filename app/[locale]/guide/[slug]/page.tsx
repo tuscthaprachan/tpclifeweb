@@ -89,7 +89,7 @@ export default async function GuideDetailPage({
           { label: title },
         ]}
       />
-      <Stack space={6} className="py-[var(--space-8)]" as="section">
+      <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
         <Stack space={2}>
           <Tag tone={page.category}>{CATEGORY_LABEL[page.category][locale]}</Tag>
           <Heading level={1}>{title}</Heading>

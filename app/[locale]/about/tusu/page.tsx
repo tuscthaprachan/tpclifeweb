@@ -73,7 +73,7 @@ export default async function AboutTusuPage({
         ]}
       />
 
-      <Stack space={8} className="py-[var(--space-8)]" as="section">
+      <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
         <Stack space={2}>
           <Heading level={1}>{body.name[locale]}</Heading>
           <p className="m-0 text-ink-600">

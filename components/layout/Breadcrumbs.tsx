@@ -22,7 +22,7 @@ export function Breadcrumbs({ locale, items }: { locale: Locale; items: Breadcru
   if (items.length === 0) return null;
 
   return (
-    <nav aria-label={UI.breadcrumb[locale]} className="py-4 text-sm">
+    <nav aria-label={UI.breadcrumb[locale]} className="py-[var(--space-2)] text-sm">
       <ol className="flex flex-wrap items-center gap-2 text-ink-600">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;

@@ -76,7 +76,7 @@ export default async function NewsDetailPage({
           { label: title },
         ]}
       />
-      <Stack space={6} className="py-[var(--space-8)]" as="section">
+      <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
         <Stack space={2}>
           {post.category ? <Tag tone={post.category}>{categoryLabel(post.category, locale)}</Tag> : null}
           <Heading level={1}>{title}</Heading>

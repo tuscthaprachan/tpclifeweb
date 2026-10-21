@@ -66,7 +66,7 @@ export default async function SearchPage({ params, searchParams }: SearchPagePro
   }
 
   return (
-    <Container className="py-8 sm:py-12">
+    <Container className="pb-8 pt-2">
       <Stack space={8}>
         <Stack space={4}>
           <Heading level={1}>{UI.searchResults[locale]}</Heading>

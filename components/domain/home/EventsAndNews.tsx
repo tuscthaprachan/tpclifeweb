@@ -27,7 +27,7 @@ export function EventsAndNews({ locale, events, news }: EventsAndNewsProps) {
   const latestNews = news.slice(0, MAX_NEWS);
 
   return (
-    <Stack space={12}>
+    <Stack space={8}>
       <Stack space={4} as="section">
         <div className="flex flex-wrap items-baseline justify-between gap-[var(--space-2)]">
           <Heading level={2} className="m-0">

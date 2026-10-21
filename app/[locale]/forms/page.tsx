@@ -90,7 +90,7 @@ export default async function FormsIndexPage({
   const priorityForms = filtered.filter((form) => form.isPriority);
 
   return (
-    <ShellContainer className="py-8">
+    <ShellContainer className="pb-8 pt-2">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.forms[locale] }]} />
 
       <Stack space={8}>

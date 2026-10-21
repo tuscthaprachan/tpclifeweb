@@ -67,7 +67,7 @@ export default async function LostFoundReportReceivedPage({
           { label: UI.reportReceivedTitle[locale] },
         ]}
       />
-      <Stack space={6} className="py-[var(--space-8)]">
+      <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Panel headingLevel={1} title={UI.reportReceivedTitle[locale]} tone="success">
           <p className="m-0">{UI.reportReceivedBody[locale]}</p>
           {reference ? (

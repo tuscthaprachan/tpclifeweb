@@ -105,7 +105,7 @@ export default async function PolicyDashboardPage({
   const now = new Date();
 
   return (
-    <ShellContainer className="py-8">
+    <ShellContainer className="pb-8 pt-2">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.policyTracker[locale] }]} />
 
       <Stack space={8}>

@@ -47,7 +47,7 @@ export default async function AboutIndexPage({
     <Container width="narrow">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.about[locale] }]} />
 
-      <Stack space={6} className="py-[var(--space-8)]" as="section">
+      <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
         <Heading level={1}>{UI.about[locale]}</Heading>
         <ul className="m-0 flex flex-col gap-[var(--space-2)] pl-[var(--space-6)]">
           <li>

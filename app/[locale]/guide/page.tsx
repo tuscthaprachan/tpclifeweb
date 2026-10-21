@@ -38,7 +38,7 @@ export default async function GuideIndexPage({ params }: { params: Promise<{ loc
   return (
     <Container width="narrow">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.guide[locale] }]} />
-      <Stack space={8} className="py-[var(--space-8)]">
+      <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Heading level={1}>{UI.guide[locale]}</Heading>
 
         {pages.length === 0 ? (

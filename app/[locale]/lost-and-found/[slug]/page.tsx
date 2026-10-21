@@ -74,7 +74,7 @@ export default async function LostFoundDetailPage({
           { label: title },
         ]}
       />
-      <Stack space={6} className="py-[var(--space-8)]" as="section">
+      <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
         <Stack space={2}>
           <div className="flex flex-wrap items-center gap-[var(--space-2)]">
             <LostFoundKindBadge kind={item.kind} locale={locale} />

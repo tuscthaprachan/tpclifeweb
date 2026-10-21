@@ -28,7 +28,7 @@ export function HelpBlock({ locale, contacts }: { locale: Locale; contacts: Help
   if (contacts.length === 0) return null;
 
   return (
-    <section aria-labelledby="need-help-heading" className="border-t border-line py-8">
+    <section aria-labelledby="need-help-heading" className="border-t border-line py-6">
       <h2 id="need-help-heading" className="text-lg">
         {UI.needHelp[locale]}
       </h2>

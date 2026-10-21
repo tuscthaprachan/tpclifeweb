@@ -120,7 +120,7 @@ export default async function AccessibilityStatementPage({ params }: { params: P
         locale={locale}
         items={[{ label: UI.home[locale], path: "/" }, { label: UI.accessibilityStatement[locale] }]}
       />
-      <Stack space={8} className="py-[var(--space-8)]">
+      <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Stack space={4}>
           <Heading level={1}>{UI.accessibilityStatement[locale]}</Heading>
           <Prose locale={locale}>
