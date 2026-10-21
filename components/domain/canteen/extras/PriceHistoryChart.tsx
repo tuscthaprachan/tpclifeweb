@@ -96,7 +96,7 @@ export function PriceHistoryChart({
   return (
     <figure className={cx("m-0 flex flex-col gap-[var(--space-3)]", className)}>
       <figcaption>
-        <Heading level={headingLevel} visualLevel={5} className="m-0">
+        <Heading level={headingLevel} className="m-0 text-lg">
           {title}
         </Heading>
       </figcaption>

@@ -39,7 +39,7 @@ export function ComboCard({ combo, data, locale, filters, position, headingLevel
   return (
     <article className="flex h-full flex-col gap-[var(--space-4)] rounded-panel border border-line bg-surface p-[var(--space-4)]">
       <div className="flex flex-wrap items-baseline justify-between gap-x-[var(--space-4)] gap-y-[var(--space-1)]">
-        <Heading level={headingLevel} visualLevel={4} className="m-0">
+        <Heading level={headingLevel} className="m-0 text-lg">
           {budget.comboHeading(locale, position)}
         </Heading>
         <p className="m-0 text-sm text-ink-600">{budget.stalls(locale, combo.stalls.length)}</p>
@@ -81,8 +81,8 @@ export function ComboCard({ combo, data, locale, filters, position, headingLevel
       </div>
 
       <div className="mt-auto flex flex-col gap-[var(--space-2)]">
-        <p className="m-0 text-sm font-medium text-ink-900">{t(BUDGET.comboWalk, locale)}</p>
-        <ol className="m-0 flex list-decimal flex-col gap-[var(--space-1)] pl-[var(--space-6)] text-sm text-ink-900">
+        <p className="m-0 text-base font-medium text-ink-900">{t(BUDGET.comboWalk, locale)}</p>
+        <ol className="m-0 flex list-decimal flex-col gap-[var(--space-1)] pl-[var(--space-6)] text-base text-ink-900">
           {stops.map((stall) => (
             <li key={stall._id}>{eat.stallFull(locale, stall.number, pick(stall.name, locale))}</li>
           ))}

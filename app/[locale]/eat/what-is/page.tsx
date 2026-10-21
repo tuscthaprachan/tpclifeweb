@@ -59,7 +59,7 @@ export default async function WhatIsIndexPage({
       />
       <Stack space={8}>
         <Stack space={2}>
-          <Heading level={1}>{EXTRAS.whatIsTitle[locale]}</Heading>
+          <Heading level={1} className="text-3xl">{EXTRAS.whatIsTitle[locale]}</Heading>
           <p className="m-0 max-w-prose text-ink-600">{EXTRAS.whatIsIntro[locale]}</p>
         </Stack>
 
@@ -77,7 +77,7 @@ export default async function WhatIsIndexPage({
                 return (
                   <li key={canonical._id} className="min-w-0 rounded-panel border border-line bg-surface p-[var(--space-4)]">
                     <Stack space={2}>
-                      <Heading level={2} visualLevel={4} className="m-0">
+                      <Heading level={2} className="m-0 text-lg">
                         <Link href={eatHref(locale, `/eat/what-is/${canonical.slug.current}`, filters)} className="inline-flex min-h-[var(--target-min)] items-center">{pick(canonical.name, locale)}</Link>
                       </Heading>
                       {otherName && otherName !== pick(canonical.name, locale) ? (

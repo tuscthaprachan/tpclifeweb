@@ -29,7 +29,7 @@ export function MealForm({ locale, filters, sameStall }: MealFormProps) {
 
   return (
     <section aria-labelledby="meal-form-title" className="rounded-panel bg-welfare-soft p-[var(--space-4)] sm:p-[var(--space-6)]">
-      <Heading level={2} id="meal-form-title" visualLevel={3} className="m-0 mb-[var(--space-4)]">
+      <Heading level={2} id="meal-form-title" className="m-0 mb-[var(--space-4)] text-xl">
         {t(BUDGET.mealFormTitle, locale)}
       </Heading>
       <form method="get" action={localePath(locale, "/eat/meal")} className="flex flex-col gap-[var(--space-4)]">

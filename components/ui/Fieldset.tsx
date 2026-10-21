@@ -21,7 +21,7 @@ interface FieldsetProps {
 export function Fieldset({ legend, children, hint, error, id, className }: FieldsetProps) {
   return (
     <fieldset className={cx("m-0 border-0 p-0", className)} aria-describedby={describedBy(id, { hasHint: Boolean(hint), hasError: Boolean(error) })}>
-      <legend className="mb-[var(--space-2)] text-base font-semibold text-ink-900">{legend}</legend>
+      <legend className="mb-[var(--space-2)] text-lg font-semibold text-ink-900">{legend}</legend>
       {hint ? (
         <p id={`${id}-hint`} className="mb-[var(--space-3)] text-sm text-ink-600">
           {hint}

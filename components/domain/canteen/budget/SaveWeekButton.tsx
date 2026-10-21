@@ -61,7 +61,7 @@ export function SaveWeekButton({ locale, seed, budget, days }: SaveWeekButtonPro
           {hasSaved && result === null ? ` ${t(BUDGET.replacesWeek, locale)}` : ""}
         </p>
       ) : null}
-      <div role="status" className="text-sm text-ink-900">
+      <div role="status" className="text-base text-ink-900">
         {result === "saved" ? (
           <>
             {t(BUDGET.saveWeekDone, locale)}{" "}

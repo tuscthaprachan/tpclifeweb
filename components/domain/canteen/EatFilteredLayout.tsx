@@ -65,7 +65,7 @@ export function EatFilteredLayout({ locale, data, filters, counts, route, displa
       */}
       <div className="mt-[var(--space-6)] grid gap-[var(--space-8)] md:grid-cols-[17rem_minmax(0,1fr)] md:items-start [&_:is(a,button,input,select,summary)]:scroll-mt-[calc(var(--header-height,4rem)+9rem)]">
         <section aria-labelledby="eat-filters-column-title" className="hidden md:block">
-          <Heading level={2} id="eat-filters-column-title" visualLevel={4} className="m-0 mb-[var(--space-4)]">
+          <Heading level={2} id="eat-filters-column-title" className="m-0 mb-[var(--space-4)] text-xl">
             {t(EAT.filtersTitle, locale)}
           </Heading>
           {form("col")}
@@ -74,7 +74,7 @@ export function EatFilteredLayout({ locale, data, filters, counts, route, displa
         <div className="min-w-0">
           <noscript>
             <section id="eat-filters" aria-labelledby="eat-filters-inline-title" className="mb-[var(--space-8)] md:hidden">
-              <Heading level={2} id="eat-filters-inline-title" visualLevel={4} className="m-0 mb-[var(--space-4)]">
+              <Heading level={2} id="eat-filters-inline-title" className="m-0 mb-[var(--space-4)] text-xl">
                 {t(EAT.filtersTitle, locale)}
               </Heading>
               {form("inline")}

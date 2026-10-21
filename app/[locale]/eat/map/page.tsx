@@ -89,7 +89,7 @@ export default async function CanteenMapPage({
       <Container className="py-8">
         <Breadcrumbs locale={locale} items={crumbs} />
         <Stack space={6}>
-          <Heading level={1}>{MAP_STRINGS.pageTitle[locale]}</Heading>
+          <Heading level={1} className="text-3xl">{MAP_STRINGS.pageTitle[locale]}</Heading>
           <EmptyState
             title={MAP_STRINGS.emptyTitle[locale]}
             action={
@@ -136,7 +136,7 @@ export default async function CanteenMapPage({
       <Breadcrumbs locale={locale} items={crumbs} />
       <Stack space={6}>
         <Stack space={2}>
-          <Heading level={1}>{MAP_STRINGS.pageTitle[locale]}</Heading>
+          <Heading level={1} className="text-3xl">{MAP_STRINGS.pageTitle[locale]}</Heading>
           <p className="m-0 text-ink-600">{MAP_STRINGS.pageIntro[locale]}</p>
         </Stack>
 

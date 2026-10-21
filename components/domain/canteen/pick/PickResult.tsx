@@ -48,7 +48,7 @@ export interface PickResultProps {
 }
 
 const CHIP =
-  "inline-flex min-h-[var(--target-min)] items-center rounded-pill border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-1)] text-sm font-medium text-ink-900 no-underline hover:bg-surface-alt";
+  "inline-flex min-h-[var(--target-min)] items-center rounded-pill border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-1)] text-base font-medium text-ink-900 no-underline hover:bg-surface-alt";
 const SECONDARY =
   "inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center rounded-control border border-line-strong bg-surface px-[var(--space-4)] py-[var(--space-2)] font-medium text-ink-900 no-underline hover:bg-surface-alt";
 
@@ -87,7 +87,7 @@ function Relaxed({ locale, relaxed }: { locale: Locale; relaxed: Relaxation[] | 
   return (
     <InsetText>
       <p className="m-0 font-medium">{PICK.relaxedTitle[locale]}</p>
-      <ul className="m-0 mt-[var(--space-1)] list-disc pl-[var(--space-5)] text-sm">
+      <ul className="m-0 mt-[var(--space-1)] list-disc pl-[var(--space-5)] text-base">
         {relaxed.map((item) => (
           <li key={item}>{PICK[RELAXED_TEXT[item]][locale]}</li>
         ))}
@@ -126,7 +126,7 @@ function Why({ locale, data, filters, lines }: { locale: Locale; data: CanteenDa
   const first = labels.length > 0 ? pickText.whyFilters(locale, joinLabels(labels, locale)) : PICK.whyNoFilters[locale];
   return (
     <div className="flex flex-col gap-[var(--space-1)]">
-      <p className="m-0 text-sm font-medium text-ink-600">{PICK.whyTitle[locale]}</p>
+      <p className="m-0 text-base font-medium text-ink-600">{PICK.whyTitle[locale]}</p>
       <p className="m-0 text-ink-900">{[first, ...lines].join(" ")}</p>
     </div>
   );
@@ -208,7 +208,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
           <DishTypeIcon type={dish.type} />
           {typeName}
         </p>
-        <Heading level={2} id="pick-result-title" visualLevel={1} className="m-0">
+        <Heading level={2} id="pick-result-title" className="m-0 text-2xl">
           <Link href={dishHref(locale, dish.slug.current, filters)} className="text-ink-900 no-underline hover:underline">
             {name}
           </Link>
@@ -228,7 +228,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
           <Why locale={locale} data={data} filters={filters} lines={why} />
         </div>
         <div className="flex min-w-0 flex-col gap-[var(--space-3)]">
-          <p className="m-0 text-sm font-medium text-ink-600">{PICK.whereTitle[locale]}</p>
+          <p className="m-0 text-base font-medium text-ink-600">{PICK.whereTitle[locale]}</p>
           <StallLine locale={locale} stall={stall} filters={filters} />
           <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="pickmap" />
         </div>
@@ -236,7 +236,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
 
       {phrases.length > 0 ? (
         <div className="flex flex-col gap-[var(--space-2)]">
-          <p className="m-0 text-sm font-medium text-ink-600">
+          <p className="m-0 text-base font-medium text-ink-600">
             {PICK.orderTitle[locale]}. {PICK.orderShow[locale]}
           </p>
           <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
@@ -246,7 +246,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
                   {phrase.th}
                 </span>
                 <span className="block text-sm text-ink-600">{phrase.romanised}</span>
-                <span lang="en" className="block text-sm text-ink-900">
+                <span lang="en" className="block text-base text-ink-900">
                   {phrase.en}
                 </span>
               </li>
@@ -299,7 +299,7 @@ function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDish
     <Card labelledBy="pick-result-title">
       <div className="flex flex-col gap-[var(--space-2)]">
         <p className="m-0 text-sm text-ink-600">{PICK.stallPickTitle[locale]}</p>
-        <Heading level={2} id="pick-result-title" visualLevel={1} className="m-0">
+        <Heading level={2} id="pick-result-title" className="m-0 text-2xl">
           <Link href={stallHref(locale, stall.slug.current, filters)} className="text-ink-900 no-underline hover:underline">
             {name}
           </Link>
@@ -310,7 +310,7 @@ function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDish
       <div className="grid gap-[var(--space-6)] md:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
           <div className="flex flex-col gap-[var(--space-2)]">
-            <p className="m-0 text-sm font-medium text-ink-600">{PICK.stallDishes[locale]}</p>
+            <p className="m-0 text-base font-medium text-ink-600">{PICK.stallDishes[locale]}</p>
             <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">
               {stallDishes.slice(0, 5).map((dish) => (
                 <li key={dish._id} className="flex flex-col gap-[var(--space-1)]">
@@ -325,7 +325,7 @@ function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDish
           <Why locale={locale} data={data} filters={filters} lines={why} />
         </div>
         <div className="flex min-w-0 flex-col gap-[var(--space-3)]">
-          <p className="m-0 text-sm font-medium text-ink-600">{PICK.whereTitle[locale]}</p>
+          <p className="m-0 text-base font-medium text-ink-600">{PICK.whereTitle[locale]}</p>
           <StallLine locale={locale} stall={stall} filters={filters} />
           <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="pickmap" />
         </div>
@@ -363,7 +363,7 @@ function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultP
     <Card labelledBy="pick-result-title">
       <div className="flex flex-col gap-[var(--space-2)]">
         <p className="m-0 text-sm text-ink-600">{PICK.mealPickTitle[locale]}</p>
-        <Heading level={2} id="pick-result-title" visualLevel={2} className="m-0">
+        <Heading level={2} id="pick-result-title" className="m-0 text-2xl">
           {pickText.mealTotal(locale, combo.total, combo.change, budget)}
         </Heading>
       </div>
@@ -379,7 +379,7 @@ function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultP
                     {names[position]}
                   </Link>
                   {stall ? (
-                    <p className="m-0 text-sm text-ink-900">
+                    <p className="m-0 text-sm text-ink-600">
                       {PICK.alsoWord[locale]} {eat.stallFull(locale, stall.number, localised(stall.name, locale))}
                     </p>
                   ) : null}
@@ -391,7 +391,7 @@ function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultP
           <Why locale={locale} data={data} filters={filters} lines={[pickText.mealWhy(locale, budget)]} />
         </div>
         <div className="flex min-w-0 flex-col gap-[var(--space-3)]">
-          <p className="m-0 text-sm font-medium text-ink-600">{PICK.mealWalk[locale]}</p>
+          <p className="m-0 text-base font-medium text-ink-600">{PICK.mealWalk[locale]}</p>
           <ol className="m-0 flex list-decimal flex-col gap-[var(--space-1)] pl-[var(--space-5)]">
             {combo.stalls.map((stall) => (
               <li key={stall._id} className="text-ink-900">

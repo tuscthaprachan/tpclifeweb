@@ -43,7 +43,7 @@ export function OrderPhrase({ phrases, locale, headingLevel = 2 }: OrderPhrasePr
     <section aria-labelledby="order-phrase-title" className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
       <div className="flex flex-col gap-[var(--space-4)]">
         <div className="flex flex-col gap-[var(--space-1)]">
-          <Heading level={headingLevel} id="order-phrase-title" visualLevel={4} className="m-0">
+          <Heading level={headingLevel} id="order-phrase-title" className={headingLevel === 2 ? "m-0 text-xl" : "m-0 text-lg"}>
             {EXTRAS.orderTitle[locale]}
           </Heading>
           <p className="m-0 text-sm text-ink-600">{EXTRAS.orderIntro[locale]}</p>

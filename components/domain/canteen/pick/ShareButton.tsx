@@ -40,7 +40,7 @@ export function ShareButton({ locale, href, id }: ShareButtonProps) {
 
   const field = (
     <div className="flex flex-col gap-[var(--space-1)]">
-      <label htmlFor={`${id}-url`} className="text-sm font-medium text-ink-900">
+      <label htmlFor={`${id}-url`} className="text-base font-medium text-ink-900">
         {PICK.shareManual[locale]}
       </label>
       <input
@@ -71,7 +71,7 @@ export function ShareButton({ locale, href, id }: ShareButtonProps) {
           {PICK.share[locale]}
         </Button>
       </div>
-      <p role="status" className="m-0 text-sm text-ink-900">
+      <p role="status" className="m-0 text-base text-ink-900">
         {state === "copied" ? PICK.shareCopied[locale] : ""}
       </p>
       {state === "manual" ? field : null}

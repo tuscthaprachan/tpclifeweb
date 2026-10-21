@@ -187,7 +187,7 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
             aria-hidden="true"
             className="pointer-events-none z-10 flex min-h-[14rem] items-center justify-center rounded-panel border border-line bg-welfare-soft p-[var(--space-6)] text-center [grid-area:1/1]"
           >
-            <p className="m-0 text-3xl font-semibold text-ink-900">{names[frame % names.length]}</p>
+            <p className="m-0 text-2xl font-semibold text-ink-900">{names[frame % names.length]}</p>
           </div>
         ) : null}
         <div className={playing ? "opacity-0 [grid-area:1/1]" : "[grid-area:1/1]"}>{content}</div>

@@ -90,7 +90,7 @@ export default async function EatWeekPage({
   );
   const header = (
     <Stack space={2}>
-      <Heading level={1}>{t(BUDGET.weekTitle, locale)}</Heading>
+      <Heading level={1} className="text-3xl">{t(BUDGET.weekTitle, locale)}</Heading>
       <p className="m-0 text-ink-600">{t(BUDGET.weekIntro, locale)}</p>
     </Stack>
   );
@@ -164,7 +164,7 @@ export default async function EatWeekPage({
         <WeekForm locale={locale} request={request} filters={filters} />
         <div className="no-print">
           <SpendThisWeek locale={locale} explain={false} />
-          <p className="m-0 mt-[var(--space-2)] text-sm">
+          <p className="m-0 mt-[var(--space-2)] text-base">
             <Link href={localePath(locale, "/eat/mine")}>{t(BUDGET.mineTitle, locale)}</Link>
           </p>
         </div>
@@ -172,8 +172,8 @@ export default async function EatWeekPage({
           <Stack space={6}>
             {body}
             <InsetText className="no-print">
-              <p className="m-0 text-sm text-ink-900">{t(BUDGET.weekPriceNote, locale)}</p>
-              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
+              <p className="m-0 text-sm text-ink-600">{t(BUDGET.weekPriceNote, locale)}</p>
+              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
             </InsetText>
           </Stack>
         </EatFilteredLayout>
@@ -235,7 +235,7 @@ function FailureBlock({
       </WarningText>
       {suggestions.length > 0 || countActiveValues(filters) > 0 ? (
         <section aria-labelledby="week-suggest-title" className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={2} id="week-suggest-title" visualLevel={4} className="m-0">
+          <Heading level={2} id="week-suggest-title" className="m-0 text-xl">
             {t(BUDGET.suggestTitle, locale)}
           </Heading>
           <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">

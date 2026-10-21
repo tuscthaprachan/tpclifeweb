@@ -85,7 +85,7 @@ export function CanteenMapWithList({
   return (
     <div className="grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:items-start">
       <section className="flex min-w-0 flex-col gap-3" aria-labelledby={listId}>
-        <Heading level={headingLevel} id={listId}>
+        <Heading level={headingLevel} id={listId} className={headingLevel === 2 ? "text-xl" : "text-lg"}>
           {MAP_STRINGS.listHeading[locale]}
         </Heading>
         <p className="m-0 text-sm text-ink-600">{MAP_STRINGS.listNote[locale]}</p>
@@ -104,7 +104,7 @@ export function CanteenMapWithList({
         className="hidden min-w-0 md:sticky md:top-[calc(var(--header-height,4rem)+var(--space-4))] md:block"
         aria-labelledby={`${idPrefix}-plan-wide`}
       >
-        <Heading level={mapLevel} id={`${idPrefix}-plan-wide`}>
+        <Heading level={mapLevel} id={`${idPrefix}-plan-wide`} className={mapLevel === 2 ? "text-xl" : "text-lg"}>
           {MAP_STRINGS.mapHeading[locale]}
         </Heading>
         <div className="mt-3">
@@ -122,7 +122,7 @@ export function CanteenMapWithList({
       </section>
 
       <section className="min-w-0 md:hidden" aria-labelledby={`${idPrefix}-plan-narrow`}>
-        <Heading level={mapLevel} id={`${idPrefix}-plan-narrow`}>
+        <Heading level={mapLevel} id={`${idPrefix}-plan-narrow`} className={mapLevel === 2 ? "text-xl" : "text-lg"}>
           {MAP_STRINGS.mapHeading[locale]}
         </Heading>
         <div className="mt-3">

@@ -28,7 +28,7 @@ export function PriceTag({ price, variants = [], checkedOn, locale, size = "comp
   const hasVariants = variants.length > 0;
   return (
     <div className={cx("flex flex-col gap-[var(--space-1)]", className)}>
-      <p className={cx("m-0 font-semibold text-ink-900", size === "full" ? "text-3xl" : "text-xl")}>{eat.baht(locale, price)}</p>
+      <p className={cx("m-0 font-semibold text-ink-900", size === "full" ? "text-2xl" : "text-lg")}>{eat.baht(locale, price)}</p>
 
       {size === "compact" && hasVariants ? <p className="m-0 text-sm text-ink-600">{t(EAT.extrasFrom, locale)}</p> : null}
 

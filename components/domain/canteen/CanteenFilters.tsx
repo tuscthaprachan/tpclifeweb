@@ -78,7 +78,7 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
           ]}
         />
         <div className="flex flex-col gap-[var(--space-1)]">
-          <label htmlFor={id("max-other")} className="text-sm font-medium text-ink-900">
+          <label htmlFor={id("max-other")} className="text-base font-medium text-ink-900">
             {t(EAT.budgetOther, locale)}
           </label>
           <input
@@ -166,7 +166,7 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
 
       {hide.includes("stall") ? null : (
         <div className="flex min-w-0 flex-col gap-[var(--space-2)]">
-          <label htmlFor={id("stall")} className="text-base font-semibold text-ink-900">
+          <label htmlFor={id("stall")} className="text-lg font-semibold text-ink-900">
             {t(EAT.stallLabel, locale)}
           </label>
           <select

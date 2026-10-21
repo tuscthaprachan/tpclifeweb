@@ -93,7 +93,7 @@ export default async function EatDishPage({
             <DishTypeIcon type={dish.type} />
             {TYPE_LABEL[dish.type][locale]}
           </p>
-          <Heading level={1}>{name}</Heading>
+          <Heading level={1} className="text-3xl">{name}</Heading>
           {otherName && otherName !== name ? (
             <p lang={other} className="m-0 text-lg text-ink-600">
               {otherName}
@@ -104,7 +104,7 @@ export default async function EatDishPage({
         <Grid minColumnWidth="18rem" space={6}>
           <section aria-labelledby="eat-dish-price" className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
             <Stack space={3}>
-              <Heading level={2} id="eat-dish-price" visualLevel={4} className="m-0">
+              <Heading level={2} id="eat-dish-price" className="m-0 text-xl">
                 {t(EAT.priceTitle, locale)}
               </Heading>
               <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} size="full" />
@@ -114,12 +114,12 @@ export default async function EatDishPage({
 
           <section aria-labelledby="eat-dish-where" className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
             <Stack space={3}>
-              <Heading level={2} id="eat-dish-where" visualLevel={4} className="m-0">
+              <Heading level={2} id="eat-dish-where" className="m-0 text-xl">
                 {t(EAT.whereTitle, locale)}
               </Heading>
               {stall ? (
                 <>
-                  <p className="m-0 flex items-start gap-[var(--space-1)] text-lg font-medium">
+                  <p className="m-0 flex items-start gap-[var(--space-1)] text-base font-medium">
                     <PinIcon className="mt-[4px] shrink-0 text-ink-600" size={18} />
                     <Link href={stallHref(locale, stall.slug.current, filters)}>{eat.stallFull(locale, stall.number, pick(stall.name, locale))}</Link>
                   </p>
@@ -135,7 +135,7 @@ export default async function EatDishPage({
 
         <section aria-labelledby="eat-dish-about">
           <Stack space={3}>
-            <Heading level={2} id="eat-dish-about" visualLevel={4} className="m-0">
+            <Heading level={2} id="eat-dish-about" className="m-0 text-xl">
               {t(EAT.aboutTitle, locale)}
             </Heading>
             <dl className="m-0 grid gap-[var(--space-4)] sm:grid-cols-2">
@@ -168,7 +168,7 @@ export default async function EatDishPage({
 
         <section aria-labelledby="eat-dish-diet">
           <Stack space={3}>
-            <Heading level={2} id="eat-dish-diet" visualLevel={4} className="m-0">
+            <Heading level={2} id="eat-dish-diet" className="m-0 text-xl">
               {t(EAT.dietTitle, locale)}
             </Heading>
             {dishDietTags(dish, stall).length > 0 ? (
@@ -184,7 +184,7 @@ export default async function EatDishPage({
 
         {canonical && sameDish.length > 1 ? (
           <section aria-labelledby="eat-dish-also" className="flex flex-col gap-[var(--space-3)]">
-            <Heading level={2} id="eat-dish-also" visualLevel={4} className="m-0">
+            <Heading level={2} id="eat-dish-also" className="m-0 text-xl">
               {t(EAT.compareTitle, locale)}
             </Heading>
             <p className="m-0 text-sm text-ink-600">

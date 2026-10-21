@@ -28,7 +28,7 @@ export function WeekForm({ locale, request, filters }: WeekFormProps) {
 
   return (
     <section aria-labelledby="week-form-title" className="no-print rounded-panel bg-welfare-soft p-[var(--space-4)] sm:p-[var(--space-6)]">
-      <Heading level={2} id="week-form-title" visualLevel={3} className="m-0 mb-[var(--space-4)]">
+      <Heading level={2} id="week-form-title" className="m-0 mb-[var(--space-4)] text-xl">
         {t(BUDGET.weekFormTitle, locale)}
       </Heading>
       <form method="get" action={localePath(locale, "/eat/week")} className="flex flex-col gap-[var(--space-4)]">

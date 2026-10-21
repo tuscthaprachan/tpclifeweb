@@ -95,7 +95,7 @@ export default async function EatStallPage({
           <p className="m-0 inline-flex w-fit items-center rounded-control bg-welfare px-[var(--space-3)] py-[var(--space-1)] text-lg font-semibold text-ink-on-fill">
             {eat.stallNumber(locale, stall.number)}
           </p>
-          <Heading level={1}>{name}</Heading>
+          <Heading level={1} className="text-3xl">{name}</Heading>
           <ul className="m-0 flex list-none flex-wrap gap-[var(--space-2)] p-0">
             {stall.cuisine.map((cuisine) => (
               <li key={cuisine}>
@@ -122,7 +122,7 @@ export default async function EatStallPage({
 
         <section aria-labelledby="eat-stall-where" className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
           <Stack space={3}>
-            <Heading level={2} id="eat-stall-where" visualLevel={4} className="m-0">
+            <Heading level={2} id="eat-stall-where" className="m-0 text-xl">
               {t(EAT.wayfindingTitle, locale)}
             </Heading>
             <p className="m-0 flex items-start gap-[var(--space-1)] text-ink-900">
@@ -137,7 +137,7 @@ export default async function EatStallPage({
 
         <section aria-labelledby="eat-stall-menu">
           <Stack space={8}>
-            <Heading level={2} id="eat-stall-menu" visualLevel={3} className="m-0">
+            <Heading level={2} id="eat-stall-menu" className="m-0 text-xl">
               {t(EAT.menuTitle, locale)}
             </Heading>
             {dishes.length === 0 ? (
@@ -148,10 +148,10 @@ export default async function EatStallPage({
             {sections.map((section) => (
               <section key={section.type} aria-labelledby={`eat-stall-type-${section.type}`}>
                 <Stack space={3}>
-                  <Heading level={3} id={`eat-stall-type-${section.type}`} visualLevel={4} className="m-0 flex items-center gap-[var(--space-2)]">
+                  <Heading level={3} id={`eat-stall-type-${section.type}`} className="m-0 flex items-center text-lg gap-[var(--space-2)]">
                     <DishTypeIcon type={section.type} size={20} />
                     {TYPE_LABEL[section.type][locale]}
-                    <span className="text-base font-normal text-ink-600"> ({formatNumber(section.dishes.length, locale)})</span>
+                    <span className="text-sm font-normal text-ink-600"> ({formatNumber(section.dishes.length, locale)})</span>
                   </Heading>
                   <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">
                     {section.dishes.map((dish) => (

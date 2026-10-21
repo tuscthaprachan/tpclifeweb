@@ -77,7 +77,7 @@ export default async function EatMinePage({
       />
       <Stack space={6}>
         <Stack space={2}>
-          <Heading level={1}>{t(BUDGET.mineTitle, locale)}</Heading>
+          <Heading level={1} className="text-3xl">{t(BUDGET.mineTitle, locale)}</Heading>
           <p className="m-0 text-ink-600">{t(BUDGET.mineIntro, locale)}</p>
         </Stack>
 

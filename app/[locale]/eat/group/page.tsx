@@ -78,7 +78,7 @@ export default async function EatGroupPage({
   );
   const header = (
     <Stack space={2}>
-      <Heading level={1}>{GROUP.pageTitle[locale]}</Heading>
+      <Heading level={1} className="text-3xl">{GROUP.pageTitle[locale]}</Heading>
       <p className="m-0 text-ink-600">{GROUP.pageIntro[locale]}</p>
     </Stack>
   );
@@ -104,7 +104,7 @@ export default async function EatGroupPage({
         {header}
 
         <section aria-labelledby="how" className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={2} id="how" visualLevel={4} className="m-0">
+          <Heading level={2} id="how" className="m-0 text-xl">
             {GROUP.howTitle[locale]}
           </Heading>
           <ul className="m-0 grid list-none gap-[var(--space-4)] p-0 sm:grid-cols-2">
@@ -121,7 +121,7 @@ export default async function EatGroupPage({
         </section>
 
         <section aria-label={GROUP.builderTitle[locale]} className="flex flex-col gap-[var(--space-4)]">
-          <Heading level={2} id="builder" className="m-0 scroll-mt-[var(--space-8)]">
+          <Heading level={2} id="builder" className="m-0 scroll-mt-[var(--space-8)] text-xl">
             {GROUP.builderTitle[locale]}
           </Heading>
           <GroupBuilder

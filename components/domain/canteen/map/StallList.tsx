@@ -68,14 +68,14 @@ export function StallList({
               .join(" ")}
           >
             <span
-              className="inline-flex h-10 min-w-10 shrink-0 items-center justify-center rounded-pill bg-welfare px-2 font-bold text-ink-on-fill"
+              className="inline-flex h-10 min-w-10 shrink-0 items-center justify-center rounded-pill bg-welfare px-2 font-semibold text-ink-on-fill"
             >
               <span className="visually-hidden">{MAP_STRINGS.stall[locale]} </span>
               {stall.number}
             </span>
             <div className="flex min-w-0 flex-col gap-1">
               {stop ? (
-                <p className="m-0 text-sm font-bold text-ink-900">
+                <p className="m-0 text-sm font-semibold text-ink-900">
                   {MAP_STRINGS.stopOf(stop.order, total, locale)}
                   {stop.label ? <span className="font-normal">{`: ${stop.label}`}</span> : null}
                 </p>

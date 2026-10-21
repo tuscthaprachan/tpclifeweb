@@ -144,7 +144,7 @@ export function GroupBuilder({ locale, action, initialPeople, strategy, seed }: 
       <input type="hidden" name="strat" value={strategy} />
       {seed ? <input type="hidden" name="seed" value={seed} /> : null}
 
-      <p ref={statusRef} tabIndex={-1} role="status" aria-live="polite" className="m-0 text-sm font-medium text-ink-900 empty:hidden">
+      <p ref={statusRef} tabIndex={-1} role="status" aria-live="polite" className="m-0 text-base font-medium text-ink-900 empty:hidden">
         {status}
       </p>
 
@@ -223,7 +223,7 @@ function PersonFieldset({ locale, index, rowKey, person, canRemove, onChange, on
 
       <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
         <div className="flex flex-col gap-[var(--space-1)]">
-          <label htmlFor={`${id}-name`} className="text-sm font-medium text-ink-900">
+          <label htmlFor={`${id}-name`} className="text-base font-medium text-ink-900">
             {GROUP.nameLabel[locale]}
           </label>
           <p id={`${id}-name-hint`} className="m-0 text-sm text-ink-600">
@@ -243,7 +243,7 @@ function PersonFieldset({ locale, index, rowKey, person, canRemove, onChange, on
           />
         </div>
         <div className="flex flex-col gap-[var(--space-1)]">
-          <label htmlFor={`${id}-max`} className="text-sm font-medium text-ink-900">
+          <label htmlFor={`${id}-max`} className="text-base font-medium text-ink-900">
             {GROUP.budgetLabel[locale]}
           </label>
           <p id={`${id}-max-hint`} className="m-0 text-sm text-ink-600">
@@ -286,7 +286,7 @@ function PersonFieldset({ locale, index, rowKey, person, canRemove, onChange, on
       />
 
       <fieldset className="m-0 border-0 p-0">
-        <legend className="mb-[var(--space-2)] text-base font-semibold text-ink-900">{GROUP.spiceLegend[locale]}</legend>
+        <legend className="mb-[var(--space-2)] text-lg font-semibold text-ink-900">{GROUP.spiceLegend[locale]}</legend>
         <div className="flex flex-wrap gap-x-[var(--space-4)] gap-y-[var(--space-2)]">
           {SPICE_OPTIONS.map((option) => (
             <div key={option.value} className="flex items-center gap-[var(--space-2)]">
@@ -342,7 +342,7 @@ interface CheckGroupProps {
 function CheckGroup({ legend, name, idPrefix, options, selected, onToggle }: CheckGroupProps) {
   return (
     <fieldset className="m-0 border-0 p-0">
-      <legend className="mb-[var(--space-2)] text-base font-semibold text-ink-900">{legend}</legend>
+      <legend className="mb-[var(--space-2)] text-lg font-semibold text-ink-900">{legend}</legend>
       <div className="flex flex-wrap gap-x-[var(--space-4)] gap-y-[var(--space-2)]">
         {options.map((option) => (
           <div key={option.value} className="flex items-center gap-[var(--space-2)]">
@@ -379,13 +379,13 @@ function ShareBox({ locale, value, hydrated }: { locale: Locale; value: string; 
 
   return (
     <section aria-labelledby="share" className="flex flex-col gap-[var(--space-2)] rounded-panel bg-welfare-soft p-[var(--space-4)]">
-      <Heading level={2} visualLevel={4} id="share" className="m-0">
+      <Heading level={2} id="share" className="m-0 text-xl">
         {GROUP.shareTitle[locale]}
       </Heading>
-      <p className="m-0 text-sm text-ink-900">{GROUP.shareHint[locale]}</p>
+      <p className="m-0 text-sm text-ink-600">{GROUP.shareHint[locale]}</p>
       <div className="flex flex-wrap items-end gap-[var(--space-2)]">
         <div className="flex min-w-0 flex-1 basis-[16rem] flex-col gap-[var(--space-1)]">
-          <label htmlFor="group-share-url" className="text-sm font-medium text-ink-900">
+          <label htmlFor="group-share-url" className="text-base font-medium text-ink-900">
             {GROUP.shareLabel[locale]}
           </label>
           <input
@@ -403,7 +403,7 @@ function ShareBox({ locale, value, hydrated }: { locale: Locale; value: string; 
           </Button>
         ) : null}
       </div>
-      <p role="status" aria-live="polite" className="m-0 text-sm text-ink-900 empty:hidden">
+      <p role="status" aria-live="polite" className="m-0 text-base text-ink-900 empty:hidden">
         {message}
       </p>
     </section>

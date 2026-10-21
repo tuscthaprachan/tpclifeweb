@@ -69,7 +69,7 @@ export default async function EatStallsPage({
   );
   const header = (
     <Stack space={2}>
-      <Heading level={1}>{t(EAT.stallsTitle, locale)}</Heading>
+      <Heading level={1} className="text-3xl">{t(EAT.stallsTitle, locale)}</Heading>
       <p className="m-0 text-ink-600">{t(EAT.stallsIntro, locale)}</p>
     </Stack>
   );
@@ -105,7 +105,7 @@ export default async function EatStallsPage({
 
         <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none">
           <Stack space={6}>
-            <p role="status" aria-live="polite" aria-atomic="true" className="m-0 text-lg font-semibold text-ink-900">
+            <p role="status" aria-live="polite" aria-atomic="true" className="m-0 text-base font-medium text-ink-900">
               {eat.stallsShown(locale, withMatches, rows.length, filtered)}
             </p>
             <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">

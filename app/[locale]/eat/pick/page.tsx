@@ -106,7 +106,7 @@ export default async function EatPickPage({
   );
   const header = (
     <Stack space={2}>
-      <Heading level={1}>{PICK.title[locale]}</Heading>
+      <Heading level={1} className="text-3xl">{PICK.title[locale]}</Heading>
       <p className="m-0 text-ink-600">{PICK.intro[locale]}</p>
     </Stack>
   );
@@ -224,7 +224,7 @@ export default async function EatPickPage({
 
         <section aria-labelledby="pick-controls" className="rounded-panel bg-welfare-soft p-[var(--space-4)] sm:p-[var(--space-6)]">
           <Stack space={4}>
-            <Heading level={2} id="pick-controls" visualLevel={4} className="m-0">
+            <Heading level={2} id="pick-controls" className="m-0 text-xl">
               {PICK.controlsHeading[locale]}
             </Heading>
             <PickControls locale={locale} filters={filters} mode={pickParams.mode} bias={pickParams.bias} sameStall={pickParams.sameStall} />
@@ -235,8 +235,8 @@ export default async function EatPickPage({
         </section>
 
         <InsetText>
-          <p className="m-0 text-sm text-ink-900">{PICK.surveyNote[locale]}</p>
-          <p className="m-0 mt-[var(--space-2)] text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
+          <p className="m-0 text-sm text-ink-600">{PICK.surveyNote[locale]}</p>
+          <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
         </InsetText>
       </Stack>
     </Container>

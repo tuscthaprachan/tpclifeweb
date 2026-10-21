@@ -39,7 +39,7 @@ export function WeekPlanner({ locale, plan, request, filters, path }: WeekPlanne
   return (
     <section id={ANCHOR} aria-labelledby="week-plan-title" className="week-plan flex flex-col gap-[var(--space-4)]">
       <div className="flex flex-col gap-[var(--space-1)]">
-        <h2 id="week-plan-title" className="m-0 text-2xl">
+        <h2 id="week-plan-title" className="m-0 text-xl">
           {t(BUDGET.printHeading, locale)}
         </h2>
         <p className="m-0 text-ink-600">{budget.weekSummary(locale, plan.days.length, budgetAmount)}</p>

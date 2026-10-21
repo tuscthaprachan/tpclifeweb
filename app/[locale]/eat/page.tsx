@@ -76,7 +76,7 @@ export default async function EatHubPage({
 
   const header = (
     <Stack space={2}>
-      <Heading level={1}>{t(EAT.title, locale)}</Heading>
+      <Heading level={1} className="text-3xl">{t(EAT.title, locale)}</Heading>
       <p className="m-0 text-ink-600">{t(EAT.intro, locale)}</p>
     </Stack>
   );
@@ -122,7 +122,7 @@ export default async function EatHubPage({
         {jay ? (
           <section aria-labelledby="eat-jay-title" className="rounded-panel border border-line bg-welfare-soft p-[var(--space-4)]">
             <Stack space={2}>
-              <Heading level={2} id="eat-jay-title" visualLevel={4} className="m-0">
+              <Heading level={2} id="eat-jay-title" className="m-0 text-xl">
                 {t(EAT.jayBannerTitle, locale)}
               </Heading>
               <p className="m-0 text-ink-900">{t(EAT.jayBannerBody, locale)}</p>
@@ -149,7 +149,7 @@ export default async function EatHubPage({
 
         <section aria-labelledby="eat-glance-title">
           <Stack space={2}>
-            <Heading level={2} id="eat-glance-title" visualLevel={4} className="m-0">
+            <Heading level={2} id="eat-glance-title" className="m-0 text-xl">
               {t(EAT.glanceTitle, locale)}
             </Heading>
             <p className="m-0 text-ink-900">
@@ -183,13 +183,13 @@ export default async function EatHubPage({
 
         <section aria-labelledby="eat-browse-title">
           <Stack space={4}>
-            <Heading level={2} id="eat-browse-title" visualLevel={4} className="m-0">
+            <Heading level={2} id="eat-browse-title" className="m-0 text-xl">
               {t(EAT.browseTitle, locale)}
             </Heading>
             <EatTabs locale={locale} filters={filters} />
             {starters.length > 0 ? (
               <Stack space={4}>
-                <Heading level={3} visualLevel={5} className="m-0">
+                <Heading level={3} className="m-0 text-lg">
                   {t(EAT.startersTitle, locale)}
                 </Heading>
                 <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">
@@ -211,7 +211,7 @@ export default async function EatHubPage({
 
         <section aria-labelledby="eat-tools-title">
           <Stack space={4}>
-            <Heading level={2} id="eat-tools-title" visualLevel={4} className="m-0">
+            <Heading level={2} id="eat-tools-title" className="m-0 text-xl">
               {t(EAT.toolsTitle, locale)}
             </Heading>
             <Grid as="ul" minColumnWidth="13rem" className="m-0 list-none p-0">

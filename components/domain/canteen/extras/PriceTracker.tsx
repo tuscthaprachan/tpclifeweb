@@ -31,7 +31,7 @@ export function PriceTracker({ data, locale }: { data: CanteenData; locale: Loca
 
   return (
     <section aria-labelledby="eat-tracker-title" className="flex flex-col gap-[var(--space-3)]">
-      <Heading level={2} id="eat-tracker-title" visualLevel={4} className="m-0">
+      <Heading level={2} id="eat-tracker-title" className="m-0 text-xl">
         {EXTRAS.trackerTitle[locale]}
       </Heading>
       <p className="m-0 text-ink-900">

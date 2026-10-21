@@ -77,7 +77,7 @@ export default async function EatDishesPage({
   );
   const header = (
     <Stack space={2}>
-      <Heading level={1}>{t(EAT.dishesTitle, locale)}</Heading>
+      <Heading level={1} className="text-3xl">{t(EAT.dishesTitle, locale)}</Heading>
       <p className="m-0 text-ink-600">{t(EAT.dishesIntro, locale)}</p>
     </Stack>
   );

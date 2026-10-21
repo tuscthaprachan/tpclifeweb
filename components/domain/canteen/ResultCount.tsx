@@ -17,7 +17,7 @@ interface ResultCountProps {
  */
 export function ResultCount({ locale, dishes, stalls, className }: ResultCountProps) {
   return (
-    <p {...liveRegionProps("polite")} className={cx("m-0 text-lg font-semibold text-ink-900", className)}>
+    <p {...liveRegionProps("polite")} className={cx("m-0 text-base font-medium text-ink-900", className)}>
       {eat.resultCount(locale, dishes, stalls)}
     </p>
   );

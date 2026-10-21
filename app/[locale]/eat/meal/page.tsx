@@ -80,7 +80,7 @@ export default async function EatMealPage({
   );
   const header = (
     <Stack space={2}>
-      <Heading level={1}>{t(BUDGET.mealTitle, locale)}</Heading>
+      <Heading level={1} className="text-3xl">{t(BUDGET.mealTitle, locale)}</Heading>
       <p className="m-0 text-ink-600">{t(BUDGET.mealIntro, locale)}</p>
     </Stack>
   );
@@ -136,7 +136,7 @@ export default async function EatMealPage({
             {t(BUDGET.mealZeroBody, locale)}
           </EmptyState>
           <section aria-labelledby="meal-relax-title" className="flex flex-col gap-[var(--space-3)]">
-            <Heading level={2} id="meal-relax-title" visualLevel={4} className="m-0">
+            <Heading level={2} id="meal-relax-title" className="m-0 text-xl">
               {t(EAT.relaxTitle, locale)}
             </Heading>
             <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
@@ -167,7 +167,7 @@ export default async function EatMealPage({
         <Stack space={6}>
           <div className="flex flex-wrap items-center justify-between gap-[var(--space-4)]">
             <Stack space={1}>
-              <Heading level={2} visualLevel={3} className="m-0">
+              <Heading level={2} className="m-0 text-xl">
                 {budget.mealsFor(locale, amount)}
               </Heading>
               <p className="m-0 text-ink-600">
@@ -200,8 +200,8 @@ export default async function EatMealPage({
           <Stack space={6}>
             {results}
             <InsetText>
-              <p className="m-0 text-sm text-ink-900">{t(BUDGET.mealPriceNote, locale)}</p>
-              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
+              <p className="m-0 text-sm text-ink-600">{t(BUDGET.mealPriceNote, locale)}</p>
+              <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
             </InsetText>
           </Stack>
         </EatFilteredLayout>

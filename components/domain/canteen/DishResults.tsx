@@ -86,7 +86,7 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
           <section key={`${group.key}-${group.continued}`} className="flex flex-col gap-[var(--space-3)]">
             <Heading level={headingLevel} visualLevel={3} className="m-0">
               {pick(canonical.name, locale)}
-              <span className="text-base font-normal text-ink-600"> · {eat.atStalls(locale, stallCount)}</span>
+              <span className="text-sm font-normal text-ink-600"> · {eat.atStalls(locale, stallCount)}</span>
             </Heading>
             <CanonicalCompare data={data} dishes={byPrice} locale={locale} filters={filters} />
           </section>

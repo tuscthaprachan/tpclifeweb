@@ -114,7 +114,7 @@ export default async function WhatIsDishPage({
 
       <Stack space={8}>
         <Stack space={2}>
-          <Heading level={1}>{name}</Heading>
+          <Heading level={1} className="text-3xl">{name}</Heading>
           {otherName && otherName !== name ? (
             <p lang={other} className="m-0 text-lg text-ink-600">
               {otherName}
@@ -124,7 +124,7 @@ export default async function WhatIsDishPage({
 
         <section aria-labelledby="what-is-about">
           <Stack space={3}>
-            <Heading level={2} id="what-is-about" visualLevel={4} className="m-0">
+            <Heading level={2} id="what-is-about" className="m-0 text-xl">
               {EXTRAS.aboutTitle[locale]}
             </Heading>
             <p className="m-0 max-w-prose text-ink-900">{explainer || EXTRAS.noExplainer[locale]}</p>
@@ -133,7 +133,7 @@ export default async function WhatIsDishPage({
 
         <section aria-labelledby="what-is-stalls">
           <Stack space={3}>
-            <Heading level={2} id="what-is-stalls" visualLevel={4} className="m-0">
+            <Heading level={2} id="what-is-stalls" className="m-0 text-xl">
               {EXTRAS.stallsTitle[locale]}
             </Heading>
             {dishes.length > 0 ? (
@@ -165,7 +165,7 @@ export default async function WhatIsDishPage({
         {histories.length > 0 ? (
           <section aria-labelledby="what-is-history">
             <Stack space={4}>
-              <Heading level={2} id="what-is-history" visualLevel={4} className="m-0">
+              <Heading level={2} id="what-is-history" className="m-0 text-xl">
                 {EXTRAS.historyTitle[locale]}
               </Heading>
               <p className="m-0 text-sm text-ink-600">{EXTRAS.historyNote[locale]}</p>
@@ -192,7 +192,7 @@ export default async function WhatIsDishPage({
         ) : null}
 
         <InsetText>
-          <p className="m-0 text-sm text-ink-900">{t(EAT.dietNote, locale)}</p>
+          <p className="m-0 text-sm text-ink-600">{t(EAT.dietNote, locale)}</p>
         </InsetText>
 
         <div className="flex flex-wrap items-center gap-[var(--space-4)]">

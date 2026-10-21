@@ -76,7 +76,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
   if (!ready) {
     return (
       <div className="rounded-panel border border-line bg-surface-alt p-[var(--space-6)]">
-        <Heading level={2} visualLevel={3} className="m-0">
+        <Heading level={2} className="m-0 text-xl">
           {t(BUDGET.mineNoStorageTitle, locale)}
         </Heading>
         <p className="mb-0 mt-[var(--space-2)] text-ink-900">{t(BUDGET.mineNoStorageBody, locale)}</p>
@@ -150,7 +150,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
 
   const section = (id: string, title: string, children: ReactNode) => (
     <section aria-labelledby={`mine-${id}`} className="flex flex-col gap-[var(--space-3)]">
-      <Heading level={2} id={`mine-${id}`} visualLevel={3} className="m-0">
+      <Heading level={2} id={`mine-${id}`} className="m-0 text-xl">
         {title}
       </Heading>
       {children}
@@ -191,7 +191,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
                 <>
                   {dishLine(
                     entry.slug,
-                    <span className="text-sm text-ink-900">
+                    <span className="text-sm text-ink-600">
                       <Timestamp value={entry.at} locale={locale} format="datetime" /> · {budget.historyLine(locale, entry.price)}
                     </span>,
                   )}

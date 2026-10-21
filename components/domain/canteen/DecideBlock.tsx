@@ -43,7 +43,7 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
   return (
     <section aria-labelledby="eat-decide-title" className="rounded-panel bg-welfare-soft p-[var(--space-6)]">
       <div className="flex flex-col gap-[var(--space-2)]">
-        <Heading level={headingLevel} id="eat-decide-title" className="m-0">
+        <Heading level={headingLevel} id="eat-decide-title" className="m-0 text-xl">
           {t(EAT.decideTitle, locale)}
         </Heading>
         <p className="m-0 text-ink-900">{t(EAT.decideHint, locale)}</p>
@@ -85,7 +85,7 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
         />
 
         <div>
-          <Button type="submit" className="w-full gap-[var(--space-2)] py-[var(--space-3)] text-lg sm:w-auto">
+          <Button type="submit" className="w-full gap-[var(--space-2)] py-[var(--space-3)] sm:w-auto">
             <DiceIcon size={22} />
             {t(EAT.decideButton, locale)}
           </Button>

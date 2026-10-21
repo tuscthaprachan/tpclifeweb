@@ -79,7 +79,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
 
   return (
     <section aria-labelledby="results" className="flex flex-col gap-[var(--space-6)]">
-      <Heading level={2} id="results" className="m-0 scroll-mt-[var(--space-8)]">
+      <Heading level={2} id="results" className="m-0 scroll-mt-[var(--space-8)] text-xl">
         {GROUP.resultsTitle[locale]}
       </Heading>
 
@@ -126,7 +126,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
               <li key={entry.stall._id}>
                 <article className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line bg-surface p-[var(--space-4)]">
                   <div className="flex flex-col gap-[var(--space-1)]">
-                    <Heading level={3} visualLevel={4} className="m-0">
+                    <Heading level={3} className="m-0 text-lg">
                       <Link
                         href={stallHref(locale, entry.stall.slug.current, filters)}
                         className="inline-flex min-h-[var(--target-min)] items-center text-ink-900 hover:text-action"
@@ -139,7 +139,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
                   <ul className="m-0 grid list-none gap-[var(--space-4)] p-0 sm:grid-cols-2">
                     {entry.perPerson.map((dishes, index) => (
                       <li key={index} className="flex min-w-0 flex-col gap-[var(--space-2)]">
-                        <Heading level={4} visualLevel={5} className="m-0">
+                        <Heading level={4} className="m-0 text-base">
                           <PersonName person={people[index]!} index={index} locale={locale} />
                         </Heading>
                         {renderDishes(dishes, entry.stall)}
@@ -200,7 +200,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
 
     return (
       <div className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line bg-welfare-soft p-[var(--space-4)]">
-        <Heading level={3} visualLevel={4} className="m-0">
+        <Heading level={3} className="m-0 text-lg">
           {GROUP.bindingTitle[locale]}
         </Heading>
         <p className="m-0 text-ink-900">
@@ -289,7 +289,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
         <p className="m-0 text-ink-600">{reveal ? GROUP.randomIntro[locale] : GROUP.ownIntro[locale]}</p>
 
         <div className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={3} className="m-0">
+          <Heading level={3} className="m-0 text-lg">
             {GROUP.revealTitle[locale]}
           </Heading>
           <ol className={cx("m-0 grid list-none gap-[var(--space-4)] p-0 sm:grid-cols-2", reveal && "group-reveal")}>
@@ -304,7 +304,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
                   style={{ "--reveal-index": entry.personIndex } as CSSProperties}
                   className="flex min-w-0 scroll-mt-[var(--space-8)] flex-col gap-[var(--space-2)]"
                 >
-                  <Heading level={4} visualLevel={5} className="m-0">
+                  <Heading level={4} className="m-0 text-base">
                     <PersonName person={person} index={entry.personIndex} locale={locale} />
                   </Heading>
                   {entry.dish ? (
@@ -347,7 +347,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
         </div>
 
         <div className="flex flex-col gap-[var(--space-2)]">
-          <Heading level={3} className="m-0">
+          <Heading level={3} className="m-0 text-lg">
             {GROUP.seatingTitle[locale]}
           </Heading>
           {zoneName ? (
@@ -360,7 +360,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
           <p className="m-0 text-sm text-ink-600">{GROUP.seatingNote[locale]}</p>
           {byStall.size > 0 ? (
             <>
-              <Heading level={4} visualLevel={5} className="m-0 mt-[var(--space-2)]">
+              <Heading level={4} className="m-0 mt-[var(--space-2)] text-base">
                 {GROUP.stallPicksTitle[locale]}
               </Heading>
               <ul className="m-0 flex list-none flex-col gap-[var(--space-1)] p-0 text-ink-900">
@@ -379,7 +379,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
 
         {byStall.size > 0 ? (
           <div className="flex flex-col gap-[var(--space-3)]">
-            <Heading level={3} className="m-0">
+            <Heading level={3} className="m-0 text-lg">
               {GROUP.mapTitle[locale]}
             </Heading>
             <p className="m-0 text-sm text-ink-600">{GROUP.mapNote[locale]}</p>
