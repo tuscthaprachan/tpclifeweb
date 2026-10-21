@@ -36,7 +36,6 @@ export function canteenSearchRecords(data: CanteenData): SearchRecord[] {
   const mark = (text: string, locale: "th" | "en") => (demo ? `${text} ${DEMO_NOTICE.label[locale]}` : text);
 
   for (const canonical of data.canonicals) {
-    const phrases = (canonical.howToOrder ?? []).map((phrase) => join(phrase.th, phrase.romanised, phrase.en));
     const explainer: LocaleString = {
       th: mark(excerpt(canonical.explainer?.th, 160), "th"),
       en: mark(excerpt(canonical.explainer?.en, 160), "en"),
@@ -56,7 +55,6 @@ export function canteenSearchRecords(data: CanteenData): SearchRecord[] {
         (canonical.aliases ?? []).join(" "),
         canonical.explainer?.th,
         canonical.explainer?.en,
-        phrases.join(" "),
       ),
       weight: CANONICAL_WEIGHT,
     });

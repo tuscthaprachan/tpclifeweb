@@ -13,7 +13,6 @@ import {
   type Person,
 } from "@/lib/canteen";
 import { DEMO_NOTICE, demoCanteenData, isCanteenDemo } from "@/lib/canteen/demo";
-import { semesterKey, semesterOf } from "@/components/domain/canteen/extras/priceHistory";
 
 const NOW = new Date("2026-10-20T12:00:00+07:00"); // a Tuesday at noon in Bangkok
 const raw = demoCanteenData(NOW);
@@ -144,27 +143,11 @@ describe("demo canteen data", () => {
     expect(data.stalls.some((stall) => stall.vegetarianStall)).toBe(false);
   });
 
-  it("keeps prices in a plausible range and history in order", () => {
+  it("keeps prices in a plausible range", () => {
     for (const dish of data.dishes) {
       expect(dish.price).toBeGreaterThanOrEqual(10);
       expect(dish.price).toBeLessThanOrEqual(70);
-      const history = dish.priceHistory ?? [];
-      expect(history.at(-1)?.price).toBe(dish.price);
-      expect(history.at(-1)?.checkedOn).toBe(dish.checkedOn);
-      expect(history.map((r) => r.checkedOn)).toEqual([...history.map((r) => r.checkedOn)].sort());
     }
-    expect(data.dishes.some((dish) => (dish.priceHistory ?? []).some((r) => r.price !== dish.price))).toBe(true);
-  });
-
-  it("has at least two semesters of price history", () => {
-    const semesters = new Set<string>();
-    for (const dish of data.dishes) {
-      for (const record of dish.priceHistory ?? []) {
-        const semester = semesterOf(record.checkedOn);
-        if (semester) semesters.add(semesterKey(semester));
-      }
-    }
-    expect(semesters.size).toBeGreaterThanOrEqual(4);
   });
 });
 

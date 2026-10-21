@@ -24,7 +24,6 @@ import {
   readFilters,
   t,
 } from "@/components/domain/canteen";
-import { PriceTracker } from "@/components/domain/canteen/extras";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Grid, Heading, InsetText, Stack, Timestamp } from "@/components/ui";
 import { applyFilters, isMealDish } from "@/lib/canteen/filter";
@@ -178,8 +177,6 @@ export default async function EatHubPage({
             </p>
           </Stack>
         </section>
-
-        <PriceTracker data={data} locale={locale} />
 
         <section aria-labelledby="eat-browse-title">
           <Stack space={4}>

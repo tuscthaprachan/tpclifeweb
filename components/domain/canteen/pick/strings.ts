@@ -69,8 +69,6 @@ export const PICK = {
   whyCheap: { th: "เมนูราคาถูกมีโอกาสถูกสุ่มมากกว่า", en: "Cheaper dishes were more likely to come up." },
   whyKeepStall: { th: "ล็อกร้านเดิมไว้", en: "Kept the same stall." },
   whyKeepCanonical: { th: "ล็อกเมนูแบบเดิมไว้", en: "Kept the same dish." },
-  orderTitle: { th: "สั่งยังไง", en: "How to order" },
-  orderShow: { th: "ยื่นให้แม่ค้าดูได้เลย", en: "You can show the Thai to the stall." },
   relaxedTitle: { th: "ผ่อนเงื่อนไขให้นิดหน่อย", en: "We relaxed something" },
   relaxedRepeat: {
     th: "เมนูนี้เพิ่งกินไปไม่นาน แต่ไม่มีอย่างอื่นที่ตรงเงื่อนไข เลยยอมให้ซ้ำ",

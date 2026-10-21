@@ -154,7 +154,7 @@ for (const locale of LOCALES as readonly Locale[]) {
     const first = await page.goto(paths[0]!);
     expect(first?.ok()).toBeTruthy();
     const href = await page.locator('main a[href*="/eat/what-is/"]').first().getAttribute("href");
-    if (href) paths.push(href, `${href}${href.includes("?") ? "&" : "?"}show=0`);
+    if (href) paths.push(href);
     for (const path of paths) {
       await test.step(path, async () => {
         const response = await page.goto(path);

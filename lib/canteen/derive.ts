@@ -59,7 +59,6 @@ export function normaliseCanteenData(raw: Partial<CanteenData> | null | undefine
       ...dish,
       protein: dish.protein ?? [],
       variants: dish.variants ?? [],
-      priceHistory: dish.priceHistory ?? [],
     }));
 
   const settings: CanteenSettings | null = raw.settings
@@ -346,10 +345,10 @@ export function medianPrice(dishes: readonly CanteenDish[], includeVariants = fa
 }
 
 /** Dish types that count as "a plate of rice" for the typical price figure. */
-export const RICE_PLATE_TYPES: readonly DishType[] = ["rice", "curryOverRice", "madeToOrder"];
+const RICE_PLATE_TYPES: readonly DishType[] = ["rice", "curryOverRice", "madeToOrder"];
 
 /** Dishes that count as a plate of rice: a main course of a rice type. */
-export function ricePlates(data: CanteenData): CanteenDish[] {
+function ricePlates(data: CanteenData): CanteenDish[] {
   return data.dishes.filter((dish) => dish.course === "main" && RICE_PLATE_TYPES.includes(dish.type));
 }
 

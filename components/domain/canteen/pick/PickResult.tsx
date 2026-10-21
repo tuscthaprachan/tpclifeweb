@@ -182,7 +182,6 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
   const tags = dishDietTags(dish, stall);
   const typeName = TYPE_LABEL[dish.type][locale];
   const previous = params.of ? index.dishBySlug.get(params.of) : undefined;
-  const phrases = canonical?.howToOrder ?? [];
 
   const why: string[] = [];
   if (outcome.reason.bias === "cheap") why.push(PICK.whyCheap[locale]);
@@ -233,27 +232,6 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
           <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="pickmap" />
         </div>
       </div>
-
-      {phrases.length > 0 ? (
-        <div className="flex flex-col gap-[var(--space-2)]">
-          <p className="m-0 text-base font-medium text-ink-600">
-            {PICK.orderTitle[locale]}. {PICK.orderShow[locale]}
-          </p>
-          <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
-            {phrases.map((phrase) => (
-              <li key={phrase._key} className="rounded-control bg-surface-alt px-[var(--space-3)] py-[var(--space-2)]">
-                <span lang="th" className="block text-lg font-medium text-ink-900">
-                  {phrase.th}
-                </span>
-                <span className="block text-sm text-ink-600">{phrase.romanised}</span>
-                <span lang="en" className="block text-base text-ink-900">
-                  {phrase.en}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
 
       <Relaxed locale={locale} relaxed={outcome.relaxed} />
 

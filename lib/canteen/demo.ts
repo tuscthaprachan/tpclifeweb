@@ -24,7 +24,7 @@
  * stalls say so in their wayfinding. Stalls 3, 7, 9 and 14 are certain by
  * type; the shop at 7 is the owner's decision.
  *
- * MADE UP: every dish, price, diet tag and price history. The shops' real
+ * MADE UP: every dish, price, diet tag and price. The shops' real
  * menus have not been surveyed. Dish ids start with "demo-". The jay festival
  * window in the settings is NOT made up: it is the real 2569 dates.
  *
@@ -47,11 +47,6 @@
  * the bottom left. Stall numbers follow the hall: 1 to 7 the west column,
  * 8 to 11 the middle block, 12 to 16 the east column, then the two kiosks.) Entrances: the main entrance on the south
  * wall, and the courtyard doors on the north wall, one set in each half.
- *
- * Price history. Four survey dates, one in each of four semesters (1/2025,
- * 2/2025, summer 2025 and 1/2026), so the price tracker has a line to draw.
- * About three dishes in four went up by 5 baht at some point. These are
- * made-up examples, like every other price here.
  */
 
 import type {
@@ -67,7 +62,6 @@ import type {
   DishType,
   DishVariant,
   HalalStatus,
-  HowToOrderPhrase,
   MapShape,
   Protein,
   SpiceLevel,
@@ -86,18 +80,14 @@ export const DEMO_NOTICE = {
   title: { th: "เมนูตัวอย่าง", en: "Example menus" },
   body: {
     th: "ชื่อร้าน เลขร้าน เวลาทำการและผังโรงอาหารมาจากเอกสารการคัดเลือกผู้ประกอบการโรงอาหารของมหาวิทยาลัย ปี 2569 (สัญญา 1 ตุลาคม 2569 ถึง 30 กันยายน 2570) ส่วนการจับคู่ร้านกับเลขร้านในประเภทที่มีหลายแผงเป็นการสันนิษฐานจากลำดับคะแนนการคัดเลือก ยังไม่ได้ยืนยันหน้างาน เมนู ราคา ป้ายอาหารพิเศษและประวัติราคาเป็นตัวอย่างที่สมมติขึ้น จนกว่าจะสำรวจเมนูจริง",
-    en: "Shop names, stall numbers, opening hours and the floor plan come from the university's canteen selection documents for 2026-27 (B.E. 2569), contract period 1 October 2026 to 30 September 2027. Where several stalls share a type, which shop has which number is assumed from the selection ranking and is not yet confirmed on site. The dishes, prices, diet tags and price history are made-up examples until the menus are surveyed.",
+    en: "Shop names, stall numbers, opening hours and the floor plan come from the university's canteen selection documents for 2026-27 (B.E. 2569), contract period 1 October 2026 to 30 September 2027. Where several stalls share a type, which shop has which number is assumed from the selection ranking and is not yet confirmed on site. The dishes, prices, diet tags and prices are made-up examples until the menus are surveyed.",
   },
   /** Appended to a line that would otherwise read as a real record. */
   label: { th: "(เมนูตัวอย่าง)", en: "(example menus)" },
 } as const;
 
-/** Survey dates, one per semester. The last one is every dish's "checked on". */
+/** Every dish's "checked on". */
 const CHECKED_ON = "2026-09-08";
-const SURVEYS = ["2025-09-15", "2026-02-10", "2026-06-20", CHECKED_ON] as const;
-
-/** Which survey a 5 baht rise first shows in, by dish position. Every fourth dish never rose. */
-const RISE_AT = [Number.POSITIVE_INFINITY, 1, 2, 3];
 
 
 const slug = (current: string) => ({ _type: "slug" as const, current });
@@ -379,15 +369,6 @@ function buildStalls(stamp: string): CanteenStall[] {
  * Canonical dishes
  * ------------------------------------------------------------------ */
 
-const phrase = (th: string, romanised: string, en: string): Omit<HowToOrderPhrase, "_key"> => ({ th, romanised, en });
-
-const NOT_SPICY = phrase("ไม่เผ็ด", "mai phet", "not spicy");
-const A_LITTLE_SPICY = phrase("เผ็ดน้อย", "phet noi", "a little spicy");
-const EGG = phrase("ไข่ดาว", "khai dao", "add a fried egg");
-const LARGE = phrase("พิเศษ", "phiset", "large portion");
-const TAKE_AWAY = phrase("ใส่ถุง", "sai thung", "to take away");
-const NO_MEAT = phrase("ไม่ใส่เนื้อสัตว์", "mai sai nuea sat", "no meat");
-
 interface CanonicalSpec {
   id: string;
   slug: string;
@@ -395,7 +376,6 @@ interface CanonicalSpec {
   en: string;
   aliases: string[];
   explainer: { th: string; en: string };
-  phrases: Array<Omit<HowToOrderPhrase, "_key">>;
 }
 
 const CANONICAL_SPECS: CanonicalSpec[] = [
@@ -409,7 +389,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ผัดกะเพราคือเนื้อสัตว์สับผัดกับใบกะเพรา พริกและกระเทียม ราดบนข้าวสวย มักเสิร์ฟพร้อมไข่ดาวกรอบ เป็นเมนูตามสั่งที่คนสั่งมากที่สุด และรสเผ็ดกว่าที่คิดเสมอ",
       en: "Minced meat stir-fried with holy basil, chilli and garlic, served over rice and usually topped with a crispy fried egg. It is the most ordered made to order dish, and it is spicier than you expect.",
     },
-    phrases: [NOT_SPICY, A_LITTLE_SPICY, EGG, LARGE, TAKE_AWAY],
   },
   {
     id: "khao-man-gai",
@@ -421,7 +400,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ไก่ต้มหรือไก่ทอดเสิร์ฟกับข้าวที่หุงในน้ำมันไก่ น้ำจิ้มเต้าเจี้ยวรสเค็มหวานเผ็ดเล็กน้อย และน้ำซุปใส ไม่เผ็ดและกินง่าย เหมาะกับคนที่เพิ่งมาลองอาหารไทย",
       en: "Poached or fried chicken over rice cooked in chicken fat, with a salty-sweet fermented bean dipping sauce and a clear broth. It is mild and easy, a good first Thai meal.",
     },
-    phrases: [phrase("ไม่เอาหนัง", "mai ao nang", "without the skin"), LARGE, TAKE_AWAY],
   },
   {
     id: "khao-mok-gai",
@@ -433,7 +411,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ข้าวหุงกับเครื่องเทศและขมิ้น วางไก่ทอดหรือไก่ต้มไว้ด้านบน กินกับน้ำจิ้มรสเปรี้ยวและน้ำซุป เป็นอาหารมุสลิมที่พบได้ทั่วไป",
       en: "Rice cooked with spices and turmeric, topped with fried or poached chicken, eaten with a sour dipping sauce and a small bowl of broth. A staple of Thai Muslim cooking.",
     },
-    phrases: [LARGE, phrase("ไม่เอาน้ำจิ้ม", "mai ao nam chim", "without the dipping sauce"), TAKE_AWAY],
   },
   {
     id: "som-tam",
@@ -445,12 +422,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "สลัดมะละกอดิบตำกับพริก กระเทียม มะนาว น้ำปลาและน้ำตาลปี๊บ รสเปรี้ยว เค็ม หวานและเผ็ดจัด กินคู่กับข้าวเหนียวและไก่ย่าง",
       en: "Shredded unripe papaya pounded with chilli, garlic, lime, fish sauce and palm sugar. Sour, salty, sweet and very hot, eaten with sticky rice and grilled chicken.",
     },
-    phrases: [
-      NOT_SPICY,
-      A_LITTLE_SPICY,
-      phrase("ไม่ใส่ปลาร้า", "mai sai pla ra", "without fermented fish"),
-      phrase("ไม่ใส่น้ำปลา", "mai sai nam pla", "without fish sauce"),
-    ],
   },
   {
     id: "larb",
@@ -462,7 +433,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "เนื้อสับปรุงรสด้วยน้ำมะนาว น้ำปลา พริกป่นและข้าวคั่ว โรยสะระแหน่และต้นหอม เป็นอาหารอีสานที่กินกับข้าวเหนียวหรือผักสด",
       en: "Minced meat dressed with lime juice, fish sauce, chilli flakes and toasted rice powder, topped with mint and spring onion. An Isan dish eaten with sticky rice or fresh vegetables.",
     },
-    phrases: [NOT_SPICY, A_LITTLE_SPICY, phrase("ข้าวเหนียวด้วย", "khao niao duai", "with sticky rice")],
   },
   {
     id: "khao-pad",
@@ -474,7 +444,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ข้าวสวยผัดกับไข่และเนื้อสัตว์ปรุงด้วยซีอิ๊วและน้ำมันหอย เสิร์ฟพร้อมแตงกวา มะนาวและพริกน้ำปลา ไม่เผ็ด",
       en: "Rice stir-fried with egg and your choice of meat, seasoned with soy and oyster sauce, served with cucumber, a lime wedge and chilli in fish sauce on the side. Not spicy.",
     },
-    phrases: [EGG, LARGE, NO_MEAT, TAKE_AWAY],
   },
   {
     id: "pad-see-ew",
@@ -486,7 +455,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "เส้นใหญ่ผัดกับซีอิ๊วดำ ไข่ และผักคะน้า ได้กลิ่นไหม้อ่อนจากกระทะร้อน รสหวานเค็ม ไม่เผ็ด",
       en: "Wide rice noodles fried with dark soy sauce, egg and Chinese broccoli. Smoky from a very hot wok, sweet and salty, not spicy.",
     },
-    phrases: [LARGE, NO_MEAT, phrase("ไม่ใส่ไข่", "mai sai khai", "without egg")],
   },
   {
     id: "rad-na",
@@ -498,7 +466,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "เส้นใหญ่ผัดหรือเส้นหมี่กรอบราดน้ำเกรวี่ข้นจากแป้งมัน ใส่ผักคะน้าและเนื้อสัตว์ รสออกหวานมัน กินแล้วอุ่นท้อง",
       en: "Pan-fried wide noodles or crispy noodles under a thick, glossy gravy with Chinese broccoli and meat. Savoury and comforting, not spicy.",
     },
-    phrases: [LARGE, NO_MEAT, phrase("เส้นหมี่กรอบ", "sen mi krop", "crispy noodles")],
   },
   {
     id: "tom-yum",
@@ -510,7 +477,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ซุปเปรี้ยวเผ็ดหอมตะไคร้ ข่าและใบมะกรูด จะเป็นน้ำใสหรือน้ำข้นก็ได้ ใส่เป็นซุปถ้วยเดียว หรือใส่ในก๋วยเตี๋ยว",
       en: "A hot and sour soup scented with lemongrass, galangal and makrut lime leaf, clear or creamy. Ordered as a bowl of soup or as the broth for noodles.",
     },
-    phrases: [NOT_SPICY, A_LITTLE_SPICY, phrase("น้ำใส", "nam sai", "clear broth"), phrase("น้ำข้น", "nam khon", "creamy broth")],
   },
   {
     id: "khao-gaeng",
@@ -522,7 +488,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ข้าวสวยหนึ่งจานราดแกงที่เลือกเองหนึ่งหรือสองอย่างจากหม้อหน้าร้าน ชี้เลือกได้เลย ไม่ต้องรู้ชื่อเมนู ราคาขึ้นอยู่กับจำนวนอย่าง",
       en: "A plate of rice with one or two curries or dishes of your choice from the pots at the counter. You can simply point. The price depends on how many toppings you take.",
     },
-    phrases: [phrase("ราดสองอย่าง", "rat song yang", "two toppings"), phrase("เอาอันนี้", "ao an ni", "this one, please"), EGG, TAKE_AWAY],
   },
   {
     id: "jok",
@@ -534,7 +499,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ข้าวต้มเละร้อน ๆ กินกับขิง ต้นหอมและไข่ลวก อาหารเช้าที่ย่อยง่าย ไม่เผ็ด",
       en: "Hot, smooth rice porridge with ginger, spring onion and a soft egg. A gentle breakfast that is not spicy.",
     },
-    phrases: [phrase("ใส่ไข่", "sai khai", "add an egg"), LARGE, TAKE_AWAY],
   },
   {
     id: "kuay-teow",
@@ -546,12 +510,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "เส้นข้าวในน้ำซุปร้อน เลือกเส้นได้ ได้แก่ เส้นเล็ก เส้นใหญ่ หมี่ขาว และบะหมี่ กินแบบน้ำหรือแบบแห้งก็ได้ ปรุงรสเองที่โต๊ะ",
       en: "Rice noodles in hot broth. You choose the noodle: thin, wide, vermicelli or egg noodle, soup or dry. You season it yourself at the table.",
     },
-    phrases: [
-      phrase("เส้นเล็ก", "sen lek", "thin noodles"),
-      phrase("เส้นใหญ่", "sen yai", "wide noodles"),
-      phrase("แห้ง", "haeng", "dry, without soup"),
-      LARGE,
-    ],
   },
   {
     id: "pad-thai",
@@ -563,7 +521,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "เส้นจันท์ผัดกับซอสมะขาม ไข่ เต้าหู้และถั่วงอก โรยถั่วลิสงป่น กินกับมะนาวและกุยช่าย รสเปรี้ยวหวานเค็ม",
       en: "Rice noodles fried in a tamarind sauce with egg, tofu and bean sprouts, topped with crushed peanuts and served with lime and garlic chives. Sweet, sour and salty.",
     },
-    phrases: [phrase("ห่อไข่", "ho khai", "wrapped in an omelette"), NO_MEAT, LARGE],
   },
   {
     id: "cha-yen",
@@ -575,7 +532,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ชาอัสสัมเข้มข้นผสมนมข้นหวานและนมสด เสิร์ฟเย็นจัดบนน้ำแข็ง หวานมากตามมาตรฐาน",
       en: "Strong Assam tea sweetened with condensed milk and finished with milk, served over ice. Very sweet by default.",
     },
-    phrases: [phrase("หวานน้อย", "wan noi", "less sweet"), phrase("ไม่ใส่น้ำแข็ง", "mai sai nam khaeng", "without ice"), LARGE],
   },
   {
     id: "bua-loy",
@@ -587,7 +543,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ลูกแป้งข้าวเหนียวเคี้ยวหนึบในน้ำกะทิอุ่นรสหวานเค็ม ใส่ไข่หวานได้ เป็นของหวานไทยแบบดั้งเดิม",
       en: "Chewy glutinous rice balls in warm, lightly salted sweet coconut milk, with an optional sweet egg. A traditional Thai dessert.",
     },
-    phrases: [phrase("ใส่ไข่หวาน", "sai khai wan", "add the sweet egg"), phrase("หวานน้อย", "wan noi", "less sweet")],
   },
   {
     id: "khai-jiao",
@@ -599,7 +554,6 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
       th: "ไข่ตีแล้วทอดในน้ำมันร้อนจนฟูกรอบ กินกับข้าวสวยและน้ำพริกหรือซอสพริก ใส่หมูสับได้ ไม่เผ็ด",
       en: "Beaten eggs fried in plenty of hot oil until puffed and crispy at the edges, eaten over rice with chilli sauce. Often made with minced pork. Not spicy.",
     },
-    phrases: [phrase("ใส่หมูสับ", "sai mu sap", "with minced pork"), phrase("ไม่ใส่หมู", "mai sai mu", "without pork"), TAKE_AWAY],
   },
 ];
 
@@ -613,7 +567,6 @@ function buildCanonicals(stamp: string): CanonicalDish[] {
     slug: slug(spec.slug),
     aliases: spec.aliases,
     explainer: spec.explainer,
-    howToOrder: spec.phrases.map((p, i) => ({ _key: `${spec.id}-${i}`, ...p })),
   }));
 }
 
@@ -783,13 +736,7 @@ d(9, "sticky-rice", "ข้าวเหนียว", "Sticky rice, one bag", 10
 d(9, "tom-saep-pork", "ต้มแซ่บกระดูกหมู", "Spicy pork rib soup", 55, { type: "soup", canonical: "tom-yum", protein: ["pork"], style: "boiled", spice: 3, wet: true });
 
 function buildDishes(stamp: string): CanteenDish[] {
-  return specs.map((spec, position) => {
-    const rise = RISE_AT[position % RISE_AT.length] ?? Number.POSITIVE_INFINITY;
-    const history = SURVEYS.map((checkedOn, k) => ({
-      _key: `${spec.slug}-p${k}`,
-      price: k >= rise ? spec.price : Math.max(10, spec.price - (Number.isFinite(rise) ? 5 : 0)),
-      checkedOn,
-    }));
+  return specs.map((spec) => {
     return {
       _id: `demo-dish-${spec.slug}`,
       _type: "canteenDish" as const,
@@ -811,7 +758,6 @@ function buildDishes(stamp: string): CanteenDish[] {
       vegetarian: spec.vegetarian ?? "no",
       vegan: spec.vegan ?? "no",
       jay: spec.jay ?? "no",
-      priceHistory: history,
       checkedOn: CHECKED_ON,
       lastReviewed: CHECKED_ON,
     };
@@ -869,7 +815,7 @@ function buildSettings(stamp: string): CanteenSettings {
 
 /**
  * The canteen with its real structure and example menus. `now` only stamps
- * the document metadata; every survey date is fixed so the price history
+ * the document metadata; every survey date is fixed so the data
  * reads the same on every request.
  */
 export function demoCanteenData(now: Date = new Date()): CanteenData {

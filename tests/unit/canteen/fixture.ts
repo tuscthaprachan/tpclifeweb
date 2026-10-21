@@ -75,11 +75,8 @@ export const CANONICALS: CanonicalDish[] = [
   },
 ];
 
-let counter = 0;
-
 function dish(stallNumber: number, price: number, extra: Partial<CanteenDish> & { id: string }): CanteenDish {
   const { id, ...rest } = extra;
-  counter += 1;
   return {
     _id: `dish-${id}`,
     _type: "canteenDish",
@@ -100,7 +97,6 @@ function dish(stallNumber: number, price: number, extra: Partial<CanteenDish> & 
     vegan: "no",
     jay: "no",
     checkedOn: "2026-08-01",
-    priceHistory: [{ _key: `p${counter}`, price, checkedOn: "2026-08-01" }],
     ...rest,
   };
 }

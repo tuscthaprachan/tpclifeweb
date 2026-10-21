@@ -64,7 +64,7 @@ export const EAT = {
   toolGroup: { th: "กินเป็นกลุ่ม", en: "Eat as a group" },
   toolGroupHint: { th: "หาร้านที่ทุกคนในกลุ่มกินได้", en: "Find a stall that works for everyone." },
   toolWhatIs: { th: "เมนูนี้คืออะไร", en: "What is this dish" },
-  toolWhatIsHint: { th: "อธิบายเมนู พร้อมประโยคสั่งอาหาร", en: "Explainers and phrases for ordering." },
+  toolWhatIsHint: { th: "อธิบายเมนูสำหรับคนที่ไม่เคยกิน", en: "Explainers for dishes you have never had." },
   toolMine: { th: "ของฉัน", en: "My stuff" },
   toolMineHint: { th: "เมนูโปรดและประวัติ เก็บไว้ในเครื่องนี้", en: "Favourites and history, kept on this device." },
 
@@ -171,7 +171,7 @@ export const EAT = {
   spiceLine: { th: "ความเผ็ดปกติ", en: "Usual spice" },
   dietTitle: { th: "อาหารที่กินได้", en: "Diet" },
   noDietTags: { th: "ร้านไม่ได้แจ้งป้ายอาหารพิเศษ", en: "The stall gave no special diet tags." },
-  whatIsLink: { th: "เมนูนี้คืออะไร และสั่งอย่างไร", en: "What is this dish, and how to order it" },
+  whatIsLink: { th: "เมนูนี้คืออะไร", en: "What is this dish" },
   showOnMap: { th: "ดูตำแหน่งบนแผนที่", en: "Show on the map" },
   backToStalls: { th: "กลับไปรายการร้านค้า", en: "Back to all stalls" },
   backToDishes: { th: "กลับไปรายการเมนู", en: "Back to all dishes" },

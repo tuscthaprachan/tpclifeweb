@@ -32,7 +32,7 @@ New top-level section, `/eat` (Thai label "กินอะไรดี", English
 ```
 /[locale]/eat                      Hub: decide, browse, map, budget, all on one page
 /[locale]/eat/dishes               Full filterable dish list (the filter "home")
-/[locale]/eat/dishes/[slug]        Dish page: price, stall, map, same dish elsewhere, how to order
+/[locale]/eat/dishes/[slug]        Dish page: price, stall, map, same dish elsewhere
 /[locale]/eat/stalls               Stall list in stall number order
 /[locale]/eat/stalls/[slug]        Stall page: full menu, position on map
 /[locale]/eat/pick                 Randomiser result (?seed=&mode= + filter params)
@@ -75,7 +75,7 @@ A sticky summary bar under the header on every `/eat` page: "No pork · under 50
 ### Keeping it fresh
 - Re-survey every semester, in week 2.
 - Studio desk view "Prices not checked in 120 days".
-- Every price change appends to the dish's price history rather than overwriting it (powers section 7.8).
+- Every price change appends to the dish's `priceHistory` rather than overwriting it, so the record is kept.
 
 ## 5. Data model (Sanity)
 
@@ -178,7 +178,7 @@ Lives at `/eat/pick`. Takes every filter param plus:
 | `lock` | Dimensions to keep on reroll: `stall`, `type`, `canonical` |
 | `not` | Dish slugs vetoed this session |
 
-**Result card**: dish name in both languages, price, stall number and name, wayfinding sentence, mini map with the stall highlighted, how to order if there is a canonical dish, and why it matched ("Under 50, no pork, noodles").
+**Result card**: dish name in both languages, price, stall number and name, wayfinding sentence, mini map with the stall highlighted, and why it matched ("Under 50, no pork, noodles").
 
 **Actions**:
 - **I'll eat this** logs it to device history and links to the stall.
@@ -241,11 +241,11 @@ Every dish page with a canonical dish shows "Also at": the same dish at other st
 
 ### 7.7 What is this dish (for exchange and international students)
 
-`/eat/what-is/[slug]` shows the explainer, a photo if any, which stalls make it and at what price, and a **how to order** card: Thai phrase, romanisation, meaning, with a "show to the stall" mode that displays just the Thai phrase large on screen. This turns the English half of the site from translation into genuine help.
+`/eat/what-is/[slug]` shows the explainer, a photo if any, which stalls make it and at what price. The how to order phrases and show-to-the-stall mode were dropped from the site; the `howToOrder` field stays in the Sanity schema so existing data is kept. This turns the English half of the site from translation into genuine help.
 
-### 7.8 Canteen price tracker
+### 7.8 Canteen price tracker (dropped)
 
-Because price history is append-only, the hub can show "A plate of rice cost a median of 40 baht in semester 1/2568 and 45 baht now", with a small chart per semester and per dish ("Kra pao at stall 3: 40, 40, 45"). This gives TUSU evidence for welfare policy and can link from a canteen-pricing policy item on the existing policy dashboard. It shows only surveyed figures with their dates, and never projects or infers.
+The price tracker and its charts were dropped from the site. The `priceHistory` field stays in the Sanity schema so existing data is kept.
 
 ### 7.9 Search
 
@@ -280,8 +280,6 @@ New, in `components/domain/canteen/`:
 | `ComboCard` | Meal combo with total and change |
 | `WeekPlanner` | Seven-row planner with lock and reroll |
 | `GroupBuilder` | Person fieldsets and strategy tabs |
-| `OrderPhrase` | Thai phrase, romanisation, meaning, show-to-stall mode |
-| `PriceHistoryChart` | Small per-semester chart, with a data table equivalent |
 
 ### Colour
 `CONTRIBUTING.md` fixes four semantic fills. Food is closest to **welfare (coral)**; recommend using `--fill-welfare` for the section rather than adding a fifth fill. Diet tags use the soft fills with `--ink-900` text, always with an icon and a word. If a dedicated food fill is wanted, it needs adding to `styles/tokens.css` and passing `check:contrast`, which is a contract change.
@@ -335,7 +333,7 @@ Vercel Analytics custom events, no personal data:
 | 2. Decide | Randomiser with seed, bias, lock, veto; canteen map with heatmap | Same seed gives same pick in unit tests and across server and client |
 | 3. Money | Meal combos, week planner, device history and spend log, `/eat/mine` | Combo and week solvers covered by unit tests, storage failure path tested |
 | 4. Together | Group mode, link encoding, no-JS form | Eight-person group resolves in under 50 ms |
-| 5. Extras | Same dish elsewhere, what-is explainer and order phrases, price tracker, search aliases, homepage glance | Search finds "krapow" and "กะเพรา" equally |
+| 5. Extras | Same dish elsewhere, what-is explainer, search aliases, homepage glance | Search finds "krapow" and "กะเพรา" equally |
 
 Phase 1 alone is a useful product. Each later phase is independent and shippable.
 

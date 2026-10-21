@@ -228,17 +228,3 @@ test("Eat as a group: Add another person works without JavaScript", async ({ pag
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#results$/);
 });
-
-/* ---- What is this dish: Show to the stall is a link without JavaScript ---- */
-test("What is this dish: Show to the stall works without JavaScript", async ({ page }) => {
-  await page.goto(localePath("en", "/eat/what-is"));
-  const dish = page.locator('main a[href*="/eat/what-is/"]').first();
-  test.skip((await dish.count()) === 0, "No canteen data in this environment.");
-  await dish.click();
-  const show = page.getByRole("link", { name: /^Show to the stall/ }).first();
-  test.skip((await show.count()) === 0, "This dish has no order phrases.");
-  await show.click();
-  await expect(page).toHaveURL(/show=0/);
-  await expect(page.locator('[lang="th"]').first()).toBeVisible();
-  await expect(page.getByRole("link", { name: "Back to the dish" })).toBeVisible();
-});

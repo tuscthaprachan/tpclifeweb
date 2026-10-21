@@ -19,14 +19,3 @@ export function excerpt(text: string | undefined | null, max = 140): string {
   const base = space > max * 0.5 ? cut.slice(0, space) : cut;
   return `${base.replace(/[\s,;:]+$/, "")}...`;
 }
-
-/**
- * The phrase index from a `?show=` query value: a whole number inside the
- * list, otherwise null. "01", "1.5", "-1", "x" and out of range are all null.
- */
-export function parseShowIndex(value: string | string[] | undefined, length: number): number | null {
-  const raw = Array.isArray(value) ? value[0] : value;
-  if (raw === undefined || !/^\d{1,3}$/.test(raw) || (raw.length > 1 && raw.startsWith("0"))) return null;
-  const index = Number(raw);
-  return index < length ? index : null;
-}

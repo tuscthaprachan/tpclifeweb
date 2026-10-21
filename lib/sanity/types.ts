@@ -685,14 +685,6 @@ export interface CanteenStall extends DocumentMeta {
   photo?: SanityImage;
 }
 
-/** One way to order a dish, shown on the "what is this dish" page. */
-export interface HowToOrderPhrase {
-  _key: string;
-  th: string;
-  romanised: string;
-  en: string;
-}
-
 /** The taxonomy layer: one per real-world dish, not per stall. */
 export interface CanonicalDish extends DocumentMeta {
   _type: "canonicalDish";
@@ -701,7 +693,6 @@ export interface CanonicalDish extends DocumentMeta {
   /** Alternative spellings that feed search, for example krapow, kaprao. */
   aliases?: string[];
   explainer?: LocaleText;
-  howToOrder?: HowToOrderPhrase[];
 }
 
 /** A priced variant, for example "special" +10 or "add egg" +10. */
@@ -710,14 +701,6 @@ export interface DishVariant {
   label: LocaleString;
   /** Baht added to the base price. Never negative. */
   delta: number;
-}
-
-/** One surveyed price. Append only, so the history is evidence rather than a guess. */
-export interface DishPriceRecord {
-  _key: string;
-  price: number;
-  /** "YYYY-MM-DD", the day the price was read off the board. */
-  checkedOn: string;
 }
 
 export interface CanteenDish extends DocumentMeta {
@@ -742,7 +725,6 @@ export interface CanteenDish extends DocumentMeta {
   vegan: DietAvailability;
   jay: DietAvailability;
   photo?: SanityImage;
-  priceHistory?: DishPriceRecord[];
   /** "YYYY-MM-DD", the day the current price was last checked. */
   checkedOn: string;
   /** Drives the "prices not checked" view in the Studio. */
