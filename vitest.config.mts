@@ -8,6 +8,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      // `server-only` throws outside a React Server build; stub it for tests.
+      "server-only": fileURLToPath(new URL("./tests/unit/server-only-stub.ts", import.meta.url)),
       "@": fileURLToPath(new URL(".", import.meta.url)),
     },
   },

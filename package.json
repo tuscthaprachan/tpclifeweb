@@ -15,6 +15,10 @@
     "test:e2e": "playwright test --config=tests/playwright.config.ts e2e",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:i18n": "node scripts/check-i18n.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx lib/db/seed.ts",
+    "db:studio": "drizzle-kit studio",
     "check": "npm run check:contrast && npm run check:i18n && npm run typecheck && npm run lint"
   },
   "comment:overrides": "Pins TypeScript across the tree. Without this npm oscillates between TS 5 and TS 7 resolving typescript-eslint's wide range and never terminates. TS 7 is not used because typescript-eslint 8 caps below TS 6.1.",
@@ -58,6 +62,7 @@
     "eslint-config-next": "^16.4.2",
     "postcss": "^8.5.31",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "vitest": "^5.0.5"
   },
