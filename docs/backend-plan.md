@@ -25,11 +25,11 @@ The Service Manual is written for UK government, so we adopt its principles and 
 | 6 | Multidisciplinary team | Named service owner per service from TUSU/TUSC; content, design, research and engineering roles identified even if one person holds several. |
 | 7 | Agile ways of working | Discovery, alpha, beta, live per service; the phase banner reflects the real phase. |
 | 8 | Iterate frequently | Neon branch per preview deployment so every change is testable with real-shaped data. |
-| 9 | Secure and private | Entra OIDC for staff, least-privilege roles, audit log, PII encrypted at rest at column level, PII deleted 1 year after case closure. |
+| 9 | Secure and private | Better Auth with email codes, mandatory passkey or authenticator app for staff, least-privilege roles, audit log, PII encrypted at rest at column level, PII deleted 1 year after case closure. |
 | 10 | Define success, publish data | KPIs per service: completion rate, user satisfaction, digital take-up, time to resolution (complaints), return rate (lost and found). Published on a `/performance` page. |
 | 11 | Choose the right tools | Boring, open technology: Postgres, Drizzle, Next.js, OIDC. |
 | 12 | Make source code open | Repository stays public; secrets and data never in the repo. |
-| 13 | Open standards and common patterns | GOV.UK Design System patterns via our existing `components/ui`; OpenAPI for any external API; OIDC; S3-compatible storage interface. |
+| 13 | Open standards and common patterns | GOV.UK Design System patterns via our existing `components/ui`; OpenAPI for any external API; WebAuthn passkeys; S3-compatible storage interface. |
 | 14 | Reliable service | `safeFetch` degradation kept, health checks, backups via Neon point-in-time restore, documented incident process. |
 
 ### Government design principles
@@ -64,7 +64,13 @@ The Service Manual is written for UK government, so we adopt its principles and 
   - `/[locale]/…`: public site and service journeys.
   - `/admin/…`: staff console, same design system, Thai and English.
   - Server Actions for all writes; `/api` only for things that need it (cron, webhooks, future integrations).
-- **Auth**: Auth.js with Microsoft Entra ID (OIDC), tenant-restricted to Thammasat. Entra only proves identity; staff roles are assigned and revoked in-app by an `admin`. Students may optionally sign in with Entra to see all their cases; never required.
+- **Auth**: [Better Auth](https://www.better-auth.com), self-hosted, with the Drizzle adapter so users, sessions and roles live in Neon.
+  - Sign-in is a 6-digit code emailed to the user, following the GOV.UK "confirm your email address" pattern. Codes rather than magic links, so it works on shared desk PCs and across devices.
+  - Students: optional sign-in, restricted to Thammasat email domains (to be confirmed, likely `@dome.tu.ac.th`), to see all their cases. Never required to report.
+  - Staff: invite-only. An `admin` invites by email; on first sign-in the user must register a passkey or authenticator app (TOTP). Roles are assigned and revoked in-app.
+  - Sessions: short idle timeout for staff with the GOV.UK session timeout warning; rate limiting on code requests.
+  - Email deliverability is a dependency: Resend from our own domain with SPF, DKIM and DMARC, tested against TU inboxes early.
+  - Entra or LINE can be added later as extra sign-in methods without changing anything else.
 - **Authorisation**: roles `admin`, `editor`, `lf_officer`, `complaints_handler`, `unit_lead`, each held on behalf of an organisation. Lost and found and complaints are jointly owned: TUSU and TUSC staff share one queue per service; each action records which organisation acted. Restricted complaint categories are visible only to named staff. Enforced in the data layer and backed by Postgres row-level security.
 - **Files**: Vercel Blob behind a small storage interface (S3-compatible, swappable). Public bucket for content images; private for item photos and complaint evidence, served via short-lived signed URLs.
 - **Notifications**: email via Resend. Templates bilingual, stored in code. LINE is on the back burner.
@@ -130,7 +136,7 @@ Common to every service:
 
 ## Phases
 
-1. **Foundations**: Neon, Drizzle, Auth.js + Entra, roles, audit log, storage interface, CI against a Neon branch.
+1. **Foundations**: Neon, Drizzle, Better Auth (email codes, passkeys, TOTP, invites), roles, audit log, storage interface, CI against a Neon branch.
 2. **Content swap**: schema, `lib/content`, seeds, pages moved over; delete Sanity, Studio route, CSP frame header, `cdn.sanity.io`, CI Sanity env vars.
 3. **Content editing** in `/admin`.
 4. **Case engine + lost and found**: discovery with TUSU/TUSC desks, alpha, private beta.
@@ -145,5 +151,6 @@ Phases 1–2 alone remove Sanity and nearly all remaining `npm audit` findings.
 2. Complaints are jointly handled by TUSU and TUSC.
 3. LINE notifications are on the back burner.
 4. Personal data is deleted 1 year after case closure.
-5. Staff roles are managed in-app, not from Entra groups.
+5. Staff roles are managed in-app.
+7. Authentication uses Better Auth, not Entra, so no university IT involvement is needed.
 6. TUSU and TUSC are jointly the data protection contact.
