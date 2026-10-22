@@ -13,6 +13,7 @@ import type { CanteenData } from "@/lib/sanity/types";
 import { dishHref } from "../links";
 import { EAT, eat, t } from "../strings";
 import { CanteenMap } from "../map";
+import { OtherName } from "../OtherName";
 import { BUDGET, budget } from "./strings";
 import { routeFor } from "./route";
 
@@ -43,6 +44,7 @@ export function ComboCard({ combo, data, locale, filters, position, headingLevel
       <div className="flex flex-wrap items-baseline justify-between gap-x-[var(--space-4)] gap-y-[var(--space-1)]">
         <Heading level={headingLevel} className="m-0 text-lg">
           {pick(combo.main.name, locale)}
+          <OtherName name={combo.main.name} locale={locale} className="font-normal" />
         </Heading>
         <p className="m-0 text-lg font-semibold text-ink-900">{eat.baht(locale, combo.total)}</p>
       </div>
@@ -61,6 +63,7 @@ export function ComboCard({ combo, data, locale, filters, position, headingLevel
                 </Link>
                 <span className="shrink-0 font-semibold text-ink-900">{eat.baht(locale, effectivePrice(dish, filters.variants))}</span>
               </div>
+              <OtherName name={dish.name} locale={locale} />
               <p className="m-0 text-sm text-ink-600">
                 {stall ? eat.stallFull(locale, stall.number, pick(stall.name, locale)) : null}
                 {dish.checkedOn ? (

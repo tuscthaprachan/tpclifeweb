@@ -25,6 +25,7 @@ export * from "./SpeakButton";
 export * from "./HowToSay";
 export * from "./DishCard";
 export * from "./DishRow";
+export * from "./OtherName";
 export * from "./StallCard";
 export * from "./CanonicalCompare";
 export * from "./DishResults";

@@ -39,7 +39,7 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 1,ข้าวราดกุ้งกระเทียม,"Garlic prawns, over rice",ข้าวราดกุ้งกระเทียม|khao rat kung krathiam,,1-garlic-prawns-over-rice,khao-gaeng,30,เพิ่มกับข้าวอีก 1 อย่าง|One more topping|10;เพิ่มกับข้าวอีก 2 อย่าง|Two more toppings|20,curryOverRice,main,seafood,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,1C.jpg
 1,ข้าวราดไก่ทอด,"Fried chicken, over rice",ข้าวราดไก่ทอด|khao rat kai thot,,1-fried-chicken-over-rice,khao-gaeng,30,เพิ่มกับข้าวอีก 1 อย่าง|One more topping|10;เพิ่มกับข้าวอีก 2 อย่าง|Two more toppings|20,curryOverRice,main,chicken,wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,1C.jpg
 1,ข้าวราดแซลมอนพริกเกลือ,"Salmon with chilli and salt, over rice",ข้าวราดแซลมอนพริกเกลือ|khao rat saelmon phrik kluea,,1-salmon-with-chilli-and-salt-over-rice,khao-gaeng,30,เพิ่มกับข้าวอีก 1 อย่าง|One more topping|10;เพิ่มกับข้าวอีก 2 อย่าง|Two more toppings|20,curryOverRice,main,fish,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,1C.jpg
-1,ข้าวราดต้มข่าไก่,"Chicken in coconut galangal soup, over rice",ข้าวราดต้มข่าไก่|khao rat tom kha kai,,1-chicken-in-coconut-galangal-soup-over-rice,khao-gaeng,30,เพิ่มกับข้าวอีก 1 อย่าง|One more topping|10;เพิ่มกับข้าวอีก 2 อย่าง|Two more toppings|20,curryOverRice,main,chicken,fish;shellfish,curry,hot,yes,no,2026-10-21,1C.jpg
+1,ข้าวราดต้มข่าไก่,"Tom kha kai (chicken in coconut galangal soup), over rice",ข้าวราดต้มข่าไก่|khao rat tom kha kai,,1-chicken-in-coconut-galangal-soup-over-rice,khao-gaeng,30,เพิ่มกับข้าวอีก 1 อย่าง|One more topping|10;เพิ่มกับข้าวอีก 2 อย่าง|Two more toppings|20,curryOverRice,main,chicken,fish;shellfish,curry,hot,yes,no,2026-10-21,1C.jpg
 1,ข้าวราดต้มจืดเต้าหู้ไข่,"Clear soup with egg tofu, over rice",ข้าวราดต้มจืดเต้าหู้ไข่|khao rat tom chuet tao hu khai,,1-clear-soup-with-egg-tofu-over-rice,khao-gaeng,30,เพิ่มกับข้าวอีก 1 อย่าง|One more topping|10;เพิ่มกับข้าวอีก 2 อย่าง|Two more toppings|20,curryOverRice,main,tofu;egg;pork,egg;soy;fish;shellfish,boiled,hot,yes,no,2026-10-21,1C.jpg
 1,ข้าวราดเต้าหู้ไข่ทอดพริกเกลือ,"Fried egg tofu with chilli and salt, over rice",ข้าวราดเต้าหู้ไข่ทอดพริกเกลือ|khao rat tao hu khai thot phrik kluea,,1-fried-egg-tofu-with-chilli-and-salt,khao-gaeng,30,เพิ่มกับข้าวอีก 1 อย่าง|One more topping|10;เพิ่มกับข้าวอีก 2 อย่าง|Two more toppings|20,curryOverRice,main,tofu;egg,egg;wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,1C.jpg
 1,ข้าวราดทอดมัน,"Fried fish cakes, over rice",ข้าวราดทอดมัน|khao rat thot man,,1-fried-fish-cakes-over-rice,khao-gaeng,30,เพิ่มกับข้าวอีก 1 อย่าง|One more topping|10;เพิ่มกับข้าวอีก 2 อย่าง|Two more toppings|20,curryOverRice,main,fish,milk;egg;wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,1C.jpg
@@ -55,7 +55,7 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 2,ก๋วยเตี๋ยวหมูเด้งต้มยำ,Tom yum noodle soup with bouncy pork balls,ก๋วยเตี๋ยวหมูเด้งต้มยำ|kuai tiao mu deng tom yam,,2-tom-yam-bouncy-pork-noodle-soup,kuay-teow,45,,noodles,main,pork,wheat;fish,boiled,hot,yes,no,2026-10-21,2A.jpg
 2,ก๋วยเตี๋ยวหมูตุ๋น,Stewed pork noodle soup,ก๋วยเตี๋ยวหมูตุ๋น|kuai tiao mu tun,,2-stewed-pork-noodle-soup,kuay-teow,40,น้ำตกต้มยำ|Nam tok tom yum style|5,noodles,main,pork,wheat;fish,boiled,hot,yes,no,2026-10-21,2A.jpg
 2,ก๋วยเตี๋ยวหมูสดตับน้ำตก,Pork and liver noodle soup,ก๋วยเตี๋ยวหมูสดตับน้ำตก|kuai tiao mu sot tap nam tok,,2-pork-and-liver-noodle-soup,kuay-teow,40,,noodles,main,pork,wheat;fish,boiled,hot,yes,no,2026-10-21,2A.jpg
-2,เย็นตาโฟ,Yentafo noodle soup,เย็นตาโฟ|yen ta fo,,2-yentafo-noodle-soup,,40,,noodles,main,pork;seafood,wheat;fish;shellfish,boiled,hot,yes,no,2026-10-21,2A.jpg
+2,เย็นตาโฟ,Yen ta fo (pink seafood noodle soup),เย็นตาโฟ|yen ta fo,,2-yentafo-noodle-soup,,40,,noodles,main,pork;seafood,wheat;fish;shellfish,boiled,hot,yes,no,2026-10-21,2A.jpg
 2,ก๋วยเตี๋ยวน่องไก่มะระ,Chicken drumstick and bitter melon noodle soup,ก๋วยเตี๋ยวน่องไก่มะระ|kuai tiao nong kai mara,,2-chicken-drumstick-and-bitter-melon-noodle-soup,kuay-teow,40,,noodles,main,chicken,wheat;fish,boiled,hot,yes,no,2026-10-21,2A.jpg
 2,ก๋วยเตี๋ยวเนื้อ,Beef noodle soup,ก๋วยเตี๋ยวเนื้อ|kuai tiao nuea,,2-beef-noodle-soup,kuay-teow,50,,noodles,main,beef,wheat;fish,boiled,hot,yes,no,2026-10-21,2A.jpg
 2,ก๋วยเตี๋ยวเนื้อตุ๋น,Braised beef noodle soup,ก๋วยเตี๋ยวเนื้อตุ๋น|kuai tiao nuea tun,,2-braised-beef-noodle-soup,kuay-teow,50,,noodles,main,beef,wheat;fish,boiled,hot,yes,no,2026-10-21,2C.jpg
@@ -64,11 +64,11 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 2,ก๋วยเตี๋ยวลูกชิ้นรวม,Mixed ball noodle soup,ก๋วยเตี๋ยวลูกชิ้นรวม|kuai tiao luk chin ruam,,2-mixed-ball-noodle-soup,kuay-teow,40,,noodles,main,pork;fish,wheat;fish,boiled,hot,yes,no,2026-10-21,2B.jpg
 2,ก๋วยเตี๋ยวไก่ฉีก,Shredded chicken noodles,ก๋วยเตี๋ยวไก่ฉีก|kuai tiao kai chik,,2-shredded-chicken-noodles,kuay-teow,40,ต้มยำ|Tom yum|5,noodles,main,chicken,wheat;fish,boiled,hot,no,no,2026-10-21,2C.jpg
 2,ต้มเลือดหมู,Pork blood soup,ต้มเลือดหมู|tom lueat mu,,2-pork-blood-soup,,40,,noodles,main,pork,wheat;fish,boiled,hot,yes,no,2026-10-21,2C.jpg
-2,เกาเหลารวม,Mixed soup (no noodles),เกาเหลารวม|kao lao ruam,,2-mixed-soup,,50,,soup,main,pork,fish,boiled,hot,yes,no,2026-10-21,2C.jpg
-2,ก๋วยจั๊บน้ำข้น,Rolled noodle soup,ก๋วยจั๊บน้ำข้น|kuai chap nam khon,,2-rolled-noodle-soup,,50,,noodles,main,pork,wheat;fish,boiled,hot,yes,no,2026-10-21,2C.jpg
+2,เกาเหลารวม,Gao lao (mixed soup without noodles),เกาเหลารวม|kao lao ruam,,2-mixed-soup,,50,,soup,main,pork,fish,boiled,hot,yes,no,2026-10-21,2C.jpg
+2,ก๋วยจั๊บน้ำข้น,Guay jub (rolled noodles in peppery soup),ก๋วยจั๊บน้ำข้น|kuai chap nam khon,,2-rolled-noodle-soup,,50,,noodles,main,pork,wheat;fish,boiled,hot,yes,no,2026-10-21,2C.jpg
 2,ข้าวต้มหมูสับ,Minced pork rice soup,ข้าวต้มหมูสับ|khao tom mu sap,,2-minced-pork-rice-soup,,40,,soup,main,pork,fish,boiled,hot,yes,no,2026-10-21,2B.jpg
 2,ข้าวต้มทรงเครื่อง,Rice soup with mixed toppings,ข้าวต้มทรงเครื่อง|khao tom song khrueang,,2-seasoned-rice-soup,,45,,soup,main,pork,fish,boiled,hot,yes,no,2026-10-21,2B.jpg
-3,ข้าวกะเพราหมูสับหรือไก่ไข่ดาว,Stir-fried holy basil with minced pork or chicken and fried egg on rice,ข้าวกะเพราหมูสับไข่ดาว|khao kaphrao mu sap khai dao;ข้าวกะเพราไก่ไข่ดาว|khao kaphrao kai khai dao,1,3-stir-fried-holy-basil-with-minced-pork,pad-kra-pao,45,,rice,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
+3,ข้าวกะเพราหมูสับหรือไก่ไข่ดาว,Pad kra pao (holy basil stir-fry) with minced pork or chicken and fried egg on rice,ข้าวกะเพราหมูสับไข่ดาว|khao kaphrao mu sap khai dao;ข้าวกะเพราไก่ไข่ดาว|khao kaphrao kai khai dao,1,3-stir-fried-holy-basil-with-minced-pork,pad-kra-pao,45,,rice,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
 3,ข้าวไก่หรือหมูกระเทียมไข่ดาว,Garlic chicken or pork with fried egg on rice,ข้าวไก่กระเทียมไข่ดาว|khao kai krathiam khai dao;ข้าวหมูกระเทียมไข่ดาว|khao mu krathiam khai dao,2,3-garlic-chicken-or-pork-with-fried-egg,,45,,rice,main,chicken;pork;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
 3,ข้าวไก่หรือหมูผัดพริกหยวก,Stir-fried pork or chicken with mild green chilli on rice,ข้าวไก่ผัดพริกหยวก|khao kai phat phrik yuak;ข้าวหมูผัดพริกหยวก|khao mu phat phrik yuak,3,3-stir-fried-pork-or-chicken-with-bell,,40,,rice,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
 3,ข้าวไก่หรือหมูผัดพริกแกง,Stir-fried pork or chicken with red curry paste on rice,ข้าวไก่ผัดพริกแกง|khao kai phat phrik kaeng;ข้าวหมูผัดพริกแกง|khao mu phat phrik kaeng,4,3-stir-fried-pork-or-chicken-with-red,,40,,rice,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
@@ -77,7 +77,7 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 3,ข้าวไก่หรือหมูผัดคะน้า,Stir-fried pork or chicken with kale on rice,ข้าวไก่ผัดคะน้า|khao kai phat khana;ข้าวหมูผัดคะน้า|khao mu phat khana,7,3-stir-fried-pork-or-chicken-with-kale,,40,,rice,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
 3,ข้าวไก่หรือหมูผัดผักบุ้ง,Stir-fried pork or chicken with morning glory on rice,ข้าวไก่ผัดผักบุ้ง|khao kai phat phak bung;ข้าวหมูผัดผักบุ้ง|khao mu phat phak bung,8,3-stir-fried-pork-or-chicken-with-morning,,40,,rice,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
 3,ข้าวไก่หรือหมูผัดขี้เมา,Stir-fried pork or chicken with spicy Thai herbs (drunken style) on rice,ข้าวไก่ผัดขี้เมา|khao kai phat khi mao;ข้าวหมูผัดขี้เมา|khao mu phat khi mao,9,3-stir-fried-pork-or-chicken-with-spicy,,40,,rice,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
-3,ข้าวไก่หรือหมูผัดกะเพราไข่เยี่ยวม้า,Spicy pork or chicken with holy basil and preserved egg on rice,ข้าวไก่ผัดกะเพราไข่เยี่ยวม้า|khao kai phat kaphrao khai yiao ma;ข้าวหมูผัดกะเพราไข่เยี่ยวม้า|khao mu phat kaphrao khai yiao ma,10,3-spicy-pork-or-chicken-with-holy-basil,pad-kra-pao,45,,rice,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
+3,ข้าวไก่หรือหมูผัดกะเพราไข่เยี่ยวม้า,Pad kra pao with pork or chicken and preserved egg on rice,ข้าวไก่ผัดกะเพราไข่เยี่ยวม้า|khao kai phat kaphrao khai yiao ma;ข้าวหมูผัดกะเพราไข่เยี่ยวม้า|khao mu phat kaphrao khai yiao ma,10,3-spicy-pork-or-chicken-with-holy-basil,pad-kra-pao,45,,rice,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
 3,ข้าวไก่หรือหมูเกาหลี,Korean-style pork or chicken with cabbage on rice,ข้าวไก่เกาหลี|khao kai kaoli;ข้าวหมูเกาหลี|khao mu kaoli,11,3-stir-fried-pork-or-chicken-with-cabbage,,40,,rice,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
 3,ข้าวไก่หรือหมูผัดพริกเผา,Stir-fried pork or chicken with sweet chilli paste on rice,ข้าวไก่ผัดพริกเผา|khao kai phat phrik phao;ข้าวหมูผัดพริกเผา|khao mu phat phrik phao,12,3-stir-fried-pork-or-chicken-with-sweet,,40,,rice,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
 3,ข้าวไก่หรือหมูผัดเผ็ดหน่อไม้,Stir-fried pork or chicken with spicy bamboo shoot on rice,ข้าวไก่ผัดเผ็ดหน่อไม้|khao kai phat phet no mai;ข้าวหมูผัดเผ็ดหน่อไม้|khao mu phat phet no mai,13,3-stir-fried-pork-or-chicken-with-spicy-2,,40,,rice,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3K.jpg
@@ -94,14 +94,14 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 3,ข้าวไก่ย่างจิ้มแจ่ว,Grilled chicken with Thai spicy dipping sauce on rice,ข้าวไก่ย่างจิ้มแจ่ว|khao kai yang chim chaeo,111,3-grilled-chicken-with-thai-spicy-dipping-sauce,,45,,rice,main,chicken,wheat;soy;fish;shellfish,grilled,hot,no,no,2026-10-21,3L.jpg
 3,ข้าวคะน้าหมูกรอบไข่ดาว,Crispy pork with kale and fried egg on rice,ข้าวคะน้าหมูกรอบไข่ดาว|khao khana mu krop khai dao,88,3-crispy-pork-with-kale-and-fried-egg,,60,,rice,main,pork;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3I.jpg
 3,ข้าวเนื้อคั่วพริกเกลือไข่ข้น,Chilli and salt stir-fried beef with creamy omelette on rice,ข้าวเนื้อคั่วพริกเกลือไข่ข้น|khao nuea khua phrik kluea khai khon,118,3-garlic-and-chilli-beef-with-creamy-omelette,,65,,rice,main,beef;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3I.jpg
-3,ข้าวกะเพราเนื้อ,Spicy beef with holy basil on rice,ข้าวกะเพราเนื้อ|khao kaphrao nuea,112,3-spicy-beef-with-holy-basil-on-rice,pad-kra-pao,55,,rice,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3I.jpg
+3,ข้าวกะเพราเนื้อ,Pad kra pao with beef on rice,ข้าวกะเพราเนื้อ|khao kaphrao nuea,112,3-spicy-beef-with-holy-basil-on-rice,pad-kra-pao,55,,rice,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3I.jpg
 3,ข้าวไก่กรอบพริกเกลือไข่ข้น,Chilli and salt crispy chicken with creamy omelette on rice,ข้าวไก่กรอบพริกเกลือไข่ข้น|khao kai krop phrik kluea khai khon,119,3-garlic-and-chilli-crispy-chicken-with-creamy,,50,,rice,main,chicken;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3I.jpg
 3,ข้าวหมูกรอบพริกเกลือไข่ดาว,Chilli and salt crispy pork with fried egg on rice,ข้าวหมูกรอบพริกเกลือไข่ดาว|khao mu krop phrik kluea khai dao,67,3-garlic-and-chilli-crispy-pork-with-fried,,50,,rice,main,pork;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3I.jpg
 3,ข้าวหมูกรอบพริกเกลือ,Crispy pork with chilli and salt on rice,ข้าวหมูกรอบพริกเกลือ|khao mu krop phrik kluea,,3-crispy-pork-with-chilli-and-salt-on,,40,,rice,main,pork,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3A.jpg
 3,ข้าวพริกเผาหมูกรอบ,Crispy pork with sweet chilli paste on rice,ข้าวพริกเผาหมูกรอบ|khao phrik phao mu krop,125,3-crispy-pork-with-sweet-chilli-paste-on,,50,,rice,main,pork,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3B.jpg
 3,ข้าวพริกแกงเนื้อ,Stir-fried beef with red curry paste on rice,ข้าวพริกแกงเนื้อ|khao phrik kaeng nuea,87,3-beef-red-curry-paste-with-rice-no,,55,,rice,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3I.jpg
 3,ข้าวหมูหรือไก่ผัดกิมจิ,Stir-fried pork or chicken with kimchi on rice,ข้าวหมูผัดกิมจิ|khao mu phat kim chi;ข้าวไก่ผัดกิมจิ|khao kai phat kim chi,126,3-stir-fried-pork-or-chicken-with-kimchi,,50,,rice,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3I.jpg
-3,ข้าวกะเพราหมูกรอบไข่ดาว,Spicy crispy pork with basil and fried egg on rice,ข้าวกะเพราหมูกรอบไข่ดาว|khao kaphrao mu krop khai dao,142,3-spicy-crispy-pork-with-basil-and-fried,pad-kra-pao,60,,rice,main,pork;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3J.jpg
+3,ข้าวกะเพราหมูกรอบไข่ดาว,Pad kra pao with crispy pork and fried egg on rice,ข้าวกะเพราหมูกรอบไข่ดาว|khao kaphrao mu krop khai dao,142,3-spicy-crispy-pork-with-basil-and-fried,pad-kra-pao,60,,rice,main,pork;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3J.jpg
 3,ข้าวผัดฉ่าทะเล,Stir-fried seafood with Thai spices on rice,ข้าวผัดฉ่าทะเล|khao phat cha thale,100,3-stir-fried-seafood-with-thai-spices-on,khao-pad,60,,rice,main,seafood,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3L.jpg
 3,ข้าวผัดผักรวม,Stir-fried mixed vegetables with rice,ข้าวผัดผักรวม|khao phat phak ruam,75,3-stir-fried-mixed-vegetables-with-rice-no,khao-pad,40,,rice,main,none,egg;wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3L.jpg
 3,ข้าวแหนมผัดไข่,Stir-fried sour pork sausage with egg and rice,ข้าวแหนมผัดไข่|khao naem phat khai,109,3-stir-fried-sour-pork-sausage-with-egg,,40,,rice,main,pork;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3L.jpg
@@ -114,7 +114,7 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 3,ข้าวผัดผงกะหรี่ไก่หรือหมู,Chicken or pork yellow curry fried rice,ข้าวผัดผงกะหรี่ไก่|khao phat phong kari kai;ข้าวผัดผงกะหรี่หมู|khao phat phong kari mu,,3-chicken-or-pork-yellow-curry-fried-rice,khao-pad,40,,rice,main,chicken;pork,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3A.jpg
 3,ข้าวผัดหมูหรือไก่,Pork or chicken egg fried rice,ข้าวผัดหมู|khao phat mu;ข้าวผัดไก่|khao phat kai,16,3-pork-or-chicken-egg-fried-rice-no,khao-pad,40,,rice,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3L.jpg
 3,ข้าวผัดต้มยำหมูหรือไก่,Pork or chicken tom yum fried rice,ข้าวผัดต้มยำหมู|khao phat tom yam mu;ข้าวผัดต้มยำไก่|khao phat tom yam kai,17,3-pork-or-chicken-tomyum-fried-rice-no,khao-pad,40,,rice,main,pork;chicken,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3L.jpg
-3,ข้าวคลุกกะเพราหมูสับหรือไก่,Holy basil minced pork or chicken mixed with rice,ข้าวคลุกกะเพราหมูสับ|khao khluk kaphrao mu sap;ข้าวคลุกกะเพราไก่|khao khluk kaphrao kai,18,3-spicy-holy-basil-pork-or-chicken-fried,pad-kra-pao,40,,rice,main,pork;chicken,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3L.jpg
+3,ข้าวคลุกกะเพราหมูสับหรือไก่,Pad kra pao with minced pork or chicken mixed into the rice,ข้าวคลุกกะเพราหมูสับ|khao khluk kaphrao mu sap;ข้าวคลุกกะเพราไก่|khao khluk kaphrao kai,18,3-spicy-holy-basil-pork-or-chicken-fried,pad-kra-pao,40,,rice,main,pork;chicken,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3L.jpg
 3,ข้าวผัดเขียวหวานไก่หรือหมู,Chicken or pork green curry fried rice,ข้าวผัดเขียวหวานไก่|khao phat khiao wan kai;ข้าวผัดเขียวหวานหมู|khao phat khiao wan mu,19,3-chicken-or-pork-green-curry-fried-rice,khao-pad,40,,rice,main,chicken;pork,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3L.jpg
 3,ข้าวผัดลาบหมูหรือไก่,Larb-flavoured fried rice with minced pork or chicken,ข้าวผัดลาบหมู|khao phat lap mu;ข้าวผัดลาบไก่|khao phat lap kai,20,3-spicy-thai-style-minced-pork-or-chicken,khao-pad,40,,rice,main,pork;chicken,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3L.jpg
 3,ข้าวผัดกุนเชียง,Chinese pork sausage fried rice,ข้าวผัดกุนเชียง|khao phat kun chiang,21,3-chinese-pork-sausage-fried-rice-no-21,khao-pad,40,,rice,main,pork;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3L.jpg
@@ -128,16 +128,16 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 3,ข้าวไข่ยัดไส้,Stuffed omelette on rice (pork filling),ข้าวไข่ยัดไส้|khao khai yat sai,30,3-stuffed-omelette-on-rice-no-30,,40,,rice,main,pork;egg,egg;wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,3E.jpg
 3,ข้าวไข่ข้นแฮมเทริยากิ,Ham creamy omelette with teriyaki sauce on rice,ข้าวไข่ข้นแฮมเทริยากิ|khao khai khon haem teriyaki,28,3-ham-creamy-omelette-with-teriyaki-sauce-on,,40,,rice,main,pork;egg,milk;egg;wheat;soy;fish,steamed,hot,yes,no,2026-10-21,3E.jpg
 3,ข้าวไข่ระเบิด,Stir-fried minced pork with tomato sauce on fried egg and rice,ข้าวไข่ระเบิด|khao khai raboet,53,3-stir-fried-minced-pork-with-tomato-sauce,,40,,rice,main,pork;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3E.jpg
-3,ข้าวไข่ข้นกะเพราหมูสับหรือไก่,Spicy minced pork or chicken with holy basil and creamy omelette on rice,ข้าวไข่ข้นกะเพราหมูสับ|khao khai khon kaphrao mu sap;ข้าวไข่ข้นกะเพราไก่|khao khai khon kaphrao kai,54,3-spicy-minced-pork-or-chicken-with-thai,pad-kra-pao,50,,rice,main,pork;chicken;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3E.jpg
+3,ข้าวไข่ข้นกะเพราหมูสับหรือไก่,Pad kra pao with minced pork or chicken and creamy omelette on rice,ข้าวไข่ข้นกะเพราหมูสับ|khao khai khon kaphrao mu sap;ข้าวไข่ข้นกะเพราไก่|khao khai khon kaphrao kai,54,3-spicy-minced-pork-or-chicken-with-thai,pad-kra-pao,50,,rice,main,pork;chicken;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3E.jpg
 3,ข้าวไข่ข้นพริกเผาหมูหรือไก่,Pork or chicken with sweet chilli paste and creamy omelette on rice,ข้าวไข่ข้นพริกเผาหมู|khao khai khon phrik phao mu;ข้าวไข่ข้นพริกเผาไก่|khao khai khon phrik phao kai,68,3-pork-or-chicken-with-sweet-chilli-paste,,50,,rice,main,pork;chicken;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3E.jpg
 3,ข้าวไข่ข้นลาบหมูหรือไก่,Spicy pork or chicken larb with creamy omelette on rice,ข้าวไข่ข้นลาบหมู|khao khai khon lap mu;ข้าวไข่ข้นลาบไก่|khao khai khon lap kai,123,3-spicy-pork-or-chicken-salad-with-creamy,,50,,rice,main,pork;chicken;egg,milk;egg;fish;shellfish,salad,hot,no,no,2026-10-21,3E.jpg
 3,ข้าวไข่ข้นหมูหรือไก่กระเทียม,Garlic pork or chicken with creamy omelette on rice,ข้าวไข่ข้นหมูกระเทียม|khao khai khon mu krathiam;ข้าวไข่ข้นไก่กระเทียม|khao khai khon kai krathiam,120,3-garlic-pork-or-chicken-with-creamy-omelette,,50,,rice,main,pork;chicken;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3E.jpg
 3,ข้าวไข่ข้นต้มยำแห้ง,Dry tom yum stir-fry with creamy omelette on rice,ข้าวไข่ข้นต้มยำแห้ง|khao khai khon tom yam haeng,60,3-spicy-pork-or-chicken-with-tomyum-sauce,,50,,rice,main,pork;chicken;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3E.jpg
 3,ข้าวไข่ข้นพะแนงหมู,Spicy pork with panang curry paste and creamy omelette on rice,ข้าวไข่ข้นพะแนงหมู|khao khai khon phanaeng mu,61,3-spicy-pork-with-panang-curry-paste-and,,50,,rice,main,pork;egg,peanut;milk;egg;fish;shellfish,curry,hot,yes,no,2026-10-21,3E.jpg
-3,ข้าวไข่เจียวกะเพรากุ้ง,Spicy shrimp and basil omelette on rice,ข้าวไข่เจียวกะเพรากุ้ง|khao khai chiao kaphrao kung,62,3-spicy-shrimp-and-basil-omelette-on-rice,pad-kra-pao,50,,rice,main,seafood;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3E.jpg
+3,ข้าวไข่เจียวกะเพรากุ้ง,Pad kra pao shrimp omelette on rice,ข้าวไข่เจียวกะเพรากุ้ง|khao khai chiao kaphrao kung,62,3-spicy-shrimp-and-basil-omelette-on-rice,pad-kra-pao,50,,rice,main,seafood;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3E.jpg
 3,ข้าวไข่ข้นหมูซีอิ๊ว,Creamy omelette on rice with pork and soy sauce,ข้าวไข่ข้นหมูซีอิ๊ว|khao khai khon mu si io,143,3-creamy-omelette-rice-with-pork-and-soy,,50,,rice,main,pork;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3B.jpg
 3,ข้าวไข่ข้นไก่ทอดเทริยากิ,Creamy omelette on rice with teriyaki crispy chicken,ข้าวไข่ข้นไก่ทอดเทริยากิ|khao khai khon kai thot teriyaki,137,3-creamy-omelette-rice-with-teriyaki-crispy-chicken,,50,,rice,main,chicken;egg,milk;egg;wheat;soy;fish;shellfish,deepFried,hot,yes,no,2026-10-21,3J.jpg
-3,ข้าวไข่ข้นกะเพราเนื้อ,Creamy omelette on rice with spicy beef and holy basil,ข้าวไข่ข้นกะเพราเนื้อ|khao khai khon kaphrao nuea,110,3-creamy-omelette-rice-with-spicy-beef-and,pad-kra-pao,65,,rice,main,beef;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3J.jpg
+3,ข้าวไข่ข้นกะเพราเนื้อ,Creamy omelette on rice with pad kra pao beef,ข้าวไข่ข้นกะเพราเนื้อ|khao khai khon kaphrao nuea,110,3-creamy-omelette-rice-with-spicy-beef-and,pad-kra-pao,65,,rice,main,beef;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3J.jpg
 3,ข้าวไข่ข้นหมูสับผัดพริก,Creamy omelette on rice with minced pork stir-fried with chilli,ข้าวไข่ข้นหมูสับผัดพริก|khao khai khon mu sap phat phrik,134,3-creamy-omelette-rice-with-chilli-pork-no,,50,,rice,main,pork;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3J.jpg
 3,ข้าวไข่ข้นเปรี้ยวหวานหมูหรือไก่,Sweet and sour pork or chicken with creamy omelette on rice,ข้าวไข่ข้นเปรี้ยวหวานหมู|khao khai khon priao wan mu;ข้าวไข่ข้นเปรี้ยวหวานไก่|khao khai khon priao wan kai,121,3-sweet-and-sour-pork-or-chicken-with,,50,,rice,main,pork;chicken;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3F.jpg
 3,ข้าวลาบไข่ขยี้,Larb with crumbled fried egg on rice,ข้าวลาบไข่ขยี้|khao lap khai khayi,122,3-spicy-omelette-salad-with-rice-no-122,,40,,rice,main,egg,egg;fish;shellfish,salad,hot,no,no,2026-10-21,3F.jpg
@@ -151,31 +151,31 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 3,สุกี้แห้งไก่หรือหมู,"Dry sukiyaki with pork or chicken, glass noodles and veggies",สุกี้แห้งไก่|suki haeng kai;สุกี้แห้งหมู|suki haeng mu,31,3-stir-fried-thai-sukiyaki-pork-or-chicken,,40,,noodles,main,chicken;pork;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3F.jpg
 3,มาม่าผัดต้มยำหมูสับหรือไก่,Stir-fried tom yum instant noodles with pork or chicken,มาม่าผัดต้มยำหมูสับ|mama phat tom yam mu sap;มาม่าผัดต้มยำไก่|mama phat tom yam kai,38,3-stir-fried-tomyum-instant-noodles-with-pork,,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3F.jpg
 3,สปาเกตตีพริกแห้งไส้กรอก,Spaghetti with chicken sausage and dried chilli,สปาเกตตีพริกแห้งไส้กรอก|sapaketti phrik haeng sai krok,40,3-spaghetti-with-chicken-sausage-and-dried-chilli,,45,,noodles,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3F.jpg
-3,มาม่าผัดกะเพราหมูสับหรือไก่,Stir-fried instant noodles with minced pork or chicken and holy basil,มาม่าผัดกะเพราหมูสับ|mama phat kaphrao mu sap;มาม่าผัดกะเพราไก่|mama phat kaphrao kai,42,3-spicy-pork-or-chicken-instant-noodles-with,pad-kra-pao,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3F.jpg
+3,มาม่าผัดกะเพราหมูสับหรือไก่,Pad kra pao instant noodles with minced pork or chicken,มาม่าผัดกะเพราหมูสับ|mama phat kaphrao mu sap;มาม่าผัดกะเพราไก่|mama phat kaphrao kai,42,3-spicy-pork-or-chicken-instant-noodles-with,pad-kra-pao,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3F.jpg
 3,ก๋วยเตี๋ยวซอสแดงหมูสับหรือไก่,Rice noodles with minced pork or chicken in tomato sauce,ก๋วยเตี๋ยวซอสแดงหมูสับ|kuai tiao sot daeng mu sap;ก๋วยเตี๋ยวซอสแดงไก่|kuai tiao sot daeng kai,45,3-rice-noodles-with-minced-pork-or-chicken,,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3F.jpg
-3,ผัดซีอิ๊วหมูหรือไก่,Rice noodles with chicken or pork and black soy sauce,ผัดซีอิ๊วหมู|phat si io mu;ผัดซีอิ๊วไก่|phat si io kai,29,3-rice-noodles-with-chicken-or-pork-and,pad-see-ew,40,,noodles,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3F.jpg
+3,ผัดซีอิ๊วหมูหรือไก่,Pad see ew with pork or chicken,ผัดซีอิ๊วหมู|phat si io mu;ผัดซีอิ๊วไก่|phat si io kai,29,3-rice-noodles-with-chicken-or-pork-and,pad-see-ew,40,,noodles,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3F.jpg
 3,มักกะโรนีซอสหมูสับหรือไก่,Pork or chicken macaroni with egg and tomato sauce,มักกะโรนีซอสหมูสับ|makkaroni sot mu sap;มักกะโรนีซอสไก่|makkaroni sot kai,34,3-pork-or-chicken-macaroni-with-egg-and,,40,,noodles,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3F.jpg
 3,สปาเกตตีซอสหมูสับหรือไก่,Pork or chicken spaghetti with egg and tomato sauce,สปาเกตตีซอสหมูสับ|sapaketti sot mu sap;สปาเกตตีซอสไก่|sapaketti sot kai,39,3-pork-or-chicken-spaghetti-with-egg-and,,40,,noodles,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3F.jpg
 3,สปาเกตตีผัดขี้เมาหมูหรือไก่,Spicy pork or chicken spaghetti with Thai herbs,สปาเกตตีผัดขี้เมาหมู|sapaketti phat khi mao mu;สปาเกตตีผัดขี้เมาไก่|sapaketti phat khi mao kai,41,3-spicy-pork-or-chicken-spaghetti-with-thai,,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3F.jpg
 3,ยากิโซบะหมูหรือไก่,Pork or chicken yakisoba,ยากิโซบะหมู|yakisoba mu;ยากิโซบะไก่|yakisoba kai,43,3-pork-or-chicken-yakisoba-no-43,,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3F.jpg
-3,คั่วไก่หรือคั่วหมู,Rice noodles with pork or chicken and egg,คั่วไก่|khua kai;คั่วหมู|khua mu,63,3-rice-noodles-with-pork-or-chicken-and,,40,,noodles,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
+3,คั่วไก่หรือคั่วหมู,Khua gai or khua mu (pan-fried rice noodles with egg),คั่วไก่|khua kai;คั่วหมู|khua mu,63,3-rice-noodles-with-pork-or-chicken-and,,40,,noodles,main,pork;chicken;egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
 3,สปาเกตตีขี้เมากุ้ง,Spicy spaghetti with shrimp,สปาเกตตีขี้เมากุ้ง|sapaketti khi mao kung,65,3-spicy-spaghetti-with-shrimp-no-65,,50,,noodles,main,seafood,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
 3,ผัดวุ้นเส้นหมูสับหรือไก่,Stir-fried glass noodles with minced pork or chicken and veggies,ผัดวุ้นเส้นหมูสับ|phat wun sen mu sap;ผัดวุ้นเส้นไก่|phat wun sen kai,46,3-stir-fried-glass-noodles-with-minced-pork,,40,,noodles,main,pork;chicken,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
 3,ลาบวุ้นเส้นหมูสับหรือไก่,Spicy larb with glass noodles and minced pork or chicken,ลาบวุ้นเส้นหมูสับ|lap wun sen mu sap;ลาบวุ้นเส้นไก่|lap wun sen kai,47,3-spicy-minced-pork-or-chicken-with-glass,larb,40,,noodles,main,pork;chicken,fish;shellfish,salad,hot,no,no,2026-10-21,3G.jpg
 3,ลาบมาม่าหมูสับหรือไก่,Spicy larb with instant noodles and minced pork or chicken,ลาบมาม่าหมูสับ|lap mama mu sap;ลาบมาม่าไก่|lap mama kai,48,3-spicy-minced-pork-or-chicken-with-instant,larb,40,,noodles,main,pork;chicken,wheat;fish;shellfish,salad,hot,no,no,2026-10-21,3G.jpg
 3,ยำวุ้นเส้นหมูสับหรือไก่,Spicy glass noodle salad with minced pork or chicken,ยำวุ้นเส้นหมูสับ|yam wun sen mu sap;ยำวุ้นเส้นไก่|yam wun sen kai,49,3-spicy-pork-or-chicken-with-glass-noodle,,40,,noodles,main,pork;chicken,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,3G.jpg
 3,ยำมาม่าทะเล,Spicy seafood instant noodle salad,ยำมาม่าทะเล|yam mama thale,50,3-spicy-seafood-with-instant-noodle-salad-no,,60,,noodles,main,seafood,peanut;wheat;fish;shellfish,salad,hot,no,no,2026-10-21,3G.jpg
-3,เส้นหมี่ผัดซีอิ๊วหมูหรือไก่,"Thin rice noodles with pork or chicken, kale and black soy sauce",เส้นหมี่ผัดซีอิ๊วหมู|sen mi phat si io mu;เส้นหมี่ผัดซีอิ๊วไก่|sen mi phat si io kai,52,3-thin-rice-noodles-with-pork-or-chicken,pad-see-ew,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
+3,เส้นหมี่ผัดซีอิ๊วหมูหรือไก่,"Pad see ew with thin rice noodles, pork or chicken and kale",เส้นหมี่ผัดซีอิ๊วหมู|sen mi phat si io mu;เส้นหมี่ผัดซีอิ๊วไก่|sen mi phat si io kai,52,3-thin-rice-noodles-with-pork-or-chicken,pad-see-ew,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
 3,สปาเกตตีเขียวหวานไก่หรือหมู,Spaghetti with pork or chicken and green curry paste,สปาเกตตีเขียวหวานไก่|sapaketti khiao wan kai;สปาเกตตีเขียวหวานหมู|sapaketti khiao wan mu,57,3-spaghetti-with-pork-or-chicken-and-green,,40,,noodles,main,chicken;pork,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
 3,เส้นใหญ่ผัดขี้เมาหมูหรือไก่,Spicy flat rice noodles with pork or chicken and Thai herbs,เส้นใหญ่ผัดขี้เมาหมู|sen yai phat khi mao mu;เส้นใหญ่ผัดขี้เมาไก่|sen yai phat khi mao kai,58,3-spicy-flat-rice-noodles-with-pork-or,,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
 3,มักกะโรนีผัดต้มยำหมูสับหรือไก่,Pork or chicken macaroni with tom yum sauce,มักกะโรนีผัดต้มยำหมูสับ|makkaroni phat tom yam mu sap;มักกะโรนีผัดต้มยำไก่|makkaroni phat tom yam kai,107,3-pork-or-chicken-macaroni-with-tomyum-sauce,,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
 3,สปาเกตตีผัดต้มยำทะเล,Spicy seafood spaghetti with tom yum sauce,สปาเกตตีผัดต้มยำทะเล|sapaketti phat tom yam thale,127,3-spicy-seafood-spaghetti-with-tomyum-sauce-no,,60,,noodles,main,seafood,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
 3,สปาเกตตีต้มยำไข่ข้น,Tom yum spaghetti with creamy omelette,สปาเกตตีต้มยำไข่ข้น|sapaketti tom yam khai khon,129,3-spicy-spaghetti-with-pork-or-chicken-and,,50,,noodles,main,pork;chicken;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
 3,หมี่ผัดผักบุ้งหมูกรอบ,Spicy thin rice noodles with crispy pork and morning glory,หมี่ผัดผักบุ้งหมูกรอบ|mi phat phak bung mu krop,130,3-spicy-thin-rice-noodles-with-crispy-pork,,50,,noodles,main,pork,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3G.jpg
-3,มาม่าผัดซีอิ๊วหมูหรือไก่,Pork or chicken instant noodles with black soy sauce,มาม่าผัดซีอิ๊วหมู|mama phat si io mu;มาม่าผัดซีอิ๊วไก่|mama phat si io kai,148,3-pork-or-chicken-instant-noodles-with-black,pad-see-ew,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3J.jpg
+3,มาม่าผัดซีอิ๊วหมูหรือไก่,"Pad see ew with instant noodles, pork or chicken",มาม่าผัดซีอิ๊วหมู|mama phat si io mu;มาม่าผัดซีอิ๊วไก่|mama phat si io kai,148,3-pork-or-chicken-instant-noodles-with-black,pad-see-ew,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3J.jpg
 3,มักกะโรนีผัดไส้กรอก,Macaroni with sausage,มักกะโรนีผัดไส้กรอก|makkaroni phat sai krok,136,3-macaroni-with-sausage-no-136,,50,,noodles,main,pork,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,3J.jpg
 3,โกยซีหมี่ไก่,Crispy noodles with chicken and bamboo shoot in gravy sauce,โกยซีหมี่ไก่|koi si mi kai,36,3-crispy-noodles-with-chicken-and-bamboo-shoot,,45,,noodles,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3H.jpg
-3,ราดหน้าหมูหรือไก่,Rice noodles with pork or chicken and kale in gravy sauce,ราดหน้าหมู|rat na mu;ราดหน้าไก่|rat na kai,37,3-rice-noodles-with-pork-or-chicken-and-2,rad-na,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3H.jpg
+3,ราดหน้าหมูหรือไก่,Rad na with pork or chicken and kale,ราดหน้าหมู|rat na mu;ราดหน้าไก่|rat na kai,37,3-rice-noodles-with-pork-or-chicken-and-2,rad-na,40,,noodles,main,pork;chicken,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,3H.jpg
 3,ขนมจีนแกงเขียวหวานไก่,Rice noodles in chicken green curry,ขนมจีนแกงเขียวหวานไก่|khanom chin kaeng khiao wan kai,116,3-rice-noodles-in-chicken-green-curry-no,,35,พิเศษ|Large portion|15,noodles,main,chicken,wheat;fish;shellfish,curry,hot,yes,no,2026-10-21,3I.jpg
 3,สุกี้น้ำทะเล,Glass noodles with veggies and seafood in sukiyaki soup,สุกี้น้ำทะเล|suki nam thale,113,3-glass-noodles-with-veggies-and-seafood-in,,60,,soup,main,seafood,egg;fish;shellfish,boiled,hot,yes,no,2026-10-21,3I.jpg
 3,ซุปมักกะโรนีหมูสับหรือไก่,Pork or chicken macaroni soup,ซุปมักกะโรนีหมูสับ|sup makkaroni mu sap;ซุปมักกะโรนีไก่|sup makkaroni kai,115,3-pork-or-chicken-macaroni-soup-no-115,,40,,soup,main,pork;chicken,wheat;fish,boiled,hot,yes,no,2026-10-21,3H.jpg
@@ -190,25 +190,25 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 3,ข้าวไข่เจียว + ต้มจืดเต้าหู้หมูสับ,Set D: Thai omelette on rice with tofu and minced pork clear soup,ข้าวไข่เจียวต้มจืดเต้าหู้หมูสับ|khao khai chiao tom chuet tao hu mu sap,,3-set-d-thai-omelette-on-rice-with,khai-jiao,60,,rice,main,pork;chicken;egg;tofu,egg;soy;fish;shellfish,curry,hot,yes,no,2026-10-21,3H.jpg
 3,ข้าวไข่เจียว + ต้มยำหมูหรือไก่,Set E: Thai omelette on rice with pork or chicken tom yum soup,ข้าวไข่เจียวต้มยำหมู|khao khai chiao tom yam mu;ข้าวไข่เจียวต้มยำไก่|khao khai chiao tom yam kai,,3-set-e-thai-omelette-on-rice-with,khai-jiao,60,,rice,main,pork;chicken;egg,egg;fish;shellfish,curry,hot,yes,no,2026-10-21,3H.jpg
 3,ข้าวไข่เจียว + แกงอ่อมหมูหรือไก่,Set F: Thai omelette on rice with Isan-style herby pork or chicken curry soup,ข้าวไข่เจียวแกงอ่อมหมู|khao khai chiao kaeng om mu;ข้าวไข่เจียวแกงอ่อมไก่|khao khai chiao kaeng om kai,,3-set-f-thai-omelette-on-rice-with,khai-jiao,60,,rice,main,pork;chicken;egg,egg;fish;shellfish,curry,hot,yes,no,2026-10-21,3H.jpg
-3,Stir-fried mushroom with yellow curry paste,Stir-fried mushroom with yellow curry paste,,90,3-vegetarian-stir-fried-mushroom-with-yellow-curry,,40,,rice,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Stir-fried veggies with red curry paste,Stir-fried veggies with red curry paste,,91,3-vegetarian-stir-fried-veggies-with-red-curry,,40,,rice,main,egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Stir-fried mushroom with salt and pepper,Stir-fried mushroom with salt and pepper,,92,3-vegetarian-stir-fried-mushroom-with-salt-and,,40,,rice,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Sweet and sour veggies,Sweet and sour veggies,,93,3-vegetarian-sweet-and-sour-veggies-no-93,,40,,rice,main,egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Stir-fried tomato with egg,Stir-fried tomato with egg,,94,3-vegetarian-stir-fried-tomato-with-egg-no,,40,,rice,main,egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Stir-fried egg tofu with mushroom and rice,Stir-fried egg tofu with mushroom and rice,,95,3-vegetarian-stir-fried-egg-tofu-with-mushroom,,40,,rice,main,tofu;egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Creamy omelette on rice with teriyaki sauce,Creamy omelette on rice with teriyaki sauce,,96,3-vegetarian-creamy-omelette-on-rice-with-teriyaki,,40,,rice,main,egg,milk;egg;wheat;soy,steamed,hot,no,yes,2026-10-21,3M.jpg
-3,Spaghetti with tomato sauce,Spaghetti with tomato sauce,,97,3-vegetarian-vegetarian-spaghetti-with-tomato-sauce-no,,40,,noodles,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Glass noodles with egg and veggies in sukiyaki soup,Glass noodles with egg and veggies in sukiyaki soup,,98,3-vegetarian-glass-noodles-with-egg-and-veggies,,40,,soup,main,egg,egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
-3,Glass noodles in creamy omelette soup,Glass noodles in creamy omelette soup,,99,3-vegetarian-glass-noodles-in-creamy-omelette-soup,,40,,soup,main,egg,milk;egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
-3,Stir-fried macaroni with egg and tomato sauce,Stir-fried macaroni with egg and tomato sauce,,101,3-vegetarian-stir-fried-macaroni-with-egg-and,,40,,noodles,main,egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Spicy glass noodles and veggies salad,Spicy glass noodles and veggies salad,,102,3-vegetarian-spicy-glass-noodles-and-veggies-salad,,40,,noodles,main,egg,egg;wheat,salad,hot,no,yes,2026-10-21,3M.jpg
-3,Mushroom yakisoba,Mushroom yakisoba,,103,3-vegetarian-mushroom-yakisoba-no-103,,40,,noodles,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Tom yum creamy omelette soup with rice,Tom yum creamy omelette soup with rice,,104,3-vegetarian-tomyum-creamy-omelette-soup-with-rice,,50,,soup,main,egg,milk;egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
-3,Tom yum creamy omelette noodle soup,Tom yum creamy omelette noodle soup,,105,3-vegetarian-tomyum-creamy-omelette-noodle-soup-no,,50,,soup,main,egg,milk;egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
-3,Holy basil instant noodles with mushroom,Holy basil instant noodles with mushroom,,107,3-vegetarian-hot-basil-instant-noodles-with-mushroom,,40,,noodles,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Egg and mushroom rice soup,Egg and mushroom rice soup,,108,3-vegetarian-egg-and-mushroom-rice-soup-no,,40,,soup,main,egg,egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
-3,Spaghetti with tom yum creamy omelette sauce,Spaghetti with tom yum creamy omelette sauce,,139,3-vegetarian-spaghetti-with-tomyam-creamy-omelette-sauce,,50,,noodles,main,egg,milk;egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
-3,Spaghetti with green curry paste,Spaghetti with green curry paste,,141,3-vegetarian-spaghetti-with-green-curry-paste-no,,40,,noodles,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,เห็ดผัดพริกแกงเหลือง,Stir-fried mushroom with yellow curry paste,,90,3-vegetarian-stir-fried-mushroom-with-yellow-curry,,40,,rice,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,ผักผัดพริกแกง,Stir-fried veggies with red curry paste,,91,3-vegetarian-stir-fried-veggies-with-red-curry,,40,,rice,main,egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,เห็ดผัดเกลือพริกไทย,Stir-fried mushroom with salt and pepper,,92,3-vegetarian-stir-fried-mushroom-with-salt-and,,40,,rice,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,ผักเปรี้ยวหวาน,Sweet and sour veggies,,93,3-vegetarian-sweet-and-sour-veggies-no-93,,40,,rice,main,egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,ไข่ผัดมะเขือเทศ,Stir-fried tomato with egg,,94,3-vegetarian-stir-fried-tomato-with-egg-no,,40,,rice,main,egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,ข้าวเต้าหู้ไข่ผัดเห็ด,Stir-fried egg tofu with mushroom and rice,,95,3-vegetarian-stir-fried-egg-tofu-with-mushroom,,40,,rice,main,tofu;egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,ข้าวไข่ข้นซอสเทริยากิ,Creamy omelette on rice with teriyaki sauce,,96,3-vegetarian-creamy-omelette-on-rice-with-teriyaki,,40,,rice,main,egg,milk;egg;wheat;soy,steamed,hot,no,yes,2026-10-21,3M.jpg
+3,สปาเกตตีซอสมะเขือเทศ,Spaghetti with tomato sauce,,97,3-vegetarian-vegetarian-spaghetti-with-tomato-sauce-no,,40,,noodles,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,สุกี้น้ำวุ้นเส้นไข่ผัก,Glass noodles with egg and veggies in sukiyaki soup,,98,3-vegetarian-glass-noodles-with-egg-and-veggies,,40,,soup,main,egg,egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
+3,ซุปไข่ข้นวุ้นเส้น,Glass noodles in creamy omelette soup,,99,3-vegetarian-glass-noodles-in-creamy-omelette-soup,,40,,soup,main,egg,milk;egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
+3,มักกะโรนีผัดไข่ซอสมะเขือเทศ,Stir-fried macaroni with egg and tomato sauce,,101,3-vegetarian-stir-fried-macaroni-with-egg-and,,40,,noodles,main,egg,egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,ยำวุ้นเส้นผัก,Spicy glass noodles and veggies salad,,102,3-vegetarian-spicy-glass-noodles-and-veggies-salad,,40,,noodles,main,egg,egg;wheat,salad,hot,no,yes,2026-10-21,3M.jpg
+3,ยากิโซบะเห็ด,Mushroom yakisoba,,103,3-vegetarian-mushroom-yakisoba-no-103,,40,,noodles,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,ข้าวซุปไข่ข้นต้มยำ,Tom yum creamy omelette soup with rice,,104,3-vegetarian-tomyum-creamy-omelette-soup-with-rice,,50,,soup,main,egg,milk;egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
+3,ก๋วยเตี๋ยวต้มยำไข่ข้น,Tom yum creamy omelette noodle soup,,105,3-vegetarian-tomyum-creamy-omelette-noodle-soup-no,,50,,soup,main,egg,milk;egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
+3,มาม่าผัดกะเพราเห็ด,Pad kra pao instant noodles with mushroom,,107,3-vegetarian-hot-basil-instant-noodles-with-mushroom,,40,,noodles,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,ข้าวต้มไข่เห็ด,Egg and mushroom rice soup,,108,3-vegetarian-egg-and-mushroom-rice-soup-no,,40,,soup,main,egg,egg,boiled,hot,yes,yes,2026-10-21,3M.jpg
+3,สปาเกตตีไข่ข้นซอสต้มยำ,Spaghetti with tom yum creamy omelette sauce,,139,3-vegetarian-spaghetti-with-tomyam-creamy-omelette-sauce,,50,,noodles,main,egg,milk;egg;wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
+3,สปาเกตตีพริกแกงเขียวหวาน,Spaghetti with green curry paste,,141,3-vegetarian-spaghetti-with-green-curry-paste-no,,40,,noodles,main,none,wheat;soy,stirFried,hot,no,yes,2026-10-21,3M.jpg
 4,น้ำโดม,Dome water,น้ำโดม|nam dom,,4-dome-water,,6,,drink,drink,none,,,cold,no,yes,2026-10-21,4A.jpg
 4,น้ำแร่,Mineral water,น้ำแร่|nam rae,,4-mineral-water,,10,,drink,drink,none,,,cold,no,yes,2026-10-21,4A.jpg
 4,น้ำชาจีนเย็น (เล็ก),Iced Chinese tea (small),น้ำชาจีนเย็น|nam cha chin yen,,4-iced-chinese-tea,,6,,drink,drink,none,,,cold,no,no,2026-10-21,4A.jpg
@@ -217,58 +217,58 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 4,ชาเขียวเย็น (กลาง),Iced green tea (medium),ชาเขียวเย็น|cha khiao yen,,4-iced-green-tea,,18,,drink,drink,none,milk,,cold,no,no,2026-10-21,4A.jpg
 4,ชามะนาวเย็น (ใหญ่),Iced lemon tea (large),ชามะนาวเย็น|cha manao yen,,4-iced-lemon-tea,,25,,drink,drink,none,,,cold,no,no,2026-10-21,4A.jpg
 4,ชาไซรัปผลไม้,Fruit syrup tea,ชาไซรัปผลไม้|cha sairap phonlamai,,4-fruit-syrup-tea,,25,,drink,drink,none,,,cold,no,no,2026-10-21,4A.jpg
-4,น้ำเต้าหู้ ร้อน/เย็น,Hot soy milk / Iced soy milk,น้ำเต้าหู้ร้อน|nam tao hu ron;น้ำเต้าหู้เย็น|nam tao hu yen,,4-hot-soy-milk-iced-soy-milk,,15,เย็น|Iced|10,drink,drink,none,soy,,hot,no,no,2026-10-21,4A.jpg
+4,น้ำเต้าหู้ ร้อน/เย็น,"Soy milk, hot or iced",น้ำเต้าหู้ร้อน|nam tao hu ron;น้ำเต้าหู้เย็น|nam tao hu yen,,4-hot-soy-milk-iced-soy-milk,,15,เย็น|Iced|10,drink,drink,none,soy,,hot,no,no,2026-10-21,4A.jpg
 4,ชงสดโบราณ (เริ่มต้น),Old-style made-to-order drink (starting price),ชงสดโบราณ|chong sot boran,,4-freshly-made-to-order-old-style,,25,,drink,drink,none,,,cold,no,no,2026-10-21,4A.jpg
 4,ภูเขาหิมะ (เริ่มต้น),Snow Mountain (starting price),ภูเขาหิมะ|phukhao hima,,4-snow-mountain,,45,,drink,drink,none,,,cold,no,no,2026-10-21,4A.jpg
-4,ชาไทยเย็น,Iced Thai tea,ชาไทยเย็น|cha thai yen,,4-thai-tea,cha-yen,13,M|Medium|5;L|Large|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
-4,นมชมพูเย็น,Iced pink milk,นมชมพูเย็น|nom chomphu yen,,4-pinky-milk,,13,M|Medium|5;L|Large|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
-4,ชาเขียวเย็น,Iced green tea,ชาเขียวเย็น|cha khiao yen,,4-green-tea,,13,M|Medium|5;L|Large|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
-4,นมเผือกเย็น,Iced taro milk,นมเผือกเย็น|nom phueak yen,,4-taro-milk,,13,M|Medium|5;L|Large|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
-4,โกโก้เย็น,Iced cocoa,โกโก้เย็น|koko yen,,4-ice-cocoa,,13,M|Medium|5;L|Large|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
-4,เนสกาแฟเย็น,Iced Nescafé,เนสกาแฟเย็น|nescafe yen,,4-nescafe,,13,M|Medium|5;L|Large|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
-4,ชามะนาวเย็น,Iced lemon tea,ชามะนาวเย็น|cha manao yen,,4-lemon-tea,,13,M|Medium|5;L|Large|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,น้ำพันช์,Fruit punch,น้ำพันช์|nam phan,,4-fruit-punch,,13,M|Medium|5;L|Large|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,น้ำผึ้งมะนาว,Honey lemon,น้ำผึ้งมะนาว|nam phueng manao,,4-honey-lemon,,13,M|Medium|5;L|Large|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,ชาเขียวมะลิ,Jasmine green tea,ชาเขียวมะลิ|cha khiao mali,,4-jasmine-green-tea,,13,M|Medium|5;L|Large|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
-4,ชาพีช,Peach tea,ชาพีช|cha phit,,4-peach-tea,,13,M|Medium|5;L|Large|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,เก๊กฮวย,Chrysanthemum tea,เก๊กฮวย|kekhuai,,4-chrysanthemum-tea,,13,M|Medium|5;L|Large|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,โอเลี้ยง,Thai-style iced black coffee,โอเลี้ยง|o liang,,4-thai-style-black-coffee,,13,M|Medium|5;L|Large|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,ชาดำ,Iced black tea,ชาดำ|cha dam,,4-ice-black-tea,,13,M|Medium|5;L|Large|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,ชานมเนสที,Nestea milk tea,ชานมเนสที|cha nom nestea,,4-milk-tea,,13,M|Medium|5;L|Large|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
-4,น้ำแดง,Red syrup drink,น้ำแดง|nam daeng,,4-hale-s-blue-boy,,13,M|Medium|5;L|Large|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,ชามะลิหอมหมื่นลี้,Osmanthus jasmine tea (sugar-free),ชามะลิหอมหมื่นลี้|cha mali hom muen li,,4-osmanthus-jasmine-tea,,13,M|Medium|5;L|Large|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,เขียวมัทฉะ,Pure matcha (sugar-free),เขียวมัทฉะ|khiao matcha,,4-pure-matcha,,13,M|Medium|5;L|Large|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
-4,ใบเตย,Iced pandan drink,ใบเตย|bai toei,,4-ice-pandan,,6,M|Medium|9;L|Large|19,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,ชาจีน,Iced Chinese tea (sugar-free),ชาจีน|cha chin,,4-ice-chinese-tea,,6,M|Medium|9;L|Large|19,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,สตรอว์เบอร์รีโซดา,Strawberry Italian soda (22oz),สตรอว์เบอร์รีโซดา|sattroberi soda,,4-strawberry-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,บลูเบอร์รีโซดา,Blueberry Italian soda (22oz),บลูเบอร์รีโซดา|blueberi soda,,4-blueberry-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,เลมอนโซดา,Lemon Italian soda (22oz),เลมอนโซดา|lemon soda,,4-lemon-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,ลิ้นจี่โซดา,Lychee Italian soda (22oz),ลิ้นจี่โซดา|linchi soda,,4-lychee-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,บลูฮาวายโซดา,Blue Hawaii Italian soda (22oz),บลูฮาวายโซดา|blue hawai soda,,4-blue-hawaii-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,เสาวรสโซดา,Passion fruit Italian soda (22oz),เสาวรสโซดา|saowarot soda,,4-passion-fruit-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,แอปเปิลโซดา,Apple Italian soda (22oz),แอปเปิลโซดา|aeppoen soda,,4-apple-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,กีวีโซดา,Kiwi Italian soda (22oz),กีวีโซดา|kiwi soda,,4-kiwi-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,แดงโซดา,Red syrup Italian soda (22oz),แดงโซดา|daeng soda,,4-red-syrup-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,แดงมะนาวโซดา,Red syrup and lime Italian soda (22oz),แดงมะนาวโซดา|daeng manao soda,,4-red-lemon-syrup-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
-4,กาแฟโบราณ,Old-style coffee,กาแฟโบราณ|kafae boran,,4-old-style-coffee,,25,L|Large|10,drink,drink,none,,,cold,no,no,2026-10-21,4C.jpg
-4,โอเลี้ยง,Black iced coffee,โอเลี้ยง|o liang,,4-black-iced-coffee,,25,L|Large|10,drink,drink,none,milk,,cold,no,no,2026-10-21,4C.jpg
-4,โอเลี้ยงยกล้อ,"Iced black coffee, yok lo style",โอเลี้ยงยกล้อ|o liang yok lo,,4-o-liang-yok-lo,,25,L|Large|10,drink,drink,none,,,cold,no,no,2026-10-21,4C.jpg
-4,จั๊มบะ,Jamba,จั๊มบะ|jamba,,4-jamba,,25,L|Large|10,drink,drink,none,,,cold,no,no,2026-10-21,4C.jpg
-4,โอยัวะ (กาแฟดำ),Hot black coffee,โอยัวะ|o yua,,4-hot-black-coffee,,20,,drink,drink,none,,,hot,no,yes,2026-10-21,4C.jpg
-4,โกปี๊ (กาแฟนมข้น),Coffee with condensed milk,โกปี๊|ko pi,,4-coffee-with-condensed-milk,,25,,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
-4,ชาไทย,Thai tea,ชาไทย|cha thai,,4-thai-tea-2,cha-yen,25,เย็น L|Iced (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
-4,ชาดำ,Black tea,ชาดำ|cha dam,,4-black-tea,,25,เย็น L|Iced (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
-4,ชามะนาว,Lemon tea,ชามะนาว|cha manao,,4-lemon-tea-2,,25,เย็น L|Iced (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
-4,ชาน้ำผึ้งมะนาว,Honey lemon tea,ชาน้ำผึ้งมะนาว|cha nam phueng manao,,4-honey-lemon-tea,,40,เย็น L|Iced (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
-4,ชาไทยบ๊วย,Thai tea with plum,ชาไทยบ๊วย|cha thai buai,,4-thai-tea-with-plum,cha-yen,25,เย็น L|Iced (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
-4,ชาเขียว,Green tea,ชาเขียว|cha khiao,,4-green-tea-2,,25,เย็น L|Iced (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
-4,โกโก้,Cocoa,โกโก้|koko,,4-cocoa,,25,เย็น L|Iced (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
-4,โอวัลติน,Ovaltine,โอวัลติน|owantin,,4-ovaltine,,25,เย็น L|Iced (L)|10,drink,drink,none,milk;wheat,,hot,no,no,2026-10-21,4C.jpg
-4,เผือก,Taro,เผือก|phueak,,4-taro,,25,เย็น L|Iced (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
-4,นมสด,Fresh milk,นมสด|nom sot,,4-fresh-milk,,25,เย็น L|Iced (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
-4,นมชมพู,Pink milk,นมชมพู|nom chomphu,,4-pink-milk,,25,เย็น L|Iced (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
-4,เนสกาแฟ,Nescafé,เนสกาแฟ|nescafe,,4-nescafe-2,,30,เย็น L|Iced (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
-4,ชาเนสที,Nestea,ชาเนสที|cha nestea,,4-nestea,,30,เย็น L|Iced (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
+4,ชาไทยเย็น,Iced Thai tea,ชาไทยเย็น|cha thai yen,,4-thai-tea,cha-yen,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
+4,นมชมพูเย็น,Iced pink milk,นมชมพูเย็น|nom chomphu yen,,4-pinky-milk,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
+4,ชาเขียวเย็น,Iced green tea,ชาเขียวเย็น|cha khiao yen,,4-green-tea,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
+4,นมเผือกเย็น,Iced taro milk,นมเผือกเย็น|nom phueak yen,,4-taro-milk,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
+4,โกโก้เย็น,Iced cocoa,โกโก้เย็น|koko yen,,4-ice-cocoa,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
+4,เนสกาแฟเย็น,Iced Nescafé,เนสกาแฟเย็น|nescafe yen,,4-nescafe,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
+4,ชามะนาวเย็น,Iced lemon tea,ชามะนาวเย็น|cha manao yen,,4-lemon-tea,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,น้ำพันช์,Fruit punch,น้ำพันช์|nam phan,,4-fruit-punch,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,น้ำผึ้งมะนาว,Honey lemon,น้ำผึ้งมะนาว|nam phueng manao,,4-honey-lemon,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,ชาเขียวมะลิ,Jasmine green tea,ชาเขียวมะลิ|cha khiao mali,,4-jasmine-green-tea,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
+4,ชาพีช,Peach tea,ชาพีช|cha phit,,4-peach-tea,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,เก๊กฮวย,Chrysanthemum tea,เก๊กฮวย|kekhuai,,4-chrysanthemum-tea,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,โอเลี้ยง,Oliang (Thai iced black coffee),โอเลี้ยง|o liang,,4-thai-style-black-coffee,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,ชาดำ,Iced black tea,ชาดำ|cha dam,,4-ice-black-tea,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,ชานมเนสที,Nestea milk tea,ชานมเนสที|cha nom nestea,,4-milk-tea,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
+4,น้ำแดง,Red syrup drink,น้ำแดง|nam daeng,,4-hale-s-blue-boy,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,ชามะลิหอมหมื่นลี้ (ไม่มีน้ำตาล),Osmanthus jasmine tea (sugar-free),ชามะลิหอมหมื่นลี้|cha mali hom muen li,,4-osmanthus-jasmine-tea,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,เขียวมัทฉะ (ไม่มีน้ำตาล),Pure matcha (sugar-free),เขียวมัทฉะ|khiao matcha,,4-pure-matcha,,13,ไซซ์ M|Medium (M)|5;ไซซ์ L|Large (L)|12,drink,drink,none,milk,,cold,no,no,2026-10-21,4B.jpg
+4,ใบเตย,Iced pandan drink,ใบเตย|bai toei,,4-ice-pandan,,6,ไซซ์ M|Medium (M)|9;ไซซ์ L|Large (L)|19,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,ชาจีน (ไม่มีน้ำตาล),Iced Chinese tea (sugar-free),ชาจีน|cha chin,,4-ice-chinese-tea,,6,ไซซ์ M|Medium (M)|9;ไซซ์ L|Large (L)|19,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,สตรอว์เบอร์รีโซดา (22oz),Strawberry Italian soda (22oz),สตรอว์เบอร์รีโซดา|sattroberi soda,,4-strawberry-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,บลูเบอร์รีโซดา (22oz),Blueberry Italian soda (22oz),บลูเบอร์รีโซดา|blueberi soda,,4-blueberry-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,เลมอนโซดา (22oz),Lemon Italian soda (22oz),เลมอนโซดา|lemon soda,,4-lemon-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,ลิ้นจี่โซดา (22oz),Lychee Italian soda (22oz),ลิ้นจี่โซดา|linchi soda,,4-lychee-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,บลูฮาวายโซดา (22oz),Blue Hawaii Italian soda (22oz),บลูฮาวายโซดา|blue hawai soda,,4-blue-hawaii-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,เสาวรสโซดา (22oz),Passion fruit Italian soda (22oz),เสาวรสโซดา|saowarot soda,,4-passion-fruit-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,แอปเปิลโซดา (22oz),Apple Italian soda (22oz),แอปเปิลโซดา|aeppoen soda,,4-apple-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,กีวีโซดา (22oz),Kiwi Italian soda (22oz),กีวีโซดา|kiwi soda,,4-kiwi-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,แดงโซดา (22oz),Red syrup Italian soda (22oz),แดงโซดา|daeng soda,,4-red-syrup-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,แดงมะนาวโซดา (22oz),Red syrup and lime Italian soda (22oz),แดงมะนาวโซดา|daeng manao soda,,4-red-lemon-syrup-soda,,30,,drink,drink,none,,,cold,no,no,2026-10-21,4B.jpg
+4,กาแฟโบราณ,Traditional Thai coffee,กาแฟโบราณ|kafae boran,,4-old-style-coffee,,25,ไซซ์ L|Large (L)|10,drink,drink,none,,,cold,no,no,2026-10-21,4C.jpg
+4,โอเลี้ยง,Black iced coffee,โอเลี้ยง|o liang,,4-black-iced-coffee,,25,ไซซ์ L|Large (L)|10,drink,drink,none,milk,,cold,no,no,2026-10-21,4C.jpg
+4,โอเลี้ยงยกล้อ,"Iced black coffee, yok lo style",โอเลี้ยงยกล้อ|o liang yok lo,,4-o-liang-yok-lo,,25,ไซซ์ L|Large (L)|10,drink,drink,none,,,cold,no,no,2026-10-21,4C.jpg
+4,จั๊มบะ,Jamba,จั๊มบะ|jamba,,4-jamba,,25,ไซซ์ L|Large (L)|10,drink,drink,none,,,cold,no,no,2026-10-21,4C.jpg
+4,โอยัวะ (กาแฟดำ),Oyua (hot black coffee),โอยัวะ|o yua,,4-hot-black-coffee,,20,,drink,drink,none,,,hot,no,yes,2026-10-21,4C.jpg
+4,โกปี๊ (กาแฟนมข้น),Kopi (coffee with condensed milk),โกปี๊|ko pi,,4-coffee-with-condensed-milk,,25,,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
+4,ชาไทย,Thai tea,ชาไทย|cha thai,,4-thai-tea-2,cha-yen,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
+4,ชาดำ,Black tea,ชาดำ|cha dam,,4-black-tea,,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
+4,ชามะนาว,Lemon tea,ชามะนาว|cha manao,,4-lemon-tea-2,,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
+4,ชาน้ำผึ้งมะนาว,Honey lemon tea,ชาน้ำผึ้งมะนาว|cha nam phueng manao,,4-honey-lemon-tea,,40,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
+4,ชาไทยบ๊วย,Thai tea with plum,ชาไทยบ๊วย|cha thai buai,,4-thai-tea-with-plum,cha-yen,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
+4,ชาเขียว,Green tea,ชาเขียว|cha khiao,,4-green-tea-2,,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
+4,โกโก้,Cocoa,โกโก้|koko,,4-cocoa,,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
+4,โอวัลติน,Ovaltine,โอวัลติน|owantin,,4-ovaltine,,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,milk;wheat,,hot,no,no,2026-10-21,4C.jpg
+4,เผือก,Taro,เผือก|phueak,,4-taro,,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
+4,นมสด,Fresh milk,นมสด|nom sot,,4-fresh-milk,,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
+4,นมชมพู,Pink milk,นมชมพู|nom chomphu,,4-pink-milk,,25,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,milk,,hot,no,no,2026-10-21,4C.jpg
+4,เนสกาแฟ,Nescafé,เนสกาแฟ|nescafe,,4-nescafe-2,,30,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
+4,ชาเนสที,Nestea,ชาเนสที|cha nestea,,4-nestea,,30,เย็น ไซซ์ L|Iced, large (L)|10,drink,drink,none,,,hot,no,no,2026-10-21,4C.jpg
 5,ลาเต้เย็น,Iced latte,ลาเต้เย็น|late yen,,5-iced-latte,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5A.jpg
 5,แตงโมปั่น,Watermelon smoothie,แตงโมปั่น|taeng mo pan,,5-watermelon-smoothie,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5A.jpg
 5,สตรอว์เบอร์รีปั่น,Strawberry smoothie,สตรอว์เบอร์รีปั่น|sattroboeri pan,,5-strawberry-smoothie,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5A.jpg
@@ -277,150 +277,150 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 5,สลัดโรล (เริ่มต้น),Salad rolls,สลัดโรล|salat rol,,5-salad-rolls,,35,,snack,main,none,wheat,,cold,no,no,2026-10-21,5A.jpg
 5,อเมริกาโน่ร้อน,Hot Americano,อเมริกาโน่ร้อน|americano ron,,5-hot-americano,,30,,drink,drink,none,,,hot,no,yes,2026-10-21,5A.jpg
 5,อเมริกาโน่เย็น,Iced Americano,อเมริกาโน่เย็น|americano yen,,5-iced-americano,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5A.jpg
-5,Mixed berry smoothie,Mixed berry smoothie,,,5-mix-berry-smoothie,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Berry and yoghurt smoothie,Berry and yoghurt smoothie,,,5-berry-yogurt,,75,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Berry cheese smoothie,Berry cheese smoothie,,,5-berrycheese,,90,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Coconut smoothie,Coconut smoothie,,,5-coconut-smoothie,,35,,drink,drink,none,treeNut,,cold,no,yes,2026-10-21,5B.jpg
-5,Coconut and milk smoothie,Coconut and milk smoothie,,,5-coconut-milk,,40,,drink,drink,none,treeNut;milk,,cold,no,no,2026-10-21,5B.jpg
-5,Coconut and avocado smoothie,Coconut and avocado smoothie,,,5-coconut-avocado,,55,,drink,drink,none,treeNut,,cold,no,yes,2026-10-21,5B.jpg
-5,Blueberry smoothie,Blueberry smoothie,,,5-blueberry-smoothie,,80,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Blueberry and yoghurt smoothie,Blueberry and yoghurt smoothie,,,5-blueberry-yogurt,,95,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Blueberry and banana smoothie,Blueberry and banana smoothie,,,5-blueberrybanana-smoothie,,90,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Carrot smoothie,Carrot smoothie,,,5-carrot-smoothie,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Carrot and lime smoothie,Carrot and lime smoothie,,,5-carrot-lime,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Carrot and passion fruit smoothie,Carrot and passion fruit smoothie,,,5-carrot-passion,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Pomegranate and strawberry smoothie,Pomegranate and strawberry smoothie,,,5-pomegranate-straw,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Pomegranate and lime smoothie,Pomegranate and lime smoothie,,,5-pomegranate-lime,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Pomegranate and passion fruit smoothie,Pomegranate and passion fruit smoothie,,,5-pomegranate-passion,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Apple smoothie,Apple smoothie,,,5-apple-smoothie,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Apple and passion fruit smoothie,Apple and passion fruit smoothie,,,5-apple-passion,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,"Apple, pineapple and passion fruit smoothie","Apple, pineapple and passion fruit smoothie",,,5-apple-pine-passion,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Kale and pineapple smoothie,Kale and pineapple smoothie,,,5-kale-pineapple,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Kale and passion fruit smoothie,Kale and passion fruit smoothie,,,5-kale-passion,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,"Kale, pineapple and apple smoothie","Kale, pineapple and apple smoothie",,,5-kale-pineapple-apple,,65,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Sweetcorn and milk smoothie,Sweetcorn and milk smoothie,,,5-corn-milk,,40,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Sweetcorn and Oreo smoothie,Sweetcorn and Oreo smoothie,,,5-corn-oreo,,45,,drink,drink,none,wheat,,cold,no,no,2026-10-21,5B.jpg
-5,Sweetcorn and chocolate chips smoothie,Sweetcorn and chocolate chips smoothie,,,5-corn-chochips,,55,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
-5,Sweetcorn cheese smoothie,Sweetcorn cheese smoothie,,,5-corncheese,,70,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Melon smoothie,Melon smoothie,,,5-melon-smoothie,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Melon and milk smoothie,Melon and milk smoothie,,,5-melon-milk,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Melon and banana smoothie,Melon and banana smoothie,,,5-melon-banana,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Melon and yoghurt smoothie,Melon and yoghurt smoothie,,,5-melon-yogurt,,60,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Lime smoothie,Lime smoothie,,,5-lime-smoothie,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Lime and apple smoothie,Lime and apple smoothie,,,5-lime-apple,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Lime and honey smoothie,Lime and honey smoothie,,,5-lime-honey,,40,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
-5,Lime and avocado smoothie,Lime and avocado smoothie,,,5-lime-avocado,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Kiwi smoothie,Kiwi smoothie,,,5-kiwi-smoothie,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Kiwi and strawberry smoothie,Kiwi and strawberry smoothie,,,5-kiwi-strawberry,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Kiwi and yoghurt smoothie,Kiwi and yoghurt smoothie,,,5-kiwi-yogurt,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Kiwi and kale smoothie,Kiwi and kale smoothie,,,5-kiwi-kale,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Mixed fruit smoothie,Mixed fruit smoothie,,,5-mix-fruits-smoothies-smoothie,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Mixed fruit and yoghurt smoothie,Mixed fruit and yoghurt smoothie,,,5-mix-fruits-yogurt,,65,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Mixed fruit and honey smoothie,Mixed fruit and honey smoothie,,,5-mix-fruits-honey,,65,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
-5,Mixed fruit smoothie with whipped cheese,Mixed fruit smoothie with whipped cheese,,,5-mix-whipcheese,,80,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Mango smoothie,Mango smoothie,,,5-mango-smoothie,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Mango and passion fruit smoothie,Mango and passion fruit smoothie,,,5-mango-passsion,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Mango and yoghurt smoothie,Mango and yoghurt smoothie,,,5-mango-yogurt,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Mango cheese smoothie,Mango cheese smoothie,,,5-mangocheese,,65,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Passion fruit smoothie,Passion fruit smoothie,,,5-passion-fruit-smoothie,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Passion fruit and yoghurt smoothie,Passion fruit and yoghurt smoothie,,,5-passion-yogurt,,45,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Passion fruit and avocado smoothie,Passion fruit and avocado smoothie,,,5-passion-avocado,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Passion fruit and cheese smoothie,Passion fruit and cheese smoothie,,,5-passion-cheese,,60,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Orange smoothie,Orange smoothie,,,5-orange-smoothie,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Orange and lime smoothie,Orange and lime smoothie,,,5-orange-lime,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Orange and apple smoothie,Orange and apple smoothie,,,5-orange-apple,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Orange and Pipo jelly smoothie,Orange and Pipo jelly smoothie,,,5-orange-pipo,,30,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
-5,Peach smoothie,Peach smoothie,,,5-peach-smoothie,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Peach and passion fruit smoothie,Peach and passion fruit smoothie,,,5-peach-passion,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Peach and yoghurt smoothie,Peach and yoghurt smoothie,,,5-peach-yogurt,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Peach cheese smoothie,Peach cheese smoothie,,,5-peachcheese,,65,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Watermelon smoothie,Watermelon smoothie,,,5-watermelon-smoothie-2,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Watermelon and lime smoothie,Watermelon and lime smoothie,,,5-watermelon-lime,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Watermelon and orange smoothie,Watermelon and orange smoothie,,,5-watermelon-orange,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Tomato smoothie,Tomato smoothie,,,5-tomato-smoothie,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Tomato and lime smoothie,Tomato and lime smoothie,,,5-tomato-lime,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Tomato and yoghurt smoothie,Tomato and yoghurt smoothie,,,5-tomato-yogurt,,40,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Mulberry and strawberry smoothie,Mulberry and strawberry smoothie,,,5-mul-strawberry,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Mulberry and passion fruit smoothie,Mulberry and passion fruit smoothie,,,5-mul-passion,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Mulberry and lime smoothie,Mulberry and lime smoothie,,,5-mul-lime,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Beetroot and passion fruit smoothie,Beetroot and passion fruit smoothie,,,5-beetroot-passion,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Beetroot and lime smoothie,Beetroot and lime smoothie,,,5-beetroot-lime,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Pineapple smoothie,Pineapple smoothie,,,5-pineapple-smoothie,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Pineapple and passion fruit smoothie,Pineapple and passion fruit smoothie,,,5-pineapple-passion,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Pineapple and yoghurt smoothie,Pineapple and yoghurt smoothie,,,5-pineapple-yogurt,,45,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Pineapple and avocado smoothie,Pineapple and avocado smoothie,,,5-pineapple-avo,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Grape smoothie,Grape smoothie,,,5-grape-smoothie,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Grape and lime smoothie,Grape and lime smoothie,,,5-grape-lime,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Grape and apple smoothie,Grape and apple smoothie,,,5-grape-apple,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Grape and yoghurt smoothie,Grape and yoghurt smoothie,,,5-grape-yogurt,,55,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Grape cheese smoothie,Grape cheese smoothie,,,5-grapecheese,,70,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Strawberry smoothie,Strawberry smoothie,,,5-strawberry-smoothie-2,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Strawberry and banana smoothie,Strawberry and banana smoothie,,,5-straw-banana,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Strawberry and yoghurt smoothie,Strawberry and yoghurt smoothie,,,5-straw-yogurt,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Strawberry and avocado smoothie,Strawberry and avocado smoothie,,,5-straw-avocado,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Strawberry cheese smoothie,Strawberry cheese smoothie,,,5-strawcheese,,65,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Banana smoothie,Banana smoothie,,,5-banana-smoothie,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Banana and milk smoothie,Banana and milk smoothie,,,5-banana-milk,,35,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Banana and Oreo smoothie,Banana and Oreo smoothie,,,5-banana-oreo,,35,,drink,drink,none,wheat,,cold,no,no,2026-10-21,5B.jpg
-5,Banana and cornflakes smoothie,Banana and cornflakes smoothie,,,5-banana-conflex,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
-5,Banana and honey smoothie,Banana and honey smoothie,,,5-banana-honey,,45,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
-5,Banana and chocolate chips smoothie,Banana and chocolate chips smoothie,,,5-banana-chochips,,45,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
-5,Avocado milk smoothie,Avocado milk smoothie,,,5-avocado-milk-smoothie,,55,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Avocado smoothie with almond or oat milk,Avocado smoothie with almond or oat milk,,,5-avoalmond-oatmilk-smoothie,,80,,drink,drink,none,treeNut,,cold,no,no,2026-10-21,5B.jpg
-5,Avocado chocolate chips smoothie,Avocado chocolate chips smoothie,,,5-avocado-chochips-smoothie,,70,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
-5,Avocado yoghurt smoothie,Avocado yoghurt smoothie,,,5-avocado-yogurt-smoothie,,70,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
-5,Avocado honey smoothie,Avocado honey smoothie,,,5-avocado-honey-smoothie,,70,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
-5,"Almond milk with vanilla, Nesvita and oats","Almond milk with vanilla, Nesvita and oats",,,5-almond-vanilla-nesvita-oat,,70,,drink,drink,none,treeNut,,cold,no,no,2026-10-21,5C.jpg
-5,Almond milk latte with Milo and whipped cheese,Almond milk latte with Milo and whipped cheese,,,5-almond-latte-milowhip-cheese,,85,,drink,drink,none,treeNut;milk;wheat,,cold,no,no,2026-10-21,5C.jpg
-5,Unsweetened almond milk with Ovaltine and konjac pearls,Unsweetened almond milk with Ovaltine and konjac pearls,,,5-almond-unsweetened-ovaltine-konjac-pearl,,65,,drink,drink,none,treeNut;milk;wheat,,cold,no,no,2026-10-21,5C.jpg
-5,Almond milk matcha with white malt,Almond milk matcha with white malt,,,5-almond-matcha-white-malt,,55,,drink,drink,none,treeNut;milk;wheat,,cold,no,no,2026-10-21,5C.jpg
-5,Almond milk chocolate with coffee and chocolate chips,Almond milk chocolate with coffee and chocolate chips,,,5-almond-chocolate-coffeechochips,,70,,drink,drink,none,treeNut;milk,,cold,no,no,2026-10-21,5C.jpg
-5,Almond milk with strawberry and Oreo,Almond milk with strawberry and Oreo,,,5-almond-strawberry-oreo,,65,,drink,drink,none,treeNut;wheat,,cold,no,no,2026-10-21,5C.jpg
-5,Oat milk with blueberry,Oat milk with blueberry,,,5-oat-milk-blueberry,,95,,drink,drink,none,,,cold,no,no,2026-10-21,5C.jpg
-5,Oat milk with Nesvita,Oat milk with Nesvita,,,5-oat-milk-nesvita,,55,,drink,drink,none,,,cold,no,no,2026-10-21,5C.jpg
-5,Milo with chocolate chips,Milo with chocolate chips,,,5-milo-chochips,,60,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
-5,Pink milk with konjac pearls,Pink milk with konjac pearls,,,5-pinky-milk-konjac-pearl,,45,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
-5,Strawberry milk with whipped cheese,Strawberry milk with whipped cheese,,,5-strawberry-milk-whip-cheese,,80,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
-5,Nutella milk,Nutella milk,,,5-nutella-milk,,65,,drink,drink,none,treeNut;milk,,cold,no,no,2026-10-21,5C.jpg
-5,Milk coffee (3-in-1) with whipped cheese,Milk coffee (3-in-1) with whipped cheese,,,5-milk-coffee-whip-cheese,,75,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
-5,White malt milk with konjac pearls,White malt milk with konjac pearls,,,5-white-malt-milk-konjac-pearl,,55,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
-5,Double oat milk,Double oat milk,,,5-double-oat-milk,,55,,drink,drink,none,,,cold,no,no,2026-10-21,5C.jpg
-5,Oat milk with chocolate chips,Oat milk with chocolate chips,,,5-oat-milk-chochips,,55,,drink,drink,none,,,cold,no,no,2026-10-21,5C.jpg
-5,Oreo milk with whipped cheese,Oreo milk with whipped cheese,,,5-oreo-milk-whip-cheese,,65,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
-5,Nesvita milk with cornflakes,Nesvita milk with cornflakes,,,5-nesvita-milk-cornflakes,,60,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
-5,Ovaltine and Oreo milk,Ovaltine and Oreo milk,,,5-ovaltine-oreo-milk,,50,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
-5,Avocado milk,Avocado milk,,,5-avocado-milk,,70,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
-5,Chocolate chip milk,Chocolate chip milk,,,5-chochips-milk,,45,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
-5,Honey milk with honey jelly,Honey milk with honey jelly,,,5-honey-milk-honey-jelly,,55,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
-5,Matcha with chocolate chips,Matcha with chocolate chips,,,5-matcha-chochips,,80,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
-5,Yakult and Pipo jelly with yoghurt,Yakult and Pipo jelly with yoghurt,,,5-yakult-pipo-yogurt,,55,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
-5,"Americano (light, medium or dark roast)","Americano (light, medium or dark roast)",,,5-americano-light-medium-dark-roast,,30,เย็น|Iced|5,drink,drink,none,,,hot,no,yes,2026-10-21,5D.jpg
-5,Americano with honey,Americano with honey,,,5-americano-honey,,45,เย็น|Iced|5,drink,drink,none,,,hot,no,no,2026-10-21,5D.jpg
-5,Americano with honey and lime,Americano with honey and lime,,,5-americano-honey-lime,,55,เย็น|Iced|5,drink,drink,none,,,hot,no,no,2026-10-21,5D.jpg
-5,Americano with yuzu,Americano with yuzu,,,5-americano-yuzu,,60,,drink,drink,none,,,cold,no,no,2026-10-21,5D.jpg
-5,Americano with coconut,Americano with coconut,,,5-americano-coconut,,60,,drink,drink,none,treeNut,,cold,no,no,2026-10-21,5D.jpg
-5,Americano เสาวรส,Americano with passion fruit,Americano เสาวรส|americano sao warot,,5-americano,,60,,drink,drink,none,,,cold,no,no,2026-10-21,5D.jpg
-5,Americano มะนาว,Americano with lime,Americano มะนาว|americano manao,,5-americano-2,,40,เย็น|Iced|5,drink,drink,none,,,hot,no,no,2026-10-21,5D.jpg
+5,มิกซ์เบอร์รีปั่น,Mixed berry smoothie,,,5-mix-berry-smoothie,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,เบอร์รีโยเกิร์ตปั่น,Berry and yoghurt smoothie,,,5-berry-yogurt,,75,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,เบอร์รีชีสปั่น,Berry cheese smoothie,,,5-berrycheese,,90,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,มะพร้าวปั่น,Coconut smoothie,,,5-coconut-smoothie,,35,,drink,drink,none,treeNut,,cold,no,yes,2026-10-21,5B.jpg
+5,มะพร้าวนมปั่น,Coconut and milk smoothie,,,5-coconut-milk,,40,,drink,drink,none,treeNut;milk,,cold,no,no,2026-10-21,5B.jpg
+5,มะพร้าวอะโวคาโดปั่น,Coconut and avocado smoothie,,,5-coconut-avocado,,55,,drink,drink,none,treeNut,,cold,no,yes,2026-10-21,5B.jpg
+5,บลูเบอร์รีปั่น,Blueberry smoothie,,,5-blueberry-smoothie,,80,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,บลูเบอร์รีโยเกิร์ตปั่น,Blueberry and yoghurt smoothie,,,5-blueberry-yogurt,,95,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,บลูเบอร์รีกล้วยปั่น,Blueberry and banana smoothie,,,5-blueberrybanana-smoothie,,90,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,แครอทปั่น,Carrot smoothie,,,5-carrot-smoothie,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,แครอทมะนาวปั่น,Carrot and lime smoothie,,,5-carrot-lime,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,แครอทเสาวรสปั่น,Carrot and passion fruit smoothie,,,5-carrot-passion,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,ทับทิมสตรอว์เบอร์รีปั่น,Pomegranate and strawberry smoothie,,,5-pomegranate-straw,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,ทับทิมมะนาวปั่น,Pomegranate and lime smoothie,,,5-pomegranate-lime,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,ทับทิมเสาวรสปั่น,Pomegranate and passion fruit smoothie,,,5-pomegranate-passion,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,แอปเปิลปั่น,Apple smoothie,,,5-apple-smoothie,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,แอปเปิลเสาวรสปั่น,Apple and passion fruit smoothie,,,5-apple-passion,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,แอปเปิลสับปะรดเสาวรสปั่น,"Apple, pineapple and passion fruit smoothie",,,5-apple-pine-passion,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,เคลสับปะรดปั่น,Kale and pineapple smoothie,,,5-kale-pineapple,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,เคลเสาวรสปั่น,Kale and passion fruit smoothie,,,5-kale-passion,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,เคลสับปะรดแอปเปิลปั่น,"Kale, pineapple and apple smoothie",,,5-kale-pineapple-apple,,65,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,ข้าวโพดนมปั่น,Sweetcorn and milk smoothie,,,5-corn-milk,,40,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,ข้าวโพดโอรีโอปั่น,Sweetcorn and Oreo smoothie,,,5-corn-oreo,,45,,drink,drink,none,wheat,,cold,no,no,2026-10-21,5B.jpg
+5,ข้าวโพดช็อกโกแลตชิปปั่น,Sweetcorn and chocolate chips smoothie,,,5-corn-chochips,,55,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
+5,ข้าวโพดชีสปั่น,Sweetcorn cheese smoothie,,,5-corncheese,,70,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,เมลอนปั่น,Melon smoothie,,,5-melon-smoothie,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,เมลอนนมปั่น,Melon and milk smoothie,,,5-melon-milk,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,เมลอนกล้วยปั่น,Melon and banana smoothie,,,5-melon-banana,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,เมลอนโยเกิร์ตปั่น,Melon and yoghurt smoothie,,,5-melon-yogurt,,60,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,มะนาวปั่น,Lime smoothie,,,5-lime-smoothie,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,มะนาวแอปเปิลปั่น,Lime and apple smoothie,,,5-lime-apple,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,มะนาวน้ำผึ้งปั่น,Lime and honey smoothie,,,5-lime-honey,,40,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
+5,มะนาวอะโวคาโดปั่น,Lime and avocado smoothie,,,5-lime-avocado,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,กีวีปั่น,Kiwi smoothie,,,5-kiwi-smoothie,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,กีวีสตรอว์เบอร์รีปั่น,Kiwi and strawberry smoothie,,,5-kiwi-strawberry,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,กีวีโยเกิร์ตปั่น,Kiwi and yoghurt smoothie,,,5-kiwi-yogurt,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,กีวีเคลปั่น,Kiwi and kale smoothie,,,5-kiwi-kale,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,ผลไม้รวมปั่น,Mixed fruit smoothie,,,5-mix-fruits-smoothies-smoothie,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,ผลไม้รวมโยเกิร์ตปั่น,Mixed fruit and yoghurt smoothie,,,5-mix-fruits-yogurt,,65,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,ผลไม้รวมน้ำผึ้งปั่น,Mixed fruit and honey smoothie,,,5-mix-fruits-honey,,65,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
+5,ผลไม้รวมปั่นวิปชีส,Mixed fruit smoothie with whipped cheese,,,5-mix-whipcheese,,80,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,มะม่วงปั่น,Mango smoothie,,,5-mango-smoothie,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,มะม่วงเสาวรสปั่น,Mango and passion fruit smoothie,,,5-mango-passsion,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,มะม่วงโยเกิร์ตปั่น,Mango and yoghurt smoothie,,,5-mango-yogurt,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,มะม่วงชีสปั่น,Mango cheese smoothie,,,5-mangocheese,,65,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,เสาวรสปั่น,Passion fruit smoothie,,,5-passion-fruit-smoothie,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,เสาวรสโยเกิร์ตปั่น,Passion fruit and yoghurt smoothie,,,5-passion-yogurt,,45,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,เสาวรสอะโวคาโดปั่น,Passion fruit and avocado smoothie,,,5-passion-avocado,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,เสาวรสชีสปั่น,Passion fruit and cheese smoothie,,,5-passion-cheese,,60,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,ส้มปั่น,Orange smoothie,,,5-orange-smoothie,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,ส้มมะนาวปั่น,Orange and lime smoothie,,,5-orange-lime,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,ส้มแอปเปิลปั่น,Orange and apple smoothie,,,5-orange-apple,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,ส้มปีโป้ปั่น,Orange and Pipo jelly smoothie,,,5-orange-pipo,,30,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
+5,พีชปั่น,Peach smoothie,,,5-peach-smoothie,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,พีชเสาวรสปั่น,Peach and passion fruit smoothie,,,5-peach-passion,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,พีชโยเกิร์ตปั่น,Peach and yoghurt smoothie,,,5-peach-yogurt,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,พีชชีสปั่น,Peach cheese smoothie,,,5-peachcheese,,65,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,แตงโมปั่น,Watermelon smoothie,,,5-watermelon-smoothie-2,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,แตงโมมะนาวปั่น,Watermelon and lime smoothie,,,5-watermelon-lime,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,แตงโมส้มปั่น,Watermelon and orange smoothie,,,5-watermelon-orange,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,มะเขือเทศปั่น,Tomato smoothie,,,5-tomato-smoothie,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,มะเขือเทศมะนาวปั่น,Tomato and lime smoothie,,,5-tomato-lime,,25,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,มะเขือเทศโยเกิร์ตปั่น,Tomato and yoghurt smoothie,,,5-tomato-yogurt,,40,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,มัลเบอร์รีสตรอว์เบอร์รีปั่น,Mulberry and strawberry smoothie,,,5-mul-strawberry,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,มัลเบอร์รีเสาวรสปั่น,Mulberry and passion fruit smoothie,,,5-mul-passion,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,มัลเบอร์รีมะนาวปั่น,Mulberry and lime smoothie,,,5-mul-lime,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,บีทรูทเสาวรสปั่น,Beetroot and passion fruit smoothie,,,5-beetroot-passion,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,บีทรูทมะนาวปั่น,Beetroot and lime smoothie,,,5-beetroot-lime,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,สับปะรดปั่น,Pineapple smoothie,,,5-pineapple-smoothie,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,สับปะรดเสาวรสปั่น,Pineapple and passion fruit smoothie,,,5-pineapple-passion,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,สับปะรดโยเกิร์ตปั่น,Pineapple and yoghurt smoothie,,,5-pineapple-yogurt,,45,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,สับปะรดอะโวคาโดปั่น,Pineapple and avocado smoothie,,,5-pineapple-avo,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,องุ่นปั่น,Grape smoothie,,,5-grape-smoothie,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,องุ่นมะนาวปั่น,Grape and lime smoothie,,,5-grape-lime,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,องุ่นแอปเปิลปั่น,Grape and apple smoothie,,,5-grape-apple,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,องุ่นโยเกิร์ตปั่น,Grape and yoghurt smoothie,,,5-grape-yogurt,,55,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,องุ่นชีสปั่น,Grape cheese smoothie,,,5-grapecheese,,70,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,สตรอว์เบอร์รีปั่น,Strawberry smoothie,,,5-strawberry-smoothie-2,,35,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,สตรอว์เบอร์รีกล้วยปั่น,Strawberry and banana smoothie,,,5-straw-banana,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,สตรอว์เบอร์รีโยเกิร์ตปั่น,Strawberry and yoghurt smoothie,,,5-straw-yogurt,,50,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,สตรอว์เบอร์รีอะโวคาโดปั่น,Strawberry and avocado smoothie,,,5-straw-avocado,,55,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,สตรอว์เบอร์รีชีสปั่น,Strawberry cheese smoothie,,,5-strawcheese,,65,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,กล้วยปั่น,Banana smoothie,,,5-banana-smoothie,,30,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,กล้วยนมปั่น,Banana and milk smoothie,,,5-banana-milk,,35,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,กล้วยโอรีโอปั่น,Banana and Oreo smoothie,,,5-banana-oreo,,35,,drink,drink,none,wheat,,cold,no,no,2026-10-21,5B.jpg
+5,กล้วยคอร์นเฟลกปั่น,Banana and cornflakes smoothie,,,5-banana-conflex,,45,,drink,drink,none,,,cold,no,yes,2026-10-21,5B.jpg
+5,กล้วยน้ำผึ้งปั่น,Banana and honey smoothie,,,5-banana-honey,,45,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
+5,กล้วยช็อกโกแลตชิปปั่น,Banana and chocolate chips smoothie,,,5-banana-chochips,,45,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
+5,อะโวคาโดนมปั่น,Avocado milk smoothie,,,5-avocado-milk-smoothie,,55,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,อะโวคาโดปั่นนมอัลมอนด์หรือนมโอ๊ต,Avocado smoothie with almond or oat milk,,,5-avoalmond-oatmilk-smoothie,,80,,drink,drink,none,treeNut,,cold,no,no,2026-10-21,5B.jpg
+5,อะโวคาโดช็อกโกแลตชิปปั่น,Avocado chocolate chips smoothie,,,5-avocado-chochips-smoothie,,70,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
+5,อะโวคาโดโยเกิร์ตปั่น,Avocado yoghurt smoothie,,,5-avocado-yogurt-smoothie,,70,,drink,drink,none,milk,,cold,no,no,2026-10-21,5B.jpg
+5,อะโวคาโดน้ำผึ้งปั่น,Avocado honey smoothie,,,5-avocado-honey-smoothie,,70,,drink,drink,none,,,cold,no,no,2026-10-21,5B.jpg
+5,นมอัลมอนด์วานิลลาเนสวิต้าข้าวโอ๊ต,"Almond milk with vanilla, Nesvita and oats",,,5-almond-vanilla-nesvita-oat,,70,,drink,drink,none,treeNut,,cold,no,no,2026-10-21,5C.jpg
+5,ลาเต้นมอัลมอนด์ไมโลวิปชีส,Almond milk latte with Milo and whipped cheese,,,5-almond-latte-milowhip-cheese,,85,,drink,drink,none,treeNut;milk;wheat,,cold,no,no,2026-10-21,5C.jpg
+5,นมอัลมอนด์ไม่หวานโอวัลตินไข่มุกบุก,Unsweetened almond milk with Ovaltine and konjac pearls,,,5-almond-unsweetened-ovaltine-konjac-pearl,,65,,drink,drink,none,treeNut;milk;wheat,,cold,no,no,2026-10-21,5C.jpg
+5,มัทฉะนมอัลมอนด์ไวท์มอลต์,Almond milk matcha with white malt,,,5-almond-matcha-white-malt,,55,,drink,drink,none,treeNut;milk;wheat,,cold,no,no,2026-10-21,5C.jpg
+5,ช็อกโกแลตนมอัลมอนด์กาแฟช็อกโกแลตชิป,Almond milk chocolate with coffee and chocolate chips,,,5-almond-chocolate-coffeechochips,,70,,drink,drink,none,treeNut;milk,,cold,no,no,2026-10-21,5C.jpg
+5,นมอัลมอนด์สตรอว์เบอร์รีโอรีโอ,Almond milk with strawberry and Oreo,,,5-almond-strawberry-oreo,,65,,drink,drink,none,treeNut;wheat,,cold,no,no,2026-10-21,5C.jpg
+5,นมโอ๊ตบลูเบอร์รี,Oat milk with blueberry,,,5-oat-milk-blueberry,,95,,drink,drink,none,,,cold,no,no,2026-10-21,5C.jpg
+5,นมโอ๊ตเนสวิต้า,Oat milk with Nesvita,,,5-oat-milk-nesvita,,55,,drink,drink,none,,,cold,no,no,2026-10-21,5C.jpg
+5,ไมโลช็อกโกแลตชิป,Milo with chocolate chips,,,5-milo-chochips,,60,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
+5,นมชมพูไข่มุกบุก,Pink milk with konjac pearls,,,5-pinky-milk-konjac-pearl,,45,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
+5,นมสตรอว์เบอร์รีวิปชีส,Strawberry milk with whipped cheese,,,5-strawberry-milk-whip-cheese,,80,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
+5,นมนูเทลลา,Nutella milk,,,5-nutella-milk,,65,,drink,drink,none,treeNut;milk,,cold,no,no,2026-10-21,5C.jpg
+5,กาแฟนม 3 อิน 1 วิปชีส,Milk coffee (3-in-1) with whipped cheese,,,5-milk-coffee-whip-cheese,,75,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
+5,นมไวท์มอลต์ไข่มุกบุก,White malt milk with konjac pearls,,,5-white-malt-milk-konjac-pearl,,55,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
+5,ดับเบิลนมโอ๊ต,Double oat milk,,,5-double-oat-milk,,55,,drink,drink,none,,,cold,no,no,2026-10-21,5C.jpg
+5,นมโอ๊ตช็อกโกแลตชิป,Oat milk with chocolate chips,,,5-oat-milk-chochips,,55,,drink,drink,none,,,cold,no,no,2026-10-21,5C.jpg
+5,นมโอรีโอวิปชีส,Oreo milk with whipped cheese,,,5-oreo-milk-whip-cheese,,65,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
+5,นมเนสวิต้าคอร์นเฟลก,Nesvita milk with cornflakes,,,5-nesvita-milk-cornflakes,,60,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
+5,โอวัลตินโอรีโอนม,Ovaltine and Oreo milk,,,5-ovaltine-oreo-milk,,50,,drink,drink,none,milk;wheat,,cold,no,no,2026-10-21,5C.jpg
+5,นมอะโวคาโด,Avocado milk,,,5-avocado-milk,,70,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
+5,นมช็อกโกแลตชิป,Chocolate chip milk,,,5-chochips-milk,,45,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
+5,นมน้ำผึ้งเยลลี่น้ำผึ้ง,Honey milk with honey jelly,,,5-honey-milk-honey-jelly,,55,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
+5,มัทฉะช็อกโกแลตชิป,Matcha with chocolate chips,,,5-matcha-chochips,,80,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
+5,ยาคูลท์ปีโป้โยเกิร์ต,Yakult and Pipo jelly with yoghurt,,,5-yakult-pipo-yogurt,,55,,drink,drink,none,milk,,cold,no,no,2026-10-21,5C.jpg
+5,อเมริกาโน่ (คั่วอ่อน/คั่วกลาง/คั่วเข้ม),"Americano (light, medium or dark roast)",,,5-americano-light-medium-dark-roast,,30,เย็น|Iced|5,drink,drink,none,,,hot,no,yes,2026-10-21,5D.jpg
+5,อเมริกาโน่น้ำผึ้ง,Americano with honey,,,5-americano-honey,,45,เย็น|Iced|5,drink,drink,none,,,hot,no,no,2026-10-21,5D.jpg
+5,อเมริกาโน่น้ำผึ้งมะนาว,Americano with honey and lime,,,5-americano-honey-lime,,55,เย็น|Iced|5,drink,drink,none,,,hot,no,no,2026-10-21,5D.jpg
+5,อเมริกาโน่ยูซุ,Americano with yuzu,,,5-americano-yuzu,,60,,drink,drink,none,,,cold,no,no,2026-10-21,5D.jpg
+5,อเมริกาโน่มะพร้าว,Americano with coconut,,,5-americano-coconut,,60,,drink,drink,none,treeNut,,cold,no,no,2026-10-21,5D.jpg
+5,อเมริกาโน่เสาวรส,Americano with passion fruit,Americano เสาวรส|americano sao warot,,5-americano,,60,,drink,drink,none,,,cold,no,no,2026-10-21,5D.jpg
+5,อเมริกาโน่มะนาว,Americano with lime,Americano มะนาว|americano manao,,5-americano-2,,40,เย็น|Iced|5,drink,drink,none,,,hot,no,no,2026-10-21,5D.jpg
 5,เอสเปรสโซ,Espresso,เอสเปรสโซ|espresso,,5-espresso,,30,เย็น|Iced|15,drink,drink,none,,,hot,no,yes,2026-10-21,5D.jpg
 5,มอคค่า,Mocha,มอคค่า|mokkha,,5-mocha,,45,,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
 5,คาปูชิโน,Cappuccino,คาปูชิโน|khapuchino,,5-cappuccino,,45,เย็น|Iced|5,drink,drink,none,milk;shellfish,,hot,no,no,2026-10-21,5D.jpg
 5,ลาเต้,Latte,ลาเต้|late,,5-latte,,45,เย็น|Iced|5,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
-5,Latte with almond milk,Latte with almond milk,,,5-latte-with-almond-milk,,70,เย็น|Iced|5,drink,drink,none,treeNut;milk,,hot,no,no,2026-10-21,5D.jpg
-5,Latte with oat milk,Latte with oat milk,,,5-latte-with-oat-milk,,70,เย็น|Iced|5,drink,drink,none,,,hot,no,no,2026-10-21,5D.jpg
-5,"Latte with caramel, vanilla or hazelnut syrup","Latte with caramel, vanilla or hazelnut syrup",,,5-latte-caramel-vanila-hezelnut,,60,เย็น|Iced|5,drink,drink,none,treeNut;milk,,hot,no,no,2026-10-21,5D.jpg
-5,Latte with brown sugar,Latte with brown sugar,,,5-latte-brownsugar,,60,เย็น|Iced|5,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
-5,Caramel มัคคิอาโต้,Caramel macchiato,Caramel มัคคิอาโต้|caramel makkhiato,,5-caramel-macchiato,,70,,drink,drink,none,,,cold,no,no,2026-10-21,5D.jpg
-5,Matcha and espresso,Matcha and espresso,,,5-matcha-and-espresso,,75,,drink,drink,none,milk,,cold,no,no,2026-10-21,5D.jpg
+5,ลาเต้นมอัลมอนด์,Latte with almond milk,,,5-latte-with-almond-milk,,70,เย็น|Iced|5,drink,drink,none,treeNut;milk,,hot,no,no,2026-10-21,5D.jpg
+5,ลาเต้นมโอ๊ต,Latte with oat milk,,,5-latte-with-oat-milk,,70,เย็น|Iced|5,drink,drink,none,,,hot,no,no,2026-10-21,5D.jpg
+5,ลาเต้ไซรัปคาราเมล/วานิลลา/เฮเซลนัต,"Latte with caramel, vanilla or hazelnut syrup",,,5-latte-caramel-vanila-hezelnut,,60,เย็น|Iced|5,drink,drink,none,treeNut;milk,,hot,no,no,2026-10-21,5D.jpg
+5,ลาเต้บราวน์ชูการ์,Latte with brown sugar,,,5-latte-brownsugar,,60,เย็น|Iced|5,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
+5,คาราเมลมัคคิอาโต้,Caramel macchiato,Caramel มัคคิอาโต้|caramel makkhiato,,5-caramel-macchiato,,70,,drink,drink,none,,,cold,no,no,2026-10-21,5D.jpg
+5,มัทฉะเอสเปรสโซ,Matcha and espresso,,,5-matcha-and-espresso,,75,,drink,drink,none,milk,,cold,no,no,2026-10-21,5D.jpg
 5,ชาไทย,Thai tea,ชาไทย|cha thai,,5-thai-tea,cha-yen,45,,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
-5,ชามะนาว,Thai tea with lemon,ชามะนาว|cha manao,,5-thai-tea-lemon,,45,,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
+5,ชาไทยมะนาว,Thai tea with lemon,ชามะนาว|cha manao,,5-thai-tea-lemon,,45,,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
 5,ชาไทยยูซุ,Thai tea with yuzu,ชาไทยยูซุ|cha thai yuzu,,5-thai-tea-yuzu,cha-yen,60,,drink,drink,none,milk,,cold,no,no,2026-10-21,5D.jpg
-5,Ceylon tea,Ceylon tea,,,5-ceylon-tea,,45,,drink,drink,none,,,hot,no,yes,2026-10-21,5D.jpg
+5,ชาซีลอน,Ceylon tea,,,5-ceylon-tea,,45,,drink,drink,none,,,hot,no,yes,2026-10-21,5D.jpg
 5,ชาเขียวยูซุ,Green tea with yuzu,ชาเขียวยูซุ|cha khiao yuzu,,5-greentea-yuzu,,60,,drink,drink,none,milk,,cold,no,no,2026-10-21,5D.jpg
 5,ชาเขียวมะพร้าว,Green tea with coconut,ชาเขียวมะพร้าว|cha khiao maphrao,,5-greentea-coconut,,60,,drink,drink,none,treeNut;milk,,cold,no,no,2026-10-21,5D.jpg
 5,มัทฉะมะพร้าว,Matcha with coconut,มัทฉะมะพร้าว|matcha maphrao,,5-matcha-coconut,,70,,drink,drink,none,treeNut;milk,,cold,no,no,2026-10-21,5D.jpg
 5,ชาเขียว,Green tea,ชาเขียว|cha khiao,,5-green-tea,,45,,drink,drink,none,,,hot,no,yes,2026-10-21,5D.jpg
-5,Matcha latte,Matcha latte,,,5-matcha-latte,,55,,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
-5,Pure matcha,Pure matcha,,,5-pure-matcha,,55,,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
+5,มัทฉะลาเต้,Matcha latte,,,5-matcha-latte,,55,,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
+5,เขียวมัทฉะ,Pure matcha,,,5-pure-matcha,,55,,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
 5,โกโก้,Cocoa,โกโก้|koko,,5-coco,,45,,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
 5,มัทฉะโกโก้,Matcha and cocoa latte,มัทฉะโกโก้|matcha koko,,5-matcha-and-coco-latte,,70,,drink,drink,none,milk,,cold,no,no,2026-10-21,5D.jpg
 5,นมสด,Fresh milk,นมสด|nom sot,,5-milk,,30,เย็น|Iced|5,drink,drink,none,milk,,hot,no,no,2026-10-21,5D.jpg
@@ -429,32 +429,32 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 5,น้ำผึ้งมะนาวโซดา,"Honey, lime and soda",น้ำผึ้งมะนาวโซดา|nam phueng manao soda,,5-dish,,60,,drink,drink,none,,,cold,no,no,2026-10-21,5D.jpg
 5,แดงมะนาวโซดา,"Red syrup, lime and soda",แดงมะนาวโซดา|daeng manao soda,,5-dish-2,,40,,drink,drink,none,,,cold,no,no,2026-10-21,5D.jpg
 5,แดงโซดา,Red syrup and soda,แดงโซดา|daeng soda,,5-dish-3,,30,,drink,drink,none,,,cold,no,no,2026-10-21,5D.jpg
-5,Apple (cold-pressed juice),Apple (cold-pressed juice),,,5-only-apple,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,Orange (cold-pressed juice),Orange (cold-pressed juice),,,5-only-orange,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,Pineapple (cold-pressed juice),Pineapple (cold-pressed juice),,,5-only-pineapple,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,Apple and pineapple (cold-pressed juice),Apple and pineapple (cold-pressed juice),,,5-apple-pineapple,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,"Apple, pineapple and passion fruit (cold-pressed juice)","Apple, pineapple and passion fruit (cold-pressed juice)",,,5-apple-pineapple-passion-fruit,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,Pineapple and passion fruit (cold-pressed juice),Pineapple and passion fruit (cold-pressed juice),,,5-pineapple-passion-fruit,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,Watermelon (cold-pressed juice),Watermelon (cold-pressed juice),,,5-watermelon,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,"Carrot, apple and beetroot (cold-pressed juice)","Carrot, apple and beetroot (cold-pressed juice)",,,5-carrot-apple-beetroot,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,"Carrot, apple and passion fruit (cold-pressed juice)","Carrot, apple and passion fruit (cold-pressed juice)",,,5-carrot-apple-passion-fruit,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,Mixed fruit (cold-pressed juice),Mixed fruit (cold-pressed juice),,,5-mixed-fruit,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,Kale and pineapple (cold-pressed juice),Kale and pineapple (cold-pressed juice),,,5-kale-pineapple-2,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,"Kale, pineapple and apple (cold-pressed juice)","Kale, pineapple and apple (cold-pressed juice)",,,5-kale-pineapple-apple-2,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,"Kale, pineapple and beetroot (cold-pressed juice)","Kale, pineapple and beetroot (cold-pressed juice)",,,5-kale-pineapple-beetroot,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-5,"Kale, pineapple, carrot and beetroot (cold-pressed juice)","Kale, pineapple, carrot and beetroot (cold-pressed juice)",,,5-kale-pineapple-carrot-beetroot,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
-6,ข้าวมันไก่ต้ม,Chicken rice (boiled chicken),ข้าวมันไก่ต้ม|khao man kai tom,,6-chicken-rice,khao-man-gai,45,พิเศษ|Large portion|10,rice,main,chicken,soy;fish,steamed,hot,no,no,2026-10-21,6A.jpg
-6,ข้าวมันไก่ทอดสมุนไพร,Herb fried chicken rice,ข้าวมันไก่ทอดสมุนไพร|khao man kai thot samun phrai,,6-herb-fried-chicken-rice,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,6A.jpg
-6,ข้าวมันไก่ผสม 2 ไก่,Mixed chicken rice (boiled and fried chicken),ข้าวมันไก่ผสม|khao man kai phasom,,6-mixed-chicken-rice,khao-man-gai,60,พิเศษ|Large portion|5,rice,main,chicken,soy;fish,steamed,hot,no,no,2026-10-21,6B.jpg
-6,ข้าวมันไก่ย่างน้ำจิ้มแจ่ว,Grilled chicken rice with spicy jaew dipping sauce,ข้าวมันไก่ย่างน้ำจิ้มแจ่ว|khao man kai yang nam chim chaeo,,6-grilled-chicken-rice-with-thai-spicy-jaew,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,wheat;soy;fish;shellfish,grilled,hot,no,no,2026-10-21,6A.jpg
-6,ข้าวมันไก่ย่างเทริยากิ,Teriyaki grilled chicken rice,ข้าวมันไก่ย่างเทริยากิ|khao man kai yang theriyaki,,6-teriyaki-grilled-chicken-rice,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,wheat;soy;fish;shellfish,grilled,hot,no,no,2026-10-21,6A.jpg
-6,ข้าวมันไก่ตุ๋นน้ำจิ้มซีฟู้ด,Braised chicken rice with seafood dipping sauce,ข้าวมันไก่ตุ๋นน้ำจิ้มซีฟู้ด|khao man kai tun nam chim sifut,,6-braised-chicken-rice-with-seafood-dipping-sauce,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,soy;fish;shellfish,steamed,hot,no,no,2026-10-21,6B.jpg
-6,ข้าวมันไก่แซ่บ,Spicy chicken rice salad,ข้าวมันไก่แซ่บ|khao man kai saep,,6-spicy-chicken-rice-salad,khao-man-gai,55,พิเศษ|Large portion|10,rice,main,chicken,soy;fish;shellfish,salad,hot,no,no,2026-10-21,6A.jpg
+5,น้ำแอปเปิลสกัดเย็น,Apple (cold-pressed juice),,,5-only-apple,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำส้มสกัดเย็น,Orange (cold-pressed juice),,,5-only-orange,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำสับปะรดสกัดเย็น,Pineapple (cold-pressed juice),,,5-only-pineapple,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำแอปเปิลสับปะรดสกัดเย็น,Apple and pineapple (cold-pressed juice),,,5-apple-pineapple,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำแอปเปิลสับปะรดเสาวรสสกัดเย็น,"Apple, pineapple and passion fruit (cold-pressed juice)",,,5-apple-pineapple-passion-fruit,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำสับปะรดเสาวรสสกัดเย็น,Pineapple and passion fruit (cold-pressed juice),,,5-pineapple-passion-fruit,,50,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำแตงโมสกัดเย็น,Watermelon (cold-pressed juice),,,5-watermelon,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำแครอทแอปเปิลบีทรูทสกัดเย็น,"Carrot, apple and beetroot (cold-pressed juice)",,,5-carrot-apple-beetroot,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำแครอทแอปเปิลเสาวรสสกัดเย็น,"Carrot, apple and passion fruit (cold-pressed juice)",,,5-carrot-apple-passion-fruit,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำผลไม้รวมสกัดเย็น,Mixed fruit (cold-pressed juice),,,5-mixed-fruit,,40,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำเคลสับปะรดสกัดเย็น,Kale and pineapple (cold-pressed juice),,,5-kale-pineapple-2,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำเคลสับปะรดแอปเปิลสกัดเย็น,"Kale, pineapple and apple (cold-pressed juice)",,,5-kale-pineapple-apple-2,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำเคลสับปะรดบีทรูทสกัดเย็น,"Kale, pineapple and beetroot (cold-pressed juice)",,,5-kale-pineapple-beetroot,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+5,น้ำเคลสับปะรดแครอทบีทรูทสกัดเย็น,"Kale, pineapple, carrot and beetroot (cold-pressed juice)",,,5-kale-pineapple-carrot-beetroot,,60,,drink,drink,none,,,cold,no,yes,2026-10-21,5D.jpg
+6,ข้าวมันไก่ต้ม,"Khao man gai, boiled chicken rice",ข้าวมันไก่ต้ม|khao man kai tom,,6-chicken-rice,khao-man-gai,45,พิเศษ|Large portion|10,rice,main,chicken,soy;fish,steamed,hot,no,no,2026-10-21,6A.jpg
+6,ข้าวมันไก่ทอดสมุนไพร,Khao man gai with herb fried chicken,ข้าวมันไก่ทอดสมุนไพร|khao man kai thot samun phrai,,6-herb-fried-chicken-rice,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,6A.jpg
+6,ข้าวมันไก่ผสม 2 ไก่,Khao man gai with boiled and fried chicken,ข้าวมันไก่ผสม|khao man kai phasom,,6-mixed-chicken-rice,khao-man-gai,60,พิเศษ|Large portion|5,rice,main,chicken,soy;fish,steamed,hot,no,no,2026-10-21,6B.jpg
+6,ข้าวมันไก่ย่างน้ำจิ้มแจ่ว,Khao man gai with grilled chicken and spicy jaew dipping sauce,ข้าวมันไก่ย่างน้ำจิ้มแจ่ว|khao man kai yang nam chim chaeo,,6-grilled-chicken-rice-with-thai-spicy-jaew,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,wheat;soy;fish;shellfish,grilled,hot,no,no,2026-10-21,6A.jpg
+6,ข้าวมันไก่ย่างเทริยากิ,Khao man gai with teriyaki grilled chicken,ข้าวมันไก่ย่างเทริยากิ|khao man kai yang theriyaki,,6-teriyaki-grilled-chicken-rice,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,wheat;soy;fish;shellfish,grilled,hot,no,no,2026-10-21,6A.jpg
+6,ข้าวมันไก่ตุ๋นน้ำจิ้มซีฟู้ด,Khao man gai with braised chicken and seafood dipping sauce,ข้าวมันไก่ตุ๋นน้ำจิ้มซีฟู้ด|khao man kai tun nam chim sifut,,6-braised-chicken-rice-with-seafood-dipping-sauce,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,soy;fish;shellfish,steamed,hot,no,no,2026-10-21,6B.jpg
+6,ข้าวมันไก่แซ่บ,Khao man gai saep (spicy chicken rice salad),ข้าวมันไก่แซ่บ|khao man kai saep,,6-spicy-chicken-rice-salad,khao-man-gai,55,พิเศษ|Large portion|10,rice,main,chicken,soy;fish;shellfish,salad,hot,no,no,2026-10-21,6A.jpg
 6,ต้มแซ่บสะโพก,Spicy and sour soup with chicken thighs,ต้มแซ่บสะโพก|tom saep sapho,,6-spicy-and-sour-soup-with-chicken-thighs,,50,,soup,main,chicken,fish,boiled,hot,yes,no,2026-10-21,6A.jpg
 6,ซุปเปอร์เท้านารี,Spicy and sour chicken feet soup,ซุปเปอร์เท้านารี|suppoe thao nari,,6-spicy-and-sour-chicken-feet-soup,,50,,soup,main,chicken,fish,boiled,hot,yes,no,2026-10-21,6A.jpg
 6,ไก่สับ,"Chopped chicken, plain (side)",ไก่สับ|kai sap,,6-chopped-chicken-plain,,80,ใหญ่|Large portion|20,singlePlate,side,chicken,,steamed,hot,no,no,2026-10-21,6A.jpg
 6,ข้าวเปล่า,Plain steamed rice,ข้าวเปล่า|khao plao,,6-plain-steamed-rice,,10,,rice,side,none,,steamed,hot,no,yes,2026-10-21,6A.jpg
-6,ข้าวมันเปล่า,Plain seasoned rice (no chicken),ข้าวมันเปล่า|khao man plao,,6-plain-seasoned-chicken-rice,,15,,rice,side,none,soy,steamed,hot,no,no,2026-10-21,6A.jpg
+6,ข้าวมันเปล่า,"Plain khao man (chicken-fat rice, no chicken)",ข้าวมันเปล่า|khao man plao,,6-plain-seasoned-chicken-rice,,15,,rice,side,none,soy,steamed,hot,no,no,2026-10-21,6A.jpg
 6,เครื่องใน หรือไข่ต้ม,Chicken giblets or boiled egg,เครื่องใน|khrueang nai;ไข่ต้ม|khai tom,,6-chicken-giblets-or-boiled-egg,,10,,singlePlate,side,chicken;egg,egg;fish,boiled,hot,no,no,2026-10-21,6A.jpg
 7,ทงคตสึ ราเมน,Tonkotsu ramen,ทงคตสึราเมน|thongkhatsu ramen,,7-tonkotsu-ramen,,68,,noodles,main,pork;egg,egg;wheat;soy;fish,boiled,hot,yes,no,2026-10-21,7C.jpg
 7,ทงคตสึ ทันตันเมน,Tonkotsu tantan-men,ทงคตสึทันตันเมน|thongkhatsu thantan men,,7-tonkotsu-tantan-men,,68,,noodles,main,pork;egg,egg;sesame,boiled,hot,yes,no,2026-10-21,7C.jpg
@@ -499,9 +499,9 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 7,ทาโกยากิ,Takoyaki,ทาโกยากิ|thako yaki,,7-takoyaki,,48,,snack,side,seafood,egg;wheat;fish;shellfish,deepFried,hot,no,no,2026-10-21,7C.jpg
 7,แฮชบราวน์,Hash browns,แฮชบราวน์|haet braon,,7-hash-browns,,48,,snack,side,none,,deepFried,hot,no,no,2026-10-21,7C.jpg
 7,เกี๊ยวซ่า,Gyoza,เกี๊ยวซ่า|kiao sa,,7-gyoza,,48,,snack,side,pork,wheat,deepFried,hot,no,no,2026-10-21,7C.jpg
-7,ไก่คาราเกะ,Karaage chicken,ไก่คาราเกะ|kai kharake,,7-karaage-chicken,,58,,snack,side,chicken,wheat,deepFried,hot,no,no,2026-10-21,7C.jpg
+7,ไก่คาราเกะ,Chicken karaage,ไก่คาราเกะ|kai kharake,,7-karaage-chicken,,58,,snack,side,chicken,wheat,deepFried,hot,no,no,2026-10-21,7C.jpg
 8,ชาไต้หวัน,Taiwanese milk tea,ชาไต้หวัน|cha taiwan,,8-taiwanese-milk-tea,,20,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
-8,โกโก้,Cocoa (iced),โกโก้|koko,,8-cocoa,,20,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
+8,โกโก้เย็น,Cocoa (iced),โกโก้|koko,,8-cocoa,,20,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
 8,นมเย็น,Iced Thai pink milk,นมเย็น|nom yen,,8-thai-pink-milk,,20,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
 8,กาแฟโบราณ,Traditional Thai coffee,กาแฟโบราณ|kafae boran,,8-traditional-thai-coffee,,20,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
 8,ชาเขียวนม,Thai green milk tea,ชาเขียวนม|cha khiao nom,,8-thai-green-milk-tea,,20,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
@@ -518,19 +518,19 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 8,น้ำกระเจี๊ยบ,Roselle juice,น้ำกระเจี๊ยบ|nam krachiap,,8-roselle-juice,,20,,drink,drink,none,,steamed,cold,yes,yes,2026-10-21,8B.jpg
 8,น้ำพันช์,Fruit punch,น้ำพันช์|nam phan,,8-punch,,20,,drink,drink,none,,steamed,cold,yes,no,2026-10-21,8B.jpg
 8,น้ำแดงเฮลซ์บลูบอย,Hale's Blue Boy (red syrup) soda,น้ำแดงเฮลซ์บลูบอย|nam daeng hels blue boy,,8-hale-s-blue-boy-soda,,20,,drink,drink,none,,steamed,cold,yes,no,2026-10-21,8B.jpg
-8,โกโก้ไข่มุก,Bubble cocoa,โกโก้ไข่มุก|koko khai muk,,8-bubble-cocoa,,30,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
-8,โกโก้ไข่มุกปั่น,Bubble cocoa frappe,โกโก้ไข่มุกปั่น|koko khai muk pan,,8-bubble-cocoa-frappe,,35,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
+8,โกโก้ไข่มุก,Cocoa with boba,โกโก้ไข่มุก|koko khai muk,,8-bubble-cocoa,,30,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
+8,โกโก้ไข่มุกปั่น,Cocoa boba frappe,โกโก้ไข่มุกปั่น|koko khai muk pan,,8-bubble-cocoa-frappe,,35,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
 8,ชานมไต้หวันไข่มุก,Taiwanese milk tea with boba,ชานมไต้หวันไข่มุก|cha nom taiwan khai muk,,8-taiwanese-milk-tea-with-boba,,30,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
-8,ชานมไต้หวันไข่มุกปั่น,Boba milk tea frappe,ชานมไต้หวันไข่มุกปั่น|cha nom taiwan khai muk pan,,8-boba-milk-tea-frappe,,35,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
+8,ชานมไต้หวันไข่มุกปั่น,Taiwanese milk tea boba frappe,ชานมไต้หวันไข่มุกปั่น|cha nom taiwan khai muk pan,,8-boba-milk-tea-frappe,,35,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
 8,ชาไทยไข่มุก,Thai tea with boba,ชาไทยไข่มุก|cha thai khai muk,,8-thai-tea-with-boba,cha-yen,30,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
-8,ชาไทยไข่มุกปั่น,Bubble Thai tea frappe,ชาไทยไข่มุกปั่น|cha thai khai muk pan,,8-bubble-thai-tea-frappe,cha-yen,35,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
+8,ชาไทยไข่มุกปั่น,Thai tea boba frappe,ชาไทยไข่มุกปั่น|cha thai khai muk pan,,8-bubble-thai-tea-frappe,cha-yen,35,,drink,drink,none,milk,steamed,cold,yes,no,2026-10-21,8A.jpg
 9,น้ำแข็งใส,Thai shaved ice (with assorted toppings),น้ำแข็งใส|nam khaeng sai,,9-thai-shaved-ice,,25,ราคาสูงสุดตามป้าย|Upper price on the board|5,dessert,dessert,none,,salad,cold,yes,no,2026-10-21,9A.jpg
 9,ขนมน้ำแข็ง 1 อย่าง,"Thai ice dessert, 1 type of topping",ขนมน้ำแข็ง|khanom nam khaeng,,9-thai-ice-dessert-1-type-of-topping,,25,,dessert,dessert,none,,salad,cold,yes,no,2026-10-21,9B.jpg
 9,ขนมน้ำแข็ง 2-3 อย่าง,"Thai ice dessert, 2-3 types of topping",ขนมน้ำแข็ง|khanom nam khaeng,,9-thai-ice-dessert-2-3-types-of,,30,,dessert,dessert,none,,salad,cold,yes,no,2026-10-21,9B.jpg
 9,รวมมิตร,Ruam mit (mixed Thai dessert),รวมมิตร|ruam mit,,9-ruam-mit,,30,,dessert,dessert,none,,salad,cold,yes,no,2026-10-21,9B.jpg
 9,ฟักทอง,Stewed pumpkin in coconut milk,ฟักทอง|fak thong,,9-stewed-pumpkin-in-coconut-milk,,25,,dessert,dessert,none,,boiled,hot,yes,no,2026-10-21,9A.jpg
-9,กล้วยบวชชี,Banana in coconut milk,กล้วยบวชชี|kluai buat chi,,9-banana-in-coconut-milk,,25,,dessert,dessert,none,,boiled,hot,yes,no,2026-10-21,9A.jpg
-9,บัวลอยไข่หวาน,Rice dumplings in coconut milk with sweet egg,บัวลอยไข่หวาน|bua loi khai wan,,9-rice-dumplings-in-coconut-milk-with-sweet,bua-loy,25,ราคาสูงสุดตามป้าย|Upper price on the board|5,dessert,dessert,egg,egg;wheat,boiled,hot,yes,no,2026-10-21,9A.jpg
+9,กล้วยบวชชี,Kluai buat chi (banana in coconut milk),กล้วยบวชชี|kluai buat chi,,9-banana-in-coconut-milk,,25,,dessert,dessert,none,,boiled,hot,yes,no,2026-10-21,9A.jpg
+9,บัวลอยไข่หวาน,Bua loi (glutinous rice balls in coconut milk) with sweet egg,บัวลอยไข่หวาน|bua loi khai wan,,9-rice-dumplings-in-coconut-milk-with-sweet,bua-loy,25,ราคาสูงสุดตามป้าย|Upper price on the board|5,dessert,dessert,egg,egg;wheat,boiled,hot,yes,no,2026-10-21,9A.jpg
 9,ครองแครง,Khrong khraeng (sweet flour dumplings in coconut milk),ครองแครง|khrong khraeng,,9-krong-krang,,25,,dessert,dessert,none,,boiled,hot,yes,no,2026-10-21,9A.jpg
 9,ข้าวเหนียวเปียกลำไย,Black/white sticky rice pudding with longan,ข้าวเหนียวเปียกลำไย|khao niao piak lamyai,,9-black-white-sticky-rice-pudding-with-longan,,25,,dessert,dessert,none,,boiled,hot,yes,no,2026-10-21,9A.jpg
 9,ข้าวเหนียวสังขยา,Sticky rice with Thai egg custard,ข้าวเหนียวสังขยา|khao niao sangkhaya,,9-sticky-rice-with-thai-egg-custard,,25,,dessert,dessert,egg,milk;egg,steamed,hot,no,no,2026-10-21,9A.jpg
@@ -573,37 +573,37 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 11,เส้นหมี่ไก่ฉีก รสต้มยำ,"Shredded chicken rice vermicelli, tom yum flavour",เส้นหมี่ไก่ฉีกรสต้มยำ|sen mi kai chik rot tom yam,,11-shredded-chicken-rice-vermicelli-tom-yum-flavour,kuay-teow,50,พิเศษ|Large portion|10,noodles,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,11A.jpg
 11,หมูกระจก (ถุง),Crispy pork cracklings (per bag),หมูกระจก|mu krachok,,11-crispy-pork-cracklings,,10,,snack,side,pork,wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,11A.jpg
 11,ไข่ต้ม (ลูก),Boiled egg (per piece),ไข่ต้ม|khai tom,,11-boiled-egg,,10,,snack,side,egg,egg;fish,boiled,hot,no,no,2026-10-21,11A.jpg
-12,ลาบหมู-ไก่,Spicy minced pork or chicken salad (larb),ลาบหมู|lap mu;ลาบไก่|lap kai,,12-spicy-minced-pork-or-chicken-salad,larb,40,,singlePlate,main,pork;chicken,fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
-12,น้ำตกหมู-ไก่,Spicy grilled pork or chicken salad (nam tok),น้ำตกหมู|nam tok mu;น้ำตกไก่|nam tok kai,,12-spicy-grilled-pork-or-chicken-salad,,40,ราคาสูงสุดตามป้าย|Upper price on the board|10,singlePlate,main,pork;chicken,fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
+12,ลาบหมู-ไก่,Larb (spicy minced pork or chicken salad),ลาบหมู|lap mu;ลาบไก่|lap kai,,12-spicy-minced-pork-or-chicken-salad,larb,40,,singlePlate,main,pork;chicken,fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
+12,น้ำตกหมู-ไก่,Nam tok (spicy grilled pork or chicken salad),น้ำตกหมู|nam tok mu;น้ำตกไก่|nam tok kai,,12-spicy-grilled-pork-or-chicken-salad,,40,ราคาสูงสุดตามป้าย|Upper price on the board|10,singlePlate,main,pork;chicken,fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
 12,ตับหวาน,Spicy blanched pork liver salad,ตับหวาน|tap wan,,12-spicy-soft-boiled-pork-liver-salad,,40,,singlePlate,main,pork,fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
 12,ก้อยย่าง,Spicy grilled beef or pork salad,ก้อยย่าง|koi yang,,12-spicy-grilled-beef-pork-salad,,45,ราคาสูงสุดตามป้าย|Upper price on the board|5,singlePlate,main,beef;pork,fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
-12,แกงอ่อม,Isan spicy herbal soup,แกงอ่อม|kaeng om,,12-isan-spicy-herbal-soup,,45,,soup,main,pork,fish;shellfish,curry,hot,yes,no,2026-10-21,12A.jpg
+12,แกงอ่อม,Kaeng om (Isan herbal soup),แกงอ่อม|kaeng om,,12-isan-spicy-herbal-soup,,45,,soup,main,pork,fish;shellfish,curry,hot,yes,no,2026-10-21,12A.jpg
 12,แกงเห็ดรวมสมุนไพร,Spicy mixed mushroom soup with herbs,แกงเห็ดรวมสมุนไพร|kaeng het ruam samunphrai,,12-spicy-mixed-mushroom-soup-with-herbs,,45,,soup,main,none,fish;shellfish,curry,hot,yes,no,2026-10-21,12A.jpg
-12,ต้มแซ่บ,Hot and sour Isan spicy soup,ต้มแซ่บ|tom saep,,12-hot-and-sour-isan-spicy-soup,,45,,soup,main,pork,fish;shellfish,curry,hot,yes,no,2026-10-21,12A.jpg
+12,ต้มแซ่บ,Tom saep (hot and sour Isan soup),ต้มแซ่บ|tom saep,,12-hot-and-sour-isan-spicy-soup,,45,,soup,main,pork,fish;shellfish,curry,hot,yes,no,2026-10-21,12A.jpg
 12,ลาบวุ้นเส้น - ลาบมาม่า,Larb-style glass noodle or instant noodle salad,ลาบวุ้นเส้น|lap wun sen;ลาบมาม่า|lap mama,,12-spicy-glass-noodle-or-instant-noodle-salad,larb,40,,singlePlate,main,pork;chicken,wheat;fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
 12,ยำวุ้นเส้น - ยำมาม่า,Spicy glass noodle or instant noodle salad,ยำวุ้นเส้น|yam wun sen;ยำมาม่า|yam mama,,12-spicy-glass-noodle-or-instant-noodle-salad-2,,40,,singlePlate,main,pork;seafood,peanut;wheat;fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
 12,ยำรวมมิตร,Spicy mixed seafood and meat salad,ยำรวมมิตร|yam ruam mit,,12-spicy-mixed-seafood-and-meat-salad,,45,ราคาสูงสุดตามป้าย|Upper price on the board|5,singlePlate,main,seafood;pork,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
-12,ตำไทย - ปู - ปลาร้า,"Thai papaya salad, plain, with blue crab or with fermented fish sauce",ตำไทย|tam thai;ตำปู|tam pu;ตำปลาร้า|tam pla ra,,12-thai-papaya-salad-with-blue-crab-with,som-tam,35,,singlePlate,main,none,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
-12,ตำข้าวโพด,Spicy corn salad,ตำข้าวโพด|tam khao phot,,12-spicy-corn-salad,som-tam,40,ราคาสูงสุดตามป้าย|Upper price on the board|5,singlePlate,main,none,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
-12,ตำซั่ว,Spicy papaya salad with rice vermicelli,ตำซั่ว|tam sua,,12-spicy-papaya-salad-with-rice-vermicelli,som-tam,40,,singlePlate,main,none,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
+12,ตำไทย - ปู - ปลาร้า,"Som tam Thai: plain, with blue crab or with fermented fish sauce",ตำไทย|tam thai;ตำปู|tam pu;ตำปลาร้า|tam pla ra,,12-thai-papaya-salad-with-blue-crab-with,som-tam,35,,singlePlate,main,none,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
+12,ตำข้าวโพด,Tam khao phot (spicy pounded corn salad),ตำข้าวโพด|tam khao phot,,12-spicy-corn-salad,som-tam,40,ราคาสูงสุดตามป้าย|Upper price on the board|5,singlePlate,main,none,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
+12,ตำซั่ว,Tam sua (som tam with rice vermicelli),ตำซั่ว|tam sua,,12-spicy-papaya-salad-with-rice-vermicelli,som-tam,40,,singlePlate,main,none,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
 12,ซุปหน่อไม้,Spicy bamboo shoot salad,ซุปหน่อไม้|sup no mai,,12-spicy-bamboo-shoot-salad,,40,,singlePlate,main,none,fish;shellfish,salad,hot,no,no,2026-10-21,12A.jpg
 12,ไก่ย่าง,Grilled chicken,ไก่ย่าง|kai yang,,12-grilled-chicken,,35,,singlePlate,main,chicken,wheat;soy;fish;shellfish,grilled,hot,no,no,2026-10-21,12B.jpg
 12,ข้าวเหนียว,Sticky rice,ข้าวเหนียว|khao niao,,12-sticky-rice,,10,,rice,side,none,,steamed,hot,no,no,2026-10-21,12A.jpg
 12,ข้าวสวย,Steamed rice,ข้าวสวย|khao suai,,12-steamed-rice,,10,,rice,side,none,,steamed,hot,no,no,2026-10-21,12A.jpg
-12,ขนมจีน,Rice vermicelli,ขนมจีน|khanom chin,,12-rice-vermicelli,,10,,noodles,side,none,wheat;fish,boiled,hot,no,no,2026-10-21,12A.jpg
+12,ขนมจีน,Khanom chin (rice vermicelli),ขนมจีน|khanom chin,,12-rice-vermicelli,,10,,noodles,side,none,wheat;fish,boiled,hot,no,no,2026-10-21,12A.jpg
 12,เส้นลวก,Blanched noodles,เส้นลวก|sen luak,,12-blanched-noodles,,10,,noodles,side,none,wheat;fish,boiled,hot,no,no,2026-10-21,12A.jpg
 12,ลาบปลาหมึก,Spicy Thai squid salad,ลาบปลาหมึก|lap pla muek,,12-spicy-thai-squid-salad,larb,50,,singlePlate,main,seafood,fish;shellfish,salad,hot,no,no,2026-10-21,12B.jpg
 12,ข้าวไก่ทอด,Fried chicken with rice,ข้าวไก่ทอด|khao kai thot,,12-fried-chicken-with-rice,,45,,rice,main,chicken,wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,12B.jpg
-12,ตำไทยไข่เค็ม,Thai-style papaya salad with salted egg,ตำไทยไข่เค็ม|tam thai khai khem,,12-thai-style-papaya-salad-with-salted-egg,som-tam,40,,singlePlate,main,egg,peanut;egg;fish;shellfish,salad,hot,no,no,2026-10-21,12B.jpg
+12,ตำไทยไข่เค็ม,Som tam Thai with salted egg,ตำไทยไข่เค็ม|tam thai khai khem,,12-thai-style-papaya-salad-with-salted-egg,som-tam,40,,singlePlate,main,egg,peanut;egg;fish;shellfish,salad,hot,no,no,2026-10-21,12B.jpg
 12,ต้มแซ่บ (ป้ายภาพ),Hot and spicy soup (photo board),ต้มแซ่บ|tom saep,,12-hot-and-spicy-soup-photo-poster,,50,,soup,main,pork,fish;shellfish,curry,hot,yes,no,2026-10-21,12B.jpg
 12,ยำขนมจีน,Spicy rice vermicelli salad,ยำขนมจีน|yam khanom chin,,12-spicy-rice-vermicelli-salad,,40,,singlePlate,main,none,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12B.jpg
-12,ตำกุ้งสด,Spicy papaya salad with fresh shrimp,ตำกุ้งสด|tam kung sot,,12-spicy-papaya-salad-with-fresh-shrimp,som-tam,50,,singlePlate,main,seafood,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12B.jpg
+12,ตำกุ้งสด,Som tam with fresh shrimp,ตำกุ้งสด|tam kung sot,,12-spicy-papaya-salad-with-fresh-shrimp,som-tam,50,,singlePlate,main,seafood,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12B.jpg
 12,ลวกจิ้มรวมมิตร,Mixed blanched meat and seafood with spicy dipping sauce,ลวกจิ้มรวมมิตร|luak chim ruam mit,,12-mixed-blanched-meat-and-seafood-with-spicy,,50,,singlePlate,main,seafood;pork,fish;shellfish,boiled,hot,no,no,2026-10-21,12B.jpg
 12,ยำหมูยอ,Spicy pork sausage salad,ยำหมูยอ|yam mu yo,,12-spicy-pork-sausage-salad,,40,,singlePlate,main,pork,peanut;wheat;soy;fish;shellfish,salad,hot,no,no,2026-10-21,12B.jpg
-12,ตำแตง,Spicy cucumber salad,ตำแตง|tam taeng,,12-spicy-cucumber-salad,som-tam,40,,singlePlate,main,none,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12B.jpg
+12,ตำแตง,Tam taeng (spicy pounded cucumber salad),ตำแตง|tam taeng,,12-spicy-cucumber-salad,som-tam,40,,singlePlate,main,none,peanut;fish;shellfish,salad,hot,no,no,2026-10-21,12B.jpg
 13,ข้าวราดไข่เจียวหมูสับ,Rice with minced pork omelette,ข้าวราดไข่เจียวหมูสับ|khao rat khai chiao mu sap,,13-rice-with-minced-pork-omelette,khai-jiao,35,,madeToOrder,main,pork;egg,egg;wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,13A.jpg
-13,ข้าวราดกะเพราหมู,Rice with stir-fried pork and holy basil,ข้าวราดกะเพราหมู|khao rat kaphrao mu,,13-rice-with-stir-fried-pork-and-holy,pad-kra-pao,40,,madeToOrder,main,pork,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
-13,ข้าวราดกะเพราไก่,Rice with stir-fried chicken and holy basil,ข้าวราดกะเพราไก่|khao rat kaphrao kai,,13-rice-with-stir-fried-chicken-and-holy,pad-kra-pao,40,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
+13,ข้าวราดกะเพราหมู,Pad kra pao with pork on rice,ข้าวราดกะเพราหมู|khao rat kaphrao mu,,13-rice-with-stir-fried-pork-and-holy,pad-kra-pao,40,,madeToOrder,main,pork,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
+13,ข้าวราดกะเพราไก่,Pad kra pao with chicken on rice,ข้าวราดกะเพราไก่|khao rat kaphrao kai,,13-rice-with-stir-fried-chicken-and-holy,pad-kra-pao,40,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
 13,ข้าวราดพริกแกงหมู,Rice with stir-fried pork in red curry paste,ข้าวราดพริกแกงหมู|khao rat phrik kaeng mu,,13-rice-with-stir-fried-pork-in-red,,40,,madeToOrder,main,pork,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
 13,ข้าวราดพริกแกงไก่,Rice with stir-fried chicken in red curry paste,ข้าวราดพริกแกงไก่|khao rat phrik kaeng kai,,13-rice-with-stir-fried-chicken-in-red,,40,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
 13,ข้าวราดเขียวหวานผัดแห้งหมู,Rice with stir-fried dry green curry pork,ข้าวราดเขียวหวานผัดแห้งหมู|khao rat khiao wan phat haeng mu,,13-rice-with-stir-fried-dry-green-curry,,40,,madeToOrder,main,pork,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
@@ -623,20 +623,20 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 13,มาม่าผัด,Stir-fried instant noodles,มาม่าผัด|mama phat,,13-stir-fried-instant-noodles,,40,,noodles,main,egg,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
 13,มาม่าผัดขี้เมาหมู,Spicy drunken-style stir-fried instant noodles with pork,มาม่าผัดขี้เมาหมู|mama phat khi mao mu,,13-spicy-stir-fried-kee-mao-instant-noodles,,40,,noodles,main,pork,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
 13,มาม่าผัดขี้เมาไก่,Spicy drunken-style stir-fried instant noodles with chicken,มาม่าผัดขี้เมาไก่|mama phat khi mao kai,,13-spicy-stir-fried-kee-mao-instant-noodles-2,,40,,noodles,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
-13,ราดหน้าหมู,Noodles in gravy sauce with pork,ราดหน้าหมู|rat na mu,,13-noodles-in-gravy-sauce-with-pork,rad-na,40,,noodles,main,pork,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,13A.jpg
-13,ราดหน้าไก่,Noodles in gravy sauce with chicken,ราดหน้าไก่|rat na kai,,13-noodles-in-gravy-sauce-with-chicken,rad-na,40,,noodles,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,13A.jpg
+13,ราดหน้าหมู,Rad na with pork,ราดหน้าหมู|rat na mu,,13-noodles-in-gravy-sauce-with-pork,rad-na,40,,noodles,main,pork,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,13A.jpg
+13,ราดหน้าไก่,Rad na with chicken,ราดหน้าไก่|rat na kai,,13-noodles-in-gravy-sauce-with-chicken,rad-na,40,,noodles,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,13A.jpg
 13,สุกี้หมู,Sukiyaki (soup or dry) with pork,สุกี้หมู|suki mu,,13-sukiyaki-with-pork,,40,,noodles,main,pork,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,13A.jpg
 13,สุกี้ไก่,Sukiyaki (soup or dry) with chicken,สุกี้ไก่|suki kai,,13-sukiyaki-with-chicken,,40,,noodles,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,yes,no,2026-10-21,13A.jpg
 13,ผัดไทย (ธรรมดา),Pad Thai (classic),ผัดไทย|phat thai,,13-pad-thai,pad-thai,40,,noodles,main,egg,peanut;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
 13,ผัดไทยหมู,Pad Thai with pork,ผัดไทยหมู|phat thai mu,,13-pad-thai-with-pork,pad-thai,45,,noodles,main,pork;egg,peanut;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
 13,ผัดไทยไก่,Pad Thai with chicken,ผัดไทยไก่|phat thai kai,,13-pad-thai-with-chicken,pad-thai,45,,noodles,main,chicken;egg,peanut;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,13A.jpg
-14,ข้าวกะเพราไก่ยอ,Basil rice with chicken sausage,ข้าวกะเพราไก่ยอ|khao kaphrao kai yo,,14-basil-rice-with-chicken-sausage,pad-kra-pao,40,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14D.jpg
-14,ข้าวกะเพราลูกชิ้นเนื้อ,Basil rice with beef meatballs,ข้าวกะเพราลูกชิ้นเนื้อ|khao kaphrao luk chin nuea,,14-basil-rice-with-beef-meatballs,pad-kra-pao,50,,madeToOrder,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14D.jpg
-14,ข้าวกะเพราอกไก่สับ,Stir-fried minced chicken breast with basil on rice,ข้าวกะเพราอกไก่สับ|khao kaphrao ok kai sap,,14-stir-fried-minced-chicken-breast-with-basil,pad-kra-pao,40,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14D.jpg
-14,ข้าวกะเพราไก่กรอบ,Stir-fried crispy chicken with basil on rice,ข้าวกะเพราไก่กรอบ|khao kaphrao kai krop,,14-stir-fried-crispy-chicken-with-basil-on,pad-kra-pao,45,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14D.jpg
-14,ข้าวกะเพราเนื้อสไลด์ ริบอาย,Stir-fried sliced ribeye beef with basil on rice,ข้าวกะเพราเนื้อสไลด์ริบอาย|khao kaphrao nuea salai ribai,,14-stir-fried-sliced-ribeye-beef-with-basil,pad-kra-pao,55,,madeToOrder,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14H.jpg
-14,ข้าวกะเพราเนื้อสับโคขุน,Stir-fried minced grain-fed beef with basil on rice,ข้าวกะเพราเนื้อสับโคขุน|khao kaphrao nuea sap kho khun,,14-stir-fried-minced-fattened-beef-with-basil,pad-kra-pao,55,,madeToOrder,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14H.jpg
-14,ข้าวกะเพราเนื้อตุ๋น,Stir-fried braised beef with basil on rice,ข้าวกะเพราเนื้อตุ๋น|khao kaphrao nuea tun,,14-stir-fried-braised-beef-with-basil-on,pad-kra-pao,60,,madeToOrder,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14H.jpg
+14,ข้าวกะเพราไก่ยอ,Pad kra pao with chicken sausage on rice,ข้าวกะเพราไก่ยอ|khao kaphrao kai yo,,14-basil-rice-with-chicken-sausage,pad-kra-pao,40,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14D.jpg
+14,ข้าวกะเพราลูกชิ้นเนื้อ,Pad kra pao with beef meatballs on rice,ข้าวกะเพราลูกชิ้นเนื้อ|khao kaphrao luk chin nuea,,14-basil-rice-with-beef-meatballs,pad-kra-pao,50,,madeToOrder,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14D.jpg
+14,ข้าวกะเพราอกไก่สับ,Pad kra pao with minced chicken breast on rice,ข้าวกะเพราอกไก่สับ|khao kaphrao ok kai sap,,14-stir-fried-minced-chicken-breast-with-basil,pad-kra-pao,40,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14D.jpg
+14,ข้าวกะเพราไก่กรอบ,Pad kra pao with crispy chicken on rice,ข้าวกะเพราไก่กรอบ|khao kaphrao kai krop,,14-stir-fried-crispy-chicken-with-basil-on,pad-kra-pao,45,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14D.jpg
+14,ข้าวกะเพราเนื้อสไลด์ ริบอาย,Pad kra pao with sliced ribeye beef on rice,ข้าวกะเพราเนื้อสไลด์ริบอาย|khao kaphrao nuea salai ribai,,14-stir-fried-sliced-ribeye-beef-with-basil,pad-kra-pao,55,,madeToOrder,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14H.jpg
+14,ข้าวกะเพราเนื้อสับโคขุน,Pad kra pao with minced grain-fed beef on rice,ข้าวกะเพราเนื้อสับโคขุน|khao kaphrao nuea sap kho khun,,14-stir-fried-minced-fattened-beef-with-basil,pad-kra-pao,55,,madeToOrder,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14H.jpg
+14,ข้าวกะเพราเนื้อตุ๋น,Pad kra pao with braised beef on rice,ข้าวกะเพราเนื้อตุ๋น|khao kaphrao nuea tun,,14-stir-fried-braised-beef-with-basil-on,pad-kra-pao,60,,madeToOrder,main,beef,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14H.jpg
 14,ข้าวไก่ย่างน้ำจิ้มแจ่ว,Grilled chicken with spicy dipping sauce and rice,ข้าวไก่ย่างน้ำจิ้มแจ่ว|khao kai yang nam chim chaeo,,14-grilled-chicken-with-spicy-dipping-sauce-and,,45,,singlePlate,main,chicken,wheat;soy;fish;shellfish,grilled,hot,no,no,2026-10-21,14D.jpg
 14,ข้าวไก่กรอบ,Crispy chicken rice,ข้าวไก่กรอบ|khao kai krop,,14-crispy-chicken-rice,,45,,singlePlate,main,chicken,wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,14G.jpg
 14,ข้าวไก่สับทอดกระเทียม,Fried minced chicken with garlic on rice,ข้าวไก่สับทอดกระเทียม|khao kai sap thot krathiam,,14-fried-minced-chicken-with-garlic-on-rice,,40,,madeToOrder,main,chicken,wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14F.jpg
@@ -655,8 +655,8 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 14,ข้าวผัดต้มยำปลาหมึก,Tom yum fried rice with squid,ข้าวผัดต้มยำปลาหมึก|khao phat tom yam pla muek,,14-tom-yum-fried-rice-with-squid,khao-pad,60,,rice,main,seafood,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14F.jpg
 14,ข้าวผัดต้มยำทะเลรวม ปลาหมึก + กุ้ง,Seafood tom yum fried rice with squid and shrimp,ข้าวผัดต้มยำทะเลรวม|khao phat tom yam thale ruam,,14-seafood-tom-yum-fried-rice-with-squid,khao-pad,60,,rice,main,seafood,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14F.jpg
 14,ข้าวผัดมันเนื้อพิคานย่าสเต็ก,Beef fat fried rice with picanha steak,ข้าวผัดมันเนื้อพิคานย่าสเต็ก|khao phat man nuea phikhanya sa tek,,14-beef-fat-fried-rice-with-picanha-steak,khao-pad,55,พิเศษ|Large portion|30,rice,main,beef,egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14G.jpg
-14,ข้าวหมกเนื้อ,Beef biryani-style rice,ข้าวหมกเนื้อ|khao mok nuea,,14-beef-biryani-style-rice,khao-mok-gai,60,,rice,main,beef,fish,steamed,hot,no,no,2026-10-21,14F.jpg
-14,ข้าวหมกไก่,Chicken biryani-style rice,ข้าวหมกไก่|khao mok kai,,14-chicken-biryani-style-rice,khao-mok-gai,50,,rice,main,chicken,fish,steamed,hot,no,no,2026-10-21,14F.jpg
+14,ข้าวหมกเนื้อ,Khao mok nuea (Thai-style beef biryani),ข้าวหมกเนื้อ|khao mok nuea,,14-beef-biryani-style-rice,khao-mok-gai,60,,rice,main,beef,fish,steamed,hot,no,no,2026-10-21,14F.jpg
+14,ข้าวหมกไก่,Khao mok gai (Thai-style chicken biryani),ข้าวหมกไก่|khao mok kai,,14-chicken-biryani-style-rice,khao-mok-gai,50,,rice,main,chicken,fish,steamed,hot,no,no,2026-10-21,14F.jpg
 14,ข้าวไข่ข้น,Rice with creamy scrambled eggs,ข้าวไข่ข้น|khao khai khon,,14-rice-with-creamy-scrambled-eggs,,30,,singlePlate,main,egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14E.jpg
 14,ข้าวไข่ข้นชีส,Cheese scrambled egg rice,ข้าวไข่ข้นชีส|khao khai khon chis,,14-cheese-scrambled-egg-rice,,45,,singlePlate,main,egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14E.jpg
 14,ข้าวไข่ข้นแฮมไก่,Rice with creamy scrambled eggs and ham,ข้าวไข่ข้นแฮมไก่|khao khai khon haem kai,,14-rice-with-creamy-scrambled-eggs-and-ham,,45,,singlePlate,main,chicken;egg,milk;egg;wheat;soy;fish;shellfish,stirFried,hot,no,no,2026-10-21,14E.jpg
@@ -667,11 +667,11 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 14,เกาเหลาเนื้อตุ๋น + ลูกชิ้น,Braised beef soup with meatballs,เกาเหลาเนื้อตุ๋นลูกชิ้น|kao lao nuea tun luk chin,,14-braised-beef-soup-with-meatballs,,50,,soup,main,beef,fish,boiled,hot,yes,no,2026-10-21,14F.jpg
 14,เกาเหลาเนื้อตุ๋น,Braised beef soup,เกาเหลาเนื้อตุ๋น|kao lao nuea tun,,14-braised-beef-soup,,50,,soup,main,beef,fish,boiled,hot,yes,no,2026-10-21,14F.jpg
 14,เกาเหลาลูกชิ้น,Meatball soup,เกาเหลาลูกชิ้น|kao lao luk chin,,14-braised-meatball-soup,,40,,soup,main,beef,fish,boiled,hot,yes,no,2026-10-21,14F.jpg
-15,ข้าวมันไก่,Chicken rice (boiled chicken),ข้าวมันไก่|khao man kai,,15-chicken-rice,khao-man-gai,45,พิเศษ|Large portion|10,rice,main,chicken,soy;fish,steamed,hot,no,no,2026-10-21,15.jpg
-15,ข้าวมันไก่ทอด,Fried chicken rice,ข้าวมันไก่ทอด|khao man kai thot,,15-fried-chicken-rice,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,15.jpg
-15,ข้าวมันไก่ผสม,Mixed chicken rice (combo of boiled and fried chicken),ข้าวมันไก่ผสม|khao man kai phasom,,15-mixed-chicken-rice,khao-man-gai,55,พิเศษ|Large portion|10,rice,main,chicken,soy;fish,steamed,hot,no,no,2026-10-21,15.jpg
-15,ข้าวขาหมู,Stewed pork leg with rice,ข้าวขาหมู|khao kha mu,,15-stewed-pork-leg-with-rice,,50,พิเศษ|Large portion|10,rice,main,pork,soy;fish,boiled,hot,yes,no,2026-10-21,15.jpg
-15,ข้าวขาหมูผสม,Mixed stewed pork leg with rice,ข้าวขาหมูผสม|khao kha mu phasom,,15-mixed-stewed-pork-leg-with-rice,,60,พิเศษ|Large portion|5,rice,main,pork,soy;fish,boiled,hot,yes,no,2026-10-21,15.jpg
+15,ข้าวมันไก่,"Khao man gai, boiled chicken rice",ข้าวมันไก่|khao man kai,,15-chicken-rice,khao-man-gai,45,พิเศษ|Large portion|10,rice,main,chicken,soy;fish,steamed,hot,no,no,2026-10-21,15.jpg
+15,ข้าวมันไก่ทอด,Khao man gai with fried chicken,ข้าวมันไก่ทอด|khao man kai thot,,15-fried-chicken-rice,khao-man-gai,50,พิเศษ|Large portion|10,rice,main,chicken,wheat;soy;fish;shellfish,deepFried,hot,no,no,2026-10-21,15.jpg
+15,ข้าวมันไก่ผสม,Khao man gai with boiled and fried chicken,ข้าวมันไก่ผสม|khao man kai phasom,,15-mixed-chicken-rice,khao-man-gai,55,พิเศษ|Large portion|10,rice,main,chicken,soy;fish,steamed,hot,no,no,2026-10-21,15.jpg
+15,ข้าวขาหมู,Khao kha mu (stewed pork leg on rice),ข้าวขาหมู|khao kha mu,,15-stewed-pork-leg-with-rice,,50,พิเศษ|Large portion|10,rice,main,pork,soy;fish,boiled,hot,yes,no,2026-10-21,15.jpg
+15,ข้าวขาหมูผสม,"Khao kha mu, mixed cuts (stewed pork leg on rice)",ข้าวขาหมูผสม|khao kha mu phasom,,15-mixed-stewed-pork-leg-with-rice,,60,พิเศษ|Large portion|5,rice,main,pork,soy;fish,boiled,hot,yes,no,2026-10-21,15.jpg
 15,ไข่มะตูม,Soft-boiled egg,ไข่มะตูม|khai matum,,15-soft-boiled-egg,,10,,snack,side,egg,egg;fish,boiled,hot,no,no,2026-10-21,15.jpg
 15,ข้าวเปล่า,Plain steamed rice,ข้าวเปล่า|khao plao,,15-plain-steamed-rice,,10,,rice,side,none,,steamed,hot,no,yes,2026-10-21,15.jpg
 16,ทาโกะยากิ 3/6 ลูก,"Takoyaki, 3 or 6 pieces",ทาโกะยากิ|thako yaki,,16-takoyaki,,25,6 ลูก|6 pieces|20,snack,main,seafood,egg;wheat;fish;shellfish,deepFried,hot,no,no,2026-10-21,16A.jpg
@@ -689,28 +689,28 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 16,ชีสบอล,Cheese balls,ชีสบอล|chis bon,,16-cheese-balls,,40,,snack,main,none,milk;wheat,deepFried,hot,no,yes,2026-10-21,16A.jpg
 16,เฟรนช์ฟรายส์มันหวาน,Sweet potato fries,เฟรนช์ฟรายส์มันหวาน|fen frai man wan,,16-sweet-potato-fries,,40,,snack,main,none,wheat,deepFried,hot,no,yes,2026-10-21,16B.jpg
 16,หอมทอด,Onion rings,หอมทอด|hom thot,,16-onion-rings,,40,,snack,main,none,wheat,deepFried,hot,no,yes,2026-10-21,16B.jpg
-16,ไก่ป๊อป,Chicken pop,ไก่ป๊อป|kai pop,,16-chicken-pop,,45,,snack,main,chicken,wheat,deepFried,hot,no,no,2026-10-21,16A.jpg
+16,ไก่ป๊อป,Popcorn chicken,ไก่ป๊อป|kai pop,,16-chicken-pop,,45,,snack,main,chicken,wheat,deepFried,hot,no,no,2026-10-21,16A.jpg
 16,ไก่กรอบซอสต่างๆ,Crispy chicken with sauces,ไก่กรอบซอสต่างๆ|kai krop sot tang tang,,16-crispy-chicken-with-sauces,,45,,snack,main,chicken,wheat,deepFried,hot,yes,no,2026-10-21,16B.jpg
 17,กาแลคซี่ ฮันนี่เลมอน,Galaxy honey lemon,กาแลคซี่ฮันนี่เลมอน|kalaeksi hanni lemon,,17-galaxy-honey-lemon,,49,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,โกโก้มินท์,Cocoa mint,โกโก้มินท์|koko min,,17-cocoa-mint,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
-17,Am Tea white malt collagen,Am Tea white malt collagen,,,17-am-tea-white-malt-collagen,,49,,drink,drink,none,wheat,boiled,cold,no,no,2026-10-21,17A.jpg
+17,แอมที ไวท์มอลต์คอลลาเจน,Am Tea white malt collagen,,,17-am-tea-white-malt-collagen,,49,,drink,drink,none,wheat,boiled,cold,no,no,2026-10-21,17A.jpg
 17,เรนโบว์มินท์,Rainbow mint,เรนโบว์มินท์|renbo min,,17-rainbow-mint,,49,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,โกโก้ลาวา,Cocoa lava,โกโก้ลาวา|koko lawa,,17-cocoa-lava,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
-17,Premium Am Tea Signature,Premium Am Tea Signature,,,17-premium-am-tea-signature,,59,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
-17,Premium Am Tea Signature Brown Sugar,Premium Am Tea Signature Brown Sugar,,,17-premium-am-tea-signature-brown-sugar,,59,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
+17,พรีเมียมแอมที ซิกเนเจอร์,Premium Am Tea Signature,,,17-premium-am-tea-signature,,59,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
+17,พรีเมียมแอมที ซิกเนเจอร์ บราวน์ชูการ์,Premium Am Tea Signature Brown Sugar,,,17-premium-am-tea-signature-brown-sugar,,59,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,กาแลคซี่ ยูซุ,Galaxy yuzu,กาแลคซี่ยูซุ|kalaeksi yuzu,,17-galaxy-yuzu,,59,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชายูซุ,Yuzu tea,ชายูซุ|cha yuzu,,17-yuzu-tea,,59,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,สตรอว์เบอร์รีโซดา,Strawberry soda,สตรอว์เบอร์รีโซดา|sattroberri soda,,17-strawberry-soda,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ลิ้นจี่โซดา,Lychee soda,ลิ้นจี่โซดา|linchi soda,,17-lychee-soda,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ฮันนี่เลมอนโซดา,Honey lemon soda,ฮันนี่เลมอนโซดา|hanni lemon soda,,17-honey-lemon-soda,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,แอปเปิลโซดา,Apple soda,แอปเปิลโซดา|aepphoen soda,,17-apple-soda,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
-17,แดงโซดา,Red soda,แดงโซดา|daeng soda,,17-red-soda,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
-17,แดงมะนาวโซดา,Red lemon soda,แดงมะนาวโซดา|daeng manao soda,,17-red-lemon-soda,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
+17,แดงโซดา,Red syrup soda,แดงโซดา|daeng soda,,17-red-soda,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
+17,แดงมะนาวโซดา,Red syrup and lime soda,แดงมะนาวโซดา|daeng manao soda,,17-red-lemon-soda,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชาสตรอว์เบอร์รี,Strawberry tea,ชาสตรอว์เบอร์รี|cha sattroberri,,17-strawberry-tea,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชาลิ้นจี่,Lychee tea,ชาลิ้นจี่|cha linchi,,17-lychee-tea,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชาฮันนี่เลมอน,Honey lemon tea,ชาฮันนี่เลมอน|cha hanni lemon,,17-honey-lemon-tea,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชาแอปเปิล,Apple tea,ชาแอปเปิล|cha aepphoen,,17-apple-tea,,29,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
-17,ชานมไต้หวัน,Taiwan milk tea,ชานมไต้หวัน|cha nom taiwan,,17-taiwan-milk-tea,,32,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
+17,ชานมไต้หวัน,Taiwanese milk tea,ชานมไต้หวัน|cha nom taiwan,,17-taiwan-milk-tea,,32,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชานมวนิลลา,Vanilla milk tea,ชานมวนิลลา|cha nom wanila,,17-vanilla-milk-tea,,32,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชานมคาราเมล,Caramel milk tea,ชานมคาราเมล|cha nom kharamel,,17-caramel-milk-tea,,32,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชานมสตรอว์เบอร์รี,Strawberry milk tea,ชานมสตรอว์เบอร์รี|cha nom sattroberri,,17-strawberry-milk-tea,,32,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
@@ -718,7 +718,7 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 17,ชานมแอปเปิล,Apple milk tea,ชานมแอปเปิล|cha nom aepphoen,,17-apple-milk-tea,,32,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชานมกาแฟ,Coffee milk tea,ชานมกาแฟ|cha nom kafae,,17-coffee-milk-tea,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชานมโกโก้,Cocoa milk tea,ชานมโกโก้|cha nom koko,,17-cocoa-milk-tea,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
-17,ชาไต้หวันบราวน์ชูการ์,Brown sugar Taiwan tea,ชาไต้หวันบราวน์ชูการ์|cha taiwan brown sugar,,17-brown-sugar-milk-tea,,42,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
+17,ชาไต้หวันบราวน์ชูการ์,Brown sugar Taiwanese tea,ชาไต้หวันบราวน์ชูการ์|cha taiwan brown sugar,,17-brown-sugar-milk-tea,,42,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชานมเผือก,Taro milk tea,ชานมเผือก|cha nom phueak,,17-taro-milk-tea,,42,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชานมเย็น,Thai milk tea,ชานมเย็น|cha nom yen,,17-thai-milk-tea,,32,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชามะนาว,Lemon tea,ชามะนาว|cha manao,,17-lemon-tea,,32,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
@@ -739,29 +739,29 @@ stall_number,name_th,name_en,say,menu_number,slug,canonical_slug,price,variants,
 17,โกโก้เย็น,Iced cocoa,โกโก้เย็น|koko yen,,17-iced-cocoa,,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,กาแฟเย็น,Iced coffee,กาแฟเย็น|kafae yen,,17-iced-coffee,,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,ชาเขียวมะลิ,Jasmine green tea,ชาเขียวมะลิ|cha khiao mali,,17-jasmine-green-tea,,35,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
-17,น้ำพันช์,Punch,น้ำพันช์|nam phan,,17-punch,,45,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
+17,น้ำพันช์,Fruit punch,น้ำพันช์|nam phan,,17-punch,,45,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,น้ำฝรั่ง,Guava juice,น้ำฝรั่ง|nam farang,,17-guava-juice,,45,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
 17,นมกล้วยเกาหลี,Korean banana milk,นมกล้วยเกาหลี|nom kluai kaoli,,17-korean-banana-milk,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,นมเมลอนฮอกไกโด,Hokkaido melon milk,นมเมลอนฮอกไกโด|nom melon hokkaido,,17-hokkaido-melon-milk,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17A.jpg
 17,น้ำส้มยูซุ,Yuzu orange juice,น้ำส้มยูซุ|nam som yuzu,,17-yuzu-orange-juice,,59,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17A.jpg
-17,ชานมไต้หวัน,"Taiwan milk tea, sugar free",ชานมไต้หวัน|cha nom taiwan,,17-taiwan-milk-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
-17,ชานมเย็น,"Thai milk tea, sugar free",ชานมเย็น|cha nom yen,,17-thai-milk-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
-17,ชามะนาว,"Lemon tea, sugar free",ชามะนาว|cha manao,,17-lemon-tea-sugar-free,,39,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17C.jpg
-17,ชาดำเย็น,"Iced black tea, sugar free",ชาดำเย็น|cha dam yen,,17-thai-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
-17,ชาเขียว,"Green tea, sugar free",ชาเขียว|cha khiao,,17-green-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
-17,ชาเขียวนม,"Milk green tea, sugar free",ชาเขียวนม|cha khiao nom,,17-milk-green-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
-17,ชาเขียวมะนาว,"Lemon green tea, sugar free",ชาเขียวมะนาว|cha khiao manao,,17-lemon-green-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
-17,โกโก้เย็น,"Iced cocoa, sugar free",โกโก้เย็น|koko yen,,17-iced-cocoa-sugar-free,,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
-17,กาแฟเย็น,"Iced coffee, sugar free",กาแฟเย็น|kafae yen,,17-iced-coffee-sugar-free,,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
-17,โกโก้นมสด,"Cocoa milk, sugar free",โกโก้นมสด|koko nom sot,,17-cocoa-milk-sugar-free,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
-17,กาแฟนมสด,"Coffee milk, sugar free",กาแฟนมสด|kafae nom sot,,17-coffee-milk-sugar-free,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,ชานมไต้หวัน (ไม่มีน้ำตาล),"Taiwanese milk tea, sugar-free",ชานมไต้หวัน|cha nom taiwan,,17-taiwan-milk-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,ชานมเย็น (ไม่มีน้ำตาล),"Thai milk tea, sugar-free",ชานมเย็น|cha nom yen,,17-thai-milk-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,ชามะนาว (ไม่มีน้ำตาล),"Lemon tea, sugar-free",ชามะนาว|cha manao,,17-lemon-tea-sugar-free,,39,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17C.jpg
+17,ชาดำเย็น (ไม่มีน้ำตาล),"Iced black tea, sugar-free",ชาดำเย็น|cha dam yen,,17-thai-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,ชาเขียว (ไม่มีน้ำตาล),"Green tea, sugar-free",ชาเขียว|cha khiao,,17-green-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,ชาเขียวนม (ไม่มีน้ำตาล),"Milk green tea, sugar-free",ชาเขียวนม|cha khiao nom,,17-milk-green-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,ชาเขียวมะนาว (ไม่มีน้ำตาล),"Lemon green tea, sugar-free",ชาเขียวมะนาว|cha khiao manao,,17-lemon-green-tea-sugar-free,,39,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,โกโก้เย็น (ไม่มีน้ำตาล),"Iced cocoa, sugar-free",โกโก้เย็น|koko yen,,17-iced-cocoa-sugar-free,,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,กาแฟเย็น (ไม่มีน้ำตาล),"Iced coffee, sugar-free",กาแฟเย็น|kafae yen,,17-iced-coffee-sugar-free,,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,โกโก้นมสด (ไม่มีน้ำตาล),"Cocoa milk, sugar-free",โกโก้นมสด|koko nom sot,,17-cocoa-milk-sugar-free,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
+17,กาแฟนมสด (ไม่มีน้ำตาล),"Coffee milk, sugar-free",กาแฟนมสด|kafae nom sot,,17-coffee-milk-sugar-free,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17C.jpg
 17,ลาเต้ชาไทย,Thai tea latte,ลาเต้ชาไทย|latte cha thai,,17-thai-tea-latte,cha-yen,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17D.jpg
 17,มัทฉะลาเต้,Matcha latte,มัทฉะลาเต้|matcha latte,,17-matcha-latte,,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17D.jpg
-17,Coffee & cocoa,Coffee & cocoa,,,17-coffee-and-cocoa,,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17D.jpg
-17,ชามะพร้าว,Coconut Taiwan tea,ชามะพร้าว|cha maphrao,,17-coconut-taiwan-tea,,49,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17D.jpg
-17,ชามะพร้าว,Coconut Thai tea,ชามะพร้าว|cha maphrao,,17-coconut-thai-tea,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17D.jpg
-17,ชามะพร้าว,Coconut green tea,ชามะพร้าว|cha maphrao,,17-coconut-green-tea,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17D.jpg
-17,ชามะพร้าว,Coconut milk,ชามะพร้าว|cha maphrao,,17-coconut-milk,,49,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17D.jpg
+17,กาแฟโกโก้,Coffee & cocoa,,,17-coffee-and-cocoa,,45,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17D.jpg
+17,ชาไต้หวันมะพร้าว,Coconut Taiwanese tea,ชามะพร้าว|cha maphrao,,17-coconut-taiwan-tea,,49,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17D.jpg
+17,ชาไทยมะพร้าว,Coconut Thai tea,ชามะพร้าว|cha maphrao,,17-coconut-thai-tea,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17D.jpg
+17,ชาเขียวมะพร้าว,Coconut green tea,ชามะพร้าว|cha maphrao,,17-coconut-green-tea,,49,,drink,drink,none,milk,boiled,cold,no,no,2026-10-21,17D.jpg
+17,นมมะพร้าว,Coconut milk,ชามะพร้าว|cha maphrao,,17-coconut-milk,,49,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17D.jpg
 17,ม่วงซ่าส์,Purple fizzy drink,ม่วงซ่าส์|muang sa,,17-sparkling-mango,,32,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17F.jpg
 17,บลูเลมอน,Blue lemon,บลูเลมอน|blue lemon,,17-blue-lemon,,32,,drink,drink,none,,boiled,cold,no,no,2026-10-21,17F.jpg
 17,แฮรี่เบียร์,Butter beer,แฮรี่เบียร์|haeri bia,,17-butter-beer,,39,,drink,drink,none,milk;wheat,boiled,cold,no,no,2026-10-21,17F.jpg

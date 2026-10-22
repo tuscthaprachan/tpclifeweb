@@ -3,6 +3,7 @@ import { Timestamp } from "@/components/ui/Timestamp";
 import { cx } from "@/components/ui/cx";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { DishVariant, StallAddOn } from "@/lib/sanity/types";
+import { OtherName } from "./OtherName";
 import { EAT, eat, t } from "./strings";
 
 interface PriceTagProps {
@@ -60,6 +61,7 @@ export function PriceTag({ price, variants = [], addOns = [], checkedOn, locale,
               <li key={variant._key} className="flex flex-wrap justify-between gap-x-[var(--space-4)]">
                 <span>
                   {pick(variant.label, locale)} ({eat.plusBaht(locale, variant.delta)})
+                  {locale === "en" ? <OtherName name={variant.label} locale={locale} /> : null}
                 </span>
                 <span className="font-medium">{eat.baht(locale, price + variant.delta)}</span>
               </li>
@@ -73,7 +75,10 @@ export function PriceTag({ price, variants = [], addOns = [], checkedOn, locale,
           <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
             {addOns.map((variant) => (
               <li key={variant._key} className="flex flex-wrap justify-between gap-x-[var(--space-4)]">
-                <span>{pick(variant.label, locale)}</span>
+                <span>
+                  {pick(variant.label, locale)}
+                  {locale === "en" ? <OtherName name={variant.label} locale={locale} /> : null}
+                </span>
                 <span className="font-medium">{eat.plusBaht(locale, variant.delta)}</span>
               </li>
             ))}

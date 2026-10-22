@@ -24,6 +24,7 @@ import { DishCard } from "../DishCard";
 import { PriceTag } from "../PriceTag";
 import { AVOID_LABEL, DIET_SHORT_LABEL, label } from "../labels";
 import { dishHref, stallHref } from "../links";
+import { OtherName } from "../OtherName";
 import { eat } from "../strings";
 import { GROUP, group } from "./strings";
 import {
@@ -170,6 +171,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
               >
                 {pick(dish.name, loc)}
               </Link>
+              <OtherName name={dish.name} locale={loc} />
               <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={loc} />
             </li>
           ))}
