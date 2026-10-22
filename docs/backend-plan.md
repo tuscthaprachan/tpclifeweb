@@ -25,7 +25,7 @@ The Service Manual is written for UK government, so we adopt its principles and 
 | 6 | Multidisciplinary team | Named service owner per service from TUSU/TUSC; content, design, research and engineering roles identified even if one person holds several. |
 | 7 | Agile ways of working | Discovery, alpha, beta, live per service; the phase banner reflects the real phase. |
 | 8 | Iterate frequently | Neon branch per preview deployment so every change is testable with real-shaped data. |
-| 9 | Secure and private | Entra OIDC for staff, least-privilege roles, audit log, PII encrypted at rest at column level, PII deleted after 1 year. |
+| 9 | Secure and private | Entra OIDC for staff, least-privilege roles, audit log, PII encrypted at rest at column level, PII deleted 1 year after case closure. |
 | 10 | Define success, publish data | KPIs per service: completion rate, user satisfaction, digital take-up, time to resolution (complaints), return rate (lost and found). Published on a `/performance` page. |
 | 11 | Choose the right tools | Boring, open technology: Postgres, Drizzle, Next.js, OIDC. |
 | 12 | Make source code open | Repository stays public; secrets and data never in the repo. |
@@ -102,7 +102,7 @@ Common to every service:
 | Match | System + officer | Candidates ranked by category, place, date window and `pg_trgm` text similarity. Officer confirms; owner notified. |
 | Claim | Owner | Answers verification questions; officer compares with hidden details. |
 | Handover | Officer | ID check recorded (no ID number stored), collection time, which desk (TUSU or TUSC). Case closed. |
-| Unclaimed | System | Found items are kept indefinitely and stay listed until claimed. Personal data on the case is deleted after 1 year; the item record remains. |
+| Unclaimed | System | Found items are kept indefinitely and stay listed until claimed. The case stays open, so its personal data is kept until it closes, then deleted 1 year later. |
 
 ### 4. Complaints
 
@@ -122,11 +122,11 @@ Common to every service:
 ## Privacy (PDPA)
 
 - Collect the minimum. Each personal field has a stated purpose.
-- Retention: personal data is kept for 1 year, then deleted by a scheduled job. Deletion is audited.
+- Retention: personal data is deleted 1 year after the case closes, by a scheduled job. Deletion is audited.
 - Privacy notice linked from every service start page.
 - Data subject requests (access, deletion) handled from the staff console.
 - PII columns encrypted; access logged.
-- Named data protection contact: **to be confirmed**.
+- Data protection contact: TUSU and TUSC jointly.
 
 ## Phases
 
@@ -144,10 +144,6 @@ Phases 1–2 alone remove Sanity and nearly all remaining `npm audit` findings.
 1. Unclaimed found items are kept indefinitely.
 2. Complaints are jointly handled by TUSU and TUSC.
 3. LINE notifications are on the back burner.
-4. Personal data is kept for 1 year.
+4. Personal data is deleted 1 year after case closure.
 5. Staff roles are managed in-app, not from Entra groups.
-
-## Open questions
-
-1. Named data protection contact.
-2. Whether the 1-year clock for personal data runs from submission or from case closure.
+6. TUSU and TUSC are jointly the data protection contact.
