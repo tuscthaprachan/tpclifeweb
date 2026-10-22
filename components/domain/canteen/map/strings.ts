@@ -16,7 +16,7 @@ export const MAP_STRINGS = {
     th: "หาร้านแต่ละร้านบนผังโรงอาหาร หรือสลับไปดูเป็นรายชื่อก็ได้",
     en: "Find each stall on the floor plan, or switch to the list.",
   },
-  svgTitle: { th: "ผังพื้นของโรงอาหาร", en: "Canteen floor plan" },
+  svgTitle: { th: "แผนผังโรงอาหาร", en: "Canteen floor plan" },
   svgDesc: {
     th: "ภาพประกอบเสริม รายชื่อร้านที่เรียงตามเลขร้านมีข้อมูลเดียวกัน",
     en: "A supplementary drawing. The list of stalls in stall number order holds the same information.",
@@ -30,7 +30,7 @@ export const MAP_STRINGS = {
   scrollHint: { th: "เลื่อนผังไปทางซ้ายและขวาเพื่อดูทั้งผัง แตะร้านเพื่อดูรายละเอียด", en: "Scroll the plan sideways to see all of it. Tap a stall to open it." },
   seeList: { th: "ดูร้านทั้งหมดเป็นรายชื่อ", en: "See every stall as a list" },
   listHeading: { th: "ร้านในโรงอาหาร ตามเลขร้าน", en: "Stalls in stall number order" },
-  mapHeading: { th: "ผังพื้น", en: "Floor plan" },
+  mapHeading: { th: "แผนผัง", en: "Floor plan" },
   key: { th: "คำอธิบายสัญลักษณ์", en: "Key" },
   keySeating: { th: "พื้นที่เส้นประคือโซนที่นั่ง", en: "Dashed areas are seating zones." },
   keyStops: {
