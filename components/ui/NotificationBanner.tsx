@@ -33,7 +33,7 @@ export function NotificationBanner({ variant, title, children, className }: Noti
     <div
       {...liveRegionProps(POLITENESS[variant])}
       className={cx(
-        "rounded-panel border-l-[var(--border-width-thick)] px-[var(--space-4)] py-[var(--space-4)] text-ink-900",
+        "rounded-panel border-l-[length:var(--border-width-thick)] px-[var(--space-4)] py-[var(--space-4)] text-ink-900",
         VARIANT_CLASS[variant],
         className,
       )}

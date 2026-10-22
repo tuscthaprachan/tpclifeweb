@@ -41,7 +41,7 @@ export function EatTabs({ locale, current, filters, className }: EatTabsProps) {
                 href={eatHref(locale, tab.route, filters)}
                 aria-current={selected ? "page" : undefined}
                 className={cx(
-                  "inline-flex min-h-[var(--target-min)] items-center border-b-[var(--border-width-thick)] px-[var(--space-3)] py-[var(--space-2)] text-base no-underline",
+                  "inline-flex min-h-[var(--target-min)] items-center border-b-[length:var(--border-width-thick)] px-[var(--space-3)] py-[var(--space-2)] text-base no-underline",
                   selected ? "border-action font-semibold text-action" : "border-transparent font-medium text-ink-600 hover:text-ink-900",
                 )}
               >

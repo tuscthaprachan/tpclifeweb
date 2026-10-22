@@ -66,7 +66,7 @@ export function Tabs({ items, label, defaultTabId, className }: TabsProps) {
               onClick={() => setActive(item.id)}
               onKeyDown={(event) => onKeyDown(event, index)}
               className={cx(
-                "min-h-[var(--target-min)] border-b-[var(--border-width-thick)] px-[var(--space-3)] py-[var(--space-2)] text-base",
+                "min-h-[var(--target-min)] border-b-[length:var(--border-width-thick)] px-[var(--space-3)] py-[var(--space-2)] text-base",
                 selected ? "border-action font-semibold text-action" : "border-transparent font-medium text-ink-600 hover:text-ink-900",
               )}
             >
