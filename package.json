@@ -19,7 +19,8 @@
   },
   "comment:overrides": "Pins TypeScript across the tree. Without this npm oscillates between TS 5 and TS 7 resolving typescript-eslint's wide range and never terminates. TS 7 is not used because typescript-eslint 8 caps below TS 6.1.",
   "overrides": {
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "smol-toml": "^1.9.1"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.1",
