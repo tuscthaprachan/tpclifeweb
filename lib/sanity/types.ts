@@ -747,7 +747,7 @@ export interface CanteenDish extends DocumentMeta {
   lastReviewed?: string;
 }
 
-/** An entrance to the canteen, positioned on the edge of the floor plan. */
+/** An entrance to the canteen, in the cell just inside the wall it is on: `row` for a north or south wall, `col` for a west or east one. */
 export interface CanteenEntrance {
   _key: string;
   label: LocaleString;
@@ -765,6 +765,26 @@ export interface CanteenSeatingZone {
   h: number;
 }
 
+/** A corner of the building outline, in grid units. */
+export interface CanteenOutlinePoint {
+  _key?: string;
+  col: number;
+  row: number;
+}
+
+export type CanteenLandmarkKind = "stairs" | "lifts" | "toilets" | "atm" | "lobby";
+
+/** Part of the building that is not a stall or seating: drawn on the plan, never interactive. */
+export interface CanteenLandmark {
+  _key: string;
+  kind: CanteenLandmarkKind;
+  label: LocaleString;
+  col: number;
+  row: number;
+  w: number;
+  h: number;
+}
+
 /** Singleton. Holds the floor plan. */
 export interface CanteenSettings extends DocumentMeta {
   _type: "canteenSettings";
@@ -774,6 +794,9 @@ export interface CanteenSettings extends DocumentMeta {
   gridRows: number;
   entrances?: CanteenEntrance[];
   seatingZones?: CanteenSeatingZone[];
+  /** Corners of the building, in grid units. When present the plan is drawn as this polygon instead of the whole grid. */
+  outline?: CanteenOutlinePoint[];
+  landmarks?: CanteenLandmark[];
   /** Which edge of the plan faces the river. */
   riverSide?: FloorSide;
 }

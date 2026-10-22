@@ -64,49 +64,59 @@ export function hasFloorPlan(settings: CanteenSettings | null | undefined, stall
   return wholeNumber(settings.gridCols, 0) >= 1 && wholeNumber(settings.gridRows, 0) >= 1;
 }
 
-/** The edge of the plan an entrance sits on, in grid units, at the middle of its cell. */
-export function entrancePoint(entrance: Pick<CanteenEntrance, "col" | "row" | "side">, cols: number, rows: number): Point {
+/** The wall an entrance sits on, in grid units, at the middle of its cell. The cell is the one just inside the wall. */
+export function entrancePoint(entrance: Pick<CanteenEntrance, "col" | "row" | "side">): Point {
   switch (entrance.side) {
     case "north":
-      return { x: entrance.col + 0.5, y: 0 };
+      return { x: entrance.col + 0.5, y: entrance.row };
     case "south":
-      return { x: entrance.col + 0.5, y: rows };
+      return { x: entrance.col + 0.5, y: entrance.row + 1 };
     case "west":
-      return { x: 0, y: entrance.row + 0.5 };
+      return { x: entrance.col, y: entrance.row + 0.5 };
     case "east":
-      return { x: cols, y: entrance.row + 0.5 };
+      return { x: entrance.col + 1, y: entrance.row + 0.5 };
   }
 }
 
-/** Grid size actually needed: the settings size, grown to hold every stall and seating zone. */
+/** Grid size actually needed: the settings size, grown to hold every stall, seating zone, landmark and outline corner. */
 export function gridExtent(
-  settings: Pick<CanteenSettings, "gridCols" | "gridRows" | "seatingZones">,
+  settings: Pick<CanteenSettings, "gridCols" | "gridRows" | "seatingZones"> & Partial<Pick<CanteenSettings, "landmarks" | "outline">>,
   stalls: readonly Pick<CanteenStall, "mapCell">[],
 ): { cols: number; rows: number } {
   let cols = Math.min(MAX_GRID, Math.max(1, wholeNumber(settings.gridCols, 1)));
   let rows = Math.min(MAX_GRID, Math.max(1, wholeNumber(settings.gridRows, 1)));
-  const cells: MapCell[] = [...stalls.map((stall) => stall.mapCell), ...(settings.seatingZones ?? [])];
+  const cells: MapCell[] = [...stalls.map((stall) => stall.mapCell), ...(settings.seatingZones ?? []), ...(settings.landmarks ?? [])];
   for (const cell of cells) {
     cols = Math.min(MAX_GRID, Math.max(cols, cell.col + Math.max(1, cell.w)));
     rows = Math.min(MAX_GRID, Math.max(rows, cell.row + Math.max(1, cell.h)));
+  }
+  for (const corner of settings.outline ?? []) {
+    cols = Math.min(MAX_GRID, Math.max(cols, corner.col));
+    rows = Math.min(MAX_GRID, Math.max(rows, corner.row));
   }
   return { cols, rows };
 }
 
 /** Margins and viewBox size for a plan. `compact` drops the entrance bands, which only carry labels. */
 export function planLayout(
-  settings: Pick<CanteenSettings, "gridCols" | "gridRows" | "seatingZones" | "entrances" | "riverSide">,
+  settings: Pick<CanteenSettings, "gridCols" | "gridRows" | "seatingZones" | "entrances" | "riverSide"> &
+    Partial<Pick<CanteenSettings, "landmarks" | "outline">>,
   stalls: readonly Pick<CanteenStall, "mapCell">[],
   options: { compact?: boolean } = {},
 ): PlanLayout {
   const { cols, rows } = gridExtent(settings, stalls);
   const margins: Margins = { top: BASE_MARGIN, right: BASE_MARGIN, bottom: BASE_MARGIN, left: BASE_MARGIN };
-  const grow = (side: FloorSide, amount: number) => {
-    margins[side === "north" ? "top" : side === "south" ? "bottom" : side === "east" ? "right" : "left"] += amount;
-  };
+  const edge = (side: FloorSide) => (side === "north" ? "top" : side === "south" ? "bottom" : side === "east" ? "right" : "left");
   if (!options.compact) {
-    for (const side of new Set((settings.entrances ?? []).map((entrance) => entrance.side))) grow(side, ENTRANCE_BAND);
-    if (settings.riverSide) grow(settings.riverSide, RIVER_BAND);
+    // An entrance set in from the edge of the grid already has room for its badge; only the shortfall becomes margin.
+    const band = new Map<FloorSide, number>();
+    for (const entrance of settings.entrances ?? []) {
+      const at = entrancePoint(entrance);
+      const room = CELL * (entrance.side === "north" ? at.y : entrance.side === "west" ? at.x : entrance.side === "south" ? rows - at.y : cols - at.x);
+      band.set(entrance.side, Math.max(band.get(entrance.side) ?? 0, ENTRANCE_BAND - Math.max(0, room)));
+    }
+    for (const [side, amount] of band) margins[edge(side)] += Math.max(0, amount);
+    if (settings.riverSide) margins[edge(settings.riverSide)] += RIVER_BAND;
   }
   return {
     cols,
@@ -210,16 +220,11 @@ export function walkingOrder<T extends CanteenStall>(stalls: readonly T[]): T[] 
  * Index of the entrance closest to a point (grid units) by Manhattan
  * distance, or -1 when there are no entrances. The first entrance wins a tie.
  */
-export function nearestEntrance(
-  entrances: readonly Pick<CanteenEntrance, "col" | "row" | "side">[],
-  point: Point,
-  cols: number,
-  rows: number,
-): number {
+export function nearestEntrance(entrances: readonly Pick<CanteenEntrance, "col" | "row" | "side">[], point: Point): number {
   let best = -1;
   let bestDistance = Number.POSITIVE_INFINITY;
   entrances.forEach((entrance, index) => {
-    const distance = manhattan(entrancePoint(entrance, cols, rows), point);
+    const distance = manhattan(entrancePoint(entrance), point);
     if (distance < bestDistance) {
       best = index;
       bestDistance = distance;

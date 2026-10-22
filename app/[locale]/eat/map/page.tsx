@@ -16,7 +16,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ActiveFilterBar, EAT, EatTabs, eatHref, readFilters, redirectToTidyQuery, t } from "@/components/domain/canteen";
-import { CanteenMapWithList, MAP_STRINGS, cellCentre, entrancePoint, gridExtent, hasFloorPlan, routeOrder } from "@/components/domain/canteen/map";
+import { CanteenMapWithList, MAP_STRINGS, cellCentre, entrancePoint, hasFloorPlan, routeOrder } from "@/components/domain/canteen/map";
 import type { MapHighlight } from "@/components/domain/canteen/map";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
@@ -138,10 +138,9 @@ export default async function CanteenMapPage({
   const named = parseHighlightSlugs(query.highlight)
     .map((slug) => stallBySlug.get(slug))
     .filter((stall): stall is CanteenStall => stall !== undefined);
-  const { cols, rows } = gridExtent(settings, data.stalls);
   const entranceIndex = named.length > 0 || query.from !== undefined ? (parseEntranceIndex(firstParam(query.from), entrances.length) ?? (entrances.length > 0 ? 0 : undefined)) : undefined;
   const origin = entranceIndex !== undefined ? entrances[entranceIndex] : undefined;
-  const start = origin ? entrancePoint(origin, cols, rows) : named[0] ? cellCentre(named[0].mapCell) : undefined;
+  const start = origin ? entrancePoint(origin) : named[0] ? cellCentre(named[0].mapCell) : undefined;
   const route = start ? routeOrder(named, start) : named;
   const view = firstParam(query.view) === "list" ? "list" : "plan";
   const carried: Record<string, string> = {};

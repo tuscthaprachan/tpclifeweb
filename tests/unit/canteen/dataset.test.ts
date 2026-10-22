@@ -92,11 +92,28 @@ describe("surveyed canteen data", () => {
   });
 
 
+  it("draws the hall outline, landmarks and seating on the surveyed grid without overlapping the stalls", () => {
+    const settings = data.settings!;
+    expect(settings).toMatchObject({ gridCols: 26, gridRows: 12 });
+    expect(settings.outline).toHaveLength(8);
+    expect(settings.landmarks!.map((landmark) => landmark.kind).sort()).toEqual(["atm", "lifts", "lobby", "stairs", "toilets", "toilets"]);
+    const blocks = [...data.stalls.map((stall) => stall.mapCell), ...settings.landmarks!, ...settings.seatingZones!];
+    for (const [i, a] of blocks.entries()) {
+      expect(a.col + a.w).toBeLessThanOrEqual(26);
+      expect(a.row + a.h).toBeLessThanOrEqual(12);
+      for (const b of blocks.slice(i + 1)) {
+        const apart = a.col + a.w <= b.col || b.col + b.w <= a.col || a.row + a.h <= b.row || b.row + b.h <= a.row;
+        expect(apart).toBe(true);
+      }
+    }
+    for (const entrance of settings.entrances!) expect(entrance.col).toBeLessThan(26);
+  });
+
   it("puts each column in walking order (stall number)", () => {
     for (const group of [[1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15, 16]]) {
       const cells = group.map((number) => data.stalls.find((stall) => stall.number === number)!.mapCell);
       expect(new Set(cells.map((cell) => cell.col)).size).toBe(1);
-      expect(cells.map((cell) => cell.row)).toEqual(group.map((_, i) => i));
+      expect(cells.map((cell) => cell.row)).toEqual(group.map((_, i) => cells[0]!.row + i));
     }
   });
 

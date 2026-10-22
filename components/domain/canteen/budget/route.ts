@@ -3,7 +3,7 @@
  * order from the first entrance. Pure.
  */
 
-import { cellCentre, entrancePoint, gridExtent, hasFloorPlan, routeOrder, type MapHighlight } from "../map";
+import { cellCentre, entrancePoint, hasFloorPlan, routeOrder, type MapHighlight } from "../map";
 import type { CanteenData, CanteenStall } from "@/lib/sanity/types";
 
 export interface Route {
@@ -18,9 +18,8 @@ export function routeFor(data: CanteenData, stalls: readonly CanteenStall[]): Ro
   const settings = data.settings;
   if (!settings || !hasFloorPlan(settings, data.stalls) || stalls.length === 0) return null;
   const entrances = settings.entrances ?? [];
-  const { cols, rows } = gridExtent(settings, data.stalls);
   const first = entrances[0];
-  const start = first ? entrancePoint(first, cols, rows) : cellCentre(stalls[0]!.mapCell);
+  const start = first ? entrancePoint(first) : cellCentre(stalls[0]!.mapCell);
   const stops = routeOrder(stalls, start);
   return {
     stops,

@@ -1,6 +1,6 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
-import { FLOOR_SIDE_OPTIONS } from "../constants";
+import { FLOOR_SIDE_OPTIONS, LANDMARK_KIND_OPTIONS } from "../constants";
 import { bilingualStringMessage } from "../objects/locale";
 
 function wholeNumber(min: number) {
@@ -106,6 +106,60 @@ export const canteenSettings = defineType({
           name: "canteenSeatingZone",
           title: "Seating zone",
           fields: [
+            defineField({
+              name: "label",
+              title: "Label",
+              type: "localeString",
+              validation: (rule) => rule.required().custom(bilingualStringMessage),
+            }),
+            defineField({ name: "col", title: "Column", type: "number", validation: (rule) => rule.required().custom(wholeNumber(0)) }),
+            defineField({ name: "row", title: "Row", type: "number", validation: (rule) => rule.required().custom(wholeNumber(0)) }),
+            defineField({ name: "w", title: "Width", type: "number", initialValue: 1, validation: (rule) => rule.required().custom(wholeNumber(1)) }),
+            defineField({ name: "h", title: "Height", type: "number", initialValue: 1, validation: (rule) => rule.required().custom(wholeNumber(1)) }),
+          ],
+          preview: { select: { title: "label.en", subtitle: "label.th" } },
+        }),
+      ],
+    }),
+    defineField({
+      name: "outline",
+      title: "Building outline",
+      type: "array",
+      group: "plan",
+      description: "Optional. The corners of the building, in order, in grid units (column and row of the corner, so the right edge of a 10 column plan is column 10). The plan is drawn as this shape instead of the whole grid.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "canteenOutlinePoint",
+          title: "Corner",
+          fields: [
+            defineField({ name: "col", title: "Column", type: "number", validation: (rule) => rule.required().custom(wholeNumber(0)) }),
+            defineField({ name: "row", title: "Row", type: "number", validation: (rule) => rule.required().custom(wholeNumber(0)) }),
+          ],
+          preview: { select: { col: "col", row: "row" }, prepare: ({ col, row }) => ({ title: `Column ${col}, row ${row}` }) },
+        }),
+      ],
+      validation: (rule) => rule.min(3).warning("An outline needs at least 3 corners, or it is ignored."),
+    }),
+    defineField({
+      name: "landmarks",
+      title: "Landmarks",
+      type: "array",
+      group: "plan",
+      description: "Parts of the building that are not stalls or seating: stairs, lifts, toilets, the ATM, the lobby. Drawn on the plan, not clickable.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "canteenLandmark",
+          title: "Landmark",
+          fields: [
+            defineField({
+              name: "kind",
+              title: "Kind",
+              type: "string",
+              options: { list: LANDMARK_KIND_OPTIONS },
+              validation: (rule) => rule.required(),
+            }),
             defineField({
               name: "label",
               title: "Label",

@@ -44,8 +44,8 @@ export interface CanteenMapWithListProps {
   viewLinks?: { plan: string; list: string };
 }
 
-/** CSS pixels per view unit for the phone plan: compact stall numbers (26 units) come out at 16 px and a 72 unit tall tile at 44.6 px, the touch target size. */
-const PHONE_SCALE = 0.62;
+/** CSS pixels per view unit for the phone plan: compact stall numbers (26 units) come out at 14 px and a 72 unit tall tile at 39.6 px, well over the 24 px minimum for a linked tile. */
+const PHONE_SCALE = 0.55;
 
 function MapKey({
   locale,
@@ -136,7 +136,7 @@ export function CanteenMapWithList({
   return (
     <div className="flex flex-col gap-4">
       {viewLinks ? <ViewSwitch locale={locale} current={view} links={viewLinks} /> : null}
-      <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:items-start">
+      <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] md:items-start">
         <section className={`min-w-0 flex-col gap-3 ${showList ? "flex" : "hidden md:flex"}`} aria-labelledby={listId}>
           <Heading level={headingLevel} id={listId} className={headingLevel === 2 ? "text-xl" : "text-lg"}>
             {MAP_STRINGS.listHeading[locale]}

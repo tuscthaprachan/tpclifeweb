@@ -54,10 +54,30 @@ describe("map geometry", () => {
   });
 
   it("places entrances on the edge of their side", () => {
-    expect(entrancePoint({ col: 1, row: 0, side: "north" }, 6, 4)).toEqual({ x: 1.5, y: 0 });
-    expect(entrancePoint({ col: 0, row: 3, side: "south" }, 6, 4)).toEqual({ x: 0.5, y: 4 });
-    expect(entrancePoint({ col: 0, row: 2, side: "east" }, 6, 4)).toEqual({ x: 6, y: 2.5 });
-    expect(entrancePoint({ col: 0, row: 2, side: "west" }, 6, 4)).toEqual({ x: 0, y: 2.5 });
+    expect(entrancePoint({ col: 1, row: 0, side: "north" })).toEqual({ x: 1.5, y: 0 });
+    expect(entrancePoint({ col: 0, row: 3, side: "south" })).toEqual({ x: 0.5, y: 4 });
+    expect(entrancePoint({ col: 5, row: 2, side: "east" })).toEqual({ x: 6, y: 2.5 });
+    expect(entrancePoint({ col: 0, row: 2, side: "west" })).toEqual({ x: 0, y: 2.5 });
+  });
+
+  it("puts an entrance on the wall of the cell it is in, so a wall can sit inside the grid", () => {
+    expect(entrancePoint({ col: 6, row: 2, side: "north" })).toEqual({ x: 6.5, y: 2 });
+    expect(entrancePoint({ col: 13, row: 11, side: "south" })).toEqual({ x: 13.5, y: 12 });
+  });
+
+  it("grows the grid for landmarks and outline corners", () => {
+    const base = { gridCols: 4, gridRows: 4 };
+    expect(gridExtent({ ...base, landmarks: [{ _key: "l", kind: "toilets", label: { th: "ห้องน้ำ", en: "Toilets" }, col: 6, row: 1, w: 1, h: 6 }] }, [])).toEqual({ cols: 7, rows: 7 });
+    expect(gridExtent({ ...base, outline: [{ col: 1, row: 1 }, { col: 9, row: 1 }, { col: 9, row: 5 }] }, [])).toEqual({ cols: 9, rows: 5 });
+  });
+
+  it("leaves an entrance set in from the edge its own room, and only adds the shortfall", () => {
+    const entrances = (row: number) => [{ _key: "n", label: { th: "ก", en: "N" }, col: 1, row, side: "north" as const }];
+    const flush = planLayout({ gridCols: 4, gridRows: 4, entrances: entrances(0) }, []);
+    const inset = planLayout({ gridCols: 4, gridRows: 4, entrances: entrances(2) }, []);
+    expect(flush.margins.top).toBeGreaterThan(inset.margins.top);
+    expect(inset.margins.top).toBe(inset.margins.bottom);
+    expect(inset.height).toBe(inset.margins.top + 4 * CELL + inset.margins.bottom);
   });
 
   it("finds the nearest entrance by Manhattan distance, first wins a tie, none gives -1", () => {
@@ -65,9 +85,9 @@ describe("map geometry", () => {
       { col: 0, row: 0, side: "north" as const },
       { col: 5, row: 0, side: "north" as const },
     ];
-    expect(nearestEntrance(entrances, { x: 5, y: 1 }, 6, 4)).toBe(1);
-    expect(nearestEntrance(entrances, { x: 3, y: 1 }, 6, 4)).toBe(0);
-    expect(nearestEntrance([], { x: 0, y: 0 }, 6, 4)).toBe(-1);
+    expect(nearestEntrance(entrances, { x: 5, y: 1 })).toBe(1);
+    expect(nearestEntrance(entrances, { x: 3, y: 1 })).toBe(0);
+    expect(nearestEntrance([], { x: 0, y: 0 })).toBe(-1);
   });
 
   it("orders a route by nearest next stop from the entrance", () => {

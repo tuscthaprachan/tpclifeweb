@@ -651,6 +651,8 @@ async function writeSettings(client: WriteClient): Promise<void> {
       gridRows: source.gridRows,
       entrances: (source.entrances ?? []).map((entrance) => ({ ...entrance, _type: "canteenEntrance", label: localeString(entrance.label.th, entrance.label.en) })),
       seatingZones: (source.seatingZones ?? []).map((zone) => ({ ...zone, _type: "canteenSeatingZone", label: localeString(zone.label.th, zone.label.en) })),
+      outline: (source.outline ?? []).map((point) => ({ ...point, _type: "canteenOutlinePoint", _key: key() })),
+      landmarks: (source.landmarks ?? []).map((landmark) => ({ ...landmark, _type: "canteenLandmark", label: localeString(landmark.label.th, landmark.label.en) })),
     })
     .commit();
   console.log(`  ok      ${SETTINGS_ID}`);

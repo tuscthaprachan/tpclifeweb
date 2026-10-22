@@ -18,22 +18,30 @@
  *   - Halal: stall 14 shows a halal sign and holds the university's halal slot.
  *     Everything it sells is halal. No stall was asked about vegetarian food.
  *
- * Floor plan (17 columns by 7 rows, top = north, landscape). Stalls are
- * 2 cells wide. Lifts, toilets, stairs and the ATM are not drawn on the map,
- * so they appear in the wayfinding text.
+ * Floor plan (26 columns by 12 rows, top = north, landscape), traced from the
+ * architectural plan of the hall: one column is 60 px and one row 50 px of the
+ * plan image. Stalls are 2 cells wide. The building outline is a polygon: the
+ * hall (rows 2 to 11) with the north lobby (cols 10 to 15) rising above it.
+ * Stairs, lifts, toilets, the ATM and the lobby are drawn as hatched
+ * landmarks, and the wayfinding text mentions them too.
  *
- *   col:  0-1   2-6          7-9      10-11   12-14      15-16
- *   row 0 [ 1 ] . . [17 ] .. [18 ]    [ 8  ]  [east  ]   [ 12 ]
- *   row 1 [ 2 ]     [17 ]    [18 ]    [ 9  ]  [seating]  [ 13 ]
- *   row 2 [ 3 ] [west seating] (gap)  [ 10 ]             [ 14 ]
- *   row 3 [ 4 ]                       [ 11 ]             [ 15 ]
- *   row 4 [ 5 ]                                          [ 16 ]
- *   row 5 [ 6 ]
- *   row 6 [ 7 ]               [south tables, cols 9-16]
+ *   col:   0     2-3   4-9      10-11  12      13  14     15-16  17-22   23-24  25
+ *   row 0                         [17 ] [lobby ]      [18 ]
+ *   row 1                         [17 ] [lobby ]      [18 ]
+ *   row 2        (north wall of the hall, doors at cols 6 and 22)
+ *   row 3         [ 1 ] [west   ]        [stairs] [lifts] [ 8 ] [east  ] [12 ]
+ *   row 4         [ 2 ] [seats  ]        [stairs] [lifts] [ 9 ] [seats ] [13 ]
+ *   row 5  [WC]   [ 3 ] [       ]        [stairs] [lifts] [10 ] [      ] [14 ] [WC]
+ *   row 6  [WC]   [ 4 ] [       ]        [stairs] [lifts] [11 ] [      ] [15 ] [WC]
+ *   row 7  [WC]   [ 5 ] [       ]        [stairs] [lifts]       [      ] [16 ] [WC]
+ *   row 8  [WC]   [ 6 ] [       ]                  [south-east b, 18-22]
+ *   row 9         [ 7 ]               [south-east a, 14-17]
+ *   row 10                [tables, 7-10]
+ *   row 11             [ATM]             [main entrance, col 13]
  *
- * 17 and 18 are triangular kiosks on the north wall, each in 2 by 2 cells,
- * either side of the central north lobby. Entrances: the main entrance on the
- * south wall, and the courtyard doors on the north wall, one set in each half.
+ * 17 and 18 are triangular kiosks in 2 by 2 cells, either side of the north
+ * lobby. Entrances: the main entrance on the south wall, and the courtyard
+ * doors on the north wall of the hall, one set in each half.
  */
 
 import type {
@@ -42,6 +50,8 @@ import type {
   CanteenData,
   CanteenDish,
   CanteenEntrance,
+  CanteenLandmark,
+  CanteenOutlinePoint,
   CanteenSeatingZone,
   CanteenSettings,
   CanteenStall,
@@ -86,36 +96,36 @@ const EAST = (nth: { th: string; en: string }) => ({
   en: `${nth.en} in the east column, facing west into the hall.`,
 });
 const MIDDLE = (nth: { th: string; en: string }) => ({
-  th: `ร้าน${nth.th}ในกลุ่มร้านกลางโถง`,
-  en: `${nth.en} in the middle block of the hall.`,
+  th: `ร้าน${nth.th}ในกลุ่มร้านกลางโถง ข้างลิฟต์ หันหน้าไปทางทิศตะวันออก`,
+  en: `${nth.en} in the middle block of the hall, beside the lifts and facing east.`,
 });
 
 const STALL_SPECS: StallSpec[] = [
   /* West column, stalls 1 to 7. */
-  { number: 1, slug: "1-pha-phriu-curry-over-rice", th: "พาพริ้ว ข้าวแกงสารพัดนึก", en: "Pha Phriu curry over rice", cuisine: ["curryOverRice"], halal: false, col: 0, row: 0, w: 2, h: 1, wayfinding: WEST({ th: "แรกที่ปลายด้านเหนือ", en: "First stall at the north end" }) },
-  { number: 2, slug: "2-song-phi-nong-noodles", th: "ก๋วยเตี๋ยวสองพี่น้อง", en: "Song Phi Nong Noodles", cuisine: ["noodles"], halal: false, col: 0, row: 1, w: 2, h: 1, wayfinding: WEST({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
-  { number: 3, slug: "3-mae-phim-made-to-order", th: "แม่พิมพ์ อาหารตามสั่ง", en: "Mama Pim, made to order", cuisine: ["madeToOrder"], halal: false, col: 0, row: 2, w: 2, h: 1, wayfinding: WEST({ th: "ที่สามจากทางเหนือ", en: "Third stall from the north" }) },
-  { number: 4, slug: "4-ganga-drinks", th: "คงคา GaNGa", en: "GaNGa", cuisine: ["drinks"], halal: false, col: 0, row: 3, w: 2, h: 1, wayfinding: { th: "ร้านกลางแถวฝั่งตะวันตก หันหน้าเข้าหาโถง ด้านหลังแถวร้านฝั่งตะวันตกเป็นห้องน้ำ บันไดและทางหนีไฟ", en: "Middle of the west column, facing the hall. Behind the west column are toilets, stairs and a fire exit." } },
-  { number: 5, slug: "5-bm-health-club", th: "BM HEALTH CLUB", en: "BM Health Club", cuisine: ["drinks", "desserts"], halal: false, col: 0, row: 4, w: 2, h: 1, wayfinding: WEST({ th: "ที่ห้าจากทางเหนือ", en: "Fifth stall from the north" }) },
-  { number: 6, slug: "6-khun-ying-chicken-rice", th: "ข้าวมันไก่คุณหญิง โดยแม่ปราณีต", en: "Khun Ying Chicken Rice by Mae Pranit", cuisine: ["chickenRice"], halal: false, col: 0, row: 5, w: 2, h: 1, wayfinding: WEST({ th: "ที่หกจากทางเหนือ", en: "Sixth stall from the north" }) },
-  { number: 7, slug: "7-tamasato-ramen", th: "Tamasato ราเม็ง", en: "Tamasato Ramen", cuisine: ["international", "noodles"], halal: false, col: 0, row: 6, w: 2, h: 1, wayfinding: WEST({ th: "สุดท้ายที่ปลายด้านใต้", en: "Last stall at the south end" }) },
+  { number: 1, slug: "1-pha-phriu-curry-over-rice", th: "พาพริ้ว ข้าวแกงสารพัดนึก", en: "Pha Phriu curry over rice", cuisine: ["curryOverRice"], halal: false, col: 2, row: 3, w: 2, h: 1, wayfinding: WEST({ th: "แรกที่ปลายด้านเหนือ", en: "First stall at the north end" }) },
+  { number: 2, slug: "2-song-phi-nong-noodles", th: "ก๋วยเตี๋ยวสองพี่น้อง", en: "Song Phi Nong Noodles", cuisine: ["noodles"], halal: false, col: 2, row: 4, w: 2, h: 1, wayfinding: WEST({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
+  { number: 3, slug: "3-mae-phim-made-to-order", th: "แม่พิมพ์ อาหารตามสั่ง", en: "Mama Pim, made to order", cuisine: ["madeToOrder"], halal: false, col: 2, row: 5, w: 2, h: 1, wayfinding: WEST({ th: "ที่สามจากทางเหนือ", en: "Third stall from the north" }) },
+  { number: 4, slug: "4-ganga-drinks", th: "คงคา GaNGa", en: "GaNGa", cuisine: ["drinks"], halal: false, col: 2, row: 6, w: 2, h: 1, wayfinding: { th: "ร้านกลางแถวฝั่งตะวันตก หันหน้าเข้าหาโถง ด้านหลังแถวร้านฝั่งตะวันตกเป็นห้องน้ำ บันไดและทางหนีไฟ", en: "Middle of the west column, facing the hall. Behind the west column are toilets, stairs and a fire exit." } },
+  { number: 5, slug: "5-bm-health-club", th: "BM HEALTH CLUB", en: "BM Health Club", cuisine: ["drinks", "desserts"], halal: false, col: 2, row: 7, w: 2, h: 1, wayfinding: WEST({ th: "ที่ห้าจากทางเหนือ", en: "Fifth stall from the north" }) },
+  { number: 6, slug: "6-khun-ying-chicken-rice", th: "ข้าวมันไก่คุณหญิง โดยแม่ปราณีต", en: "Khun Ying Chicken Rice by Mae Pranit", cuisine: ["chickenRice"], halal: false, col: 2, row: 8, w: 2, h: 1, wayfinding: WEST({ th: "ที่หกจากทางเหนือ", en: "Sixth stall from the north" }) },
+  { number: 7, slug: "7-tamasato-ramen", th: "Tamasato ราเม็ง", en: "Tamasato Ramen", cuisine: ["international", "noodles"], halal: false, col: 2, row: 9, w: 2, h: 1, wayfinding: WEST({ th: "สุดท้ายที่ปลายด้านใต้", en: "Last stall at the south end" }) },
 
   /* Middle block, stalls 8 to 11. */
-  { number: 8, slug: "8-lung-kap-pa-drinks", th: "ลุงกับป้า", en: "Lung Kap Pa", cuisine: ["drinks"], halal: false, col: 10, row: 0, w: 2, h: 1, wayfinding: MIDDLE({ th: "บนสุด", en: "Top stall" }) },
-  { number: 9, slug: "9-pa-mu-desserts", th: "ขนมหวานป้าหมู", en: "Pa Mu Desserts", cuisine: ["desserts", "fruit"], halal: false, col: 10, row: 1, w: 2, h: 1, wayfinding: MIDDLE({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
-  { number: 10, slug: "10-steak-project", th: "สเต็ก โปรเจกต์", en: "Steak Project", cuisine: ["international"], halal: false, col: 10, row: 2, w: 2, h: 1, wayfinding: MIDDLE({ th: "ที่สามจากทางเหนือ", en: "Third stall from the north" }) },
-  { number: 11, slug: "11-chicken-man", th: "เส้นหมี่ไก่ฉีก Chicken Man", en: "Chicken Man", cuisine: ["noodles"], halal: false, col: 10, row: 3, w: 2, h: 1, wayfinding: MIDDLE({ th: "ล่างสุด", en: "Bottom stall" }) },
+  { number: 8, slug: "8-lung-kap-pa-drinks", th: "ลุงกับป้า", en: "Lung Kap Pa", cuisine: ["drinks"], halal: false, col: 15, row: 3, w: 2, h: 1, wayfinding: MIDDLE({ th: "บนสุด", en: "Top stall" }) },
+  { number: 9, slug: "9-pa-mu-desserts", th: "ขนมหวานป้าหมู", en: "Pa Mu Desserts", cuisine: ["desserts", "fruit"], halal: false, col: 15, row: 4, w: 2, h: 1, wayfinding: MIDDLE({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
+  { number: 10, slug: "10-steak-project", th: "สเต็ก โปรเจกต์", en: "Steak Project", cuisine: ["international"], halal: false, col: 15, row: 5, w: 2, h: 1, wayfinding: MIDDLE({ th: "ที่สามจากทางเหนือ", en: "Third stall from the north" }) },
+  { number: 11, slug: "11-chicken-man", th: "เส้นหมี่ไก่ฉีก Chicken Man", en: "Chicken Man", cuisine: ["noodles"], halal: false, col: 15, row: 6, w: 2, h: 1, wayfinding: MIDDLE({ th: "ล่างสุด", en: "Bottom stall" }) },
 
   /* East column, stalls 12 to 16. */
-  { number: 12, slug: "12-isan-food", th: "อาหารอีสาน", en: "Isan food", cuisine: ["isan"], halal: false, col: 15, row: 0, w: 2, h: 1, wayfinding: EAST({ th: "แรกที่ปลายด้านเหนือ", en: "First stall at the north end" }) },
-  { number: 13, slug: "13-thian-thong-made-to-order", th: "เทียนทอง อาหารตามสั่ง", en: "Thian Thong, made to order", cuisine: ["madeToOrder"], halal: false, col: 15, row: 1, w: 2, h: 1, wayfinding: EAST({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
-  { number: 14, slug: "14-mum-kin-halal", th: "ร้านมุมกินฮาลาล", en: "Mum Kin Halal", cuisine: ["muslim", "madeToOrder"], halal: true, col: 15, row: 2, w: 2, h: 1, wayfinding: EAST({ th: "กลางแถว", en: "Middle stall" }) },
-  { number: 15, slug: "15-tu-chicken-rice-pork-leg", th: "ข้าวมันไก่-ขาหมู TU", en: "TU Chicken Rice and Pork Leg", cuisine: ["chickenRice"], halal: false, col: 15, row: 3, w: 2, h: 1, wayfinding: EAST({ th: "ที่สี่จากทางเหนือ", en: "Fourth stall from the north" }) },
-  { number: 16, slug: "16-yum-yum-snackie", th: "Yum Yum Snackie", en: "Yum Yum Snackie", cuisine: ["international"], halal: false, col: 15, row: 4, w: 2, h: 1, wayfinding: { th: "ร้านสุดท้ายที่ปลายด้านใต้ของแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก ด้านหลังแถวร้านฝั่งตะวันออกเป็นห้องน้ำและบันได", en: "Last stall at the south end of the east column, facing west. Behind the east column are toilets and stairs." } },
+  { number: 12, slug: "12-isan-food", th: "อาหารอีสาน", en: "Isan food", cuisine: ["isan"], halal: false, col: 23, row: 3, w: 2, h: 1, wayfinding: EAST({ th: "แรกที่ปลายด้านเหนือ", en: "First stall at the north end" }) },
+  { number: 13, slug: "13-thian-thong-made-to-order", th: "เทียนทอง อาหารตามสั่ง", en: "Thian Thong, made to order", cuisine: ["madeToOrder"], halal: false, col: 23, row: 4, w: 2, h: 1, wayfinding: EAST({ th: "ที่สองจากทางเหนือ", en: "Second stall from the north" }) },
+  { number: 14, slug: "14-mum-kin-halal", th: "ร้านมุมกินฮาลาล", en: "Mum Kin Halal", cuisine: ["muslim", "madeToOrder"], halal: true, col: 23, row: 5, w: 2, h: 1, wayfinding: EAST({ th: "กลางแถว", en: "Middle stall" }) },
+  { number: 15, slug: "15-tu-chicken-rice-pork-leg", th: "ข้าวมันไก่-ขาหมู TU", en: "TU Chicken Rice and Pork Leg", cuisine: ["chickenRice"], halal: false, col: 23, row: 6, w: 2, h: 1, wayfinding: EAST({ th: "ที่สี่จากทางเหนือ", en: "Fourth stall from the north" }) },
+  { number: 16, slug: "16-yum-yum-snackie", th: "Yum Yum Snackie", en: "Yum Yum Snackie", cuisine: ["international"], halal: false, col: 23, row: 7, w: 2, h: 1, wayfinding: { th: "ร้านสุดท้ายที่ปลายด้านใต้ของแถวร้านฝั่งตะวันออก หันหน้าไปทางทิศตะวันตก ด้านหลังแถวร้านฝั่งตะวันออกเป็นห้องน้ำและบันได", en: "Last stall at the south end of the east column, facing west. Behind the east column are toilets and stairs." } },
 
   /* Corner kiosks on the north wall, either side of the central north lobby. */
-  { number: 17, slug: "17-am-tea", th: "แอมที", en: "Am Tea", cuisine: ["drinks", "desserts"], halal: false, col: 4, row: 0, w: 2, h: 2, shape: "triangleBottomRight", wayfinding: { th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางซ้ายของทางเข้ากลางด้านเหนือ", en: "Triangular corner kiosk on the north wall, left of the central north entrance." } },
-  { number: 18, slug: "18-kanlaya-peeled-fruit", th: "ร้านกัลยาผลไม้ปอกพร้อมทาน", en: "Kanlaya Peeled Fruit", cuisine: ["fruit"], halal: false, col: 8, row: 0, w: 2, h: 2, shape: "triangleBottomLeft", wayfinding: { th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางขวาของทางเข้ากลางด้านเหนือ ยังไม่ได้ถ่ายรูปเมนู และยังไม่ได้ยืนยันว่าร้านนี้อยู่ที่แผงนี้", en: "Triangular corner kiosk on the north wall, right of the central north entrance. Its menu has not been photographed and the shop at this kiosk is not yet confirmed." } },
+  { number: 17, slug: "17-am-tea", th: "แอมที", en: "Am Tea", cuisine: ["drinks", "desserts"], halal: false, col: 10, row: 0, w: 2, h: 2, shape: "triangleBottomRight", wayfinding: { th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางซ้ายของโถงทางเข้าด้านเหนือ", en: "Triangular corner kiosk on the north wall, left of the north lobby." } },
+  { number: 18, slug: "18-kanlaya-peeled-fruit", th: "ร้านกัลยาผลไม้ปอกพร้อมทาน", en: "Kanlaya Peeled Fruit", cuisine: ["fruit"], halal: false, col: 14, row: 0, w: 2, h: 2, shape: "triangleBottomLeft", wayfinding: { th: "แผงสามเหลี่ยมมุมผนังด้านเหนือ อยู่ทางขวาของโถงทางเข้าด้านเหนือ ยังไม่ได้ถ่ายรูปเมนู และยังไม่ได้ยืนยันว่าร้านนี้อยู่ที่แผงนี้", en: "Triangular corner kiosk on the north wall, right of the north lobby. Its menu has not been photographed and the shop at this kiosk is not yet confirmed." } },
 ];
 
 const stallId = (number: number) => `survey-stall-${number}`;
@@ -386,17 +396,41 @@ function buildDishes(stamp: string): CanteenDish[] {
  * Settings
  * ------------------------------------------------------------------ */
 
-/** Main entrance on the south wall, south of the central staircase; courtyard doors on the north wall, one set in each half. */
+/** Main entrance on the south wall; courtyard doors on the north wall of the hall (row 2, below the lobby), one set in each half. */
 const ENTRANCES: CanteenEntrance[] = [
-  { _key: "main", label: { th: "ทางเข้าหลัก", en: "Main entrance" }, col: 7, row: 6, side: "south" },
-  { _key: "north-left", label: { th: "ประตูลานอเนกประสงค์ ซ้าย", en: "North courtyard doors, left" }, col: 3, row: 0, side: "north" },
-  { _key: "north-right", label: { th: "ประตูลานอเนกประสงค์ ขวา", en: "North courtyard doors, right" }, col: 13, row: 0, side: "north" },
+  { _key: "main", label: { th: "ทางเข้าหลัก", en: "Main entrance" }, col: 13, row: 11, side: "south" },
+  { _key: "north-left", label: { th: "ประตูลานอเนกประสงค์ ซ้าย", en: "North courtyard doors, left" }, col: 6, row: 2, side: "north" },
+  { _key: "north-right", label: { th: "ประตูลานอเนกประสงค์ ขวา", en: "North courtyard doors, right" }, col: 22, row: 2, side: "north" },
 ];
 
 const SEATING: CanteenSeatingZone[] = [
-  { _key: "west", label: { th: "ที่นั่งฝั่งตะวันตก ข้างร้าน 1 ถึง 7", en: "West seating, by stalls 1 to 7" }, col: 2, row: 2, w: 5, h: 5 },
-  { _key: "east", label: { th: "ที่นั่งฝั่งตะวันออก ร้าน 8 ถึง 16", en: "East seating, stalls 8 to 16" }, col: 12, row: 0, w: 3, h: 5 },
-  { _key: "south", label: { th: "โต๊ะแถวใต้ ทางตะวันออกเฉียงใต้", en: "South tables, south-east" }, col: 9, row: 6, w: 8, h: 1 },
+  { _key: "west", label: { th: "ที่นั่งฝั่งตะวันตก ข้างร้าน 1 ถึง 7", en: "West seating, by stalls 1 to 7" }, col: 4, row: 3, w: 6, h: 6 },
+  { _key: "east", label: { th: "ที่นั่งฝั่งตะวันออก ระหว่างร้าน 8 ถึง 11 และร้าน 12 ถึง 16", en: "East seating, between stalls 8 to 11 and 12 to 16" }, col: 17, row: 3, w: 6, h: 5 },
+  { _key: "south-entrance", label: { th: "โต๊ะบริเวณทางเข้าหลัก", en: "Tables by the main entrance" }, col: 7, row: 10, w: 4, h: 2 },
+  { _key: "south-east-a", label: { th: "โต๊ะฝั่งตะวันออกเฉียงใต้", en: "South-east tables" }, col: 14, row: 9, w: 4, h: 1 },
+  { _key: "south-east-b", label: { th: "โต๊ะฝั่งตะวันออกเฉียงใต้", en: "South-east tables" }, col: 18, row: 8, w: 5, h: 1 },
+];
+
+/** Corners of the building: the hall, with the north lobby rising above its north wall. */
+const OUTLINE: CanteenOutlinePoint[] = [
+  { col: 1, row: 2 },
+  { col: 10, row: 2 },
+  { col: 10, row: 0 },
+  { col: 16, row: 0 },
+  { col: 16, row: 2 },
+  { col: 25, row: 2 },
+  { col: 25, row: 12 },
+  { col: 1, row: 12 },
+];
+
+/** Not stalls and not seating. The toilets sit in the wings, outside the outline. */
+const LANDMARKS: CanteenLandmark[] = [
+  { _key: "toilets-west", kind: "toilets", label: { th: "ห้องน้ำ", en: "Toilets" }, col: 0, row: 5, w: 1, h: 4 },
+  { _key: "toilets-east", kind: "toilets", label: { th: "ห้องน้ำ", en: "Toilets" }, col: 25, row: 5, w: 1, h: 3 },
+  { _key: "stairs", kind: "stairs", label: { th: "บันได", en: "Stairs" }, col: 12, row: 3, w: 1, h: 5 },
+  { _key: "lifts", kind: "lifts", label: { th: "ลิฟต์", en: "Lifts" }, col: 14, row: 3, w: 1, h: 5 },
+  { _key: "lobby", kind: "lobby", label: { th: "โถงด้านเหนือ", en: "North lobby" }, col: 12, row: 0, w: 2, h: 2 },
+  { _key: "atm", kind: "atm", label: { th: "ตู้ ATM", en: "ATM" }, col: 6, row: 11, w: 1, h: 1 },
 ];
 
 function buildSettings(stamp: string): CanteenSettings {
@@ -416,10 +450,12 @@ function buildSettings(stamp: string): CanteenSettings {
       // Monday to Friday 07:00 to 16:00. Closed Saturday, Sunday and public holidays (no public holiday data here).
       openingHours: [{ _key: "weekdays", daysOfWeek: [1, 2, 3, 4, 5], opens: "07:00", closes: "16:00" }],
     },
-    gridCols: 17,
-    gridRows: 7,
+    gridCols: 26,
+    gridRows: 12,
     entrances: ENTRANCES,
     seatingZones: SEATING,
+    outline: OUTLINE,
+    landmarks: LANDMARKS,
   };
 }
 

@@ -65,6 +65,8 @@ export function normaliseCanteenData(raw: Partial<CanteenData> | null | undefine
         ...raw.settings,
         entrances: raw.settings.entrances ?? [],
         seatingZones: raw.settings.seatingZones ?? [],
+        outline: raw.settings.outline ?? [],
+        landmarks: raw.settings.landmarks ?? [],
       }
     : null;
 

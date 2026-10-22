@@ -16,6 +16,10 @@
  * sit near the right angle, where the tile is widest, and its name is left to
  * the stall list, which carries every full name.
  *
+ * Landmarks (stairs, lifts, toilets, ATM, the north lobby) are drawn as
+ * hatched blocks so the plan matches the building. They are neither stalls
+ * nor seating, and not interactive.
+ *
  * Colour is never the only cue: a match count is a number in text, a stall
  * with none gets diagonal hatching AND the text "0", a highlighted stall
  * gets a thicker double outline AND a numbered marker.
@@ -152,7 +156,7 @@ interface EntranceDrawProps {
  * east or west edge with a rotation, so the text always reads along the edge.
  */
 function Entrance({ entrance, index, layout, locale, isStart }: EntranceDrawProps) {
-  const edge = toView(entrancePoint(entrance, layout.cols, layout.rows), layout);
+  const edge = toView(entrancePoint(entrance), layout);
   const side: FloorSide = entrance.side;
   const outward = side === "south" ? 1 : -1;
   const transform =
@@ -248,6 +252,8 @@ export function CanteenMap({
   const layout = planLayout(settings, stalls, { compact });
   const entrances = compact ? [] : (settings.entrances ?? []);
   const seatingZones = settings.seatingZones ?? [];
+  const landmarks = settings.landmarks ?? [];
+  const outline = (settings.outline ?? []).length >= 3 ? settings.outline! : null;
   const ordered = [...stalls].sort(compareStallsByWalk);
   const search = queryString(query);
 
@@ -259,7 +265,7 @@ export function CanteenMap({
 
   // The route: from the chosen entrance (if any) through the stops in their order.
   const routePoints: { x: number; y: number }[] = [];
-  if (origin) routePoints.push(toView(entrancePoint(origin, layout.cols, layout.rows), layout));
+  if (origin) routePoints.push(toView(entrancePoint(origin), layout));
   [...highlights]
     .map((highlight, position) => ({ stall: stalls.find((s) => s._id === highlight.stallId), order: highlight.order ?? position + 1 }))
     .filter((entry): entry is { stall: CanteenStall; order: number } => entry.stall !== undefined)
@@ -270,6 +276,7 @@ export function CanteenMap({
   const titleId = `${id}-title`;
   const descId = `${id}-desc`;
   const hatchId = `${id}-hatch`;
+  const landmarkId = `${id}-landmark`;
   const planRect = { x: layout.margins.left, y: layout.margins.top, w: layout.cols * CELL, h: layout.rows * CELL };
 
   const labelProps = links
@@ -295,15 +302,51 @@ export function CanteenMap({
         <pattern id={hatchId} width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <line className="cmap-hatch-line" x1="0" y1="0" x2="0" y2="8" />
         </pattern>
+        <pattern id={landmarkId} width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+          <line className="cmap-landmark-line" x1="0" y1="0" x2="0" y2="10" />
+        </pattern>
       </defs>
 
       {settings.riverSide && !compact ? <River side={settings.riverSide} layout={layout} locale={locale} /> : null}
 
-      <rect className="cmap-plan" x={planRect.x} y={planRect.y} width={planRect.w} height={planRect.h} rx={6} aria-hidden="true" />
+      {outline ? (
+        <path
+          className="cmap-plan"
+          d={`M ${outline.map((corner) => { const p = toView({ x: corner.col, y: corner.row }, layout); return `${p.x} ${p.y}`; }).join(" L ")} Z`}
+          aria-hidden="true"
+        />
+      ) : (
+        <rect className="cmap-plan" x={planRect.x} y={planRect.y} width={planRect.w} height={planRect.h} rx={6} aria-hidden="true" />
+      )}
+
+      {landmarks.map((landmark) => {
+        const rect = cellRect(landmark, layout, TILE_GAP / 2);
+        const upright = rect.h > rect.w;
+        const text = truncate(pick(landmark.label, locale), charsThatFit(upright ? rect.h - 8 : rect.w - 8, 13));
+        const middle = { x: rect.x + rect.w / 2, y: rect.y + rect.h / 2 };
+        return (
+          <g key={landmark._key} aria-hidden="true">
+            <rect className="cmap-landmark" x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={4} />
+            <rect x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={4} fill={`url(#${landmarkId})`} />
+            {compact ? null : (
+              <text
+                className="cmap-landmark-text"
+                x={middle.x}
+                y={middle.y}
+                textAnchor="middle"
+                dominantBaseline="central"
+                transform={upright ? `rotate(-90 ${middle.x} ${middle.y})` : undefined}
+              >
+                {text}
+              </text>
+            )}
+          </g>
+        );
+      })}
 
       {seatingZones.map((zone) => {
         const rect = cellRect(zone, layout, TILE_GAP / 2);
-        const text = truncate(pick(zone.label, locale), charsThatFit(rect.w - 8, 11));
+        const text = truncate(pick(zone.label, locale), charsThatFit(rect.w - 8, 14));
         return (
           <g key={zone._key} aria-hidden="true">
             <rect className="cmap-seat" x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={6} />
@@ -328,7 +371,7 @@ export function CanteenMap({
         const highlighted = stop !== undefined;
         const name = stallName(stall, locale);
         const roomForText = rect.w - 16 - (highlighted ? 26 : 0);
-        const shortName = truncate(name, charsThatFit(roomForText, 11));
+        const shortName = truncate(name, charsThatFit(roomForText, 13));
         const glyphs = stall.cuisine.slice(0, 3);
         const wide = rect.w >= CELL * 1.5;
         const shape = cellShape(stall.mapCell);

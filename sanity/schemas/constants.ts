@@ -125,5 +125,14 @@ export const FLOOR_SIDE_OPTIONS = [
   { title: "West (left of the plan)", value: "west" },
 ];
 
+/** Matches `CanteenLandmarkKind`. What a non-stall block on the floor plan is. */
+export const LANDMARK_KIND_OPTIONS = [
+  { title: "Stairs", value: "stairs" },
+  { title: "Lifts", value: "lifts" },
+  { title: "Toilets", value: "toilets" },
+  { title: "ATM", value: "atm" },
+  { title: "Lobby", value: "lobby" },
+];
+
 /** Price older than this many days appears in the Studio list "Prices not checked in 120 days". */
 export const CANTEEN_PRICE_STALE_DAYS = 120;
