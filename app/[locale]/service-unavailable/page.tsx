@@ -6,7 +6,7 @@
  * page, a manually shared link) can point here.
  *
  * A `page.tsx` Server Component cannot itself set the HTTP response status
- * to 503 the way a Route Handler could; that would need a middleware or
+ * to 503 the way a Route Handler could; that would need a proxy or
  * route-handler change, which is outside this agent's scope
  * (CONTRIBUTING.md: "write only inside the directories you were given").
  * This route only supplies the destination content, which is what was
