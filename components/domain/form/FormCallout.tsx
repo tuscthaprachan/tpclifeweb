@@ -33,7 +33,7 @@ export function FormCallout({ form, locale, headingLevel, className }: FormCallo
   const href = localePath(locale, `/forms/${form.slug.current}`);
 
   return (
-    <div className={cx("rounded-panel border-l-[var(--border-width-thick)] border-action bg-surface-alt p-[var(--space-4)]", className)}>
+    <div className={cx("rounded-panel border-l-[length:var(--border-width-thick)] border-action bg-surface-alt p-[var(--space-4)]", className)}>
       <Heading level={headingLevel} className="text-lg">
         <Link href={href} className="text-action no-underline hover:text-action-hover hover:underline">
           {pick(form.title, locale)}

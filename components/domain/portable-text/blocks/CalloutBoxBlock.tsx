@@ -60,7 +60,7 @@ export function CalloutBoxBlock({ value, locale }: { value: CalloutBoxValue; loc
   return (
     <div
       className={cx(
-        "my-[var(--space-4)] rounded-panel border-l-[var(--border-width-thick)] px-[var(--space-4)] py-[var(--space-4)]",
+        "my-[var(--space-4)] rounded-panel border-l-[length:var(--border-width-thick)] px-[var(--space-4)] py-[var(--space-4)]",
         TONE_BORDER[tone],
         TONE_BG[tone],
       )}

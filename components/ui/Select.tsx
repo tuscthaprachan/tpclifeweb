@@ -51,7 +51,7 @@ export function Select({ id, label, hint, error, options, className, ...rest }: 
         aria-invalid={error ? true : undefined}
         className={cx(
           "min-h-[var(--target-min)] max-w-full rounded-control bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900",
-          error ? "border-[var(--border-width-thick)] border-error" : "border border-line-strong",
+          error ? "border-[length:var(--border-width-thick)] border-error" : "border border-line-strong",
         )}
         {...rest}
       >

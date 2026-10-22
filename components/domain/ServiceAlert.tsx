@@ -63,7 +63,7 @@ export function ServiceAlert({ locale, alert, className }: ServiceAlertProps) {
   return (
     <div
       {...liveRegionProps(POLITENESS[alert.severity])}
-      className={cx("rounded-panel border-l-[var(--border-width-thick)] px-[var(--space-4)] py-[var(--space-4)] text-ink-900", BORDER_BG[alert.severity], className)}
+      className={cx("rounded-panel border-l-[length:var(--border-width-thick)] px-[var(--space-4)] py-[var(--space-4)] text-ink-900", BORDER_BG[alert.severity], className)}
     >
       <Cluster space={2}>
         <StatusTag tone={TONE[alert.severity]} label={pick(SEVERITY_LABEL[alert.severity], locale)} />

@@ -43,7 +43,7 @@ function buildComponents(locale: Locale, headingLevel: HeadingLevel): PortableTe
     block: {
       normal: ({ children }) => <p>{children}</p>,
       blockquote: ({ children }) => (
-        <blockquote className="border-l-[var(--border-width-thick)] border-line-strong pl-[var(--space-4)] py-[var(--space-1)] text-ink-900 italic">
+        <blockquote className="border-l-[length:var(--border-width-thick)] border-line-strong pl-[var(--space-4)] py-[var(--space-1)] text-ink-900 italic">
           {children}
         </blockquote>
       ),
