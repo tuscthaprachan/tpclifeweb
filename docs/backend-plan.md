@@ -6,7 +6,7 @@ Status: draft for review. The site is pre-production, so there is no content to 
 
 1. Remove Sanity entirely: Studio, client, Portable Text, image CDN, webhook, Live.
 2. One Postgres backend on Neon serving website content, staff tools and transactional services.
-3. End-to-end services, starting with lost and found (run jointly by TUSU and TUSC) and complaints.
+3. End-to-end services, starting with lost and found and complaints, both run jointly by TUSU and TUSC.
 4. Design, build and run every part of it, public and staff-facing, to the [GOV.UK Service Manual](https://www.gov.uk/service-manual) and [Service Standard](https://www.gov.uk/service-manual/service-standard).
 
 ## Standards we hold ourselves to
@@ -25,7 +25,7 @@ The Service Manual is written for UK government, so we adopt its principles and 
 | 6 | Multidisciplinary team | Named service owner per service from TUSU/TUSC; content, design, research and engineering roles identified even if one person holds several. |
 | 7 | Agile ways of working | Discovery, alpha, beta, live per service; the phase banner reflects the real phase. |
 | 8 | Iterate frequently | Neon branch per preview deployment so every change is testable with real-shaped data. |
-| 9 | Secure and private | Entra OIDC for staff, least-privilege roles, audit log, PII encrypted at rest at column level, PDPA retention schedule. |
+| 9 | Secure and private | Entra OIDC for staff, least-privilege roles, audit log, PII encrypted at rest at column level, PII deleted after 1 year. |
 | 10 | Define success, publish data | KPIs per service: completion rate, user satisfaction, digital take-up, time to resolution (complaints), return rate (lost and found). Published on a `/performance` page. |
 | 11 | Choose the right tools | Boring, open technology: Postgres, Drizzle, Next.js, OIDC. |
 | 12 | Make source code open | Repository stays public; secrets and data never in the repo. |
@@ -64,11 +64,11 @@ The Service Manual is written for UK government, so we adopt its principles and 
   - `/[locale]/…`: public site and service journeys.
   - `/admin/…`: staff console, same design system, Thai and English.
   - Server Actions for all writes; `/api` only for things that need it (cron, webhooks, future integrations).
-- **Auth**: Auth.js with Microsoft Entra ID (OIDC), tenant-restricted to Thammasat. Staff roles are mapped from Entra groups where possible, otherwise managed in-app. Students may optionally sign in with Entra to see all their cases; never required.
-- **Authorisation**: roles `admin`, `editor`, `lf_officer`, `complaints_handler`, `unit_lead`, scoped by organisation. Lost and found is jointly owned: both TUSU and TUSC officers see the shared queue; each action records which organisation acted. Restricted complaint categories are visible only to named staff. Enforced in the data layer and backed by Postgres row-level security.
+- **Auth**: Auth.js with Microsoft Entra ID (OIDC), tenant-restricted to Thammasat. Entra only proves identity; staff roles are assigned and revoked in-app by an `admin`. Students may optionally sign in with Entra to see all their cases; never required.
+- **Authorisation**: roles `admin`, `editor`, `lf_officer`, `complaints_handler`, `unit_lead`, each held on behalf of an organisation. Lost and found and complaints are jointly owned: TUSU and TUSC staff share one queue per service; each action records which organisation acted. Restricted complaint categories are visible only to named staff. Enforced in the data layer and backed by Postgres row-level security.
 - **Files**: Vercel Blob behind a small storage interface (S3-compatible, swappable). Public bucket for content images; private for item photos and complaint evidence, served via short-lived signed URLs.
-- **Notifications**: email via Resend. LINE Messaging API as a later channel. Templates bilingual, stored in code.
-- **Jobs**: Vercel Cron for response-time reminders, escalations, unclaimed-item expiry and PII deletion.
+- **Notifications**: email via Resend. Templates bilingual, stored in code. LINE is on the back burner.
+- **Jobs**: Vercel Cron for response-time reminders, escalations and PII deletion.
 - **Audit log**: append-only table, recording actor, action, entity, before/after diff, and every view of personal data.
 - **Caching**: content writes call `revalidateTag` directly; the existing `CACHE_TAGS` stay. Replaces the Sanity webhook and Live.
 - **Validation**: Zod schemas are the single source of truth for types, admin forms, server actions and the bilingual completeness rule.
@@ -102,11 +102,11 @@ Common to every service:
 | Match | System + officer | Candidates ranked by category, place, date window and `pg_trgm` text similarity. Officer confirms; owner notified. |
 | Claim | Owner | Answers verification questions; officer compares with hidden details. |
 | Handover | Officer | ID check recorded (no ID number stored), collection time, which desk (TUSU or TUSC). Case closed. |
-| Expiry | System | Unclaimed after N days: flagged, then disposed of or donated, with a record. PII deleted on schedule. |
+| Unclaimed | System | Found items are kept indefinitely and stay listed until claimed. Personal data on the case is deleted after 1 year; the item record remains. |
 
 ### 4. Complaints
 
-- Category routes to the owning organisation.
+- Jointly handled by TUSU and TUSC from one shared queue; categories are for reporting and triage, not routing.
 - Named, pseudonymous or anonymous submission (anonymous cannot be tracked by email, only by reference link shown once).
 - Acknowledge and resolve targets per category, escalation to `unit_lead` when missed.
 - Resolution with outcome text, satisfaction survey, reopen window.
@@ -121,7 +121,8 @@ Common to every service:
 
 ## Privacy (PDPA)
 
-- Collect the minimum. Each personal field has a stated purpose and retention period.
+- Collect the minimum. Each personal field has a stated purpose.
+- Retention: personal data is kept for 1 year, then deleted by a scheduled job. For open cases the clock runs from submission; deletion is audited.
 - Privacy notice linked from every service start page.
 - Data subject requests (access, deletion) handled from the staff console.
 - PII columns encrypted; access logged.
@@ -134,14 +135,19 @@ Common to every service:
 3. **Content editing** in `/admin`.
 4. **Case engine + lost and found**: discovery with TUSU/TUSC desks, alpha, private beta.
 5. **Complaints**: discovery, alpha, beta.
-6. **Notifications, scheduled jobs, performance page.**
+6. **Notifications (email), scheduled jobs, performance page.** LINE later.
 
 Phases 1–2 alone remove Sanity and nearly all remaining `npm audit` findings.
 
+## Decisions
+
+1. Unclaimed found items are kept indefinitely.
+2. Complaints are jointly handled by TUSU and TUSC.
+3. LINE notifications are on the back burner.
+4. Personal data is kept for 1 year.
+5. Staff roles are managed in-app, not from Entra groups.
+
 ## Open questions
 
-1. Lost and found: unclaimed retention period, disposal route, and which desk holds which items.
-2. Complaint categories and owning organisation for each.
-3. Whether to include LINE notifications in phase 6 or earlier.
-4. PII retention periods and data protection contact.
-5. Can Entra group membership be used to assign staff roles, or are roles managed in-app?
+1. Named data protection contact.
+2. Whether the 1-year clock for personal data runs from submission or from case closure.
