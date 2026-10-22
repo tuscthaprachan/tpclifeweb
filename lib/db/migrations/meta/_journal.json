@@ -22,6 +22,13 @@
       "when": 1792656132218,
       "tag": "0002_needy_randall_flagg",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792662128941,
+      "tag": "0003_content_schema",
+      "breakpoints": true
     }
   ]
 }
