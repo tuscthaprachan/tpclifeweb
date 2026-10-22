@@ -47,6 +47,15 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Content-Security-Policy", value: "frame-ancestors 'self' https://www.sanity.io" }],
       },
       {
+        // The staff console is never for a crawler or a shared cache. robots.txt
+        // and the page metadata say the same; this covers non-HTML responses too.
+        source: "/admin/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "private, no-store" },
+        ],
+      },
+      {
         // The search index is regenerated on revalidation, so it may be cached
         // hard at the edge but must revalidate quickly when content changes.
         source: "/api/search-index/:locale",

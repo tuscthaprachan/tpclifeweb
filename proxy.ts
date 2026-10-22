@@ -63,8 +63,11 @@ export function proxy(request: NextRequest) {
 export const config = {
   /*
    * Excludes /api, /_next, /studio (the Sanity Studio mounts its own routing
-   * there and must not be redirected into a locale) and any path with a file
-   * extension (favicon.ico, sitemap.xml, robots.txt, static assets).
+   * there and must not be redirected into a locale), /admin (the staff
+   * console is a single, un-prefixed route tree that picks its language from
+   * the same cookie, see lib/admin/locale.ts; authorisation lives in
+   * `requireStaff`, never here) and any path with a file extension
+   * (favicon.ico, sitemap.xml, robots.txt, static assets).
    */
-  matcher: ["/((?!api|_next|studio|.*\\..*).*)"],
+  matcher: ["/((?!api|_next|studio|admin\\b|.*\\..*).*)"],
 };

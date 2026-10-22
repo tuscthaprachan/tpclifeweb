@@ -1,4 +1,4 @@
-import { boolean, index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { bigint, boolean, index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 /**
  * Better Auth tables. Property names are the camelCase field names Better
@@ -40,6 +40,10 @@ export const session = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     // admin plugin
     impersonatedBy: text("impersonated_by"),
+    // Our own field (lib/auth/create.ts): when this session passed its second
+    // factor. Null means the email code alone has been proved, which the staff
+    // console does not accept (lib/auth/access.ts).
+    secondFactorAt: timestamp("second_factor_at", { withTimezone: true }),
   },
   (t) => [index("session_user_id_idx").on(t.userId)],
 );
@@ -116,3 +120,15 @@ export const passkey = pgTable(
   },
   (t) => [index("passkey_user_id_idx").on(t.userId), index("passkey_credential_id_idx").on(t.credentialID)],
 );
+
+/**
+ * Better Auth's rate limiter, with `storage: "database"` (lib/auth/create.ts).
+ * Our own limiter for Server Actions (lib/auth/rate-limit.ts) shares the table
+ * under an `app:` key prefix.
+ */
+export const rateLimit = pgTable("rate_limit", {
+  id: text("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  count: integer("count").notNull(),
+  lastRequest: bigint("last_request", { mode: "number" }).notNull(),
+});

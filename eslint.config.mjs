@@ -35,6 +35,19 @@ const config = [
   },
 
   {
+    // The staff console uses plain links and full page loads on purpose. Every
+    // page re-reads the session, so the header, the timeout warning and the
+    // access decision are never stale, and nothing depends on client routing
+    // (it must work without JavaScript). A client-side `<Link>` would reuse the
+    // cached layout and show the previous session's state.
+    files: ["app/admin/**", "components/admin/**"],
+    rules: {
+      "@next/next/no-html-link-for-pages": "off",
+      "@next/next/no-location-assign-relative-destination": "off",
+    },
+  },
+
+  {
     // Node scripts are not part of the app bundle.
     files: ["scripts/**/*.mjs", "*.config.mjs", "*.config.ts"],
     rules: { "@typescript-eslint/no-require-imports": "off" },
