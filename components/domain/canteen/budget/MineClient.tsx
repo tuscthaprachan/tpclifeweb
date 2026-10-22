@@ -14,6 +14,7 @@ import { localePath, pick, type Locale } from "@/lib/i18n/config";
 
 import { filterSummary } from "../chips";
 import { dishHref } from "../links";
+import { OtherName } from "../OtherName";
 import { EAT, eat, t } from "../strings";
 import { BUDGET, WEEKDAY_NAME, budget } from "./strings";
 import { SpendThisWeek } from "./SpendThisWeek";
@@ -105,6 +106,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
         <Link href={dishHref(locale, slug, noFilters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
           {pick(dish.name, locale)}
         </Link>
+        <OtherName name={dish.name} locale={locale} />
         <span className="text-sm text-ink-600">
           {stallLabel(dish)} · {eat.baht(locale, dish.price)}
           {dish.checkedOn ? (

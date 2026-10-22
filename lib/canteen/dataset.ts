@@ -175,7 +175,7 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     id: "pad-kra-pao",
     slug: "pad-kra-pao",
     th: "ข้าวกะเพรา",
-    en: "Holy basil stir-fry over rice",
+    en: "Pad kra pao, holy basil stir-fry over rice",
     aliases: ["krapow", "kaprao", "gaprao", "kra pao", "pad kaprao", "กะเพา", "กระเพรา"],
     explainer: {
       th: "ผัดกะเพราคือเนื้อสัตว์สับผัดกับใบกะเพรา พริกและกระเทียม ราดบนข้าวสวย มักเสิร์ฟพร้อมไข่ดาวกรอบ เป็นเมนูตามสั่งที่คนสั่งมากที่สุด",
@@ -186,7 +186,7 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     id: "khao-man-gai",
     slug: "khao-man-gai",
     th: "ข้าวมันไก่",
-    en: "Hainanese chicken rice",
+    en: "Khao man gai, Hainanese chicken rice",
     aliases: ["khao man kai", "khaomangai", "chicken rice", "ข้าวมัน"],
     explainer: {
       th: "ไก่ต้มหรือไก่ทอดเสิร์ฟกับข้าวที่หุงในน้ำมันไก่ น้ำจิ้มเต้าเจี้ยวรสเค็มหวาน และน้ำซุปใส กินง่าย เหมาะกับคนที่เพิ่งมาลองอาหารไทย",
@@ -197,7 +197,7 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     id: "khao-mok-gai",
     slug: "khao-mok-gai",
     th: "ข้าวหมกไก่",
-    en: "Chicken biryani, Thai style",
+    en: "Khao mok gai, Thai-style chicken biryani",
     aliases: ["khao mok kai", "khaomokgai", "biryani", "ข้าวหมก"],
     explainer: {
       th: "ข้าวหุงกับเครื่องเทศและขมิ้น วางไก่ทอดหรือไก่ต้มไว้ด้านบน กินกับน้ำจิ้มรสเปรี้ยวและน้ำซุป เป็นอาหารมุสลิมที่พบได้ทั่วไป",
@@ -208,7 +208,7 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     id: "som-tam",
     slug: "som-tam",
     th: "ส้มตำ",
-    en: "Green papaya salad",
+    en: "Som tam, green papaya salad",
     aliases: ["som tum", "somtam", "papaya salad", "ตำไทย"],
     explainer: {
       th: "สลัดมะละกอดิบตำกับพริก กระเทียม มะนาว น้ำปลาและน้ำตาลปี๊บ รสเปรี้ยว เค็มและหวาน กินคู่กับข้าวเหนียวและไก่ย่าง",
@@ -241,7 +241,7 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     id: "pad-see-ew",
     slug: "pad-see-ew",
     th: "ผัดซีอิ๊ว",
-    en: "Stir-fried wide noodles in soy sauce",
+    en: "Pad see ew, stir-fried wide noodles in soy sauce",
     aliases: ["pad si ew", "pad siew", "phat si io", "ผัดซีอิ้ว"],
     explainer: {
       th: "เส้นใหญ่ผัดกับซีอิ๊วดำ ไข่ และผักคะน้า ได้กลิ่นไหม้อ่อนจากกระทะร้อน รสหวานเค็ม",
@@ -252,7 +252,7 @@ const CANONICAL_SPECS: CanonicalSpec[] = [
     id: "rad-na",
     slug: "rad-na",
     th: "ราดหน้า",
-    en: "Noodles in thick gravy",
+    en: "Rad na, noodles in thick gravy",
     aliases: ["rat na", "lad na", "rad nah"],
     explainer: {
       th: "เส้นใหญ่ผัดหรือเส้นหมี่กรอบราดน้ำเกรวี่ข้นจากแป้งมัน ใส่ผักคะน้าและเนื้อสัตว์ รสออกหวานมัน กินแล้วอุ่นท้อง",

@@ -19,6 +19,7 @@ import "../fun.css";
 import { dishDietTags } from "../diet";
 import { TYPE_LABEL } from "../labels";
 import { dishHref, mapHref, stallHref } from "../links";
+import { OtherName } from "../OtherName";
 import { PriceTag } from "../PriceTag";
 import { EAT, eat, t } from "../strings";
 import { EatThisButton } from "./EatThisButton";
@@ -282,6 +283,7 @@ function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDish
                   <Link href={dishHref(locale, dish.slug.current, filters)} className="font-medium">
                     {localised(dish.name, locale)}
                   </Link>
+                  <OtherName name={dish.name} locale={locale} />
                   <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} hideChecked />
                 </li>
               ))}
@@ -341,6 +343,7 @@ function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultP
                   <Link href={dishHref(locale, dish.slug.current, filters)} className="text-lg font-medium">
                     {names[position]}
                   </Link>
+                  <OtherName name={dish.name} locale={locale} />
                   {stall ? (
                     <p className="m-0 text-sm text-ink-600">
                       {PICK.alsoWord[locale]} {eat.stallFull(locale, stall.number, localised(stall.name, locale))}
