@@ -122,7 +122,7 @@ Common to every service:
 ## Privacy (PDPA)
 
 - Collect the minimum. Each personal field has a stated purpose.
-- Retention: personal data is kept for 1 year, then deleted by a scheduled job. For open cases the clock runs from submission; deletion is audited.
+- Retention: personal data is kept for 1 year, then deleted by a scheduled job. Deletion is audited.
 - Privacy notice linked from every service start page.
 - Data subject requests (access, deletion) handled from the staff console.
 - PII columns encrypted; access logged.
