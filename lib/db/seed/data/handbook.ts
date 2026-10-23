@@ -1,8 +1,8 @@
 /**
  * TU91 freshman handbook content ("The magic of TPC", academic year 2568),
- * ported from sanity/seed/handbook.ts for the Postgres seed.
+ * for the Postgres seed.
  *
- * This is DATA: the Sanity client and the run script are gone. The block
+ * This is DATA: there is no client or run script. The block
  * builders still emit Portable Text because that is how the content was
  * authored; lib/db/seed/handbook.ts converts each block array to a ProseMirror
  * document with `portableTextToDoc` before writing. Em dashes in the source
@@ -21,7 +21,7 @@ import { randomUUID } from "node:crypto";
  *
  * ------------------------------------------------------------------ */
 
-/** A short, stable-enough key. Sanity requires one on every object in an array. */
+/** A short, stable-enough key. Portable Text blocks carry one on every object in an array. */
 function key(): string {
   return randomUUID().replace(/-/g, "").slice(0, 12);
 }
@@ -31,10 +31,7 @@ function slug(current: string) {
 }
 
 /**
- * A published document's id must not contain a dot: Sanity's default
- * public-read grant is `_id in path("*")`, which matches only dot-free ids,
- * and that is exactly how a published document is told apart from its
- * `drafts.` counterpart. See the long comment on docId in seed.ts.
+ * A document id must not contain a dot, so dots in a name become hyphens.
  */
 function docId(type: string, name: string): string {
   return `${type}-${name.replace(/\./g, "-")}`;

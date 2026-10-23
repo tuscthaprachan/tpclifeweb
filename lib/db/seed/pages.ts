@@ -8,7 +8,7 @@ import { contentPages } from "../schema/content/pages";
 import { excludedSet, published, rich, type Bi, type SeedDb } from "./util";
 
 /**
- * The four hand-built guide pages from sanity/seed/seed.ts: useful online
+ * The four hand-built guide pages seeded here: useful online
  * services, rules and documents, about TUSU and about TUSC. Their real content
  * is their link lists. SOURCE_DOCUMENTS notes are English-only maintainer
  * notes and are deliberately not copied into the reader-facing text.

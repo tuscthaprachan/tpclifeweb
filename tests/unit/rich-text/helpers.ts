@@ -1,54 +1,31 @@
-import { vi } from "vitest";
+import { FAQ_DOCS, GUIDE_PAGE_DOCS, NEW_ORGANISATION_DOCS, PLACE_DOCS, WELFARE_PAGE_DOCS } from "@/lib/db/seed/data/handbook";
+import { GUIDE_PAGES } from "@/lib/db/seed/pages";
 
 /**
- * Collects every Portable Text field the two Sanity seed scripts would write.
- * Both scripts build their documents and write them at import time, so the
- * only way to read them without editing them is to import each one with the
- * Sanity client mocked and capture what is handed to `createOrReplace`.
+ * Every record the Postgres content seed builds from Portable Text blocks: the
+ * handbook data (FAQs, welfare and guide pages, places, organisations) and the
+ * hand-built guide pages in lib/db/seed/pages.ts. These are plain data, so
+ * they are read directly.
  */
 export async function loadSeedDocs(): Promise<Array<Record<string, unknown>>> {
-  const docs: Array<Record<string, unknown>> = [];
-  const chain: unknown = new Proxy(() => chain, { get: (_t, prop) => (prop === "then" ? undefined : chain) });
-
-  vi.resetModules();
-  vi.doMock("@sanity/client", () => ({
-    createClient: () => ({
-      createOrReplace: async (doc: Record<string, unknown>) => {
-        docs.push(doc);
-      },
-      fetch: async () => null,
-      patch: () => chain,
-      transaction: () => chain,
-    }),
+  const guidePages = GUIDE_PAGES.map((page) => ({
+    _id: `guide-${page.slug}`,
+    bodyTh: page.bodyTh,
+    bodyEn: page.bodyEn,
   }));
-  process.env.SANITY_API_WRITE_TOKEN = "test-token";
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ??= "test";
-  process.env.NEXT_PUBLIC_SANITY_DATASET ??= "test";
-  const log = vi.spyOn(console, "log").mockImplementation(() => {});
-  const err = vi.spyOn(console, "error").mockImplementation(() => {});
-  const exit = vi.spyOn(process, "exit").mockImplementation((() => undefined) as never);
-
-  try {
-    await import("../../../sanity/seed/handbook");
-    await import("../../../sanity/seed/seed");
-    // Let the scripts' async main functions drain.
-    let last = -1;
-    while (docs.length !== last) {
-      last = docs.length;
-      await new Promise((resolve) => setTimeout(resolve, 50));
-    }
-  } finally {
-    log.mockRestore();
-    err.mockRestore();
-    exit.mockRestore();
-    vi.doUnmock("@sanity/client");
-  }
-  return docs;
+  return [
+    ...FAQ_DOCS,
+    ...WELFARE_PAGE_DOCS,
+    ...GUIDE_PAGE_DOCS,
+    ...PLACE_DOCS,
+    ...NEW_ORGANISATION_DOCS,
+    ...guidePages,
+  ] as Array<Record<string, unknown>>;
 }
 
 type PtBlock = { _type: string; [key: string]: unknown };
 
-/** Every array in a seed document that looks like Portable Text, with where it was found. */
+/** Every array in a seed record that looks like Portable Text, with where it was found. */
 export function findPortableText(docs: Array<Record<string, unknown>>): Array<{ where: string; blocks: PtBlock[] }> {
   const found: Array<{ where: string; blocks: PtBlock[] }> = [];
   const walk = (value: unknown, where: string) => {

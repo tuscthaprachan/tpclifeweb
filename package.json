@@ -24,29 +24,21 @@
   },
   "comment:overrides": "Pins TypeScript across the tree. Without this npm oscillates between TS 5 and TS 7 resolving typescript-eslint's wide range and never terminates. TS 7 is not used because typescript-eslint 8 caps below TS 6.1.",
   "overrides": {
-    "typescript": "^6.0.3",
-    "smol-toml": "^1.9.1"
+    "typescript": "^6.0.3"
   },
   "dependencies": {
     "@better-auth/passkey": "^1.7.12",
     "@neondatabase/serverless": "^1.2.0",
-    "@portabletext/react": "^8.0.1",
-    "@sanity/client": "^8.10.1",
-    "@sanity/image-url": "^2.1.1",
-    "@sanity/vision": "^6.20.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.8.2",
     "@vercel/speed-insights": "^2.0.0",
     "better-auth": "^1.7.12",
     "drizzle-orm": "^0.45.4",
     "next": "^16.4.2",
-    "next-sanity": "^13.3.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "resend": "^6.34.1",
-    "sanity": "^6.20.0",
     "server-only": "^0.0.1",
-    "styled-components": "^6.6.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {

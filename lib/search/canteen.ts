@@ -2,7 +2,7 @@
  * Canteen dishes and canonical dishes as search records.
  *
  * Built in code from the one cached canteen dataset rather than by another
- * GROQ projection, so the haystack logic (aliases folded in, both languages,
+ * query, so the haystack logic (aliases folded in, both languages,
  * stall and type words) is unit tested and the same dataset feeds search and
  * the /eat pages.
  *

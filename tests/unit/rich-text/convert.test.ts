@@ -23,7 +23,7 @@ describe("portableTextToDoc: seed content", () => {
   }, 30_000);
 
   it("finds the seeded Portable Text fields", () => {
-    // 16 FAQs x2 languages, 12 handbook pages x2, plus seed.ts guide pages.
+    // 16 FAQs x2 languages, 12 handbook pages x2, plus the hand-built guide pages.
     expect(fields.length).toBeGreaterThan(50);
   });
 

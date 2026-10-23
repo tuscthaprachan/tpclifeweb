@@ -112,7 +112,7 @@ describe("content migration", () => {
     expect(rows.map((r) => r.severity)).toEqual(["critical", "warning", "info"]);
   });
 
-  it("answers the active-alert window and the upcoming-events predicate like the GROQ did", async () => {
+  it("answers the active-alert window and the upcoming-events predicate with the same window rules the pages rely on", async () => {
     await ctx.db.delete(serviceAlerts);
     const t = (s: string) => new Date(s);
     await ctx.db.insert(serviceAlerts).values([

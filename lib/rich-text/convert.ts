@@ -5,19 +5,19 @@ import type { RichTextDoc, RichTextMark, RichTextNode } from "./types";
  * import. Call it once per language (`portableTextToDoc(body.th)`); the
  * custom blocks keep their bilingual `{ th, en }` attrs, see `schema.ts`.
  *
- * It throws on anything outside the vocabulary the old schema allowed
- * (`sanity/schemas/objects/portableText.ts`) rather than dropping it, so a
+ * It throws on anything outside the vocabulary the editor allows
+ * rather than dropping it, so a
  * lossy conversion is a loud failure at seed time. The result is not
  * validated here; run `parseRichTextDoc` on it before storing.
  */
 
 export interface PortableTextConvertOptions {
   /**
-   * Portable Text references Sanity ids, which do not exist in the new
+   * Portable Text references image and form ids, which do not exist in the
    * database. Map them to the new row ids here. Default: pass through.
    */
-  mapImageId?: (sanityAssetRef: string) => string;
-  mapFormId?: (sanityFormRef: string) => string;
+  mapImageId?: (assetRef: string) => string;
+  mapFormId?: (formRef: string) => string;
 }
 
 type Raw = Record<string, unknown>;
@@ -75,7 +75,7 @@ function withContent(type: string, content: RichTextNode[], attrs?: Raw): RichTe
   return { type, ...(attrs ? { attrs } : {}), ...(content.length ? { content } : {}) };
 }
 
-/** A Sanity `localeString`/`localeText` as plain `{ th, en }`, without `_type`. Undefined stays undefined. */
+/** A `localeString`/`localeText` as plain `{ th, en }`, without `_type`. Undefined stays undefined. */
 function loc(value: unknown, where: string): { th: string; en: string } | undefined {
   if (value === undefined || value === null) return undefined;
   if (!isRecord(value)) throw new Error(`portableTextToDoc: malformed locale value in ${where}`);

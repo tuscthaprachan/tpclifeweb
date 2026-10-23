@@ -6,7 +6,7 @@ import { upsertContentPage, type PageSeed } from "./pages";
 import { excludedSet, published, rich, type Bi, type SeedDb } from "./util";
 
 /**
- * The TU91 handbook content (sanity/seed/handbook.ts): FAQs, welfare pages,
+ * The TU91 handbook content (lib/db/seed/data/handbook.ts): FAQs, welfare pages,
  * guide pages and places. New organisations and the Thai-name enrichments are
  * applied by seed/directory.ts. Portable Text is converted to ProseMirror here.
  */

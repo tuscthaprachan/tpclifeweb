@@ -32,7 +32,7 @@ describe("revalidateFor", () => {
     expect(next.revalidateTag).toHaveBeenCalledWith(CACHE_TAGS.serviceAlert, "max");
   });
 
-  it("keeps the mapping the Sanity webhook had", () => {
+  it("maps each entity type to its cache tags", () => {
     const expected: Record<ContentEntityType, string[]> = {
       siteSettings: ["siteSettings"],
       serviceAlert: ["serviceAlert"],

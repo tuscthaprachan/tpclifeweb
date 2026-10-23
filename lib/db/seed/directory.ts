@@ -22,8 +22,8 @@ interface OrgRecord {
   contacts: OrganisationContactJson[];
 }
 
-/** The id the Sanity seed gave an organisation, which the handbook enrichments refer to. */
-const sanityId = (handle: string) => `organisation-${handle.replace(/\./g, "-")}`;
+/** The id the handbook data gives an organisation, which the handbook enrichments refer to. */
+const handbookOrgId = (handle: string) => `organisation-${handle.replace(/\./g, "-")}`;
 
 export function buildDirectory(): OrgRecord[] {
   const enrichments = new Map(ENRICHMENTS.map((e) => [e.id, e]));
@@ -35,7 +35,7 @@ export function buildDirectory(): OrgRecord[] {
       faculty: "faculty" in org ? { th: org.faculty.th, en: org.faculty.en } : undefined,
       contacts: [{ channel: "instagram", value: org.handle }],
     };
-    const enrichment = enrichments.get(sanityId(org.handle));
+    const enrichment = enrichments.get(handbookOrgId(org.handle));
     // Only fill in names that were never captured in Thai (th still equals en).
     if (enrichment && base.name.th.trim() === base.name.en.trim()) {
       base.name = enrichment.name;

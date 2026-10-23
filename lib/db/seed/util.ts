@@ -18,7 +18,7 @@ import type { RichTextDoc } from "../../rich-text/types";
 
 export type SeedDb = AuditExecutor;
 
-/** Mirrors the slug the Studio generated: lower case, ASCII, hyphenated. */
+/** Mirrors the slug format used on the site: lower case, ASCII, hyphenated. */
 export function slugify(input: string): string {
   return input
     .toLowerCase()

@@ -13,7 +13,7 @@ import { contentStatusEnum } from "./enums";
  * null for seeded rows and system writes.
  *
  * `published_at` is the editorial publication date. For news posts and lost
- * and found entries it is also the field Sanity called `publishedAt`.
+ * and found entries it is also the publication date.
  */
 export function contentColumns() {
   return {

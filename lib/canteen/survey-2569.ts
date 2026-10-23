@@ -11,8 +11,8 @@
  * towards listing too much and is never a guarantee. Vegetarian is true only where the board says so or the item plainly
  * has no meat, fish or seafood.
  *
- * Generated from the transcription and mirrored, row for row, in
- * data/canteen-survey.csv for the Sanity importer. Change both together.
+ * Generated from the transcription. lib/db/seed/canteen.ts seeds Postgres
+ * from it.
  */
 
 import type { Allergen, CookingStyle, DishCourse, DishType, Protein, Temperature } from "@/lib/content/types";

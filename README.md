@@ -36,7 +36,7 @@ npm run dev
 
 `pglite:memory` runs a throwaway Postgres inside the server process ([PGlite](https://pglite.dev), a devDependency). On first use it applies the migrations in `lib/db/migrations` and runs the content seed (`lib/db/seed`: site settings, forms, shuttle, directory, handbook pages, FAQs, places and the surveyed canteen), so you get a complete, seeded site. It is empty again on every restart, which is what you want for tests and CI. News, events, policies, alerts and lost and found start empty because there is nothing to seed them from. For a development database that keeps your edits across restarts use `DATABASE_URL=pglite:./.pglite` (the directory is git-ignored); only one process may use a directory at a time, so run `next build` with `pglite:memory`. To use a real Neon database instead, set `DATABASE_URL` to its connection string, then run `npm run db:migrate` and `npm run db:seed`.
 
-The site is at `http://localhost:3000`. The old Sanity Studio is still at `http://localhost:3000/studio` until it is removed; it needs the Sanity values in `.env.example` and no longer affects what the site shows.
+The site is at `http://localhost:3000`.
 
 ## Deploying
 

@@ -110,8 +110,7 @@ test("filters on /policy work via <form method=\"get\">", async ({ page }) => {
 
 test("pagination on /news accepts ?page= without JavaScript", async ({ page }) => {
   /*
-   * There is no seeded CMS content in this environment (.env.local points
-   * at a placeholder Sanity project), so `components/ui/Pagination` never
+   * News is not seeded (there is nothing to seed it from), so `components/ui/Pagination` never
    * renders: it returns null whenever totalPages <= 1, which is always true
    * against an empty index. There is therefore no "Next page" link to click
    * here that would exist in a populated environment.

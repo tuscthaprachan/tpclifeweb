@@ -19,7 +19,7 @@
  *
  * The alerts and shuttle reads, the surfaces that most need to feel current,
  * are cached for a minute and invalidated by tag when an alert or route
- * changes (lib/content/cache.ts), which replaces Sanity Live without giving
+ * changes (lib/content/cache.ts), which keeps them current without giving
  * up the outage resilience CONTRIBUTING.md and this page's brief treat as
  * non-negotiable.
  */

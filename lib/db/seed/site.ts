@@ -3,7 +3,7 @@ import { siteSettings } from "../schema/content/site";
 import { excludedSet, published, type SeedDb } from "./util";
 
 /**
- * The site settings singleton, ported from sanity/seed/seed.ts. Alpha on
+ * The site settings singleton, the site-wide settings. Alpha on
  * purpose: the register is new and the timetables carry unverified caveats.
  */
 

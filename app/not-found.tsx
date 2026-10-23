@@ -2,7 +2,7 @@
  * Root fallback for any URL that does not match a route file anywhere in the
  * app, which per Next.js routing rules is the ONLY case that reaches this
  * file: a mistyped or dead link (e.g. `/th/forms` before that route exists),
- * a path the proxy does not touch (dotted paths, `/studio`, `/api`), or the
+ * a path the proxy does not touch (dotted paths, `/api`), or the
  * `notFound()` call in `app/[locale]/layout.tsx` for an invalid `locale`
  * value, which bubbles up to here since that layout has no parent to catch
  * it. Content missing WITHIN a real route (a form or news slug that is not

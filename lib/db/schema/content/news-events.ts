@@ -66,9 +66,8 @@ export const newsPostTags = pgTable(
 );
 
 /**
- * Events. "Upcoming" is `coalesce(ends_at, starts_at) >= $now`, which is
- * exactly Sanity's `(!defined(endsAt) && startsAt >= $now) || endsAt >= $now`,
- * and is served by events_upcoming_idx (an expression index).
+ * Events. "Upcoming" is `coalesce(ends_at, starts_at) >= $now`, which means
+ * "no end and starts later, or ends later", and is served by events_upcoming_idx (an expression index).
  */
 export const events = pgTable(
   "events",

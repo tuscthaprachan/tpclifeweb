@@ -23,7 +23,7 @@ export const servicePhaseEnum = pgEnum("service_phase", SERVICE_PHASES);
 
 /**
  * Declared least to most severe, so `order by severity desc` puts critical
- * first. (Sanity sorted the strings, which put "warning" above "critical".)
+ * first. (Sorting the strings would put "warning" above "critical".)
  */
 export const ALERT_SEVERITIES = ["info", "warning", "critical"] as const;
 export const alertSeverityEnum = pgEnum("alert_severity", ALERT_SEVERITIES);

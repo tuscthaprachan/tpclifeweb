@@ -4,7 +4,7 @@ import { shuttleRoutes, shuttleStops } from "../schema/content/shuttle";
 import { excludedSet, published, slugify, type Bi, type SeedDb } from "./util";
 
 /**
- * Shuttle routes, ported from sanity/seed/seed.ts (`buildShuttleRouteDoc`).
+ * Shuttle routes, built from the harvested inventory.
  * Honesty decisions carried across unchanged: every stop's offset is 0 (the
  * timetable graphics publish no travel times; said in the route notes), the
  * term the timetable applies to is unknown (also in the notes), and nothing is

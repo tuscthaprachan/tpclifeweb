@@ -257,7 +257,7 @@ export const UI = {
   describeLocation: { th: "อธิบายตำแหน่งด้วยตัวเอง", en: "Describe the location yourself" },
   /*
    * A student cannot attach a photo. Anonymous asset upload would mean a
-   * Sanity write token in the browser bundle, so pictures are added by an
+   * storage write token in the browser bundle, so pictures are added by an
    * editor afterwards. Saying so is better than a file input that discards
    * what a worried student just uploaded.
    */

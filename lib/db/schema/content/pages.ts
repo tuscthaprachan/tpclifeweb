@@ -38,7 +38,7 @@ export const contentPages = pgTable(
     /** Off-site links, rendered whole. */
     relatedLinks: jsonb("related_links").$type<ExternalLinkJson[]>().notNull().default(sql`'[]'::jsonb`),
     lastReviewed: date("last_reviewed", { mode: "string" }),
-    /** Lower shows first. Sanity called this `order`, a reserved word in SQL. */
+    /** Lower shows first. Not named `order`, a reserved word in SQL. */
     sortOrder: integer("sort_order"),
   },
   (t) => [

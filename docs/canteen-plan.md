@@ -1,3 +1,5 @@
+> Note: the CMS is now Postgres (Neon), not Sanity. This is a historical plan; the Sanity references below are kept as written.
+
 # What to eat: canteen service plan
 
 Status: built, with real data. The stalls and menus were surveyed from photos on 21 October 2026 and live in `lib/canteen/dataset.ts` and `lib/canteen/survey-2569.ts` (mirrored in `data/canteen-*.csv` for the importer). What the survey changed is in `docs/canteen-plan-v2.md`.

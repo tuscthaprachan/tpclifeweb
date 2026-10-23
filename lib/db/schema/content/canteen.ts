@@ -33,7 +33,7 @@ import {
  * (cuisine, protein, contains) are columns, not join tables; only things with
  * foreign keys or history are child tables.
  *
- * HONESTY (unchanged from Sanity): every price is a surveyed figure with a
+ * HONESTY: every price is a surveyed figure with a
  * `checked_on` date; there is no allergen guarantee and no operational signal.
  */
 
@@ -154,7 +154,7 @@ export const canteenDishVariants = pgTable(
   ],
 );
 
-/** Append-only evidence for the price tracker (Sanity's `priceHistory`). */
+/** Append-only evidence for the price tracker (`priceHistory` in the dataset). */
 export const canteenDishPriceHistory = pgTable(
   "canteen_dish_price_history",
   {

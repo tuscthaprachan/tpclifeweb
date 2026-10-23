@@ -18,11 +18,9 @@ import { excludedSet, published, type SeedDb } from "./util";
  * The canteen. ONE source of truth: `surveyCanteenData()` in
  * lib/canteen/dataset.ts, which is built from lib/canteen/survey-2569.ts (every
  * priced dish on the menu boards photographed 21 October 2569) plus the stall,
- * canonical dish and floor plan definitions. The CSVs in data/ were the
- * Sanity importer's input and mirror the survey row for row; they are not read
- * here and can be deleted with sanity/seed/canteen.ts.
+ * canonical dish and floor plan definitions.
  *
- * Ids in the dataset (`survey-stall-3`, `survey-dish-<slug>`) are Sanity-style
+ * Ids in the dataset (`survey-stall-3`, `survey-dish-<slug>`) are string
  * references. They are resolved to the uuids Postgres assigns through lookup
  * maps keyed by those ids.
  */

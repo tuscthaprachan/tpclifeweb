@@ -24,7 +24,7 @@ import { lostFoundCategoryEnum, lostFoundKindEnum, lostFoundStatusEnum, ownerEnu
  * TWO DIFFERENT "STATUS" FIELDS. The common `status` column (draft/published)
  * is the publication state: a public report is inserted as `draft` and means
  * "waiting for approval"; only `published` rows are visible to readers.
- * `register_status` is Sanity's `status` (open, matched, returned, unclaimed,
+ * `register_status` is the register state (open, matched, returned, unclaimed,
  * withdrawn): an explicit, hand-set editorial field with no inferred value.
  *
  * PRIVATE COLUMNS. `submitter_contact` and `staff_verification_detail` must

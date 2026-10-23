@@ -410,7 +410,7 @@ export const TRANSPORT = {
  *     the single worst failure mode for a service like this, so
  *     `needsVerification` below says so explicitly, and the same caveat is
  *     repeated in each route's own `notes` field so it is visible to
- *     whoever reads the document in the Studio or, until an editor commits
+ *     whoever reads the record in the admin console or, until an editor commits
  *     to a term, to a student reading the site itself.
  *
  * The Pinklao Line timetable graphic also marks four specific departures as
@@ -418,8 +418,7 @@ export const TRANSPORT = {
  * is real, published information a student needs, not a note about the data;
  * see the seed script for where it ends up, since neither `shuttleStop.note`
  * (a stop, not a departure time) nor a field of its own exists for a
- * per-departure tag in `sanity/schemas/objects/shuttleStop.ts` or
- * `sanity/schemas/documents/shuttleRoute.ts`.
+ * per-departure tag in the shuttle tables.
  * ------------------------------------------------------------------ */
 
 interface ShuttleRouteSourceStop {
@@ -444,7 +443,7 @@ interface ShuttleRouteSource {
 
 // The plain-language notes about unpublished per-stop offsets, the last bus
 // and the unknown term (referenced in the file comment above) are assembled
-// in sanity/seed/seed.ts, next to the other document-building logic, rather
+// in lib/db/seed/shuttle.ts, next to the other seeding logic, rather
 // than duplicated here. This file holds the raw harvested facts (the routes,
 // stops and departure times below); how they become a document's fields is
 // the seed script's job, matching every other export in this file.

@@ -1,9 +1,9 @@
 /**
  * Runtime lists of every enum the canteen uses, in the canonical order the
  * UI and the URLs follow. The unions themselves live in
- * `lib/content/types.ts`; the Studio option lists live in
- * `sanity/schemas/constants.ts`. `tests/unit/canteen/options.test.ts` fails
- * if the three drift apart.
+ * `lib/content/types.ts`; the Postgres enums live in
+ * `lib/db/schema/content/enums.ts`. `tests/unit/canteen/options.test.ts` fails
+ * if they drift apart.
  *
  * Pure data, safe on the server and the client.
  */

@@ -43,9 +43,9 @@ export function isLocale(value: unknown): value is Locale {
 }
 
 /**
- * A field that exists in both languages. Every user-facing string in the CMS
+ * A field that exists in both languages. Every user-facing string in the database
  * uses one of these. Both sides are required: a document with an empty side is
- * blocked from publishing by Sanity validation and caught again at build time
+ * blocked from publishing by the content schema and caught again at build time
  * by scripts/check-i18n.mjs.
  */
 export interface LocaleString {

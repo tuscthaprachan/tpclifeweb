@@ -1,3 +1,5 @@
+> Note: the CMS is now Postgres (Neon), not Sanity. This is a historical plan; the Sanity references below are kept as written.
+
 # What to eat, v2: restructure after the real survey
 
 The first plan (`docs/canteen-plan.md`) was written before any menu existed. It assumed about 300 dishes, mostly rice and noodle plates, one price per dish with an optional "special", and stall numbers taken from the selection ranking. The photos of 21 October 2026 show a different canteen. This plan lists what the real data showed, what must change in the data model, and what must change in the design, in the order to build it.

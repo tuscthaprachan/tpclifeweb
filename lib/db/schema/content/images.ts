@@ -2,7 +2,7 @@ import { sql } from "drizzle-orm";
 import { boolean, check, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
- * Every picture on the public site (replaces SanityImage and the Sanity CDN).
+ * Every picture on the public site (stored in Vercel Blob).
  * `storage_key` is the object key behind the storage interface (Vercel Blob).
  *
  * WCAG 1.1.1: an image is either described in both languages or explicitly

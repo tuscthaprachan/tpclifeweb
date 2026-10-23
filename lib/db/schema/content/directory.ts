@@ -13,7 +13,7 @@ export interface OrganisationContactJson {
 
 /**
  * The student directory (clubs, faculty committees, independent groups,
- * university divisions, student bodies): Sanity's `organisation` document.
+ * university divisions, student bodies).
  *
  * Kept SEPARATE from the phase 1 `organisations` table. That table is the
  * authorisation and audit principal: a tiny, stable set (TUSU, TUSC) with an

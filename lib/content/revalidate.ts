@@ -6,8 +6,8 @@ import { CACHE_TAGS, type CacheTag } from "./cache";
 
 /**
  * The kinds of content a write can change. Phase 3's admin Server Actions call
- * `revalidateFor(entityType, slug)` after committing a change, which replaces
- * the Sanity webhook (and Sanity Live) this site used before.
+ * `revalidateFor(entityType, slug)` after committing a change, which expires
+ * the cache tags for that kind of content.
  */
 export type ContentEntityType =
   | "siteSettings"
