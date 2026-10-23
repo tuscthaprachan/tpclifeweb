@@ -1,6 +1,6 @@
 /**
- * The console header: service name, the two places to go, language switch and
- * sign out. Plain links and forms, so everything works without JavaScript.
+ * The console header: service name, the places to go, language switch and
+ * sign out. Plain links and forms.
  */
 
 import { AdminLanguageSwitch } from "@/components/admin/AdminLanguageSwitch";
@@ -19,9 +19,11 @@ interface AdminHeaderProps {
   /** Has passed the second step: shows the console links. */
   verified: boolean;
   isAdmin: boolean;
+  /** An `editor` or `admin`: shows the Content link. */
+  isEditor: boolean;
 }
 
-export function AdminHeader({ locale, hasSession, verified, isAdmin }: AdminHeaderProps) {
+export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor }: AdminHeaderProps) {
   return (
     <header className="border-b border-line bg-surface">
       <ShellContainer className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-3">
@@ -40,6 +42,13 @@ export function AdminHeader({ locale, hasSession, verified, isAdmin }: AdminHead
                     {A.homeLink[locale]}
                   </a>
                 </li>
+                {isEditor ? (
+                  <li>
+                    <a href="/admin/content" className="text-ink-900">
+                      {A.contentLink[locale]}
+                    </a>
+                  </li>
+                ) : null}
                 {isAdmin ? (
                   <li>
                     <a href="/admin/staff" className="text-ink-900">

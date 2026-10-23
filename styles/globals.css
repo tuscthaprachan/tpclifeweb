@@ -313,3 +313,41 @@
     word-break: break-all;
   }
 }
+
+/*
+ * The staff console's rich text editor (components/admin/content/RichTextEditor).
+ * Headings, lists and quotes look like they will on the site; unlayered like
+ * the focus rule so the reset cannot flatten them.
+ */
+.prose-editor > * + * {
+  margin-top: var(--space-4);
+}
+.prose-editor h2 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+}
+.prose-editor h3 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+.prose-editor h4 {
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+.prose-editor ul {
+  list-style: disc;
+  padding-left: var(--space-6);
+}
+.prose-editor ol {
+  list-style: decimal;
+  padding-left: var(--space-6);
+}
+.prose-editor blockquote {
+  border-left: var(--border-width-thick) solid var(--line-strong);
+  padding-left: var(--space-4);
+  font-style: italic;
+}
+.prose-editor a {
+  color: var(--colour-action);
+  text-decoration: underline;
+}

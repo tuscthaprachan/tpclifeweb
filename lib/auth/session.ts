@@ -128,10 +128,10 @@ export function redirectFor(state: Exclude<AccessState, { kind: "ok" }>): string
 /**
  * Gate for every staff page and action. Redirects unless the person is signed
  * in, within their time limits, holds at least one staff role, has passed
- * their second factor, and (when given) holds `role`, on behalf of
- * `organisationId` if that is given too.
+ * their second factor, and (when given) holds `role` (or any one of the roles,
+ * if a list is given), on behalf of `organisationId` if that is given too.
  */
-export async function requireStaff(role?: StaffRole, organisationId?: number): Promise<AccessContext> {
+export async function requireStaff(role?: StaffRole | readonly StaffRole[], organisationId?: number): Promise<AccessContext> {
   const loaded = await loadAccess();
   if (loaded.state === "timed_out") redirect(redirectFor({ kind: "timed_out" }));
   if (loaded.state === "none") redirect(redirectFor({ kind: "unauthenticated" }));

@@ -21,7 +21,7 @@ The Service Manual is written for UK government, so we adopt its principles and 
 | 2 | Solve a whole problem | Lost and found covers loss → report → match → verify → handover → disposal, not just a form. Complaints cover submission → routing → resolution → feedback. |
 | 3 | Joined-up experience across channels | Desk staff record walk-ins and phone reports in the same case system. One reference number works online and at the desk. |
 | 4 | Make the service simple to use | One thing per page, plain language in Thai and English, no sign-in required to report. |
-| 5 | Everyone can use it | WCAG 2.2 AA, progressive enhancement (every journey works without JavaScript), assisted digital via the desk. Applies to the staff console too. |
+| 5 | Everyone can use it | Public site and service journeys: WCAG 2.2 AA, progressive enhancement (every journey works without JavaScript), assisted digital via the desk. The staff console (`/admin`) may rely on JavaScript, so that non-technical staff get a visual editor and a convenient workflow; it keeps WCAG 2.2 AA as far as practical. |
 | 6 | Multidisciplinary team | Named service owner per service from TUSU/TUSC; content, design, research and engineering roles identified even if one person holds several. |
 | 7 | Agile ways of working | Discovery, alpha, beta, live per service; the phase banner reflects the real phase. |
 | 8 | Iterate frequently | Neon branch per preview deployment so every change is testable with real-shaped data. |
@@ -39,7 +39,7 @@ The Service Manual is written for UK government, so we adopt its principles and 
 3. **Design with data**: service KPIs are built in from day one.
 4. **Do the hard work to make it simple**: matching, routing and retention happen in the backend, not on the user.
 5. **Iterate, then iterate again.**
-6. **This is for everyone**: Thai first, English equal; accessible; no-JS works.
+6. **This is for everyone**: Thai first, English equal; accessible. On the public site no-JS works and the strict rules apply; the staff console may rely on JavaScript and favours convenience for non-technical staff (WCAG 2.2 AA as far as practical).
 7. **Understand context**: students on phones and patchy campus wifi; staff on shared desk PCs.
 8. **Build digital services, not websites.**
 9. **Be consistent, not uniform**: one pattern library for public and staff interfaces.
@@ -84,7 +84,8 @@ The Service Manual is written for UK government, so we adopt its principles and 
 ### 1. Content
 
 - The 18 Sanity document types become tables: bilingual fields as `_th`/`_en` columns, references as foreign keys, `status` (draft/published), `published_at`, revision history table.
-- Rich text: TipTap JSON in `jsonb`. The renderer is rewritten for the six custom blocks (contact, form callout, image, link out, step list, callout box).
+- Rich text: TipTap JSON in `jsonb`. The renderer is rewritten for the six custom blocks (contact, form callout, image, link out, step list, callout box). Staff edit it with a visual TipTap editor in `/admin` that can only produce that vocabulary (paragraphs, headings 2 to 4, lists, quotes, bold, italic, links, line breaks and the six blocks, which are added and edited through a dialog). The server validates every document with `parseRichTextDoc` before writing.
+- Editing: content lives at `/admin/content/<type>`, open to `editor` and `admin` staff. Every save, publish, unpublish and delete goes through one helper (`lib/admin/content/save.ts`) that writes the row, an audit entry and a revision in one transaction and expires the caches after it commits. Published content needs Thai and English; drafts may be incomplete.
 - `lib/sanity/` becomes `lib/content/`, keeping function names and return types so pages change minimally. `safeFetch` stays.
 - Search index generated from SQL; existing client-side tokeniser kept.
 - Seeds: `sanity/seed/*` and `data/*.csv` become Drizzle seed scripts.
@@ -121,7 +122,7 @@ Common to every service:
 
 ### 5. Staff console
 
-- Content CRUD generated from Zod schemas, using the same `components/ui` set.
+- Content CRUD built on shared form components and Zod field helpers (`lib/admin/content`, `components/admin/content`), using the same `components/ui` set. The console relies on JavaScript.
 - Case inbox, matching queue, handover task list.
 - Performance dashboard feeding the public `/performance` page.
 
