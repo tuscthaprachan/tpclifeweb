@@ -2,22 +2,16 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { EventSchedule, ownerLabel, categoryLabel } from "@/components/domain/event";
-// The forms agent owns components/domain/form/** and exports FormCallout,
-// which takes a resolved FormRecord and a headingLevel. getEventBySlug
-// already resolves `relatedForm` to a full record (EVENT_PROJECTION in
-// lib/sanity/queries.ts), so no extra fetch is needed here, only the import.
+// FormCallout takes a resolved FormRecord and a headingLevel. getEventBySlug
+// already resolves `relatedForm` to a full record, so no extra fetch is
+// needed here, only the import.
 import { FormCallout } from "@/components/domain/form";
-import { PortableTextRenderer } from "@/components/domain/portable-text";
+import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, Link, NotificationBanner, Stack, StatusTag, Tag } from "@/components/ui";
 import { DEFAULT_LOCALE, LOCALES, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getEventBySlug, getUpcomingEvents } from "@/lib/sanity/queries";
-import type { FormRecord, SanityRef } from "@/lib/sanity/types";
-
-function isResolvedForm(form: FormRecord | SanityRef | undefined): form is FormRecord {
-  return Boolean(form) && (form as { _type?: string })._type === "form";
-}
+import { getEventBySlug, getUpcomingEvents, resolveRichTextRefs } from "@/lib/content";
 
 // getUpcomingEvents only covers events that have not yet ended, so a past
 // event's slug will not be pre-rendered here. It still resolves fine on
@@ -57,9 +51,10 @@ export default async function EventDetailPage({
   if (!event) notFound();
 
   const title = pick(event.title, locale);
-  const place = event.place && "name" in event.place ? event.place : null;
+  const place = event.place ?? null;
   const location = place ? pick(place.name, locale) : event.location ? pick(event.location, locale) : "";
-  const relatedForm = isResolvedForm(event.relatedForm) ? event.relatedForm : null;
+  const relatedForm = event.relatedForm ?? null;
+  const resolved = await resolveRichTextRefs([event.body?.[locale]]);
 
   return (
     <Container width="narrow">
@@ -92,7 +87,7 @@ export default async function EventDetailPage({
           </NotificationBanner>
         ) : null}
 
-        {event.body ? <PortableTextRenderer value={event.body[locale]} locale={locale} headingLevel={2} /> : null}
+        {event.body ? <RichText value={event.body[locale]} locale={locale} headingLevel={2} resolved={resolved} /> : null}
 
         {relatedForm ? <FormCallout form={relatedForm} locale={locale} headingLevel={2} /> : null}
 

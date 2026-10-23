@@ -6,7 +6,7 @@ import type { HeadingLevel } from "@/lib/a11y";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
-import type { CanteenStall } from "@/lib/sanity/types";
+import type { CanteenStall } from "@/lib/content/types";
 import { DietTag } from "./DietTag";
 import { stallHalalTag } from "./diet";
 import { CUISINE_LABEL } from "./labels";

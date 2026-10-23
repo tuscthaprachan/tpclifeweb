@@ -48,8 +48,8 @@ import { newSeed, pick as runPick } from "@/lib/canteen/random";
 import { DEFAULT_LOCALE, isLocale, localePath, pick as localised, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { getCanteenData } from "@/lib/sanity/queries";
-import type { CanteenStall } from "@/lib/sanity/types";
+import { getCanteenData } from "@/lib/content";
+import type { CanteenStall } from "@/lib/content/types";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -167,11 +167,11 @@ export default async function EatPickPage({
       result = <PickEmpty locale={locale} data={data} filters={filters} reason="filters" now={now} />;
     } else {
       const matched = applyFilters(data, filters, now, { locale });
-      const stallDishes = pickParams.mode === "stall" ? matched.filter((dish) => dish.stall._ref === outcome.stall!._id) : undefined;
+      const stallDishes = pickParams.mode === "stall" ? matched.filter((dish) => dish.stallId === outcome.stall!._id) : undefined;
       const place = eat.stallFull(locale, outcome.stall.number, stallName(outcome.stall));
       if (pickParams.mode === "stall") {
         const names = matched.flatMap((dish) => {
-          const stall = index.stallById.get(dish.stall._ref);
+          const stall = index.stallById.get(dish.stallId);
           return stall ? [stallName(stall)] : [];
         });
         reel = reelNames(names, stallName(outcome.stall), seed);

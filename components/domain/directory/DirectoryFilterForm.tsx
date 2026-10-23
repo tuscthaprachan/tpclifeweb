@@ -3,7 +3,7 @@
 import { Button, Select } from "@/components/ui";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { LocaleString, OrganisationType } from "@/lib/sanity/types";
+import type { LocaleString, OrganisationType } from "@/lib/content/types";
 
 /**
  * Neither "organisation type" nor "faculty" nor the five `OrganisationType`

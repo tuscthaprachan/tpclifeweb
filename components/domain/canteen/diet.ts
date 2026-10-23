@@ -8,7 +8,7 @@
 
 import { isVegetarian } from "@/lib/canteen/derive";
 import type { DietKey } from "@/lib/canteen/params";
-import type { CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenDish, CanteenStall } from "@/lib/content/types";
 import type { DIET_TAG_LABEL } from "./labels";
 
 /** The wording key of one diet tag. */

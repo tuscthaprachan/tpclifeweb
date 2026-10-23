@@ -46,7 +46,7 @@ describe("mealCombos", () => {
   it("sameStallOnly keeps drink and dessert at the main's stall", () => {
     const withMain = makeData();
     const drink = withMain.dishes.find((d) => d.slug.current === "fixture-dish-o")!;
-    withMain.dishes.push({ ...drink, _id: "dish-extra", slug: { _type: "slug", current: "fixture-dish-extra" }, course: "main", type: "snack", price: 30 });
+    withMain.dishes.push({ ...drink, _id: "dish-extra", slug: { current: "fixture-dish-extra" }, course: "main", type: "snack", price: 30 });
     const combos = mealCombos(withMain, f(), 60, { now: NOW, sameStallOnly: true, limit: 500 });
     expect(combos.every((c) => c.stalls.length === 1)).toBe(true);
     expect(combos.some((c) => c.items.length === 3)).toBe(true); // 30 + 15 + 10 at stall 5
@@ -58,7 +58,7 @@ describe("mealCombos", () => {
     const combos = mealCombos(data, f({ diet: ["vegetarian"] }), 80, { now: NOW, limit: 500 });
     expect(combos.length).toBeGreaterThan(0);
     for (const combo of combos) {
-      for (const dish of combo.items) expect(dish.vegetarian || dish.stall._ref === "stall-4").toBe(true);
+      for (const dish of combo.items) expect(dish.vegetarian || dish.stallId === "stall-4").toBe(true);
     }
   });
 

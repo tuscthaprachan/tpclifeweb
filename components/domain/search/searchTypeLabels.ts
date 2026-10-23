@@ -17,7 +17,7 @@
 
 import type { LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { SearchableType } from "@/lib/sanity/types";
+import type { SearchableType } from "@/lib/content/types";
 
 export const SEARCH_TYPE_LABEL: Record<SearchableType, LocaleString> = {
   form: UI.forms,

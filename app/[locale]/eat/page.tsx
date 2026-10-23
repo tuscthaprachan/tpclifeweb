@@ -35,7 +35,7 @@ import { pickSuggested, suggestedPool } from "@/lib/canteen/random";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 const SUGGESTED_COUNT = 6;
 const SUGGESTED_PER_STALL = 3;
@@ -168,7 +168,7 @@ export default async function EatHubPage({
               {suggestedChecked ? <CheckedOnNote checkedOn={suggestedChecked} locale={locale} /> : null}
               <SuggestedMenu
                 locale={locale}
-                candidates={suggestedDishes.map((dish) => ({ _id: dish._id, course: dish.course, type: dish.type, stall: { _ref: dish.stall._ref } }))}
+                candidates={suggestedDishes.map((dish) => ({ _id: dish._id, course: dish.course, type: dish.type, stallId: dish.stallId }))}
                 cards={Object.fromEntries(
                   suggestedDishes.map((dish) => [
                     dish._id,

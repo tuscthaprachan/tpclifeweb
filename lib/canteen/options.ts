@@ -1,7 +1,7 @@
 /**
  * Runtime lists of every enum the canteen uses, in the canonical order the
  * UI and the URLs follow. The unions themselves live in
- * `lib/sanity/types.ts`; the Studio option lists live in
+ * `lib/content/types.ts`; the Studio option lists live in
  * `sanity/schemas/constants.ts`. `tests/unit/canteen/options.test.ts` fails
  * if the three drift apart.
  *
@@ -18,7 +18,7 @@ import type {
   MapShape,
   Protein,
   Temperature,
-} from "@/lib/sanity/types";
+} from "@/lib/content/types";
 
 export const CUISINES: readonly CanteenCuisine[] = [
   "thaiRice",

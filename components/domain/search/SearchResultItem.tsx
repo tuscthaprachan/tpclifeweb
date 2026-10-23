@@ -24,7 +24,7 @@ function toneFor(category: SearchResult["record"]["category"]): TagTone {
 export function SearchResultItem({ result, locale, headingLevel }: SearchResultItemProps) {
   const { record } = result;
   // record.path already carries the locale prefix (see getSearchIndex in
-  // lib/sanity/queries.ts, which builds "/th/forms/slug" and "/en/forms/slug"
+  // lib/content/search-index.ts, which builds "/th/forms/slug" and "/en/forms/slug"
   // directly), so this is used as-is rather than passed through localePath
   // again, which would double the prefix.
   const href = record.path[locale];

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cx } from "@/components/ui/cx";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { pick, OTHER_LOCALE, type Locale } from "@/lib/i18n/config";
-import type { CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenDish, CanteenStall } from "@/lib/content/types";
 import { TickIcon } from "./icons";
 import { DietTags } from "./DietTag";
 import { HowToSay } from "./HowToSay";

@@ -7,7 +7,7 @@
 
 import type { Locale, LocaleString } from "@/lib/i18n/config";
 import type { UiKey } from "@/lib/i18n/strings";
-import type { Category, FormRecord, Owner } from "@/lib/sanity/types";
+import type { Category, FormRecord, Owner } from "@/lib/content/types";
 
 export const CATEGORY_LABEL_KEY = {
   transport: "categoryTransport",

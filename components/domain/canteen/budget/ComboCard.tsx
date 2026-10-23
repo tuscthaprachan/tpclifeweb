@@ -8,7 +8,7 @@ import type { MealCombo } from "@/lib/canteen/combos";
 import { effectivePrice } from "@/lib/canteen/derive";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { CanteenData } from "@/lib/sanity/types";
+import type { CanteenData } from "@/lib/content/types";
 
 import { dishHref } from "../links";
 import { EAT, eat, t } from "../strings";
@@ -51,7 +51,7 @@ export function ComboCard({ combo, data, locale, filters, position, headingLevel
 
       <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0" aria-label={t(BUDGET.comboItems, locale)}>
         {combo.items.map((dish) => {
-          const stall = stallOfItem(dish.stall._ref);
+          const stall = stallOfItem(dish.stallId);
           return (
             <li key={dish.slug.current} className="flex flex-col gap-[var(--space-1)]">
               <div className="flex items-baseline justify-between gap-[var(--space-3)]">

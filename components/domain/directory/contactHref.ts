@@ -1,5 +1,5 @@
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { OrganisationContact } from "@/lib/sanity/types";
+import type { OrganisationContact } from "@/lib/content/types";
 
 /**
  * Channel to href. Instagram and Facebook values are stored as bare handles

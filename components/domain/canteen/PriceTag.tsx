@@ -2,7 +2,7 @@ import { Details } from "@/components/ui/Details";
 import { Timestamp } from "@/components/ui/Timestamp";
 import { cx } from "@/components/ui/cx";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { DishVariant, StallAddOn } from "@/lib/sanity/types";
+import type { DishVariant, StallAddOn } from "@/lib/content/types";
 import { OtherName } from "./OtherName";
 import { EAT, eat, t } from "./strings";
 

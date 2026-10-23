@@ -6,7 +6,7 @@ import { Cluster } from "@/components/ui/Cluster";
 import { Select, type SelectOption } from "@/components/ui/Select";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { Category, Owner } from "@/lib/sanity/types";
+import type { Category, Owner } from "@/lib/content/types";
 import { CATEGORY_LABEL_KEY, NO_SIGN_IN_ON_FORM, OWNER_LABEL_KEY, SIGN_IN_ON_FORM } from "./labels";
 
 export interface FormFiltersValue {

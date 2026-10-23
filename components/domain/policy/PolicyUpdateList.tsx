@@ -3,7 +3,7 @@ import { Timestamp } from "@/components/ui/Timestamp";
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { PolicyUpdate } from "@/lib/sanity/types";
+import type { PolicyUpdate } from "@/lib/content/types";
 import { STATUS_LABEL_KEY, STATUS_TONE } from "./statusLabels";
 import { sortUpdatesDesc } from "./updates";
 

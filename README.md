@@ -2,7 +2,7 @@
 
 A one-stop student life portal for Thammasat Tha Prachan, built for and with the Thammasat University Student Union Tha Prachan (อมธ. ท่าพระจันทร์) and the Thammasat University Student Council Tha Prachan (สภานักศึกษา ท่าพระจันทร์).
 
-Natively bilingual Thai and English. WCAG 2.2 AA. Content managed in Sanity, deployed on Vercel.
+Natively bilingual Thai and English. WCAG 2.2 AA. Content in Postgres (Neon), deployed on Vercel.
 
 ## What it replaces
 
@@ -22,38 +22,39 @@ Thammasat Tha Prachan student information currently lives across four Linktrees,
 npm install
 ```
 
-Copy `.env.example` to `.env.local` and fill in the Sanity values, then:
+Every page reads its content from Postgres, so the site needs `DATABASE_URL`. The quickest start needs no account and no install: copy `.env.example` to `.env.local` and set
+
+```bash
+DATABASE_URL=pglite:memory
+```
+
+then:
 
 ```bash
 npm run dev
 ```
 
-The site is at `http://localhost:3000` and the CMS at `http://localhost:3000/studio`.
+`pglite:memory` runs a throwaway Postgres inside the server process ([PGlite](https://pglite.dev), a devDependency). On first use it applies the migrations in `lib/db/migrations` and runs the content seed (`lib/db/seed`: site settings, forms, shuttle, directory, handbook pages, FAQs, places and the surveyed canteen), so you get a complete, seeded site. It is empty again on every restart, which is what you want for tests and CI. News, events, policies, alerts and lost and found start empty because there is nothing to seed them from. For a development database that keeps your edits across restarts use `DATABASE_URL=pglite:./.pglite` (the directory is git-ignored); only one process may use a directory at a time, so run `next build` with `pglite:memory`. To use a real Neon database instead, set `DATABASE_URL` to its connection string, then run `npm run db:migrate` and `npm run db:seed`.
+
+The site is at `http://localhost:3000`. The old Sanity Studio is still at `http://localhost:3000/studio` until it is removed; it needs the Sanity values in `.env.example` and no longer affects what the site shows.
 
 ## Deploying
 
-`lib/sanity/env.ts` throws at import time on a missing project id, so a Vercel project without these set fails the build during page data collection rather than deploying a half-configured site. Set all six in Vercel under Settings, Environment Variables, for Production, Preview and Development:
+Set these in Vercel under Settings, Environment Variables, for Production, Preview and Development. The build itself needs none of them (pages that cannot reach the database show their empty states), but the deployed site shows nothing without `DATABASE_URL`.
 
 | Variable | Value |
 | --- | --- |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` | from sanity.io/manage |
-| `NEXT_PUBLIC_SANITY_DATASET` | `production` |
-| `NEXT_PUBLIC_SANITY_API_VERSION` | `2025-02-19` |
-| `SANITY_API_READ_TOKEN` | Viewer role token. Server only, never exposed to the browser |
-| `SANITY_API_WRITE_TOKEN` | Editor role token. Server only. Used only by the lost and found report form |
-| `SANITY_REVALIDATE_SECRET` | any long random string, reused in the webhook below |
+| `DATABASE_URL` | the Neon connection string (the Neon integration sets it per preview branch) |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token. Content images are served from the store's public URL, so none show without it |
 | `NEXT_PUBLIC_SITE_URL` | the origin for non-production builds, with no trailing slash (production always uses `https://tpclife.vercel.app`, set in `lib/site-url.ts`) |
 
-Only the first two are needed for the build to pass. The rest decide whether the deployed site actually works: without `SANITY_REVALIDATE_SECRET` the revalidation webhook refuses every request with a 500.
+Sign-in and email have their own variables, listed in `.env.example`.
 
-The What to eat service (`/eat`) shows the real canteen with no setup. Until the survey is imported into Sanity, `getCanteenData` falls back to `lib/canteen/dataset.ts`: 18 stalls and 806 priced dishes read from photos of every stall's menu board taken on 21 October 2026 (`lib/canteen/survey-2569.ts`). To move the data into Sanity, run `npx tsx --env-file=.env.local sanity/seed/canteen.ts` (it reads `data/canteen-stalls.csv`, `data/canteen-survey.csv` and `data/canteen-canonical.csv`, which mirror the dataset). Once Sanity has stalls, it wins.
+The What to eat service (`/eat`) reads the canteen from the database: 18 stalls and 806 priced dishes read from photos of every stall's menu board taken on 21 October 2026 (`lib/canteen/survey-2569.ts`), put there by the seed. `lib/canteen/dataset.ts` is kept only as the fallback `getCanteenData` shows while the database cannot be read at all; an empty database shows an empty canteen.
 
-`SANITY_API_WRITE_TOKEN` is the only one that is genuinely optional. Without it the lost and found register still works, and its report page tells the reader to use the contact details instead of showing a form that cannot store anything. Set it and students can file a report themselves, which arrives in the Studio under Lost and found, Waiting for approval, and is invisible to readers until an editor publishes it.
+Reads are cached with Next's data cache, tagged per kind of content (`lib/content/cache.ts`), with a time-based window as a safety net: one minute for service alerts and the shuttle panel, fifteen for events, an hour for everything else. Content writes call `revalidateFor` (`lib/content/revalidate.ts`), which expires the right tags. There is no webhook to set up.
 
-Two things then have to be done in sanity.io/manage, neither of which lives in this repo:
-
-1. **CORS origins.** Add the production origin and `https://*.vercel.app` for previews, both with credentials allowed, or the embedded Studio at `/studio` cannot reach the API.
-2. **The revalidation webhook.** Set it up exactly as documented at the top of `app/api/revalidate/route.ts`, using the same secret. Until it exists, published content does not reach the site until the next deploy, which for a service that carries service alerts and shuttle times is the failure that matters most.
+Students can file a lost or found report themselves once `DATABASE_URL` is set. It is stored as a draft, invisible to readers until staff publish it.
 
 ## Checks
 
@@ -71,6 +72,14 @@ npx playwright install
 
 ```bash
 npm run test:a11y
+```
+
+The browser suites need a built site and a database. Build and serve it with `pglite:memory` so it is seeded:
+
+```bash
+DATABASE_URL=pglite:memory npm run build
+DATABASE_URL=pglite:memory npm start &
+PLAYWRIGHT_BASE_URL=http://localhost:3000 npm run test:a11y
 ```
 
 ## Before you contribute

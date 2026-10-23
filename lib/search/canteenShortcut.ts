@@ -12,7 +12,7 @@
 import { DISH_TYPES } from "@/lib/canteen/options";
 import { MAX_BUDGET, defaultFilters, withFilters } from "@/lib/canteen/params";
 import { localePath, type Locale } from "@/lib/i18n/config";
-import type { DishType } from "@/lib/sanity/types";
+import type { DishType } from "@/lib/content/types";
 
 export interface CanteenShortcut {
   /** Highest price per dish, in baht. */

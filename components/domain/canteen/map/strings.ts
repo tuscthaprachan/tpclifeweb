@@ -6,7 +6,7 @@
 
 import type { Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
-import type { CanteenCuisine } from "@/lib/sanity/types";
+import type { CanteenCuisine } from "@/lib/content/types";
 
 type Pair = { th: string; en: string };
 

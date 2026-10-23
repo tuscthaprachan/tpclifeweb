@@ -1,13 +1,12 @@
 /**
- * Type guard for `Policy.oversightOf`, which GROQ resolves to a partial
- * `Policy` (see `POLICY_OVERSIGHT_PROJECTION` in lib/sanity/queries.ts) when
- * the reference is live, or leaves as a plain `SanityRef` when it could not
- * be resolved (a dangling reference, or a document type oddity). Mirrors the
- * `isResolvedForm` guard in app/[locale]/welfare/[slug]/page.tsx.
+ * Type guard for `Policy.oversightOf`, which the read layer resolves to a
+ * partial `Policy` (title, summary, owner, status and dates, without its own
+ * detail or history) when the target is published. It is absent when the
+ * target is a draft or has been deleted.
  */
 
-import type { Policy, SanityRef } from "@/lib/sanity/types";
+import type { Policy } from "@/lib/content/types";
 
-export function isResolvedPolicy(value: Policy | SanityRef | undefined): value is Policy {
-  return value !== undefined && (value as { _type?: string })._type === "policy";
+export function isResolvedPolicy(value: Policy | undefined): value is Policy {
+  return value !== undefined && value._type === "policy";
 }

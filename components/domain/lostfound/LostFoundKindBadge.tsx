@@ -1,6 +1,6 @@
 import { cx } from "@/components/ui";
 import type { Locale } from "@/lib/i18n/config";
-import type { LostFoundKind } from "@/lib/sanity/types";
+import type { LostFoundKind } from "@/lib/content/types";
 import { FoundItemIcon, LostItemIcon } from "./icons";
 import { kindLabel } from "./kindLabel";
 

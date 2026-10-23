@@ -20,8 +20,8 @@ import { Container, Heading, NotificationBanner, Stack } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { alternatesFor } from "@/lib/i18n/metadata";
-import { getPlaces } from "@/lib/sanity/queries";
-import { writeToken } from "@/lib/sanity/env";
+import { getPlaces } from "@/lib/content";
+import { isDatabaseConfigured } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -71,13 +71,12 @@ export default async function LostFoundReportPage({
     />
   );
 
-  // writeToken empty means Sanity writes are not configured in this
-  // environment. Say so honestly (lib/sanity/env.ts's own comment: "the
-  // submission action checks it and tells the student the form is
-  // unavailable rather than accepting a report it cannot store") rather than
-  // rendering a form that can never succeed. The sitewide help block still
+  // No DATABASE_URL means reports cannot be stored in this environment. Say so
+  // honestly (the submission action checks it too and tells the student the
+  // form is unavailable rather than accepting a report it cannot store) rather
+  // than rendering a form that can never succeed. The sitewide help block still
   // renders from the root layout regardless, so contact details stay reachable.
-  if (!writeToken) {
+  if (!isDatabaseConfigured()) {
     return (
       <Container width="narrow">
         {breadcrumbs}

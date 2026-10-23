@@ -4,13 +4,9 @@ import NextLink from "next/link";
 import { Heading, Tag, Timestamp } from "@/components/ui";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import { hasImageAsset, urlFor } from "@/lib/sanity/image";
-import type { NewsPost } from "@/lib/sanity/types";
+import type { NewsPost } from "@/lib/content/types";
 import { categoryLabel } from "./categoryLabel";
 import { ownerLabel } from "./ownerLabel";
-
-const COVER_WIDTH = 640;
-const COVER_HEIGHT = 360;
 
 interface NewsCardProps {
   post: NewsPost;
@@ -31,10 +27,10 @@ export function NewsCard({ post, locale, headingLevel }: NewsCardProps) {
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-panel border border-line">
-      {hasImageAsset(post.cover) ? (
+      {post.cover ? (
         <div className="relative aspect-[16/9] w-full bg-surface-sunk">
           <Image
-            src={urlFor(post.cover).width(COVER_WIDTH).height(COVER_HEIGHT).fit("crop").auto("format").url()}
+            src={post.cover.url}
             alt={post.cover.isDecorative ? "" : pick(post.cover.alt, locale)}
             fill
             sizes="(min-width: 768px) 360px, 100vw"

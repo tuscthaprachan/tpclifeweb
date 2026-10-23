@@ -3,7 +3,7 @@ import { EXTRAS } from "@/components/domain/canteen/extras";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { pick } from "@/lib/i18n/config";
 import { ogImageRoute } from "@/lib/og/route";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 const og = ogImageRoute<{ locale: string; slug: string }>(async ({ locale, slug }) => {
   const generic = { locale, kicker: t(EAT.title, locale), title: EXTRAS.whatIsTitle[locale], description: EXTRAS.whatIsIntro[locale], tone: "canteen" } as const;

@@ -1,62 +1,60 @@
 /**
- * The shape of every document TryTPC reads out of Sanity.
+ * The shape of every record TryTPC reads out of Postgres.
  *
- * This file is a shared contract between the CMS schemas and every page that
- * renders them. The Sanity schema definitions in `sanity/schemas` must produce
+ * This file is the page contract between the read layer (`lib/content`) and
+ * every page that renders its output. The mappers in `lib/content` must produce
  * exactly these shapes, and page code must not assume anything beyond them.
+ * The `_id`, `_type`, `_createdAt`, `_updatedAt` and `_key` names are kept from
+ * the CMS era on purpose, so pages did not have to change when the source did:
+ * `_id` is the row's uuid, `_type` names the kind of record, `_createdAt` and
+ * `_updatedAt` are ISO timestamps, and `_key` is a stable list key (the item's
+ * position) for entries stored inside a jsonb column.
  *
  * Treat this file as fixed. If a field is genuinely missing, say so rather than
  * widening a type to `any` to get past it.
  */
 
 import type { LocaleString, LocaleText } from "@/lib/i18n/config";
+import type { LocaleRichText } from "@/lib/rich-text/types";
 
-export type { LocaleString, LocaleText };
+export type { LocaleString, LocaleText, LocaleRichText };
 
 /* ------------------------------------------------------------------ *
  * Shared primitives
  * ------------------------------------------------------------------ */
 
-export interface SanityRef {
-  _ref: string;
-  _type: "reference";
-}
-
-export interface SanityImage {
-  _type: "siteImage";
-  asset: SanityRef;
+/**
+ * A picture, ready to render. `url` is the public storage URL, built by the
+ * read layer from the image row's storage key, so a page never sees a key.
+ */
+export interface ContentImage {
+  /** The `images` row id. */
+  id: string;
+  url: string;
+  width?: number;
+  height?: number;
   /**
-   * Required by schema validation. An image with no alt text cannot be
-   * published, because 1.1.1 is not negotiable. Decorative images are marked
-   * with `isDecorative` instead and render alt="".
+   * Required for an image that is not decorative. An image with no alt text
+   * cannot be published, because 1.1.1 is not negotiable. Decorative images
+   * are marked with `isDecorative` instead and render alt="".
    */
   alt?: LocaleString;
   isDecorative?: boolean;
   caption?: LocaleString;
 }
 
-export interface SanitySlug {
-  _type: "slug";
+export interface Slug {
   current: string;
 }
 
 export interface DocumentMeta {
+  /** The row's uuid. */
   _id: string;
   _type: string;
+  /** ISO 8601. */
   _createdAt: string;
+  /** ISO 8601. */
   _updatedAt: string;
-}
-
-/** Portable Text. Rendered by the shared Prose component, never dangerously set. */
-export type PortableTextBlock = {
-  _key: string;
-  _type: string;
-  [key: string]: unknown;
-};
-
-export interface LocaleBlock {
-  th: PortableTextBlock[];
-  en: PortableTextBlock[];
 }
 
 /** Which body owns a thing. Every governance item must be attributed. */
@@ -64,7 +62,7 @@ export type Owner = "tusu" | "tusc" | "university" | "joint";
 
 /**
  * Semantic fill category. Maps one to one onto the --fill-* tokens, so a
- * category chosen in the CMS drives colour without an editor picking a colour.
+ * category chosen in the admin console drives colour without an editor picking a colour.
  */
 export type Category = "transport" | "welfare" | "activity" | "governance";
 
@@ -151,7 +149,7 @@ export interface ServiceCalendar {
 export interface ShuttleRoute extends DocumentMeta {
   _type: "shuttleRoute";
   name: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   description?: LocaleText;
   /** Ordered. First entry is the origin. */
   stops: ShuttleStop[];
@@ -173,7 +171,7 @@ export interface ShuttleRoute extends DocumentMeta {
 /* ------------------------------------------------------------------ *
  * Forms
  *
- * The centralised form system. Sanity holds a rich record of every form a
+ * The centralised form system. The database holds a rich record of every form a
  * student might need; submission still happens on the owner's own system.
  * The point is that the student learns what they need BEFORE they click.
  * ------------------------------------------------------------------ */
@@ -189,10 +187,10 @@ export interface FormPrerequisite {
 export interface FormRecord extends DocumentMeta {
   _type: "form";
   title: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   /** One sentence. What this form is for, in the student's words. */
   purpose: LocaleString;
-  description?: LocaleBlock;
+  description?: LocaleRichText;
   category: Category;
   owner: Owner;
 
@@ -234,39 +232,39 @@ export interface FormRecord extends DocumentMeta {
 export interface NewsPost extends DocumentMeta {
   _type: "newsPost";
   title: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   summary: LocaleText;
-  body: LocaleBlock;
+  body: LocaleRichText;
   publishedAt: string;
   owner: Owner;
   category?: Category;
-  cover?: SanityImage;
+  cover?: ContentImage;
   /**
    * Additional pictures shown under the body, in the order the editor set.
-   * Every entry carries the same alt text contract as `cover`: a `SanityImage`
+   * Every entry carries the same alt text contract as `cover`: a `ContentImage`
    * is either described in both languages or explicitly `isDecorative`.
    */
-  gallery?: SanityImage[];
+  gallery?: ContentImage[];
   tags?: LocaleString[];
 }
 
 export interface CampusEvent extends DocumentMeta {
   _type: "event";
   title: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   summary: LocaleText;
-  body?: LocaleBlock;
+  body?: LocaleRichText;
   startsAt: string;
   endsAt?: string;
   /** True when the event is a whole day and no clock time should be shown. */
   isAllDay?: boolean;
   location?: LocaleString;
-  place?: CampusPlace | SanityRef;
+  place?: CampusPlace;
   owner: Owner;
   category?: Category;
-  cover?: SanityImage;
+  cover?: ContentImage;
   /** A form the student must file to take part, if there is one. */
-  relatedForm?: FormRecord | SanityRef;
+  relatedForm?: FormRecord;
   registrationUrl?: string;
   isCancelled?: boolean;
   cancellationNote?: LocaleString;
@@ -295,9 +293,9 @@ export interface PolicyUpdate {
 export interface Policy extends DocumentMeta {
   _type: "policy";
   title: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   summary: LocaleText;
-  detail?: LocaleBlock;
+  detail?: LocaleRichText;
   owner: Owner;
   policyArea: LocaleString;
   status: PolicyStatus;
@@ -311,7 +309,7 @@ export interface Policy extends DocumentMeta {
   targetDate?: string;
   completedAt?: string;
   /** The TUSU policy this TUSC item scrutinises, where that applies. */
-  oversightOf?: Policy | SanityRef;
+  oversightOf?: Policy;
   updates?: PolicyUpdate[];
   evidenceLinks?: ExternalLink[];
 }
@@ -332,14 +330,14 @@ export interface ExternalLink {
 export interface ContentPage extends DocumentMeta {
   _type: "welfarePage" | "guidePage";
   title: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   summary: LocaleText;
-  body: LocaleBlock;
+  body: LocaleRichText;
   category: Category;
-  relatedForms?: Array<FormRecord | SanityRef>;
+  relatedForms?: FormRecord[];
   relatedLinks?: ExternalLink[];
-  relatedPages?: Array<ContentPage | SanityRef>;
-  /** Drives the "not reviewed since" view in the Studio. */
+  relatedPages?: ContentPage[];
+  /** Drives the "not reviewed since" view in the admin console. */
   lastReviewed?: string;
   order?: number;
 }
@@ -347,9 +345,9 @@ export interface ContentPage extends DocumentMeta {
 export interface Faq extends DocumentMeta {
   _type: "faq";
   question: LocaleString;
-  answer: LocaleBlock;
+  answer: LocaleRichText;
   category: Category;
-  relatedForms?: Array<FormRecord | SanityRef>;
+  relatedForms?: FormRecord[];
   order?: number;
 }
 
@@ -374,7 +372,7 @@ export interface OrganisationContact {
 export interface Organisation extends DocumentMeta {
   _type: "organisation";
   name: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   type: OrganisationType;
   faculty?: LocaleString;
   description?: LocaleText;
@@ -395,7 +393,7 @@ export interface OpeningHours {
 export interface CampusPlace extends DocumentMeta {
   _type: "place";
   name: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   building?: LocaleString;
   description?: LocaleText;
   category: Category;
@@ -484,16 +482,16 @@ export interface LostFoundItem extends DocumentMeta {
   reference: string;
   kind: LostFoundKind;
   title: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   /**
    * What the item is, in enough detail to recognise but not enough to claim
-   * falsely. Editors are told in the Studio to hold back one identifying
+   * falsely. Editors are told to hold back one identifying
    * detail so a claim can be verified against it.
    */
   description: LocaleText;
   category: LostFoundCategory;
   /** Pictures of the item itself. Never of a person, never of an ID's face. */
-  photos?: SanityImage[];
+  photos?: ContentImage[];
   /** Where on campus it was lost or found, when it is a place the site knows. */
   place?: CampusPlace;
   /** Free text location for anywhere `place` does not cover, including off campus. */
@@ -575,7 +573,7 @@ export interface SearchIndex {
 /* ------------------------------------------------------------------ *
  * Canteen ("What to eat")
  *
- * One on-campus canteen, maintained by TUSU editors in Sanity. The dish is
+ * One on-campus canteen, maintained by TUSU editors. The dish is
  * the primary object; a stall is where you walk to.
  *
  * HONESTY. Every price is a surveyed figure with a "checked on" date, never
@@ -583,8 +581,8 @@ export interface SearchIndex {
  * allergen data anywhere in this model, on purpose, and no operational
  * signal (closed today, sold out, queue, payment method).
  *
- * `canteenDish.stall` and `canteenDish.canonical` are stored as references and
- * `getCanteenData` returns them as references (`{ _ref }`). The pure code in
+ * `canteenDish.stallId` and `canteenDish.canonicalId` are plain ids and
+ * `getCanteenData` returns them as ids. The pure code in
  * `lib/canteen` joins them with `indexCanteen` in `lib/canteen/derive.ts`, so
  * the whole dataset ships once and filtering is instant on the client.
  * ------------------------------------------------------------------ */
@@ -656,7 +654,7 @@ export interface MapCell {
 export interface CanteenStall extends DocumentMeta {
   _type: "canteenStall";
   name: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   /** As painted on the stall. */
   number: number;
   cuisine: CanteenCuisine[];
@@ -670,14 +668,14 @@ export interface CanteenStall extends DocumentMeta {
   hours?: OpeningHours[];
   mapCell: MapCell;
   wayfinding?: LocaleString;
-  photo?: SanityImage;
+  photo?: ContentImage;
 }
 
 /** The taxonomy layer: one per real-world dish, not per stall. */
 export interface CanonicalDish extends DocumentMeta {
   _type: "canonicalDish";
   name: LocaleString;
-  slug: SanitySlug;
+  slug: Slug;
   /** Alternative spellings that feed search, for example krapow, kaprao. */
   aliases?: string[];
   explainer?: LocaleText;
@@ -692,7 +690,7 @@ export interface SayPhrase {
 
 /**
  * A topping or extra a stall sells only with something else (boba, an extra
- * egg, a takeaway box). With neither `courses` nor `dishes` it goes with
+ * egg, a takeaway box). With neither `courses` nor `dishIds` it goes with
  * every item at the stall.
  */
 export interface StallAddOn {
@@ -703,7 +701,7 @@ export interface StallAddOn {
   /** Only items of these courses, for example drinks. */
   courses?: DishCourse[];
   /** Only these dishes. */
-  dishes?: SanityRef[];
+  dishIds?: string[];
 }
 
 /** A priced variant, for example "special" +10 or "add egg" +10. */
@@ -722,9 +720,11 @@ export interface CanteenDish extends DocumentMeta {
   sayAs?: SayPhrase[];
   /** The number the stall's board gives the dish, when it numbers its menu. */
   menuNumber?: string;
-  slug: SanitySlug;
-  stall: SanityRef;
-  canonical?: SanityRef;
+  slug: Slug;
+  /** The `_id` of the stall that sells it. */
+  stallId: string;
+  /** The `_id` of the canonical dish it is a version of. */
+  canonicalId?: string;
   /** Baht, the base price as surveyed. */
   price: number;
   variants?: DishVariant[];
@@ -740,10 +740,10 @@ export interface CanteenDish extends DocumentMeta {
   wet: boolean;
   /** Made without meat, fish or seafood as it normally comes. */
   vegetarian: boolean;
-  photo?: SanityImage;
+  photo?: ContentImage;
   /** "YYYY-MM-DD", the day the current price was last checked. */
   checkedOn: string;
-  /** Drives the "prices not checked" view in the Studio. */
+  /** Drives the "prices not checked" view in the admin console. */
   lastReviewed?: string;
 }
 
@@ -789,7 +789,7 @@ export interface CanteenLandmark {
 export interface CanteenSettings extends DocumentMeta {
   _type: "canteenSettings";
   /** The canteen `place`, which carries the hours and the location. */
-  canteen?: CampusPlace | SanityRef;
+  canteen?: CampusPlace;
   gridCols: number;
   gridRows: number;
   entrances?: CanteenEntrance[];

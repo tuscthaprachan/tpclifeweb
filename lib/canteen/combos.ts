@@ -7,7 +7,7 @@
  * dessert that could not beat the worst of them.
  */
 
-import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/content/types";
 
 import { effectivePrice, indexCanteen, stallOf } from "./derive";
 import { matchesFilters } from "./filter";
@@ -86,12 +86,12 @@ export function mealCombos(
     key: string;
   }
 
-  const rank = (dish: CanteenDish) => walkRank.get(dish.stall._ref) ?? 0;
+  const rank = (dish: CanteenDish) => walkRank.get(dish.stallId) ?? 0;
   const candidate = (main: CanteenDish, drink: CanteenDish | undefined, dessert: CanteenDish | undefined, change: number): Candidate => {
     const items = [main, drink, dessert]
       .filter((dish): dish is CanteenDish => dish !== undefined)
       .sort((a, b) => rank(a) - rank(b));
-    const stallCount = new Set(items.map((dish) => dish.stall._ref)).size;
+    const stallCount = new Set(items.map((dish) => dish.stallId)).size;
     return { main, drink, dessert, items, change, stallCount, key: items.map((dish) => dish.slug.current).join("|") };
   };
   const compare = (a: Candidate, b: Candidate) =>
@@ -116,7 +116,7 @@ export function mealCombos(
     for (let i = sorted.length - 1; i >= 0; i -= 1) {
       const dish = sorted[i]!;
       if (price(dish) > cap) continue;
-      if (!options.sameStallOnly || dish.stall._ref === main.stall._ref) out.push(dish);
+      if (!options.sameStallOnly || dish.stallId === main.stallId) out.push(dish);
     }
     out.push(undefined);
     return out;

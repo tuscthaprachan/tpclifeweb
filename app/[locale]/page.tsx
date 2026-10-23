@@ -11,22 +11,17 @@
  *   5. TUSU and TUSC activity, attributed, plus the route into the policy
  *      dashboard.
  *
- * Every query that touches Sanity goes through `lib/sanity/queries.ts`'s
- * `safeFetch`-wrapped functions, fetched in parallel with `Promise.all` so
- * one slow or failed read cannot serialise or blank the rest of the page. A
- * CMS outage yields empty arrays, and every section below has its own
- * well-designed empty state, because an all-empty page is this page's real
- * state today, not a hypothetical.
+ * Every read goes through `lib/content`'s `safeFetch`-wrapped functions,
+ * fetched in parallel with `Promise.all` so one slow or failed read cannot
+ * serialise or blank the rest of the page. A database outage yields empty
+ * arrays, and every section below has its own well-designed empty state,
+ * because an all-empty page is a real state of this page, not a hypothetical.
  *
- * `lib/sanity/live.ts`'s `sanityFetch` is deliberately not used for the
- * alerts and shuttle reads, even though that module's own doc comment
- * recommends it for "the at-a-glance surfaces that most need to feel
- * current". `sanityFetch` does not go through `safeFetch`, so a CMS outage
- * would throw instead of degrading, and its live updates need `<SanityLive>`
- * mounted in `app/[locale]/layout.tsx`, which is outside this agent's owned
- * files. The plain, safe query functions below give up live revalidation in
- * exchange for the outage resilience CONTRIBUTING.md and this page's brief
- * both treat as non-negotiable.
+ * The alerts and shuttle reads, the surfaces that most need to feel current,
+ * are cached for a minute and invalidated by tag when an alert or route
+ * changes (lib/content/cache.ts), which replaces Sanity Live without giving
+ * up the outage resilience CONTRIBUTING.md and this page's brief treat as
+ * non-negotiable.
  */
 
 import type { Metadata } from "next";
@@ -49,7 +44,7 @@ import {
   getPolicies,
   getPriorityForms,
   getUpcomingEvents,
-} from "@/lib/sanity/queries";
+} from "@/lib/content";
 
 // Fetched a little wider than the 3 shown in section 3, so filtering section
 // 5's activity feed down to TUSU/TUSC ownership still has something to draw

@@ -1,13 +1,12 @@
 /**
  * Site-wide chrome content: service name, navigation, help contacts, phase.
  *
- * Reads the `siteSettings` singleton out of Sanity, falling back to
- * FALLBACK_SITE_SETTINGS below when there is no such document or the read
- * fails.
+ * Reads the `site_settings` singleton from the database, falling back to
+ * FALLBACK_SITE_SETTINGS below when there is no such row or the read fails.
  *
  * WHY A FALLBACK RATHER THAN AN EMPTY HEADER
  * This is the only content on the site that every single page depends on. A
- * missing `siteSettings` document must not cost a reader the navigation, the
+ * missing `siteSettings` row must not cost a reader the navigation, the
  * language toggle and the help contacts, because those are how they get
  * anywhere else, including away from a page that is failing. So the fallback
  * is a real, complete, bilingual set of chrome and not a placeholder: the
@@ -15,13 +14,13 @@
  * a page with no way out.
  *
  * The consequence worth knowing is that an editor emptying `primaryNav` in
- * the Studio does NOT empty the site's menu, it restores this list. That is
+ * the admin console does NOT empty the site's menu, it restores this list. That is
  * the intended behaviour, and it is why the fallback stays maintained
  * alongside the routes rather than being left to rot.
  */
 
-import { getSiteSettings as fetchSiteSettings } from "@/lib/sanity/queries";
-import type { SiteSettings } from "@/lib/sanity/types";
+import { getSiteSettings as fetchSiteSettings } from "@/lib/content";
+import type { SiteSettings } from "@/lib/content/types";
 
 const FALLBACK_SITE_SETTINGS: SiteSettings = {
   _id: "siteSettings-fallback",
@@ -83,8 +82,8 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
 
 /**
  * The chrome for the current request. `fetchSiteSettings` already routes
- * through `safeFetch`, so a Sanity outage returns null here rather than
- * throwing, and null and "no document yet" collapse to the same branch: use
+ * through `safeFetch`, so a database outage returns null here rather than
+ * throwing, and null and "no row yet" collapse to the same branch: use
  * the fallback.
  *
  * Async, unlike the stub this replaces. Every caller is already an async

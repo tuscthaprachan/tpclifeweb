@@ -5,7 +5,7 @@ import type { HeadingLevel } from "@/lib/a11y";
 import { canonicalOf, commonCheckedOn, stallOf } from "@/lib/canteen/derive";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { CanteenData, CanteenDish } from "@/lib/sanity/types";
+import type { CanteenData, CanteenDish } from "@/lib/content/types";
 import { CanonicalCompare } from "./CanonicalCompare";
 import { CheckedOnNote } from "./CheckedOnNote";
 import { DishCard } from "./DishCard";
@@ -116,7 +116,7 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
           );
         }
         const byPrice = [...group.dishes].sort((a, b) => a.price - b.price);
-        const stallCount = new Set(byPrice.map((dish) => dish.stall._ref)).size;
+        const stallCount = new Set(byPrice.map((dish) => dish.stallId)).size;
         return (
           <section key={`${group.key}-${group.continued}`} id={eat.itemId(first)} className="flex scroll-mt-[calc(var(--header-height,4rem)+9rem)] flex-col gap-[var(--space-3)]">
             <Heading level={headingLevel} visualLevel={3} className="m-0">

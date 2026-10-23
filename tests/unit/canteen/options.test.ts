@@ -20,7 +20,7 @@ import {
 } from "@/sanity/schemas/constants";
 
 /**
- * The enum lists exist in three places: the unions in `lib/sanity/types.ts`,
+ * The enum lists exist in three places: the unions in `lib/content/types.ts`,
  * the runtime lists in `lib/canteen/options.ts`, and the Studio option lists in
  * `sanity/schemas/constants.ts`. The runtime lists are typed against the
  * unions; this test keeps the Studio lists in step with the runtime ones.

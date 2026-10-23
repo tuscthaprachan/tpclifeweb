@@ -3,7 +3,7 @@ import { ShuttlePanel } from "@/components/domain/shuttle/ShuttlePanel";
 import { Heading, Stack } from "@/components/ui";
 import { type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { CampusPlace, ServiceAlert as ServiceAlertDoc, ShuttleRoute } from "@/lib/sanity/types";
+import type { CampusPlace, ServiceAlert as ServiceAlertDoc, ShuttleRoute } from "@/lib/content/types";
 import { CanteenGlance } from "./CanteenGlance";
 import { KeyOpeningHours } from "./KeyOpeningHours";
 
@@ -34,7 +34,7 @@ interface AtAGlanceProps {
  * (CONTRIBUTING.md, Honesty), and nothing in this component or its children
  * implies otherwise.
  *
- * `siteSettings` (`lib/sanity/types.ts`) has no field for a standalone
+ * `siteSettings` (`lib/content/types.ts`) has no field for a standalone
  * "urgent notice": there is no `urgentNotice` or equivalent on
  * `SiteSettings`. A sitewide `ServiceAlert` (`affects` including
  * `"sitewide"`, or simply the highest-severity alert active right now) is

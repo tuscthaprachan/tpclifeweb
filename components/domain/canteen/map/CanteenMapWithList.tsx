@@ -20,7 +20,7 @@ import Link from "next/link";
 import { Heading } from "@/components/ui/Heading";
 import type { HeadingLevel } from "@/lib/a11y";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { CanteenData } from "@/lib/sanity/types";
+import type { CanteenData } from "@/lib/content/types";
 
 import { CanteenMap, type MapHighlight } from "./CanteenMap";
 import { StallList } from "./StallList";

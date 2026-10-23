@@ -1,14 +1,7 @@
-// The old renderer's import chain reads Sanity env at load time.
-vi.hoisted(() => {
-  process.env.NEXT_PUBLIC_SANITY_PROJECT_ID ??= "test";
-  process.env.NEXT_PUBLIC_SANITY_DATASET ??= "test";
-});
-
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import { PortableTextRenderer } from "@/components/domain/portable-text";
 import { RichText } from "@/components/domain/rich-text";
 import { portableTextToDoc } from "@/lib/rich-text/convert";
 import type { RichTextDoc } from "@/lib/rich-text/types";
@@ -25,60 +18,6 @@ const block = (text: string, extra: Record<string, unknown> = {}) => ({
   markDefs: [],
   children: [span(text)],
   ...extra,
-});
-const ls = (en: string) => ({ _type: "localeString", th: `ไทย ${en}`, en });
-
-function both(pt: unknown[], headingLevel: 2 | 3 | 4 = 2, locale: "th" | "en" = "en") {
-  const oldHtml = renderToStaticMarkup(createElement(PortableTextRenderer, { value: pt as never, locale, headingLevel }));
-  const newHtml = renderToStaticMarkup(createElement(RichText, { value: portableTextToDoc(pt), locale, headingLevel }));
-  return { oldHtml, newHtml };
-}
-
-describe("RichText matches PortableTextRenderer", () => {
-  it("plain blocks, headings, lists and quotes", () => {
-    const pt = [
-      block("H2", { style: "h2" }),
-      block("H3", { style: "h3" }),
-      block("H4", { style: "h4" }),
-      block("Para"),
-      block("Quote", { style: "blockquote" }),
-      block("a", { listItem: "bullet", level: 1 }),
-      block("b", { listItem: "bullet", level: 1 }),
-      block("one", { listItem: "number", level: 1 }),
-      block("two", { listItem: "number", level: 1 }),
-    ];
-    for (const level of [2, 3, 4] as const) {
-      const { oldHtml, newHtml } = both(pt, level);
-      expect(newHtml).toBe(oldHtml);
-    }
-  });
-
-  it("strong and em", () => {
-    const pt = [{ ...block("x"), children: [span("plain "), span("bold", ["strong"]), span("it", ["em"])] }];
-    const { oldHtml, newHtml } = both(pt);
-    expect(newHtml).toBe(oldHtml);
-    expect(newHtml).toContain("<strong>bold</strong>");
-  });
-
-  it("never lets body content produce an h1", () => {
-    const { newHtml } = both([block("H2", { style: "h2" })], 2);
-    expect(newHtml).not.toContain("<h1");
-    expect(newHtml).toContain("<h2");
-  });
-
-  it("contact, link out, callout and step list blocks", () => {
-    const pt = [
-      { _type: "contactBlock", _key: "c", label: ls("Desk"), channel: "email", value: "a@b.co", hours: ls("9-5") },
-      { _type: "contactBlock", _key: "c2", label: ls("Room"), channel: "inPerson", value: "W101" },
-      { _type: "linkOut", _key: "l", label: ls("Go"), url: "https://example.com", description: ls("desc"), requiresSignIn: true },
-      { _type: "calloutBox", _key: "b", tone: "warning", title: ls("T"), body: ls("Body") },
-      { _type: "stepList", _key: "s", title: ls("How"), steps: [{ _key: "1", title: ls("One"), detail: ls("d") }, { _key: "2", title: ls("Two") }] },
-    ];
-    for (const locale of ["en", "th"] as const) {
-      const { oldHtml, newHtml } = both(pt, 3, locale);
-      expect(newHtml).toBe(oldHtml);
-    }
-  });
 });
 
 describe("RichText", () => {

@@ -15,7 +15,7 @@
  * data/canteen-survey.csv for the Sanity importer. Change both together.
  */
 
-import type { Allergen, CookingStyle, DishCourse, DishType, Protein, Temperature } from "@/lib/sanity/types";
+import type { Allergen, CookingStyle, DishCourse, DishType, Protein, Temperature } from "@/lib/content/types";
 
 /** The day the menu boards were photographed. */
 export const SURVEY_DATE = "2026-10-21";

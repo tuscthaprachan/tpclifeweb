@@ -64,7 +64,7 @@ describe("search matching", () => {
   });
 
   it("matches a canonical name or alias for every dish mapped to it", () => {
-    const basil = slugs(data.dishes.filter((d) => d.canonical?._ref === "canon-basil"));
+    const basil = slugs(data.dishes.filter((d) => d.canonicalId === "canon-basil"));
     expect(run("krapow").sort()).toEqual(basil.map((s) => s.replace("fixture-dish-", "")).sort());
     expect(run("Fixture basil dish").length).toBe(basil.length);
   });

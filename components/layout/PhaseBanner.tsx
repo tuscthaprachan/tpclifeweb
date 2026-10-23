@@ -7,7 +7,7 @@
 
 import { pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { LocaleString, ServicePhase } from "@/lib/sanity/types";
+import type { LocaleString, ServicePhase } from "@/lib/content/types";
 import { ShellContainer } from "./ShellContainer";
 
 export function PhaseBanner({

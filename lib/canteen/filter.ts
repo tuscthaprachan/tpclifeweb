@@ -8,7 +8,7 @@
  */
 
 import type { Locale } from "@/lib/i18n/config";
-import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/content/types";
 
 import { effectivePrice, indexCanteen, isOpenNow, meetsDiet, stallOf } from "./derive";
 import { BUDGET_STEPS, DISH_TYPES } from "./options";
@@ -24,7 +24,7 @@ import {
   type GroupKey,
   normaliseQuery,
 } from "./params";
-import type { DishType } from "@/lib/sanity/types";
+import type { DishType } from "@/lib/content/types";
 
 /* ------------------------------------------------------------------ *
  * Matching
@@ -68,7 +68,7 @@ const searchTextCache = new WeakMap<CanteenDish, string>();
 export function dishSearchText(data: CanteenData, dish: CanteenDish): string {
   const cached = searchTextCache.get(dish);
   if (cached !== undefined) return cached;
-  const canonical = dish.canonical ? indexCanteen(data).canonicalById.get(dish.canonical._ref) : undefined;
+  const canonical = dish.canonicalId ? indexCanteen(data).canonicalById.get(dish.canonicalId) : undefined;
   const text = fold(
     [
       dish.name.th,
@@ -154,7 +154,7 @@ export interface ApplyOptions {
 }
 
 function walkRankOf(data: CanteenData, dish: CanteenDish): number {
-  return indexCanteen(data).walkRank.get(dish.stall._ref) ?? Number.MAX_SAFE_INTEGER;
+  return indexCanteen(data).walkRank.get(dish.stallId) ?? Number.MAX_SAFE_INTEGER;
 }
 
 function stallNumberOf(data: CanteenData, dish: CanteenDish): number {
@@ -210,7 +210,7 @@ export function applyFilters(
 
 /** How many distinct stalls the dishes come from. */
 export function countStalls(data: CanteenData, dishes: readonly CanteenDish[]): number {
-  return new Set(dishes.map((dish) => dish.stall._ref)).size;
+  return new Set(dishes.map((dish) => dish.stallId)).size;
 }
 
 /* ------------------------------------------------------------------ *
@@ -238,13 +238,13 @@ export function groupDishes(data: CanteenData, dishes: readonly CanteenDish[], g
 
   const buckets = new Map<string, DishGroup>();
   for (const dish of dishes) {
-    const key = group === "stall" ? dish.stall._ref : (dish.canonical?._ref ?? "none");
+    const key = group === "stall" ? dish.stallId : (dish.canonicalId ?? "none");
     let bucket = buckets.get(key);
     if (!bucket) {
       bucket =
         group === "stall"
           ? { key, stall: stallOf(data, dish), dishes: [] }
-          : { key, ...(dish.canonical ? { canonicalId: dish.canonical._ref } : {}), dishes: [] };
+          : { key, ...(dish.canonicalId ? { canonicalId: dish.canonicalId } : {}), dishes: [] };
       buckets.set(key, bucket);
     }
     bucket.dishes.push(dish);

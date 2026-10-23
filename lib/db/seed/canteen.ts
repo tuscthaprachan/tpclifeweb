@@ -1,7 +1,6 @@
 import { inArray } from "drizzle-orm";
 import { surveyCanteenData } from "../../canteen/dataset";
 import { SURVEY_DATE } from "../../canteen/survey-2569";
-import type { SanityRef } from "../../sanity/types";
 import { places } from "../schema/content/directory";
 import {
   canonicalDishes,
@@ -43,7 +42,8 @@ export async function seedCanteen(db: SeedDb): Promise<void> {
   if (!settings) throw new Error("surveyCanteenData returned no settings");
 
   /* The canteen place, which carries the opening hours. */
-  const canteenPlace = settings.canteen as Exclude<typeof settings.canteen, SanityRef | undefined>;
+  const canteenPlace = settings.canteen;
+  if (!canteenPlace) throw new Error("surveyCanteenData returned no canteen place");
   const [place] = await db
     .insert(places)
     .values({
@@ -128,8 +128,8 @@ export async function seedCanteen(db: SeedDb): Promise<void> {
           nameEn: d.name.en,
           sayAs: (d.sayAs ?? []).map((p) => ({ th: p.th, romanised: p.romanised })),
           menuNumber: d.menuNumber ?? null,
-          stallId: stallIds.get(d.stall._ref)!,
-          canonicalId: d.canonical ? canonicalIds.get(d.canonical._ref)! : null,
+          stallId: stallIds.get(d.stallId)!,
+          canonicalId: d.canonicalId ? canonicalIds.get(d.canonicalId)! : null,
           price: d.price,
           type: d.type,
           course: d.course,
@@ -191,7 +191,7 @@ export async function seedCanteen(db: SeedDb): Promise<void> {
           courses: addOn.courses ?? [],
         })
         .returning({ id: canteenStallAddOns.id });
-      const links = (addOn.dishes ?? []).map((ref) => ({ addOnId: row!.id, dishId: dishIds.get(ref._ref)! }));
+      const links = (addOn.dishIds ?? []).map((id) => ({ addOnId: row!.id, dishId: dishIds.get(id)! }));
       if (links.length > 0) await db.insert(canteenStallAddOnDishes).values(links);
     }
   }

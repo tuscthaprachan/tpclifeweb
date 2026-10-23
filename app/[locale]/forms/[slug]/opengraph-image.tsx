@@ -1,6 +1,6 @@
 import { pick } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getFormBySlug } from "@/lib/sanity/queries";
+import { getFormBySlug } from "@/lib/content";
 import { ogImageRoute } from "@/lib/og/route";
 
 const og = ogImageRoute<{ locale: string; slug: string }>(async ({ locale, slug }) => {

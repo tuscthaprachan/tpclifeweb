@@ -2,49 +2,55 @@
 
 /**
  * The public report form's Server Action. This is the one place on the
- * whole site that writes to Sanity from a request nobody has signed into
- * (lib/sanity/env.ts's own comment on `writeToken`), so everything here
- * treats the submitted `FormData` as hostile: every field is revalidated
- * server-side regardless of what the client already checked, per the House
- * Rules and per Next's own guidance (server-actions.md: "Validate inputs.
- * Treat FormData... as untrusted").
+ * whole site that writes to the database from a request nobody has signed
+ * into, so everything here treats the submitted `FormData` as hostile: every
+ * field is revalidated server-side regardless of what the client already
+ * checked, per the House Rules and per Next's own guidance (server-actions.md:
+ * "Validate inputs. Treat FormData... as untrusted").
  *
- * WRITES A DRAFT, NEVER A PUBLISHED DOCUMENT. The `_id` created below always
- * starts with the literal prefix "drafts.", which is how Sanity itself
- * defines an unpublished document. `lib/sanity/client.ts` reads with
- * `perspective: "published"`, so nothing this action writes is visible to a
- * reader of this site until an editor opens it from the "Waiting for
- * approval" queue (sanity/structure.ts) and publishes it by hand. There is
- * no code path here that calls anything resembling `publish`.
+ * WRITES A DRAFT, NEVER A PUBLISHED ROW. The row is inserted with
+ * `status = 'draft'` ("waiting for approval"). Every public read goes through
+ * the `lost_found_public` view, which shows published rows only, so nothing
+ * this action writes is visible to a reader of this site until staff open it
+ * from the approval queue and publish it by hand. There is no code path here
+ * that sets `published`. For the same reason it does not revalidate any cache:
+ * a draft changes nothing a reader can see, and an action anyone can call must
+ * not be a way to evict the cache.
  *
  * REFERENCE ALLOCATION. `reference` has to be unique and is read out loud at
  * a desk, so it has to be short and predictable: "LF-2026-0001", the next
- * year, the next number. Two students submitting in the same second can both
- * read the same "last" reference before either has saved, so the actual
- * uniqueness guarantee comes from the document `_id` being DERIVED from the
- * candidate reference (`drafts.lost-found-2026-0001`) and from `client.create`
- * refusing to create a document over an `_id` that already exists. A
- * collision surfaces as that specific error, which is retried with the next
- * candidate number, bounded, so a burst of simultaneous submissions cannot
- * spin forever.
+ * year, the next number. `nextLostFoundReference` (lib/db/references.ts)
+ * takes it from a per-year counter row inside the same transaction that
+ * inserts the report, so two students submitting in the same second are
+ * serialised on that row and can never be handed the same number, there is no
+ * retry loop, and a report that fails to save gives its number back. The
+ * `unique` constraint on `lost_found_items.reference` is only a backstop. The
+ * year is the Bangkok calendar year.
  *
- * REPORTER PRIVACY. `submitterContact` and `staffVerificationDetail` are not
- * part of the public `LostFoundItem` shape in lib/sanity/types.ts on purpose.
- * They exist only on the Sanity document (sanity/schemas/documents/lostFoundItem.ts
- * adds both, with a Studio description saying they must be cleared before
- * publish), and nothing in app/[locale]/lost-and-found ever reads them back
- * out. The reporter's contact detail never appears on a public page.
+ * AUDIT. The insert and one `audit_log` row (`lost_found_item.report`, no
+ * actor because nobody is signed in, with a request id to correlate it with the
+ * server log) commit or roll back together via `withAudit`. The audit row
+ * records the reference, kind and category only: it is append-only and kept
+ * for good, so it must not hold the reporter's contact detail.
+ *
+ * REPORTER PRIVACY. `submitter_contact` and `staff_verification_detail` are
+ * columns of `lost_found_items` that the public `lost_found_public` view
+ * leaves out, and `LostFoundItem` in lib/content/types.ts has nowhere to put
+ * them. Nothing in app/[locale]/lost-and-found ever reads them back out. The
+ * reporter's contact detail never appears on a public page.
  */
 
-import { createClient } from "next-sanity";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { getDb, isDatabaseConfigured } from "@/lib/db";
+import { withAudit } from "@/lib/db/audit";
+import { nextLostFoundReference } from "@/lib/db/references";
+import { lostFoundItems } from "@/lib/db/schema";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
-import { apiVersion, dataset, projectId, writeToken } from "@/lib/sanity/env";
-import { LOST_FOUND_LAST_REFERENCE_QUERY } from "@/lib/sanity/queries";
-import type { LostFoundCategory, LostFoundKind } from "@/lib/sanity/types";
+import type { LostFoundCategory, LostFoundKind } from "@/lib/content/types";
 
 const CATEGORY_VALUES: readonly LostFoundCategory[] = [
   "idCard",
@@ -64,13 +70,13 @@ const CATEGORY_VALUES: readonly LostFoundCategory[] = [
   "other",
 ];
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /** How long a real person takes, at minimum, to read the privacy notice and
  * fill in a multi-field form. A bot that posts within this window never
  * looked at the page at all. Deliberately short: the point is to catch
  * scripted, instant submission, not to slow down a fast typist. */
 const MIN_FILL_TIME_MS = 1500;
-
-const MAX_REFERENCE_ATTEMPTS = 8;
 
 export type LostFoundReportFieldError = "kind" | "title" | "category" | "description" | "occurredOn" | "location" | "contact" | "form";
 
@@ -135,27 +141,11 @@ function validate(values: LostFoundReportValues, locale: Locale): Partial<Record
     errors.category = UI.errorFieldRequired[locale];
   }
   if (!toIsoDate(values.day, values.month, values.year)) errors.occurredOn = UI.errorInvalidDate[locale];
-  if (!values.place && !values.locationNote) errors.location = UI.errorLocationRequired[locale];
+  if (values.place && !UUID.test(values.place)) errors.location = UI.errorLocationRequired[locale];
+  else if (!values.place && !values.locationNote) errors.location = UI.errorLocationRequired[locale];
   if (!values.contact) errors.contact = UI.errorFieldRequired[locale];
 
   return errors;
-}
-
-function writeClient() {
-  // `perspective: "raw"` (rather than the shared `client`'s "published") is
-  // required here for two reasons: this client has to be able to CREATE a
-  // draft at all, and LOST_FOUND_LAST_REFERENCE_QUERY has to see references
-  // already allocated to other pending, unpublished drafts, or two reports
-  // filed before the first is approved could be handed the same number.
-  return createClient({ projectId, dataset, apiVersion, token: writeToken, useCdn: false, perspective: "raw" });
-}
-
-function isDocumentExistsError(error: unknown): boolean {
-  const statusCode = (error as { statusCode?: number; response?: { statusCode?: number } } | undefined)?.statusCode
-    ?? (error as { response?: { statusCode?: number } } | undefined)?.response?.statusCode;
-  if (statusCode === 409) return true;
-  const message = error instanceof Error ? error.message : String(error);
-  return /already exists/i.test(message);
 }
 
 function receivedPath(locale: Locale, reference: string | null): string {
@@ -176,7 +166,7 @@ export async function submitLostFoundReport(
   // reader never fills the honeypot (it is aria-hidden and off the tab
   // order, see ReportForm.tsx) and never finishes a multi-field bilingual
   // form faster than MIN_FILL_TIME_MS, so both are treated as spam and the
-  // submission is quietly dropped rather than written to Sanity at all. No
+  // submission is quietly dropped rather than written to the database at all. No
   // reference is issued for a dropped submission, since issuing one for a
   // report that does not exist would itself be dishonest.
   const honeypot = String(formData.get("website") ?? "").trim();
@@ -186,7 +176,7 @@ export async function submitLostFoundReport(
     redirect(receivedPath(locale, null));
   }
 
-  if (!writeToken) {
+  if (!isDatabaseConfigured()) {
     return { errors: { form: UI.reportUnavailable[locale] }, values };
   }
 
@@ -202,79 +192,64 @@ export async function submitLostFoundReport(
     return { errors: { occurredOn: UI.errorInvalidDate[locale] }, values };
   }
 
-  const client = writeClient();
-  const now = new Date();
-  const year = now.getUTCFullYear();
+  // The Bangkok calendar year, so a report filed just after midnight on 1 January gets the new year's number.
+  const year = Number(bangkokDateKey().slice(0, 4));
 
-  let startNumber = 1;
+  const requestHeaders = await headers();
+  const requestId = requestHeaders.get("x-vercel-id") ?? requestHeaders.get("x-request-id") ?? crypto.randomUUID();
+
+  // The reporter writes in one language; the other side stays empty until staff translate it on approval.
+  const inLocale = (text: string) => ({ th: locale === "th" ? text : "", en: locale === "en" ? text : "" });
+  const title = inLocale(values.title);
+  const description = inLocale(values.description);
+  const locationNote = inLocale(values.locationNote);
+
+  let allocatedReference: string;
   try {
-    const last = await client.fetch<string | null>(LOST_FOUND_LAST_REFERENCE_QUERY);
-    if (last) {
-      const match = /^LF-(\d{4})-(\d{4})$/.exec(last);
-      if (match && Number(match[1]) === year) startNumber = Number(match[2]) + 1;
-    }
-  } catch {
-    // An unreadable register does not block a new report: fall back to 0001
-    // and let the create-time uniqueness check (drafts.lost-found-...) catch
-    // any collision the same way it would for a burst of concurrent reports.
-  }
-
-  const localeText = { th: locale === "th" ? values.title : "", en: locale === "en" ? values.title : "" };
-  const localeDescription = { th: locale === "th" ? values.description : "", en: locale === "en" ? values.description : "" };
-  const localeLocationNote = values.locationNote
-    ? { th: locale === "th" ? values.locationNote : "", en: locale === "en" ? values.locationNote : "" }
-    : undefined;
-
-  let allocatedReference: string | null = null;
-  for (let attempt = 0; attempt < MAX_REFERENCE_ATTEMPTS; attempt += 1) {
-    const number = startNumber + attempt;
-    const reference = `LF-${year}-${String(number).padStart(4, "0")}`;
-    // Deterministic from the reference, not random: this is the actual
-    // uniqueness check. A second submission racing for the same number
-    // collides on this exact id and gets retried with the next one.
-    const id = `drafts.lost-found-${year}-${String(number).padStart(4, "0")}`;
-
-    try {
-      await client.create({
-        _id: id,
-        _type: "lostFoundItem",
-        reference,
-        kind: values.kind,
-        title: localeText,
-        // The slug is derived from the reference, not the (possibly
-        // single-language, possibly Thai-script) title: Studio's own slug
-        // source function only runs inside the Studio UI, never against a
-        // document created through the API, and a reference is already
-        // unique, URL-safe and stable.
-        slug: { _type: "slug", current: reference.toLowerCase() },
-        description: localeDescription,
-        category: values.category,
-        place: values.place ? { _type: "reference", _ref: values.place } : undefined,
-        locationNote: localeLocationNote,
-        occurredOn,
-        status: "open",
-        // No student reporting a lost or found item is in a position to say
-        // which body administers this register; that is an editorial
-        // decision. "tusc" is a starting default an editor corrects during
-        // review, not a claim about who is actually handling this item.
-        owner: "tusc",
-        publishedAt: now.toISOString(),
-        submittedByStudent: true,
-        submitterContact: values.contact,
-        staffVerificationDetail: values.staffDetail || undefined,
+    allocatedReference = await withAudit(getDb(), { actorUserId: null, requestId }, async (tx, audit) => {
+      const reference = await nextLostFoundReference(tx, year);
+      const [row] = await tx
+        .insert(lostFoundItems)
+        .values({
+          reference,
+          // The slug is derived from the reference, not the (possibly
+          // single-language, possibly Thai-script) title: a reference is
+          // already unique, URL-safe and stable.
+          slug: reference.toLowerCase(),
+          kind: values.kind,
+          titleTh: title.th,
+          titleEn: title.en,
+          descriptionTh: description.th,
+          descriptionEn: description.en,
+          category: values.category as LostFoundCategory,
+          placeId: values.place || null,
+          locationNoteTh: values.locationNote ? locationNote.th : null,
+          locationNoteEn: values.locationNote ? locationNote.en : null,
+          occurredOn,
+          registerStatus: "open",
+          // Waiting for approval. Public reads only ever see published rows.
+          status: "draft",
+          // No student reporting a lost or found item is in a position to say
+          // which body administers this register; that is a staff decision.
+          // "tusc" is a starting default staff correct during review, not a
+          // claim about who is actually handling this item.
+          owner: "tusc",
+          submittedByStudent: true,
+          submitterContact: values.contact,
+          staffVerificationDetail: values.staffDetail || null,
+        })
+        .returning({ id: lostFoundItems.id });
+      await audit({
+        action: "lost_found_item.report",
+        entityType: "lost_found_item",
+        entityId: row!.id,
+        after: { reference, kind: values.kind, category: values.category, status: "draft" },
       });
-      allocatedReference = reference;
-      break;
-    } catch (error) {
-      if (!isDocumentExistsError(error)) {
-        return { errors: { form: UI.errorReportNotSaved[locale] }, values };
-      }
-      // Collision: another submission took this exact reference first. Loop
-      // to the next candidate number.
-    }
-  }
-
-  if (!allocatedReference) {
+      return reference;
+    });
+  } catch (error) {
+    // Server log only: the reporter is told it was not saved, never why.
+    console.error("[lost-found] report not saved", error instanceof Error ? error.message : error);
     return { errors: { form: UI.errorReportNotSaved[locale] }, values };
   }
 

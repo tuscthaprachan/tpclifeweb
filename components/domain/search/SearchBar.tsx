@@ -24,7 +24,7 @@ import { liveRegionProps } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { search as runSearch, type SearchResult } from "@/lib/search";
-import type { SearchIndex, SearchRecord } from "@/lib/sanity/types";
+import type { SearchIndex, SearchRecord } from "@/lib/content/types";
 import { Button, cx } from "@/components/ui";
 
 interface SearchBarProps {

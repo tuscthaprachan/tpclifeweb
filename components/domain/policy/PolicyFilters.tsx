@@ -7,7 +7,7 @@ import { Cluster } from "@/components/ui/Cluster";
 import { Select, type SelectOption } from "@/components/ui/Select";
 import { localePath, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { Owner, PolicyStatus } from "@/lib/sanity/types";
+import type { Owner, PolicyStatus } from "@/lib/content/types";
 import { STATUS_LABEL_KEY, STATUS_ORDER } from "./statusLabels";
 
 /**

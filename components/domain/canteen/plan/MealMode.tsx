@@ -31,7 +31,7 @@ import { effectivePrice, indexCanteen } from "@/lib/canteen/derive";
 import { facetCounts, matchesFilters, relaxSuggestions } from "@/lib/canteen/filter";
 import { MAX_BUDGET, parseMealBudget } from "@/lib/canteen/params";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 import { PLAN_ROUTE } from "./mode";
 

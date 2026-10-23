@@ -9,14 +9,14 @@
  * item it scrutinises, so the reverse has to be found by scanning every
  * policy for one whose `oversightOf` resolves back to this one. That is a
  * small, bounded scan (the whole policy set, fetched once from `getPolicies`),
- * not a second query type that would need its own GROQ.
+ * not a second query type.
  */
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PolicyLastUpdated, PolicyProgress, PolicyRelationLink, PolicyUpdateList, STATUS_LABEL_KEY, STATUS_TONE, isResolvedPolicy } from "@/components/domain/policy";
 import { OWNER_LABEL_KEY } from "@/components/domain/form";
-import { PortableTextRenderer } from "@/components/domain/portable-text";
+import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ShellContainer } from "@/components/layout/ShellContainer";
 import { Heading } from "@/components/ui/Heading";
@@ -28,7 +28,7 @@ import { Timestamp } from "@/components/ui/Timestamp";
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
 import { DEFAULT_LOCALE, LOCALES, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getPolicies, getPolicyBySlug } from "@/lib/sanity/queries";
+import { getPolicies, getPolicyBySlug, resolveRichTextRefs } from "@/lib/content";
 
 /*
  * Copy that lib/i18n/strings.ts does not carry, per CONTRIBUTING.md's
@@ -95,6 +95,7 @@ export default async function PolicyDetailPage({
   // The reverse half of the oversight relationship: every policy in the
   // whole set whose own `oversightOf` resolves back to this one.
   const allPolicies = await getPolicies();
+  const resolved = await resolveRichTextRefs([policy.detail?.[locale]]);
   const scrutinisedBy = allPolicies.filter((candidate) => {
     const target = isResolvedPolicy(candidate.oversightOf) ? candidate.oversightOf : null;
     return target !== null && target._id === policy._id;
@@ -142,7 +143,7 @@ export default async function PolicyDetailPage({
 
         <SummaryList rows={metaRows} />
 
-        {policy.detail ? <PortableTextRenderer value={policy.detail[locale]} locale={locale} headingLevel={2} /> : null}
+        {policy.detail ? <RichText value={policy.detail[locale]} locale={locale} headingLevel={2} resolved={resolved} /> : null}
 
         {oversightTarget ? (
           <Stack space={2} as="section">

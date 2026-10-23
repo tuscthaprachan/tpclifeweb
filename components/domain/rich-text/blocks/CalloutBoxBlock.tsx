@@ -1,7 +1,7 @@
 import { cx, StatusTag, type StatusTone } from "@/components/ui";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { LocaleString } from "@/lib/sanity/types";
+import type { LocaleString } from "@/lib/content/types";
 import type { CalloutBoxAttrs, CalloutTone } from "@/lib/rich-text/schema";
 
 const TONE_STATUS: Record<CalloutTone, StatusTone> = {

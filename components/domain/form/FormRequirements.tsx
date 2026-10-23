@@ -1,7 +1,7 @@
 import { CheckIcon } from "@/components/ui/icons";
 import { cx } from "@/components/ui/cx";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { FormPrerequisite } from "@/lib/sanity/types";
+import type { FormPrerequisite } from "@/lib/content/types";
 
 interface FormRequirementsProps {
   prerequisites: FormPrerequisite[];

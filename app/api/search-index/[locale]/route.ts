@@ -16,22 +16,14 @@
  * Caching has two layers:
  * - Edge/CDN: `next.config.ts` sets `Cache-Control` for exactly this path
  *   (`public, max-age=0, s-maxage=3600, stale-while-revalidate=86400`).
- * - Data: `getSearchIndex()` is wrapped in `unstable_cache` here, tagged
- *   with `CACHE_TAGS.searchIndex`, so the revalidation webhook can call
- *   `revalidateTag(CACHE_TAGS.searchIndex)` to invalidate this specific
- *   entry the moment content changes, without waiting out the hour.
+ * - Data: `getSearchIndex()` (lib/content/search-index.ts) is cached and
+ *   tagged with `CACHE_TAGS.searchIndex`, so `revalidateFor` invalidates this
+ *   specific entry the moment content changes, without waiting out the hour.
  */
 
-import { unstable_cache } from "next/cache";
 import { NextResponse } from "next/server";
 import { isLocale } from "@/lib/i18n/config";
-import { CACHE_TAGS } from "@/lib/sanity/env";
-import { getSearchIndex } from "@/lib/sanity/queries";
-
-const getCachedSearchIndex = unstable_cache(() => getSearchIndex(), ["search-index"], {
-  tags: [CACHE_TAGS.searchIndex],
-  revalidate: 3600,
-});
+import { getSearchIndex } from "@/lib/content";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -39,6 +31,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ loc
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const index = await getCachedSearchIndex();
+  const index = await getSearchIndex();
   return NextResponse.json(index);
 }

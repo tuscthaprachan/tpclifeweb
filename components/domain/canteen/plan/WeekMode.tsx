@@ -25,7 +25,7 @@ import { countActiveValues, defaultFilters, type CanteenFilters } from "@/lib/ca
 import { newSeed } from "@/lib/canteen/random";
 import { planWeek, type WeekFailure, type WeekResult } from "@/lib/canteen/week";
 import { localePath, type Locale } from "@/lib/i18n/config";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 import { PLAN_ROUTE } from "./mode";
 

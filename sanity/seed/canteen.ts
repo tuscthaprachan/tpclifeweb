@@ -53,7 +53,7 @@ import { join } from "node:path";
 import { createClient } from "@sanity/client";
 
 import { surveyCanteenData } from "../../lib/canteen/dataset";
-import type { CampusPlace } from "../../lib/sanity/types";
+import type { CampusPlace } from "../../lib/content/types";
 import { apiVersion, dataset, projectId } from "../../lib/sanity/env";
 import {
   ALLERGENS,

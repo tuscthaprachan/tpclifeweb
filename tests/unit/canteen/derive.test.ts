@@ -17,7 +17,7 @@ import {
   stallOf,
   weekStartKey,
 } from "@/lib/canteen";
-import type { CanteenData, CanteenDish } from "@/lib/sanity/types";
+import type { CanteenData, CanteenDish } from "@/lib/content/types";
 
 import { NOW, makeData, slugs } from "./fixture";
 
@@ -32,7 +32,7 @@ describe("derive: data", () => {
 
   it("normaliseCanteenData fills gaps and drops dishes with a dangling stall", () => {
     const data = makeData();
-    const orphan = { ...dishById(data, "a"), _id: "orphan", slug: { _type: "slug" as const, current: "orphan" }, stall: { _type: "reference" as const, _ref: "no-such-stall" } };
+    const orphan = { ...dishById(data, "a"), _id: "orphan", slug: { current: "orphan" }, stallId: "no-such-stall" };
     const noArrays = { ...dishById(data, "b"), protein: undefined as unknown as CanteenDish["protein"], variants: undefined };
     const result = normaliseCanteenData({ ...data, dishes: [orphan, noArrays] });
     expect(result.dishes).toHaveLength(1);
@@ -128,7 +128,7 @@ describe("derive: time in Asia/Bangkok", () => {
 
   it("says unknown, not closed, when no hours are recorded", () => {
     expect(isOpenNow(null, stall(1), NOW)).toBeNull();
-    expect(isOpenNow({ ...data.settings!, canteen: { _type: "reference", _ref: "x" } }, stall(1), NOW)).toBeNull();
+    expect(isOpenNow({ ...data.settings!, canteen: undefined }, stall(1), NOW)).toBeNull();
   });
 
   it("reports the closing time while open", () => {

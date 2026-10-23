@@ -7,7 +7,7 @@ import { cx } from "@/components/ui/cx";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { Policy } from "@/lib/sanity/types";
+import type { Policy } from "@/lib/content/types";
 import { PolicyLastUpdated } from "./PolicyLastUpdated";
 import { PolicyProgress } from "./PolicyProgress";
 import { isResolvedPolicy } from "./relations";

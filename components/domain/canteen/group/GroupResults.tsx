@@ -17,7 +17,7 @@ import {
 import { defaultFilters } from "@/lib/canteen/params";
 import { newSeed } from "@/lib/canteen/random";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/content/types";
 
 import { CheckedOnNote } from "../CheckedOnNote";
 import { DishCard } from "../DishCard";

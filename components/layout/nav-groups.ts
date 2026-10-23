@@ -2,14 +2,14 @@
  * Which primary navigation items stay on the desktop row and which fold into
  * the "More" disclosure.
  *
- * Pinning is decided by PATH, not by position in the CMS list, so an editor
- * can reorder `primaryNav` in the Studio (or add and remove other items)
+ * Pinning is decided by PATH, not by position in the stored list, so an editor
+ * can reorder `primaryNav` in the admin console (or add and remove other items)
  * without the desktop row changing shape. The array order is the order the
- * pinned items appear in, whatever order the CMS holds them in. A pinned path
+ * pinned items appear in, whatever order they are stored in. A pinned path
  * that is missing from the list is simply skipped.
  */
 
-import type { NavItem } from "@/lib/sanity/types";
+import type { NavItem } from "@/lib/content/types";
 
 export const PINNED_NAV_PATHS: readonly string[] = ["/eat", "/welfare"];
 

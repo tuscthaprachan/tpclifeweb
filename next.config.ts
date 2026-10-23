@@ -8,8 +8,13 @@ const nextConfig: NextConfig = {
     "/**": ["./assets/og/**"],
   },
 
+  // PGlite (DATABASE_URL=pglite:...) is a devDependency that finds its own wasm
+  // files on disk, so it must be loaded from node_modules, not bundled.
+  serverExternalPackages: ["@electric-sql/pglite"],
+
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+    // Content images live in Vercel Blob (lib/storage), one public host per store.
+    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
     formats: ["image/avif", "image/webp"],
   },
 

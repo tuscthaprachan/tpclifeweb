@@ -98,7 +98,7 @@ import type {
   OrganisationType,
   ShuttleRoute,
   ShuttleStop,
-} from "../../lib/sanity/types";
+} from "../../lib/content/types";
 
 /* ------------------------------------------------------------------ *
  * Client

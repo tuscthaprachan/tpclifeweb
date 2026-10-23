@@ -3,7 +3,7 @@ import { Timestamp } from "@/components/ui/Timestamp";
 import { cx } from "@/components/ui/cx";
 import type { Locale, LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { Policy } from "@/lib/sanity/types";
+import type { Policy } from "@/lib/content/types";
 import { getLatestUpdate } from "./updates";
 
 const STALE_AFTER_DAYS = 365;

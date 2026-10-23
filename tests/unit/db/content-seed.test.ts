@@ -88,7 +88,7 @@ describe("content seed", () => {
     expect(before.canteen_dish_price_history).toBe(SURVEY_DISHES.length);
     expect(before.canteen_stall_add_ons).toBe(data.stalls.reduce((n, s) => n + (s.addOns?.length ?? 0), 0));
     expect(before.canteen_stall_add_on_dishes).toBe(
-      data.stalls.reduce((n, s) => n + (s.addOns ?? []).reduce((m, a) => m + (a.dishes?.length ?? 0), 0), 0),
+      data.stalls.reduce((n, s) => n + (s.addOns ?? []).reduce((m, a) => m + (a.dishIds?.length ?? 0), 0), 0),
     );
     expect(before.canteen_settings).toBe(1);
   });

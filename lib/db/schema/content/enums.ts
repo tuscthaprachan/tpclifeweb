@@ -4,7 +4,7 @@ import { pgEnum } from "drizzle-orm/pg-core";
  * Every enum the content tables use. The TypeScript arrays are the single
  * source for the Postgres enums, for Zod schemas in the admin forms, and for
  * the drift test in tests/unit/db/content-schema.test.ts. Values match the
- * unions that lib/sanity/types.ts defined, so pages keep compiling unchanged.
+ * unions that lib/content/types.ts defined, so pages keep compiling unchanged.
  */
 
 /** draft = waiting for approval or not yet live; published = visible on the public site. */

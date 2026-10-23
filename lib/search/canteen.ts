@@ -18,7 +18,7 @@ import { excerpt } from "@/components/domain/canteen/extras/text";
 import { indexCanteen, stallOf } from "@/lib/canteen/derive";
 import { formatDate, formatNumber } from "@/lib/i18n/format";
 import type { LocaleString } from "@/lib/i18n/config";
-import type { CanteenData, SearchRecord } from "@/lib/sanity/types";
+import type { CanteenData, SearchRecord } from "@/lib/content/types";
 
 /** Dishes rank below forms and the canonical explainers, above news. */
 const DISH_WEIGHT = 35;
@@ -58,7 +58,7 @@ export function canteenSearchRecords(data: CanteenData): SearchRecord[] {
 
   for (const dish of data.dishes) {
     const stall = stallOf(data, dish);
-    const canonical = dish.canonical ? index.canonicalById.get(dish.canonical._ref) : undefined;
+    const canonical = dish.canonicalId ? index.canonicalById.get(dish.canonicalId) : undefined;
     const price = (locale: "th" | "en") =>
       locale === "th"
         ? `${stall ? `ร้าน ${formatNumber(stall.number, "th")} ` : ""}${formatNumber(dish.price, "th")} บาท ตรวจเมื่อ ${formatDate(dish.checkedOn, "th")}`

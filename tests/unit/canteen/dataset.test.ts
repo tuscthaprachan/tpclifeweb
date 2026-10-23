@@ -42,15 +42,15 @@ describe("surveyed canteen data", () => {
   it("resolves every stall and canonical reference", () => {
     const index = indexCanteen(data);
     for (const dish of data.dishes) {
-      expect(index.stallById.has(dish.stall._ref)).toBe(true);
-      if (dish.canonical) expect(index.canonicalById.has(dish.canonical._ref)).toBe(true);
+      expect(index.stallById.has(dish.stallId)).toBe(true);
+      if (dish.canonicalId) expect(index.canonicalById.has(dish.canonicalId)).toBe(true);
     }
     const stallsPerCanonical = new Map<string, Set<string>>();
     for (const dish of data.dishes) {
-      if (!dish.canonical) continue;
-      const set = stallsPerCanonical.get(dish.canonical._ref) ?? new Set<string>();
-      set.add(dish.stall._ref);
-      stallsPerCanonical.set(dish.canonical._ref, set);
+      if (!dish.canonicalId) continue;
+      const set = stallsPerCanonical.get(dish.canonicalId) ?? new Set<string>();
+      set.add(dish.stallId);
+      stallsPerCanonical.set(dish.canonicalId, set);
     }
     expect([...stallsPerCanonical.values()].filter((set) => set.size >= 3).length).toBeGreaterThanOrEqual(2);
   });
@@ -62,7 +62,7 @@ describe("surveyed canteen data", () => {
 
   it("has a menu for every photographed stall, 1 to 17, and none for unphotographed 18", () => {
     expect(data.stalls.map((stall) => stall.number).sort((a, b) => a - b)).toEqual(Array.from({ length: 18 }, (_, i) => i + 1));
-    const dishCount = (number: number) => data.dishes.filter((dish) => dish.stall._ref === `survey-stall-${number}`).length;
+    const dishCount = (number: number) => data.dishes.filter((dish) => dish.stallId === `survey-stall-${number}`).length;
     for (let number = 1; number <= 17; number += 1) expect(dishCount(number)).toBeGreaterThan(0);
     expect(dishCount(18)).toBe(0);
     expect(data.stalls.find((stall) => stall.number === 18)?.wayfinding?.en).toMatch(/not yet confirmed/);
@@ -123,7 +123,7 @@ describe("surveyed canteen data", () => {
 
   it("lists add-ons on the stall, not as dishes, and splits choices into phrases to say", () => {
     const stall = (number: number) => data.stalls.find((s) => s.number === number)!;
-    const atStall = (number: number) => data.dishes.filter((dish) => dish.stall._ref === stall(number)._id);
+    const atStall = (number: number) => data.dishes.filter((dish) => dish.stallId === stall(number)._id);
     expect(atStall(17).some((dish) => dish.name.th === "ไข่มุก")).toBe(false);
     const drink = atStall(17).find((dish) => dish.course === "drink")!;
     expect(addOnsFor(drink, stall(17)).some((addOn) => addOn.label.th === "เพิ่มไข่มุก")).toBe(true);
@@ -168,7 +168,7 @@ describe("the canteen logic on surveyed data", () => {
     expect(result.dish).not.toBeNull();
     for (let i = 0; i < 200; i += 1) {
       const dish = pick(data, filters, { seed: `vacant-${i}`, now: NOW }).dish;
-      expect(dish?.stall._ref).not.toBe(vacantId);
+      expect(dish?.stallId).not.toBe(vacantId);
     }
   });
 

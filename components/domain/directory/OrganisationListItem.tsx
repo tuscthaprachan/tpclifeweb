@@ -1,6 +1,6 @@
 import { Link } from "@/components/ui";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { Organisation } from "@/lib/sanity/types";
+import type { Organisation } from "@/lib/content/types";
 import { contactHref, contactLabel } from "./contactHref";
 
 /**

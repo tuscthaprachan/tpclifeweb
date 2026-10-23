@@ -2,7 +2,7 @@ import { EAT, eat, t } from "@/components/domain/canteen";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { pick } from "@/lib/i18n/config";
 import { ogImageRoute } from "@/lib/og/route";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 const og = ogImageRoute<{ locale: string; slug: string }>(async ({ locale, slug }) => {
   const generic = { locale, kicker: t(EAT.title, locale), title: t(EAT.stallsTitle, locale), description: t(EAT.stallsIntro, locale), tone: "canteen" } as const;

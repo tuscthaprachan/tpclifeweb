@@ -55,7 +55,9 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: "npm run dev",
+        // CI has just run `npm run build`, so serve that build (with the seeded
+        // PGlite database from DATABASE_URL) instead of compiling on demand.
+        command: process.env.CI ? "npm start" : "npm run dev",
         url: "http://localhost:3000",
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,

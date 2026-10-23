@@ -1,6 +1,6 @@
 /**
  * The policy dashboard: every policy from both TUSU and TUSC, combined but
- * always attributed (lib/sanity/types.ts, "Policy tracker"). Filterable by
+ * always attributed (lib/content/types.ts, "Policy tracker"). Filterable by
  * owner, policy area and status through query parameters, working with
  * JavaScript off, via a real `<form method="get">`
  * (components/domain/policy/PolicyFilters.tsx), following the exact pattern
@@ -19,8 +19,8 @@ import { liveRegionProps } from "@/lib/a11y";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
-import { getPolicies } from "@/lib/sanity/queries";
-import type { Owner, Policy, PolicyStatus } from "@/lib/sanity/types";
+import { getPolicies } from "@/lib/content";
+import type { Owner, Policy, PolicyStatus } from "@/lib/content/types";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 const OWNERS: readonly Owner[] = ["tusu", "tusc", "university", "joint"];

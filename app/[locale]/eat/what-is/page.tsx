@@ -16,7 +16,7 @@ import { dishesInCanonical, priceRange } from "@/lib/canteen/derive";
 import { DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
@@ -71,7 +71,7 @@ export default async function WhatIsIndexPage({
               {sorted.map((canonical) => {
                 const dishes = dishesInCanonical(data, canonical._id);
                 const range = priceRange(dishes);
-                const stalls = new Set(dishes.map((dish) => dish.stall._ref)).size;
+                const stalls = new Set(dishes.map((dish) => dish.stallId)).size;
                 const otherName = pick(canonical.name, other);
                 const text = excerpt(pick(canonical.explainer, locale));
                 return (

@@ -14,7 +14,7 @@
  */
 
 import { DISH_TYPES } from "./options";
-import type { Allergen, DishType, Protein } from "@/lib/sanity/types";
+import type { Allergen, DishType, Protein } from "@/lib/content/types";
 
 /** Diet filter keys. `halal` is any dish from a halal stall. */
 export const DIET_KEYS = ["nopork", "nobeef", "nochicken", "noseafood", "halal", "vegetarian"] as const;

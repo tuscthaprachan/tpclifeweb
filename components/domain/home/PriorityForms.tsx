@@ -2,7 +2,7 @@ import { FormCard } from "@/components/domain/form";
 import { Button, EmptyState, Grid, Heading, Stack } from "@/components/ui";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { FormRecord } from "@/lib/sanity/types";
+import type { FormRecord } from "@/lib/content/types";
 
 interface PriorityFormsProps {
   locale: Locale;

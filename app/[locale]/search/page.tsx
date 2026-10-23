@@ -16,7 +16,7 @@ import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { search } from "@/lib/search";
 import { logZeroResultSearch } from "@/lib/search/log-zero-result";
-import { getSearchIndex } from "@/lib/sanity/queries";
+import { getSearchIndex } from "@/lib/content";
 import { Container, EmptyState, Heading, Stack } from "@/components/ui";
 import { CanteenShortcutCallout } from "@/components/domain/search/CanteenShortcutCallout";
 import { SearchBar } from "@/components/domain/search/SearchBar";

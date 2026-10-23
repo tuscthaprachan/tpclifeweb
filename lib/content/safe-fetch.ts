@@ -1,14 +1,14 @@
 import "server-only";
 
 /**
- * Fetching from Sanity without letting a CMS outage take the site down.
+ * Reading content without letting a database outage take the site down.
  *
  * WHY THIS EXISTS
- * `client.fetch` rejects on any transport failure: the CMS is unreachable, the
- * project id is wrong, a token expired, the network dropped. Left unhandled,
- * that rejection propagates out of a Server Component and Next renders the
- * error boundary, so a student looking for the next shuttle gets a blank error
- * page instead of the page they asked for.
+ * A query rejects on any transport failure: the database is unreachable, the
+ * connection string is wrong, the network dropped. Left unhandled, that
+ * rejection propagates out of a Server Component and Next renders the error
+ * boundary, so a student looking for the next shuttle gets a blank error page
+ * instead of the page they asked for.
  *
  * That is the wrong failure mode for this service. Most of what TryTPC shows
  * degrades gracefully: a news list with no items reads as "nothing here yet",
@@ -23,24 +23,24 @@ import "server-only";
  * the label of the query that failed, so an outage is visible in the Vercel
  * logs rather than silently looking like an empty dataset.
  *
- * It also does not paper over a MISSING document, which is a different thing. A
+ * It also does not paper over a MISSING row, which is a different thing. A
  * page asked for by slug that does not exist must still call `notFound()` and
- * return a real 404. `safeFetch` returning `null` for a single document means
+ * return a real 404. `safeFetch` returning `null` for a single record means
  * "could not read", and the caller decides what that means. Where the two need
  * telling apart, use `safeFetchResult` and check `ok`.
  */
 
 export interface FetchResult<T> {
-  /** False when the read failed. Distinguishes "CMS down" from "no such document". */
+  /** False when the read failed. Distinguishes "database down" from "no such row". */
   ok: boolean;
   data: T;
 }
 
 /**
- * Runs a Sanity read and returns `fallback` if it throws.
+ * Runs a read and returns `fallback` if it throws.
  *
- * `label` names the query in the server log. Use the query's own name so a log
- * line points straight at the code, for example "getUpcomingEvents".
+ * `label` names the read in the server log. Use the function's own name so a
+ * log line points straight at the code, for example "getUpcomingEvents".
  */
 export async function safeFetch<T>(
   label: string,
@@ -62,7 +62,7 @@ export async function safeFetchResult<T>(
   } catch (error) {
     // Server-side only. This never reaches the browser, so it can be blunt.
     console.error(
-      `[sanity] ${label} failed, falling back to an empty result. ` +
+      `[content] ${label} failed, falling back to an empty result. ` +
         `The page will render its empty state.`,
       error instanceof Error ? error.message : error,
     );

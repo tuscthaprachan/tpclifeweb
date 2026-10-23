@@ -141,7 +141,7 @@ describe("pick", () => {
   it("locks the stall, the type or the canonical dish relative to a previous dish", () => {
     for (let i = 0; i < 40; i += 1) {
       const sameStall = pick(data, f(), opts(`l${i}`, { lock: { of: "fixture-dish-a", stall: true } }));
-      expect(sameStall.dish!.stall._ref).toBe("stall-1");
+      expect(sameStall.dish!.stallId).toBe("stall-1");
       expect(id(sameStall)).not.toBe("a");
 
       const sameType = pick(data, f(), opts(`l${i}`, { lock: { of: "fixture-dish-e", type: true } }));
@@ -149,7 +149,7 @@ describe("pick", () => {
       expect(id(sameType)).not.toBe("e");
 
       const sameCanonical = pick(data, f(), opts(`l${i}`, { lock: { of: "fixture-dish-a", canonical: true } }));
-      expect(sameCanonical.dish!.canonical?._ref).toBe("canon-basil");
+      expect(sameCanonical.dish!.canonicalId).toBe("canon-basil");
       expect(sameCanonical.reason.locks).toEqual(["canonical"]);
     }
   });
@@ -180,7 +180,7 @@ describe("pickSuggested", () => {
     const chosen = pickSuggested(data.dishes, 50, "abc");
     expect(chosen.length).toBeGreaterThan(0);
     expect(chosen.every((dish) => dish.course === "main")).toBe(true);
-    expect(new Set(chosen.map((dish) => dish.stall._ref)).size).toBe(chosen.length);
+    expect(new Set(chosen.map((dish) => dish.stallId)).size).toBe(chosen.length);
   });
 
   it("respects the count", () => {
@@ -202,7 +202,7 @@ describe("pickSuggested", () => {
   it("builds a pool of at most perStall mains per stall", () => {
     const pool = suggestedPool(data.dishes, 2, "abc");
     const perStall = new Map<string, number>();
-    for (const dish of pool) perStall.set(dish.stall._ref, (perStall.get(dish.stall._ref) ?? 0) + 1);
+    for (const dish of pool) perStall.set(dish.stallId, (perStall.get(dish.stallId) ?? 0) + 1);
     expect(pool.every((dish) => dish.course === "main")).toBe(true);
     expect(Math.max(...perStall.values())).toBeLessThanOrEqual(2);
   });

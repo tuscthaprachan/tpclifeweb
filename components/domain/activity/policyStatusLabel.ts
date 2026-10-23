@@ -9,7 +9,7 @@
 
 import type { StatusTone } from "@/components/ui";
 import type { UiKey } from "@/lib/i18n/strings";
-import type { PolicyStatus } from "@/lib/sanity/types";
+import type { PolicyStatus } from "@/lib/content/types";
 
 export const POLICY_STATUS_LABEL_KEY: Record<PolicyStatus, UiKey> = {
   notStarted: "statusNotStarted",

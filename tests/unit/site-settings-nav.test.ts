@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/sanity/queries", () => ({ getSiteSettings: async () => null }));
+vi.mock("@/lib/content", () => ({ getSiteSettings: async () => null }));
 
 import { splitPrimaryNav } from "@/components/layout/nav-groups";
 import { withRequiredNav } from "@/components/layout/site-settings";
-import type { SiteSettings } from "@/lib/sanity/types";
+import type { SiteSettings } from "@/lib/content/types";
 
 function settings(paths: string[]): SiteSettings {
   return {

@@ -21,7 +21,7 @@ import {
 import { Details, EmptyState, Heading, Stack } from "@/components/ui";
 import { newSeed } from "@/lib/canteen/random";
 import { localePath, type Locale } from "@/lib/i18n/config";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 import { PLAN_ROUTE } from "./mode";
 

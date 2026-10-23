@@ -6,7 +6,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Heading, Stack, StatusTag, Tag, Timestamp } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getContentPages } from "@/lib/sanity/queries";
+import { getContentPages } from "@/lib/content";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 const CATEGORY_LABEL = {

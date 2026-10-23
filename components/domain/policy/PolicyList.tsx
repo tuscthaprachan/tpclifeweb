@@ -1,7 +1,7 @@
 import { cx } from "@/components/ui/cx";
 import type { HeadingLevel } from "@/lib/a11y";
 import type { Locale } from "@/lib/i18n/config";
-import type { Policy } from "@/lib/sanity/types";
+import type { Policy } from "@/lib/content/types";
 import { PolicyListItem } from "./PolicyListItem";
 
 interface PolicyListProps {

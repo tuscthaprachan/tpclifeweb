@@ -3,7 +3,7 @@
  * category and status, paginated. Filters are query-param driven
  * (this file reads them; components/domain/lostfound/LostFoundFilters.tsx
  * renders the real `<form method="get">` that writes them) and pagination
- * comes straight from `getLostFoundPage`'s GROQ `[$start...$end]` slice, so
+ * comes straight from `getLostFoundPage`'s SQL limit and offset, so
  * the whole page works identically with JavaScript on or off (CONTRIBUTING.md,
  * "search, filtering and pagination must work with JavaScript off").
  *
@@ -34,8 +34,8 @@ import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/co
 import { formatNumber } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
 import { alternatesFor } from "@/lib/i18n/metadata";
-import { getLostFoundPage } from "@/lib/sanity/queries";
-import type { LostFoundCategory, LostFoundKind, LostFoundStatus } from "@/lib/sanity/types";
+import { getLostFoundPage } from "@/lib/content";
+import type { LostFoundCategory, LostFoundKind, LostFoundStatus } from "@/lib/content/types";
 
 const PAGE_SIZE = 24;
 const KINDS: readonly LostFoundKind[] = ["lost", "found"];

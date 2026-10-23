@@ -15,7 +15,7 @@
  */
 
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import type { NewsPost, Owner, Policy, PolicyStatus } from "@/lib/sanity/types";
+import type { NewsPost, Owner, Policy, PolicyStatus } from "@/lib/content/types";
 
 /** The two bodies this feed attributes to. University- or joint-owned items are out of scope for "TUSU and TUSC activity" specifically. */
 export type ActivityOwner = Extract<Owner, "tusu" | "tusc">;

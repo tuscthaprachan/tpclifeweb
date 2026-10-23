@@ -19,7 +19,7 @@ import { serialise } from "@/lib/canteen/params";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 const ROUTE = "/eat/mine";
 
@@ -53,7 +53,7 @@ export default async function EatMinePage({
   const stallById = new Map(data.stalls.map((stall) => [stall._id, stall]));
   const dishes: Record<string, MineDish> = {};
   for (const dish of data.dishes) {
-    const stall = stallById.get(dish.stall._ref);
+    const stall = stallById.get(dish.stallId);
     if (!stall) continue;
     dishes[dish.slug.current] = {
       name: dish.name,

@@ -1,4 +1,4 @@
-import type { LocaleString } from "@/lib/sanity/types";
+import type { LocaleString } from "@/lib/content/types";
 
 /** What `RichText` needs to know about a form to draw a `formCallout`. */
 export interface FormSummary {

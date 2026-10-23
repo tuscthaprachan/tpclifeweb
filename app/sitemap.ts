@@ -1,26 +1,18 @@
 /**
- * Static routes in both locales. Content-backed routes (individual forms,
- * news posts, events, policies, directory entries, places) are not here yet:
+ * Static routes in both locales, plus the lost and found entries and the
+ * canteen pages, which are read from the database. Other content-backed
+ * routes (individual forms, news posts, events, policies, welfare and guide
+ * pages) are not here yet; they follow the same shape, each from its
+ * `lib/content` list function mapped through `localePath`.
  *
- * TODO(sanity-integration): once lib/sanity/client.ts exists, extend this
- * with a query for every published slug of each document type in
- * lib/sanity/types.ts, mapped through `localePath` the same way the static
- * routes below are.
- *
- * Lost and found is the exception: lib/sanity/client.ts and
- * lib/sanity/queries.ts already exist (they are fixed contracts this agent
- * reads but does not edit), so its two static routes plus every published
- * entry are wired in below. `getLostFoundPage` already fails safe (returns
- * an empty list rather than throwing) if Sanity is briefly unreachable at
- * build time, so a fetch problem here degrades the sitemap rather than
- * breaking the build. News and events should follow this same shape once
- * whoever owns them is ready; nothing about this pattern is lost-and-found
- * specific.
+ * Both reads fail safe (an empty list rather than a throw) if the database is
+ * briefly unreachable at build time, so a fetch problem degrades the sitemap
+ * rather than breaking the build.
  */
 
 import type { MetadataRoute } from "next";
 import { LOCALES, localePath } from "@/lib/i18n/config";
-import { getCanteenData, getLostFoundPage } from "@/lib/sanity/queries";
+import { getCanteenData, getLostFoundPage } from "@/lib/content";
 import { SITE_URL } from "@/lib/site-url";
 
 const STATIC_ROUTES = [
@@ -49,8 +41,7 @@ const STATIC_ROUTES = [
 
 // A large page size rather than a dedicated "every slug" query, the same
 // trade-off app/[locale]/lost-and-found/[slug]/page.tsx makes for
-// generateStaticParams, and for the same reason: lib/sanity/queries.ts is a
-// fixed contract and only exposes a paged list.
+// generateStaticParams.
 const MAX_SITEMAP_ITEMS = 1000;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -71,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  // What to eat: one page per dish and per stall, from Sanity or, until the survey is imported, the surveyed dataset.
+  // What to eat: one page per dish, stall and canonical dish.
   const canteen = await getCanteenData();
   const canteenEntries = LOCALES.flatMap((locale) => [
     ...canteen.dishes.map((dish) => ({

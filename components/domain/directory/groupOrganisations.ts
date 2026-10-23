@@ -1,4 +1,4 @@
-import type { LocaleString, Organisation } from "@/lib/sanity/types";
+import type { LocaleString, Organisation } from "@/lib/content/types";
 
 export interface FacultyGroup {
   /** `faculty.en`, used as a stable sort/dedupe key across both locales. */

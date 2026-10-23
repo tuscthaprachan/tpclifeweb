@@ -11,7 +11,7 @@ Four files are fixed. Read them first, use them, do not edit them.
 | `styles/tokens.css` | Every colour, type, space, radius and motion value |
 | `lib/i18n/config.ts` | Locales, the `LocaleString` shape, `pick`, path helpers, `Asia/Bangkok` |
 | `lib/i18n/strings.ts` | The shared UI vocabulary, both languages |
-| `lib/sanity/types.ts` | The shape of every document read out of the CMS |
+| `lib/content/types.ts` | The shape of every record the pages read from the database |
 
 If you need something that is not in them, say so in your report. Do not add it yourself and do not work around it with a local copy.
 

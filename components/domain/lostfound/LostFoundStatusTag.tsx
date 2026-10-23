@@ -1,6 +1,6 @@
 import { StatusTag, type StatusTone } from "@/components/ui";
 import type { Locale } from "@/lib/i18n/config";
-import type { LostFoundStatus } from "@/lib/sanity/types";
+import type { LostFoundStatus } from "@/lib/content/types";
 import { statusLabel } from "./statusLabel";
 
 interface LostFoundStatusTagProps {

@@ -11,7 +11,7 @@
  *   score = record.weight + FIELD_SCORE[bestField] * KIND_SCORE[bestKind] * coverage
  *
  * - `record.weight` is the base from `SearchRecord.weight` (forms and
- *   shuttle routes outrank news, per lib/sanity/queries.ts).
+ *   shuttle routes outrank news, per lib/content/search-index.ts).
  * - `FIELD_SCORE` makes a title match worth more than a summary match, which
  *   is worth more than a body-only match (title > summary > body).
  * - `KIND_SCORE` makes a whole-token match worth more than a prefix match,
@@ -25,7 +25,7 @@
  * see exactly why a result ranked where it did.
  */
 
-import type { SearchRecord } from "@/lib/sanity/types";
+import type { SearchRecord } from "@/lib/content/types";
 import { tokenise, type TokeniseResult } from "./tokenise";
 
 export type MatchField = "title" | "summary" | "body";
@@ -87,18 +87,11 @@ function prepareRecord(record: SearchRecord): PreparedRecord {
 
   const prepared: PreparedRecord = {
     /*
-     * `record.title` and `record.summary` are typed as required, but they
-     * come from GROQ, which returns null for a field the projection names
-     * and the document does not have. That is not hypothetical: the
-     * shuttleRoute bucket projected a bare `title` when the field is called
-     * `name`, and every reader's search page threw on `record.title.th`
-     * rather than the one bad record simply ranking badly. It stayed hidden
-     * for as long as the dataset had no shuttleRoute in it.
-     *
-     * SEARCH_INDEX_QUERY is the fix and is now correct. This is the
+     * `record.title` and `record.summary` are typed as required, and
+     * lib/content/search-index.ts always fills both sides. This is the
      * backstop, in the same spirit as `record.haystack ?? ""` below: a
      * record that cannot be found by title is a far better outcome than a
-     * search page that 500s for everyone.
+     * search page that 500s for everyone because one record was malformed.
      */
     title: toFieldTokens(tokenise(`${record.title?.th ?? ""} ${record.title?.en ?? ""}`)),
     summary: toFieldTokens(tokenise(`${record.summary?.th ?? ""} ${record.summary?.en ?? ""}`)),
@@ -107,12 +100,10 @@ function prepareRecord(record: SearchRecord): PreparedRecord {
     // should still find the record even if it also happens to repeat a
     // title word, and the field-priority scoring above already makes sure a
     // genuine title/summary hit outranks a body-only one regardless.
-    // `?? ""` is a backstop, not the fix. The haystack is built by GROQ
-    // string concatenation, which is null-propagating, so one empty optional
-    // field nulls the whole thing; SEARCH_INDEX_QUERY coalesces every operand
-    // to prevent that. If one is ever missed, a record that cannot be
-    // searched by body text is a far better outcome than the search page
-    // throwing for every reader.
+    // `?? ""` is a backstop, not the fix. lib/content/search-index.ts joins
+    // only the non-empty parts, so the haystack is always a string. If one is
+    // ever missed, a record that cannot be searched by body text is a far
+    // better outcome than the search page throwing for every reader.
     body: toFieldTokens(tokenise(record.haystack ?? "")),
   };
   preparedCache.set(record, prepared);

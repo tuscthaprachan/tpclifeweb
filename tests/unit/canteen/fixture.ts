@@ -18,7 +18,7 @@ import type {
   CanteenDish,
   CanteenSettings,
   CanteenStall,
-} from "@/lib/sanity/types";
+} from "@/lib/content/types";
 
 const META = { _createdAt: "2026-01-01T00:00:00.000Z", _updatedAt: "2026-01-01T00:00:00.000Z" };
 
@@ -36,7 +36,7 @@ function stall(
     _type: "canteenStall",
     ...META,
     name: { th: `ร้านตัวอย่าง ${number}`, en: `Fixture stall ${number}` },
-    slug: { _type: "slug", current: `fixture-stall-${number}` },
+    slug: { current: `fixture-stall-${number}` },
     number,
     cuisine: ["thaiRice"],
     halal,
@@ -63,14 +63,14 @@ export const CANONICALS: CanonicalDish[] = [
     _type: "canonicalDish",
     ...META,
     name: { th: "จานตัวอย่าง ก", en: "Fixture basil dish" },
-    slug: { _type: "slug", current: "fixture-basil" },
+    slug: { current: "fixture-basil" },
   },
   {
     _id: "canon-noodle",
     _type: "canonicalDish",
     ...META,
     name: { th: "จานตัวอย่าง ข", en: "Fixture noodle dish" },
-    slug: { _type: "slug", current: "fixture-noodle" },
+    slug: { current: "fixture-noodle" },
   },
 ];
 
@@ -81,8 +81,8 @@ function dish(stallNumber: number, price: number, extra: Partial<CanteenDish> & 
     _type: "canteenDish",
     ...META,
     name: { th: `เมนูตัวอย่าง ${id}`, en: `Fixture dish ${id}` },
-    slug: { _type: "slug", current: `fixture-dish-${id}` },
-    stall: { _type: "reference", _ref: `stall-${stallNumber}` },
+    slug: { current: `fixture-dish-${id}` },
+    stallId: `stall-${stallNumber}`,
     price,
     variants: [],
     type: "rice",
@@ -97,22 +97,21 @@ function dish(stallNumber: number, price: number, extra: Partial<CanteenDish> & 
   };
 }
 
-const ref = (id: string) => ({ _type: "reference" as const, _ref: id });
 
 export const DISHES: CanteenDish[] = [
   // Stall 1: rice, a pork dish, a chicken dish, one with a special.
-  dish(1, 40, { id: "a", protein: ["pork"], canonical: ref("canon-basil") }),
-  dish(1, 45, { id: "b", protein: ["chicken", "egg"], canonical: ref("canon-basil"), variants: [{ _key: "v1", label: { th: "พิเศษ", en: "Special" }, delta: 10 }] }),
+  dish(1, 40, { id: "a", protein: ["pork"], canonicalId: "canon-basil" }),
+  dish(1, 45, { id: "b", protein: ["chicken", "egg"], canonicalId: "canon-basil", variants: [{ _key: "v1", label: { th: "พิเศษ", en: "Special" }, delta: 10 }] }),
   dish(1, 50, { id: "c", protein: ["beef"], style: "grilled", type: "singlePlate" }),
   dish(1, 35, { id: "d", protein: ["egg"], type: "madeToOrder", vegetarian: true }),
   // Stall 2: noodles and soup.
-  dish(2, 45, { id: "e", type: "noodles", protein: ["chicken"], wet: true, style: "boiled", canonical: ref("canon-noodle") }),
+  dish(2, 45, { id: "e", type: "noodles", protein: ["chicken"], wet: true, style: "boiled", canonicalId: "canon-noodle" }),
   dish(2, 55, { id: "f", type: "noodles", protein: ["beef"], wet: true, style: "boiled" }),
   dish(2, 40, { id: "g", type: "soup", protein: ["fish"], wet: true, style: "boiled" }),
   dish(2, 50, { id: "h", type: "noodles", protein: ["seafood"], wet: false, style: "stirFried" }),
   // Stall 3: halal, curry over rice and rice.
   dish(3, 60, { id: "i", type: "curryOverRice", protein: ["beef"], style: "curry", wet: true }),
-  dish(3, 45, { id: "j", type: "rice", protein: ["chicken"], canonical: ref("canon-basil") }),
+  dish(3, 45, { id: "j", type: "rice", protein: ["chicken"], canonicalId: "canon-basil" }),
   dish(3, 70, { id: "k", type: "madeToOrder", protein: ["seafood"] }),
   // Stall 4: vegetarian stall, own hours 10:00 to 12:00.
   dish(4, 40, { id: "l", protein: ["tofu"], vegetarian: true }),
@@ -124,7 +123,7 @@ export const DISHES: CanteenDish[] = [
   dish(5, 25, { id: "q", type: "dessert", course: "dessert", protein: ["none"], temperature: "cold", style: "steamed", vegetarian: true }),
   dish(5, 10, { id: "r", type: "dessert", course: "dessert", protein: ["none"], style: "steamed", vegetarian: true }),
   // Stall 6: a second basil dish, pork, and a cheap rice.
-  dish(6, 50, { id: "s", protein: ["pork", "egg"], canonical: ref("canon-basil") }),
+  dish(6, 50, { id: "s", protein: ["pork", "egg"], canonicalId: "canon-basil" }),
   dish(6, 38, { id: "t", protein: ["pork"] }),
   dish(6, 65, { id: "u", type: "singlePlate", protein: ["fish"], style: "deepFried" }),
 ];
@@ -138,7 +137,7 @@ export const SETTINGS: CanteenSettings = {
     _type: "place",
     ...META,
     name: { th: "โรงอาหารตัวอย่าง", en: "Fixture canteen" },
-    slug: { _type: "slug", current: "fixture-canteen" },
+    slug: { current: "fixture-canteen" },
     category: "welfare",
     openingHours: [{ _key: "c", daysOfWeek: [1, 2, 3, 4, 5], opens: "08:00", closes: "15:00" }],
   },

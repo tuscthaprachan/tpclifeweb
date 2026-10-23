@@ -18,7 +18,7 @@ import type {
   CanteenStall,
   DishType,
   OpeningHours,
-} from "@/lib/sanity/types";
+} from "@/lib/content/types";
 
 import type { DietKey } from "./params";
 
@@ -32,8 +32,8 @@ export function emptyCanteenData(): CanteenData {
 }
 
 /**
- * Makes whatever the query returned safe to use. GROQ omits unset arrays and
- * returns null for a missing document, so this fills the gaps: missing lists
+ * Makes whatever the read returned safe to use. Unset arrays can be missing
+ * and a missing row is null, so this fills the gaps: missing lists
  * become empty lists, and a dish that points at a stall that does not exist
  * (or has no slug or a usable price) is dropped rather than crashing a page.
  */
@@ -51,8 +51,8 @@ export function normaliseCanteenData(raw: Partial<CanteenData> | null | undefine
         dish &&
         dish.slug?.current &&
         Number.isFinite(dish.price) &&
-        dish.stall?._ref !== undefined &&
-        stallIds.has(dish.stall._ref),
+        dish.stallId !== undefined &&
+        stallIds.has(dish.stallId),
     )
     .map((dish) => ({
       ...dish,
@@ -135,12 +135,12 @@ export function indexCanteen(data: CanteenData): CanteenIndex {
 
 /** The stall a dish is sold at, or undefined if the reference is dangling. */
 export function stallOf(data: CanteenData, dish: CanteenDish): CanteenStall | undefined {
-  return indexCanteen(data).stallById.get(dish.stall._ref);
+  return indexCanteen(data).stallById.get(dish.stallId);
 }
 
 /** The canonical dish a dish maps to, or undefined if it has none. */
 export function canonicalOf(data: CanteenData, dish: CanteenDish): CanonicalDish | undefined {
-  return dish.canonical ? indexCanteen(data).canonicalById.get(dish.canonical._ref) : undefined;
+  return dish.canonicalId ? indexCanteen(data).canonicalById.get(dish.canonicalId) : undefined;
 }
 
 /* ------------------------------------------------------------------ *
@@ -160,7 +160,7 @@ export function noPork(dish: CanteenDish): boolean {
 /** The stall's add-ons that go with this dish. */
 export function addOnsFor(dish: CanteenDish, stall: CanteenStall | undefined): StallAddOn[] {
   return (stall?.addOns ?? []).filter((addOn) => {
-    if (addOn.dishes) return addOn.dishes.some((ref) => ref._ref === dish._id);
+    if (addOn.dishIds) return addOn.dishIds.includes(dish._id);
     if (addOn.courses) return addOn.courses.includes(dish.course);
     return true;
   });
@@ -350,11 +350,11 @@ export function priceRange(dishes: readonly CanteenDish[]): { min: number; max: 
 export function dishesInCanonical(data: CanteenData, canonicalId: string): CanteenDish[] {
   const { walkRank } = indexCanteen(data);
   return data.dishes
-    .filter((dish) => dish.canonical?._ref === canonicalId)
+    .filter((dish) => dish.canonicalId === canonicalId)
     .sort(
       (a, b) =>
         a.price - b.price ||
-        (walkRank.get(a.stall._ref) ?? 0) - (walkRank.get(b.stall._ref) ?? 0) ||
+        (walkRank.get(a.stallId) ?? 0) - (walkRank.get(b.stallId) ?? 0) ||
         a.slug.current.localeCompare(b.slug.current),
     );
 }

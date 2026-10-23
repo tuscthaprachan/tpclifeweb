@@ -9,7 +9,7 @@
  * Pure, apart from `newSeed`.
  */
 
-import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/content/types";
 
 import { effectivePrice, indexCanteen, stallOf } from "./derive";
 import { isMealDish, matchesFilters } from "./filter";
@@ -82,7 +82,7 @@ export interface SuggestedCandidate {
   _id: string;
   course: CanteenDish["course"];
   type: CanteenDish["type"];
-  stall: { _ref: string };
+  stallId: string;
 }
 
 /**
@@ -95,9 +95,9 @@ export function pickSuggested<T extends SuggestedCandidate>(dishes: readonly T[]
   const byStall = new Map<string, T[]>();
   for (const dish of [...dishes].sort((a, b) => a._id.localeCompare(b._id))) {
     if (dish.course !== "main" || dish.type === "snack") continue;
-    const list = byStall.get(dish.stall._ref);
+    const list = byStall.get(dish.stallId);
     if (list) list.push(dish);
-    else byStall.set(dish.stall._ref, [dish]);
+    else byStall.set(dish.stallId, [dish]);
   }
   const stalls = shuffle([...byStall.keys()].sort(), rng);
   const chosen: T[] = [];
@@ -114,9 +114,9 @@ export function suggestedPool<T extends SuggestedCandidate>(dishes: readonly T[]
   const byStall = new Map<string, T[]>();
   for (const dish of [...dishes].sort((a, b) => a._id.localeCompare(b._id))) {
     if (dish.course !== "main" || dish.type === "snack") continue;
-    const list = byStall.get(dish.stall._ref);
+    const list = byStall.get(dish.stallId);
     if (list) list.push(dish);
-    else byStall.set(dish.stall._ref, [dish]);
+    else byStall.set(dish.stallId, [dish]);
   }
   return [...byStall.keys()].sort().flatMap((stall) => shuffle(byStall.get(stall)!, rng).slice(0, perStall));
 }
@@ -242,7 +242,7 @@ export function pick(
     .filter((dish) => !dislikes.has(dish.slug.current) && isMealDish(dish, filters) && matchesFilters(data, dish, filters, options.now))
     .sort(
       (a, b) =>
-        (index.walkRank.get(a.stall._ref) ?? 0) - (index.walkRank.get(b.stall._ref) ?? 0) ||
+        (index.walkRank.get(a.stallId) ?? 0) - (index.walkRank.get(b.stallId) ?? 0) ||
         a.slug.current.localeCompare(b.slug.current),
     );
 
@@ -251,7 +251,7 @@ export function pick(
   if (previous && options.lock) {
     if (options.lock.stall) locks.push("stall");
     if (options.lock.type) locks.push("type");
-    if (options.lock.canonical && previous.canonical) locks.push("canonical");
+    if (options.lock.canonical && previous.canonicalId) locks.push("canonical");
   }
 
   const days = options.avoidRepeatDays ?? 2;
@@ -278,9 +278,9 @@ export function pick(
       if (!relaxing.includes("veto") && vetoed.has(dish.slug.current)) return false;
       if (!relaxing.includes("lock") && previous && locks.length > 0) {
         if (dish.slug.current === previous.slug.current) return false;
-        if (locks.includes("stall") && dish.stall._ref !== previous.stall._ref) return false;
+        if (locks.includes("stall") && dish.stallId !== previous.stallId) return false;
         if (locks.includes("type") && dish.type !== previous.type) return false;
-        if (locks.includes("canonical") && dish.canonical?._ref !== previous.canonical?._ref) return false;
+        if (locks.includes("canonical") && dish.canonicalId !== previous.canonicalId) return false;
       }
       return true;
     });
@@ -319,9 +319,9 @@ function choose(
   if (bias === "fair") {
     const byStall = new Map<string, CanteenDish[]>();
     for (const dish of pool) {
-      const list = byStall.get(dish.stall._ref);
+      const list = byStall.get(dish.stallId);
       if (list) list.push(dish);
-      else byStall.set(dish.stall._ref, [dish]);
+      else byStall.set(dish.stallId, [dish]);
     }
     const stalls = [...byStall.values()];
     const group = stalls[Math.floor(rng() * stalls.length)]!;

@@ -4,7 +4,7 @@ import { Heading } from "@/components/ui/Heading";
 import type { HeadingLevel } from "@/lib/a11y";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { pick, OTHER_LOCALE, type Locale } from "@/lib/i18n/config";
-import type { CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenDish, CanteenStall } from "@/lib/content/types";
 import { DietTags } from "./DietTag";
 import { FavouriteToggle } from "./FavouriteToggle";
 import { HowToSay } from "./HowToSay";

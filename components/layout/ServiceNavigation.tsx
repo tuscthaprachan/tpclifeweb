@@ -18,7 +18,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { cx } from "@/components/ui/cx";
 import { UI } from "@/lib/i18n/strings";
 import { localePath, pick, stripLocale, type Locale } from "@/lib/i18n/config";
-import type { NavItem } from "@/lib/sanity/types";
+import type { NavItem } from "@/lib/content/types";
 import { splitPrimaryNav } from "./nav-groups";
 
 /*

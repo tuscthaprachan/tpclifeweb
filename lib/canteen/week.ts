@@ -6,7 +6,7 @@
  * same plan; a different seed gives a different valid plan. Pure.
  */
 
-import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/content/types";
 
 import { effectivePrice, indexCanteen, stallOf } from "./derive";
 import { isMealDish, matchesFilters } from "./filter";
@@ -67,9 +67,9 @@ const MONDAY_FIRST = [1, 2, 3, 4, 5, 6, 0];
 function fairOrder(dishes: readonly CanteenDish[], rng: () => number): CanteenDish[] {
   const byStall = new Map<string, CanteenDish[]>();
   for (const dish of dishes) {
-    const list = byStall.get(dish.stall._ref);
+    const list = byStall.get(dish.stallId);
     if (list) list.push(dish);
-    else byStall.set(dish.stall._ref, [dish]);
+    else byStall.set(dish.stallId, [dish]);
   }
   const queues = shuffle([...byStall.values()].map((list) => shuffle(list, rng)), rng);
   const ordered: CanteenDish[] = [];
@@ -114,11 +114,11 @@ export function planWeek(data: CanteenData, filters: CanteenFilters, options: We
   const usedCanonicals = new Set<string>();
   let spent = 0;
   for (const dish of chosen.values()) {
-    if (usedStalls.has(dish.stall._ref) || (dish.canonical && usedCanonicals.has(dish.canonical._ref))) {
+    if (usedStalls.has(dish.stallId) || (dish.canonicalId && usedCanonicals.has(dish.canonicalId))) {
       return { ok: false, reason: "lockConflict" };
     }
-    usedStalls.add(dish.stall._ref);
-    if (dish.canonical) usedCanonicals.add(dish.canonical._ref);
+    usedStalls.add(dish.stallId);
+    if (dish.canonicalId) usedCanonicals.add(dish.canonicalId);
     spent += price(dish);
   }
   if (spent > options.budget) return { ok: false, reason: "budgetTooLow" };
@@ -131,8 +131,8 @@ export function planWeek(data: CanteenData, filters: CanteenFilters, options: We
   // Cheapest dish per stall bounds what the remaining days must cost.
   const cheapestByStall = new Map<string, number>();
   for (const dish of pool) {
-    const best = cheapestByStall.get(dish.stall._ref);
-    if (best === undefined || price(dish) < best) cheapestByStall.set(dish.stall._ref, price(dish));
+    const best = cheapestByStall.get(dish.stallId);
+    if (best === undefined || price(dish) < best) cheapestByStall.set(dish.stallId, price(dish));
   }
   const freeStallPrices = [...cheapestByStall.entries()]
     .filter(([stallId]) => !usedStalls.has(stallId))
@@ -168,22 +168,22 @@ export function planWeek(data: CanteenData, filters: CanteenFilters, options: We
     for (const dish of order) {
       nodes += 1;
       if (nodes > NODE_LIMIT) return false;
-      if (usedStalls.has(dish.stall._ref)) continue;
-      if (dish.canonical && usedCanonicals.has(dish.canonical._ref)) continue;
+      if (usedStalls.has(dish.stallId)) continue;
+      if (dish.canonicalId && usedCanonicals.has(dish.canonicalId)) continue;
 
       const cost = total + price(dish);
       // The days still to fill each need at least the cheapest stall price left.
-      const reserve = remaining === 0 ? 0 : remainingFloor(remaining, dish.stall._ref);
+      const reserve = remaining === 0 ? 0 : remainingFloor(remaining, dish.stallId);
       if (cost + reserve > options.budget) continue;
 
-      usedStalls.add(dish.stall._ref);
-      if (dish.canonical) usedCanonicals.add(dish.canonical._ref);
+      usedStalls.add(dish.stallId);
+      if (dish.canonicalId) usedCanonicals.add(dish.canonicalId);
       assignment.set(freeDays[position]!, dish);
 
       if (search(position + 1, cost)) return true;
 
-      usedStalls.delete(dish.stall._ref);
-      if (dish.canonical) usedCanonicals.delete(dish.canonical._ref);
+      usedStalls.delete(dish.stallId);
+      if (dish.canonicalId) usedCanonicals.delete(dish.canonicalId);
       assignment.delete(freeDays[position]!);
       if (nodes > NODE_LIMIT) return false;
     }

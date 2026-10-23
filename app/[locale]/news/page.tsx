@@ -6,7 +6,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Grid, Heading, Pagination, Stack } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getNewsPage } from "@/lib/sanity/queries";
+import { getNewsPage } from "@/lib/content";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 const PAGE_SIZE = 9;

@@ -16,7 +16,7 @@
  * partial and fuzzy matches even when word segmentation succeeded.
  *
  * A `SearchRecord.haystack` concatenates BOTH languages into one string
- * (see lib/sanity/queries.ts), so a single call to `tokenise` must cope with
+ * (see lib/content/search-index.ts), so a single call to `tokenise` must cope with
  * a string that mixes Thai and Latin script, for example a Thai sentence
  * that contains the English test name "TU-GET". This is handled by walking
  * the text in runs of consecutive Thai / non-Thai characters and tokenising

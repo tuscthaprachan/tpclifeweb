@@ -3,7 +3,7 @@ import { NewsCard } from "@/components/domain/news";
 import { Button, EmptyState, Grid, Heading, Link as UiLink, Stack } from "@/components/ui";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { CampusEvent, NewsPost } from "@/lib/sanity/types";
+import type { CampusEvent, NewsPost } from "@/lib/content/types";
 
 interface EventsAndNewsProps {
   locale: Locale;

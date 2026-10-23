@@ -1,9 +1,10 @@
 /**
  * The canteen as it really is: the stalls, their numbers and their menus.
  *
- * Used whenever Sanity holds no canteen stalls, so /eat always shows the
- * real canteen. Once the survey is imported into Sanity
- * (`sanity/seed/canteen.ts`), Sanity's copy wins and this file is a fallback.
+ * The database is the source of truth (the seed in lib/db/seed/canteen.ts
+ * writes this dataset into it). This file is also the fallback `getCanteenData`
+ * uses when the database cannot be read at all, so /eat keeps showing the real
+ * canteen through an outage. An empty database is not an outage.
  *
  * WHERE IT COMES FROM
  *   - Shop names and stall numbers: the menu boards and shop signs, photographed
@@ -57,14 +58,13 @@ import type {
   CanteenStall,
   MapShape,
   StallAddOn,
-} from "@/lib/sanity/types";
+} from "@/lib/content/types";
 
 import { SURVEY_ADD_ONS, SURVEY_DATE, SURVEY_DISHES } from "./survey-2569";
 
 const SETTINGS_ID = "survey-canteen-settings";
 
 const slug = (current: string) => ({ _type: "slug" as const, current });
-const ref = (id: string) => ({ _type: "reference" as const, _ref: id });
 
 /* ------------------------------------------------------------------ *
  * Stalls
@@ -153,7 +153,7 @@ function buildAddOns(number: number): StallAddOn[] {
     label: { th: addOn.th, en: addOn.en },
     delta: addOn.delta,
     ...(addOn.courses ? { courses: addOn.courses } : {}),
-    ...(addOn.dishes ? { dishes: addOn.dishes.map((dishSlug) => ref(`survey-dish-${dishSlug}`)) } : {}),
+    ...(addOn.dishes ? { dishIds: addOn.dishes.map((dishSlug) => `survey-dish-${dishSlug}`) } : {}),
   }));
 }
 
@@ -376,8 +376,8 @@ function buildDishes(stamp: string): CanteenDish[] {
     ...(spec.sayAs ? { sayAs: spec.sayAs.map((phrase, i) => ({ _key: `s${i}`, ...phrase })) } : {}),
     ...(spec.menuNumber ? { menuNumber: spec.menuNumber } : {}),
     slug: slug(spec.slug),
-    stall: ref(stallId(spec.stall)),
-    ...(spec.canonical ? { canonical: ref(`survey-canonical-${spec.canonical}`) } : {}),
+    stallId: stallId(spec.stall),
+    ...(spec.canonical ? { canonicalId: `survey-canonical-${spec.canonical}` } : {}),
     price: spec.price,
     variants: (spec.variants ?? []).map((variant, i) => ({ _key: `v${i}`, label: { th: variant.th, en: variant.en }, delta: variant.delta })),
     type: spec.type,
