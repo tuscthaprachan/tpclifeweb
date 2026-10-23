@@ -14,12 +14,18 @@ let cached: EmailSender | undefined;
  * production build throws `not_configured` when called (never at import, so
  * the site still builds); development falls back to printing to the console so
  * sign-in works locally with no account.
+ *
+ * `EMAIL_LOG_ONLY=1` forces the console sender, in production too, so the
+ * first admin can sign in before email is set up. Codes then appear in the
+ * server logs, so remove it once email works.
  */
 export function getEmailSender(): EmailSender {
   if (cached) return cached;
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
-  if (apiKey && from) {
+  if (process.env.EMAIL_LOG_ONLY === "1") {
+    cached = new ConsoleEmailSender();
+  } else if (apiKey && from) {
     cached = new ResendSender(apiKey, from);
   } else if (process.env.NODE_ENV === "production") {
     throw new EmailError("not_configured", "Email is not configured. Set RESEND_API_KEY and EMAIL_FROM.");
