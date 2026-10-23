@@ -140,9 +140,11 @@
    *
    * `:only-child` is the precise inverse of the exception, so this catches
    * the standalone case without bloating the line height of links inside
-   * body copy. --target-min is 24px, and 44px under `pointer: coarse`.
+   * body copy. Card titles are the same case: a heading whose only child is
+   * its link (FormCard, GuideCard, handbook items) is a standalone target.
+   * --target-min is 24px, and 44px under `pointer: coarse`.
    */
-  :where(p, li, dd, dt) > a:only-child {
+  :where(p, li, dd, dt, h1, h2, h3, h4, h5, h6) > a:only-child {
     display: inline-flex;
     align-items: center;
     min-block-size: var(--target-min);
