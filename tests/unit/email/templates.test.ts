@@ -109,4 +109,12 @@ describe("senders", () => {
     vi.stubEnv("NODE_ENV", "production");
     expect(() => getEmailSender()).toThrow(/not configured/);
   });
+
+  it("getEmailSender logs instead of sending when EMAIL_LOG_ONLY is 1", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("EMAIL_LOG_ONLY", "1");
+    vi.stubEnv("RESEND_API_KEY", "re_test");
+    vi.stubEnv("EMAIL_FROM", "a@example.org");
+    expect(getEmailSender()).toBeInstanceOf(ConsoleEmailSender);
+  });
 });
