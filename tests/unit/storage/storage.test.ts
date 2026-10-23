@@ -88,12 +88,17 @@ describe("getStorage", () => {
   afterEach(() => {
     setStorageForTests(undefined);
     delete process.env.BLOB_READ_WRITE_TOKEN;
+    delete process.env.BLOB_STORE_ID;
   });
 
-  it("throws only when used, and only without a token", () => {
-    delete process.env.BLOB_READ_WRITE_TOKEN;
+  it("throws only when used, and only without a token or store id", () => {
     expect(() => getStorage()).toThrow(/not configured/);
     process.env.BLOB_READ_WRITE_TOKEN = "vercel_blob_rw_abc123_secret";
+    expect(getStorage().publicUrl("a/b.png")).toBe("https://abc123.public.blob.vercel-storage.com/a/b.png");
+  });
+
+  it("uses the store id when there is no token", () => {
+    process.env.BLOB_STORE_ID = "store_AbC123";
     expect(getStorage().publicUrl("a/b.png")).toBe("https://abc123.public.blob.vercel-storage.com/a/b.png");
   });
 });

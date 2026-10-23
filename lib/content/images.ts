@@ -9,7 +9,7 @@ import type { ContentImage } from "./types";
 
 /**
  * The public URL for an image's storage key, or null when file storage is not
- * configured (no `BLOB_READ_WRITE_TOKEN`). Callers treat null as "no picture":
+ * configured (no `BLOB_READ_WRITE_TOKEN` or `BLOB_STORE_ID`). Callers treat null as "no picture":
  * a missing image degrades to not shown instead of failing the page.
  */
 export function publicImageUrl(storageKey: string): string | null {

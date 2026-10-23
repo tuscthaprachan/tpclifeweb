@@ -45,7 +45,7 @@ Set these in Vercel under Settings, Environment Variables, for Production, Previ
 | Variable | Value |
 | --- | --- |
 | `DATABASE_URL` | the Neon connection string (the Neon integration sets it per preview branch) |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token. Content images are served from the store's public URL, so none show without it |
+| `BLOB_STORE_ID` or `BLOB_READ_WRITE_TOKEN` | the Vercel Blob store id (auth via Vercel OIDC, set by connecting the store) or a read-write token. Content images are served from the store's public URL, so none show without one |
 | `NEXT_PUBLIC_SITE_URL` | the origin for non-production builds, with no trailing slash (production always uses `https://tpclife.vercel.app`, set in `lib/site-url.ts`) |
 
 Sign-in and email have their own variables, listed in `.env.example`.

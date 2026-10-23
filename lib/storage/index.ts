@@ -11,17 +11,22 @@ let cached: Storage | undefined;
 /**
  * Picks the implementation from the environment, on first use.
  *
- * With `BLOB_READ_WRITE_TOKEN` set it is Vercel Blob. Without it, `getStorage`
- * throws a `not_configured` error when called, not at import, so the site
+ * With `BLOB_READ_WRITE_TOKEN` or `BLOB_STORE_ID` (Vercel OIDC) set it is
+ * Vercel Blob. Without either, `getStorage` throws a `not_configured` error when called, not at import, so the site
  * still builds and every page that does not touch files still works.
  */
 export function getStorage(): Storage {
   if (cached) return cached;
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  if (!token) {
-    throw new StorageError("not_configured", "File storage is not configured. Set BLOB_READ_WRITE_TOKEN.");
+  const token = process.env.BLOB_READ_WRITE_TOKEN || undefined;
+  // Token format: vercel_blob_rw_<storeId>_<secret>.
+  const storeId = process.env.BLOB_STORE_ID || token?.split("_")[3];
+  if (!storeId) {
+    throw new StorageError(
+      "not_configured",
+      "File storage is not configured. Set BLOB_READ_WRITE_TOKEN or BLOB_STORE_ID.",
+    );
   }
-  cached = new VercelBlobStorage(token);
+  cached = new VercelBlobStorage({ token, storeId });
   return cached;
 }
 

@@ -22,9 +22,18 @@ import {
  *
  * Keys are used as Blob pathnames with no random suffix; callers supply
  * unguessable keys (`newObjectKey`) and overwrites are off.
+ *
+ * Auth is either a read-write token or, with no token, Vercel OIDC plus the
+ * store id, which `@vercel/blob` resolves itself.
  */
 export class VercelBlobStorage implements Storage {
-  constructor(private readonly token: string) {}
+  private readonly auth: { token: string } | { storeId: string };
+  private readonly storeId: string;
+
+  constructor(options: { token?: string; storeId: string }) {
+    this.auth = options.token ? { token: options.token } : { storeId: options.storeId };
+    this.storeId = options.storeId.replace(/^store_/, "").toLowerCase();
+  }
 
   async put(key: string, body: Uint8Array, options: PutOptions): Promise<PutResult> {
     assertValidKey(key);
@@ -37,7 +46,7 @@ export class VercelBlobStorage implements Storage {
         contentType: options.contentType,
         addRandomSuffix: false,
         allowOverwrite: false,
-        token: this.token,
+        ...this.auth,
       });
       return {
         key,
@@ -55,7 +64,7 @@ export class VercelBlobStorage implements Storage {
     assertValidKey(key);
     // The caller does not know the visibility, and Blob needs it. Try private first.
     for (const access of ["private", "public"] as const) {
-      const result = await get(key, { access, token: this.token }).catch(() => null);
+      const result = await get(key, { access, ...this.auth }).catch(() => null);
       if (result && result.statusCode === 200) {
         return { body: result.stream, contentType: result.blob.contentType, size: result.blob.size };
       }
@@ -65,16 +74,12 @@ export class VercelBlobStorage implements Storage {
 
   async delete(key: string): Promise<void> {
     assertValidKey(key);
-    await del(key, { token: this.token });
+    await del(key, this.auth);
   }
 
   publicUrl(key: string): string {
     assertValidKey(key);
-    // Token format: vercel_blob_rw_<storeId>_<secret>. Public URLs are
-    // https://<storeid>.public.blob.vercel-storage.com/<pathname>.
-    const storeId = this.token.split("_")[3];
-    if (!storeId) throw new StorageError("not_configured", "Cannot work out the Blob store from the token.");
-    return `https://${storeId.toLowerCase()}.public.blob.vercel-storage.com/${key}`;
+    return `https://${this.storeId}.public.blob.vercel-storage.com/${key}`;
   }
 
   async signedReadUrl(key: string, options?: { expiresInSeconds?: number }): Promise<string> {
@@ -85,7 +90,7 @@ export class VercelBlobStorage implements Storage {
         pathname: key,
         operations: ["get"],
         validUntil,
-        token: this.token,
+        ...this.auth,
       });
       const { presignedUrl } = await presignUrl(signed, {
         operation: "get",
