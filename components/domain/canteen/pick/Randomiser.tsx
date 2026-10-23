@@ -35,7 +35,7 @@ import { applyFilters } from "@/lib/canteen/filter";
 import { pick, type HistoryEntry } from "@/lib/canteen/random";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { localePath, pick as localised, type Locale } from "@/lib/i18n/config";
-import type { CanteenData } from "@/lib/sanity/types";
+import type { CanteenData } from "@/lib/content/types";
 
 import { eat } from "../strings";
 import "../fun.css";
@@ -158,7 +158,7 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
   const stallDishes = useMemo(() => {
     if (!outcome?.stall || params.mode !== "stall" || !snapshot) return undefined;
     const stallId = outcome.stall._id;
-    return applyFilters(data, filters, snapshot.now, { locale }).filter((dish) => dish.stall._ref === stallId);
+    return applyFilters(data, filters, snapshot.now, { locale }).filter((dish) => dish.stallId === stallId);
   }, [outcome, params.mode, snapshot, data, filters, locale]);
 
   const finalName = outcome?.dish

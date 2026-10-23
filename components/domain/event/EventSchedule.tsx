@@ -1,7 +1,7 @@
 import { Timestamp } from "@/components/ui";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { CampusEvent } from "@/lib/sanity/types";
+import type { CampusEvent } from "@/lib/content/types";
 
 type ScheduleFields = Pick<CampusEvent, "startsAt" | "endsAt" | "isAllDay">;
 

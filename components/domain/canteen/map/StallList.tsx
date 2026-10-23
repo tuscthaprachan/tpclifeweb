@@ -7,7 +7,7 @@
 
 import { compareStallsByWalk } from "@/lib/canteen/derive";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import type { CanteenData } from "@/lib/sanity/types";
+import type { CanteenData } from "@/lib/content/types";
 
 import type { MapHighlight } from "./CanteenMap";
 import { MAP_STRINGS, cuisineLabel } from "./strings";

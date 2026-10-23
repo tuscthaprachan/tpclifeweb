@@ -6,8 +6,8 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Heading, Stack } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getOrganisations } from "@/lib/sanity/queries";
-import type { LocaleString, Organisation, OrganisationType } from "@/lib/sanity/types";
+import { getOrganisations } from "@/lib/content";
+import type { LocaleString, Organisation, OrganisationType } from "@/lib/content/types";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 const VALID_TYPES = new Set<OrganisationType>([

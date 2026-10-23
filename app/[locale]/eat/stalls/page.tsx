@@ -26,7 +26,7 @@ import { countActiveValues } from "@/lib/canteen/params";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 const ROUTE = "/eat/stalls";
 
@@ -90,7 +90,7 @@ export default async function EatStallsPage({
   const filtered = countActiveValues(filters) > 0;
   const counts = facetCounts(data, filters, now);
   const rows = index.stallsInWalkOrder.map((stall) => {
-    const dishes = data.dishes.filter((dish) => dish.stall._ref === stall._id);
+    const dishes = data.dishes.filter((dish) => dish.stallId === stall._id);
     const matching = filtered ? dishes.filter((dish) => matchesFilters(data, dish, filters, now)) : dishes;
     return { stall, dishCount: dishes.length, matchCount: filtered ? matching.length : undefined, range: priceRange(matching) };
   });

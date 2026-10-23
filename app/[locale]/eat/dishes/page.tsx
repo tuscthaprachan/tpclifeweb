@@ -36,7 +36,7 @@ import { MAX_QUERY_LENGTH, countActiveValues, serialise } from "@/lib/canteen/pa
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 const ROUTE = "/eat/dishes";
 

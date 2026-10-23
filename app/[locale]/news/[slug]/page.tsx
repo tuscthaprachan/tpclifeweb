@@ -2,33 +2,24 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import { categoryLabel, getNewsPostBySlug, ownerLabel } from "@/components/domain/news";
-import { PortableTextRenderer } from "@/components/domain/portable-text";
+import { categoryLabel, ownerLabel } from "@/components/domain/news";
+import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Grid, Heading, Stack, Tag, Timestamp } from "@/components/ui";
 import { DEFAULT_LOCALE, LOCALES, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { hasImageAsset, urlFor } from "@/lib/sanity/image";
-import { getNewsPage } from "@/lib/sanity/queries";
-import type { SanityImage } from "@/lib/sanity/types";
+import { getNewsPage, getNewsPostBySlug, resolveRichTextRefs } from "@/lib/content";
+import type { ContentImage } from "@/lib/content/types";
 
-const COVER_WIDTH = 1200;
-const COVER_HEIGHT = 675;
+// Cover and gallery images are cropped to a fixed ratio with `fill` and
+// `object-cover`, the same way ImageBlock crops images embedded in the body, so
+// a picture of any shape fits its frame without distorting. The gallery is 4:3
+// rather than the cover's 16:9, so it reads as a distinct, denser strip of
+// thumbnails under the article.
 
-// Gallery images are cropped to a fixed ratio for the same reason
-// ImageBlock.tsx crops embedded body images: the fixed queries in
-// lib/sanity/queries.ts and components/domain/news/queries.ts do not fetch
-// asset metadata (real width/height) for an inline siteImage, so a next/image
-// with `fill` needs a ratio it can rely on rather than one read off the
-// source file. 4:3 rather than the cover's 16:9, so the gallery reads as a
-// distinct, denser strip of thumbnails under the article.
-const GALLERY_WIDTH = 800;
-const GALLERY_HEIGHT = 600;
-
-// getNewsPage is the only news-listing query the fixed contract exposes, so
-// static params come from one large page rather than a dedicated "all slugs"
-// query. Sites with more than this many posts will need that query added to
-// lib/sanity/queries.ts by whoever owns it; noted rather than worked around.
+// getNewsPage is the only news-listing read, so static params come from one
+// large page rather than a dedicated "all slugs" query. A site with more than
+// this many posts will need that query added to lib/content/news.ts.
 const MAX_STATIC_POSTS = 1000;
 
 export async function generateStaticParams() {
@@ -65,6 +56,7 @@ export default async function NewsDetailPage({
   if (!post) notFound();
 
   const title = pick(post.title, locale);
+  const resolved = await resolveRichTextRefs([post.body[locale]]);
 
   return (
     <Container width="narrow">
@@ -87,10 +79,10 @@ export default async function NewsDetailPage({
           </div>
         </Stack>
 
-        {hasImageAsset(post.cover) ? (
+        {post.cover ? (
           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-panel bg-surface-sunk">
             <Image
-              src={urlFor(post.cover).width(COVER_WIDTH).height(COVER_HEIGHT).fit("crop").auto("format").url()}
+              src={post.cover.url}
               alt={post.cover.isDecorative ? "" : pick(post.cover.alt, locale)}
               fill
               sizes="(min-width: 768px) 720px, 100vw"
@@ -100,7 +92,7 @@ export default async function NewsDetailPage({
           </div>
         ) : null}
 
-        <PortableTextRenderer value={post.body[locale]} locale={locale} headingLevel={2} />
+        <RichText value={post.body[locale]} locale={locale} headingLevel={2} resolved={resolved} />
 
         {post.gallery && post.gallery.length > 0 ? (
           <NewsGallery gallery={post.gallery} locale={locale} />
@@ -117,13 +109,11 @@ export default async function NewsDetailPage({
  * than a fixed row, because the number of pictures an editor adds is
  * unbounded. Every entry is a `<figure>` so a caption, when one exists,
  * stays associated with its picture for every user agent, not just visually.
- * Images with no asset yet (schema allows saving a `siteImage` object before
- * a file is uploaded) are skipped rather than crashing the page, the same
- * guard `hasImageAsset` applies to `cover` above.
+ * Gallery entries whose file cannot be resolved are dropped by the read layer,
+ * so everything passed in here has a URL.
  */
-function NewsGallery({ gallery, locale }: { gallery: SanityImage[]; locale: Locale }) {
-  const usable = gallery.filter(hasImageAsset);
-  if (usable.length === 0) return null;
+function NewsGallery({ gallery, locale }: { gallery: ContentImage[]; locale: Locale }) {
+  if (gallery.length === 0) return null;
 
   return (
     <Stack space={4} as="section">
@@ -133,19 +123,19 @@ function NewsGallery({ gallery, locale }: { gallery: SanityImage[]; locale: Loca
         them from it, so a sighted reader needs the break as much as a
         screen reader user does, and CONTRIBUTING forbids an aria-label
         where a visible label does the job. Level 2 matches the body's own
-        headings, which PortableTextRenderer is given as headingLevel={2}.
+        headings, which RichText is given as headingLevel={2}.
       */}
       <Heading level={2}>{UI.morePictures[locale]}</Heading>
       <Grid as="ul" minColumnWidth="20rem" space={4} className="list-none p-0">
-        {usable.map((image, index) => {
+        {gallery.map((image) => {
           const alt = image.isDecorative ? "" : pick(image.alt, locale);
           const caption = image.caption ? pick(image.caption, locale) : "";
           return (
-            <li key={image.asset._ref + index}>
+            <li key={image.id}>
               <figure className="m-0">
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-panel bg-surface-sunk">
                   <Image
-                    src={urlFor(image).width(GALLERY_WIDTH).height(GALLERY_HEIGHT).fit("crop").auto("format").url()}
+                    src={image.url}
                     alt={alt}
                     fill
                     sizes="(min-width: 768px) 340px, 100vw"

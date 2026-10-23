@@ -16,7 +16,7 @@ import type {
   CookingStyle,
   DishType,
   Protein,
-} from "@/lib/sanity/types";
+} from "@/lib/content/types";
 import type { AvoidKey, DietKey, FeelKey, GroupKey, SortKey } from "@/lib/canteen/params";
 import type { Bilingual } from "./strings";
 

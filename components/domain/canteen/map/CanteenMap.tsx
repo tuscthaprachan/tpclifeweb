@@ -29,7 +29,7 @@ import type { ReactNode } from "react";
 
 import { compareStallsByWalk } from "@/lib/canteen/derive";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import type { CanteenCuisine, CanteenData, CanteenEntrance, CanteenStall, FloorSide } from "@/lib/sanity/types";
+import type { CanteenCuisine, CanteenData, CanteenEntrance, CanteenStall, FloorSide } from "@/lib/content/types";
 
 import {
   CELL,

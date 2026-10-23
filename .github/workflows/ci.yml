@@ -6,10 +6,11 @@ on:
   pull_request:
 
 env:
-  # The checks below do not talk to Sanity, but lib/sanity/env.ts throws at
-  # import time on a missing project id. These are placeholders, not secrets.
-  NEXT_PUBLIC_SANITY_PROJECT_ID: ci000000
-  NEXT_PUBLIC_SANITY_DATASET: production
+  # Every page reads its content from Postgres. In CI that is PGlite, an
+  # in-process Postgres that applies the migrations and the content seed the
+  # first time a server process uses it, so the build and the browser suites
+  # run against the same seeded content with no database to provision.
+  DATABASE_URL: pglite:memory
   NEXT_PUBLIC_SITE_URL: http://localhost:3000
 
 jobs:
@@ -57,9 +58,13 @@ jobs:
       - run: npm run build
 
       # axe against every route in both locales, plus the reflow, text spacing
-      # and target size checks. Zero violations required.
+      # and target size checks. Zero violations required. Playwright starts
+      # `npm start` itself (tests/playwright.config.ts) on the build above.
       - name: axe, reflow, text spacing, target size
         run: npm run test:a11y
+
+      - name: End to end
+        run: npm run test:e2e
 
       - uses: actions/upload-artifact@v4
         if: failure()

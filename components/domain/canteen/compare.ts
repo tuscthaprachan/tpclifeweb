@@ -2,7 +2,7 @@
  * Price comparison helpers for one canonical dish across stalls. Pure.
  */
 
-import type { CanteenDish } from "@/lib/sanity/types";
+import type { CanteenDish } from "@/lib/content/types";
 
 /**
  * The slugs to mark "Cheapest": every dish at the lowest price, but only when

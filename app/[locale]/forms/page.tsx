@@ -20,8 +20,8 @@ import { liveRegionProps } from "@/lib/a11y";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
-import { getForms } from "@/lib/sanity/queries";
-import type { Category, Owner } from "@/lib/sanity/types";
+import { getForms } from "@/lib/content";
+import type { Category, Owner } from "@/lib/content/types";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 const CATEGORIES: readonly Category[] = ["transport", "welfare", "activity", "governance"];

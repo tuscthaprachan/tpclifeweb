@@ -1,7 +1,7 @@
 import { pick } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { ogImageRoute } from "@/lib/og/route";
-import { getPolicyBySlug } from "@/lib/sanity/queries";
+import { getPolicyBySlug } from "@/lib/content";
 
 const og = ogImageRoute<{ locale: string; slug: string }>(async ({ locale, slug }) => {
   const policy = await getPolicyBySlug(slug).catch(() => null);

@@ -23,7 +23,7 @@ describe("planWeek", () => {
       expect(result.change).toBe(250 - result.total);
       expect(result.allowance).toBe(50);
       expect(new Set(result.days.map((d) => d.stall._id)).size).toBe(5);
-      const canonicals = result.days.flatMap((d) => (d.dish.canonical ? [d.dish.canonical._ref] : []));
+      const canonicals = result.days.flatMap((d) => (d.dish.canonicalId ? [d.dish.canonicalId] : []));
       expect(new Set(canonicals).size).toBe(canonicals.length);
       expect(result.days.every((d) => d.dish.course === "main")).toBe(true);
     }

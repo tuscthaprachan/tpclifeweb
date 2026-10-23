@@ -20,7 +20,7 @@ import Link from "next/link";
 import { Heading } from "@/components/ui/Heading";
 import type { HeadingLevel } from "@/lib/a11y";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { CanteenData } from "@/lib/sanity/types";
+import type { CanteenData } from "@/lib/content/types";
 
 import { CanteenMap, type MapHighlight } from "./CanteenMap";
 import { StallList } from "./StallList";
@@ -44,8 +44,8 @@ export interface CanteenMapWithListProps {
   viewLinks?: { plan: string; list: string };
 }
 
-/** CSS pixels per view unit for the phone plan: compact stall numbers (26 units) come out at 14 px and a 72 unit tall tile at 39.6 px, well over the 24 px minimum for a linked tile. */
-const PHONE_SCALE = 0.55;
+/** CSS pixels per view unit for the phone plan. A linked tile is 72 units tall and phones have a coarse pointer, where --target-min is 44 px, so 0.62 gives 44.6 px (compact stall numbers come out at 16 px). */
+const PHONE_SCALE = 0.62;
 
 function MapKey({
   locale,

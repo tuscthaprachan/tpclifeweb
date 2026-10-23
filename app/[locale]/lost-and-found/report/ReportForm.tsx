@@ -25,7 +25,7 @@ import { Button, DateInput, ErrorSummary, NotificationBanner, Radios, Select, St
 import { categoryLabel, kindLabel, LOST_FOUND_CATEGORIES } from "@/components/domain/lostfound";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { CampusPlace, LostFoundKind } from "@/lib/sanity/types";
+import type { CampusPlace, LostFoundKind } from "@/lib/content/types";
 import { submitLostFoundReport, type LostFoundReportState } from "./actions";
 
 interface ReportFormProps {

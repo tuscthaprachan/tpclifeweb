@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { Category } from "@/lib/sanity/types";
+import type { Category } from "@/lib/content/types";
 
 /** Localised label for the shared `Category` union, which also drives the fill tone via `Tag`. */
 export function categoryLabel(category: Category, locale: Locale): string {

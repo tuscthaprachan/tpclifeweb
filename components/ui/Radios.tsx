@@ -36,7 +36,7 @@ export function Radios({ id, legend, hint, error, name, options, value, defaultV
                 id={optionId}
                 name={name}
                 value={option.value}
-                className="m-0 mt-[calc((var(--target-min)-1.25rem)/2)] size-5 min-h-0 min-w-0 shrink-0"
+                className="m-0 mt-[calc((var(--target-min)-1.5rem)/2)] size-6 min-h-0 min-w-0 shrink-0"
                 {...(controlled
                   ? { checked: value === option.value, onChange: () => onValueChange?.(option.value) }
                   : { defaultChecked: defaultValue === option.value, onChange: onValueChange ? () => onValueChange(option.value) : undefined })}

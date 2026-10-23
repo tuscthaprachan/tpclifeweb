@@ -2,18 +2,17 @@ import type { Metadata } from "next";
 import NextLink from "next/link";
 import { notFound } from "next/navigation";
 
-// The forms agent owns components/domain/form/** and exports FormCallout,
-// which takes a resolved FormRecord and a headingLevel. getContentPageBySlug
-// already resolves `relatedForms` to full records, so only the import is
-// needed here.
+// FormCallout takes a resolved FormRecord and a headingLevel.
+// getContentPageBySlug already resolves `relatedForms` to full records, so only
+// the import is needed here.
 import { FormCallout } from "@/components/domain/form";
-import { PortableTextRenderer } from "@/components/domain/portable-text";
+import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, Link, NotificationBanner, Stack, Tag, Timestamp } from "@/components/ui";
 import { DEFAULT_LOCALE, LOCALES, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getContentPageBySlug, getContentPages } from "@/lib/sanity/queries";
-import type { ContentPage, FormRecord, SanityRef } from "@/lib/sanity/types";
+import { getContentPageBySlug, getContentPages, resolveRichTextRefs } from "@/lib/content";
+import type { ContentPage } from "@/lib/content/types";
 
 const CATEGORY_LABEL = {
   transport: UI.categoryTransport,
@@ -34,10 +33,6 @@ function isStale(lastReviewed: string | undefined, now: Date): boolean {
   const reviewedAt = new Date(lastReviewed).getTime();
   if (Number.isNaN(reviewedAt)) return true;
   return (now.getTime() - reviewedAt) / (1000 * 60 * 60 * 24) > STALE_AFTER_DAYS;
-}
-
-function isResolvedForm(form: FormRecord | SanityRef): form is FormRecord {
-  return (form as { _type?: string })._type === "form";
 }
 
 function relatedPagePath(page: ContentPage): string {
@@ -76,8 +71,9 @@ export default async function GuideDetailPage({
 
   const title = pick(page.title, locale);
   const now = new Date();
-  const relatedForms = (page.relatedForms ?? []).filter(isResolvedForm);
-  const relatedPages = (page.relatedPages ?? []).filter((related): related is ContentPage => "title" in related);
+  const relatedForms = page.relatedForms ?? [];
+  const relatedPages = page.relatedPages ?? [];
+  const resolved = await resolveRichTextRefs([page.body[locale]]);
 
   return (
     <Container width="narrow">
@@ -107,7 +103,7 @@ export default async function GuideDetailPage({
           </NotificationBanner>
         ) : null}
 
-        <PortableTextRenderer value={page.body[locale]} locale={locale} headingLevel={2} />
+        <RichText value={page.body[locale]} locale={locale} headingLevel={2} resolved={resolved} />
 
         {relatedForms.length > 0 ? (
           <Stack space={4}>

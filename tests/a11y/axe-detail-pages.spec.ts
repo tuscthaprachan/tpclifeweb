@@ -11,8 +11,8 @@
  * listings above them were.
  *
  * Slugs are discovered by crawling the listing pages rather than by querying
- * Sanity, for two reasons. The test process does not load `.env.local`, so it
- * has no project credentials of its own, and more importantly a link a reader
+ * the database, for two reasons. The test process does not load `.env.local`, so it
+ * has no database credentials of its own, and more importantly a link a reader
  * cannot reach from the site is not a page worth auditing. This tests exactly
  * what is reachable.
  *

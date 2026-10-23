@@ -2,7 +2,7 @@ import { categoryLabel, kindLabel } from "@/components/domain/lostfound";
 import { pick } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { ogImageRoute } from "@/lib/og/route";
-import { getLostFoundItemBySlug } from "@/lib/sanity/queries";
+import { getLostFoundItemBySlug } from "@/lib/content";
 
 const og = ogImageRoute<{ locale: string; slug: string }>(async ({ locale, slug }) => {
   const item = await getLostFoundItemBySlug(slug).catch(() => null);

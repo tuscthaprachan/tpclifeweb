@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { LostFoundCategory } from "@/lib/sanity/types";
+import type { LostFoundCategory } from "@/lib/content/types";
 
 /** Localised label for the `LostFoundCategory` union. */
 export function categoryLabel(category: LostFoundCategory, locale: Locale): string {

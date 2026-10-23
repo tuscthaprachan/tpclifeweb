@@ -7,7 +7,7 @@ import { Container, EmptyState, Heading, Link, Stack, Tag } from "@/components/u
 import { SOURCE_DOCUMENTS, TRANSPORT } from "@/data/harvested-inventory";
 import { isLocale, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getActiveServiceAlerts, getActiveShuttleRoutes } from "@/lib/sanity/queries";
+import { getActiveServiceAlerts, getActiveShuttleRoutes } from "@/lib/content";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 /*

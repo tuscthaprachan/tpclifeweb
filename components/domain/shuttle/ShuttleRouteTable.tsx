@@ -2,7 +2,7 @@ import type { HeadingLevel } from "@/lib/a11y";
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getShuttleStatus, originDepartures, resolveStopTime, type ShuttleStatus } from "@/lib/shuttle/schedule";
-import type { ShuttleRoute } from "@/lib/sanity/types";
+import type { ShuttleRoute } from "@/lib/content/types";
 import { DataTable, type DataTableColumn, EmptyState, Heading, Stack, Tag } from "@/components/ui";
 
 /*

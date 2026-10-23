@@ -3,7 +3,7 @@ import { cx } from "@/components/ui/cx";
 import type { Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
-import type { Policy, PolicyStatus } from "@/lib/sanity/types";
+import type { Policy, PolicyStatus } from "@/lib/content/types";
 import { STATUS_LABEL_KEY, STATUS_ORDER, STATUS_TONE } from "./statusLabels";
 
 const BAR_SEGMENT_CLASS = {

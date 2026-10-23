@@ -13,8 +13,8 @@
  * SAFETY
  * The report form is submitted EMPTY on purpose. `submitLostFoundReport`
  * runs its spam checks, then validates, then writes, so an empty submission
- * returns errors and never reaches Sanity. Do not change these tests to fill
- * the form in validly: that would write a junk draft into the real dataset
+ * returns errors and never reaches the database. Do not change these tests to fill
+ * the form in validly: that would write a junk draft into the real database
  * on every run.
  */
 

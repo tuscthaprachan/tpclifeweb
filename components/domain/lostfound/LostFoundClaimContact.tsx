@@ -1,14 +1,8 @@
 import { Link } from "@/components/ui";
 import { pick, type Locale } from "@/lib/i18n/config";
-import type { HelpContact } from "@/lib/sanity/types";
+import type { HelpContact } from "@/lib/content/types";
 
-/**
- * Channel to href. Duplicated from components/domain/portable-text/blocks/ContactBlock.tsx
- * rather than imported, for the same reason that file gives for duplicating
- * it from components/layout/HelpBlock.tsx in turn: it lives outside this
- * agent's owned directories, and importing across an in-progress parallel
- * workstream is how a build breaks on someone else's half-finished file.
- */
+/** Channel to href. The same mapping as components/domain/rich-text/blocks/ContactBlock.tsx and components/layout/HelpBlock.tsx. */
 function contactHref(contact: HelpContact): string | null {
   switch (contact.channel) {
     case "email":
@@ -23,7 +17,7 @@ function contactHref(contact: HelpContact): string | null {
   }
 }
 
-/** How to start a claim, when an editor has set `claimContact` on a found item. */
+/** How to start a claim, when `claimContact` is set on a found item. */
 export function LostFoundClaimContact({ contact, locale }: { contact: HelpContact; locale: Locale }) {
   const label = pick(contact.label, locale);
   const hours = contact.hours ? pick(contact.hours, locale) : "";

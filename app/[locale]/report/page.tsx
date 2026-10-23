@@ -6,7 +6,7 @@ import { Container, Heading, Link, NotificationBanner, Stack, StatusTag } from "
 import { EXTERNAL_SERVICES, FORMS } from "@/data/harvested-inventory";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { LocaleString } from "@/lib/sanity/types";
+import type { LocaleString } from "@/lib/content/types";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 /*

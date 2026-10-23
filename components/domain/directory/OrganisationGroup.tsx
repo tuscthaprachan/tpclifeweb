@@ -1,7 +1,7 @@
 import { Heading, Stack } from "@/components/ui";
 import type { HeadingLevel } from "@/lib/a11y";
 import type { Locale } from "@/lib/i18n/config";
-import type { Organisation } from "@/lib/sanity/types";
+import type { Organisation } from "@/lib/content/types";
 import { OrganisationListItem } from "./OrganisationListItem";
 
 interface OrganisationGroupProps {

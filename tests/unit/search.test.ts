@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { tokenise, trigrams } from "@/lib/search/tokenise";
 import { search } from "@/lib/search";
-import type { SearchRecord } from "@/lib/sanity/types";
+import type { SearchRecord } from "@/lib/content/types";
 
 interface RecordOverrides {
   id: string;

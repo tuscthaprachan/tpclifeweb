@@ -46,7 +46,7 @@ import { SearchBar } from "@/components/domain/search/SearchBar";
 import { localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { ThemeChoice } from "@/lib/theme/config";
-import type { NavItem } from "@/lib/sanity/types";
+import type { NavItem } from "@/lib/content/types";
 import { LanguageToggle } from "./LanguageToggle";
 import { ServiceNavigation } from "./ServiceNavigation";
 import { ShellContainer } from "./ShellContainer";

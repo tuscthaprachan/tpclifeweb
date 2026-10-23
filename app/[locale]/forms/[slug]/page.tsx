@@ -26,8 +26,8 @@ import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y
 import { DEFAULT_LOCALE, LOCALES, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { formatDuration } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
-import { getFormBySlug, getForms } from "@/lib/sanity/queries";
-import type { FormRecord, HelpContact } from "@/lib/sanity/types";
+import { getFormBySlug, getForms } from "@/lib/content";
+import type { FormRecord, HelpContact } from "@/lib/content/types";
 
 /*
  * Copy that lib/i18n/strings.ts does not carry. UI.requiresGoogleSignIn

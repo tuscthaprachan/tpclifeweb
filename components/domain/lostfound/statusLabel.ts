@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { LostFoundStatus } from "@/lib/sanity/types";
+import type { LostFoundStatus } from "@/lib/content/types";
 
 /** Localised label for the `LostFoundStatus` union. */
 export function statusLabel(status: LostFoundStatus, locale: Locale): string {

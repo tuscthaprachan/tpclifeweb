@@ -4,7 +4,7 @@ import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
 import { addDaysToDateKey, getShuttleStatus, originDepartures, type ShuttleStatus } from "@/lib/shuttle/schedule";
-import type { ShuttleRoute } from "@/lib/sanity/types";
+import type { ShuttleRoute } from "@/lib/content/types";
 import { Cluster, EmptyState, Heading, Stack, Tag, Timestamp } from "@/components/ui";
 import { ShuttleCountdown } from "./ShuttleCountdown";
 

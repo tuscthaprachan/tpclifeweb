@@ -18,7 +18,7 @@ import {
 } from "@/lib/canteen/params";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
-import type { CanteenStall } from "@/lib/sanity/types";
+import type { CanteenStall } from "@/lib/content/types";
 import { ChoiceGroup } from "./ChoiceGroup";
 import { foldRetiredAvoid, OFFERED_AVOID_KEYS } from "./chips";
 import { FilterForm } from "./FilterForm";

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cx } from "@/components/ui/cx";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import type { Locale } from "@/lib/i18n/config";
-import type { CanteenData, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenData, CanteenStall } from "@/lib/content/types";
 
 import { mapHref } from "../links";
 import { CanteenMap } from "../map/CanteenMap";

@@ -9,7 +9,7 @@
  */
 
 import { compareStallsByWalk } from "@/lib/canteen/derive";
-import type { CanteenEntrance, CanteenSettings, CanteenStall, FloorSide, MapCell, MapShape } from "@/lib/sanity/types";
+import type { CanteenEntrance, CanteenSettings, CanteenStall, FloorSide, MapCell, MapShape } from "@/lib/content/types";
 
 /** Side of one grid cell in view units. */
 export const CELL = 72;

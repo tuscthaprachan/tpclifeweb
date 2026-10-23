@@ -10,7 +10,7 @@ import { makeData, NOW } from "./fixture";
 
 const data = makeData();
 const dish = (id: string) => data.dishes.find((d) => d.slug.current === `fixture-dish-${id}`)!;
-const stallOf = (id: string) => data.stalls.find((s) => s._id === dish(id).stall._ref)!;
+const stallOf = (id: string) => data.stalls.find((s) => s._id === dish(id).stallId)!;
 
 describe("dishDietTags", () => {
   it("tags everything a halal stall sells as halal, and nothing elsewhere", () => {

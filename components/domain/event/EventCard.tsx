@@ -5,13 +5,9 @@ import { Heading, StatusTag, Tag } from "@/components/ui";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { hasImageAsset, urlFor } from "@/lib/sanity/image";
-import type { CampusEvent } from "@/lib/sanity/types";
+import type { CampusEvent } from "@/lib/content/types";
 import { categoryLabel } from "./categoryLabel";
 import { EventSchedule } from "./EventSchedule";
-
-const COVER_WIDTH = 640;
-const COVER_HEIGHT = 360;
 
 interface EventCardProps {
   event: CampusEvent;
@@ -20,7 +16,7 @@ interface EventCardProps {
 }
 
 function eventLocation(event: CampusEvent, locale: Locale): string {
-  if (event.place && "name" in event.place) return pick(event.place.name, locale);
+  if (event.place) return pick(event.place.name, locale);
   if (event.location) return pick(event.location, locale);
   return "";
 }
@@ -37,18 +33,10 @@ export function EventCard({ event, locale, headingLevel }: EventCardProps) {
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-panel border border-line">
-      {/*
-        `hasImageAsset` rather than a plain truthiness check on `cover`. An
-        editor can save a `siteImage` object before the file finishes
-        uploading, which leaves a truthy object with no `asset._ref` behind
-        it. `urlFor` resolves lazily and only throws inside `.url()`, so the
-        plain check let one half-uploaded cover take down the whole events
-        list rather than just dropping its own picture.
-      */}
-      {hasImageAsset(event.cover) ? (
+      {event.cover ? (
         <div className="relative aspect-[16/9] w-full bg-surface-sunk">
           <Image
-            src={urlFor(event.cover).width(COVER_WIDTH).height(COVER_HEIGHT).fit("crop").auto("format").url()}
+            src={event.cover.url}
             alt={event.cover.isDecorative ? "" : pick(event.cover.alt, locale)}
             fill
             sizes="(min-width: 768px) 360px, 100vw"

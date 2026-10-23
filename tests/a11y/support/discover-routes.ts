@@ -10,8 +10,8 @@
  * array would.
  *
  * Two kinds of directory are skipped:
- *   - Dynamic segments (`[slug]`). `.env.local` points at a placeholder
- *     Sanity project with no content, so there is no real slug to visit;
+ *   - Dynamic segments (`[slug]`). a slug is only known once the database is
+ *     seeded, so there is no fixed slug to visit;
  *     the list page that would link to one instead renders its empty
  *     state, which the index route itself already covers.
  *   - `design`. Documented in app/[locale]/design/page.tsx as "internal

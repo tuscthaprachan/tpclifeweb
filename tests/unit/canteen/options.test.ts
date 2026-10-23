@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  ALLERGENS,
   COOKING_STYLES,
   CUISINES,
   DISH_COURSES,
@@ -9,34 +10,27 @@ import {
   PROTEINS,
   TEMPERATURES,
 } from "@/lib/canteen";
-import {
-  CANTEEN_CUISINE_OPTIONS,
-  COOKING_STYLE_OPTIONS,
-  DISH_COURSE_OPTIONS,
-  DISH_TYPE_OPTIONS,
-  FLOOR_SIDE_OPTIONS,
-  PROTEIN_OPTIONS,
-  TEMPERATURE_OPTIONS,
-} from "@/sanity/schemas/constants";
+import * as db from "@/lib/db/schema/content/enums";
 
 /**
- * The enum lists exist in three places: the unions in `lib/sanity/types.ts`,
- * the runtime lists in `lib/canteen/options.ts`, and the Studio option lists in
- * `sanity/schemas/constants.ts`. The runtime lists are typed against the
- * unions; this test keeps the Studio lists in step with the runtime ones.
+ * The enum lists exist in two places: the runtime lists in
+ * `lib/canteen/options.ts` (typed against the unions in `lib/content/types.ts`)
+ * and the Postgres enums in `lib/db/schema/content/enums.ts`. This test keeps
+ * them in step.
  */
 describe("canteen option lists", () => {
-  const pairs: Array<[string, readonly unknown[], Array<{ value: unknown }>]> = [
-    ["cuisine", CUISINES, CANTEEN_CUISINE_OPTIONS],
-    ["type", DISH_TYPES, DISH_TYPE_OPTIONS],
-    ["course", DISH_COURSES, DISH_COURSE_OPTIONS],
-    ["protein", PROTEINS, PROTEIN_OPTIONS],
-    ["style", COOKING_STYLES, COOKING_STYLE_OPTIONS],
-    ["temperature", TEMPERATURES, TEMPERATURE_OPTIONS],
-    ["floor side", FLOOR_SIDES, FLOOR_SIDE_OPTIONS],
+  const pairs: Array<[string, readonly unknown[], readonly unknown[]]> = [
+    ["cuisine", CUISINES, db.CANTEEN_CUISINES],
+    ["type", DISH_TYPES, db.DISH_TYPES],
+    ["course", DISH_COURSES, db.DISH_COURSES],
+    ["protein", PROTEINS, db.PROTEINS],
+    ["allergen", ALLERGENS, db.ALLERGENS],
+    ["style", COOKING_STYLES, db.COOKING_STYLES],
+    ["temperature", TEMPERATURES, db.TEMPERATURES],
+    ["floor side", FLOOR_SIDES, db.FLOOR_SIDES],
   ];
 
-  it.each(pairs)("Studio %s options match the runtime list", (_name, runtime, studio) => {
-    expect(studio.map((option) => option.value)).toEqual([...runtime]);
+  it.each(pairs)("database %s enum matches the runtime list", (_name, runtime, database) => {
+    expect([...database]).toEqual([...runtime]);
   });
 });

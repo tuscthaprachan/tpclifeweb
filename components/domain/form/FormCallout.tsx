@@ -4,14 +4,14 @@ import { StatusTag } from "@/components/ui/StatusTag";
 import { cx } from "@/components/ui/cx";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import type { FormRecord } from "@/lib/sanity/types";
+import type { FormRecord } from "@/lib/content/types";
 import { signInBadgeLabel } from "./labels";
 
 export interface FormCalloutProps {
-  /** An already-resolved form, not a `SanityRef`. The `relatedForms[]->{...}` / `relatedForm->{...}` projections in lib/sanity/queries.ts resolve the reference before this component ever sees it. */
-  form: FormRecord;
+  /** An already-resolved form. The read layer (lib/content) resolves related forms before this component sees them, and `RichText` resolves a `formCallout` block's form from a `FormSummary`. Only the fields the callout draws are required. */
+  form: Pick<FormRecord, "slug" | "title" | "purpose" | "requiresSignIn" | "signInType">;
   locale: Locale;
-  /** The depth this callout's own heading sits at wherever it is embedded, so it never skips a level inside a Portable Text body (1.3.1). */
+  /** The depth this callout's own heading sits at wherever it is embedded, so it never skips a level inside a rich text body (1.3.1). */
   headingLevel: HeadingLevel;
   className?: string;
 }
@@ -23,7 +23,7 @@ export interface FormCalloutProps {
  * form's own page, never straight to the external `destinationUrl`, so the
  * "check before you click" page can never be skipped.
  *
- * An editor dropping a form reference into a welfare page's Portable Text
+ * An editor dropping a form reference into a welfare page's rich text
  * body always renders from this one source of truth, so the callout can
  * never drift from what the form's own page says.
  *

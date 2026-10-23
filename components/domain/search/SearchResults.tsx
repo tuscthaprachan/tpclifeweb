@@ -2,7 +2,7 @@ import type { HeadingLevel } from "@/lib/a11y";
 import type { Locale } from "@/lib/i18n/config";
 import { pick } from "@/lib/i18n/config";
 import type { SearchResult } from "@/lib/search";
-import type { SearchableType } from "@/lib/sanity/types";
+import type { SearchableType } from "@/lib/content/types";
 import { Heading, Stack } from "@/components/ui";
 import { SEARCH_TYPE_LABEL } from "./searchTypeLabels";
 import { SearchResultItem } from "./SearchResultItem";

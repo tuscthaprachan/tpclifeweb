@@ -8,7 +8,7 @@
  */
 
 import { cx } from "@/components/ui/cx";
-import type { DishType } from "@/lib/sanity/types";
+import type { DishType } from "@/lib/content/types";
 import type { DietKey } from "@/lib/canteen/params";
 
 interface IconProps {

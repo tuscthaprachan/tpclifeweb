@@ -7,7 +7,7 @@
  * must label everything this returns as "scheduled" (`UI.scheduled`), never
  * "live", and must not animate it in a way that implies tracking. See
  * CONTRIBUTING.md's Honesty section and `ShuttleRoute.realtimeFeedUrl`'s
- * doc comment in `lib/sanity/types.ts`.
+ * doc comment in `lib/content/types.ts`.
  *
  * All time maths happens in Asia/Bangkok, exclusively through
  * `lib/i18n/format.ts`. This file never reads the server's or the browser's
@@ -15,7 +15,7 @@
  */
 
 import { bangkokDateKey, bangkokMinutesOfDay, formatClockTime, parseClockTime } from "@/lib/i18n/format";
-import type { ServiceCalendar, ShuttleRoute, ShuttleStop } from "@/lib/sanity/types";
+import type { ServiceCalendar, ShuttleRoute, ShuttleStop } from "@/lib/content/types";
 
 /**
  * How many days ahead `findNextServiceDate` will search before giving up.
@@ -154,7 +154,7 @@ function stopOffset(stop: ShuttleStop | undefined): number {
  * Every departure configured on `route`, parsed and reformatted, in the
  * order they are stored (the schema guarantees ascending). Malformed
  * "HH:mm" entries are skipped rather than thrown on: this is a pure function
- * over CMS content, and content that has not yet passed Studio validation
+ * over stored content, and content that has not yet passed validation
  * should degrade, not crash a render.
  */
 export function originDepartures(route: ShuttleRoute): OriginDeparture[] {

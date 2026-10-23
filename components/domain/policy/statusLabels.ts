@@ -17,7 +17,7 @@
 
 import type { StatusTone } from "@/components/ui/StatusTag";
 import type { UiKey } from "@/lib/i18n/strings";
-import type { PolicyStatus } from "@/lib/sanity/types";
+import type { PolicyStatus } from "@/lib/content/types";
 
 export const STATUS_LABEL_KEY = {
   notStarted: "statusNotStarted",

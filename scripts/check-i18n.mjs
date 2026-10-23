@@ -5,8 +5,9 @@
  *    and they are easy to introduce by accident when pasting.
  * 2. Every entry in lib/i18n/strings.ts carries a non-empty th and en.
  *
- * The CMS side of the same promise is enforced by Sanity validation, which
- * blocks publishing a document with a half-filled bilingual field.
+ * The database side of the same promise is enforced by the admin forms and the
+ * content schemas, which refuse to publish a record with a half-filled
+ * bilingual field.
  */
 
 import { readFileSync, readdirSync, statSync } from "node:fs";

@@ -4,7 +4,7 @@ import { indexCanteen } from "@/lib/canteen/derive";
 import type { FacetCounts } from "@/lib/canteen/filter";
 import type { CanteenFilters as Filters } from "@/lib/canteen/params";
 import { pick, localePath, type Locale } from "@/lib/i18n/config";
-import type { CanteenData } from "@/lib/sanity/types";
+import type { CanteenData } from "@/lib/content/types";
 import { ActiveFilterBar } from "./ActiveFilterBar";
 import { CanteenFilters } from "./CanteenFilters";
 import { EAT, t } from "./strings";

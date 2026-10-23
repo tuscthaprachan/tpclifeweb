@@ -10,7 +10,7 @@ import { canonicalOf } from "@/lib/canteen/derive";
 import type { PickResult as PickOutcome, Relaxation } from "@/lib/canteen/random";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { OTHER_LOCALE, pick as localised, type Locale } from "@/lib/i18n/config";
-import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/content/types";
 
 import { DietTags } from "../DietTag";
 import { HowToSay } from "../HowToSay";
@@ -337,7 +337,7 @@ function MealCard({ locale, data, filters, params, nextSeed, meal }: PickResultP
         <div className="flex min-w-0 flex-col gap-[var(--space-4)]">
           <ul className="m-0 flex list-none flex-col gap-[var(--space-4)] p-0">
             {combo.items.map((dish, position) => {
-              const stall = data.stalls.find((item) => item._id === dish.stall._ref);
+              const stall = data.stalls.find((item) => item._id === dish.stallId);
               return (
                 <li key={dish._id} className="flex flex-col gap-[var(--space-1)]">
                   <Link href={dishHref(locale, dish.slug.current, filters)} className="text-lg font-medium">

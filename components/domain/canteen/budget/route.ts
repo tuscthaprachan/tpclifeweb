@@ -4,7 +4,7 @@
  */
 
 import { cellCentre, entrancePoint, hasFloorPlan, routeOrder, type MapHighlight } from "../map";
-import type { CanteenData, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenData, CanteenStall } from "@/lib/content/types";
 
 export interface Route {
   /** The stalls in the order to visit them. */

@@ -4,11 +4,11 @@ import { StatusTag } from "@/components/ui/StatusTag";
 import { Tag } from "@/components/ui/Tag";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { Policy } from "@/lib/sanity/types";
+import type { Policy } from "@/lib/content/types";
 import { STATUS_LABEL_KEY, STATUS_TONE } from "./statusLabels";
 
 interface PolicyRelationLinkProps {
-  /** A resolved oversight target: either the policy this one scrutinises, or one of the policies scrutinising it. Only the fields in `POLICY_OVERSIGHT_PROJECTION` (lib/sanity/queries.ts) are guaranteed present. */
+  /** A resolved oversight target: either the policy this one scrutinises, or one of the policies scrutinising it. Only the fields in the oversight shape built by `toOversight` (lib/content/policies.ts) are guaranteed present. */
   policy: Pick<Policy, "_id" | "title" | "slug" | "summary" | "owner" | "status">;
   locale: Locale;
 }

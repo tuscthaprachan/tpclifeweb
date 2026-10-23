@@ -35,7 +35,7 @@ import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { getCanteenData } from "@/lib/sanity/queries";
+import { getCanteenData } from "@/lib/content";
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -69,7 +69,7 @@ export default async function EatStallPage({
   if (!stall) notFound();
 
   const now = new Date();
-  const dishes = data.dishes.filter((dish) => dish.stall._ref === stall._id);
+  const dishes = data.dishes.filter((dish) => dish.stallId === stall._id);
   const range = priceRange(dishes);
   const checkedOn = commonCheckedOn(dishes);
   const filtered = countActiveValues(filters) > 0;

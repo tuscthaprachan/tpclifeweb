@@ -1,4 +1,4 @@
-import { getNewsPostBySlug } from "@/components/domain/news";
+import { getNewsPostBySlug } from "@/lib/content";
 import { pick } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { ogImageRoute } from "@/lib/og/route";

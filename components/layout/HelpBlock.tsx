@@ -8,7 +8,7 @@
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { HelpContact } from "@/lib/sanity/types";
+import type { HelpContact } from "@/lib/content/types";
 
 function contactHref(contact: HelpContact): string | null {
   switch (contact.channel) {

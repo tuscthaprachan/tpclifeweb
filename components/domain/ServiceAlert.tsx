@@ -1,7 +1,7 @@
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { liveRegionProps, type Announcement } from "@/lib/a11y";
-import type { AlertSeverity, ServiceAlert as ServiceAlertDoc } from "@/lib/sanity/types";
+import type { AlertSeverity, ServiceAlert as ServiceAlertDoc } from "@/lib/content/types";
 import { cx, Cluster, Link, StatusTag, Tag, Timestamp, type StatusTone } from "@/components/ui";
 
 /*

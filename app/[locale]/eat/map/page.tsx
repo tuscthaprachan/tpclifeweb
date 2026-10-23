@@ -28,8 +28,8 @@ import { applyFilters, countActiveValues, indexCanteen, serialise } from "@/lib/
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { getCanteenData } from "@/lib/sanity/queries";
-import type { CanteenStall } from "@/lib/sanity/types";
+import { getCanteenData } from "@/lib/content";
+import type { CanteenStall } from "@/lib/content/types";
 
 const ROUTE = "/eat/map";
 
@@ -128,7 +128,7 @@ export default async function CanteenMapPage({
   if (filtersActive) {
     matchCounts = new Map(data.stalls.map((stall) => [stall._id, 0]));
     for (const dish of applyFilters(data, filters, new Date(), { locale })) {
-      matchCounts.set(dish.stall._ref, (matchCounts.get(dish.stall._ref) ?? 0) + 1);
+      matchCounts.set(dish.stallId, (matchCounts.get(dish.stallId) ?? 0) + 1);
     }
     matchingStalls = [...matchCounts.values()].filter((count) => count > 0).length;
   }

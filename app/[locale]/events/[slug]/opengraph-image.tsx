@@ -3,7 +3,7 @@ import { pick } from "@/lib/i18n/config";
 import { formatDate } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
 import { ogImageRoute } from "@/lib/og/route";
-import { getEventBySlug } from "@/lib/sanity/queries";
+import { getEventBySlug } from "@/lib/content";
 
 const og = ogImageRoute<{ locale: string; slug: string }>(async ({ locale, slug }) => {
   const event = await getEventBySlug(slug).catch(() => null);

@@ -6,7 +6,7 @@
  */
 
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
-import type { HelpContact, NavItem } from "@/lib/sanity/types";
+import type { HelpContact, NavItem } from "@/lib/content/types";
 import { HelpBlock } from "./HelpBlock";
 import { ServiceNavigation } from "./ServiceNavigation";
 import { ShellContainer } from "./ShellContainer";

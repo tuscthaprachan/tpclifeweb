@@ -4,7 +4,7 @@
  * defensively rather than trusting array order.
  */
 
-import type { PolicyUpdate } from "@/lib/sanity/types";
+import type { PolicyUpdate } from "@/lib/content/types";
 
 function updateTime(update: PolicyUpdate): number {
   const time = new Date(update.date).getTime();

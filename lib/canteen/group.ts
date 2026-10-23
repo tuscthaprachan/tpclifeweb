@@ -25,7 +25,7 @@
  * All of it pure, so the no-JavaScript form and the client agree.
  */
 
-import type { CanteenData, CanteenDish, CanteenSeatingZone, CanteenStall } from "@/lib/sanity/types";
+import type { CanteenData, CanteenDish, CanteenSeatingZone, CanteenStall } from "@/lib/content/types";
 
 import { effectivePrice, indexCanteen } from "./derive";
 import { isMealDish, matchesFilters } from "./filter";
@@ -192,9 +192,9 @@ function dishesByStallFor(data: CanteenData, filters: CanteenFilters, now: Date)
   const map = new Map<string, CanteenDish[]>();
   for (const dish of data.dishes) {
     if (!isMealDish(dish, filters) || !matchesFilters(data, dish, filters, now)) continue;
-    const list = map.get(dish.stall._ref);
+    const list = map.get(dish.stallId);
     if (list) list.push(dish);
-    else map.set(dish.stall._ref, [dish]);
+    else map.set(dish.stallId, [dish]);
   }
   for (const list of map.values()) {
     list.sort((a, b) => a.price - b.price || a.slug.current.localeCompare(b.slug.current));
@@ -347,7 +347,7 @@ function smallestChange(
   now: Date,
 ): GroupChange | null {
   const filters = personFilters(person, base);
-  const atStall = data.dishes.filter((dish) => dish.stall._ref === stall._id && isMealDish(dish, filters));
+  const atStall = data.dishes.filter((dish) => dish.stallId === stall._id && isMealDish(dish, filters));
   const fits = (changed: CanteenFilters) => atStall.some((dish) => matchesFilters(data, dish, changed, now));
 
   // A budget change is the gentlest: the cheapest dish that otherwise fits.
@@ -396,7 +396,7 @@ export function bindingConstraint(
   );
 
   // A stall with no dishes at all (a vacant slot) is not somewhere a group can eat, so it is never suggested.
-  const stallsWithDishes = new Set(data.dishes.map((dish) => dish.stall._ref));
+  const stallsWithDishes = new Set(data.dishes.map((dish) => dish.stallId));
   const candidates = data.stalls.filter((stall) => stallsWithDishes.has(stall._id)).map((stall) => {
     const blockers: Blocker[] = [];
     people.forEach((person, personIndex) => {

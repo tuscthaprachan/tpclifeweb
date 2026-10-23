@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { PortableTextRenderer } from "@/components/domain/portable-text";
+import { RichText } from "@/components/domain/rich-text";
 import { Container, Details, EmptyState, Heading, Stack, Tag } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getFaqs } from "@/lib/sanity/queries";
-import type { Category, Faq } from "@/lib/sanity/types";
+import { getFaqs, resolveRichTextRefs } from "@/lib/content";
+import type { Category, Faq } from "@/lib/content/types";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 /**
@@ -67,6 +67,8 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
 
   const faqs = await getFaqs();
   const groups = groupByCategory(faqs);
+  // One lookup for every form card and picture in every answer on the page.
+  const resolved = await resolveRichTextRefs(faqs.map((faq) => faq.answer[locale]));
 
   return (
     <Container width="narrow">
@@ -93,15 +95,16 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
                 {group.items.map((faq) => (
                   /*
                    * The id is what the search index anchors to. It is the
-                   * document id rather than a slug because `Faq` has no slug
-                   * field in the content model.
+                   * row id rather than a slug because `Faq` has no slug in the
+                   * page contract.
                    */
                   <div key={faq._id} id={faq._id} className="scroll-mt-[var(--header-height,4rem)]">
                     <Details summary={pick(faq.question, locale)}>
-                      <PortableTextRenderer
+                      <RichText
                         value={faq.answer[locale]}
                         locale={locale}
                         headingLevel={3}
+                        resolved={resolved}
                       />
                     </Details>
                   </div>

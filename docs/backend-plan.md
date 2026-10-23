@@ -66,7 +66,7 @@ The Service Manual is written for UK government, so we adopt its principles and 
   - Server Actions for all writes; `/api` only for things that need it (cron, webhooks, future integrations).
 - **Auth**: [Better Auth](https://www.better-auth.com), self-hosted, with the Drizzle adapter so users, sessions and roles live in Neon.
   - Sign-in is a 6-digit code emailed to the user, following the GOV.UK "confirm your email address" pattern. Codes rather than magic links, so it works on shared desk PCs and across devices.
-  - Students: optional sign-in, restricted to Thammasat email domains (to be confirmed, likely `@dome.tu.ac.th`), to see all their cases. Never required to report.
+  - Students: optional sign-in, restricted to Thammasat email domains (`@dome.tu.ac.th` and `@tu.ac.th`), to see all their cases. Never required to report.
   - Staff: invite-only. An `admin` invites by email; on first sign-in the user must register a passkey or authenticator app (TOTP). Roles are assigned and revoked in-app.
   - Sessions: short idle timeout for staff with the GOV.UK session timeout warning; rate limiting on code requests.
   - Email deliverability is a dependency: Resend from our own domain with SPF, DKIM and DMARC, tested against TU inboxes early.

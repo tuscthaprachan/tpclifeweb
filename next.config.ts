@@ -8,8 +8,13 @@ const nextConfig: NextConfig = {
     "/**": ["./assets/og/**"],
   },
 
+  // PGlite (DATABASE_URL=pglite:...) is a devDependency that finds its own wasm
+  // files on disk, so it must be loaded from node_modules, not bundled.
+  serverExternalPackages: ["@electric-sql/pglite"],
+
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+    // Content images live in Vercel Blob (lib/storage), one public host per store.
+    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
     formats: ["image/avif", "image/webp"],
   },
 
@@ -27,6 +32,7 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           // No camera, microphone or location. The site never needs them, and
           // saying so explicitly is cheaper than being asked why it might.
@@ -37,14 +43,13 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/((?!studio(?:/|$)).*)",
-        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
-      },
-      {
-        // The sanity.io dashboard shows the Studio in an iframe, so /studio
-        // allows that one origin instead of sending X-Frame-Options.
-        source: "/studio/:path*",
-        headers: [{ key: "Content-Security-Policy", value: "frame-ancestors 'self' https://www.sanity.io" }],
+        // The staff console is never for a crawler or a shared cache. robots.txt
+        // and the page metadata say the same; this covers non-HTML responses too.
+        source: "/admin/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "private, no-store" },
+        ],
       },
       {
         // The search index is regenerated on revalidation, so it may be cached

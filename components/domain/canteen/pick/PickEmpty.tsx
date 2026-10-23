@@ -6,7 +6,7 @@ import { relaxSuggestions } from "@/lib/canteen/filter";
 import { countActiveValues, defaultFilters, type CanteenFilters } from "@/lib/canteen/params";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { pick as localised, type Locale } from "@/lib/i18n/config";
-import type { CanteenData } from "@/lib/sanity/types";
+import type { CanteenData } from "@/lib/content/types";
 
 import { RelaxSuggestions } from "../RelaxSuggestions";
 import { eatHref } from "../links";

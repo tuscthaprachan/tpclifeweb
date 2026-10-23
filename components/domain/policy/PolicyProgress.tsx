@@ -3,7 +3,7 @@ import { cx } from "@/components/ui/cx";
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
-import type { Policy } from "@/lib/sanity/types";
+import type { Policy } from "@/lib/content/types";
 import { getLatestUpdate } from "./updates";
 
 /**
@@ -21,7 +21,7 @@ interface PolicyProgressProps {
 
 /**
  * Honesty rule 1 (CONTRIBUTING.md, and the doc comment on
- * `Policy.progressPercent` in lib/sanity/types.ts): a percentage renders
+ * `Policy.progressPercent` in lib/content/types.ts): a percentage renders
  * ONLY when an editor set one by hand, never inferred from status, dates or
  * the number of updates.
  *

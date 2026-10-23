@@ -2,7 +2,7 @@ import { OWNER_LABEL_KEY } from "@/components/domain/form";
 import { Button, EmptyState, Heading, Link as UiLink, Stack, StatusTag, Tag, Timestamp } from "@/components/ui";
 import { localePath, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { NewsPost, Policy } from "@/lib/sanity/types";
+import type { NewsPost, Policy } from "@/lib/content/types";
 import { buildActivityItems } from "./activityItems";
 import { POLICY_STATUS_LABEL_KEY, POLICY_STATUS_TONE } from "./policyStatusLabel";
 

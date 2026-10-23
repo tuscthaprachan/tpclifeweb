@@ -1,5 +1,5 @@
 import type { Locale } from "@/lib/i18n/config";
-import type { CanteenDish } from "@/lib/sanity/types";
+import type { CanteenDish } from "@/lib/content/types";
 import { cx } from "@/components/ui/cx";
 import { SpeakButton } from "./SpeakButton";
 import { EAT, t } from "./strings";

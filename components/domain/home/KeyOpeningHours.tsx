@@ -1,7 +1,7 @@
 import type { HeadingLevel } from "@/lib/a11y";
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { CampusPlace } from "@/lib/sanity/types";
+import type { CampusPlace } from "@/lib/content/types";
 import { Heading, StatusTag, SummaryList } from "@/components/ui";
 import { getPlaceHoursStatus, type PlaceHoursStatus } from "./openingHours";
 

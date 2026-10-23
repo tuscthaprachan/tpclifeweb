@@ -11,7 +11,7 @@
  */
 
 import { bangkokDayOfWeek, bangkokMinutesOfDay, formatClockTime, parseClockTime } from "@/lib/i18n/format";
-import type { CampusPlace, LocaleString, OpeningHours } from "@/lib/sanity/types";
+import type { CampusPlace, LocaleString, OpeningHours } from "@/lib/content/types";
 
 export type PlaceHoursStatus =
   | { kind: "open"; closes: string; note?: LocaleString }

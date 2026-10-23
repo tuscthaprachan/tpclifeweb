@@ -1,5 +1,5 @@
 /**
- * The Studio and the API routes are the only things not meant for a crawler.
+ * The staff console and the API routes are the only things not meant for a crawler.
  * Everything else is public by design: the entire point of this site is to
  * be more findable than the Linktrees and PDFs it replaces.
  */
@@ -13,7 +13,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/studio", "/api"],
+        disallow: ["/admin", "/api"],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
