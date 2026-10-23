@@ -136,10 +136,10 @@ function stallName(stall: CanteenStall, locale: Locale): string {
 
 /** The accessible name of a tile: what the sighted reader sees, spelled out. */
 function tileLabel(stall: CanteenStall, locale: Locale, count: number | undefined, stop: number | undefined): string {
-  const parts = [MAP_STRINGS.stallNumber(stall.number, locale), stallName(stall, locale)];
+  const parts = [`${stall.number} ${stallName(stall, locale)}`];
+  if (count !== undefined) parts.push(count === 0 ? `0, ${MAP_STRINGS.matchCount(0, locale)}` : MAP_STRINGS.matchCount(count, locale));
   if (stop !== undefined) parts.push(MAP_STRINGS.stop(stop, locale));
-  if (count !== undefined) parts.push(MAP_STRINGS.matchCount(count, locale));
-  return parts.filter(Boolean).join(", ");
+  return parts.join(", ");
 }
 
 interface EntranceDrawProps {
@@ -277,6 +277,7 @@ export function CanteenMap({
   const descId = `${id}-desc`;
   const hatchId = `${id}-hatch`;
   const landmarkId = `${id}-landmark`;
+  const marks: ReactNode[] = [];
   const planRect = { x: layout.margins.left, y: layout.margins.top, w: layout.cols * CELL, h: layout.rows * CELL };
 
   const labelProps = links
@@ -371,9 +372,10 @@ export function CanteenMap({
         const highlighted = stop !== undefined;
         const name = stallName(stall, locale);
         const roomForText = rect.w - 16 - (highlighted ? 26 : 0);
-        const shortName = truncate(name, charsThatFit(roomForText, 13));
+        const nameFits = Array.from(name).length <= charsThatFit(roomForText, 13);
+        const squeezable = Array.from(name).length <= charsThatFit(roomForText, 13) / 0.7;
+        const nameClipId = `${id}-name-${stall.number}`;
         const glyphs = stall.cuisine.slice(0, 3);
-        const wide = rect.w >= CELL * 1.5;
         const shape = cellShape(stall.mapCell);
         const triangle = shape !== "rect";
         const tileClass = none ? "cmap-tile cmap-tile-none" : "cmap-tile";
@@ -387,6 +389,26 @@ export function CanteenMap({
         const markAt = triangle ? spot(compact ? 84 : 64, compact ? 18 : 20) : null;
         const markX = markAt ? markAt.x : rect.x + rect.w - (compact ? 16 : 18);
         const markY = markAt ? markAt.y : rect.y + rect.h - (compact ? 16 : 18);
+        if (triangle && !compact && badgeAt && count !== undefined) {
+          marks.push(
+            <g key={`${stall._id}-count`} aria-hidden="true">
+              <rect className="cmap-badge" x={badgeAt.x - 11} y={badgeAt.y - 11} width={22} height={22} rx={5} />
+              <text className="cmap-badge-text" x={badgeAt.x} y={badgeAt.y + 0.5}>
+                {count}
+              </text>
+            </g>,
+          );
+        }
+        if (showMark) {
+          marks.push(
+            <g key={stall._id} aria-hidden="true">
+              <circle className="cmap-mark" cx={markX} cy={markY} r={compact ? 15 : 16} />
+              <text className="cmap-mark-text" x={markX} y={markY + 1}>
+                {stop}
+              </text>
+            </g>,
+          );
+        }
 
         const body = (
           <>
@@ -441,14 +463,7 @@ export function CanteenMap({
                   <text className="cmap-number" x={pillAt.x} y={pillAt.y + 0.5}>
                     {stall.number}
                   </text>
-                  {count !== undefined ? (
-                    <>
-                      <rect className="cmap-badge" x={badgeAt.x - 11} y={badgeAt.y - 11} width={22} height={22} rx={5} />
-                      <text className="cmap-badge-text" x={badgeAt.x} y={badgeAt.y + 0.5}>
-                        {count}
-                      </text>
-                    </>
-                  ) : null}
+
                 </>
               )
             ) : compact ? (
@@ -474,7 +489,7 @@ export function CanteenMap({
               <>
                 <rect className="cmap-pill" x={rect.x + 4} y={rect.y + 4} width={38} height={30} rx={15} />
                 <text className="cmap-number" x={rect.x + 23} y={rect.y + 19.5}>
-                  {stall.number}
+                  {`${stall.number} `}
                 </text>
                 {glyphs.map((cuisine, position) => (
                   <g
@@ -486,33 +501,29 @@ export function CanteenMap({
                     {GLYPHS[cuisine]}
                   </g>
                 ))}
-                <text className={none ? "cmap-text cmap-text-soft" : "cmap-text"} x={rect.x + 8} y={rect.y + rect.h - 9}>
-                  {shortName}
+                {nameFits || squeezable ? null : (
+                  <clipPath id={nameClipId}>
+                    <rect x={rect.x + 4} y={rect.y} width={roomForText + 4} height={rect.h} />
+                  </clipPath>
+                )}
+                <text
+                  className={none ? "cmap-text cmap-text-soft" : "cmap-text"}
+                  x={rect.x + 8}
+                  y={rect.y + rect.h - 9}
+                  {...(nameFits ? {} : squeezable ? { textLength: roomForText, lengthAdjust: "spacingAndGlyphs" } : { clipPath: `url(#${nameClipId})` })}
+                >
+                  {`${name} `}
                 </text>
                 {count !== undefined ? (
                   <>
                     <rect className="cmap-badge" x={rect.x + rect.w - 26} y={rect.y + 8} width={22} height={22} rx={5} />
                     <text className="cmap-badge-text" x={rect.x + rect.w - 15} y={rect.y + 19.5}>
-                      {count}
+                      {`${count} `}
                     </text>
-                    {none && wide ? (
-                      <text className="cmap-text cmap-text-soft" x={rect.x + rect.w - 8} y={rect.y + 40} textAnchor="end">
-                        {MAP_STRINGS.noMatchShort[locale]}
-                      </text>
-                    ) : null}
                   </>
                 ) : null}
               </>
             )}
-
-            {showMark ? (
-              <>
-                <circle className="cmap-mark" cx={markX} cy={markY} r={compact ? 15 : 16} />
-                <text className="cmap-mark-text" x={markX} y={markY + 1}>
-                  {stop}
-                </text>
-              </>
-            ) : null}
 
             {links ? (
               triangle ? (
@@ -545,6 +556,8 @@ export function CanteenMap({
           </g>
         );
       })}
+
+      {marks.length > 0 ? <g className="cmap-marks">{marks}</g> : null}
 
       {entrances.map((entrance, index) => (
         <Entrance
