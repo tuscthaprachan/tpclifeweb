@@ -11,6 +11,7 @@ import { getAuth, isAuthConfigured } from "@/lib/auth";
 import { decodeFlow, encodeFlow, FLOW_TTL_MS, type SignInFlow } from "@/lib/auth/flow-token";
 import { isEmailPermitted } from "@/lib/auth/permitted";
 import { consumeRateLimit } from "@/lib/auth/rate-limit";
+import { captureSendFailure } from "@/lib/auth/send-outcome";
 import { getRequestMeta } from "@/lib/auth/session";
 import { getAllowedDomains, normaliseEmail } from "@/lib/auth/domains";
 import { getDb } from "@/lib/db";
@@ -62,7 +63,11 @@ export async function issueCode(rawEmail: string): Promise<IssueCodeResult> {
   }
 
   try {
-    await getAuth().api.sendVerificationOTP({ body: { email, type: "sign-in" }, headers: await headers() });
+    const requestHeaders = await headers();
+    const { error } = await captureSendFailure(() =>
+      getAuth().api.sendVerificationOTP({ body: { email, type: "sign-in" }, headers: requestHeaders }),
+    );
+    if (error) throw error;
     return { status: "sent" };
   } catch (error) {
     console.error("[auth] could not send sign-in code", error);
