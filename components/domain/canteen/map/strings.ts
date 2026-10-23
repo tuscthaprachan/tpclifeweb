@@ -56,7 +56,6 @@ export const MAP_STRINGS = {
     if (locale === "th") return n === 0 ? "ไม่มีเมนูที่ตรง" : `${count} เมนูที่ตรง`;
     return n === 0 ? "No matching dishes" : n === 1 ? "1 matching dish" : `${count} matching dishes`;
   },
-  noMatchShort: { th: "ไม่ตรง", en: "None" },
   matchSummary: (n: number, locale: Locale) => {
     if (locale === "th") return n === 0 ? "ยังไม่มีร้านที่มีเมนูตรงกับที่เลือก" : `มี ${formatNumber(n, locale)} ร้านที่มีเมนูตรงกับที่เลือก`;
     if (n === 0) return "No stall has something that matches.";

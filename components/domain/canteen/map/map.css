@@ -286,3 +286,7 @@
     stroke: Highlight;
   }
 }
+
+.cmap-marks {
+  pointer-events: none;
+}
