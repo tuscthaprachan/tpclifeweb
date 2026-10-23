@@ -10,6 +10,11 @@
  */
 
 import type { Locale, LocaleString } from "./config";
+import { CANTEEN_STRINGS } from "./admin-content/canteen";
+import { DIRECTORY_STRINGS } from "./admin-content/directory";
+import { MEDIA_STRINGS } from "./admin-content/media";
+import { PAGES_STRINGS } from "./admin-content/pages";
+import { PUBLISHING_STRINGS } from "./admin-content/publishing";
 
 export const A = {
   /* Shell */
@@ -645,6 +650,12 @@ export const A = {
   },
   errBlockCallout: { th: "กรอกข้อความทั้งสองภาษา", en: "Fill in the message in Thai and English" },
   errBlockSteps: { th: "ต้องมีอย่างน้อยหนึ่งขั้นตอน และทุกขั้นตอนต้องมีชื่อทั้งสองภาษา", en: "Add at least one step, and give every step a title in Thai and English" },
+  /* Per content group, kept in their own files */
+  ...PUBLISHING_STRINGS,
+  ...PAGES_STRINGS,
+  ...DIRECTORY_STRINGS,
+  ...CANTEEN_STRINGS,
+  ...MEDIA_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 
 export type AdminKey = keyof typeof A;
