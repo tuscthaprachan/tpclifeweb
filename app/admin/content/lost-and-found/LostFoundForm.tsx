@@ -29,7 +29,7 @@ import { CLAIM_CHANNELS } from "./validate";
  */
 export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
   const db = getDb();
-  const def = getContentType("lostFound")!;
+  const def = getContentType("lost-and-found")!;
 
   const [item] = id ? await db.select().from(lostFoundItems).where(eq(lostFoundItems.id, id)) : [];
   if (id && !item) notFound();

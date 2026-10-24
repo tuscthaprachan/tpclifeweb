@@ -24,7 +24,7 @@ export default async function LostFoundListPage({ searchParams }: { searchParams
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
   await requireEditor();
   const { q, notice } = await searchParams;
-  const def = getContentType("lostFound")!;
+  const def = getContentType("lost-and-found")!;
   const db = getDb();
   const [pending, rows] = await Promise.all([listPendingReports(db), listLostFound(db, q)]);
 

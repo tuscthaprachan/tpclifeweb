@@ -480,6 +480,7 @@ export const A = {
   formSavedPublished: { th: "เผยแพร่แล้ว", en: "Published" },
   formSavedUnpublished: { th: "ยกเลิกการเผยแพร่แล้ว ตอนนี้เป็นฉบับร่าง", en: "Unpublished. It is now a draft" },
   formSavedUpdated: { th: "บันทึกการเปลี่ยนแปลงแล้ว", en: "Changes saved" },
+  formSavedLiveNote: { th: "การเปลี่ยนแปลงจะขึ้นบนเว็บไซต์ภายในไม่กี่นาที", en: "The change will appear on the website within a few minutes" },
   formSavedNote: { th: "รายการนี้ยังไม่แสดงบนเว็บไซต์จนกว่าจะเผยแพร่", en: "It will not appear on the website until you publish it" },
 
   /* Content: field labels and hints shared by many types */

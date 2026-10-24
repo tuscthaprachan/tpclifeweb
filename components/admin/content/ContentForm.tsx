@@ -96,7 +96,7 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
                   <span className="visually-hidden"> ({UI.opensInNewTab[locale]})</span>
                 </a>
               ) : (
-                a("formSavedNote", locale)
+                a(status === "published" ? "formSavedLiveNote" : "formSavedNote", locale)
               )}
             </NotificationBanner>
           ) : null}

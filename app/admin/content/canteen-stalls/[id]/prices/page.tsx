@@ -4,7 +4,7 @@ import { AdminPage } from "@/components/admin/AdminPage";
 import { ContentForm } from "@/components/admin/content/ContentForm";
 import { CheckboxField, DateField, TextField } from "@/components/admin/content/fields";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { EmptyState, Heading, NotificationBanner } from "@/components/ui";
+import { EmptyState, Heading } from "@/components/ui";
 import { requireEditor } from "@/lib/admin/content/access";
 import { isUuid } from "@/lib/admin/content/form-state";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
@@ -17,6 +17,7 @@ import { pick } from "@/lib/i18n/config";
 import { stallPriceSheet } from "../../prices";
 import { todayBangkok } from "../../shared";
 import { saveStallPrices } from "./actions";
+import { SavedBanner } from "./SavedBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -44,15 +45,15 @@ export default async function StallPricesPage({ params, searchParams }: { params
     <AdminPage width="content">
       <Heading level={1}>{a("canteenPricesHeading", locale, { number: stall.number, name: stallName })}</Heading>
       <p className="m-0">{a("canteenPricesIntro", locale)}</p>
-      {saved !== undefined ? (
-        <NotificationBanner variant="success" title={a(saved === "0" ? "canteenPricesNoChange" : "canteenPricesSaved", locale, { count: Number(saved) || 0 })}>
-          {a("canteenPricesSavedNote", locale)}
-        </NotificationBanner>
-      ) : null}
       {dishes.length === 0 ? (
         <EmptyState title={a("canteenPricesEmpty", locale)} />
       ) : (
         <ContentForm key={`${saved}-${dishes.map((d) => d.price).join(",")}`} locale={locale} action={saveStallPrices.bind(null, id)} listHref={`${contentPath(getContentType("canteen-stalls")!, id)}`} hasStatus={false}>
+          {saved !== undefined ? (
+            <SavedBanner title={a(saved === "0" ? "canteenPricesNoChange" : Number(saved) === 1 ? "canteenPricesSavedOne" : "canteenPricesSaved", locale, { count: Number(saved) || 0 })}>
+              {a("canteenPricesSavedNote", locale)}
+            </SavedBanner>
+          ) : null}
           <DateField name="checkedOn" label={a("canteenFieldCheckedOn", locale)} hint={a("canteenHintPricesDate", locale)} defaultValue={todayBangkok()} />
           <CheckboxField name="confirmAll" label={a("canteenFieldConfirmAll", locale)} hint={a("canteenHintConfirmAll", locale)} />
           <div className="grid gap-[var(--space-4)] md:grid-cols-2">

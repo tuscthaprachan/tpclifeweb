@@ -112,6 +112,7 @@ export const CANTEEN_STRINGS = {
   },
   canteenPriceCheckedHint: { th: "ตรวจล่าสุด {date}", en: "Last checked {date}" },
   canteenPricesSaved: { th: "บันทึกราคาแล้ว {count} เมนู", en: "Saved prices for {count} dishes" },
+  canteenPricesSavedOne: { th: "บันทึกราคาแล้ว {count} เมนู", en: "Saved the price for {count} dish" },
   canteenPricesNoChange: { th: "ไม่มีราคาที่เปลี่ยน จึงไม่ได้บันทึกอะไร", en: "No prices changed, so nothing was saved" },
   canteenPricesSavedNote: { th: "ราคาใหม่ขึ้นบนเว็บไซต์ภายในไม่กี่นาที", en: "The new prices appear on the website within a few minutes" },
   canteenPricesEmpty: { th: "ร้านนี้ยังไม่มีเมนู", en: "This stall has no dishes yet" },
