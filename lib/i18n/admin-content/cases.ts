@@ -33,7 +33,7 @@ export const CASES_STRINGS = {
   casesNone: { th: "ไม่พบเรื่องที่ตรงกับตัวกรอง", en: "No cases match these filters" },
   casesTotal: { th: "พบ {count} เรื่อง", en: "{count} cases" },
   casesTotalOne: { th: "พบ 1 เรื่อง", en: "1 case" },
-  casesOpenCase: { th: "เปิดเรื่อง", en: "Open case" },
+  casesOpenCase: { th: "ดูเรื่อง", en: "View case" },
   casesUnassigned: { th: "ยังไม่มี", en: "Nobody" },
 
   /* Case page */
