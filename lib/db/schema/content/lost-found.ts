@@ -16,6 +16,7 @@ import {
 import { contentColumns, type HelpContactJson } from "./common";
 import { images } from "./images";
 import { places } from "./directory";
+import { cases } from "../cases";
 import { lostFoundCategoryEnum, lostFoundKindEnum, lostFoundStatusEnum, ownerEnum } from "./enums";
 
 /**
@@ -62,6 +63,8 @@ export const lostFoundItems = pgTable(
     owner: ownerEnum("owner").notNull(),
     resolvedAt: timestamp("resolved_at", { withTimezone: true }),
     submittedByStudent: boolean("submitted_by_student").notNull().default(false),
+    /** The case behind this listing, if it has one. Null for listings made before cases existed. */
+    caseId: uuid("case_id").references(() => cases.id, { onDelete: "set null" }),
     /** PRIVATE. The reporter's contact detail. Never selected by public reads. */
     submitterContact: text("submitter_contact"),
     /** PRIVATE. The identifying detail held back to verify a claim. Never selected by public reads. */
@@ -76,6 +79,7 @@ export const lostFoundItems = pgTable(
     // Approval queue.
     index("lost_found_pending_idx").on(t.createdAt).where(sql`${t.status} = 'draft'`),
     index("lost_found_reference_lower_idx").on(sql`lower(${t.reference})`),
+    index("lost_found_case_idx").on(t.caseId),
   ],
 );
 
