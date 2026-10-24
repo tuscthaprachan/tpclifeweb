@@ -381,6 +381,355 @@ export const UI = {
   accessibility: { th: "การเข้าถึง", en: "Accessibility" },
   accessibilityStatement: { th: "แถลงการณ์การเข้าถึง", en: "Accessibility statement" },
   cookies: { th: "คุกกี้", en: "Cookies" },
+
+  /*
+   * Lost and found, public journeys (lib/lost-found/public,
+   * app/[locale]/lost-and-found). All keys start with `lfp`. Question pages
+   * ask one thing each; hints say what to do and why, in plain words.
+   */
+
+  /* Start pages and shared pieces */
+  lfpStartNow: { th: "เริ่มเลย", en: "Start now" },
+  lfpYouWillNeed: { th: "สิ่งที่คุณต้องเตรียม", en: "What you will need" },
+  lfpLostIntro: {
+    th: "บอกเราว่าคุณทำอะไรหาย และติดต่อคุณได้อย่างไร เจ้าหน้าที่จะช่วยค้นหา และแจ้งคุณเมื่อพบของ ใช้เวลาประมาณ 5 นาที",
+    en: "Tell us what you lost and how to reach you. Staff look for it and tell you if it turns up. It takes about 5 minutes",
+  },
+  lfpLostNeed1: { th: "ลักษณะของสิ่งของ", en: "A description of the item" },
+  lfpLostNeed2: { th: "สถานที่และวันที่ที่คุณทำหาย (โดยประมาณก็ได้)", en: "Where and roughly when you lost it" },
+  lfpLostNeed3: {
+    th: "รายละเอียดหนึ่งอย่างที่มีแต่เจ้าของที่รู้ เช่น รอยหรือสิ่งของที่อยู่ข้างใน",
+    en: "One detail only the owner would know, such as a mark or something inside",
+  },
+  lfpLostNeed4: { th: "ช่องทางติดต่อคุณ (อีเมล โทรศัพท์ หรือไลน์)", en: "A way to contact you (email, phone or LINE)" },
+  lfpFoundIntro: {
+    th: "ถ้าคุณเก็บของได้ นำไปส่งที่เคาน์เตอร์ อมธ. หรือ สภานักศึกษา ได้โดยตรง หรือแจ้งทางเว็บไซต์ก่อน เจ้าหน้าที่จะบันทึกและประกาศให้เจ้าของมารับ",
+    en: "If you found something, you can hand it straight to the TUSU or TUSC desk, or report it here first. Staff log it and list it so the owner can claim it",
+  },
+  lfpFoundDeskNote: {
+    th: "ไม่ว่าจะแจ้งทางเว็บไซต์หรือไม่ โปรดนำของไปส่งที่เคาน์เตอร์ อมธ. หรือ สภานักศึกษา เพื่อให้เจ้าหน้าที่เก็บรักษาไว้ ไม่ควรเก็บของไว้เอง",
+    en: "Whether or not you report it online, please take the item to the TUSU or TUSC desk so staff can keep it safe. Please do not keep it yourself",
+  },
+  lfpFoundNeed1: { th: "ลักษณะของสิ่งของ", en: "A description of the item" },
+  lfpFoundNeed2: { th: "สถานที่และวันที่ที่คุณเก็บได้", en: "Where and when you found it" },
+  lfpFoundNeed3: { th: "ตอนนี้ของอยู่ที่ไหน", en: "Where the item is now" },
+  lfpFoundNeed4: {
+    th: "ช่องทางติดต่อคุณ ถ้าต้องการ (ไม่บังคับ)",
+    en: "A way to contact you, if you want to (optional)",
+  },
+  lfpClaimIntro: {
+    th: "บอกเราว่าคุณพิสูจน์ได้อย่างไรว่าเป็นเจ้าของ เจ้าหน้าที่จะตรวจสอบคำตอบกับรายละเอียดที่เก็บไว้ก่อนนัดรับของ",
+    en: "Tell us how you can show this item is yours. Staff check your answer against what they hold before arranging collection",
+  },
+  lfpClaimNeed1: { th: "รายละเอียดที่มีแต่เจ้าของที่รู้", en: "Something only the owner would know" },
+  lfpClaimNeed2: { th: "ช่องทางติดต่อคุณ (อีเมล โทรศัพท์ หรือไลน์)", en: "A way to contact you (email, phone or LINE)" },
+  lfpThisIsMine: { th: "นี่คือของฉัน", en: "This is mine" },
+  lfpClaimTitle: { th: "ขอรับของคืน", en: "Claim this item" },
+  lfpClaimLegacy: {
+    th: "รายการนี้ยังขอรับคืนทางเว็บไซต์ไม่ได้ ใช้ช่องทางติดต่อด้านล่าง และแจ้งเลขอ้างอิงของรายการ",
+    en: "This item cannot be claimed online. Use the contact below and quote the item's reference number",
+  },
+  lfpClaimClosed: {
+    th: "รายการนี้ไม่เปิดให้ขอรับคืนทางเว็บไซต์แล้ว อาจมีผู้รับคืนไปแล้วหรือถอนรายการออก ติดต่อเจ้าหน้าที่ตามช่องทางด้านล่าง",
+    en: "This item can no longer be claimed online. It may have been returned or removed. Contact the desk using the details below",
+  },
+  lfpPrivacyLink: { th: "เราใช้ข้อมูลส่วนบุคคลของคุณอย่างไร", en: "How we use your personal data" },
+  lfpTrackLink: { th: "ติดตามเรื่องที่แจ้งไว้", en: "Track a report you made" },
+  lfpUnavailable: {
+    th: "ขณะนี้ยังใช้บริการนี้ไม่ได้ โปรดติดต่อเจ้าหน้าที่ตามช่องทางด้านล่าง",
+    en: "This service is not available right now. Please use the contact details below",
+  },
+  lfpContinue: { th: "ต่อไป", en: "Continue" },
+  lfpSaveAndCheck: { th: "บันทึกและกลับไปตรวจคำตอบ", en: "Save and check your answers" },
+
+  /* Question pages */
+  lfpQCategory: { th: "สิ่งของเป็นประเภทใด", en: "What kind of item is it?" },
+  lfpQDescribeLost: { th: "อธิบายสิ่งของที่หาย", en: "Describe what you lost" },
+  lfpQDescribeFound: { th: "อธิบายสิ่งของที่คุณเก็บได้", en: "Describe what you found" },
+  lfpTitleLabel: { th: "ชื่อสิ่งของ", en: "Item name" },
+  lfpTitleHint: {
+    th: "เช่น กระเป๋าเป้สีดำ หรือ หูฟังไร้สายสีขาว ไม่เกิน 80 ตัวอักษร",
+    en: "For example, black backpack or white wireless earbuds. Up to 80 characters",
+  },
+  lfpDescriptionLabel: { th: "ลักษณะของสิ่งของ", en: "What it looks like" },
+  lfpDescriptionHint: {
+    th: "สี ยี่ห้อ ขนาด และลักษณะที่เห็นได้ชัด ไม่เกิน 600 ตัวอักษร",
+    en: "Colour, make, size and anything easy to see. Up to 600 characters",
+  },
+  lfpDescribeGuidanceLost: {
+    th: "อย่าใส่รายละเอียดที่มีแต่เจ้าของที่รู้ เช่น ชื่อที่เขียนไว้ข้างใน ภาพหน้าจอล็อก หรือของที่อยู่ในกระเป๋า เราจะถามเรื่องนี้ในหน้าถัดไปและเก็บเป็นความลับ สิ่งที่คุณเขียนในหน้านี้อาจแสดงต่อสาธารณะในหน้าของหายและของเก็บได้ หลังเจ้าหน้าที่ตรวจสอบแล้ว",
+    en: "Do not include anything only the owner would know, such as a name written inside, a lock screen picture or what is in a bag. We ask for that on a later page and keep it private. What you write here may appear on the public lost and found page once staff have checked it",
+  },
+  lfpDescribeGuidanceFound: {
+    th: "อย่าใส่รายละเอียดที่ใช้ยืนยันความเป็นเจ้าของ เช่น ชื่อที่เขียนไว้ข้างใน หมายเลขเครื่อง หรือของที่อยู่ข้างใน เจ้าหน้าที่จะใช้สิ่งเหล่านี้ตรวจสอบเจ้าของตัวจริง สิ่งที่คุณเขียนในหน้านี้อาจแสดงต่อสาธารณะ หลังเจ้าหน้าที่ตรวจสอบแล้ว",
+    en: "Do not include anything that proves who owns it, such as a name written inside, a serial number or what is inside. Staff use those to check the real owner. What you write here may appear on the public lost and found page once staff have checked it",
+  },
+  lfpQWhereLost: { th: "คุณทำของหายที่ไหน", en: "Where did you lose it?" },
+  lfpQWhereFound: { th: "คุณเก็บของได้ที่ไหน", en: "Where did you find it?" },
+  lfpPlaceLabel: { th: "สถานที่ในมหาวิทยาลัย", en: "Place on campus" },
+  lfpPlaceHint: {
+    th: "เลือกจากรายการ ถ้าไม่แน่ใจหรือไม่มีในรายการ ให้เลือก ที่อื่น แล้วอธิบายด้านล่าง",
+    en: "Choose from the list. If you are not sure, or it is not listed, choose Somewhere else and say where below",
+  },
+  lfpSomewhereElse: { th: "ที่อื่น หรือไม่แน่ใจ", en: "Somewhere else, or not sure" },
+  lfpPlaceNoteLabel: { th: "อธิบายสถานที่เพิ่มเติม", en: "Say more about where" },
+  lfpPlaceNoteHint: {
+    th: "เช่น ชั้นไหน โต๊ะไหน หรือใกล้จุดใด ไม่เกิน 200 ตัวอักษร",
+    en: "For example which floor, table or nearby landmark. Up to 200 characters",
+  },
+  lfpQWhenLost: { th: "คุณทำของหายเมื่อไร", en: "When did you lose it?" },
+  lfpQWhenFound: { th: "คุณเก็บของได้เมื่อไร", en: "When did you find it?" },
+  lfpWhenHint: {
+    th: "เช่น 12 3 2569 ใส่ปีเป็น พ.ศ. หรือ ค.ศ. ก็ได้ ถ้าไม่แน่ใจ ให้ใส่วันที่ใกล้เคียงที่สุด",
+    en: "For example, 12 3 2026. You can enter the year in the Thai (BE) or the western (CE) calendar. If you are not sure, give your best guess",
+  },
+  lfpQDetail: { th: "บอกรายละเอียดหนึ่งอย่างที่มีแต่คุณที่รู้", en: "Give one detail only you would know" },
+  lfpDetailLabel: { th: "รายละเอียดที่เป็นความลับ", en: "Private detail" },
+  lfpDetailHint: {
+    th: "เช่น รอยขีดข่วน สติกเกอร์ใต้เคส ภาพหน้าจอล็อก หรือของที่อยู่ในกระเป๋า เราเก็บเป็นความลับ เจ้าหน้าที่ใช้ตรวจสอบว่าผู้ขอรับของเป็นเจ้าของจริง และไม่แสดงบนเว็บไซต์ ไม่เกิน 500 ตัวอักษร",
+    en: "For example a scratch, a sticker under the case, the lock screen picture or something in a pocket. We keep it private. Staff use it to check that whoever claims the item is the owner. It is never shown on the website. Up to 500 characters",
+  },
+  lfpQWhereNow: { th: "ตอนนี้ของอยู่ที่ไหน", en: "Where is the item now?" },
+  lfpWhereNowHandIn: {
+    th: "ฉันเก็บไว้ และจะนำไปส่งที่เคาน์เตอร์ อมธ. หรือ สภานักศึกษา",
+    en: "I have it and will take it to the TUSU or TUSC desk",
+  },
+  lfpWhereNowLeftThere: { th: "ฉันวางไว้ที่เดิม", en: "I left it where I found it" },
+  lfpWhereNowNeedHelp: {
+    th: "ฉันเก็บไว้ แต่นำไปส่งไม่ได้ ขอให้เจ้าหน้าที่ติดต่อกลับ",
+    en: "I have it but cannot take it to the desk. Please contact me",
+  },
+  lfpQContact: { th: "ช่องทางติดต่อของคุณ", en: "Your contact details" },
+  lfpContactHintLost: {
+    th: "เราใช้ข้อมูลนี้แจ้งคุณเมื่อพบของและนัดรับของคืน เฉพาะเจ้าหน้าที่เท่านั้นที่เห็น และไม่แสดงบนเว็บไซต์ ให้อย่างน้อยหนึ่งช่องทาง",
+    en: "We use these to tell you if we find your item and to arrange handover. Only staff see them, and they are never shown on the website. Give at least one way to reach you",
+  },
+  lfpContactHintFound: {
+    th: "ไม่บังคับ ถ้าให้ไว้ เจ้าหน้าที่จะติดต่อคุณเฉพาะเรื่องของชิ้นนี้ เฉพาะเจ้าหน้าที่เท่านั้นที่เห็น",
+    en: "Optional. If you give them, staff contact you only about this item. Only staff see them",
+  },
+  lfpContactHintFoundNeedHelp: {
+    th: "คุณขอให้เจ้าหน้าที่ติดต่อกลับ จึงต้องให้อย่างน้อยหนึ่งช่องทาง เฉพาะเจ้าหน้าที่เท่านั้นที่เห็น",
+    en: "You asked staff to contact you, so give at least one way to reach you. Only staff see them",
+  },
+  lfpContactHintClaim: {
+    th: "เราใช้ข้อมูลนี้ติดต่อคุณเกี่ยวกับการขอรับของ เฉพาะเจ้าหน้าที่เท่านั้นที่เห็น และไม่แสดงบนเว็บไซต์ ให้อย่างน้อยหนึ่งช่องทาง",
+    en: "We use these to contact you about this claim. Only staff see them, and they are never shown on the website. Give at least one way to reach you",
+  },
+  lfpNameLabel: { th: "ชื่อ-นามสกุล", en: "Full name" },
+  lfpEmailLabel: { th: "อีเมล", en: "Email address" },
+  lfpEmailHint: { th: "ถ้ามี เช่น name@example.com", en: "If you have one, for example name@example.com" },
+  lfpPhoneLabel: { th: "เบอร์โทรศัพท์", en: "Phone number" },
+  lfpLineLabel: { th: "ไอดีไลน์", en: "LINE ID" },
+  lfpPreferredLegend: { th: "ให้ติดต่อทางช่องทางใดก่อน", en: "How should we contact you first?" },
+  lfpPreferredEmail: { th: "อีเมล", en: "Email" },
+  lfpPreferredPhone: { th: "โทรศัพท์", en: "Phone" },
+  lfpPreferredLine: { th: "ไลน์", en: "LINE" },
+  lfpPreferredHint: { th: "ตอบเฉพาะเมื่อคุณกรอกมากกว่าหนึ่งช่องทาง", en: "Only needed if you gave more than one way" },
+  lfpConsentLegend: { th: "ความยินยอม", en: "Your agreement" },
+  lfpConsentReport: {
+    th: "ฉันยินยอมให้เจ้าหน้าที่ อมธ. และ สภานักศึกษา ติดต่อฉันเกี่ยวกับเรื่องนี้ตามช่องทางที่ให้ไว้",
+    en: "I agree that TUSU and TUSC staff may contact me about this report using these details",
+  },
+  lfpConsentClaim: {
+    th: "ฉันยินยอมให้เจ้าหน้าที่ อมธ. และ สภานักศึกษา ติดต่อฉันเกี่ยวกับการขอรับของตามช่องทางที่ให้ไว้",
+    en: "I agree that TUSU and TUSC staff may contact me about this claim using these details",
+  },
+  lfpQProof: { th: "คุณพิสูจน์ได้อย่างไรว่าเป็นเจ้าของ", en: "How can you show the item is yours?" },
+  lfpProofLabel: { th: "สิ่งที่มีแต่เจ้าของที่รู้", en: "Something only the owner would know" },
+  lfpProofHint: {
+    th: "อย่าเขียนซ้ำสิ่งที่ปรากฏในรายการอยู่แล้ว บอกรายละเอียดอื่น เช่น รอย สติกเกอร์ ของที่อยู่ข้างใน หรือภาพหน้าจอล็อก เจ้าหน้าที่ใช้เปรียบเทียบเท่านั้น และไม่แสดงต่อใคร ไม่เกิน 1,000 ตัวอักษร",
+    en: "Do not repeat what the listing already says. Give something else, such as a mark, a sticker, what is inside or the lock screen picture. Staff use it only to compare and it is shown to no one. Up to 1,000 characters",
+  },
+
+  /* Check your answers */
+  lfpCheckTitleReport: { th: "ตรวจคำตอบก่อนส่งรายงาน", en: "Check your answers before sending your report" },
+  lfpCheckTitleClaim: { th: "ตรวจคำตอบก่อนส่งคำขอรับของ", en: "Check your answers before sending your claim" },
+  lfpChange: { th: "เปลี่ยน", en: "Change" },
+  lfpRowDetail: { th: "รายละเอียดที่เป็นความลับ", en: "Private detail" },
+  lfpRowWhereNow: { th: "ตอนนี้ของอยู่ที่", en: "Where the item is now" },
+  lfpRowProof: { th: "สิ่งที่มีแต่เจ้าของที่รู้", en: "Something only the owner would know" },
+  lfpRowContact: { th: "ช่องทางติดต่อ", en: "Contact details" },
+  lfpRowFirstContact: { th: "ติดต่อทางช่องทางใดก่อน", en: "Contact first by" },
+  lfpRowAgreement: { th: "ความยินยอมให้ติดต่อ", en: "Agreed to be contacted" },
+  lfpRowItem: { th: "สิ่งของที่ขอรับ", en: "Item you are claiming" },
+  lfpAgreed: { th: "ยินยอม", en: "Agreed" },
+  lfpNotGiven: { th: "ไม่ได้ระบุ", en: "Not given" },
+  lfpPrivateNote: { th: "เก็บเป็นความลับ ไม่แสดงบนเว็บไซต์", en: "Kept private, never shown on the website" },
+  lfpCheckPrivacy: {
+    th: "เมื่อกดส่ง ถือว่าคุณรับทราบวิธีที่เราใช้ข้อมูลส่วนบุคคลตามประกาศความเป็นส่วนตัว",
+    en: "By sending this you confirm you have read how we use your personal data in the privacy notice",
+  },
+  lfpSendReport: { th: "ยอมรับและส่งรายงาน", en: "Accept and send report" },
+  lfpSendClaim: { th: "ยอมรับและส่งคำขอรับของ", en: "Accept and send claim" },
+
+  /* Confirmation */
+  lfpDoneClaimTitle: { th: "ได้รับคำขอรับของแล้ว", en: "Claim received" },
+  lfpYourReference: { th: "เลขอ้างอิงของคุณ", en: "Your reference number" },
+  lfpKeepLinkTitle: { th: "เก็บลิงก์ส่วนตัวของคุณไว้", en: "Keep your private link" },
+  lfpKeepLinkBody: {
+    th: "คุณต้องใช้ลิงก์นี้คู่กับเลขอ้างอิงเพื่อดูความคืบหน้า เราแสดงลิงก์นี้ตอนนี้เท่านั้นและแสดงซ้ำไม่ได้ ใครมีลิงก์นี้ก็ดูความคืบหน้าของเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น",
+    en: "You need this link, with your reference number, to see progress. We show it only now and cannot show it again. Anyone with the link can see how this case is going, so do not share it",
+  },
+  lfpKeepLinkWarning: { th: "บันทึกลิงก์นี้ไว้ก่อนออกจากหน้านี้", en: "Save this link before you leave this page" },
+  lfpYourLink: { th: "ลิงก์ส่วนตัวของคุณ", en: "Your private link" },
+  lfpOpenTracking: { th: "เปิดหน้าติดตามเรื่อง", en: "Open your tracking page" },
+  lfpEmailOffer: {
+    th: "ส่งลิงก์นี้ไปที่อีเมลที่คุณให้ไว้ เพื่อให้เก็บไว้ได้ง่าย",
+    en: "We can email this link to the address you gave, so it is easy to keep",
+  },
+  lfpEmailButton: { th: "ส่งลิงก์ให้ทางอีเมล", en: "Email me the link" },
+  lfpEmailSent: {
+    th: "ส่งลิงก์ไปที่อีเมลของคุณแล้ว อาจใช้เวลาสักครู่",
+    en: "We have sent the link to your email address. It may take a few minutes",
+  },
+  lfpEmailFailed: {
+    th: "ส่งอีเมลไม่สำเร็จ โปรดคัดลอกลิงก์ด้านบนเก็บไว้",
+    en: "We could not send the email. Please copy the link above and keep it",
+  },
+  lfpWhatNext: { th: "ขั้นตอนต่อไป", en: "What happens next" },
+  lfpNextLost1: {
+    th: "เจ้าหน้าที่ตรวจสอบรายงานของคุณ และประกาศในหน้าของหายและของเก็บได้",
+    en: "Staff check your report and add it to the public lost and found page",
+  },
+  lfpNextLost2: {
+    th: "เจ้าหน้าที่ค้นหาจากของที่มีผู้นำมาส่ง ถ้าพบของที่อาจเป็นของคุณ จะติดต่อคุณตามช่องทางที่ให้ไว้",
+    en: "Staff look through what has been handed in. If something may be yours, they contact you using the details you gave",
+  },
+  lfpNextLost3: {
+    th: "คุณดูความคืบหน้าได้ทุกเมื่อด้วยลิงก์ส่วนตัว ถ้าพบของเองแล้ว ให้ยกเลิกเรื่องที่แจ้ง",
+    en: "You can follow progress at any time with your private link. If you find it yourself, withdraw the report",
+  },
+  lfpNextFound1: {
+    th: "ถ้ายังไม่ได้ส่งของ โปรดนำไปส่งที่เคาน์เตอร์ อมธ. หรือ สภานักศึกษา และแจ้งเลขอ้างอิงนี้",
+    en: "If you have not already, take the item to the TUSU or TUSC desk and quote this reference number",
+  },
+  lfpNextFound2: {
+    th: "เจ้าหน้าที่บันทึกของและประกาศให้เจ้าของมารับ หลังตรวจสอบรายงานของคุณ",
+    en: "Staff log the item and list it for the owner once they have checked your report",
+  },
+  lfpNextFound3: {
+    th: "ถ้าคุณให้ช่องทางติดต่อไว้ และเจ้าหน้าที่ต้องการข้อมูลเพิ่ม จะติดต่อคุณ",
+    en: "If you gave contact details and staff need more information, they will contact you",
+  },
+  lfpNextClaim1: {
+    th: "เจ้าหน้าที่เปรียบเทียบคำตอบของคุณกับรายละเอียดที่เก็บไว้ โดยไม่บอกคำตอบแก่ผู้อื่น",
+    en: "Staff compare your answer with the details they hold. They do not tell anyone your answer",
+  },
+  lfpNextClaim2: {
+    th: "เจ้าหน้าที่จะติดต่อคุณตามช่องทางที่ให้ไว้ เพื่อนัดรับของ นำบัตรนักศึกษาหรือบัตรที่มีรูปถ่ายมาด้วย",
+    en: "Staff contact you using the details you gave to arrange collection. Bring your student card or other photo ID",
+  },
+  lfpNextClaim3: {
+    th: "คุณดูความคืบหน้าของรายการนี้ได้ด้วยลิงก์ส่วนตัว",
+    en: "You can follow this item's progress with your private link",
+  },
+
+  /* Tracking */
+  lfpTrackTitle: { th: "ติดตามเรื่องที่แจ้งไว้", en: "Track a report you made" },
+  lfpTrackIntro: {
+    th: "กรอกเลขอ้างอิงและวางลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง หรือเปิดลิงก์นั้นโดยตรง",
+    en: "Enter your reference number and paste the private link you were given when you sent your report. Or just open that link",
+  },
+  lfpTrackRefLabel: { th: "เลขอ้างอิง", en: "Reference number" },
+  lfpTrackRefHint: { th: "เช่น LF-2026-0001", en: "For example, LF-2026-0001" },
+  lfpTrackLinkLabel: { th: "ลิงก์ส่วนตัว", en: "Private link" },
+  lfpTrackLinkHint: {
+    th: "วางลิงก์ทั้งหมด หรือเฉพาะรหัสท้ายลิงก์",
+    en: "Paste the whole link, or just the code at the end of it",
+  },
+  lfpTrackSubmit: { th: "ดูเรื่องของฉัน", en: "Show my report" },
+  lfpTrackProblem: {
+    th: "ไม่พบเรื่องที่ตรงกับข้อมูลนี้ ตรวจเลขอ้างอิงและลิงก์อีกครั้ง หากยังเข้าไม่ได้ ติดต่อเจ้าหน้าที่และแจ้งเลขอ้างอิง",
+    en: "We could not find a report that matches. Check the reference number and link and try again. If you still cannot get in, contact the desk and quote your reference number",
+  },
+  lfpTrackLimited: {
+    th: "ลองหลายครั้งเกินไป รอสักครู่แล้วลองใหม่",
+    en: "Too many attempts. Wait a few minutes and try again",
+  },
+  lfpStatusTitleReport: { th: "เรื่องที่คุณแจ้ง", en: "Your report" },
+  lfpStatusTitleItem: { th: "ความคืบหน้าของรายการนี้", en: "Progress on this item" },
+  lfpStatusNow: { th: "สถานะตอนนี้", en: "Current status" },
+  lfpReportedOn: { th: "รับเรื่องเมื่อ", en: "Received on" },
+  lfpLastUpdated: { th: "อัปเดตล่าสุด", en: "Last updated" },
+  lfpProgress: { th: "ความคืบหน้า", en: "Progress" },
+  lfpWithdrawLink: { th: "ยกเลิกเรื่องที่แจ้ง", en: "Withdraw this report" },
+  lfpForgetThisDevice: { th: "เลิกแสดงเรื่องนี้บนอุปกรณ์เครื่องนี้", en: "Stop showing this on this device" },
+  lfpForgetNote: {
+    th: "ลิงก์ส่วนตัวของคุณยังใช้ได้ คุณเพียงต้องเปิดลิงก์อีกครั้งเมื่อกลับมา",
+    en: "Your private link still works. You just open it again when you come back",
+  },
+  lfpWithdrawnBanner: { th: "ยกเลิกเรื่องที่แจ้งแล้ว", en: "Your report has been withdrawn" },
+  lfpWithdrawnBannerBody: {
+    th: "เจ้าหน้าที่จะหยุดค้นหา และรายการของคุณจะไม่แสดงในหน้าของหายอีกต่อไป",
+    en: "Staff will stop looking, and your entry no longer appears on the lost and found page",
+  },
+  lfpWithdrawTitle: { th: "ต้องการยกเลิกเรื่องที่แจ้งหรือไม่", en: "Do you want to withdraw your report?" },
+  lfpWithdrawBody: {
+    th: "เลือกยกเลิกถ้าคุณพบของแล้ว หรือไม่ต้องการให้เราค้นหาต่อ เจ้าหน้าที่จะหยุดค้นหา และรายการของคุณจะถูกถอนจากหน้าของหาย การยกเลิกนี้ย้อนกลับไม่ได้",
+    en: "Do this if you have found the item, or no longer want us to look. Staff will stop looking and your entry is removed from the lost and found page. You cannot undo this",
+  },
+  lfpWithdrawYes: { th: "ยกเลิกเรื่องที่แจ้ง", en: "Yes, withdraw my report" },
+  lfpWithdrawNo: { th: "ไม่ยกเลิก กลับไป", en: "No, go back" },
+  lfpWithdrawFailed: {
+    th: "ยกเลิกเรื่องนี้ไม่ได้ในขณะนี้ อาจเพราะเรื่องปิดไปแล้ว ติดต่อเจ้าหน้าที่ตามช่องทางด้านล่าง",
+    en: "This report cannot be withdrawn now. It may already be closed. Contact the desk using the details below",
+  },
+
+  /* Errors on the journeys */
+  lfpErrCategory: { th: "เลือกประเภทของสิ่งของ", en: "Choose what kind of item it is" },
+  lfpErrTitle: { th: "กรอกชื่อสิ่งของ", en: "Enter the item name" },
+  lfpErrTitleLong: { th: "ชื่อสิ่งของต้องไม่เกิน 80 ตัวอักษร", en: "The item name must be 80 characters or fewer" },
+  lfpErrDescription: { th: "กรอกลักษณะของสิ่งของ", en: "Describe what the item looks like" },
+  lfpErrDescriptionLong: { th: "ลักษณะของสิ่งของต้องไม่เกิน 600 ตัวอักษร", en: "The description must be 600 characters or fewer" },
+  lfpErrPlace: { th: "เลือกสถานที่จากรายการ", en: "Choose a place from the list" },
+  lfpErrWhere: {
+    th: "เลือกสถานที่จากรายการ หรืออธิบายว่าเกิดที่ใด",
+    en: "Choose a place from the list, or say where it was",
+  },
+  lfpErrWhereLong: { th: "คำอธิบายสถานที่ต้องไม่เกิน 200 ตัวอักษร", en: "The place description must be 200 characters or fewer" },
+  lfpErrDetail: {
+    th: "กรอกรายละเอียดหนึ่งอย่างที่มีแต่คุณที่รู้",
+    en: "Enter one detail that only you would know",
+  },
+  lfpErrDetailLong: { th: "รายละเอียดต้องไม่เกิน 500 ตัวอักษร", en: "The detail must be 500 characters or fewer" },
+  lfpErrWhereNow: { th: "เลือกว่าตอนนี้ของอยู่ที่ไหน", en: "Choose where the item is now" },
+  lfpErrProof: { th: "บอกสิ่งที่มีแต่เจ้าของที่รู้", en: "Say something only the owner would know" },
+  lfpErrProofLong: { th: "คำตอบต้องไม่เกิน 1,000 ตัวอักษร", en: "Your answer must be 1,000 characters or fewer" },
+  lfpErrName: { th: "กรอกชื่อ-นามสกุลของคุณ", en: "Enter your full name" },
+  lfpErrNameLong: { th: "ชื่อต้องไม่เกิน 100 ตัวอักษร", en: "Your name must be 100 characters or fewer" },
+  lfpErrContactMethod: {
+    th: "กรอกอีเมล เบอร์โทรศัพท์ หรือไอดีไลน์อย่างน้อยหนึ่งช่องทาง",
+    en: "Enter at least one of an email address, phone number or LINE ID",
+  },
+  lfpErrEmail: { th: "กรอกอีเมลให้ถูกต้อง เช่น name@example.com", en: "Enter an email address in the correct format, like name@example.com" },
+  lfpErrPhone: { th: "กรอกเบอร์โทรศัพท์ให้ถูกต้อง เช่น 081 234 5678", en: "Enter a phone number in the correct format, like 081 234 5678" },
+  lfpErrLine: { th: "กรอกไอดีไลน์ให้ถูกต้อง ไม่มีช่องว่าง", en: "Enter a LINE ID without spaces" },
+  lfpErrPreferred: {
+    th: "เลือกช่องทางที่ให้ติดต่อก่อน จากช่องทางที่คุณกรอก",
+    en: "Choose which of the ways you entered we should use first",
+  },
+  lfpErrConsent: {
+    th: "เลือกช่องนี้ เพื่อยินยอมให้เจ้าหน้าที่ติดต่อคุณ",
+    en: "Select this box to agree that staff may contact you",
+  },
+  lfpErrTrackRef: { th: "กรอกเลขอ้างอิง", en: "Enter your reference number" },
+  lfpErrTrackLink: { th: "วางลิงก์ส่วนตัวของคุณ", en: "Paste your private link" },
+  lfpExpiredTitle: { th: "คำตอบของคุณหมดอายุแล้ว", en: "Your answers have expired" },
+  lfpExpiredBody: {
+    th: "เพื่อความเป็นส่วนตัว เราเก็บคำตอบที่ยังไม่ส่งไว้ไม่นาน กรุณาเริ่มใหม่",
+    en: "For your privacy we only keep unfinished answers for a short time. Please start again",
+  },
+  lfpSubmitFailed: {
+    th: "ส่งไม่สำเร็จ คำตอบของคุณยังอยู่ ลองส่งอีกครั้ง หรือติดต่อเจ้าหน้าที่ตามช่องทางด้านล่าง",
+    en: "We could not send this. Your answers are still saved. Try again, or contact the desk using the details below",
+  },
+  lfpSubmitTooMany: {
+    th: "มีการส่งหลายครั้งเกินไปจากการเชื่อมต่อนี้ รอสักครู่แล้วลองใหม่ หรือติดต่อเจ้าหน้าที่",
+    en: "Too many submissions from this connection. Wait a while and try again, or contact the desk",
+  },
+  lfpSubmitProblemTitle: { th: "ส่งไม่สำเร็จ", en: "We could not send this" },
+
 } as const satisfies Record<string, LocaleString>;
 
 export type UiKey = keyof typeof UI;

@@ -43,10 +43,26 @@ const LOCALE_COOKIE_ROW = {
   duration: { th: "1 ปี", en: "1 year" } satisfies LocaleString,
 };
 
+const LF_JOURNEY_ROW = {
+  purpose: {
+    th: "จดจำแบบฟอร์มแจ้งของหายหรือของที่พบ หรือแบบฟอร์มขอรับของ ที่คุณกำลังกรอกอยู่ เพื่อให้กรอกต่อทีละหน้าได้ คุกกี้เก็บเพียงรหัสสุ่ม คำตอบของคุณถูกเข้ารหัสไว้ที่เซิร์ฟเวอร์",
+    en: "Remembers the lost, found or claim form you are filling in, so you can move between its pages. It holds only a random code; your answers are kept encrypted on our server.",
+  } satisfies LocaleString,
+  duration: { th: "2 ชั่วโมง", en: "2 hours" } satisfies LocaleString,
+};
+
+const LF_TRACK_ROW = {
+  purpose: {
+    th: "จดจำลิงก์ติดตามส่วนตัวของคุณหลังจากเปิดลิงก์ เพื่อให้ดูสถานะเรื่องได้โดยไม่ต้องแสดงลิงก์ไว้ในแถบที่อยู่",
+    en: "Remembers your private tracking link after you open it, so you can see your case without the link showing in the address bar.",
+  } satisfies LocaleString,
+  duration: { th: "1 ชั่วโมง", en: "1 hour" } satisfies LocaleString,
+};
+
 const NECESSARY_HEADING: LocaleString = { th: "เหตุใดจึงไม่มีแบนเนอร์ขอความยินยอม", en: "Why there is no consent banner" };
 const NECESSARY_BODY: LocaleString = {
-  th: "คุกกี้ภาษาข้างต้นเป็นคุกกี้ที่จำเป็นอย่างยิ่ง (strictly necessary) ต่อการทำงานพื้นฐานของเว็บไซต์ กฎหมายคุ้มครองข้อมูลส่วนบุคคลไม่กำหนดให้ต้องขอความยินยอมสำหรับคุกกี้ประเภทนี้ เว็บไซต์นี้จึงไม่แสดงแบนเนอร์ขอความยินยอมคุกกี้ เพราะเป็นการแสดงผลที่ไม่มีความหมายจริง ไม่ใช่การให้ข้อมูลที่เป็นประโยชน์",
-  en: "The language cookie above is strictly necessary for the site's basic operation. Data protection law does not require consent for this category of cookie, so this site does not show a cookie consent banner: doing so over an exempt cookie would be theatre, not useful information.",
+  th: "คุกกี้ทั้งหมดข้างต้นเป็นคุกกี้ที่จำเป็นอย่างยิ่ง (strictly necessary) ต่อการทำงานพื้นฐานของเว็บไซต์ กฎหมายคุ้มครองข้อมูลส่วนบุคคลไม่กำหนดให้ต้องขอความยินยอมสำหรับคุกกี้ประเภทนี้ เว็บไซต์นี้จึงไม่แสดงแบนเนอร์ขอความยินยอมคุกกี้ เพราะเป็นการแสดงผลที่ไม่มีความหมายจริง ไม่ใช่การให้ข้อมูลที่เป็นประโยชน์",
+  en: "The cookies above are strictly necessary for the site's basic operation. Data protection law does not require consent for this category of cookie, so this site does not show a cookie consent banner: doing so over an exempt cookie would be theatre, not useful information.",
 };
 
 const ANALYTICS_HEADING: LocaleString = { th: "การวิเคราะห์การใช้งาน", en: "Analytics" };
@@ -114,6 +130,8 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
                 purpose: LOCALE_COOKIE_ROW.purpose[locale],
                 duration: LOCALE_COOKIE_ROW.duration[locale],
               },
+              { name: "lf_journey_…", purpose: LF_JOURNEY_ROW.purpose[locale], duration: LF_JOURNEY_ROW.duration[locale] },
+              { name: "lf_track", purpose: LF_TRACK_ROW.purpose[locale], duration: LF_TRACK_ROW.duration[locale] },
             ]}
             getRowKey={(row) => row.name}
           />

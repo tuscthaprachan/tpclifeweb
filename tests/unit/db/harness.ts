@@ -4,6 +4,7 @@
  */
 
 import { PGlite } from "@electric-sql/pglite";
+import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
 import { fileURLToPath } from "node:url";
@@ -13,7 +14,7 @@ import { seedOrganisations } from "@/lib/db/seed";
 const MIGRATIONS = fileURLToPath(new URL("../../../lib/db/migrations", import.meta.url));
 
 export async function createTestDb() {
-  const client = new PGlite();
+  const client = new PGlite({ extensions: { pg_trgm } });
   const db = drizzle(client, { schema });
   await migrate(db, { migrationsFolder: MIGRATIONS });
   await seedOrganisations(db);

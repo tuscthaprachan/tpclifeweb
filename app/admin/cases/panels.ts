@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import type { CaseService } from "@/lib/cases/services";
 import type { Locale } from "@/lib/i18n/config";
+import { LostFoundPanel } from "./lost-found/LostFoundPanel";
 
 /**
  * Extension point for service-specific parts of the case page. Register a
@@ -26,4 +27,4 @@ export interface CasePanelProps {
 
 export type CasePanelRegistry = Partial<Record<CaseService, ComponentType<CasePanelProps>>>;
 
-export const CASE_PANELS: CasePanelRegistry = {};
+export const CASE_PANELS: CasePanelRegistry = { lost_found: LostFoundPanel };

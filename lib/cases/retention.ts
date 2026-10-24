@@ -15,6 +15,7 @@ import { and, eq, isNotNull, isNull, lte } from "drizzle-orm";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { caseAccessTokens, caseAttachments, caseContacts, cases } from "@/lib/db/schema/cases";
 import type { Storage } from "@/lib/storage/types";
+import { purgeLostFoundPii } from "@/lib/lost-found/retention";
 import { appendEvent } from "./internal";
 
 export interface PurgeResult {
@@ -53,6 +54,8 @@ export async function purgeExpiredPii(db: AuditExecutor, now: Date, getStorage?:
       const counts = await withAudit(db, { actorUserId: null }, async (tx, audit) => {
         const gone = await tx.delete(caseContacts).where(eq(caseContacts.caseId, item.id)).returning({ id: caseContacts.id });
         const objects = await tx.delete(caseAttachments).where(eq(caseAttachments.caseId, item.id)).returning({ id: caseAttachments.id });
+        // Other tables keyed by case that hold encrypted personal data (lost and found: hidden detail, claim answers).
+        await purgeLostFoundPii(tx, item.id);
         await tx.update(caseAccessTokens).set({ revokedAt: now }).where(and(eq(caseAccessTokens.caseId, item.id), isNull(caseAccessTokens.revokedAt)));
         await tx.update(cases).set({ piiDeletedAt: now }).where(eq(cases.id, item.id));
         await appendEvent(tx, item.id, { kind: "system" }, now, { type: "pii_deleted", metadata: { contacts: gone.length, attachments: objects.length } });

@@ -11,11 +11,11 @@
  * correct, and none of them were being checked.
  *
  * SAFETY
- * The report form is submitted EMPTY on purpose. `submitLostFoundReport`
- * runs its spam checks, then validates, then writes, so an empty submission
- * returns errors and never reaches the database. Do not change these tests to fill
- * the form in validly: that would write a junk draft into the real database
- * on every run.
+ * The lost and found journeys are only ever taken as far as an EMPTY question
+ * page. Pressing "Start now" saves an encrypted, two hour draft (not a case),
+ * and an empty "Continue" is rejected before anything else is written. Do not
+ * change these tests to answer the questions and send the report: that would
+ * create a real case and a draft listing in the real database on every run.
  */
 
 import AxeBuilder from "@axe-core/playwright";
@@ -26,44 +26,33 @@ import { formatViolations } from "./support/axe-report";
 
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
-/** The honeypot's minimum fill time in actions.ts, plus a margin. */
-const MIN_FILL_TIME_MS = 1500;
-
 async function auditCurrentState(page: Page, label: string): Promise<void> {
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
   expect(results.violations, formatViolations(label, results.violations)).toEqual([]);
 }
 
 for (const locale of LOCALES as readonly Locale[]) {
-  test(`axe state: ${locale} report form after a rejected submission`, async ({ page }) => {
+  test(`axe state: ${locale} lost report question page after a rejected answer`, async ({ page }) => {
     await page.goto(localePath(locale, "/lost-and-found/report"));
+    await page.getByRole("button", { name: UI.lfpStartNow[locale], exact: true }).click();
+    await expect(page).toHaveURL(/\/lost-and-found\/report\/category$/);
 
-    // Submitting sooner than this is treated as spam and redirects without
-    // ever validating, so the error state would never render.
-    await page.waitForTimeout(MIN_FILL_TIME_MS + 250);
-
-    await page.getByRole("button", { name: UI.submitReport[locale], exact: true }).click();
+    // The first question, unanswered. The server rejects it and comes back with an error summary.
+    await page.getByRole("button", { name: UI.lfpContinue[locale], exact: true }).click();
 
     /*
      * The error summary is the state under test, so it is asserted before the
      * audit rather than after. Without this the test would pass on a page
      * that never entered the state at all, which is the usual way a
-     * state-based accessibility test quietly stops testing anything.
-     *
-     * Matched by its heading, not by role="alert". The page already carries
-     * an empty assertive live region for announcements, so an alert-role
-     * query resolves immediately, while the submission is still in flight and
-     * the summary does not exist yet. Waiting for the heading waits for the
-     * real thing. The link count then pins that it is listing actual field
-     * errors rather than rendering an empty shell.
+     * state-based accessibility test quietly stops testing anything. The link
+     * count pins that it lists a real field error rather than an empty shell.
      */
     const summary = page.getByRole("heading", { name: UI.errorSummaryTitle[locale] });
     await expect(summary).toBeVisible({ timeout: 15_000 });
-
     const summaryPanel = page.locator("div", { has: summary }).last();
     expect(await summaryPanel.getByRole("link").count()).toBeGreaterThan(0);
 
-    await auditCurrentState(page, `${locale} /lost-and-found/report (error state)`);
+    await auditCurrentState(page, `${locale} /lost-and-found/report/category (error state)`);
   });
 
   test(`axe state: ${locale} search results`, async ({ page }) => {

@@ -5,7 +5,7 @@ import { ogImageRoute } from "@/lib/og/route";
 const og = ogImageRoute(({ locale }) => ({
   locale,
   kicker: pick(UI.lostAndFound, locale),
-  title: pick(UI.reportReceivedTitle, locale),
+  title: pick(UI.reportFoundItem, locale),
   tone: "brand",
 }));
 

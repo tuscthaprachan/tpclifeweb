@@ -13,6 +13,7 @@ import type { Locale, LocaleString } from "./config";
 import { CANTEEN_STRINGS } from "./admin-content/canteen";
 import { CASES_STRINGS } from "./admin-content/cases";
 import { DIRECTORY_STRINGS } from "./admin-content/directory";
+import { LOST_FOUND_CASES_STRINGS } from "./admin-content/lost-found-cases";
 import { MEDIA_STRINGS } from "./admin-content/media";
 import { PAGES_STRINGS } from "./admin-content/pages";
 import { PUBLISHING_STRINGS } from "./admin-content/publishing";
@@ -712,6 +713,7 @@ export const A = {
   ...CANTEEN_STRINGS,
   ...MEDIA_STRINGS,
   ...CASES_STRINGS,
+  ...LOST_FOUND_CASES_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 
 export type AdminKey = keyof typeof A;

@@ -50,6 +50,20 @@
       "when": 1792852880825,
       "tag": "0006_lost_found_case_link",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792853235245,
+      "tag": "0007_lost_found_staff",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792853263770,
+      "tag": "0008_lost_found_public_journeys",
+      "breakpoints": true
     }
   ]
 }

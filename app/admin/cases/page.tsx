@@ -83,6 +83,14 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
       <div>
         <Heading level={1}>{a("casesTitle", locale)}</Heading>
         <p className="mt-[var(--space-2)] text-ink-600">{a("casesIntro", locale)}</p>
+        {services.includes("lost_found") ? (
+          <div className="mt-[var(--space-3)] flex flex-wrap gap-[var(--space-2)]">
+            <Button href="/admin/cases/new/found">{a("lfcInboxLogFound", locale)}</Button>
+            <Button href="/admin/cases/new/lost" variant="secondary">
+              {a("lfcInboxLogLost", locale)}
+            </Button>
+          </div>
+        ) : null}
       </div>
 
       <form method="get" role="search" className="flex flex-wrap items-end gap-[var(--space-3)]">

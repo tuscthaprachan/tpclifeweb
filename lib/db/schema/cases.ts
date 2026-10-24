@@ -23,6 +23,8 @@ export const CASE_EVENT_TYPES = [
   "attachment_added",
   "contact_added",
   "contact_viewed",
+  "verification_viewed",
+  "claim_viewed",
   "tracking_link_issued",
   "tracking_link_revoked",
   "pii_deleted",

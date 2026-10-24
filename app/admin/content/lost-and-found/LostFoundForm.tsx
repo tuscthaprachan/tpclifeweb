@@ -7,14 +7,14 @@ import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
 import { kindLabel } from "@/components/domain/lostfound/kindLabel";
 import { statusLabel } from "@/components/domain/lostfound/statusLabel";
-import { Heading, NotificationBanner } from "@/components/ui";
+import { Heading, InsetText, NotificationBanner } from "@/components/ui";
 import { formatBangkokDateTime } from "@/lib/admin/content/datetime";
 import { isStorageConfigured, listImageChoices } from "@/lib/admin/content/images";
 import { loadChoices, userNames } from "@/lib/admin/content/list";
 import { ownerOptions } from "@/lib/admin/content/options";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
 import { getDb } from "@/lib/db";
-import { lostFoundItemPhotos, lostFoundItems } from "@/lib/db/schema";
+import { cases, lostFoundItemPhotos, lostFoundItems } from "@/lib/db/schema";
 import { LOST_FOUND_CATEGORIES, LOST_FOUND_KINDS, LOST_FOUND_STATUSES } from "@/lib/db/schema/content/enums";
 import { a } from "@/lib/i18n/admin";
 import { localePath, type Locale } from "@/lib/i18n/config";
@@ -50,6 +50,8 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
       }
     : undefined;
   const L = (key: Parameters<typeof a>[0]) => a(key, locale);
+  const [linkedCase] = item?.caseId ? await db.select({ reference: cases.reference }).from(cases).where(eq(cases.id, item.caseId)) : [];
+  const caseReference = linkedCase?.reference;
   const pendingReport = item?.status === "draft" && item.submittedByStudent;
   const claim = item?.claimContact;
 
@@ -153,7 +155,29 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
         <DateTimeField name="resolvedAt" label={L("lfFieldResolvedAt")} hint={L("lfFieldResolvedAtHint")} defaultValue={formatBangkokDateTime(item?.resolvedAt)} />
       </section>
 
-      <PrivateFields submitterContact={item?.submitterContact ?? null} staffVerificationDetail={item?.staffVerificationDetail ?? null} />
+      {item?.caseId ? (
+        <section aria-labelledby="lf-case" className="flex flex-col gap-[var(--space-3)] rounded-panel border-[length:var(--border-width-thick)] border-line-strong p-[var(--space-4)]">
+          <Heading level={2} id="lf-case">
+            {L("lfcEditorCaseTitle")}
+          </Heading>
+          <InsetText>{L("lfcEditorCaseBody")}</InsetText>
+          <p className="m-0">
+            <a href={`/admin/cases/${item.caseId}`}>{a("lfcEditorCaseLink", locale, { reference: caseReference ?? item.reference })}</a>
+          </p>
+        </section>
+      ) : item ? (
+        // A listing made before cases existed keeps its two plaintext private fields until it is moved to a case.
+        <PrivateFields submitterContact={item.submitterContact ?? null} staffVerificationDetail={item.staffVerificationDetail ?? null} />
+      ) : (
+        <InsetText>
+          <p className="m-0">{L("lfcEditorNewNote")}</p>
+          <p className="m-0 mt-[var(--space-2)]">
+            <a href="/admin/cases/new/found">{L("lfcEditorLogFound")}</a>
+            {" | "}
+            <a href="/admin/cases/new/lost">{L("lfcEditorLogLost")}</a>
+          </p>
+        </InsetText>
+      )}
     </ContentForm>
   );
 }
