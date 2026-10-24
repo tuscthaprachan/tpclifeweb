@@ -18,6 +18,12 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
   },
 
+  // The console uploads pictures through a Server Action (4 MB cap in
+  // lib/admin/content/upload-limit.ts; Vercel itself refuses bodies over 4.5 MB).
+  experimental: {
+    serverActions: { bodySizeLimit: "4.5mb" },
+  },
+
   typescript: {
     // A type error is a build failure. There is no "ship it anyway" here.
     ignoreBuildErrors: false,

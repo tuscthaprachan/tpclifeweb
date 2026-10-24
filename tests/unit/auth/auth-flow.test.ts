@@ -10,6 +10,7 @@ import { and, eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createAuth } from "@/lib/auth/create";
 import { createInvite } from "@/lib/auth/invites";
+import { captureSendFailure } from "@/lib/auth/send-outcome";
 import { MemoryEmailSender } from "@/lib/email";
 import { auditLog, session, user } from "@/lib/db/schema";
 import { createTestDb } from "../db/harness";
@@ -92,6 +93,25 @@ describe("email code sign-in", () => {
     await ctx.auth.api.sendVerificationOTP({ body: { email: "a@tu.ac.th", type: "sign-in" } });
     const rows = await ctx.db.query.verification.findMany();
     expect(rows.some((r) => r.value.includes(codeFrom(ctx.mailbox)))).toBe(false);
+  });
+
+  it("reports a failed send to the caller even though Better Auth swallows it", async () => {
+    const failing = createAuth({
+      db: ctx.db,
+      secret: SECRET,
+      baseURL: "http://localhost:3000",
+      allowedDomains: ["tu.ac.th"],
+      getEmailSender: () => ({ send: () => Promise.reject(new Error("smtp down")) }),
+      useNextCookies: false,
+    });
+    const { error } = await captureSendFailure(() =>
+      failing.api.sendVerificationOTP({ body: { email: "a@tu.ac.th", type: "sign-in" } }),
+    );
+    expect(error).toBeInstanceOf(Error);
+    const ok = await captureSendFailure(() =>
+      ctx.auth.api.sendVerificationOTP({ body: { email: "a@tu.ac.th", type: "sign-in" } }),
+    );
+    expect(ok.error).toBeUndefined();
   });
 
   it("sends nothing to an address outside the allowed domains", async () => {

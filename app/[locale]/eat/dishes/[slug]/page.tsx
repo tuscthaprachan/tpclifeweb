@@ -144,10 +144,12 @@ export default async function EatDishPage({
               {t(EAT.aboutTitle, locale)}
             </Heading>
             <dl className="m-0 grid gap-[var(--space-3)] sm:grid-cols-2">
-              <div>
-                <dt className="text-sm font-medium text-ink-600">{t(EAT.proteinLine, locale)}</dt>
-                <dd className="m-0 text-ink-900">{dish.protein.map((protein) => PROTEIN_LABEL[protein][locale]).join(", ")}</dd>
-              </div>
+              {dish.protein.length > 0 ? (
+                <div>
+                  <dt className="text-sm font-medium text-ink-600">{t(EAT.proteinLine, locale)}</dt>
+                  <dd className="m-0 text-ink-900">{dish.protein.map((protein) => PROTEIN_LABEL[protein][locale]).join(", ")}</dd>
+                </div>
+              ) : null}
               {dish.contains && dish.contains.length > 0 ? (
                 <div className="sm:col-span-2">
                   <dt className="text-sm font-medium text-ink-600">{t(EAT.containsLine, locale)}</dt>

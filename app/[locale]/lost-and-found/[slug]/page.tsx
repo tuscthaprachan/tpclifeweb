@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
 
 import { categoryLabel, LostFoundClaimContact, LostFoundKindBadge, LostFoundStatusTag } from "@/components/domain/lostfound";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Grid, Heading, InsetText, Stack, Tag, Timestamp } from "@/components/ui";
-import { DEFAULT_LOCALE, LOCALES, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getLostFoundItemBySlug, getLostFoundPage } from "@/lib/content";
 
@@ -16,7 +17,7 @@ const MAX_STATIC_ITEMS = 1000;
 
 export async function generateStaticParams() {
   const { items } = await getLostFoundPage({}, 1, MAX_STATIC_ITEMS);
-  return LOCALES.flatMap((locale) => items.map((item) => ({ locale, slug: item.slug.current })));
+  return slugParams(items.map((item) => item.slug.current));
 }
 
 export async function generateMetadata({

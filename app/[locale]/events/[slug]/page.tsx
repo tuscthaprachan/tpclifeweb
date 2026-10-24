@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { slugParams } from "@/lib/static-params";
 
 import { EventSchedule, ownerLabel, categoryLabel } from "@/components/domain/event";
 // FormCallout takes a resolved FormRecord and a headingLevel. getEventBySlug
@@ -9,7 +10,7 @@ import { FormCallout } from "@/components/domain/form";
 import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, Link, NotificationBanner, Stack, StatusTag, Tag } from "@/components/ui";
-import { DEFAULT_LOCALE, LOCALES, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getEventBySlug, getUpcomingEvents, resolveRichTextRefs } from "@/lib/content";
 
@@ -19,7 +20,7 @@ import { getEventBySlug, getUpcomingEvents, resolveRichTextRefs } from "@/lib/co
 // [locale] segment above it, so Next renders it on demand instead of 404ing.
 export async function generateStaticParams() {
   const events = await getUpcomingEvents();
-  return LOCALES.flatMap((locale) => events.map((event) => ({ locale, slug: event.slug.current })));
+  return slugParams(events.map((event) => event.slug.current));
 }
 
 export async function generateMetadata({

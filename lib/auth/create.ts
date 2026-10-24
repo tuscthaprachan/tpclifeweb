@@ -33,6 +33,7 @@ import { signInCode, type EmailSender } from "@/lib/email";
 import { recordAudit, type AuditContext, type AuditExecutor } from "@/lib/db/audit";
 import * as authSchema from "@/lib/db/schema/auth";
 import { isAllowedEmailDomain, normaliseEmail } from "./domains";
+import { reportSendFailure } from "./send-outcome";
 import {
   hasVerifiedSecondFactor,
   recentSecondFactorFailures,
@@ -313,7 +314,12 @@ export function createAuth(deps: AuthDeps) {
           // to ones that may not sign in, so it cannot be used to mail strangers.
           if (!(await isEmailPermitted(db, email, deps.allowedDomains))) return;
           const message = signInCode({ code: otp, expiresInMinutes: OTP_EXPIRY_SECONDS / 60 });
-          await deps.getEmailSender().send({ to: normaliseEmail(email), ...message });
+          try {
+            await deps.getEmailSender().send({ to: normaliseEmail(email), ...message });
+          } catch (error) {
+            reportSendFailure(error);
+            throw error;
+          }
         },
       }),
       twoFactor({

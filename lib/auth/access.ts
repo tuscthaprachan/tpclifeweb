@@ -9,7 +9,7 @@
  * second factor, which would be pointless.
  */
 
-import { hasRole, isStaff, type ActiveRole, type StaffRole } from "@/lib/auth/roles";
+import { hasAnyRole, isStaff, type ActiveRole, type StaffRole } from "@/lib/auth/roles";
 import { isSessionLive, type SessionTimes } from "@/lib/auth/session-policy";
 
 export interface AccessSession extends SessionTimes {
@@ -32,7 +32,8 @@ export interface AccessInput {
   roles: readonly ActiveRole[];
   /** A verified authenticator app or at least one passkey is enrolled. */
   hasSecondFactor: boolean;
-  required?: { role?: StaffRole; organisationId?: number };
+  /** `role` may be one role or a list of which any one will do. */
+  required?: { role?: StaffRole | readonly StaffRole[]; organisationId?: number };
 }
 
 export function decideAccess({ session, now, roles, hasSecondFactor, required }: AccessInput): AccessState {
@@ -42,8 +43,9 @@ export function decideAccess({ session, now, roles, hasSecondFactor, required }:
   if (!session.secondFactorAt) {
     return { kind: hasSecondFactor ? "second_factor_challenge" : "second_factor_setup" };
   }
-  if (required?.role && !hasRole(roles, required.role, required.organisationId)) return { kind: "forbidden" };
-  if (!required?.role && required?.organisationId !== undefined) {
+  const wanted = required?.role === undefined ? [] : typeof required.role === "string" ? [required.role] : required.role;
+  if (wanted.length > 0 && !hasAnyRole(roles, wanted, required?.organisationId)) return { kind: "forbidden" };
+  if (wanted.length === 0 && required?.organisationId !== undefined) {
     if (!roles.some((r) => r.organisationId === required.organisationId)) return { kind: "forbidden" };
   }
   return { kind: "ok" };

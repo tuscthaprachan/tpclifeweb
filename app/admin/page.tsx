@@ -1,9 +1,11 @@
 import { AdminPage } from "@/components/admin/AdminPage";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { Button, Heading, SummaryList, Timestamp } from "@/components/ui";
+import { CONTENT_TYPES, contentPath } from "@/lib/admin/content/types";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
+import { canEditContent } from "@/lib/admin/content/access";
 import { hasRole } from "@/lib/auth/roles";
 import { requireStaff } from "@/lib/auth/session";
 import { a, ROLE_LABEL } from "@/lib/i18n/admin";
@@ -43,6 +45,24 @@ export default async function AdminDashboardPage() {
           ]}
         />
       </section>
+      {canEditContent(staff.roles) ? (
+        <section>
+          <Heading level={2}>{a("contentLink", locale)}</Heading>
+          <p className="mt-[var(--space-2)] text-ink-600">{a("dashContentIntro", locale)}</p>
+          <ul className="mt-[var(--space-3)] grid list-none gap-[var(--space-2)] p-0 sm:grid-cols-2">
+            {CONTENT_TYPES.filter((def) => def.available).map((def) => (
+              <li key={def.key}>
+                <a href={contentPath(def)}>{a(def.labelKey, locale)}</a>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-[var(--space-3)]">
+            <Button href="/admin/content" variant="secondary">
+              {a("dashAllContent", locale)}
+            </Button>
+          </div>
+        </section>
+      ) : null}
       {hasRole(staff.roles, "admin") ? (
         <div>
           <Button href="/admin/staff" variant="secondary">

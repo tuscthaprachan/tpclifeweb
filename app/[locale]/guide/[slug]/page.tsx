@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import NextLink from "next/link";
+import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
 
 // FormCallout takes a resolved FormRecord and a headingLevel.
@@ -9,7 +10,7 @@ import { FormCallout } from "@/components/domain/form";
 import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, Link, NotificationBanner, Stack, Tag, Timestamp } from "@/components/ui";
-import { DEFAULT_LOCALE, LOCALES, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getContentPageBySlug, getContentPages, resolveRichTextRefs } from "@/lib/content";
 import type { ContentPage } from "@/lib/content/types";
@@ -41,7 +42,7 @@ function relatedPagePath(page: ContentPage): string {
 
 export async function generateStaticParams() {
   const pages = await getContentPages("guidePage");
-  return LOCALES.flatMap((locale) => pages.map((page) => ({ locale, slug: page.slug.current })));
+  return slugParams(pages.map((page) => page.slug.current));
 }
 
 export async function generateMetadata({

@@ -19,6 +19,7 @@ import { fontVariables } from "@/components/layout/fonts";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { getAdminSession } from "@/lib/auth/session";
+import { canEditContent } from "@/lib/admin/content/access";
 import { hasRole } from "@/lib/auth/roles";
 import { A } from "@/lib/i18n/admin";
 import { HTML_LANG } from "@/lib/i18n/config";
@@ -46,6 +47,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           hasSession={Boolean(session)}
           verified={Boolean(session?.secondFactorAt)}
           isAdmin={Boolean(session && hasRole(session.roles, "admin"))}
+          isEditor={Boolean(session && canEditContent(session.roles))}
         />
         <main id="main-content" tabIndex={-1}>
           {children}

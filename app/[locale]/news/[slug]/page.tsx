@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
 
 import { categoryLabel, ownerLabel } from "@/components/domain/news";
 import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Grid, Heading, Stack, Tag, Timestamp } from "@/components/ui";
-import { DEFAULT_LOCALE, LOCALES, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getNewsPage, getNewsPostBySlug, resolveRichTextRefs } from "@/lib/content";
 import type { ContentImage } from "@/lib/content/types";
@@ -24,7 +25,7 @@ const MAX_STATIC_POSTS = 1000;
 
 export async function generateStaticParams() {
   const { items } = await getNewsPage(1, MAX_STATIC_POSTS);
-  return LOCALES.flatMap((locale) => items.map((post) => ({ locale, slug: post.slug.current })));
+  return slugParams(items.map((post) => post.slug.current));
 }
 
 export async function generateMetadata({
