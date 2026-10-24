@@ -13,6 +13,7 @@
  */
 
 import type { Metadata } from "next";
+import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
 import { PolicyLastUpdated, PolicyProgress, PolicyRelationLink, PolicyUpdateList, STATUS_LABEL_KEY, STATUS_TONE, isResolvedPolicy } from "@/components/domain/policy";
 import { OWNER_LABEL_KEY } from "@/components/domain/form";
@@ -26,7 +27,7 @@ import { SummaryList, type SummaryListRow } from "@/components/ui/SummaryList";
 import { Tag } from "@/components/ui/Tag";
 import { Timestamp } from "@/components/ui/Timestamp";
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
-import { DEFAULT_LOCALE, LOCALES, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getPolicies, getPolicyBySlug, resolveRichTextRefs } from "@/lib/content";
 
@@ -46,7 +47,7 @@ const COMPLETED_LABEL: LocaleString = { th: "ดำเนินการเส�
 
 export async function generateStaticParams() {
   const policies = await getPolicies();
-  return LOCALES.flatMap((locale) => policies.map((policy) => ({ locale, slug: policy.slug.current })));
+  return slugParams(policies.map((policy) => policy.slug.current));
 }
 
 export async function generateMetadata({

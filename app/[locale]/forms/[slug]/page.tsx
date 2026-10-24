@@ -10,6 +10,7 @@
  */
 
 import type { Metadata } from "next";
+import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -23,7 +24,7 @@ import { StatusTag } from "@/components/ui/StatusTag";
 import { SummaryList, type SummaryListRow } from "@/components/ui/SummaryList";
 import { Timestamp } from "@/components/ui/Timestamp";
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
-import { DEFAULT_LOCALE, LOCALES, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { formatDuration } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
 import { getFormBySlug, getForms } from "@/lib/content";
@@ -69,7 +70,7 @@ const NO_DESTINATION_NOTE: LocaleString = {
 
 export async function generateStaticParams() {
   const forms = await getForms();
-  return LOCALES.flatMap((locale) => forms.map((form) => ({ locale, slug: form.slug.current })));
+  return slugParams(forms.map((form) => form.slug.current));
 }
 
 export async function generateMetadata({
