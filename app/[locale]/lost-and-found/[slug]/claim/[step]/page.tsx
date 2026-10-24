@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates: alternatesFor(locale, `/lost-and-found/${slug}/claim/${step}`),
     title: stepTitle("claim", step, locale),
     robots: { index: false, follow: false },
-    referrer: "no-referrer",
+    referrer: "same-origin",
   };
 }
 

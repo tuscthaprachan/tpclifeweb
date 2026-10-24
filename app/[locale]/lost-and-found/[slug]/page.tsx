@@ -113,7 +113,7 @@ export default async function LostFoundDetailPage({
           ) : null}
         </dl>
 
-        {isFound ? (
+        {isFound && item.status !== "returned" && item.status !== "withdrawn" ? (
           <Stack space={3} as="section" className="rounded-panel border border-line px-[var(--space-4)] py-[var(--space-4)]">
             <Heading level={2} visualLevel={3}>
               {UI.howToClaim[locale]}

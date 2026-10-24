@@ -16,6 +16,8 @@ export type OnPage = (step: string) => Promise<void>;
 
 async function next(page: Page, step: string, onPage?: OnPage) {
   await expect(page).toHaveURL(new RegExp(`/${step}(\\?.*)?$`));
+  // After a client side navigation the title is briefly empty while the page's metadata streams in.
+  await expect(page).toHaveTitle(/.+/);
   await onPage?.(step);
 }
 
@@ -36,7 +38,7 @@ async function answerWhen(page: Page, locale: Locale) {
 
 async function answerContact(page: Page, locale: Locale) {
   await page.getByLabel(UI.lfpNameLabel[locale], { exact: true }).fill("Somchai Tester");
-  await page.getByLabel(UI.lfpEmailLabel[locale], { exact: true }).fill("somchai.tester@example.com");
+  await page.getByRole("textbox", { name: UI.lfpEmailLabel[locale], exact: true }).fill("somchai.tester@example.com");
   await page.getByLabel(UI.lfpConsentReport[locale]).check();
 }
 

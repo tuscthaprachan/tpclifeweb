@@ -195,6 +195,7 @@ export const LOST_FOUND_CASES_STRINGS = {
     en: "Something only the real owner would know, such as a scratch on the lid or the lock screen picture. It is stored encrypted, never shown publicly, and only appears when you choose Show",
   },
   lfcVerificationNone: { th: "ยังไม่ได้บันทึกรายละเอียดที่ปกปิด", en: "No hidden detail recorded yet" },
+  lfcRevealHide: { th: "ซ่อนข้อมูล", en: "Hide" },
   lfcVerificationShow: { th: "แสดงรายละเอียดที่ปกปิด", en: "Show the hidden detail" },
   lfcVerificationTitle: { th: "รายละเอียดที่ปกปิด", en: "Hidden detail" },
   lfcVerificationEmpty: { th: "ไม่มีรายละเอียดที่ปกปิด หรือข้อมูลถูกลบตามกำหนดแล้ว", en: "There is no hidden detail, or it has been deleted under retention" },

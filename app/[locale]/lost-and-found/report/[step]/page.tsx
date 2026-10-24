@@ -19,9 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     alternates: alternatesFor(locale, `/lost-and-found/report/${step}`),
     title: stepTitle("lost", step, locale),
-    // Question pages hold a person's draft; they are never for a search engine, and links off them carry no referrer.
+    // Question pages hold a person's draft; they are never for a search engine, and links off them carry no referrer. Not no-referrer: a form posted from such a page would send `Origin: null`, which Server Actions reject.
     robots: { index: false, follow: false },
-    referrer: "no-referrer",
+    referrer: "same-origin",
   };
 }
 

@@ -166,7 +166,7 @@ export default async function LostAndFoundIndexPage({
           <Stack space={6}>
             <Grid minColumnWidth="18rem">
               {items.map((item) => (
-                <LostFoundCard key={item._id} item={item} locale={locale} headingLevel={3} />
+                <LostFoundCard key={item._id} item={item} locale={locale} headingLevel={2} />
               ))}
             </Grid>
             <Pagination

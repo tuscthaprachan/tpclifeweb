@@ -85,6 +85,7 @@ async function ListingSection({ caseId, locale, orgId, canEdit, found, status }:
           { key: a("lfFieldDescription", locale), value: <Bilingual th={listing.description.th} en={listing.description.en} locale={locale} /> },
           { key: a("fieldCategory", locale), value: categoryLabel(listing.category, locale) },
           { key: a("lfFieldOccurredOn", locale), value: listing.occurredOn },
+          { key: a("lfFieldPlace", locale), value: places.find((p) => p.value === listing.placeId)?.label ?? a("caseNone", locale) },
           { key: a("lfFieldLocationNote", locale), value: <Bilingual th={listing.locationNote.th} en={listing.locationNote.en} locale={locale} /> },
           { key: a("lfFieldProgress", locale), value: a(`lfcRegister_${listing.registerStatus}` as AdminKey, locale) },
         ]}

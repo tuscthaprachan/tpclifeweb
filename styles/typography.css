@@ -96,6 +96,11 @@ html[lang^="th"] body {
   word-break: normal;
 }
 
+/* The rule above is unlayered, so it would otherwise beat the utility on long links and tokens. */
+:lang(th) .break-all {
+  word-break: break-all;
+}
+
 @layer base {
   h1,
   h2,

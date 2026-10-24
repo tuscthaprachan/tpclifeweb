@@ -18,6 +18,7 @@
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-serverless";
 import { BootstrapError, runBootstrap, runRecovery } from "@/lib/auth/bootstrap";
+import { parsePgliteUrl } from "@/lib/db/lazy";
 import * as schema from "@/lib/db/schema";
 
 const USAGE = [
@@ -44,9 +45,11 @@ async function main() {
   if (!url) throw new Error("DATABASE_URL is not set. See .env.example.");
   if (!baseUrl) throw new Error("BETTER_AUTH_URL is not set. See .env.example.");
 
-  const pool = new Pool({ connectionString: url });
+  const local = parsePgliteUrl(url);
+  const pool = local ? null : new Pool({ connectionString: url });
+  const lite = local ? await (await import("@/lib/db/pglite")).openPglite(local) : null;
   try {
-    const db = drizzle(pool, { schema });
+    const db = (lite ?? drizzle(pool as Pool, { schema })) as unknown as Parameters<typeof runBootstrap>[0];
     if (recover) {
       const result = await runRecovery(db, { email: first, baseUrl });
       console.log(`\nRecovery link for ${result.email}.`);
@@ -57,7 +60,8 @@ async function main() {
       console.log(`Open this link before ${result.expiresAt.toISOString()}. It lets you create your account by registering a passkey:\n\n  ${result.link}\n`);
     }
   } finally {
-    await pool.end();
+    await pool?.end();
+    await lite?.$client.close();
   }
 }
 

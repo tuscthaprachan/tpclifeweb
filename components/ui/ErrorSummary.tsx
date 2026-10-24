@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { liveRegionProps, type HeadingLevel } from "@/lib/a11y";
 import { cx } from "./cx";
+import { FocusParent } from "./FocusParent";
 import { Heading } from "./Heading";
 
 export interface ErrorSummaryItem {
@@ -21,7 +22,9 @@ interface ErrorSummaryProps {
  * Sits at the top of a form after a failed submit (3.3.1). `autoFocus` is
  * the plain HTML attribute, not a client-side focus() call: it works on the
  * server-rendered page that comes back after a full, JavaScript-off
- * submission, which is the case this component exists for.
+ * submission, which is the case this component exists for. React ignores
+ * `autoFocus` on a div when the page arrives by client navigation, so
+ * `FocusParent` covers that case.
  */
 export function ErrorSummary({ title, headingLevel, items, className }: ErrorSummaryProps) {
   if (items.length === 0) return null;
@@ -33,6 +36,7 @@ export function ErrorSummary({ title, headingLevel, items, className }: ErrorSum
       autoFocus
       className={cx("rounded-panel border-[length:var(--border-width-thick)] border-error bg-error-soft px-[var(--space-4)] py-[var(--space-4)]", className)}
     >
+      <FocusParent />
       <Heading level={headingLevel} className="m-0 text-lg font-semibold text-ink-900">
         {title}
       </Heading>

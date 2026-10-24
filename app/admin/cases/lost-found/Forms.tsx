@@ -272,7 +272,8 @@ function Reveal({ locale, action, fields, showLabel, shownTitle, loggedNote, emp
           <p className="m-0 whitespace-pre-wrap rounded-control border border-line-strong bg-surface-alt p-[var(--space-3)]">{state.secret ? state.secret : emptyNote}</p>
           <div>
             <Button type="button" variant="secondary" size="sm" onClick={() => setHidden(true)}>
-              {a("caseContactsHide", locale)}
+              {a("lfcRevealHide", locale)}
+              <span className="visually-hidden"> {shownTitle}</span>
             </Button>
           </div>
         </div>
@@ -410,7 +411,7 @@ export function PhotoUpload({ locale, caseId, orgId, storageConfigured, canPubli
   if (!storageConfigured) {
     return (
       <NotificationBanner variant="info" title={a("storageNotConfiguredTitle", locale)}>
-        {a("errStorageNotConfigured", locale)}
+        {a("errPhotoStorageNotConfigured", locale)}
       </NotificationBanner>
     );
   }

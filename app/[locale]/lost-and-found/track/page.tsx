@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates: alternatesFor(locale, "/lost-and-found/track"),
     title: UI.lfpTrackTitle[locale],
     description: UI.lfpTrackIntro[locale],
-    referrer: "no-referrer",
+    referrer: "same-origin",
   };
 }
 
