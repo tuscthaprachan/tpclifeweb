@@ -16,7 +16,7 @@ interface AdminHeaderProps {
   locale: Locale;
   /** Any live session: shows "Sign out". */
   hasSession: boolean;
-  /** Has passed the second step: shows the console links. */
+  /** Signed in with a passkey: shows the console links. */
   verified: boolean;
   isAdmin: boolean;
   /** An `editor` or `admin`: shows the Content link. */
@@ -56,6 +56,11 @@ export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor }:
                     </a>
                   </li>
                 ) : null}
+                <li>
+                  <a href="/admin/security" className="text-ink-900">
+                    {A.securityLink[locale]}
+                  </a>
+                </li>
               </ul>
             </nav>
           ) : null}

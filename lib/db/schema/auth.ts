@@ -3,9 +3,12 @@ import { bigint, boolean, index, integer, pgTable, text, timestamp } from "drizz
 /**
  * Better Auth tables. Property names are the camelCase field names Better
  * Auth's Drizzle adapter looks up; column names are snake_case in Postgres.
- * Verified against `getAuthTables` for better-auth 1.7.12 with the emailOTP,
- * twoFactor, admin and passkey plugins (emailOTP stores its codes in
- * `verification`). Re-check this file when upgrading Better Auth.
+ * Verified against `getAuthTables` for better-auth 1.7.12 with the passkey
+ * plugin. `two_factor`, the admin-plugin columns on `user` and `session`, and
+ * `verification` rows from the retired email code sign-in stay in the database
+ * untouched (no drops); nothing reads them any more except `verification`,
+ * which the passkey plugin uses for WebAuthn challenges. Re-check this file
+ * when upgrading Better Auth.
  */
 
 export const user = pgTable("user", {
@@ -16,7 +19,7 @@ export const user = pgTable("user", {
   image: text("image"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  // twoFactor plugin
+  // Retired twoFactor plugin; kept so the table matches production.
   twoFactorEnabled: boolean("two_factor_enabled").default(false),
   // admin plugin
   role: text("role"),
@@ -40,9 +43,10 @@ export const session = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     // admin plugin
     impersonatedBy: text("impersonated_by"),
-    // Our own field (lib/auth/create.ts): when this session passed its second
-    // factor. Null means the email code alone has been proved, which the staff
-    // console does not accept (lib/auth/access.ts).
+    // Our own field (lib/auth/create.ts): when this session proved a passkey.
+    // Every passkey sign-in sets it; a null value (a session left over from the
+    // retired email code sign-in) is not accepted by the staff console
+    // (lib/auth/access.ts).
     secondFactorAt: timestamp("second_factor_at", { withTimezone: true }),
   },
   (t) => [index("session_user_id_idx").on(t.userId)],
@@ -83,7 +87,7 @@ export const verification = pgTable(
   (t) => [index("verification_identifier_idx").on(t.identifier)],
 );
 
-/** twoFactor plugin (TOTP and backup codes). */
+/** Retired twoFactor plugin (TOTP and backup codes). Unused; kept so no data is dropped. */
 export const twoFactor = pgTable(
   "two_factor",
   {
@@ -117,6 +121,8 @@ export const passkey = pgTable(
     transports: text("transports"),
     createdAt: timestamp("created_at", { withTimezone: true }),
     aaguid: text("aaguid"),
+    // Our own column (lib/auth/passkeys.ts): set on each passkey sign-in. Not a Better Auth field.
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
   },
   (t) => [index("passkey_user_id_idx").on(t.userId), index("passkey_credential_id_idx").on(t.credentialID)],
 );
@@ -132,3 +138,5 @@ export const rateLimit = pgTable("rate_limit", {
   count: integer("count").notNull(),
   lastRequest: bigint("last_request", { mode: "number" }).notNull(),
 });
+
+export type User = typeof user.$inferSelect;

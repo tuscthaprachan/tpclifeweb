@@ -16,6 +16,7 @@ import "server-only";
  */
 
 import { Pool } from "@neondatabase/serverless";
+import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/neon-serverless";
 import * as schema from "./schema";
 import { createLazyDb, parsePgliteUrl } from "./lazy";
@@ -62,6 +63,15 @@ const globalForDb = globalThis as unknown as { __trytpcDb?: Db };
 export function getDb(): Db {
   globalForDb.__trytpcDb ??= createDb();
   return globalForDb.__trytpcDb;
+}
+
+/**
+ * Resolves once a PGlite database has been opened, migrated and seeded; a
+ * no-op for Neon. Better Auth's Drizzle adapter needs the real client's own
+ * members (see lib/db/lazy.ts), which exist only after the first query ran.
+ */
+export async function whenDatabaseReady(): Promise<void> {
+  if (parsePgliteUrl(process.env.DATABASE_URL ?? "")) await getDb().execute(sql`select 1`);
 }
 
 /** Lazy convenience handle: resolves the client on first property access. */

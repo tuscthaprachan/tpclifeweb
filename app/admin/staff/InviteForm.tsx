@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { LinkReady } from "@/components/admin/LinkReady";
 import { Button, Checkboxes, ErrorSummary, NotificationBanner, Radios, Stack, TextInput, type ErrorSummaryItem } from "@/components/ui";
 import { a, ROLE_HINT, ROLE_LABEL } from "@/lib/i18n/admin";
 import { pick, type Locale } from "@/lib/i18n/config";
@@ -28,6 +29,17 @@ export function InviteForm({ locale, organisations }: { locale: Locale; organisa
   return (
     <form action={formAction} noValidate>
       <Stack space={6}>
+        {state.created ? (
+          <LinkReady
+            locale={locale}
+            id="admin-invite-link"
+            title={a("invitedTitle", locale)}
+            body={a("invitedBody", locale, { email: state.created.email, days: state.created.days })}
+            link={state.created.link}
+            email={state.created.email}
+            emailed={state.created.emailed}
+          />
+        ) : null}
         {state.errors.form ? (
           <NotificationBanner variant="warning" title={UI.errorTitle[locale]}>
             {state.errors.form}

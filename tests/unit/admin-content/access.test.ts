@@ -11,7 +11,7 @@ const session: AccessSession = {
 const EDITORS: readonly StaffRole[] = ["editor", "admin"];
 const hold = (role: StaffRole, organisationId = 1): ActiveRole => ({ role, organisationId });
 const decide = (roles: ActiveRole[], required?: { role?: StaffRole | readonly StaffRole[]; organisationId?: number }) =>
-  decideAccess({ session, now, roles, hasSecondFactor: true, required }).kind;
+  decideAccess({ session, now, roles, required }).kind;
 
 describe("decideAccess with a list of roles", () => {
   it("lets an editor or an admin edit content, in any organisation", () => {
@@ -35,9 +35,9 @@ describe("decideAccess with a list of roles", () => {
     expect(decide([hold("admin")], { role: "admin" })).toBe("ok");
     expect(decide([hold("editor")], { role: [] })).toBe("ok");
     expect(decide([])).toBe("not_staff");
-    expect(decideAccess({ session: { ...session, secondFactorAt: null }, now, roles: [hold("editor")], hasSecondFactor: true, required: { role: EDITORS } }).kind).toBe(
-      "second_factor_challenge",
+    expect(decideAccess({ session: { ...session, secondFactorAt: null }, now, roles: [hold("editor")], required: { role: EDITORS } }).kind).toBe(
+      "passkey_required",
     );
-    expect(decideAccess({ session: null, now, roles: [], hasSecondFactor: false, required: { role: EDITORS } }).kind).toBe("unauthenticated");
+    expect(decideAccess({ session: null, now, roles: [], required: { role: EDITORS } }).kind).toBe("unauthenticated");
   });
 });

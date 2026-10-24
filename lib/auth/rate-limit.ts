@@ -1,10 +1,11 @@
 /**
- * A small fixed-window counter in Postgres, used by the sign-in Server Actions.
+ * A small fixed-window counter in Postgres, used for invite and recovery token
+ * attempts.
  *
  * Why this exists next to Better Auth's limiter: Better Auth only rate-limits
- * requests that arrive through its HTTP handler. Our forms call `auth.api.*`
- * directly from Server Actions (so they work without JavaScript), and those
- * calls skip the limiter. Both write to the same `rate_limit` table, ours under
+ * requests that arrive through its HTTP handler, per path. Token pages are
+ * Server Components and the token checks run inside passkey hooks, which that
+ * limiter does not see. Both write to the same `rate_limit` table, ours under
  * an `app:` key prefix.
  *
  * Why the database and not memory: on Vercel each request may run on a different
@@ -52,4 +53,17 @@ export async function consumeRateLimit(
   const windowStart = Number(row.last_request);
   if (count <= rule.max) return { allowed: true, retryAfterSeconds: 0 };
   return { allowed: false, retryAfterSeconds: Math.max(1, Math.ceil((windowStart + windowMs - now) / 1000)) };
+}
+
+/**
+ * Guesses at invite and recovery tokens: 30 per address in 15 minutes, counted
+ * on every page view and passkey ceremony that carries a token. The tokens are
+ * 256 bits, so this is about not being a free oracle and not filling the audit
+ * log, not about stopping a brute force that cannot succeed anyway. Generous
+ * because a campus network shares addresses.
+ */
+export const TOKEN_ATTEMPT_RULE: RateRule = { windowSeconds: 15 * 60, max: 30 };
+
+export function consumeTokenAttempt(db: AuditExecutor, ip: string | null): Promise<RateResult> {
+  return consumeRateLimit(db, `token:${ip ?? "unknown"}`, TOKEN_ATTEMPT_RULE);
 }

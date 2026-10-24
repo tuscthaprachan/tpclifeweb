@@ -5,7 +5,6 @@ import {
   acceptInvite,
   createInvite,
   findInviteByToken,
-  hasPendingInviteForEmail,
   INVITE_TTL_DAYS,
   InviteError,
   inviteStatus,
@@ -193,15 +192,14 @@ describe("accepting an invite", () => {
 });
 
 describe("looking invites up", () => {
-  it("finds by raw token and by pending address", async () => {
+  it("finds by raw token, never by its hash", async () => {
     const to = email();
     const { token, invite } = await createInvite(db, { email: to, organisationId: tusu, roles: ["editor"], invitedBy: admin });
     expect((await findInviteByToken(db, token))?.invite.id).toBe(invite.id);
     expect(await findInviteByToken(db, invite.tokenHash)).toBeNull();
-    expect(await hasPendingInviteForEmail(db, to.toUpperCase())).toBe(true);
-    expect(await hasPendingInviteForEmail(db, to, new Date(Date.now() + 8 * 24 * 3600 * 1000))).toBe(false);
     await revokeInvite(db, { inviteId: invite.id });
-    expect(await hasPendingInviteForEmail(db, to)).toBe(false);
+    const revoked = await findInviteByToken(db, token);
+    expect(revoked && inviteStatus(revoked.invite, new Date())).toBe("revoked");
   });
 });
 

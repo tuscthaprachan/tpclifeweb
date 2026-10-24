@@ -3,14 +3,16 @@ import { expect, test } from "@playwright/test";
 /**
  * The staff console shell with NO database and NO auth secrets, which is how a
  * fresh clone and CI look. The signed-in journey needs a database and a
- * mailbox, so it is not automated here; here we only prove the parts that must
- * hold regardless.
+ * WebAuthn authenticator, so it is not automated here; here we only prove the
+ * parts that must hold regardless.
  *
- * To walk the real journey by hand: set DATABASE_URL (a Neon branch),
- * BETTER_AUTH_SECRET and BETTER_AUTH_URL, leave RESEND_API_KEY unset so codes
- * print to the dev server console, run `npm run db:migrate`, `npm run db:seed`
- * and `npm run auth:bootstrap -- you@dome.tu.ac.th tusu`, then open the link.
- * Check with JavaScript off, and again on with a passkey.
+ * To walk the real journey by hand: set DATABASE_URL (a Neon branch, or
+ * pglite:./.pglite), BETTER_AUTH_SECRET and BETTER_AUTH_URL, run `npm run
+ * db:migrate`, `npm run db:seed` and `npm run auth:bootstrap -- you@example.org
+ * tusu`, then open the link it prints and create your account with a passkey.
+ * Email is not needed. Chromium can stand in for a real authenticator: open
+ * DevTools, More tools, WebAuthn, and enable a virtual authenticator with
+ * resident keys and user verification.
  */
 
 test.describe("staff console, not configured", () => {

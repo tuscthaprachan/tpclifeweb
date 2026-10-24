@@ -50,6 +50,17 @@ describe("createLazyDb", () => {
     await expect(Promise.resolve(broken.select("a"))).rejects.toThrow("cannot open");
   });
 
+  it("hands out the real client's own members once it is open", async () => {
+    const open = vi.fn(async () => ({ _: { fullSchema: { t: 1 } }, select: () => "real select", execute: async () => "ran" }));
+    const db = createLazyDb(open);
+    expect(open).not.toHaveBeenCalled();
+    expect(await db.execute()).toBe("ran");
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect((db as unknown as { _: { fullSchema: unknown } })._.fullSchema).toEqual({ t: 1 });
+    expect(db.select()).toBe("real select");
+    expect(open).toHaveBeenCalledTimes(1);
+  });
+
   it("is not itself awaitable", async () => {
     const db = createLazyDb(async () => ({}));
     expect(await Promise.resolve(db)).toBe(db);

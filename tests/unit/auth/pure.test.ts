@@ -1,50 +1,28 @@
 import { describe, expect, it } from "vitest";
 import { decideAccess, type AccessSession } from "@/lib/auth/access";
-import { withResponseCookies } from "@/lib/admin/cookies";
-import {
-  DEFAULT_ALLOWED_EMAIL_DOMAINS,
-  emailDomain,
-  isAllowedEmailDomain,
-  isPlausibleEmail,
-  parseAllowedDomains,
-} from "@/lib/auth/domains";
-import { decodeFlow, encodeFlow, FLOW_TTL_MS } from "@/lib/auth/flow-token";
+import { safeReturnPath } from "@/lib/admin/return-path";
+import { encodeCeremonyContext, parseCeremonyContext } from "@/lib/auth/ceremony";
+import { isPlausibleEmail, normaliseEmail } from "@/lib/auth/email-address";
+import { cleanPasskeyName } from "@/lib/auth/passkeys";
+import { cleanPersonName } from "@/lib/auth/enrolment";
 import { type ActiveRole } from "@/lib/auth/roles";
 import { ABSOLUTE_TIMEOUT_MS, IDLE_TIMEOUT_MS, isSessionLive, sessionDeadlines } from "@/lib/auth/session-policy";
 import { generateToken, hashToken } from "@/lib/auth/tokens";
 
-describe("allowed email domains", () => {
-  it("defaults to the Thammasat domains", () => {
-    expect(parseAllowedDomains(undefined)).toEqual([...DEFAULT_ALLOWED_EMAIL_DOMAINS]);
-    expect(parseAllowedDomains("  ")).toEqual(["dome.tu.ac.th", "tu.ac.th"]);
+describe("email addresses", () => {
+  it("normalises case and whitespace", () => {
+    expect(normaliseEmail("  A@Example.ORG ")).toBe("a@example.org");
   });
 
-  it("reads a comma separated list, trimming, lower-casing and dropping @", () => {
-    expect(parseAllowedDomains(" Example.org, @tu.ac.th ,,")).toEqual(["example.org", "tu.ac.th"]);
-  });
-
-  it("admits listed domains regardless of case", () => {
-    expect(isAllowedEmailDomain("A@Dome.TU.ac.th", ["dome.tu.ac.th"])).toBe(true);
-    expect(isAllowedEmailDomain("a@tu.ac.th", ["dome.tu.ac.th", "tu.ac.th"])).toBe(true);
-  });
-
-  it("matches the whole domain, never a suffix or subdomain", () => {
-    const allowed = ["tu.ac.th"];
-    expect(isAllowedEmailDomain("a@evil.tu.ac.th", allowed)).toBe(false);
-    expect(isAllowedEmailDomain("a@eviltu.ac.th", allowed)).toBe(false);
-    expect(isAllowedEmailDomain("a@tu.ac.th.evil.com", allowed)).toBe(false);
-    expect(isAllowedEmailDomain("a@gmail.com", allowed)).toBe(false);
-  });
-
-  it("uses the last @ so a quoted trick cannot smuggle a domain", () => {
-    expect(emailDomain("tu.ac.th@evil.com")).toBe("evil.com");
-    expect(isAllowedEmailDomain("a@tu.ac.th@evil.com", ["tu.ac.th"])).toBe(false);
+  it("accepts any domain, since the invite is the authorisation", () => {
+    expect(isPlausibleEmail("someone@gmail.com")).toBe(true);
+    expect(isPlausibleEmail("a@dome.tu.ac.th")).toBe(true);
   });
 
   it("rejects things that are not addresses", () => {
     expect(isPlausibleEmail("nope")).toBe(false);
     expect(isPlausibleEmail("a b@tu.ac.th")).toBe(false);
-    expect(isAllowedEmailDomain("", ["tu.ac.th"])).toBe(false);
+    expect(isPlausibleEmail("")).toBe(false);
   });
 });
 
@@ -93,7 +71,7 @@ describe("requireStaff decision", () => {
   };
   const editor: ActiveRole[] = [{ role: "editor", organisationId: 1 }];
   const admin: ActiveRole[] = [{ role: "admin", organisationId: 2 }];
-  const base = { now, roles: editor, hasSecondFactor: true };
+  const base = { now, roles: editor };
 
   it("sends the signed out to sign in", () => {
     expect(decideAccess({ ...base, session: null }).kind).toBe("unauthenticated");
@@ -104,23 +82,17 @@ describe("requireStaff decision", () => {
     expect(decideAccess({ ...base, session: idle }).kind).toBe("timed_out");
   });
 
-  it("tells a student they have no access, without asking for a second factor", () => {
-    const unverified = { ...live, secondFactorAt: null };
-    expect(decideAccess({ ...base, session: unverified, roles: [], hasSecondFactor: false }).kind).toBe("not_staff");
+  it("tells a signed-in person with no staff role they have no access", () => {
+    const unmarked = { ...live, secondFactorAt: null };
+    expect(decideAccess({ ...base, session: unmarked, roles: [] }).kind).toBe("not_staff");
   });
 
-  it("asks staff with no second factor to set one up", () => {
-    const unverified = { ...live, secondFactorAt: null };
-    expect(decideAccess({ ...base, session: unverified, hasSecondFactor: false }).kind).toBe("second_factor_setup");
-  });
-
-  it("challenges staff who have a factor but have not passed it in this session", () => {
-    const unverified = { ...live, secondFactorAt: null };
-    expect(decideAccess({ ...base, session: unverified }).kind).toBe("second_factor_challenge");
-  });
-
-  it("lets verified staff in", () => {
+  it("lets staff in once the session came from a passkey", () => {
     expect(decideAccess({ ...base, session: live }).kind).toBe("ok");
+  });
+
+  it("sends staff whose session did not come from a passkey back to sign in", () => {
+    expect(decideAccess({ ...base, session: { ...live, secondFactorAt: null } }).kind).toBe("passkey_required");
   });
 
   it("requires the named role", () => {
@@ -138,44 +110,50 @@ describe("requireStaff decision", () => {
     expect(decideAccess({ ...base, session: live, required: { organisationId: 1 } }).kind).toBe("ok");
   });
 
-  it("checks the second factor before the role, so a role never hides a missing factor", () => {
-    const unverified = { ...live, secondFactorAt: null };
-    expect(decideAccess({ ...base, session: unverified, required: { role: "admin" } }).kind).toBe("second_factor_challenge");
+  it("checks the passkey marker before the role, so a role never hides a missing one", () => {
+    const unmarked = { ...live, secondFactorAt: null };
+    expect(decideAccess({ ...base, session: unmarked, required: { role: "admin" } }).kind).toBe("passkey_required");
   });
 });
 
-describe("sign-in flow cookie", () => {
-  const secret = "a-secret-that-is-long-enough-for-hmac-0123456789";
-  const t0 = 1_700_000_000_000;
-
-  it("round-trips the email and invite token", () => {
-    const value = encodeFlow({ email: "a@tu.ac.th", invite: "tok" }, secret, t0);
-    expect(decodeFlow(value, secret, t0 + 1000)).toEqual({ email: "a@tu.ac.th", invite: "tok", exp: t0 + FLOW_TTL_MS });
+describe("ceremony context", () => {
+  it("round-trips an invite and a recovery link", () => {
+    const invite = { kind: "invite" as const, token: "tok-1_a", name: "Somchai" };
+    expect(parseCeremonyContext(encodeCeremonyContext(invite))).toEqual(invite);
+    const recover = { kind: "recover" as const, token: "tok-2" };
+    expect(parseCeremonyContext(encodeCeremonyContext(recover))).toEqual(recover);
   });
 
-  it("expires", () => {
-    const value = encodeFlow({ email: "a@tu.ac.th" }, secret, t0);
-    expect(decodeFlow(value, secret, t0 + FLOW_TTL_MS + 1)).toBeNull();
-  });
-
-  it("rejects an edited value or the wrong secret", () => {
-    const value = encodeFlow({ email: "a@tu.ac.th" }, secret, t0);
-    const [body, sig] = value.split(".");
-    const forged = Buffer.from(JSON.stringify({ email: "boss@tu.ac.th", exp: t0 + FLOW_TTL_MS })).toString("base64url");
-    expect(decodeFlow(`${forged}.${sig}`, secret, t0)).toBeNull();
-    expect(decodeFlow(`${body}.${sig}`, "another-secret-another-secret-0123456789", t0)).toBeNull();
-    expect(decodeFlow("garbage", secret, t0)).toBeNull();
-    expect(decodeFlow(undefined, secret, t0)).toBeNull();
+  it("refuses anything malformed, without throwing", () => {
+    for (const bad of [undefined, null, "", "not json", "[]", "{}", '{"k":"other","t":"x"}', '{"k":"invite","t":"x"}', '{"k":"invite","t":"","n":"a"}', `{"k":"recover","t":"${"x".repeat(201)}"}`]) {
+      expect(parseCeremonyContext(bad)).toBeNull();
+    }
   });
 });
 
-describe("withResponseCookies", () => {
-  it("applies new and cleared cookies to the request cookie header", () => {
-    const request = new Headers({ cookie: "a=1; session=old" });
-    const response = new Headers();
-    response.append("set-cookie", "session=new; Path=/; HttpOnly");
-    response.append("set-cookie", "a=; Max-Age=0; Path=/");
-    response.append("set-cookie", "b=2; Path=/");
-    expect(withResponseCookies(request, response).get("cookie")).toBe("session=new; b=2");
+describe("names", () => {
+  it("cleans a person's name and refuses empty or overlong ones", () => {
+    expect(cleanPersonName("  Somchai \n  Jaidee ")).toBe("Somchai Jaidee");
+    expect(cleanPersonName("   ")).toBeNull();
+    expect(cleanPersonName("x".repeat(101))).toBeNull();
+    expect(cleanPersonName("x".repeat(100))).toBe("x".repeat(100));
+  });
+
+  it("cleans a passkey name to 60 characters", () => {
+    expect(cleanPasskeyName(" Work   laptop ")).toBe("Work laptop");
+    expect(cleanPasskeyName("")).toBeNull();
+    expect(cleanPasskeyName("x".repeat(61))).toBeNull();
   });
 });
+
+describe("return paths", () => {
+  it("keeps paths inside the console and nothing else", () => {
+    expect(safeReturnPath("/admin/invite/abc_DEF-1")).toBe("/admin/invite/abc_DEF-1");
+    expect(safeReturnPath("/admin")).toBe("/admin");
+    expect(safeReturnPath("https://evil.example/admin")).toBe("/admin");
+    expect(safeReturnPath("//evil.example")).toBe("/admin");
+    expect(safeReturnPath("/administrator")).toBe("/admin");
+    expect(safeReturnPath(undefined)).toBe("/admin");
+  });
+});
+

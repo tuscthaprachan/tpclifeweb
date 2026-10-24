@@ -15,7 +15,7 @@ Session handoff for the backend migration described in `docs/backend-plan.md`. R
 
 - `main`: dependency updates, canteen floor plan redraw, menu names, map accessibility fix, thick-border fix. Still uses Sanity.
 - `ccr-c7c55779-2hzk84`: everything on main plus phases 1 and 2 (16 commits ahead). Not merged.
-  - Phase 1: Neon + Drizzle (`lib/db`), organisations, staff roles, append-only audit log, Better Auth sign-in with email codes and mandatory passkey or TOTP for staff (`lib/auth`), staff invites, first-admin bootstrap, `/admin` console shell, storage (`lib/storage`) and email (`lib/email`) interfaces.
+  - Phase 1: Neon + Drizzle (`lib/db`), organisations, staff roles, append-only audit log, Better Auth passkey-only sign-in for staff (`lib/auth`; replaced the earlier email codes plus TOTP), staff invites, recovery links, first-admin bootstrap, `/admin` console shell, storage (`lib/storage`) and email (`lib/email`) interfaces.
   - Phase 2: Postgres content schema (`lib/db/schema/content`), seeds (`lib/db/seed`), rich text as ProseMirror JSON (`lib/rich-text`, `components/domain/rich-text`), read layer (`lib/content`) used by every page, lost and found reports written to Postgres, PGlite for local and CI (`DATABASE_URL=pglite:memory`), Sanity fully removed.
   - Checks at last commit: `npm run check` green, 576 unit tests, build, e2e, and the full a11y suite (971 passed, 0 failed) against `next start` with PGlite.
 
@@ -43,14 +43,14 @@ Use `next start`, not `next dev`, for Playwright: the dev server times out under
    - Change `VercelBlobStorage` to take `{ token?: string; storeId: string }`, pass `token` only when present, and build `publicUrl` from the store id (strip the `store_` prefix, lower-case): `https://<id>.public.blob.vercel-storage.com/<key>`.
    - Update `tests/unit/storage/storage.test.ts`, the comment in `lib/content/images.ts`, `.env.example` and the README table.
 3. **Ask the user to merge to main** once step 1 is done (the live site must not start before its tables exist). Merge with a merge commit; Vercel then deploys.
-4. **First admin**: `npm run auth:bootstrap -- <email> tusu` (or `tusc`) needs `DATABASE_URL` and `BETTER_AUTH_URL`. It prints a one-time invite link and refuses once any admin exists. Second-factor reset does not exist yet, so the admin must save backup codes.
+4. **First admin**: `npm run auth:bootstrap -- <email> tusu` (or `tusc`) needs `DATABASE_URL` and `BETTER_AUTH_URL`. It prints a one-time invite link and refuses once any admin exists. Open it, enter a name and create the account with a passkey; no email is involved. If every admin later loses their passkeys, `npm run auth:bootstrap -- --recover <email>` prints a 24 hour recovery link (break-glass, needs the same environment). Run `npm run db:migrate` first: migration 0004 adds `staff_recovery_links` and `passkey.last_used_at`. The existing production admin keeps signing in with their existing passkey.
 5. **Phase 3** (content editing in `/admin`) per the plan, once the user asks.
 
 ## Outstanding items for the user
 
-- Resend: account, verified sending domain (SPF, DKIM, DMARC), `RESEND_API_KEY` and `EMAIL_FROM` in Vercel. Skipped so far.
+- Resend (optional for staff sign-in now, needed for later notifications): account, verified sending domain (SPF, DKIM, DMARC), `RESEND_API_KEY` and `EMAIL_FROM` in Vercel. Skipped so far. Without it, invitation and recovery links are shown on screen for the admin to send.
 - `BETTER_AUTH_SECRET` is set for Production only; add a separate Preview value.
-- Check `AUTH_ALLOWED_EMAIL_DOMAINS` in Vercel is exactly `dome.tu.ac.th,tu.ac.th` (confirmed domains; also the code default).
+- `AUTH_ALLOWED_EMAIL_DOMAINS` is no longer read (invites work for any domain); it can be removed from Vercel.
 - Check Neon preview branching is on, so previews do not share the production database.
 - After the merge: remove the eight `SANITY_*` env vars and the Sanity integration in Vercel, the unused `CANTEEN_DEMO` preview var, and Neon Auth (`NEON_AUTH_BASE_URL`, `VITE_NEON_AUTH_URL`), which is not used.
 - Delete the stray `tmp-skip` branch on GitHub (the proxy refuses branch deletion from the session).
@@ -58,8 +58,8 @@ Use `next start`, not `next dev`, for Playwright: the dev server times out under
 
 ## Known gaps before launch
 
-- No QR code on authenticator set-up (needs the `qrcode` package; ask first).
-- No "manage my security" page and no admin reset of a lost second factor.
+- Passkeys are bound to the `BETTER_AUTH_URL` hostname. Changing the production domain makes every passkey unusable until each person is recovered, so settle the domain first.
+- No conditional UI (passkey autofill) on the sign-in page: it has no input to attach it to.
 - Migrations do not run on deploy; offer to run `db:migrate` in the Vercel production build.
 - GOV.UK places field error messages above the input; the site's components put them below. Changing it touches every form; the user has not decided.
 - `npm audit`: 4 moderate, all in the `drizzle-kit` dev chain; the only fix is a major downgrade.

@@ -2,7 +2,7 @@
  * Staff session lifetime. Two independent limits, both enforced on the server:
  *
  * - Idle: 30 minutes since the last request the person made.
- * - Absolute: 12 hours since the code was entered, however active they are.
+ * - Absolute: 12 hours since the passkey sign-in, however active they are.
  *
  * The absolute limit is Better Auth's own `expiresAt`. The idle limit is
  * tracked in `session.updated_at`, which `lib/auth/session.ts` touches on each

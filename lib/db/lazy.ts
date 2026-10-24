@@ -10,10 +10,11 @@
  * the chain is replayed on it, and its result is awaited. Transactions and
  * `execute` are async already, so they simply wait for the client first.
  *
- * Only top-level query builders and `transaction` / `execute` are supported,
- * which is all the app uses. Anything that needs a value synchronously (a
- * subquery's `.as()`, `$client`) is not available on this handle: take the
- * real client from inside a `transaction` callback instead.
+ * Once the client is open, every property read returns the real thing. So code that
+ * needs real objects (Better Auth's Drizzle adapter reads `_.fullSchema` and
+ * `query`, and builds subqueries with `.limit(1)` passed to `inArray`) works
+ * from the second tick on. Before that, only top-level query builders and
+ * `transaction` / `execute` are supported, which is all the app uses.
  *
  * No `server-only` import: pure, and covered by a unit test.
  */
@@ -58,10 +59,26 @@ async function replay(open: Open<object>, steps: Step[]): Promise<unknown> {
 /** `open` runs at most once; every caller waits for the same promise. */
 export function createLazyDb<T extends object>(open: Open<T>): T {
   let opened: Promise<T> | undefined;
-  const once: Open<T> = () => (opened ??= open());
+  let ready: T | undefined;
+  const once: Open<T> = () => {
+    if (!opened) {
+      opened = open();
+      opened.then(
+        (client) => {
+          ready = client;
+        },
+        () => {}, // awaiters see the rejection; this only stops it being reported as unhandled
+      );
+    }
+    return opened;
+  };
   return new Proxy({} as T, {
     get(_t, prop) {
       if (prop === "then") return undefined; // a handle is not itself awaitable
+      if (ready) {
+        const value = Reflect.get(ready, prop, ready);
+        return typeof value === "function" ? value.bind(ready) : value;
+      }
       return (...args: unknown[]) => chain(once, [{ method: prop, args }]);
     },
   });
