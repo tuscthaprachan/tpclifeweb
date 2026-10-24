@@ -6,6 +6,7 @@ import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
 import { canEditContent } from "@/lib/admin/content/access";
+import { canUseCaseInbox } from "@/lib/cases/access";
 import { hasRole } from "@/lib/auth/roles";
 import { requireStaff } from "@/lib/auth/session";
 import { a, ROLE_LABEL } from "@/lib/i18n/admin";
@@ -59,6 +60,17 @@ export default async function AdminDashboardPage() {
           <div className="mt-[var(--space-3)]">
             <Button href="/admin/content" variant="secondary">
               {a("dashAllContent", locale)}
+            </Button>
+          </div>
+        </section>
+      ) : null}
+      {canUseCaseInbox(staff.roles) ? (
+        <section>
+          <Heading level={2}>{a("casesLink", locale)}</Heading>
+          <p className="mt-[var(--space-2)] text-ink-600">{a("casesDashIntro", locale)}</p>
+          <div className="mt-[var(--space-3)]">
+            <Button href="/admin/cases" variant="secondary">
+              {a("casesTitle", locale)}
             </Button>
           </div>
         </section>

@@ -36,6 +36,13 @@
       "when": 1792846202188,
       "tag": "0004_staff_recovery_passkey_last_used",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792851897326,
+      "tag": "0005_case_engine",
+      "breakpoints": true
     }
   ]
 }

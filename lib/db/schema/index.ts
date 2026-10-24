@@ -5,3 +5,4 @@ export * from "./audit-log";
 export * from "./staff-invites";
 export * from "./staff-recovery";
 export * from "./content";
+export * from "./cases";

@@ -21,9 +21,11 @@ interface AdminHeaderProps {
   isAdmin: boolean;
   /** An `editor` or `admin`: shows the Content link. */
   isEditor: boolean;
+  /** Holds a case role: shows the Cases link. */
+  isCaseStaff?: boolean;
 }
 
-export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor }: AdminHeaderProps) {
+export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor, isCaseStaff = false }: AdminHeaderProps) {
   return (
     <header className="border-b border-line bg-surface">
       <ShellContainer className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-3">
@@ -46,6 +48,13 @@ export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor }:
                   <li>
                     <a href="/admin/content" className="text-ink-900">
                       {A.contentLink[locale]}
+                    </a>
+                  </li>
+                ) : null}
+                {isCaseStaff ? (
+                  <li>
+                    <a href="/admin/cases" className="text-ink-900">
+                      {A.casesLink[locale]}
                     </a>
                   </li>
                 ) : null}

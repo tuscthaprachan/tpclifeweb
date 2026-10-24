@@ -20,6 +20,7 @@ import { SkipLink } from "@/components/layout/SkipLink";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { getAdminSession } from "@/lib/auth/session";
 import { canEditContent } from "@/lib/admin/content/access";
+import { canUseCaseInbox } from "@/lib/cases/access";
 import { hasRole } from "@/lib/auth/roles";
 import { A } from "@/lib/i18n/admin";
 import { HTML_LANG } from "@/lib/i18n/config";
@@ -48,6 +49,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           verified={Boolean(session?.secondFactorAt)}
           isAdmin={Boolean(session && hasRole(session.roles, "admin"))}
           isEditor={Boolean(session && canEditContent(session.roles))}
+          isCaseStaff={Boolean(session && canUseCaseInbox(session.roles))}
         />
         <main id="main-content" tabIndex={-1}>
           {children}
