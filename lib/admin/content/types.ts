@@ -78,7 +78,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: serviceAlerts,
     kind: "collection",
     columns: std(serviceAlerts, [serviceAlerts.titleTh, serviceAlerts.titleEn]),
-    available: false,
+    available: true,
   },
   {
     key: "news",
@@ -104,7 +104,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     kind: "collection",
     columns: std(events, [events.titleTh, events.titleEn]),
     viewPath: "/events",
-    available: false,
+    available: true,
   },
   {
     key: "policies",
@@ -117,7 +117,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     kind: "collection",
     columns: std(policies, [policies.titleTh, policies.titleEn]),
     viewPath: "/policy",
-    available: false,
+    available: true,
   },
   {
     key: "guidePages",
@@ -131,7 +131,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     kind: "collection",
     columns: std(contentPages, [contentPages.titleTh, contentPages.titleEn]),
     viewPath: "/guide",
-    available: false,
+    available: true,
   },
   {
     key: "welfarePages",
@@ -145,7 +145,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     kind: "collection",
     columns: std(contentPages, [contentPages.titleTh, contentPages.titleEn]),
     viewPath: "/welfare",
-    available: false,
+    available: true,
   },
   {
     key: "faqs",
@@ -157,7 +157,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: faqs,
     kind: "collection",
     columns: std(faqs, [faqs.questionTh, faqs.questionEn]),
-    available: false,
+    available: true,
   },
   {
     key: "forms",
@@ -170,7 +170,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     kind: "collection",
     columns: std(forms, [forms.titleTh, forms.titleEn]),
     viewPath: "/forms",
-    available: false,
+    available: true,
   },
   {
     key: "organisations",
@@ -182,7 +182,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: directoryOrganisations,
     kind: "collection",
     columns: std(directoryOrganisations, [directoryOrganisations.nameTh, directoryOrganisations.nameEn]),
-    available: false,
+    available: true,
   },
   {
     key: "places",
@@ -194,7 +194,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: places,
     kind: "collection",
     columns: std(places, [places.nameTh, places.nameEn]),
-    available: false,
+    available: true,
   },
   {
     key: "shuttleRoutes",
@@ -206,7 +206,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: shuttleRoutes,
     kind: "collection",
     columns: std(shuttleRoutes, [shuttleRoutes.nameTh, shuttleRoutes.nameEn]),
-    available: false,
+    available: true,
   },
   {
     key: "siteSettings",
@@ -218,7 +218,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: siteSettings,
     kind: "singleton",
     columns: { id: siteSettings.id, title: null, status: siteSettings.status, updatedAt: siteSettings.updatedAt },
-    available: false,
+    available: true,
   },
   {
     key: "lostFound",
@@ -231,7 +231,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     kind: "collection",
     columns: std(lostFoundItems, [lostFoundItems.titleTh, lostFoundItems.titleEn]),
     viewPath: "/lost-and-found",
-    available: false,
+    available: true,
   },
   {
     key: "canteenSettings",
@@ -243,7 +243,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: canteenSettings,
     kind: "singleton",
     columns: { id: canteenSettings.id, title: null, status: canteenSettings.status, updatedAt: canteenSettings.updatedAt },
-    available: false,
+    available: true,
   },
   {
     key: "canteenStalls",
@@ -255,7 +255,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: canteenStalls,
     kind: "collection",
     columns: std(canteenStalls, [canteenStalls.nameTh, canteenStalls.nameEn]),
-    available: false,
+    available: true,
   },
   {
     key: "canteenDishes",
@@ -267,7 +267,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: canteenDishes,
     kind: "collection",
     columns: std(canteenDishes, [canteenDishes.nameTh, canteenDishes.nameEn]),
-    available: false,
+    available: true,
   },
   {
     key: "canonicalDishes",
@@ -279,7 +279,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: canonicalDishes,
     kind: "collection",
     columns: std(canonicalDishes, [canonicalDishes.nameTh, canonicalDishes.nameEn]),
-    available: false,
+    available: true,
   },
   {
     key: "images",
@@ -291,7 +291,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: images,
     kind: "collection",
     columns: { id: images.id, title: [images.altTh, images.altEn], status: null, updatedAt: images.createdAt },
-    available: false,
+    available: true,
   },
 ];
 
