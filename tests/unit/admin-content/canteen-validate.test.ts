@@ -128,9 +128,9 @@ describe("validateDishForm", () => {
     expect(await dish({ stallId: "00000000-0000-4000-8000-000000000000" })).toMatchObject({ ok: false, errors: { stallId: expect.any(String) } });
   });
 
-  it("applies the protein rules", async () => {
-    expect(await dish({ protein: [] })).toMatchObject({ ok: false, errors: { protein: expect.stringContaining("at least one") } });
-    expect(await dish({ protein: ["none", "pork"] })).toMatchObject({ ok: false, errors: { protein: expect.stringContaining("No meat") } });
+  it("lets proteins be empty or combined freely", async () => {
+    expect(await dish({ protein: [] })).toMatchObject({ ok: true, data: { protein: [] } });
+    expect(await dish({ protein: ["none", "pork"] })).toMatchObject({ ok: true, data: { protein: ["pork", "none"] } });
   });
 
   it("will not accept a check date in the future", async () => {

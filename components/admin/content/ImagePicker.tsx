@@ -10,6 +10,8 @@ import { ADMIN_UPLOAD_MAX_BYTES } from "@/lib/admin/content/upload-limit";
 import { a } from "@/lib/i18n/admin";
 import { pick } from "@/lib/i18n/config";
 import { useContentForm } from "./context";
+import { compressInBrowser } from "./compress-image-browser";
+import { formatMegabytes } from "./compress-image";
 import { PortalDialog } from "./PortalDialog";
 
 interface ImagePickerProps {
@@ -54,6 +56,7 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
   const [chosen, setChosen] = useState<string[]>(defaultValue);
   const [open, setOpen] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadNote, setUploadNote] = useState<string | null>(null);
   const [uploading, startUpload] = useTransition();
   const byId = new Map(library.map((i) => [i.id, i]));
   const id = fieldId(name);
@@ -83,16 +86,20 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
     const field = (n: string) => form.querySelector<HTMLInputElement>(`[data-upload="${n}"]`);
     const data = new FormData();
     const file = field("file")?.files?.[0];
-    if (file) data.set("file", file);
     data.set("altTh", field("altTh")?.value ?? "");
     data.set("altEn", field("altEn")?.value ?? "");
     if (field("isDecorative")?.checked) data.set("isDecorative", "on");
     setUploadError(null);
-    if (file && file.size > ADMIN_UPLOAD_MAX_BYTES) {
-      setUploadError(a("errUploadTooLarge", locale));
-      return;
-    }
+    setUploadNote(null);
     startUpload(async () => {
+      if (file) {
+        const compressed = await compressInBrowser(file);
+        if (compressed.status === "failed") return setUploadError(a(compressed.reason === "decode" ? "errUploadCompressDecode" : "errUploadCompressStill", locale));
+        if (compressed.status === "compressed") {
+          setUploadNote(a("imageCompressed", locale, { from: formatMegabytes(compressed.originalBytes), to: formatMegabytes(compressed.compressedBytes) }));
+        }
+        data.set("file", compressed.file);
+      }
       const result = await uploadImageAction(data);
       if (!result.ok) return setUploadError(result.error);
       setLibrary((current) => [result.image, ...current]);
@@ -208,6 +215,11 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
                   <input type="checkbox" data-upload="isDecorative" className="size-5" />
                   {a("imageDecorativeLabel", locale)}
                 </label>
+                {uploadNote ? (
+                  <p role="status" className="m-0 text-sm text-ink-600">
+                    {uploadNote}
+                  </p>
+                ) : null}
                 {uploadError ? <ErrorMessage id={`${id}-upload-error`}>{uploadError}</ErrorMessage> : null}
                 <div>
                   <Button

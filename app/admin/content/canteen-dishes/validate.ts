@@ -81,8 +81,6 @@ export async function validateDishForm(
       const [canonical] = await db.select({ id: canonicalDishes.id }).from(canonicalDishes).where(eq(canonicalDishes.id, data.canonicalId));
       if (!canonical) errors.canonicalId = a("errSelectField", locale, { field: L("canteenFieldCanonical") });
     }
-    if (data.protein.length === 0) errors.protein = L("canteenErrProtein");
-    else if (data.protein.includes("none") && data.protein.length > 1) errors.protein = L("canteenErrProteinNone");
     const today = todayBangkok(input.now);
     if (data.checkedOn && data.checkedOn > today) errors.checkedOn = L("canteenErrFutureDate");
     if (data.lastReviewed && data.lastReviewed > today) errors.lastReviewed = L("canteenErrFutureDate");

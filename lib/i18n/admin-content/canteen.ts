@@ -156,8 +156,6 @@ export const CANTEEN_STRINGS = {
   canteenCourseDessert: { th: "ของหวาน", en: "Dessert" },
   canteenFieldProtein: { th: "เนื้อสัตว์และโปรตีน", en: "Protein" },
   canteenHintProtein: { th: "เลือกทุกอย่างที่มีในเมนู ถ้าไม่มีเนื้อสัตว์ เลือก ไม่มีเนื้อสัตว์", en: "Tick everything in the dish. If there is no meat, tick No meat" },
-  canteenErrProtein: { th: "เลือกอย่างน้อยหนึ่งอย่าง หรือเลือก ไม่มีเนื้อสัตว์", en: "Select at least one, or select No meat" },
-  canteenErrProteinNone: { th: "ถ้าเลือก ไม่มีเนื้อสัตว์ ห้ามเลือกอย่างอื่นร่วมด้วย", en: "If you select No meat, do not select anything else" },
   canteenFieldContains: { th: "สารก่อภูมิแพ้ที่น่าจะมี", en: "Allergens it probably contains" },
   canteenHintContains: {
     th: "เป็นการคาดการณ์จากส่วนประกอบทั่วไป ไม่ใช่การรับรอง ผู้แพ้อาหารต้องถามที่ร้านทุกครั้ง",
@@ -194,7 +192,12 @@ export const CANTEEN_STRINGS = {
   canteenHintHowToOrder: { th: "ประโยคที่พูดสั่งที่ร้าน พร้อมคำอ่านและคำแปล", en: "Phrases to say at the stall, with a reading and a translation" },
   canteenFieldPhraseTh: { th: "ประโยคภาษาไทย", en: "Thai phrase" },
   canteenFieldPhraseEn: { th: "คำแปลภาษาอังกฤษ", en: "English meaning" },
-  canteenCanonicalUsed: { th: "มี {count} เมนูของร้านต่างๆ อ้างถึงเมนูต้นแบบนี้ ถ้าลบ เมนูเหล่านั้นจะไม่มีเมนูต้นแบบ", en: "{count} stall dishes point to this one. If you delete it, they lose the link" },
+  canteenCanonicalInUseTitle: { th: "ลบเมนูต้นแบบนี้ไม่ได้", en: "This standard dish cannot be deleted" },
+  canteenCanonicalInUseBody: {
+    th: "มี {count} เมนูของร้านต่างๆ อ้างถึงเมนูต้นแบบนี้ ให้เปลี่ยนหรือเอาเมนูต้นแบบออกจากเมนูเหล่านั้นก่อน แล้วลองลบอีกครั้ง",
+    en: "{count} stall dishes point to this one. Change or clear the standard dish on each of them first, then try deleting again",
+  },
+  canteenCanonicalInUseMore: { th: "และอีก {n} เมนู", en: "and {n} more" },
 
   /* Settings */
   canteenSettingsIntro: {

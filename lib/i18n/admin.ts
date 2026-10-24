@@ -547,7 +547,11 @@ export const A = {
   imageLibraryEmpty: { th: "ยังไม่มีรูปในคลัง อัปโหลดรูปแรกด้านล่าง", en: "The library is empty. Upload the first picture below" },
   imageUploadTitle: { th: "อัปโหลดรูปใหม่", en: "Upload a new picture" },
   imageFile: { th: "ไฟล์รูปภาพ", en: "Picture file" },
-  imageFileHint: { th: "JPEG, PNG, WebP หรือ HEIC ขนาดไม่เกิน {mb} MB", en: "JPEG, PNG, WebP or HEIC, up to {mb} MB" },
+  imageFileHint: {
+    th: "JPEG, PNG, WebP หรือ HEIC ไฟล์ที่ใหญ่กว่า {mb} MB จะถูกย่อให้อัตโนมัติ",
+    en: "JPEG, PNG, WebP or HEIC. Files over {mb} MB are shrunk automatically",
+  },
+  imageCompressed: { th: "ย่อไฟล์จาก {from} MB เหลือ {to} MB แล้ว", en: "Compressed from {from} MB to {to} MB" },
   imageAltTh: { th: "คำอธิบายภาพ (ไทย)", en: "Describe the picture (Thai)" },
   imageAltEn: { th: "คำอธิบายภาพ (อังกฤษ)", en: "Describe the picture (English)" },
   imageDecorativeLabel: { th: "รูปนี้เป็นแค่ตกแต่ง ไม่ต้องมีคำอธิบาย", en: "This picture is only decoration and needs no description" },
@@ -564,6 +568,14 @@ export const A = {
   errUploadChoose: { th: "เลือกไฟล์รูปภาพ", en: "Choose a picture file" },
   errUploadAlt: { th: "กรอกคำอธิบายภาพทั้งภาษาไทยและอังกฤษ หรือเลือกว่าเป็นรูปตกแต่ง", en: "Describe the picture in Thai and English, or tick that it is only decoration" },
   errUploadTooLarge: { th: "ไฟล์ใหญ่เกินไป ลดขนาดรูปให้ไม่เกิน 4 MB", en: "That file is too large. Reduce the picture to 4 MB or less" },
+  errUploadCompressDecode: {
+    th: "ไฟล์ใหญ่เกิน 4 MB และเบราว์เซอร์นี้ย่อไฟล์ให้ไม่ได้ แปลงเป็น JPEG หรือลดขนาดรูปก่อน",
+    en: "That file is over 4 MB and this browser could not shrink it. Convert it to JPEG or reduce the picture first",
+  },
+  errUploadCompressStill: {
+    th: "ย่อไฟล์แล้วก็ยังเกิน 4 MB ลองใช้รูปที่เล็กลงหรือเรียบง่ายกว่านี้",
+    en: "Even after compressing, that picture is still over 4 MB. Try a smaller or simpler picture",
+  },
   errUploadType: { th: "ใช้ได้เฉพาะไฟล์ JPEG, PNG, WebP หรือ HEIC", en: "Only JPEG, PNG, WebP or HEIC files can be used" },
   errUploadFailed: { th: "อัปโหลดไม่สำเร็จ ลองอีกครั้ง", en: "The upload did not work. Try again" },
 

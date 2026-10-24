@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { uploadImageAction } from "@/app/admin/content/actions";
+import { compressInBrowser } from "@/components/admin/content/compress-image-browser";
+import { formatMegabytes } from "@/components/admin/content/compress-image";
 import { Button, ErrorSummary, TextInput } from "@/components/ui";
 import { ADMIN_UPLOAD_MAX_BYTES } from "@/lib/admin/content/upload-limit";
 import { a } from "@/lib/i18n/admin";
@@ -16,6 +18,7 @@ import { UI } from "@/lib/i18n/strings";
 export function UploadForm({ locale }: { locale: Locale }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [note, setNote] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [decorative, setDecorative] = useState(false);
 
@@ -24,11 +27,16 @@ export function UploadForm({ locale }: { locale: Locale }) {
     const data = new FormData(event.currentTarget);
     const file = data.get("file");
     setError(null);
-    if (file instanceof File && file.size > ADMIN_UPLOAD_MAX_BYTES) {
-      setError(a("errUploadTooLarge", locale));
-      return;
-    }
+    setNote(null);
     startTransition(async () => {
+      if (file instanceof File && file.size > 0) {
+        const compressed = await compressInBrowser(file);
+        if (compressed.status === "failed") return setError(a(compressed.reason === "decode" ? "errUploadCompressDecode" : "errUploadCompressStill", locale));
+        if (compressed.status === "compressed") {
+          setNote(a("imageCompressed", locale, { from: formatMegabytes(compressed.originalBytes), to: formatMegabytes(compressed.compressedBytes) }));
+        }
+        data.set("file", compressed.file);
+      }
       const result = await uploadImageAction(data);
       if (!result.ok) return setError(result.error);
       router.push(`/admin/content/images/${result.image.id}?uploaded=1`);
@@ -53,6 +61,11 @@ export function UploadForm({ locale }: { locale: Locale }) {
         <input type="checkbox" name="isDecorative" className="size-5" checked={decorative} onChange={(e) => setDecorative(e.target.checked)} />
         {a("imageDecorativeLabel", locale)}
       </label>
+      {note ? (
+        <p role="status" className="m-0 text-sm text-ink-600">
+          {note}
+        </p>
+      ) : null}
       <div>
         <Button type="submit" loading={pending} loadingLabel={a("imageUploading", locale)}>
           {a("imageUpload", locale)}

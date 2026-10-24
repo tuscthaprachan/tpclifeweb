@@ -4,11 +4,12 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { contentActor, requireEditor } from "@/lib/admin/content/access";
 import { EMPTY_FORM_STATE, isUuid, type ContentFormState } from "@/lib/admin/content/form-state";
-import { ContentConflictError, ContentNotFoundError, deleteContent, saveContent } from "@/lib/admin/content/save";
+import { ContentConflictError, ContentInUseError, ContentNotFoundError, deleteContent, saveContent } from "@/lib/admin/content/save";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { getDb } from "@/lib/db";
 import { canonicalDishes } from "@/lib/db/schema";
 import { a } from "@/lib/i18n/admin";
+import { canonicalDishUsage } from "./usage";
 import { validateCanonicalForm } from "./validate";
 
 const LIST = "/admin/content/canonical-dishes";
@@ -55,13 +56,19 @@ export async function saveCanonicalDish(id: string | null, _prev: ContentFormSta
   redirect(`${LIST}/${saved.id}?saved=${notice}`);
 }
 
-/** Deletes a canonical dish; dishes that pointed at it simply lose the link. Bound with `.bind(null, id)`. */
+/**
+ * Deletes a canonical dish and returns to the list. One that stall dishes still
+ * point at is kept: the edit page opens with a message naming them. Bound with
+ * `.bind(null, id)`.
+ */
 export async function deleteCanonicalDish(id: string): Promise<void> {
   const staff = await requireEditor();
   if (!isUuid(id)) redirect(LIST);
   try {
+    if ((await canonicalDishUsage(getDb(), id, 0)).total > 0) throw new ContentInUseError();
     await deleteContent({ entityType: "canonicalDish", table: canonicalDishes, actor: await contentActor(staff), id });
   } catch (error) {
+    if (error instanceof ContentInUseError) redirect(`${LIST}/${id}?error=inUse`);
     if (!(error instanceof ContentNotFoundError)) throw error;
   }
   redirect(`${LIST}?notice=deleted`);

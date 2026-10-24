@@ -1,15 +1,17 @@
-import { count, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, BilingualTextField, SlugField } from "@/components/admin/content/fields";
 import { userNames } from "@/lib/admin/content/list";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
 import { getDb } from "@/lib/db";
-import { canonicalDishes, canteenDishes } from "@/lib/db/schema";
+import { Link, NotificationBanner } from "@/components/ui";
+import { canonicalDishes } from "@/lib/db/schema";
 import { a } from "@/lib/i18n/admin";
-import { localePath, type Locale } from "@/lib/i18n/config";
+import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { RepeatRows, type RowValue } from "../canteen-stalls/RepeatRows";
 import { deleteCanonicalDish, saveCanonicalDish } from "./actions";
+import { canonicalDishUsage } from "./usage";
 
 /** The canonical dish form, for the "new" page (no `id`) and the edit page. */
 export async function CanonicalDishForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
@@ -19,10 +21,8 @@ export async function CanonicalDishForm({ locale, id, saved }: { locale: Locale;
 
   const [dish] = id ? await db.select().from(canonicalDishes).where(eq(canonicalDishes.id, id)) : [];
   if (id && !dish) notFound();
-  const [names, [{ n: used } = { n: 0 }]] = await Promise.all([
-    userNames(db, [dish?.updatedBy]),
-    dish ? db.select({ n: count() }).from(canteenDishes).where(eq(canteenDishes.canonicalId, dish.id)) : [{ n: 0 }],
-  ]);
+  const [names, usage] = await Promise.all([userNames(db, [dish?.updatedBy]), dish ? canonicalDishUsage(db, dish.id) : null]);
+  const inUse = usage !== null && usage.total > 0;
 
   const record: ContentRecordInfo | undefined = dish
     ? {
@@ -41,12 +41,24 @@ export async function CanonicalDishForm({ locale, id, saved }: { locale: Locale;
       key={record?.updatedAt}
       locale={locale}
       action={saveCanonicalDish.bind(null, dish?.id ?? null)}
-      deleteAction={dish ? deleteCanonicalDish.bind(null, dish.id) : undefined}
+      deleteAction={dish && !inUse ? deleteCanonicalDish.bind(null, dish.id) : undefined}
       record={record}
       listHref={contentPath(def)}
       saved={saved}
     >
-      {dish && used > 0 ? <p className="m-0 text-sm text-ink-600">{a("canteenCanonicalUsed", locale, { count: used })}</p> : null}
+      {usage && inUse ? (
+        <NotificationBanner variant="warning" title={L("canteenCanonicalInUseTitle")}>
+          <p className="m-0">{a("canteenCanonicalInUseBody", locale, { count: usage.total })}</p>
+          <ul className="m-0 mt-[var(--space-2)] pl-[var(--space-5)]">
+            {usage.dishes.map((d) => (
+              <li key={d.id}>
+                <Link href={`/admin/content/canteen-dishes/${d.id}`} locale={locale}>{pick({ th: d.nameTh, en: d.nameEn }, locale) || d.nameEn || d.nameTh}</Link>
+              </li>
+            ))}
+          </ul>
+          {usage.total > usage.dishes.length ? <p className="m-0 mt-[var(--space-2)]">{a("canteenCanonicalInUseMore", locale, { n: usage.total - usage.dishes.length })}</p> : null}
+        </NotificationBanner>
+      ) : null}
       <BilingualTextField name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: dish?.nameTh, en: dish?.nameEn }} />
       <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={dish?.slug} />
       <RepeatRows
