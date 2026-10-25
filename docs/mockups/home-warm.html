@@ -87,7 +87,9 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .band-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .band h1 { font-size: 1.6rem; font-weight: 700; max-width: 15ch; }
 :lang(th) .band h1 { font-size: 1.6rem; max-width: 12em; }
-.band svg { flex: none; width: 104px; height: 72px; }
+.band .dome { flex: none; width: 100px; margin-block: -6px -34px; }
+.band .dome svg { display: block; width: 100%; height: auto; }
+.band .search { position: relative; }
 .search { margin-top: 8px; }
 .search label { display: block; font-weight: 700; }
 .search .hint { margin: 0 0 8px; color: var(--ink-600); font-size: .875rem; }
@@ -164,7 +166,7 @@ footer li a { display: inline-flex; align-items: center; min-height: var(--targe
 
 @media (min-width: 48rem) {
   .band h1 { font-size: 2.2rem; max-width: none; }
-  .band svg { width: 180px; height: 124px; }
+  .band .dome { width: 180px; margin-bottom: -60px; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; align-items: start; }
 }
 </style>
@@ -173,18 +175,42 @@ footer li a { display: inline-flex; align-items: center; min-height: var(--targe
 <div id="app"></div>
 <template id="landmarks">
   <svg viewBox="0 0 120 84" aria-hidden="true" focusable="false">
-    <circle cx="94" cy="18" r="10" fill="var(--fill-transport)" opacity=".9"/>
-    <rect x="22" y="34" width="52" height="26" rx="3" fill="var(--surface)"/>
-    <path d="M28 34 a20 18 0 0 1 40 0 z" fill="var(--surface)"/>
-    <path d="M34 34 a14 12 0 0 1 28 0" fill="none" stroke="var(--fill-activity)" stroke-width="3"/>
-    <rect x="46" y="12" width="4" height="6" rx="1" fill="var(--fill-activity)"/>
-    <g fill="var(--fill-activity)"><rect x="28" y="42" width="5" height="12" rx="2"/><rect x="38" y="42" width="5" height="12" rx="2"/><rect x="53" y="42" width="5" height="12" rx="2"/><rect x="63" y="42" width="5" height="12" rx="2"/></g>
-    <rect x="45" y="44" width="6" height="16" rx="3" fill="var(--fill-transport)"/>
-    <path d="M0 64 q10 -5 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 v20 h-120 z" fill="var(--fill-governance)" opacity=".55"/>
-    <path d="M78 58 h30 l-5 8 h-21 z" fill="var(--fill-transport)"/>
-    <rect x="84" y="50" width="16" height="8" rx="2" fill="var(--surface)"/>
-    <path d="M0 72 q10 -5 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 v12 h-120 z" fill="var(--fill-governance)"/>
+    <circle cx="90" cy="26" r="12" fill="var(--fill-transport)"/>
+    <path d="M0 58 q10 -5 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 v26 h-120 z" fill="var(--fill-governance)" opacity=".55"/>
+    <path d="M30 50 h46 l-7 10 h-32 z" fill="var(--fill-transport)"/>
+    <rect x="38" y="40" width="26" height="10" rx="2" fill="var(--surface)"/>
+    <g fill="var(--fill-activity)"><rect x="42" y="43" width="5" height="4" rx="1"/><rect x="50" y="43" width="5" height="4" rx="1"/><rect x="58" y="43" width="4" height="4" rx="1"/></g>
+    <path d="M0 68 q10 -5 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 v16 h-120 z" fill="var(--fill-governance)"/>
   </svg>
+</template>
+<template id="dome">
+<svg viewBox="0 0 160 200" aria-hidden="true" focusable="false">
+  <circle cx="124" cy="44" r="15" fill="#e7935b"/>
+  <path d="M80 2v14" stroke="#4a2f68" stroke-width="1.5"/>
+  <path d="M81 3h11v2h-11z" fill="#e07e61"/><path d="M81 5h11v2h-11z" fill="#fff"/><path d="M81 7h11v2h-11z" fill="#613f87"/>
+  <path d="M20 134h120v58H20z" fill="#f6e2c4"/>
+  <path d="M18 135l20-15h18v15zM142 135l-20-15h-18v15z" fill="#efe6f7"/>
+  <path d="M34 120h4v-5a2 2 0 0 0-4 0zM122 120h4v-5a2 2 0 0 0-4 0z" fill="#e07e61"/>
+  <path d="M80 14L66 62h14z" fill="#7a55a3"/><path d="M80 14l14 48H80z" fill="#613f87"/>
+  <path d="M61 62h38l-4 5H65z" fill="#4a2f68"/>
+  <path d="M68 67h24v9H68z" fill="#2e1f3d"/>
+  <path d="M70 67h2v9h-2zM76 67h2v9h-2zM82 67h2v9h-2zM88 67h2v9h-2z" fill="#7a55a3"/>
+  <path d="M69 76h11v44H37q4-1 6-4z" fill="#7a55a3"/><path d="M91 76H80v44h43q-4-1-6-4z" fill="#613f87"/>
+  <path d="M70 104l5-5 5 5v6H70zM80 104l5-5 5 5v6H80z" fill="#e07e61"/>
+  <path d="M72 105h6v5h-6zM82 105h6v5h-6z" fill="#2e1f3d"/>
+  <path d="M56 122h48v60H56z" fill="#fdf1df"/>
+  <path d="M53 124l27-9 27 9z" fill="#fdf1df" stroke="#f0d9b5" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="80" cy="134" r="6.5" fill="#613f87"/><path d="M80 134v-4M80 134l3 2" stroke="#fdf1df" stroke-width="1.2" stroke-linecap="round"/>
+  <g fill="#3b2a4a"><path d="M66 145h6v8h-6zM77 145h6v8h-6zM88 145h6v8h-6zM66 168h6v8h-6zM77 168h6v8h-6zM88 168h6v8h-6zM28 142h7v9h-7zM40 142h7v9h-7zM113 142h7v9h-7zM125 142h7v9h-7z"/></g>
+  <path d="M61 157h38v7H61z" fill="#e07e61"/><path d="M65 160h30v1.4H65z" fill="#fdf1df"/>
+  <path d="M20 180h120v2H20z" fill="#f0d9b5"/>
+  <g fill="#3b2a4a"><path d="M26 192v-5a5 5 0 0 1 10 0v5zM40 192v-5a5 5 0 0 1 10 0v5zM62 192v-5a5 5 0 0 1 10 0v5zM88 192v-5a5 5 0 0 1 10 0v5zM110 192v-5a5 5 0 0 1 10 0v5zM124 192v-5a5 5 0 0 1 10 0v5z"/></g>
+  <path d="M73 183h14v11H73z" fill="#2e1f3d"/><circle cx="80" cy="175" r="2.4" fill="#2e1f3d"/><path d="M76 183q0-6 4-6t4 6z" fill="#2e1f3d"/>
+  <path d="M0 194q80-6 160 0v6H0z" fill="#c293e5"/>
+  <g fill="#998fe8"><circle cx="12" cy="166" r="13"/><circle cx="148" cy="166" r="13"/></g>
+  <g fill="#c293e5"><circle cx="22" cy="178" r="11"/><circle cx="6" cy="182" r="9"/><circle cx="138" cy="178" r="11"/><circle cx="154" cy="182" r="9"/></g>
+  <path d="M14 196v-12M146 196v-12" stroke="#4a2f68" stroke-width="2"/>
+</svg>
 </template>
 <script>
 const T = {
@@ -265,6 +291,7 @@ if (q.get("theme") === "dark") document.documentElement.dataset.theme = "dark";
 document.documentElement.lang = lang;
 const s = T[lang];
 const art = document.getElementById("landmarks").innerHTML;
+const domeArt = document.getElementById("dome").innerHTML;
 const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 const empty = q.get("empty") === "1";
 document.getElementById("app").innerHTML = `
@@ -272,7 +299,7 @@ document.getElementById("app").innerHTML = `
 <header class="header wrap"><a class="brand" href="#"><span class="mark"></span>${s.name}</a><button class="menu press">${s.menu}</button></header>
 <main>
   <div class="band"><div class="wrap">
-    <div class="band-top"><h1>${s.h1}</h1>${art}</div>
+    <div class="band-top"><h1>${s.h1}</h1><span class="dome">${domeArt}</span></div>
     <form class="search" role="search" action="#"><label for="q">${s.searchLabel}</label><p class="hint" id="qh">${s.searchHint}</p>
       <div class="search-row"><input id="q" name="q" type="search" aria-describedby="qh"><button class="press">${s.searchBtn}</button></div></form>
   </div></div>

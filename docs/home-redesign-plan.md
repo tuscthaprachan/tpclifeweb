@@ -129,7 +129,7 @@ h2  Student union and council
 
 Chosen with the product owner on 25 October 2026. The page should feel warm, soft and local without becoming loud. The warmth lives in shape, colour and illustration; behaviour, copy and the honesty rules do not change.
 
-Mock-up: `docs/mockups/home-warm.html` (static, sample content; `?lang=en`, `?theme=dark`, `?empty=1`). Screenshots are in `docs/mockups/shots/`. At 360 by 640 the first shuttle row ends at 578 px in Thai and 487 px in English, and axe (WCAG 2.2 AA tags) reports no violations in either language or theme.
+Mock-up: `docs/mockups/home-warm.html` (static, sample content; `?lang=en`, `?theme=dark`, `?empty=1`). Screenshots are in `docs/mockups/shots/`. At 360 by 640 the first shuttle row ends at 582 px in Thai and 500 px in English, and axe (WCAG 2.2 AA tags) reports no violations in either language or theme.
 
 | Decision | Choice | Detail |
 |---|---|---|
@@ -138,7 +138,7 @@ Mock-up: `docs/mockups/home-warm.html` (static, sample content; `?lang=en`, `?th
 | Section colour | Full fill heading bar | Each `h2` is a 16 px rounded bar in its category fill with `--ink-on-fill`: transport orange for Today, activity lilac for What's on, governance indigo for the union. Popular tasks has no category, so it uses `--colour-action` purple with white text (8.17:1) |
 | Shape | Soft | 16 px radius on bars, task rows and empty states; pills for search, buttons and tags; 28 px on the band and footer corners |
 | Popular tasks | Rounded list rows with an arrow | Full-width rows at least 64 px high on `--surface-alt`, purple label, one scent line, and a round purple arrow. The whole row is the link |
-| Illustration | Campus landmarks | Flat SVGs in the palette (the Dome, the river ferry, the sun over the Chao Phraya). Used in the top band, in empty states and on 404 and error pages. Decorative, `aria-hidden`, under 5 KB each, and coloured with tokens so they follow the theme |
+| Illustration | Campus landmarks | The main illustration is the Dome building (ตึกโดม), drawn from a front photograph: purple spire and lower roof, cream tower with the clock and the red name band, the arcade, the statue, and trees either side (`docs/mockups/illustrations/dome.svg`, 2.4 KB). It sits at the right of the top band, beside the `h1`. Smaller scenes (the river ferry, the sun over the Chao Phraya) are used in empty states and on 404 and error pages. All are decorative, `aria-hidden`, under 5 KB each. The Dome keeps fixed palette colours in both themes because it depicts a real building; the smaller scenes use tokens and follow the theme |
 | Thai type | Keep Sarabun | No extra font download |
 | Voice | Plain everywhere | The official register in CONTRIBUTING.md is unchanged, including empty states |
 | Dark mode | Plum and amber | Surfaces move from near-black to plum (`#1a1220`, `#251a2d`); the band becomes an amber and lilac glow on deep plum; fills use the existing dark values |
@@ -154,6 +154,7 @@ Open points for the build:
 - The date block on event rows uses the lilac fill. Check that it stays legible at 200% text size.
 - The first-screen budget is tight in Thai: the `h1` wraps to two lines beside the illustration. If an alert banner is present, the shuttle row moves below the fold; the target in section 4 already allows for that.
 - The plum dark surfaces need new contrast pairs in `check-contrast.mjs` (section 9).
+- In dark mode the Dome's purple spire sits close to the plum band. It is decorative, so no contrast rule applies, but a lighter roof tone for dark mode is worth testing.
 
 ## 4. Targets the new page must meet
 
