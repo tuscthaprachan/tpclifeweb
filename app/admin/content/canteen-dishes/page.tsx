@@ -142,7 +142,7 @@ export default async function CanteenDishListPage({ searchParams }: { searchPara
       </div>
 
       {rows.length === 0 ? (
-        <EmptyState title={q || stallId ? a("listNoMatches", locale) : a("listEmpty", locale, { label: label.toLowerCase() })} />
+        <EmptyState illustration={false} title={q || stallId ? a("listNoMatches", locale) : a("listEmpty", locale, { label: label.toLowerCase() })} />
       ) : (
         <>
           <DataTable columns={columns} rows={rows} getRowKey={(r) => r.id} caption={a("listCaption", locale, { shown: rows.length, total, label })} />

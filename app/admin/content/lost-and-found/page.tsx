@@ -81,7 +81,7 @@ export default async function LostFoundListPage({ searchParams }: { searchParams
         </Heading>
         <p className="m-0 text-ink-600">{a("lfPendingNote", locale)}</p>
         {pending.length === 0 ? (
-          <EmptyState title={a("lfPendingNone", locale)} />
+          <EmptyState illustration={false} title={a("lfPendingNone", locale)} />
         ) : (
           <DataTable columns={columns(false)} rows={pending} getRowKey={(r) => r.id} caption={a("lfPendingTitle", locale)} />
         )}
@@ -118,7 +118,7 @@ export default async function LostFoundListPage({ searchParams }: { searchParams
           <Button href={`${contentPath(def)}/new`}>{a("listAdd", locale, { item: a(def.oneKey, locale) })}</Button>
         </div>
         {rows.length === 0 ? (
-          <EmptyState title={q ? a("listNoMatches", locale) : a("lfListEmpty", locale)} />
+          <EmptyState illustration={false} title={q ? a("listNoMatches", locale) : a("lfListEmpty", locale)} />
         ) : (
           <DataTable columns={columns(true)} rows={rows} getRowKey={(r) => r.id} caption={a("listCaption", locale, { shown: rows.length, total: rows.length, label: a(def.labelKey, locale) })} />
         )}

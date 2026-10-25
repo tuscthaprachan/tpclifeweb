@@ -172,7 +172,7 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
         {list.total === 1 ? a("casesTotalOne", locale) : a("casesTotal", locale, { count: formatNumber(list.total, locale) })}
       </p>
       {list.rows.length === 0 ? (
-        <EmptyState title={a("casesNone", locale)} />
+        <EmptyState illustration={false} title={a("casesNone", locale)} />
       ) : (
         <DataTable columns={columns} rows={list.rows} getRowKey={(r) => r.id} caption={a("casesTitle", locale)} />
       )}

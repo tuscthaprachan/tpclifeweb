@@ -46,7 +46,7 @@ export default async function StallPricesPage({ params, searchParams }: { params
       <Heading level={1}>{a("canteenPricesHeading", locale, { number: stall.number, name: stallName })}</Heading>
       <p className="m-0">{a("canteenPricesIntro", locale)}</p>
       {dishes.length === 0 ? (
-        <EmptyState title={a("canteenPricesEmpty", locale)} />
+        <EmptyState illustration={false} title={a("canteenPricesEmpty", locale)} />
       ) : (
         <ContentForm key={`${saved}-${dishes.map((d) => d.price).join(",")}`} locale={locale} action={saveStallPrices.bind(null, id)} listHref={`${contentPath(getContentType("canteen-stalls")!, id)}`} hasStatus={false}>
           {saved !== undefined ? (

@@ -102,7 +102,7 @@ export function ContentList({ def, locale, rows, total, q, canAdd = true, notice
       </div>
 
       {rows.length === 0 ? (
-        <EmptyState title={q ? a("listNoMatches", locale) : a("listEmpty", locale, { label: label.toLowerCase() })} />
+        <EmptyState illustration={false} title={q ? a("listNoMatches", locale) : a("listEmpty", locale, { label: label.toLowerCase() })} />
       ) : (
         <>
           <DataTable columns={columns} rows={rows} getRowKey={(r) => r.id} caption={a("listCaption", locale, { shown: rows.length, total, label })} />

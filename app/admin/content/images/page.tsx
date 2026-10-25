@@ -137,7 +137,7 @@ export default async function ImagesListPage({ searchParams }: { searchParams: P
       </div>
 
       {rows.length === 0 ? (
-        <EmptyState title={term || missing === "1" ? a("listNoMatches", locale) : a("mediaListEmpty", locale)} />
+        <EmptyState illustration={false} title={term || missing === "1" ? a("listNoMatches", locale) : a("mediaListEmpty", locale)} />
       ) : (
         <>
           <DataTable columns={columns} rows={rows} getRowKey={(r) => r.id} caption={a("listCaption", locale, { shown: rows.length, total, label })} />
