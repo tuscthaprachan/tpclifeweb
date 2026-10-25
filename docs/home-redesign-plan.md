@@ -125,12 +125,42 @@ h2  Student union and council
 - 48rem: "Today" and "Popular tasks" sit side by side (2 columns, DOM order unchanged). "What's on" shows images.
 - 80rem: content width as now. The desktop nav pins the top 4 tasks from the survey instead of `/eat` and `/welfare` (`nav-groups.ts`).
 
+## 3a. Visual direction: warm and friendly
+
+Chosen with the product owner on 25 October 2026. The page should feel warm, soft and local without becoming loud. The warmth lives in shape, colour and illustration; behaviour, copy and the honesty rules do not change.
+
+Mock-up: `docs/mockups/home-warm.html` (static, sample content; `?lang=en`, `?theme=dark`, `?empty=1`). Screenshots are in `docs/mockups/shots/`. At 360 by 640 the first shuttle row ends at 578 px in Thai and 487 px in English, and axe (WCAG 2.2 AA tags) reports no violations in either language or theme.
+
+| Decision | Choice | Detail |
+|---|---|---|
+| Overall | Warm and friendly | Calm layout and plain words; warmth from shape and colour |
+| Top band | Sunrise gradient | Soft orange to lilac behind the `h1` and search, with rounded bottom corners. Text never sits on the gradient alone: it is ink on a pale band in light mode (well above 4.5:1 at every point), and the search is a solid surface pill |
+| Section colour | Full fill heading bar | Each `h2` is a 16 px rounded bar in its category fill with `--ink-on-fill`: transport orange for Today, activity lilac for What's on, governance indigo for the union. Popular tasks has no category, so it uses `--colour-action` purple with white text (8.17:1) |
+| Shape | Soft | 16 px radius on bars, task rows and empty states; pills for search, buttons and tags; 28 px on the band and footer corners |
+| Popular tasks | Rounded list rows with an arrow | Full-width rows at least 64 px high on `--surface-alt`, purple label, one scent line, and a round purple arrow. The whole row is the link |
+| Illustration | Campus landmarks | Flat SVGs in the palette (the Dome, the river ferry, the sun over the Chao Phraya). Used in the top band, in empty states and on 404 and error pages. Decorative, `aria-hidden`, under 5 KB each, and coloured with tokens so they follow the theme |
+| Thai type | Keep Sarabun | No extra font download |
+| Voice | Plain everywhere | The official register in CONTRIBUTING.md is unchanged, including empty states |
+| Dark mode | Plum and amber | Surfaces move from near-black to plum (`#1a1220`, `#251a2d`); the band becomes an amber and lilac glow on deep plum; fills use the existing dark values |
+| Motion | Press feedback only | A 1 px lift and 2% squash on press at 150 ms. Nothing moves on its own; nothing moves under reduced motion |
+
+What stays fixed:
+- Orange, coral and lilac are still fills only. Text on them is `--ink-on-fill`, and they never carry text on a light surface.
+- No coloured border with a tint (`check:accent-boxes`). The bars are solid fills, and the task rows and empty states are tint only, with no border.
+- Status is still an icon plus a word plus a colour. "Scheduled" appears as an orange tag on every shuttle row, with the explainer line under the list.
+- No carousels, confetti, bouncing, auto-animation or "live" styling.
+
+Open points for the build:
+- The date block on event rows uses the lilac fill. Check that it stays legible at 200% text size.
+- The first-screen budget is tight in Thai: the `h1` wraps to two lines beside the illustration. If an alert banner is present, the shuttle row moves below the fold; the target in section 4 already allows for that.
+- The plum dark surfaces need new contrast pairs in `check-contrast.mjs` (section 9).
+
 ## 4. Targets the new page must meet
 
 | Measure | Target | How it is checked |
 |---|---|---|
 | First screen at 360 by 640, Thai | Search box and the first shuttle row both visible without scrolling, with no alert. With a critical alert: search, the alert title, and the "Today" heading | New Playwright spec (`tests/e2e/home-fold.spec.ts`) using element bounding boxes |
-| Page height at 360, Thai, seeded plus 3 events, 3 news, 3 updates | 2,600 px or less (from about 6,500 estimated) | Same spec, fixture data |
+| Page height at 360, Thai, 2 shuttle routes, 2 places, canteen, 6 tasks, 2 events, 2 news, 3 updates | 3,300 px or less (the mock-up measures 3,224; the current page is about 6,500 estimated with content) | Same spec, fixture data |
 | Tab stops from the skip link to the first shuttle row | 6 or fewer | Extend `tests/a11y/keyboard.spec.ts` |
 | `role=search` landmarks on `/` | Exactly 1 | Extend `structure.spec.ts` |
 | Live regions on `/` with no user action | 0 | New check in `structure.spec.ts` |
@@ -208,7 +238,7 @@ The shared contract files are fixed (CONTRIBUTING.md). The redesign needs:
 |---|---|
 | `lib/i18n/strings.ts` | New `home*` keys (purpose `h1`, short search hint, block headings, task labels and scent lines, "more alerts", section link texts); move the TODO literals listed in section 7 |
 | `lib/content/types.ts` | `SiteSettings.homeTasks: { label: LocaleString; scent: LocaleString; href: string }[]` so editors own the order of popular tasks; optional `ServiceAlert.affectsRouteId` or `affectsPlaceId` so an alert can sit on its row in "Today" |
-| `styles/tokens.css` | None expected. If the side-by-side layout needs a new breakpoint value, it is added here |
+| `styles/tokens.css` | `--radius-block: 16px`; `--radius-band: 28px`; `--band-gradient` (light and both dark blocks); plum dark surfaces (`--surface`, `--surface-alt`, `--surface-sunk`, `--line`) in both dark blocks; `--press-lift`. Every new pair added to `scripts/check-contrast.mjs` |
 | Migration | A column or JSON field for `homeTasks` on site settings, with a seed of the current priority forms and nav so nothing is empty on day one; an admin field to edit it |
 
 ## 10. Build plan
@@ -226,6 +256,7 @@ Opus orchestrates and reviews; Sonnet subagents implement, each in its own direc
 | 6 | `components/layout/fonts.ts` | Load Sarabun only on `th` pages and Lexend plus a Sarabun Thai subset on `en` pages; measure before and after |
 | 7 | `app/admin/content` | Edit "Popular tasks" in site settings |
 | 8 | `app/[locale]/design` | Document the new components with their when-to-use and when-not-to-use notes |
+| 9 | `components/illustrations` (new) | The landmark SVGs as server components that take tokens, used by the band, `EmptyState` and the 404 and error pages |
 
 Each step ends green on `npm run check`, `npm run test`, `npm run test:a11y` and `npm run test:e2e`, with screenshots at 360, 390, 414, 768 and 1280 in both languages and both themes.
 

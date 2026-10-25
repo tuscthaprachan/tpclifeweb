@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home mock-up, warm direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --surface: #ffffff;
+  --surface-alt: #fef8f4;
+  --ink-900: #1f1a1c;
+  --ink-600: #554f51;
+  --ink-on-fill: #1f1a1c;
+  --line: #e2dcde;
+  --action: #613f87;
+  --action-hover: #42295e;
+  --on-action: #ffffff;
+  --accent: #843a01;
+  --fill-transport: #e7935b;
+  --fill-activity: #c293e5;
+  --fill-governance: #998fe8;
+  --success: #1d6b3a;
+  --success-soft: #dcefe2;
+  --neutral-soft: #ece9ea;
+  --band: linear-gradient(135deg, #fbe4d7 0%, #f8dccf 35%, #f0e4f9 100%);
+  --search-ring: #868082;
+  --focus-fill: #ffbf47;
+  --radius-block: 16px;
+  --radius-pill: 999px;
+  --target: 44px;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --surface: #1a1220;
+  --surface-alt: #251a2d;
+  --ink-900: #f1ebf3;
+  --ink-600: #c3b8c8;
+  --line: #3a2d44;
+  --action: #d4b8f5;
+  --action-hover: #e6d6fa;
+  --on-action: #1a1220;
+  --accent: #f0ad82;
+  --fill-transport: #d98650;
+  --fill-activity: #b585d9;
+  --fill-governance: #8c82da;
+  --success: #8fd3a6;
+  --success-soft: #1f3a29;
+  --neutral-soft: #33293b;
+  --band: radial-gradient(120% 90% at 0% 0%, rgba(217,134,80,.42) 0%, rgba(217,134,80,0) 60%), radial-gradient(110% 100% at 100% 100%, rgba(181,133,217,.40) 0%, rgba(181,133,217,0) 65%), #241830;
+  --search-ring: #8d7f97;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink-900);
+  font-family: Lexend, Sarabun, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+:lang(th) { font-family: Sarabun, Lexend, system-ui, sans-serif; font-size: 18px; line-height: 1.75; }
+h1, h2, h3 { margin: 0; line-height: 1.25; }
+:lang(th) h1, :lang(th) h2, :lang(th) h3 { line-height: 1.4; }
+a { color: var(--action); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 3px solid var(--focus-fill);
+  outline-offset: 0;
+  box-shadow: 0 0 0 6px var(--ink-900);
+}
+.wrap { padding-inline: 16px; max-width: 1180px; margin-inline: auto; }
+.press { transition: transform 150ms cubic-bezier(.2,0,.2,1); }
+.press:active { transform: translateY(1px) scale(.98); }
+@media (prefers-reduced-motion: reduce) { .press { transition: none; } .press:active { transform: none; } }
+
+.phase { font-size: .875rem; padding-block: 6px; border-bottom: 1px solid var(--line); display: flex; gap: 8px; align-items: center; }
+.phase .tag { background: var(--fill-activity); color: var(--ink-on-fill); font-weight: 700; border-radius: var(--radius-pill); padding: 0 10px; }
+.header { display: flex; align-items: center; justify-content: space-between; min-height: 56px; border-bottom: 1px solid var(--line); background: var(--surface); position: sticky; top: 0; z-index: 10; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; color: var(--ink-900); min-height: var(--target); }
+.brand .mark { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--fill-transport), var(--fill-activity)); }
+.menu { min-height: var(--target); padding-inline: 16px; border-radius: var(--radius-pill); border: 1px solid var(--search-ring); background: var(--surface); color: var(--ink-900); font: inherit; font-weight: 600; }
+
+.band { background: var(--band); border-radius: 0 0 28px 28px; padding-block: 16px 20px; }
+.band-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.band h1 { font-size: 1.6rem; font-weight: 700; max-width: 15ch; }
+:lang(th) .band h1 { font-size: 1.6rem; max-width: 12em; }
+.band svg { flex: none; width: 104px; height: 72px; }
+.search { margin-top: 8px; }
+.search label { display: block; font-weight: 700; }
+.search .hint { margin: 0 0 8px; color: var(--ink-600); font-size: .875rem; }
+:lang(th) .search .hint { font-size: 1rem; }
+.search-row { display: flex; background: var(--surface); border: 2px solid var(--search-ring); border-radius: var(--radius-pill); padding: 4px; gap: 4px; }
+.search-row:focus-within { outline: 3px solid var(--focus-fill); box-shadow: 0 0 0 6px var(--ink-900); }
+.search input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--ink-900); font: inherit; padding-inline: 14px; min-height: 48px; border-radius: var(--radius-pill); }
+.search input:focus-visible { outline: none; box-shadow: none; }
+.search button { border: 0; background: var(--action); color: var(--on-action); font: inherit; font-weight: 700; border-radius: var(--radius-pill); padding-inline: 20px; min-height: 48px; }
+
+section { margin-top: 24px; }
+.band + .wrap > .grid2:first-child > section:first-child { margin-top: 20px; }
+.bar { border-radius: var(--radius-block); padding: 10px 16px; color: var(--ink-on-fill); font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+:lang(th) .bar { font-size: 1.35rem; }
+.bar.transport { background: var(--fill-transport); }
+.bar.activity { background: var(--fill-activity); }
+.bar.governance { background: var(--fill-governance); }
+.bar.action { background: var(--action); color: var(--on-action); }
+
+.sched { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; margin: 10px 0 0; color: var(--ink-600); font-size: .875rem; }
+:lang(th) .sched { font-size: 1rem; }
+.pill { display: inline-flex; align-items: center; gap: 4px; border-radius: var(--radius-pill); padding: 0 10px; font-weight: 600; font-size: .875rem; white-space: nowrap; }
+:lang(th) .pill { font-size: .95rem; }
+.pill.transport { background: var(--fill-transport); color: var(--ink-on-fill); }
+.pill.open { background: var(--success-soft); color: var(--success); }
+.pill.closed { background: var(--neutral-soft); color: var(--ink-900); }
+.pill.tusu { background: var(--fill-governance); color: var(--ink-on-fill); }
+.pill.tusc { background: var(--fill-activity); color: var(--ink-on-fill); }
+
+dl.today { margin: 8px 0 0; }
+dl.today > div { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 12px 4px; border-bottom: 1px solid var(--line); align-items: baseline; }
+dl.today dt { font-weight: 700; }
+dl.today dt a { color: var(--ink-900); text-decoration: none; }
+dl.today dt a:hover { text-decoration: underline; }
+dl.today dd.time { margin: 0; }
+dl.today dd:not(.time) { margin: 0; grid-column: 1 / -1; color: var(--ink-600); display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
+dl.today .time { grid-column: 2; grid-row: 1; font-size: 1.5rem; font-weight: 700; color: var(--ink-900); font-variant-numeric: tabular-nums; }
+.more { display: inline-flex; align-items: center; min-height: var(--target); font-weight: 600; }
+
+ul.tasks { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+ul.tasks a { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; min-height: 64px; padding: 10px 10px 10px 16px; background: var(--surface-alt); border-radius: var(--radius-block); text-decoration: none; }
+ul.tasks .label { display: block; font-weight: 700; color: var(--action); }
+ul.tasks .scent { display: block; color: var(--ink-600); font-size: .875rem; line-height: 1.45; }
+:lang(th) ul.tasks .scent { font-size: 1rem; line-height: 1.6; }
+ul.tasks .arrow { width: 36px; height: 36px; border-radius: 50%; background: var(--action); display: grid; place-items: center; }
+ul.tasks .arrow svg { width: 18px; height: 18px; stroke: var(--on-action); }
+ul.tasks a:hover .label { text-decoration: underline; }
+
+h3.sub { font-size: 1.1rem; margin-top: 16px; }
+ul.items { list-style: none; margin: 4px 0 0; padding: 0; }
+ul.items li { display: grid; grid-template-columns: 56px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.date { width: 56px; height: 60px; border-radius: 14px; background: var(--fill-activity); color: var(--ink-on-fill); display: grid; place-items: center; text-align: center; font-weight: 700; }
+.date, .date * { line-height: 1.2 !important; }
+.date b { display: block; font-size: 1.35rem; }
+.date span { font-size: .8rem; }
+ul.items a { font-weight: 700; }
+ul.items .meta { display: block; color: var(--ink-600); font-size: .875rem; }
+:lang(th) ul.items .meta { font-size: 1rem; }
+ul.news li { grid-template-columns: 1fr; }
+ul.updates li { grid-template-columns: 1fr; }
+.links { display: flex; flex-wrap: wrap; gap: 0 20px; }
+
+.empty { margin-top: 12px; background: var(--surface-alt); border-radius: var(--radius-block); padding: 20px 16px; display: grid; justify-items: center; text-align: center; gap: 6px; }
+.empty svg { width: 120px; height: 84px; }
+.empty p { margin: 0; color: var(--ink-600); }
+.empty strong { font-size: 1.1rem; }
+.empty .btn { display: inline-flex; align-items: center; min-height: var(--target); padding-inline: 18px; border-radius: var(--radius-pill); border: 2px solid var(--action); font-weight: 700; text-decoration: none; }
+
+footer { margin-top: 40px; background: var(--surface-alt); padding-block: 24px 32px; border-radius: 28px 28px 0 0; }
+footer h2 { font-size: 1.2rem; }
+footer p { margin: 6px 0 10px; color: var(--ink-600); }
+footer ul { list-style: none; padding: 0; margin: 0; }
+footer li a { display: inline-flex; align-items: center; min-height: var(--target); }
+
+@media (min-width: 48rem) {
+  .band h1 { font-size: 2.2rem; max-width: none; }
+  .band svg { width: 180px; height: 124px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; align-items: start; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<template id="landmarks">
+  <svg viewBox="0 0 120 84" aria-hidden="true" focusable="false">
+    <circle cx="94" cy="18" r="10" fill="var(--fill-transport)" opacity=".9"/>
+    <rect x="22" y="34" width="52" height="26" rx="3" fill="var(--surface)"/>
+    <path d="M28 34 a20 18 0 0 1 40 0 z" fill="var(--surface)"/>
+    <path d="M34 34 a14 12 0 0 1 28 0" fill="none" stroke="var(--fill-activity)" stroke-width="3"/>
+    <rect x="46" y="12" width="4" height="6" rx="1" fill="var(--fill-activity)"/>
+    <g fill="var(--fill-activity)"><rect x="28" y="42" width="5" height="12" rx="2"/><rect x="38" y="42" width="5" height="12" rx="2"/><rect x="53" y="42" width="5" height="12" rx="2"/><rect x="63" y="42" width="5" height="12" rx="2"/></g>
+    <rect x="45" y="44" width="6" height="16" rx="3" fill="var(--fill-transport)"/>
+    <path d="M0 64 q10 -5 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 v20 h-120 z" fill="var(--fill-governance)" opacity=".55"/>
+    <path d="M78 58 h30 l-5 8 h-21 z" fill="var(--fill-transport)"/>
+    <rect x="84" y="50" width="16" height="8" rx="2" fill="var(--surface)"/>
+    <path d="M0 72 q10 -5 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 v12 h-120 z" fill="var(--fill-governance)"/>
+  </svg>
+</template>
+<script>
+const T = {
+  th: {
+    phase: "อัลฟา", phaseNote: "บริการใหม่", phaseLink: "ดูรายละเอียด",
+    name: "#ท้ายท่าพระจันทร์", menu: "เมนู",
+    h1: "ชีวิตนักศึกษาท่าพระจันทร์",
+    searchLabel: "ค้นหา", searchHint: "พิมพ์ได้ทั้งไทยและอังกฤษ เช่น รถรับส่ง", searchBtn: "ค้นหา",
+    today: "วันนี้", scheduled: "ตามตารางเวลา", schedNote: "เวลามาจากตารางที่ประกาศไว้ ไม่ใช่ตำแหน่งรถจริง",
+    rows: [
+      { k: "รถสายปิ่นเกล้า", t: "14:20", sched: true, d: "อีก 8 นาที รอบต่อไป 14:50" },
+      { k: "รถสายสนามไชย", t: "", sched: true, d: "ไม่มีบริการวันนี้ รอบแรกพรุ่งนี้ 07:45", tag: ["closed", "ไม่วิ่ง"] },
+      { k: "หอสมุดปรีดี พนมยงค์", d: "ปิด 21:30", tag: ["open", "✓ เปิดอยู่"] },
+      { k: "TU Virtual Clinic", en: true, d: "เปิดพรุ่งนี้ 08:30", tag: ["closed", "● ปิดอยู่"] },
+      { k: "โรงอาหาร", d: "ปิด 15:00", tag: ["open", "✓ เปิดอยู่"], link: "กินอะไรดี" },
+    ],
+    timetable: "ตารางรถรับส่งทั้งหมด",
+    tasksH: "บริการที่ใช้บ่อย",
+    tasks: [
+      ["ค้นหาแบบฟอร์ม", "ดูว่าต้องเตรียมอะไร และต้องเข้าสู่ระบบหรือไม่"],
+      ["แจ้งของหายหรือเก็บของได้", "ติดตามสถานะได้ด้วยลิงก์ส่วนตัว"],
+      ["ร้องเรียน", "ระบุชื่อหรือไม่ระบุชื่อก็ได้"],
+      ["สวัสดิการและสุขภาพ", "ทุน ประกันอุบัติเหตุ สุขภาพจิต"],
+      ["กินอะไรดี", "ร้านในโรงอาหาร 18 ร้าน พร้อมราคา"],
+      ["ติดต่อหน่วยงาน", "เบอร์โทรและอีเมลของหน่วยงานในวิทยาเขต"],
+    ],
+    allServices: "บริการทั้งหมด",
+    whatsOn: "กิจกรรมและข่าว", events: "กิจกรรม", news: "ข่าว",
+    ev: [["2", "พ.ย.", "วันเปิดบ้านชมรม", "ลานโพธิ์ 10:00 ถึง 16:00"], ["8", "พ.ย.", "เตรียมตัวก่อนฝึกงาน", "ห้อง LB 105 13:00 ถึง 15:00"]],
+    nw: [["ปรับเวลาเปิดหอสมุดช่วงสอบ", "24 ต.ค."], ["เปิดรับสมัครทุนอาหารกลางวัน ภาค 2", "22 ต.ค."]],
+    allEvents: "กิจกรรมทั้งหมด", allNews: "ข่าวทั้งหมด",
+    emptyTitle: "ยังไม่มีกิจกรรมที่กำหนดไว้", emptyBody: "ดูกิจกรรมที่ผ่านมาหรือกลับมาดูใหม่ภายหลัง",
+    union: "อมธ. และสภานักศึกษา",
+    up: [["tusu", "อมธ.", "เปิดรับฟังความเห็นเรื่องเวลาเปิดห้องอ่านหนังสือ", "23 ต.ค."], ["tusc", "สภาฯ", "ตั้งกระทู้ถามเรื่องความถี่รถรับส่งช่วงเย็น", "21 ต.ค."], ["tusu", "อมธ.", "นโยบายตู้น้ำดื่มฟรี: กำลังดำเนินการ", "18 ต.ค."]],
+    policy: "ความคืบหน้านโยบาย",
+    help: "ต้องการความช่วยเหลือ", helpBody: "ติดต่อ อมธ. ท่าพระจันทร์ หรือสภานักศึกษา ท่าพระจันทร์",
+    helpLinks: ["องค์การนักศึกษา ท่าพระจันทร์", "สภานักศึกษา ท่าพระจันทร์"],
+  },
+  en: {
+    phase: "Alpha", phaseNote: "A new service.", phaseLink: "What this means",
+    name: "#trytpc", menu: "Menu",
+    h1: "Student life at Tha Prachan",
+    searchLabel: "Search", searchHint: "Thai or English, for example shuttle", searchBtn: "Search",
+    today: "Today", scheduled: "Scheduled", schedNote: "Times come from the published timetable, not the bus's position.",
+    rows: [
+      { k: "Pinklao Line", t: "14:20", sched: true, d: "in 8 min, then 14:50" },
+      { k: "Sanam Chai Line", t: "", sched: true, d: "No service today. First bus tomorrow 07:45", tag: ["closed", "Not running"] },
+      { k: "Pridi Banomyong Library", d: "closes 21:30", tag: ["open", "✓ Open"] },
+      { k: "TU Virtual Clinic", d: "opens tomorrow 08:30", tag: ["closed", "● Closed"] },
+      { k: "Canteen", d: "closes 15:00", tag: ["open", "✓ Open"], link: "What to eat" },
+    ],
+    timetable: "Full shuttle timetable",
+    tasksH: "Popular",
+    tasks: [
+      ["Find a form", "See what you need and whether you have to sign in"],
+      ["Report lost or found property", "Track it with a private link"],
+      ["Make a complaint", "With or without your name"],
+      ["Welfare and health", "Grants, accident insurance, mental health"],
+      ["What to eat", "18 canteen stalls with prices"],
+      ["Find a contact", "Phone numbers and emails for campus offices"],
+    ],
+    allServices: "All services",
+    whatsOn: "What's on", events: "Events", news: "News",
+    ev: [["2", "Nov", "Club open day", "Lan Pho, 10:00 to 16:00"], ["8", "Nov", "Getting ready for your internship", "Room LB 105, 13:00 to 15:00"]],
+    nw: [["Library opening hours change for exams", "24 Oct"], ["Lunch grants open for semester 2", "22 Oct"]],
+    allEvents: "All events", allNews: "All news",
+    emptyTitle: "No events scheduled", emptyBody: "See past events, or check again later.",
+    union: "Student union and council",
+    up: [["tusu", "TUSU", "Views wanted on reading room opening hours", "23 Oct"], ["tusc", "TUSC", "Council asks about evening shuttle frequency", "21 Oct"], ["tusu", "TUSU", "Free drinking water policy: in progress", "18 Oct"]],
+    policy: "Policy progress",
+    help: "Need help", helpBody: "Contact the TUSU or TUSC Tha Prachan offices.",
+    helpLinks: ["TUSU Tha Prachan", "TUSC Tha Prachan"],
+  },
+};
+const q = new URLSearchParams(location.search);
+const lang = q.get("lang") === "en" ? "en" : "th";
+if (q.get("theme") === "dark") document.documentElement.dataset.theme = "dark";
+document.documentElement.lang = lang;
+const s = T[lang];
+const art = document.getElementById("landmarks").innerHTML;
+const arrow = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const empty = q.get("empty") === "1";
+document.getElementById("app").innerHTML = `
+<div class="phase wrap"><span class="tag">${s.phase}</span><span>${s.phaseNote} <a href="#">${s.phaseLink}</a></span></div>
+<header class="header wrap"><a class="brand" href="#"><span class="mark"></span>${s.name}</a><button class="menu press">${s.menu}</button></header>
+<main>
+  <div class="band"><div class="wrap">
+    <div class="band-top"><h1>${s.h1}</h1>${art}</div>
+    <form class="search" role="search" action="#"><label for="q">${s.searchLabel}</label><p class="hint" id="qh">${s.searchHint}</p>
+      <div class="search-row"><input id="q" name="q" type="search" aria-describedby="qh"><button class="press">${s.searchBtn}</button></div></form>
+  </div></div>
+  <div class="wrap">
+    <div class="grid2">
+      <section aria-labelledby="h-today">
+        <h2 class="bar transport" id="h-today">${s.today}</h2>
+        <dl class="today">${s.rows.map(r => `<div><dt><a href="#"${r.en && lang === "th" ? ' lang="en"' : ""}>${r.k}</a></dt><dd class="time">${r.t ? r.t : r.tag ? `<span class="pill ${r.tag[0]}">${r.tag[1]}</span>` : ""}</dd><dd>${r.sched ? `<span class="pill transport">${s.scheduled}</span> ` : ""}${r.d}${r.link ? ` <a href="#">${r.link}</a>` : ""}</dd></div>`).join("")}</dl>
+        <p class="sched">${s.schedNote}</p>
+        <a class="more" href="#">${s.timetable}</a>
+      </section>
+      <section aria-labelledby="h-tasks">
+        <h2 class="bar action" id="h-tasks">${s.tasksH}</h2>
+        <ul class="tasks">${s.tasks.map(([l, d]) => `<li><a class="press" href="#"><span><span class="label">${l}</span><span class="scent">${d}</span></span><span class="arrow">${arrow}</span></a></li>`).join("")}</ul>
+        <a class="more" href="#">${s.allServices}</a>
+      </section>
+    </div>
+    <div class="grid2">
+      <section aria-labelledby="h-on">
+        <h2 class="bar activity" id="h-on">${s.whatsOn}</h2>
+        <h3 class="sub">${s.events}</h3>
+        ${empty ? `<div class="empty">${art}<strong>${s.emptyTitle}</strong><p>${s.emptyBody}</p><a class="btn press" href="#">${s.allEvents}</a></div>` :
+        `<ul class="items">${s.ev.map(([d, m, t, w]) => `<li><span class="date"><span><b>${d}</b><span>${m}</span></span></span><span><a href="#">${t}</a><span class="meta">${w}</span></span></li>`).join("")}</ul>`}
+        <h3 class="sub">${s.news}</h3>
+        <ul class="items news">${s.nw.map(([t, d]) => `<li><span><a href="#">${t}</a><span class="meta">${d}</span></span></li>`).join("")}</ul>
+        <p class="links"><a class="more" href="#">${s.allEvents}</a><a class="more" href="#">${s.allNews}</a></p>
+      </section>
+      <section aria-labelledby="h-union">
+        <h2 class="bar governance" id="h-union">${s.union}</h2>
+        <ul class="items updates">${s.up.map(([c, o, t, d]) => `<li><span><span class="pill ${c}">${o}</span> <a href="#">${t}</a><span class="meta">${d}</span></span></li>`).join("")}</ul>
+        <a class="more" href="#">${s.policy}</a>
+      </section>
+    </div>
+  </div>
+</main>
+<footer><div class="wrap"><h2>${s.help}</h2><p>${s.helpBody}</p><ul>${s.helpLinks.map(l => `<li><a href="#">${l}</a></li>`).join("")}</ul></div></footer>`;
+</script>
+</body>
+</html>
