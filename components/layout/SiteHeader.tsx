@@ -39,6 +39,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { cx } from "@/components/ui/cx";
 import { MenuIcon, SearchIcon } from "@/components/ui/icons";
@@ -105,6 +106,7 @@ export function SiteHeader({
   const summaryRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const menuId = useId();
+  const isHome = usePathname() === localePath(locale, "/");
 
   useEffect(() => {
     const el = headerRef.current;
@@ -159,7 +161,7 @@ export function SiteHeader({
       <ShellContainer className="flex items-center justify-between gap-4 py-3">
         <Link
           href={localePath(locale, "/")}
-          className="inline-flex min-h-[var(--target-min)] shrink-0 items-center gap-2 text-lg font-semibold text-ink-900 no-underline"
+          className="inline-flex min-h-[var(--target-min)] min-w-0 items-center gap-2 text-base font-semibold sm:text-lg text-ink-900 no-underline"
         >
           <SiteLogo size={36} priority />
           {pick(serviceName, locale)}
@@ -170,12 +172,14 @@ export function SiteHeader({
             `lg` by CSS alone, not by script. The nav itself lives in row 2
             below, not here, see the file-level comment. */}
         <div className="hidden items-center gap-6 lg:flex">
-          <Link
-            href={localePath(locale, "/search")}
-            className="inline-flex min-h-[var(--target-min)] items-center text-base font-medium text-ink-900 no-underline hover:text-action"
-          >
-            {UI.search[locale]}
-          </Link>
+          {isHome ? null : (
+            <Link
+              href={localePath(locale, "/search")}
+              className="inline-flex min-h-[var(--target-min)] items-center text-base font-medium text-ink-900 no-underline hover:text-action"
+            >
+              {UI.search[locale]}
+            </Link>
+          )}
           <LanguageToggle locale={locale} />
           <ThemeToggle locale={locale} current={theme} />
         </div>
@@ -187,13 +191,15 @@ export function SiteHeader({
             menu at all. The full SearchBar also appears inside the open
             panel below for anyone who opens the menu first. */}
         <div className="flex items-center gap-1 lg:hidden">
-          <Link
-            href={localePath(locale, "/search")}
-            className="inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center rounded-control px-2 text-ink-900 no-underline hover:bg-surface-alt"
-          >
-            <SearchIcon />
-            <span className="visually-hidden">{UI.search[locale]}</span>
-          </Link>
+          {isHome ? null : (
+            <Link
+              href={localePath(locale, "/search")}
+              className="inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center rounded-control px-2 text-ink-900 no-underline hover:bg-surface-alt"
+            >
+              <SearchIcon />
+              <span className="visually-hidden">{UI.search[locale]}</span>
+            </Link>
+          )}
 
           {/* Native disclosure. Works fully without JavaScript; see the
               file-level comment for how the open panel becomes full-width. */}
@@ -202,10 +208,10 @@ export function SiteHeader({
               ref={summaryRef}
               aria-expanded={open}
               aria-controls={menuId}
-              className="flex min-h-[var(--target-min)] min-w-[var(--target-min)] cursor-pointer list-none items-center gap-2 rounded-control px-3 py-2 text-base font-medium text-ink-900 [&::-webkit-details-marker]:hidden"
+              className="press flex min-h-[var(--target-min)] min-w-[var(--target-min)] cursor-pointer list-none items-center gap-2 whitespace-nowrap rounded-pill border border-line-strong bg-surface px-3 py-2 text-base font-semibold text-ink-900 [&::-webkit-details-marker]:hidden"
             >
               <MenuIcon />
-              <span className="max-[26rem]:sr-only">{open ? UI.closeMenu[locale] : UI.openMenu[locale]}</span>
+              <span>{open ? UI.closeMenu[locale] : UI.openMenu[locale]}</span>
             </summary>
 
             <div
@@ -216,7 +222,7 @@ export function SiteHeader({
               )}
             >
               <ShellContainer className="flex flex-col gap-6 py-4">
-                <SearchBar locale={locale} />
+                {isHome ? null : <SearchBar locale={locale} />}
                 <ServiceNavigation locale={locale} items={navItems} label={navLabel} variant="vertical" />
                 <div className="flex flex-wrap items-center gap-3 border-t border-line pt-4">
                   <LanguageToggle locale={locale} />

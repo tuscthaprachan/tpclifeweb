@@ -67,19 +67,19 @@ describe("withRequiredNav footer", () => {
 });
 
 describe("splitPrimaryNav", () => {
-  const items = settings(["/forms", "/welfare", "/news", "/eat", "/directory"]).primaryNav;
+  const items = settings(["/welfare", "/news", "/eat", "/getting-around", "/directory", "/forms"]).primaryNav;
 
-  it("pins What to eat then Student welfare regardless of CMS order", () => {
-    expect(splitPrimaryNav(items).pinned.map((item) => item.path)).toEqual(["/eat", "/welfare"]);
+  it("pins Forms, Getting around, What to eat then Student welfare regardless of CMS order", () => {
+    expect(splitPrimaryNav(items).pinned.map((item) => item.path)).toEqual(["/forms", "/getting-around", "/eat", "/welfare"]);
   });
 
   it("keeps every other item in CMS order under More", () => {
-    expect(splitPrimaryNav(items).more.map((item) => item.path)).toEqual(["/forms", "/news", "/directory"]);
+    expect(splitPrimaryNav(items).more.map((item) => item.path)).toEqual(["/news", "/directory"]);
   });
 
   it("skips a pinned path that the CMS does not list", () => {
-    const result = splitPrimaryNav(settings(["/forms", "/eat"]).primaryNav);
+    const result = splitPrimaryNav(settings(["/news", "/eat"]).primaryNav);
     expect(result.pinned.map((item) => item.path)).toEqual(["/eat"]);
-    expect(result.more.map((item) => item.path)).toEqual(["/forms"]);
+    expect(result.more.map((item) => item.path)).toEqual(["/news"]);
   });
 });

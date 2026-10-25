@@ -29,14 +29,23 @@ test.beforeEach(async ({}, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "Mechanism check, not a layout check; see file header for why desktop only.");
 });
 
-test("navigation works with JavaScript disabled", async ({ page }) => {
+test("pinned navigation works with JavaScript disabled", async ({ page }) => {
   await page.goto(localePath("th", "/"));
 
-  await page.locator("header summary").filter({ hasText: UI.moreNav.th }).click();
   await page.locator("header").getByRole("link", { name: UI.forms.th, exact: true }).first().click();
 
   await expect(page).toHaveURL(new RegExp(`${localePath("th", "/forms")}$`));
   await expect(page.locator("h1")).toHaveText(UI.forms.th);
+});
+
+test("the More disclosure opens and navigates with JavaScript disabled", async ({ page }) => {
+  await page.goto(localePath("th", "/"));
+
+  await page.locator("header summary").filter({ hasText: UI.moreNav.th }).click();
+  await page.locator("header").getByRole("link", { name: UI.news.th, exact: true }).first().click();
+
+  await expect(page).toHaveURL(new RegExp(`${localePath("th", "/news")}$`));
+  await expect(page.locator("h1")).toHaveText(UI.news.th);
 });
 
 test("the language toggle keeps the reader on the same page", async ({ page }) => {
