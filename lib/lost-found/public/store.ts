@@ -15,6 +15,7 @@ import { eq, lte } from "drizzle-orm";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { lostFoundJourneys } from "@/lib/db/schema/lost-found-cases";
 import { decryptPii, encryptPii, type PiiEnv } from "@/lib/crypto/pii";
+import { recordJourneyStart } from "@/lib/performance/journeys";
 import type { Locale } from "@/lib/i18n/config";
 import type { UiKey } from "@/lib/i18n/strings";
 import { emptyValues } from "./validate";
@@ -88,6 +89,8 @@ export async function startJourney(
     updatedAt: now,
     expiresAt: new Date(now.getTime() + JOURNEY_TTL_MS),
   });
+  // A count for the completion rate on /performance: the kind and the time, nothing about the person.
+  await recordJourneyStart(db, id, input.kind, now);
   return { token, id };
 }
 

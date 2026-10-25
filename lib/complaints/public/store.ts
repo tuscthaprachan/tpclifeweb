@@ -14,6 +14,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { eq, inArray, lte } from "drizzle-orm";
 import { decryptPii, encryptPii, type PiiEnv } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
+import { recordJourneyStart } from "@/lib/performance/journeys";
 import { complaintJourneyFiles, complaintJourneys, type ComplaintIdentity } from "@/lib/db/schema/complaints";
 import type { Locale } from "@/lib/i18n/config";
 import type { UiKey } from "@/lib/i18n/strings";
@@ -104,6 +105,8 @@ export async function startJourney(
     updatedAt: now,
     expiresAt: new Date(now.getTime() + JOURNEY_TTL_MS),
   });
+  // A count for the completion rate on /performance: the kind and the time, nothing about the person.
+  await recordJourneyStart(db, id, "complaint", now);
   return { token, id };
 }
 

@@ -9,7 +9,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
 import { publicCaseView, readContacts, resolveTrackingLink, transition, createCase, type StaffActor } from "@/lib/cases";
 import { decryptPii, PiiUnavailableError } from "@/lib/crypto/pii";
-import { auditLog, caseContacts, caseEvents, cases, lostFoundClaims, lostFoundIdentifyingDetails, lostFoundItems, lostFoundJourneys, lostFoundPublic, places, referenceCounters } from "@/lib/db/schema";
+import { auditLog, caseContacts, caseEvents, cases, lostFoundClaims, lostFoundIdentifyingDetails, lostFoundItems, journeyMetrics, lostFoundJourneys, lostFoundPublic, places, referenceCounters } from "@/lib/db/schema";
 import { claimAnswerAad, identifyingDetailAad } from "@/lib/lost-found/public/aad";
 import { trackingLinkEmail } from "@/lib/lost-found/public/email";
 import { finishJourney, JourneyTooFastError, MIN_JOURNEY_MS } from "@/lib/lost-found/public/journey";
@@ -262,6 +262,9 @@ describe("finishing a journey", () => {
     const again = await finishJourney(t.db, id, ctx, { now: NOW, env });
     expect(again).toEqual(first);
     expect(await counter()).toBe(before + 1);
+    // The completion count has the kind and the two times only.
+    const [metric] = await t.db.select().from(journeyMetrics).where(eq(journeyMetrics.id, id));
+    expect(metric).toMatchObject({ kind: "lost", startedAt: new Date(NOW.getTime() - 60_000), finishedAt: NOW });
     expect(first).toMatchObject({ email: "somchai@example.com", emailed: false });
     const [row] = await t.db.select().from(lostFoundJourneys).where(eq(lostFoundJourneys.id, id));
     // The answers are gone; only the result remains, and it expires in minutes.

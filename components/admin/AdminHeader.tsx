@@ -23,9 +23,11 @@ interface AdminHeaderProps {
   isEditor: boolean;
   /** Holds a case role: shows the Cases link. */
   isCaseStaff?: boolean;
+  /** An `admin` or `unit_lead`: shows the Performance link. */
+  canSeePerformance?: boolean;
 }
 
-export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor, isCaseStaff = false }: AdminHeaderProps) {
+export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor, isCaseStaff = false, canSeePerformance = false }: AdminHeaderProps) {
   return (
     <header className="border-b border-line bg-surface">
       <ShellContainer className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-3">
@@ -55,6 +57,13 @@ export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor, i
                   <li>
                     <a href="/admin/cases" className="text-ink-900">
                       {A.casesLink[locale]}
+                    </a>
+                  </li>
+                ) : null}
+                {canSeePerformance ? (
+                  <li>
+                    <a href="/admin/performance" className="text-ink-900">
+                      {A.pfLink[locale]}
                     </a>
                   </li>
                 ) : null}

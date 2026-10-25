@@ -17,6 +17,7 @@ import { DIRECTORY_STRINGS } from "./admin-content/directory";
 import { LOST_FOUND_CASES_STRINGS } from "./admin-content/lost-found-cases";
 import { MEDIA_STRINGS } from "./admin-content/media";
 import { PAGES_STRINGS } from "./admin-content/pages";
+import { PERFORMANCE_STRINGS } from "./admin-content/performance";
 import { PUBLISHING_STRINGS } from "./admin-content/publishing";
 
 export const A = {
@@ -720,6 +721,7 @@ export const A = {
   ...CASES_STRINGS,
   ...COMPLAINTS_STRINGS,
   ...LOST_FOUND_CASES_STRINGS,
+  ...PERFORMANCE_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 
 export type AdminKey = keyof typeof A;

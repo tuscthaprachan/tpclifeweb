@@ -36,6 +36,7 @@ export async function seedSiteSettings(db: SeedDb): Promise<void> {
       nav("เกี่ยวกับ", "About", "/about"),
       nav("การเข้าถึง", "Accessibility", "/accessibility"),
       nav("คุกกี้", "Cookies", "/cookies"),
+      nav("ผลการดำเนินงาน", "Performance", "/performance"),
     ],
     helpContacts: [
       { label: STUDENT_BODIES.tusu.name, channel: "url" as const, value: STUDENT_BODIES.tusu.linktree },

@@ -11,6 +11,7 @@ import { hasRole } from "@/lib/auth/roles";
 import { requireStaff } from "@/lib/auth/session";
 import { a, ROLE_LABEL } from "@/lib/i18n/admin";
 import { pick } from "@/lib/i18n/config";
+import { canSeePerformance } from "@/lib/performance/access";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,17 @@ export default async function AdminDashboardPage() {
           <div className="mt-[var(--space-3)]">
             <Button href="/admin/cases" variant="secondary">
               {a("casesTitle", locale)}
+            </Button>
+          </div>
+        </section>
+      ) : null}
+      {canSeePerformance(staff.roles) ? (
+        <section>
+          <Heading level={2}>{a("pfLink", locale)}</Heading>
+          <p className="mt-[var(--space-2)] text-ink-600">{a("pfDashIntro", locale)}</p>
+          <div className="mt-[var(--space-3)]">
+            <Button href="/admin/performance" variant="secondary">
+              {a("pfTitle", locale)}
             </Button>
           </div>
         </section>

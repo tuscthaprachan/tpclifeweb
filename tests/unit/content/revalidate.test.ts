@@ -52,6 +52,7 @@ describe("revalidateFor", () => {
       canteenDish: ["canteen", "searchIndex"],
       canonicalDish: ["canteen", "searchIndex"],
       image: ["image"],
+      performance: ["performance"],
     };
     expect(TAGS_BY_TYPE).toEqual(expected);
   });

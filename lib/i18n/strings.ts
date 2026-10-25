@@ -983,6 +983,148 @@ export const UI = {
   cpErrCommentLong: { th: "ข้อความยาวเกิน 1,000 ตัวอักษร", en: "That is over 1,000 characters" },
   cpFromReport: { th: "ถ้าไม่ใช่เหตุฉุกเฉินและต้องการร้องเรียนต่อ อมธ. หรือ สภานักศึกษา:", en: "If it is not an emergency and you want to complain about TUSU or TUSC:" },
 
+  /*
+   * Performance (app/[locale]/performance, lib/performance). All keys start
+   * with `perf`. The page publishes figures from the case system, so each
+   * measure carries a short plain definition here; keep them in step with
+   * the comments in lib/performance. A figure based on fewer than five cases
+   * is never shown, only `perfNotEnough`.
+   */
+  perfTitle: { th: "ผลการดำเนินงาน", en: "Performance" },
+  perfIntro: {
+    th: "ตัวเลขเหล่านี้แสดงว่าบริการของหายและของเก็บได้ และบริการข้อร้องเรียน ทำงานได้ดีเพียงใด คำนวณจากระบบที่ อมธ. และ สภานักศึกษา ท่าพระจันทร์ ใช้ดูแลเรื่องร่วมกัน และไม่มีข้อมูลส่วนบุคคลของใครอยู่ในตัวเลข",
+    en: "These figures show how the lost and found and complaints services are doing. They are worked out from the system TUSU and TUSC Tha Prachan use together, and they contain no one's personal details",
+  },
+  perfSmallNumbers: {
+    th: "เราไม่แสดงตัวเลขที่คำนวณจากเรื่องน้อยกว่า 5 เรื่อง เพื่อไม่ให้ระบุตัวบุคคลได้ ช่องนั้นจะเขียนว่า “ข้อมูลไม่พอ”",
+    en: "We do not show a figure based on fewer than 5 cases, so that no one can be identified. It says “Not enough data” instead",
+  },
+  perfPeriodLabel: { th: "ช่วงเวลา", en: "Period" },
+  perfPeriod30d: { th: "30 วันที่ผ่านมา", en: "Last 30 days" },
+  perfPeriod12m: { th: "12 เดือนที่ผ่านมา", en: "Last 12 months" },
+  perfPeriodAll: { th: "ตั้งแต่เริ่มบริการ", en: "All time" },
+  perfCoversFrom: { th: "แสดงเรื่องที่เกิดตั้งแต่ {from} จนถึงปัจจุบัน", en: "Showing cases from {from} to now" },
+  perfCoversAll: { th: "แสดงทุกเรื่องตั้งแต่เริ่มบริการ", en: "Showing every case since the service began" },
+  perfPeriod12mNote: { th: "12 เดือนที่ผ่านมา หมายถึงเดือนนี้และ 11 เดือนก่อนหน้า", en: "Last 12 months means this month and the 11 before it" },
+  perfUpdated: { th: "อัปเดตล่าสุด", en: "Last updated" },
+  perfRefreshNote: { th: "ตัวเลขคำนวณใหม่ประมาณทุกชั่วโมง", en: "The figures are worked out again about once an hour" },
+  perfNotEnough: { th: "ข้อมูลไม่พอ", en: "Not enough data" },
+  perfUnavailable: { th: "ขณะนี้ยังแสดงตัวเลขไม่ได้ ลองใหม่ภายหลัง", en: "We cannot show the figures right now. Try again later" },
+  perfOfItems: { th: "จากของ {n} ชิ้น", en: "of {n} items" },
+  perfOfReports: { th: "จากรายงาน {n} เรื่อง", en: "of {n} reports" },
+  perfOfComplaints: { th: "จากข้อร้องเรียน {n} เรื่อง", en: "of {n} complaints" },
+  perfOfResponses: { th: "จากผู้ตอบ {n} คน", en: "from {n} responses" },
+  perfOfForms: { th: "จากแบบฟอร์ม {n} ครั้ง", en: "of {n} forms" },
+  perfDays: { th: "{n} วัน", en: "{n} days" },
+  perfOutOfFive: { th: "{n} จาก 5", en: "{n} out of 5" },
+  perfMeasure: { th: "ตัวชี้วัด", en: "Measure" },
+
+  perfLfHeading: { th: "ของหายและของเก็บได้", en: "Lost and found" },
+  perfLfLostReceived: { th: "รายงานของหายที่ได้รับ", en: "Lost reports received" },
+  perfLfLostReceivedDef: {
+    th: "จำนวนรายงานของหายที่เปิดเรื่องในช่วงเวลานี้ ทั้งที่แจ้งผ่านเว็บไซต์และที่เจ้าหน้าที่บันทึกที่ห้องบริการ",
+    en: "Lost reports opened in the period, whether made on this website or recorded by staff at a desk",
+  },
+  perfLfFoundReceived: { th: "รายงานของที่พบที่ได้รับ", en: "Found reports received" },
+  perfLfFoundReceivedDef: {
+    th: "จำนวนของที่พบที่เปิดเรื่องในช่วงเวลานี้ ทั้งที่ผู้พบแจ้งผ่านเว็บไซต์และที่เจ้าหน้าที่บันทึกที่ห้องบริการ",
+    en: "Found items opened in the period, whether reported on this website or logged by staff at a desk",
+  },
+  perfLfReturned: { th: "ของที่ส่งคืนเจ้าของแล้ว", en: "Items returned" },
+  perfLfReturnedDef: { th: "จำนวนของที่พบซึ่งส่งคืนเจ้าของในช่วงเวลานี้", en: "Found items handed back to their owners in the period" },
+  perfLfReturnRate: { th: "อัตราการส่งคืน", en: "Return rate" },
+  perfLfReturnRateDef: {
+    th: "จากของที่พบซึ่งบันทึกในช่วงเวลานี้และผ่านมาแล้วอย่างน้อย 30 วัน สัดส่วนที่ส่งคืนเจ้าของแล้ว ไม่นับของที่ถอนออกจากรายการเพราะบันทึกผิด ของที่ใหม่กว่านั้นยังไม่นับ ช่วง 30 วันที่ผ่านมาจึงไม่มีตัวเลขนี้",
+    en: "Of the found items logged in the period that are at least 30 days old, the share that have been returned. Items removed from the register because they were logged in error are left out. Newer items are not counted yet, so the last 30 days has no figure",
+  },
+  perfLfMedian: { th: "จำนวนวันที่ใช้ส่งคืน (ค่ามัธยฐาน)", en: "Median days to return" },
+  perfLfMedianDef: {
+    th: "สำหรับของที่ส่งคืนในช่วงเวลานี้ จำนวนวันตรงกลางนับจากเจ้าหน้าที่บันทึกของจนถึงส่งคืนเจ้าของ ครึ่งหนึ่งใช้เวลาน้อยกว่านี้ อีกครึ่งใช้นานกว่า",
+    en: "For items returned in the period, the middle number of days from staff logging the item to handing it back. Half were returned faster and half took longer",
+  },
+  perfLfOnline: { th: "รายงานที่แจ้งผ่านเว็บไซต์", en: "Reports made online" },
+  perfLfOnlineDef: {
+    th: "จากรายงานของหายและของที่พบที่เปิดเรื่องในช่วงเวลานี้ สัดส่วนที่ผู้ใช้แจ้งผ่านเว็บไซต์เอง ที่เหลือเจ้าหน้าที่บันทึกที่ห้องบริการ",
+    en: "Of all lost and found reports opened in the period, the share made by a person on this website. The rest were recorded by staff at a desk",
+  },
+
+  perfCpHeading: { th: "ข้อร้องเรียน", en: "Complaints" },
+  perfCpReceived: { th: "ข้อร้องเรียนที่ได้รับ", en: "Complaints received" },
+  perfCpReceivedDef: { th: "จำนวนข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้", en: "Complaints opened in the period" },
+  perfCpAck: { th: "รับทราบภายในเวลาที่กำหนด", en: "Acknowledged on time" },
+  perfCpAckDef: {
+    th: "จากข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้ และได้รับทราบแล้วหรือถึงกำหนดรับทราบแล้ว สัดส่วนที่เจ้าหน้าที่รับทราบทันกำหนดของหมวดนั้น ไม่นับเรื่องที่ผู้ร้องยกเลิกก่อนมีการรับทราบ",
+    en: "Of complaints opened in the period that have been acknowledged or whose acknowledgement date has passed, the share staff acknowledged by the date set for their category. Complaints withdrawn before they were acknowledged are left out",
+  },
+  perfCpResolved: { th: "แก้ไขภายในเวลาที่กำหนด", en: "Resolved on time" },
+  perfCpResolvedDef: {
+    th: "จากข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้ และแก้ไขแล้วหรือถึงกำหนดแก้ไขแล้ว สัดส่วนที่แก้ไขทันกำหนดของหมวดนั้น เรื่องที่เปิดอีกครั้งจะได้กำหนดใหม่นับจากวันที่เปิดอีกครั้ง",
+    en: "Of complaints opened in the period that have been resolved or whose resolution date has passed, the share resolved by the date set for their category. A complaint that is reopened gets a new date from the day it was reopened",
+  },
+  perfCpMedian: { th: "จำนวนวันที่ใช้แก้ไข (ค่ามัธยฐาน)", en: "Median days to resolution" },
+  perfCpMedianDef: {
+    th: "สำหรับข้อร้องเรียนที่แก้ไขในช่วงเวลานี้ จำนวนวันตรงกลางนับจากวันที่ได้รับเรื่องจนถึงวันที่แก้ไข นับทุกวันในปฏิทิน",
+    en: "For complaints resolved in the period, the middle number of days from receiving the complaint to resolving it, counting every calendar day",
+  },
+  perfCpSatisfaction: { th: "ความพึงพอใจ (คะแนนเฉลี่ย)", en: "User satisfaction (average score)" },
+  perfCpSatisfactionDef: {
+    th: "ค่าเฉลี่ยของคะแนนที่ผู้ร้องให้ในแบบสอบถามหลังการแก้ไข ตั้งแต่ 1 (ไม่พอใจมาก) ถึง 5 (พอใจมาก) นับคำตอบที่ส่งในช่วงเวลานี้",
+    en: "The average of the scores people give in the survey after a resolution, from 1 (very dissatisfied) to 5 (very satisfied), for answers sent in the period",
+  },
+  perfCpSatisfied: { th: "พอใจหรือพอใจมาก", en: "Satisfied or very satisfied" },
+  perfCpSatisfiedDef: { th: "สัดส่วนของคำตอบที่ให้คะแนน 4 หรือ 5", en: "The share of those answers that scored 4 or 5" },
+  perfCpReopen: { th: "อัตราการเปิดเรื่องอีกครั้ง", en: "Reopen rate" },
+  perfCpReopenDef: {
+    th: "จากข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้และเคยได้รับการแก้ไขอย่างน้อยหนึ่งครั้ง สัดส่วนที่ผู้ร้องขอให้เปิดเรื่องอีกครั้ง",
+    en: "Of complaints opened in the period that have been resolved at least once, the share a person asked to reopen",
+  },
+  perfCpOnline: { th: "ข้อร้องเรียนที่ส่งผ่านเว็บไซต์", en: "Complaints made online" },
+  perfCpOnlineDef: {
+    th: "จากข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้ สัดส่วนที่ผู้ใช้ส่งผ่านเว็บไซต์เอง",
+    en: "Of complaints opened in the period, the share made by a person on this website",
+  },
+  perfCpMonthCaption: { th: "ข้อร้องเรียนที่ได้รับในแต่ละเดือน", en: "Complaints received each month" },
+  perfCpMonthNone: { th: "ตารางรายเดือนแสดงเฉพาะ 12 เดือนที่ผ่านมาและตั้งแต่เริ่มบริการ", en: "The monthly table is shown for the last 12 months and all time" },
+  perfCpCategoryCaption: { th: "ข้อร้องเรียนที่ได้รับแยกตามหมวด", en: "Complaints received by category" },
+  perfCpCategoryNote: {
+    th: "หมวดที่อ่อนไหวเห็นได้เฉพาะเจ้าหน้าที่ที่ได้รับมอบหมาย จึงรวมเป็นแถวเดียวและไม่แสดงชื่อหมวด หมวดที่มีเรื่องน้อยจะรวมกัน เพื่อไม่ให้คำนวณย้อนหาตัวเลขที่ซ่อนไว้ได้",
+    en: "Sensitive categories can be seen only by named staff, so they are shown as one row and never by name. Small categories are combined so that nobody can work out a hidden figure by subtraction",
+  },
+  perfColMonth: { th: "เดือน", en: "Month" },
+  perfColReceived: { th: "ที่ได้รับ", en: "Received" },
+  perfColCategory: { th: "หมวด", en: "Category" },
+  perfPoolSensitive: { th: "อ่อนไหว", en: "Sensitive" },
+  perfPoolOther: { th: "หมวดอื่น ๆ", en: "Other categories" },
+  perfPoolSensitiveOther: { th: "อ่อนไหวและหมวดอื่น ๆ", en: "Sensitive and other categories" },
+
+  perfJHeading: { th: "การส่งเรื่องผ่านเว็บไซต์ให้สำเร็จ", en: "Finishing an online form" },
+  perfJIntro: {
+    th: "จากผู้ที่เริ่มกรอกแบบฟอร์มออนไลน์ มีกี่คนที่ส่งเรื่องจนจบ นับเฉพาะแบบฟอร์มที่ส่งแล้วหรือที่ทิ้งไว้เกิน 2 ชั่วโมง แบบฟอร์มที่ยังกรอกอยู่ไม่นับว่าเลิกกลางคัน การกดเริ่มใหม่นับเป็นการเริ่มครั้งใหม่",
+    en: "Of the people who started an online form, how many sent it. Only forms that were sent, or left for more than 2 hours, are counted; one still being filled in is not treated as given up. Starting again counts as a new start",
+  },
+  perfJCaption: { th: "แบบฟอร์มออนไลน์ที่เริ่มและที่ส่งแล้ว", en: "Online forms started and sent" },
+  perfJLost: { th: "แจ้งของหาย", en: "Report a lost item" },
+  perfJFound: { th: "แจ้งของที่พบ", en: "Report a found item" },
+  perfJClaim: { th: "ขอรับของที่พบ", en: "Claim a found item" },
+  perfJComplaint: { th: "ส่งข้อร้องเรียน", en: "Make a complaint" },
+  perfColForm: { th: "แบบฟอร์ม", en: "Form" },
+  perfColStarted: { th: "เริ่มกรอก", en: "Started" },
+  perfColSent: { th: "ส่งจนจบ", en: "Sent" },
+
+  perfAboutHeading: { th: "เกี่ยวกับตัวเลขเหล่านี้", en: "About these figures" },
+  perfAbout1: {
+    th: "ตัวเลขนับจากระบบจริงที่เจ้าหน้าที่ใช้ทำงาน ไม่ใช่การสุ่มตัวอย่าง และไม่มีชื่อ อีเมล หรือรายละเอียดของเรื่องใดอยู่ในนั้น",
+    en: "The figures are counted from the system staff work in, not sampled, and contain no names, email addresses or details of any case",
+  },
+  perfAbout2: {
+    th: "แต่ละหมวดของข้อร้องเรียนมีกำหนดรับทราบและกำหนดแก้ไขของตัวเอง นับเป็นวันทำการ (จันทร์ถึงศุกร์)",
+    en: "Each complaint category has its own date for acknowledging and resolving a complaint, counted in working days (Monday to Friday)",
+  },
+  perfAbout3: {
+    th: "ตัวเลขที่ซ่อนไว้จะไม่บอกจำนวนเรื่องที่อยู่เบื้องหลังด้วย",
+    en: "Where a figure is hidden, the number of cases behind it is hidden too",
+  },
+
 } as const satisfies Record<string, LocaleString>;
 
 export type UiKey = keyof typeof UI;

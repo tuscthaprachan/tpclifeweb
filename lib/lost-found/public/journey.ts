@@ -9,6 +9,7 @@ import { eq } from "drizzle-orm";
 import { decryptPii, encryptPii, type PiiEnv } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { lostFoundJourneys } from "@/lib/db/schema/lost-found-cases";
+import { recordJourneyFinish } from "@/lib/performance/journeys";
 import { emptyValues } from "./validate";
 import { RESULT_TTL_MS, type JourneyData, type JourneyResult } from "./store";
 import { submitClaim, submitReport, type SubmitContext } from "./submit";
@@ -49,6 +50,7 @@ export async function finishJourney(
         ? await submitClaim(tx, data.slug ?? "", data.values, ctx, opts)
         : await submitReport(tx, data.kind, data.values, ctx, opts);
 
+    await recordJourneyFinish(tx, id, now);
     const result: JourneyResult = { reference: outcome.reference, token: outcome.token, email: data.values.email || null, emailed: false };
     // The answers are no longer needed: keep only what the confirmation page shows.
     const next: JourneyData = { ...data, values: emptyValues(), flash: undefined, result };

@@ -30,6 +30,22 @@ describe("withRequiredNav", () => {
   });
 });
 
+describe("withRequiredNav footer", () => {
+  const withFooter = (paths: string[]) =>
+    ({ primaryNav: [{ label: { th: "/eat", en: "/eat" }, path: "/eat" }], footerNav: paths.map((path) => ({ label: { th: path, en: path }, path })) }) as unknown as SiteSettings;
+
+  it("adds Performance after Cookies when the CMS footer predates it", () => {
+    const result = withRequiredNav(withFooter(["/faq", "/cookies", "/about"]));
+    expect(result.footerNav.map((item) => item.path)).toEqual(["/faq", "/cookies", "/performance", "/about"]);
+    expect(result.footerNav[2]?.label.en).toBe("Performance");
+  });
+
+  it("leaves a footer that already links to it alone", () => {
+    const input = withFooter(["/performance", "/faq"]);
+    expect(withRequiredNav(input)).toBe(input);
+  });
+});
+
 describe("splitPrimaryNav", () => {
   const items = settings(["/forms", "/welfare", "/news", "/eat", "/directory"]).primaryNav;
 

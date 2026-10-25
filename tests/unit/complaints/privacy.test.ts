@@ -2,7 +2,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { eq, sql } from "drizzle-orm";
 import { readContacts, purgeExpiredPii } from "@/lib/cases";
-import { caseAttachments, caseContacts, caseEvents, cases, complaintCases, complaintEvidence, complaintJourneyFiles, complaintJourneys, complaintSurveys } from "@/lib/db/schema";
+import { caseAttachments, caseContacts, caseEvents, cases, complaintCases, complaintEvidence, complaintJourneyFiles, complaintJourneys, complaintSurveys, journeyMetrics } from "@/lib/db/schema";
 import { hasContacts } from "@/lib/complaints/create";
 import { readComplaintText, readEvidence } from "@/lib/complaints/details";
 import { addJourneyFile, listJourneyFiles, removeJourneyFile } from "@/lib/complaints/public/evidence";
@@ -74,6 +74,9 @@ describe("submitting through the journey", () => {
     const result = await finishJourney(t.db, id, ctx, { now: later, env });
     expect(result.reference).toMatch(/^CP-\d{4}-\d{4}$/);
     expect(result.token).toHaveLength(43);
+    // The completion count has the start and the finish, and nothing about the person.
+    const [metric] = await t.db.select().from(journeyMetrics).where(eq(journeyMetrics.id, id));
+    expect(metric).toMatchObject({ kind: "complaint", startedAt: NOW, finishedAt: later });
     // A second press returns the same complaint.
     expect(await finishJourney(t.db, id, ctx, { now: later, env })).toEqual(result);
 
@@ -117,6 +120,7 @@ describe("submitting through the journey", () => {
     const { saveJourney: save } = await import("@/lib/complaints/public/store");
     await save(t.db, id, { v: 1, locale: "en", startedAt: NOW.toISOString(), values: values({ description: "", category: "nope" }) }, { now: NOW, env });
     await expect(finishJourney(t.db, id, ctx, { now: new Date(NOW.getTime() + 5000), env })).rejects.toBeInstanceOf(JourneyInvalidError);
+    expect((await t.db.select().from(journeyMetrics).where(eq(journeyMetrics.id, id)))[0]!.finishedAt).toBeNull();
     expect((await t.db.select().from(cases)).length).toBe(before);
   });
 

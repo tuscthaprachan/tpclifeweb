@@ -7,60 +7,109 @@ Session handoff for the backend migration described in `docs/backend-plan.md`. R
 - Opus orchestrates; Sonnet subagents do the implementation. Subagents never commit; the orchestrator reviews, runs checks, commits and pushes.
 - British English, no em dashes anywhere (`npm run check:i18n` fails on them), no code comments beyond the surrounding style.
 - Read `node_modules/next/dist/docs/` before Next-specific code (Next 16.4: `proxy.ts` not `middleware.ts`, different caching APIs).
-- `next dev` rewrites `AGENTS.md`; restore it with `git checkout AGENTS.md` before committing.
-- Push only to the development branch (`ccr-c7c55779-2hzk84`). Push to `main` only when the user asks. Small fixes already on main were cherry-picked via a worktree from `origin/main`.
+- `next dev` rewrites `AGENTS.md`; restore it with `git checkout AGENTS.md` before committing. Do not run `next dev` in a session; use `next start`.
+- Push only to the development branch (`ccr-c7c55779-2hzk84`). Push to `main` only when the user asks.
 - Never ask the user to paste secrets into chat. Secrets go in the environment settings and are picked up by a new session.
+- `DATABASE_URL` in a session is production. Unset it in every shell (`unset DATABASE_URL`) unless the user has asked for a migration; tests and builds use PGlite.
+- Public strings go in `lib/i18n/strings.ts` (a commented block per feature, keys with a prefix); staff strings in `lib/i18n/admin-content/<group>.ts`, spread into `A` in `lib/i18n/admin.ts`.
+- No coloured accent boxes (`npm run check:accent-boxes`): use inset text, warning text, notification banner, summary list.
+
+## What exists (phases 1 to 6)
+
+| Phase | Where | State |
+|---|---|---|
+| 1 Foundations | `lib/db`, `lib/auth`, `lib/storage`, `lib/email`, `/admin` shell | Passkey-only staff sign-in, invites, recovery links, roles (`admin`, `editor`, `lf_officer`, `complaints_handler`, `unit_lead`), append-only audit log. |
+| 2 Content swap | `lib/content`, `lib/db/schema/content`, `lib/db/seed`, `lib/rich-text` | Every page reads Postgres; Sanity removed. PGlite for local and CI. |
+| 3 Content editing | `/admin/content/*`, `lib/admin/content` | Editors manage every content type. On `main`. |
+| 4 Case engine and lost and found | `lib/cases`, `lib/lost-found/**`, `/admin/cases`, `app/[locale]/lost-and-found/**` | Shared state machines, encrypted contacts, private tracking links, retention, desk intake, matching, claims, handover, public report/found/claim journeys. |
+| 5 Complaints | `lib/complaints/**`, `app/[locale]/complaints/**`, `/admin/complaints/categories` | Named, pseudonymous or anonymous; categories with acknowledge and resolve targets in working days; restricted categories visible only to named staff; evidence; survey; 30 day reopen window; daily escalation and auto-close. |
+| 6 Notifications, jobs, performance | `lib/email`, `app/api/cron/*`, `lib/performance/**`, `/[locale]/performance`, `/admin/performance` | See below. |
+
+### Emails (`lib/email`)
+
+Resend behind an interface (`RESEND_API_KEY` and `EMAIL_FROM`; `EMAIL_LOG_ONLY=1` prints instead of sending). Templates are bilingual and live in code: staff invite and recovery (`templates.ts`), lost and found status mails (`lost-found-templates.ts`), complaint acknowledged, resolved and the escalation digest to leads (`complaint-templates.ts`). A failed email never blocks a case action or an invitation. LINE is not built.
+
+### Crons (`vercel.json`)
+
+Both need `CRON_SECRET` (Vercel sends it as a bearer token); without it the routes return 503 and nothing runs.
+
+- `/api/cron/retention`, daily 19:00 UTC: deletes personal data (contacts, encrypted text, evidence files) one year after a case closes.
+- `/api/cron/complaints`, daily 00:23 UTC: closes resolved complaints whose reopen window has passed, flags missed targets as escalated and emails the leads, sweeps abandoned complaint journeys and their files.
+
+### Performance (Service Standard point 10)
+
+- `lib/performance/**`: SQL aggregates only; no personal field is read. Every figure goes through `measure` (`suppress.ts`): fewer than 5 cases shows "Not enough data" and no number. Restricted complaint categories are never named; they fold into "Sensitive", and small groups are merged so a hidden row cannot be found by subtraction.
+- Measures: lost and found (reports received by kind, items returned, return rate, median days found to returned, share reported online); complaints (received, by month and category, acknowledged and resolved on time, median days to resolution, satisfaction mean and share scoring 4 or 5, reopen rate, share made online); completion rate of the four public journeys. Exact definitions are in the file headers and on the public page.
+- Completion rate needs `journey_metrics` (migration 0011): kind, `started_at`, `finished_at`, nothing personal. The encrypted draft tables expire and are deleted, so they cannot be counted afterwards. Journeys started before 0011 is applied are not counted.
+- Public page `/[locale]/performance`: period by `?period=30d|12m|all` links (works without JavaScript), tables with captions, no charts. Cached for an hour (`lib/performance/read.ts`, tag `performance`). In the sitemap and the footer (added in code by `withRequiredNav` if the CMS footer lacks it, and in the seed).
+- Staff page `/admin/performance` (`admin` and `unit_lead`): the same figures plus live open cases by status, overdue and escalated complaints, and cases by desk. Counts respect restricted categories (`caseVisibleTo`), so an administrator not named on a category does not see those complaints counted.
 
 ## Branch state
 
-- `main`: dependency updates, canteen floor plan redraw, menu names, map accessibility fix, thick-border fix. Still uses Sanity.
-- `ccr-c7c55779-2hzk84`: everything on main plus phases 1 and 2 (16 commits ahead). Not merged.
-  - Phase 1: Neon + Drizzle (`lib/db`), organisations, staff roles, append-only audit log, Better Auth passkey-only sign-in for staff (`lib/auth`; replaced the earlier email codes plus TOTP), staff invites, recovery links, first-admin bootstrap, `/admin` console shell, storage (`lib/storage`) and email (`lib/email`) interfaces.
-  - Phase 2: Postgres content schema (`lib/db/schema/content`), seeds (`lib/db/seed`), rich text as ProseMirror JSON (`lib/rich-text`, `components/domain/rich-text`), read layer (`lib/content`) used by every page, lost and found reports written to Postgres, PGlite for local and CI (`DATABASE_URL=pglite:memory`), Sanity fully removed.
-  - Checks at last commit: `npm run check` green, 576 unit tests, build, e2e, and the full a11y suite (971 passed, 0 failed) against `next start` with PGlite.
+- `main` (`108c15d`): phases 1 to 3 (Postgres content, content editing) with the earlier email-code sign-in; the passkey-only change is only on the branch. Production runs this.
+- `ccr-c7c55779-2hzk84`: main plus passkey-only auth (`e8bbdbd`), phase 4 (`d25dc5d`, `cca7904`, `156e5cb`, `50c6fd3`, `ad22e7b`), phase 5 (`62980a8`) and phase 6. Phase 6 (performance, `journey_metrics`, this handoff) is uncommitted in the working tree until the orchestrator commits it. Not merged.
+- Do not merge the branch until production has migrations 0004 to 0011 and the complaint categories are seeded (below). The live site must not start before its tables exist.
+
+## Before merging to main
+
+1. Confirm `DATABASE_URL` is the unpooled Neon connection (host without `-pooler`) without printing it.
+2. `npm run db:migrate` applies 0004 to 0011 (0004 recovery links and passkey `last_used_at`; 0005 case engine; 0006 to 0009 lost and found; 0010 complaints; 0011 journey metrics). All are additive.
+3. `npm run db:seed` (idempotent) adds the complaint categories and their targets. Without them no complaint can be made.
+4. Set the environment variables below in Vercel Production (and Preview where useful).
+5. Merge with a merge commit; Vercel deploys.
+6. First admin on a fresh database: `npm run auth:bootstrap -- <email> tusu` prints a one-time invite link. The existing production admin keeps signing in with their existing passkey. Break-glass recovery: `npm run auth:bootstrap -- --recover <email>`.
+7. Name the staff on each restricted complaint category at `/admin/complaints/categories`; a restricted category with nobody named is visible to no one.
+
+## Environment variables
+
+| Name | Needed for |
+|---|---|
+| `DATABASE_URL` | Neon pooled string in deployments; `pglite:memory` or `pglite:./.pglite` locally and in CI. |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin for hreflang, sitemap and Open Graph. |
+| `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` | Sign-in. The URL's hostname is the passkey RP ID. |
+| `PII_ENCRYPTION_KEY` | Required in production: encrypts contacts, complaint text, evidence names, survey comments. Losing it loses that data. `PII_ENCRYPTION_KEY_PREVIOUS` is for rotation (decrypt only). |
+| `CRON_SECRET` | Both crons. |
+| `BLOB_READ_WRITE_TOKEN` or `BLOB_STORE_ID` | Private item photos and complaint evidence (OIDC with the store id on Vercel). |
+| `RESEND_API_KEY`, `EMAIL_FROM` | Notification emails. Optional for sign-in; without them status mails are not sent. |
+| `EMAIL_LOG_ONLY` | Print emails to the log instead. |
 
 ## Running checks locally
 
 ```
+unset DATABASE_URL
 npm run check
 npm test
 DATABASE_URL=pglite:memory npm run build
-DATABASE_URL=pglite:memory npx next start -p 3300 &
-PLAYWRIGHT_BASE_URL=http://localhost:3300 PW_CHROMIUM_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome \
+DATABASE_URL=pglite:memory PII_ENCRYPTION_KEY=$(openssl rand -base64 32) npx next start -p 3300 &
+PLAYWRIGHT_BASE_URL=http://localhost:3300 PW_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome \
   npx playwright test --config=tests/playwright.config.ts tests/a11y --reporter=line
 ```
 
-Use `next start`, not `next dev`, for Playwright: the dev server times out under the a11y suite. Never run `playwright install`.
-
-## Next steps, in order
-
-1. **Migrate and seed Neon.** The user added `DATABASE_URL` to the environment for this session.
-   - Confirm it is set and is the unpooled connection (host must not contain `-pooler`) without printing it.
-   - `npm run db:migrate`, then `npm run db:seed`.
-   - Verify counts: 18 canteen stalls, organisations `tusu` and `tusc`, handbook FAQs and pages, places.
-2. **Storage: support Blob without a read-write token.** The Vercel project has `BLOB_STORE_ID` (OIDC auth) but no `BLOB_READ_WRITE_TOKEN`. `@vercel/blob` 2.8 resolves OIDC plus `BLOB_STORE_ID` itself when no `token` is passed (see `resolveBlobAuth` in `node_modules/@vercel/blob/dist/chunk-*.js`).
-   - Change `lib/storage/index.ts` `getStorage()` to accept either `BLOB_READ_WRITE_TOKEN` or `BLOB_STORE_ID`.
-   - Change `VercelBlobStorage` to take `{ token?: string; storeId: string }`, pass `token` only when present, and build `publicUrl` from the store id (strip the `store_` prefix, lower-case): `https://<id>.public.blob.vercel-storage.com/<key>`.
-   - Update `tests/unit/storage/storage.test.ts`, the comment in `lib/content/images.ts`, `.env.example` and the README table.
-3. **Ask the user to merge to main** once step 1 is done (the live site must not start before its tables exist). Merge with a merge commit; Vercel then deploys.
-4. **First admin**: `npm run auth:bootstrap -- <email> tusu` (or `tusc`) needs `DATABASE_URL` and `BETTER_AUTH_URL`. It prints a one-time invite link and refuses once any admin exists. Open it, enter a name and create the account with a passkey; no email is involved. If every admin later loses their passkeys, `npm run auth:bootstrap -- --recover <email>` prints a 24 hour recovery link (break-glass, needs the same environment). Run `npm run db:migrate` first: migration 0004 adds `staff_recovery_links` and `passkey.last_used_at`. The existing production admin keeps signing in with their existing passkey.
-5. **Phase 3** (content editing in `/admin`) per the plan, once the user asks.
+Use `next start`, not `next dev`, for Playwright. Never run `playwright install`.
 
 ## Outstanding items for the user
 
-- Resend (optional for staff sign-in now, needed for later notifications): account, verified sending domain (SPF, DKIM, DMARC), `RESEND_API_KEY` and `EMAIL_FROM` in Vercel. Skipped so far. Without it, invitation and recovery links are shown on screen for the admin to send.
-- `BETTER_AUTH_SECRET` is set for Production only; add a separate Preview value.
-- `AUTH_ALLOWED_EMAIL_DOMAINS` is no longer read (invites work for any domain); it can be removed from Vercel.
-- Check Neon preview branching is on, so previews do not share the production database.
-- After the merge: remove the eight `SANITY_*` env vars and the Sanity integration in Vercel, the unused `CANTEEN_DEMO` preview var, and Neon Auth (`NEON_AUTH_BASE_URL`, `VITE_NEON_AUTH_URL`), which is not used.
-- Delete the stray `tmp-skip` branch on GitHub (the proxy refuses branch deletion from the session).
-- Thai review of the email templates (`lib/email/templates.ts`) and of menu names flagged as unverified (stall 3 vegetarian dishes, most of stalls 5 and 17, the stall 12 "(ป้ายภาพ)" placeholder, possible duplicate smoothies at stall 5).
+- Production: run migrations 0004 to 0011 and `npm run db:seed`, set `PII_ENCRYPTION_KEY` and `CRON_SECRET`, then ask for the merge.
+- Resend: account, verified sending domain (SPF, DKIM, DMARC), `RESEND_API_KEY` and `EMAIL_FROM`. Until then the people who gave an email get no status mail, and invitation and recovery links are shown on screen.
+- `BETTER_AUTH_SECRET` is set for Production only; add a separate Preview value. Check Neon preview branching is on so previews do not share the production database.
+- Desks must confirm the wellbeing centre contact details in `lib/complaints/constants.ts`, and the complaint category names, hints and targets at `/admin/complaints/categories`.
+- Name the staff on each restricted category (harassment, safety).
+- Thai review of the email templates, the lost and found and complaints question pages and privacy notices, and the performance page wording. Menu names flagged unverified earlier (stall 3 vegetarian dishes, most of stalls 5 and 17, the stall 12 "(ป้ายภาพ)" placeholder, possible duplicate smoothies at stall 5) are still open.
+- Name a service owner for each service (Service Standard point 6) and decide who reads `/admin/performance` regularly.
+- Cleanup after the merge: the eight `SANITY_*` env vars and the Sanity integration, the unused `CANTEEN_DEMO` preview var, Neon Auth (`NEON_AUTH_BASE_URL`, `VITE_NEON_AUTH_URL`), `AUTH_ALLOWED_EMAIL_DOMAINS` (no longer read), and the stray `tmp-skip` branch on GitHub (the proxy refuses branch deletion from the session).
 
-## Known gaps before launch
+## Known gaps
 
 - Passkeys are bound to the `BETTER_AUTH_URL` hostname. Changing the production domain makes every passkey unusable until each person is recovered, so settle the domain first.
-- No conditional UI (passkey autofill) on the sign-in page: it has no input to attach it to.
+- No passkey autofill (conditional UI) on the sign-in page.
 - Migrations do not run on deploy; offer to run `db:migrate` in the Vercel production build.
+- No Postgres row-level security yet: access is enforced in the data layer (`lib/cases/access.ts`, `restrictions.ts`) only.
+- No data subject request tooling in the console (the plan lists access and deletion requests); deletion today is the one year retention job.
+- Students cannot see all their cases in one place; each case has its own private link. Sign-in for students is undecided.
+- LINE notifications are not built (decision 3).
+- Performance: figures with fewer than 5 cases are hidden, so a new service shows "Not enough data" for a while. Monthly totals are not complementarily suppressed (a hidden month could be inferred from the period total); only the category table is. Journeys started before migration 0011 are not counted. The return rate ignores found items under 30 days old, so the last 30 days has no return rate. Complaints are not logged at the desk yet, so their online share is 100%.
+- The performance page is cached for an hour and is not refreshed when cases change; `revalidateFor("performance")` can force it.
+- No charts on `/performance`; add one only with a data table beside it.
 - GOV.UK places field error messages above the input; the site's components put them below. Changing it touches every form; the user has not decided.
 - `npm audit`: 4 moderate, all in the `drizzle-kit` dev chain; the only fix is a major downgrade.
-- No seed content for events, news, policies or alerts; those pages show empty states until phase 3.
+- No seed content for events, news, policies or alerts; those pages show empty states until editors add them.

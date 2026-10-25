@@ -9,6 +9,7 @@ import { eq } from "drizzle-orm";
 import { decryptPii, encryptPii, type PiiEnv } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { complaintJourneys } from "@/lib/db/schema/complaints";
+import { recordJourneyFinish } from "@/lib/performance/journeys";
 import { journeyAad } from "../aad";
 import { RESULT_TTL_MS, type JourneyData, type JourneyResult } from "./store";
 import { submitComplaint, type SubmitContext } from "./submit";
@@ -39,6 +40,7 @@ export async function finishJourney(db: AuditExecutor, id: string, ctx: SubmitCo
     if (now.getTime() - new Date(data.startedAt).getTime() < MIN_JOURNEY_MS) throw new JourneyTooFastError();
 
     const outcome = await submitComplaint(tx, data.values, ctx, { journeyId: id, now, env: opts.env });
+    await recordJourneyFinish(tx, id, now);
     const result: JourneyResult = {
       reference: outcome.reference,
       token: outcome.token,

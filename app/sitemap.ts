@@ -29,6 +29,7 @@ const STATIC_ROUTES = [
   "/about",
   "/accessibility",
   "/cookies",
+  "/performance",
   "/lost-and-found",
   "/lost-and-found/report",
   "/lost-and-found/found",
