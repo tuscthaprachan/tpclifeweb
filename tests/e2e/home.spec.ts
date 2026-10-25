@@ -22,7 +22,7 @@ for (const locale of LOCALES as readonly Locale[]) {
       test("search and the first Today row are visible without scrolling", async ({ page }) => {
         await page.goto(localePath(locale, "/"));
 
-        const search = page.locator("main").getByRole("searchbox");
+        const search = page.locator("main [role=search] input").first();
         await expect(search).toBeVisible();
         const searchBox = await search.boundingBox();
         expect(searchBox?.y ?? Infinity).toBeLessThan(FIRST_SCREEN.height);

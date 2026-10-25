@@ -1139,6 +1139,7 @@ export const UI = {
   servicesIntro: { th: "บริการทั้งหมดสำหรับนักศึกษาท่าพระจันทร์", en: "Every service for Tha Prachan students" },
   phaseNewService: { th: "บริการใหม่", en: "A new service." },
   phaseWhatThisMeans: { th: "ดูรายละเอียด", en: "What this means" },
+  homeThenDeparture: { th: "รอบต่อไป", en: "then" },
 
   keyHoursTitle: { th: "เวลาทำการสถานที่สำคัญวันนี้", en: "Key opening hours today" },
   keyHoursNotPublished: {
