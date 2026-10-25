@@ -51,7 +51,7 @@ function ShuttleRow({ locale, route, status, now }: { locale: Locale; route: Shu
         >
           {scheduled}
           <ShuttleCountdown locale={locale} targetStopMinutesOfDay={next.stopMinutesOfDay} initialMinutesUntil={next.minutesUntil} />
-          {rest[0] ? <span>· {rest[0].stopTime}</span> : null}
+          {rest[0] ? <span>{UI.homeThenDeparture[locale]} {rest[0].stopTime}</span> : null}
         </TodayRow>
       );
     }
