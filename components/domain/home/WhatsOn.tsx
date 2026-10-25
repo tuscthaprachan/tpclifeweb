@@ -49,6 +49,7 @@ export function WhatsOn({ locale, events, news }: WhatsOnProps) {
       </Heading>
       {upcomingEvents.length === 0 ? (
         <EmptyState
+          illustration={false}
           className="mt-[var(--space-3)]"
           title={UI.noUpcomingEvents[locale]}
           action={
@@ -90,6 +91,7 @@ export function WhatsOn({ locale, events, news }: WhatsOnProps) {
       </Heading>
       {latestNews.length === 0 ? (
         <EmptyState
+          illustration={false}
           className="mt-[var(--space-3)]"
           title={UI.nothingHere[locale]}
           action={

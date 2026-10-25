@@ -38,7 +38,7 @@ export function ActivityFeed({ locale, news, policies, excludeNewsIds }: Activit
       </SectionBar>
 
       {items.length === 0 ? (
-        <EmptyState className="mt-[var(--space-3)]" title={UI.nothingHere[locale]} />
+        <EmptyState illustration={false} className="mt-[var(--space-3)]" title={UI.nothingHere[locale]} />
       ) : (
         <ul className="m-0 list-none p-0">
           {items.map((item) => (
