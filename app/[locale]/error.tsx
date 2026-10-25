@@ -14,6 +14,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { River } from "@/components/illustrations/River";
 import { Button, Container, Heading, Stack } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -34,6 +35,7 @@ export default function LocaleError({ error, reset }: { error: Error & { digest?
   return (
     <Container width="narrow">
       <Stack space={6} className="py-12">
+        <River className="h-[84px] w-[120px]" />
         <div ref={headingWrapRef} tabIndex={-1} className="outline-none">
           <Heading level={1}>{UI.errorTitle[locale]}</Heading>
         </div>
