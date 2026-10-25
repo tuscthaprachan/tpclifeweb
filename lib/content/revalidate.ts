@@ -27,7 +27,8 @@ export type ContentEntityType =
   | "canteenStall"
   | "canteenDish"
   | "canonicalDish"
-  | "image";
+  | "image"
+  | "performance";
 
 /** Which cache tags each kind of content invalidates when it changes. */
 export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
@@ -56,6 +57,8 @@ export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
   canonicalDish: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
   // Pictures appear in news, events, lost and found, the canteen and rich text.
   image: [CACHE_TAGS.image],
+  // The public performance figures (lib/performance/read.ts). Nothing edits them; this lets a script or a future admin action refresh them early.
+  performance: [CACHE_TAGS.performance],
 };
 
 /** The route segment of the detail page for kinds that have one, so a changed slug's own page is refreshed. */

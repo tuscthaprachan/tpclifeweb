@@ -25,7 +25,7 @@ The Service Manual is written for UK government, so we adopt its principles and 
 | 6 | Multidisciplinary team | Named service owner per service from TUSU/TUSC; content, design, research and engineering roles identified even if one person holds several. |
 | 7 | Agile ways of working | Discovery, alpha, beta, live per service; the phase banner reflects the real phase. |
 | 8 | Iterate frequently | Neon branch per preview deployment so every change is testable with real-shaped data. |
-| 9 | Secure and private | Better Auth with email codes, mandatory passkey or authenticator app for staff, least-privilege roles, audit log, PII encrypted at rest at column level, PII deleted 1 year after case closure. |
+| 9 | Secure and private | Better Auth with passkey-only staff accounts (phishing-resistant, no passwords, no emailed codes), invite-only account creation, audited recovery links, least-privilege roles, audit log, PII encrypted at rest at column level, PII deleted 1 year after case closure. |
 | 10 | Define success, publish data | KPIs per service: completion rate, user satisfaction, digital take-up, time to resolution (complaints), return rate (lost and found). Published on a `/performance` page. |
 | 11 | Choose the right tools | Boring, open technology: Postgres, Drizzle, Next.js, OIDC. |
 | 12 | Make source code open | Repository stays public; secrets and data never in the repo. |
@@ -65,11 +65,13 @@ The Service Manual is written for UK government, so we adopt its principles and 
   - `/admin/…`: staff console, same design system, Thai and English.
   - Server Actions for all writes; `/api` only for things that need it (cron, webhooks, future integrations).
 - **Auth**: [Better Auth](https://www.better-auth.com), self-hosted, with the Drizzle adapter so users, sessions and roles live in Neon.
-  - Sign-in is a 6-digit code emailed to the user, following the GOV.UK "confirm your email address" pattern. Codes rather than magic links, so it works on shared desk PCs and across devices.
-  - Students: optional sign-in, restricted to Thammasat email domains (`@dome.tu.ac.th` and `@tu.ac.th`), to see all their cases. Never required to report.
-  - Staff: invite-only. An `admin` invites by email; on first sign-in the user must register a passkey or authenticator app (TOTP). Roles are assigned and revoked in-app.
-  - Sessions: short idle timeout for staff with the GOV.UK session timeout warning; rate limiting on code requests.
-  - Email deliverability is a dependency: Resend from our own domain with SPF, DKIM and DMARC, tested against TU inboxes early.
+  - Staff: passkey-only, no passwords and no emailed codes. A passkey (WebAuthn, discoverable credential, user verification required) is phishing resistant and checks the person with a fingerprint, face or PIN, so one passkey sign-in is the whole sign-in and sets the session's second-factor marker. The sign-in page is a single "Sign in with a passkey" button; no email is typed. The RP ID and origin come from `BETTER_AUTH_URL`, so the passkeys are bound to that hostname.
+  - Accounts exist only because an admin invited them. The admin gets an invitation link to show on screen and pass on privately (and, when email is configured, it is also emailed; a failed email never cancels the invite). The person opens it, enters their name and creates the account by registering a passkey on that device. The token is the proof: 256 random bits, stored only as a SHA-256 hash, single use, expires in 7 days, attempts rate limited. An invite for an address that already has an account is accepted while signed in, never by registering a new passkey on someone else's account.
+  - Recovery: an admin can issue a single-use recovery link (24 hours, hashed, audited) for a member of staff in their organisations from `/admin/staff`. Opening it registers a new passkey on the existing account, ends all the person's other sessions, and offers to remove their old passkeys. An admin cannot issue one for themselves unless another admin exists. If every admin is locked out, whoever has database access runs `npm run auth:bootstrap -- --recover <email>`, the break-glass path (audited, 24 hours).
+  - Every member of staff has a "My security" page: list passkeys (name, added, last used), add one per device, rename, remove (never the last one).
+  - Sessions: 30 minute idle timeout for staff with the GOV.UK session timeout warning, 12 hour absolute limit. Every account creation, passkey add or remove, recovery issue or use, and sign-in (or failed one) is audited.
+  - Students: optional sign-in to see all their cases is not built. Its method is undecided (passkeys, or emailed codes via `lib/email`). Never required to report.
+  - Email is optional for staff authentication. Resend (own domain, SPF, DKIM, DMARC) is still needed for notifications in later phases, not for sign-in.
   - Entra or LINE can be added later as extra sign-in methods without changing anything else.
 - **Authorisation**: roles `admin`, `editor`, `lf_officer`, `complaints_handler`, `unit_lead`, each held on behalf of an organisation. Lost and found and complaints are jointly owned: TUSU and TUSC staff share one queue per service; each action records which organisation acted. Restricted complaint categories are visible only to named staff. Enforced in the data layer and backed by Postgres row-level security.
 - **Files**: Vercel Blob behind a small storage interface (S3-compatible, swappable). Public bucket for content images; private for item photos and complaint evidence, served via short-lived signed URLs.
@@ -137,7 +139,7 @@ Common to every service:
 
 ## Phases
 
-1. **Foundations**: Neon, Drizzle, Better Auth (email codes, passkeys, TOTP, invites), roles, audit log, storage interface, CI against a Neon branch.
+1. **Foundations**: Neon, Drizzle, Better Auth (passkey-only staff accounts, invites, recovery links), roles, audit log, storage interface, CI against a Neon branch.
 2. **Content swap**: schema, `lib/content`, seeds, pages moved over; delete Sanity, Studio route, CSP frame header, `cdn.sanity.io`, CI Sanity env vars.
 3. **Content editing** in `/admin`.
 4. **Case engine + lost and found**: discovery with TUSU/TUSC desks, alpha, private beta.
@@ -155,3 +157,4 @@ Phases 1–2 alone remove Sanity and nearly all remaining `npm audit` findings.
 5. Staff roles are managed in-app.
 7. Authentication uses Better Auth, not Entra, so no university IT involvement is needed.
 6. TUSU and TUSC are jointly the data protection contact.
+8. Staff sign in with passkeys only. The earlier design (emailed 6-digit codes, then a mandatory passkey or authenticator app) was replaced: codes made email a hard dependency for getting in, and a passkey already is the strong factor. Accounts come from invites, lost passkeys from audited recovery links, and the database-side break-glass is `npm run auth:bootstrap -- --recover <email>`. The email code, authenticator app (TOTP) and backup code flows were removed; their tables stay in the database untouched.

@@ -104,6 +104,8 @@ export async function validateLostFoundForm(
     photos: d.photos,
     submitterContact: d.submitterContact,
     staffVerificationDetail: d.staffVerificationDetail,
+    // The two plaintext private fields are only on the form for legacy listings. When the form did not send them (a new listing, or one that belongs to a case) they are left exactly as stored.
+    privateIncluded: formData.has("submitterContact") || formData.has("staffVerificationDetail"),
   };
   return { ok: true as const, data, ...resolved };
 }

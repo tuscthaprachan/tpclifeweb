@@ -4,6 +4,7 @@ import { DataTable, Heading, NotificationBanner, Stack, Timestamp } from "@/comp
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
+import { hasOtherActiveAdmin, listPendingRecoveryUserIds } from "@/lib/auth/recovery";
 import { organisationsWithRole } from "@/lib/auth/roles";
 import { requireStaff } from "@/lib/auth/session";
 import { listOrganisations, listPendingInvites, listStaff } from "@/lib/auth/staff";
@@ -18,32 +19,32 @@ export async function generateMetadata() {
   return adminTitle("staffTitle");
 }
 
-type Notice = "invited" | "role-removed" | "invite-cancelled" | "gone";
+type Notice = "role-removed" | "invite-cancelled" | "gone";
 
-export default async function StaffPage({ searchParams }: { searchParams: Promise<{ notice?: string; email?: string }> }) {
+export default async function StaffPage({ searchParams }: { searchParams: Promise<{ notice?: string }> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
 
   const staff = await requireStaff("admin");
   const adminOrgIds = organisationsWithRole(staff.roles, "admin");
   const db = getDb();
-  const [people, invites, allOrgs, query] = await Promise.all([
+  const [people, invites, allOrgs, query, otherAdmin] = await Promise.all([
     listStaff(db, adminOrgIds),
     listPendingInvites(db, adminOrgIds),
     listOrganisations(db),
     searchParams,
+    hasOtherActiveAdmin(db, staff.user.id),
   ]);
+  const withRecovery = await listPendingRecoveryUserIds(
+    db,
+    people.map((p) => p.userId),
+  );
   const orgs = allOrgs.filter((o) => adminOrgIds.includes(o.id));
   const orgName = new Map(orgs.map((o) => [o.id, pick({ th: o.nameTh, en: o.nameEn }, locale)]));
   const notice = query.notice as Notice | undefined;
 
   return (
     <AdminPage width="content">
-      {notice === "invited" ? (
-        <NotificationBanner variant="success" title={a("invitedTitle", locale)}>
-          {a("invitedBody", locale, { email: query.email ?? "" })}
-        </NotificationBanner>
-      ) : null}
       {notice === "role-removed" ? <NotificationBanner variant="success" title={a("roleRemovedTitle", locale)}>{a("roleRemovedBody", locale)}</NotificationBanner> : null}
       {notice === "invite-cancelled" ? <NotificationBanner variant="success" title={a("inviteCancelledTitle", locale)}>{a("inviteCancelledBody", locale)}</NotificationBanner> : null}
       {notice === "gone" ? <NotificationBanner variant="info" title={a("goneTitle", locale)}>{a("errNothingToChange", locale)}</NotificationBanner> : null}
@@ -92,6 +93,23 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
                         </li>
                       ))}
                     </ul>
+                  ),
+                },
+                {
+                  id: "account",
+                  header: a("colAccount", locale),
+                  cell: (p) => (
+                    <span>
+                      {p.userId === staff.user.id && !otherAdmin ? (
+                        <span className="text-sm text-ink-600">-</span>
+                      ) : (
+                        <a href={`/admin/staff/recovery/${encodeURIComponent(p.userId)}`}>
+                          {a("recoveryLinkVisible", locale)}
+                          <span className="visually-hidden"> {a("recoveryLinkFor", locale, { person: p.name || p.email })}</span>
+                        </a>
+                      )}
+                      {withRecovery.has(p.userId) ? <span className="block text-sm text-ink-600">{a("recoveryPendingNote", locale)}</span> : null}
+                    </span>
                   ),
                 },
               ]}

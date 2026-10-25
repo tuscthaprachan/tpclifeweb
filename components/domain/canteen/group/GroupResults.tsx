@@ -202,7 +202,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
     }
 
     return (
-      <div className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line bg-welfare-soft p-[var(--space-4)]">
+      <div className="flex flex-col gap-[var(--space-3)] border border-line-strong bg-surface p-[var(--space-4)]">
         <Heading level={3} className="m-0 text-lg">
           {GROUP.bindingTitle[locale]}
         </Heading>

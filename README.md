@@ -46,6 +46,8 @@ Set these in Vercel under Settings, Environment Variables, for Production, Previ
 | --- | --- |
 | `DATABASE_URL` | the Neon connection string (the Neon integration sets it per preview branch) |
 | `BLOB_STORE_ID` or `BLOB_READ_WRITE_TOKEN` | the Vercel Blob store id (auth via Vercel OIDC, set by connecting the store) or a read-write token. Content images are served from the store's public URL, so none show without one |
+| `PII_ENCRYPTION_KEY` | key that encrypts personal data in lost and found and complaint cases (AES-256-GCM): 32 random bytes, base64. Generate one with `openssl rand -base64 32` and keep a copy somewhere safe, because data encrypted with a lost key cannot be recovered. Required in production: without it nothing that holds personal data works, and nothing is stored in the clear. To rotate it, move the old value to `PII_ENCRYPTION_KEY_PREVIOUS` (decrypt only) and set a new one |
+| `CRON_SECRET` | any random string (`openssl rand -hex 32`). Vercel Cron sends it as a Bearer token to `/api/cron/retention` (deletes personal data a year after a case closes) and `/api/cron/complaints` (escalates complaints past their target, closes lapsed resolutions), the daily jobs in `vercel.json`. Without it that route is closed and nothing is deleted |
 | `NEXT_PUBLIC_SITE_URL` | the origin for non-production builds, with no trailing slash (production always uses `https://tpclife.vercel.app`, set in `lib/site-url.ts`) |
 
 Sign-in and email have their own variables, listed in `.env.example`.

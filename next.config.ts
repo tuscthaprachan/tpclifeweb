@@ -58,6 +58,18 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Tracking pages handle a private link; never send any part of the URL onwards. The pages that
+        // post a form narrow this to same-origin in their metadata: a no-referrer document sends
+        // `Origin: null` with a form, which Server Actions reject.
+        source: "/:locale/lost-and-found/track/:path*",
+        headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
+      },
+      {
+        // The same for complaint tracking.
+        source: "/:locale/complaints/track/:path*",
+        headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
+      },
+      {
         // The search index is regenerated on revalidation, so it may be cached
         // hard at the edge but must revalidate quickly when content changes.
         source: "/api/search-index/:locale",

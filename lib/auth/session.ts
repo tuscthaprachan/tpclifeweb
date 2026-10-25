@@ -5,9 +5,8 @@ import "server-only";
  * and Server Action starts with `requireStaff(...)`. The proxy is not relied
  * on for authorisation (and does not run for /admin at all).
  *
- * Roles and the second-factor facts are read from the database on every
- * request, never cached in the session, so revoking a role or an invite takes
- * effect on the person's very next click.
+ * Roles are read from the database on every request, never cached in the
+ * session, so revoking a role takes effect on the person's very next click.
  */
 
 import { cache } from "react";
@@ -19,7 +18,6 @@ import type { AuditContext } from "@/lib/db/audit";
 import { session as sessionTable } from "@/lib/db/schema/auth";
 import { organisations, type Organisation } from "@/lib/db/schema/organisations";
 import { decideAccess, type AccessState } from "./access";
-import { hasVerifiedSecondFactor } from "./factors";
 import { getAuth, isAuthConfigured } from "./index";
 import { getStaffRoles, type ActiveRole, type StaffRole } from "./roles";
 import { ACTIVITY_TOUCH_MS, isSessionLive, sessionDeadlines, type SessionDeadlines, type SessionTimes } from "./session-policy";
@@ -37,7 +35,6 @@ export interface AccessContext {
   times: SessionTimes;
   deadlines: SessionDeadlines;
   roles: ActiveRole[];
-  hasSecondFactor: boolean;
   /** Organisations the person holds at least one role in. */
   organisations: Organisation[];
 }
@@ -81,10 +78,7 @@ const loadAccess = cache(async (): Promise<{ state: "none" } | { state: "timed_o
 
   const roles = await getStaffRoles(found.user.id, db);
   const orgIds = [...new Set(roles.map((r) => r.organisationId))];
-  const [hasSecondFactor, orgs] = await Promise.all([
-    hasVerifiedSecondFactor(db, found.user.id),
-    orgIds.length ? db.select().from(organisations).where(inArray(organisations.id, orgIds)) : Promise.resolve([]),
-  ]);
+  const orgs = orgIds.length ? await db.select().from(organisations).where(inArray(organisations.id, orgIds)) : [];
 
   return {
     state: "live",
@@ -95,7 +89,6 @@ const loadAccess = cache(async (): Promise<{ state: "none" } | { state: "timed_o
       times,
       deadlines: sessionDeadlines(times),
       roles,
-      hasSecondFactor,
       organisations: orgs,
     },
   };
@@ -116,10 +109,8 @@ export function redirectFor(state: Exclude<AccessState, { kind: "ok" }>): string
       return "/admin/signed-out?reason=timeout";
     case "not_staff":
       return "/admin/no-access";
-    case "second_factor_setup":
-      return "/admin/set-up-security";
-    case "second_factor_challenge":
-      return "/admin/sign-in/verify";
+    case "passkey_required":
+      return "/admin/sign-in";
     case "forbidden":
       return "/admin/no-access?reason=role";
   }
@@ -127,8 +118,8 @@ export function redirectFor(state: Exclude<AccessState, { kind: "ok" }>): string
 
 /**
  * Gate for every staff page and action. Redirects unless the person is signed
- * in, within their time limits, holds at least one staff role, has passed
- * their second factor, and (when given) holds `role` (or any one of the roles,
+ * in with a passkey, within their time limits, holds at least one staff role,
+ * and (when given) holds `role` (or any one of the roles,
  * if a list is given), on behalf of `organisationId` if that is given too.
  */
 export async function requireStaff(role?: StaffRole | readonly StaffRole[], organisationId?: number): Promise<AccessContext> {
@@ -140,7 +131,6 @@ export async function requireStaff(role?: StaffRole | readonly StaffRole[], orga
     session: { ...ctx.times, secondFactorAt: ctx.secondFactorAt },
     now: new Date(),
     roles: ctx.roles,
-    hasSecondFactor: ctx.hasSecondFactor,
     required: { role, organisationId },
   });
   if (state.kind !== "ok") redirect(redirectFor(state));
@@ -148,12 +138,13 @@ export async function requireStaff(role?: StaffRole | readonly StaffRole[], orga
 }
 
 /**
- * For pages in the middle of signing in (choose a second factor, enter a
- * code, "no access"): needs a live session but not a verified one.
+ * For pages that need a live session but not a staff role ("no access", the
+ * timeout extender). Like `requireStaff` it refuses a session that did not
+ * come from a passkey.
  */
 export async function requireSignedIn(): Promise<AccessContext> {
   const loaded = await loadAccess();
   if (loaded.state === "timed_out") redirect(redirectFor({ kind: "timed_out" }));
-  if (loaded.state === "none") redirect(redirectFor({ kind: "unauthenticated" }));
+  if (loaded.state === "none" || !loaded.ctx.secondFactorAt) redirect(redirectFor({ kind: "unauthenticated" }));
   return loaded.ctx;
 }

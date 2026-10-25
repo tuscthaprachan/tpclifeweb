@@ -141,7 +141,7 @@ export default async function EatHubPage({
                   key={route}
                   className="relative flex min-w-0 items-center gap-[var(--space-3)] rounded-panel border border-line bg-surface p-[var(--space-3)] hover:border-line-strong hover:bg-surface-alt has-[:focus-visible]:[box-shadow:0_0_0_6px_var(--focus-bar)] has-[:focus-visible]:[outline:var(--focus-width)_solid_var(--focus-fill)]"
                 >
-                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-control bg-welfare-soft text-ink-900">
+                  <span className="inline-flex size-10 shrink-0 items-center justify-center text-ink-900">
                     <Icon size={24} />
                   </span>
                   <span className="flex min-w-0 flex-col">

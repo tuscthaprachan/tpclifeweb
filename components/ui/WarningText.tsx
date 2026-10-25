@@ -1,24 +1,35 @@
 import type { ReactNode } from "react";
 import { cx } from "./cx";
-import { WarningIcon } from "./icons";
 
 interface WarningTextProps {
   /**
-   * Must include the word itself ("Warning" / "คำเตือน") as visible text.
-   * This component does not supply it: there is no generic "Warning" entry
-   * in lib/i18n/strings.ts to reuse, only specific notices such as
-   * `phaseAlphaNote`. Report this gap rather than inventing a synonym here.
+   * The warning itself. Include the visually hidden word as the first child,
+   * `<span className="visually-hidden">{UI.warning[locale]}: </span>`: there
+   * is no generic prefix supplied here because the word is the caller's
+   * localised string.
    */
   children: ReactNode;
   className?: string;
 }
 
-/** Icon, colour and the word together (1.4.1). The icon is decorative; the word lives in `children` because it is the caller's string to supply. */
+/**
+ * The GOV.UK warning text: bold text with a black circular "!" icon. No box,
+ * no fill, no coloured border. The icon is decorative; the visually hidden
+ * prefix the caller supplies tells a screen reader this is a warning, and the bold weight and the
+ * icon tell everyone else, so meaning never rests on colour (1.4.1).
+ */
 export function WarningText({ children, className }: WarningTextProps) {
   return (
-    <div className={cx("flex items-start gap-[var(--space-2)] border-l-[length:var(--border-width-thick)] border-warning bg-warning-soft px-[var(--space-4)] py-[var(--space-3)]", className)}>
-      <WarningIcon className="mt-[calc((1lh-16px)/2)] shrink-0 text-warning" />
-      <p className="m-0 font-semibold text-ink-900">{children}</p>
+    <div className={cx("relative flex items-start gap-[var(--space-4)] py-[var(--space-2)] font-bold text-ink-900", className)}>
+      <span
+        aria-hidden="true"
+        className="inline-flex size-[2.2rem] shrink-0 select-none items-center justify-center rounded-full bg-ink-900 text-lg font-bold leading-none text-surface"
+      >
+        !
+      </span>
+      <p className="m-0 min-w-0 self-center">
+        {children}
+      </p>
     </div>
   );
 }

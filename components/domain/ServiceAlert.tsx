@@ -1,8 +1,7 @@
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { liveRegionProps, type Announcement } from "@/lib/a11y";
 import type { AlertSeverity, ServiceAlert as ServiceAlertDoc } from "@/lib/content/types";
-import { cx, Cluster, Link, StatusTag, Tag, Timestamp, type StatusTone } from "@/components/ui";
+import { Link, NotificationBanner, Tag, Timestamp, WarningText } from "@/components/ui";
 
 /*
  * TODO: add to UI strings. lib/i18n/strings.ts has UI.warning ("Warning" /
@@ -23,23 +22,6 @@ const SEVERITY_LABEL: Record<AlertSeverity, LocaleString> = {
  */
 const MORE_INFO_LABEL: LocaleString = { th: "ข้อมูลเพิ่มเติม", en: "More information" };
 
-/** `critical` reuses the `error` status tone: there is no dedicated "critical" tone in StatusTag, and error red is the most severe colour the status palette has. */
-const TONE: Record<AlertSeverity, StatusTone> = { info: "info", warning: "warning", critical: "error" };
-
-const BORDER_BG: Record<AlertSeverity, string> = {
-  info: "border-info bg-info-soft",
-  warning: "border-warning bg-warning-soft",
-  critical: "border-error bg-error-soft",
-};
-
-/**
- * A critical alert interrupts (4.1.3 assertive): something the reader must
- * act on now, for example a shuttle route that has just been suspended.
- * Info and warning wait for a pause, matching NotificationBanner's own
- * politeness rule.
- */
-const POLITENESS: Record<AlertSeverity, Announcement> = { info: "polite", warning: "polite", critical: "assertive" };
-
 interface ServiceAlertProps {
   locale: Locale;
   alert: ServiceAlertDoc;
@@ -47,30 +29,44 @@ interface ServiceAlertProps {
 }
 
 /**
- * Renders one `ServiceAlert` document. Severity always drives an icon, a
- * word and a colour together (1.4.1 Use of Colour): the word comes from
- * `StatusTag`, which is the one place in the design system a status colour
- * is allowed to carry meaning, and it is never colour alone.
+ * Renders one `ServiceAlert` document as a GOV.UK notification banner: the
+ * severity word sits in the solid title bar, so it is never colour alone
+ * (1.4.1). `info` and `warning` are the plain "important" banner (a labelled
+ * region, announced politely). `critical` is the same banner announced
+ * assertively (4.1.3), something the reader must act on now such as a shuttle
+ * route that has just been suspended, with the alert itself set as GOV.UK
+ * warning text inside. No tinted box anywhere.
  *
  * Alerts that affect the shuttle carry a separate `transport` category
- * `Tag`, using the fixed `--fill-transport` fill (CONTRIBUTING.md), so the
- * "this is about the shuttle" signal is independent of the "how serious is
- * this" signal instead of trying to overload one colour with both meanings.
+ * `Tag` (a label, not a box), so "this is about the shuttle" stays
+ * independent of "how serious is this".
  */
 export function ServiceAlert({ locale, alert, className }: ServiceAlertProps) {
   const affectsShuttle = alert.affects?.includes("shuttle") ?? false;
+  const critical = alert.severity === "critical";
+  const title = pick(alert.title, locale);
+  const body = pick(alert.body, locale);
 
   return (
-    <div
-      {...liveRegionProps(POLITENESS[alert.severity])}
-      className={cx("rounded-panel border-l-[length:var(--border-width-thick)] px-[var(--space-4)] py-[var(--space-4)] text-ink-900", BORDER_BG[alert.severity], className)}
+    <NotificationBanner
+      variant={critical ? "warning" : "info"}
+      title={pick(SEVERITY_LABEL[alert.severity], locale)}
+      className={className}
     >
-      <Cluster space={2}>
-        <StatusTag tone={TONE[alert.severity]} label={pick(SEVERITY_LABEL[alert.severity], locale)} />
-        {affectsShuttle ? <Tag tone="transport">{UI.categoryTransport[locale]}</Tag> : null}
-      </Cluster>
-      <p className="m-0 mt-[var(--space-2)] font-semibold">{pick(alert.title, locale)}</p>
-      <p className="m-0 mt-[var(--space-1)]">{pick(alert.body, locale)}</p>
+      {affectsShuttle ? (
+        <p className="m-0 mb-[var(--space-2)]">
+          <Tag tone="transport">{UI.categoryTransport[locale]}</Tag>
+        </p>
+      ) : null}
+      {critical ? (
+        <WarningText>
+          <span className="visually-hidden">{UI.warning[locale]}: </span>
+          {title}
+        </WarningText>
+      ) : (
+        <p className="m-0 font-bold">{title}</p>
+      )}
+      <p className="m-0 mt-[var(--space-1)]">{body}</p>
       <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">
         <Timestamp value={alert.startsAt} locale={locale} format="datetime" />
         {alert.endsAt ? (
@@ -87,6 +83,6 @@ export function ServiceAlert({ locale, alert, className }: ServiceAlertProps) {
           </Link>
         </p>
       ) : null}
-    </div>
+    </NotificationBanner>
   );
 }

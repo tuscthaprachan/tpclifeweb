@@ -92,6 +92,12 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
               {UI.startForm[locale]}
             </Link>
           </p>
+          <p className="m-0 text-ink-600">
+            {UI.cpFromReport[locale]}{" "}
+            <Link href="/complaints" locale={locale} className="font-semibold text-action">
+              {UI.cpServiceName[locale]}
+            </Link>
+          </p>
         </Stack>
 
         <Stack space={3} as="section">

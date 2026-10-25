@@ -11,9 +11,13 @@
 
 import type { Locale, LocaleString } from "./config";
 import { CANTEEN_STRINGS } from "./admin-content/canteen";
+import { CASES_STRINGS } from "./admin-content/cases";
+import { COMPLAINTS_STRINGS } from "./admin-content/complaints";
 import { DIRECTORY_STRINGS } from "./admin-content/directory";
+import { LOST_FOUND_CASES_STRINGS } from "./admin-content/lost-found-cases";
 import { MEDIA_STRINGS } from "./admin-content/media";
 import { PAGES_STRINGS } from "./admin-content/pages";
+import { PERFORMANCE_STRINGS } from "./admin-content/performance";
 import { PUBLISHING_STRINGS } from "./admin-content/publishing";
 
 export const A = {
@@ -30,169 +34,134 @@ export const A = {
     en: "The staff console cannot be used in this environment yet. A developer needs to set: {vars}",
   },
 
-  /* Sign in: email */
+  /* Sign in */
   signInTitle: { th: "เข้าสู่ระบบคอนโซลเจ้าหน้าที่", en: "Sign in to the staff console" },
   signInIntro: {
-    th: "เราจะส่งรหัส 6 หลักไปที่อีเมลของคุณ ไม่ต้องใช้รหัสผ่าน",
-    en: "We will email you a 6 digit code. You do not need a password",
+    th: "ใช้พาสคีย์ในอุปกรณ์นี้ ไม่ต้องกรอกอีเมลหรือรหัสผ่าน",
+    en: "Use the passkey on this device. You do not need an email address or a password",
+  },
+  signInButton: { th: "เข้าสู่ระบบด้วยพาสคีย์", en: "Sign in with a passkey" },
+  signInNeedsScript: {
+    th: "พาสคีย์ต้องเปิดใช้ JavaScript และใช้เบราว์เซอร์รุ่นใหม่ เช่น Chrome, Edge, Safari หรือ Firefox",
+    en: "Passkeys need JavaScript and a recent browser, such as Chrome, Edge, Safari or Firefox",
+  },
+  signInFailed: {
+    th: "เข้าสู่ระบบด้วยพาสคีย์ไม่สำเร็จ ลองอีกครั้ง หรือใช้อุปกรณ์อื่นที่มีพาสคีย์ของคุณ",
+    en: "We could not sign you in with a passkey. Try again, or use another device that has your passkey",
+  },
+  signInLostHeading: { th: "พาสคีย์หายหรือใช้ไม่ได้", en: "Lost your passkey?" },
+  signInLostBody: {
+    th: "ขอให้ผู้ดูแลระบบสร้างลิงก์กู้คืนบัญชีให้คุณ หากคุณเป็นผู้ดูแลระบบคนเดียว ผู้ดูแลฐานข้อมูลสร้างลิงก์ให้ได้ด้วยคำสั่งกู้คืน",
+    en: "Ask an administrator to make you a recovery link. If you are the only administrator, whoever looks after the database can make one with the recovery command",
   },
   emailLabel: { th: "อีเมล", en: "Email address" },
-  emailHint: { th: "ใช้อีเมลของมหาวิทยาลัย เช่น name@dome.tu.ac.th", en: "Use your university email address, for example name@dome.tu.ac.th" },
-  continue: { th: "ดำเนินการต่อ", en: "Continue" },
-  errEmailRequired: { th: "กรอกอีเมลของคุณ", en: "Enter your email address" },
   errEmailFormat: {
-    th: "กรอกอีเมลให้ถูกต้อง เช่น name@dome.tu.ac.th",
-    en: "Enter an email address in the correct format, like name@dome.tu.ac.th",
+    th: "กรอกอีเมลให้ถูกต้อง เช่น name@example.org",
+    en: "Enter an email address in the correct format, like name@example.org",
   },
-  errEmailDomain: {
-    th: "ใช้อีเมลของมหาวิทยาลัยที่ลงท้ายด้วย {domains}",
-    en: "Use a university email address ending in {domains}",
-  },
-  errTooManyCodes: {
-    th: "คุณขอรหัสบ่อยเกินไป ลองใหม่ในอีก {minutes} นาที",
-    en: "You have asked for too many codes. Try again in {minutes} minutes",
-  },
-  errSendFailed: { th: "ส่งรหัสไม่สำเร็จ ลองอีกครั้ง", en: "We could not send the code. Try again" },
 
-  /* Sign in: code */
-  codeTitle: { th: "ตรวจสอบอีเมลของคุณ", en: "Check your email" },
-  codeSentTo: { th: "เราส่งรหัสไปที่ {email}", en: "We have sent a code to {email}" },
-  codeIntro: {
-    th: "รหัสมี 6 หลักและใช้ได้ 10 นาที หากไม่พบอีเมล ลองดูในกล่องจดหมายขยะ",
-    en: "The code is 6 digits and works for 10 minutes. If you cannot see the email, check your spam folder",
-  },
-  codeLabel: { th: "รหัส 6 หลัก", en: "6 digit code" },
-  errCodeRequired: { th: "กรอกรหัส 6 หลักที่ส่งไปทางอีเมล", en: "Enter the 6 digit code we emailed you" },
-  errCodeFormat: { th: "รหัสต้องเป็นตัวเลข 6 หลัก", en: "The code must be 6 digits" },
-  errCodeWrong: {
-    th: "รหัสไม่ถูกต้อง ตรวจสอบอีเมลอีกครั้ง หรือขอรหัสใหม่",
-    en: "That code is not right. Check the email again, or ask for a new code",
-  },
-  errCodeExpired: {
-    th: "รหัสนี้หมดอายุหรือกรอกผิดหลายครั้งแล้ว ขอรหัสใหม่",
-    en: "That code has expired or has been tried too many times. Ask for a new code",
-  },
-  errNoAccount: {
-    th: "ไม่สามารถเข้าสู่ระบบด้วยอีเมลนี้ได้",
-    en: "You cannot sign in with this email address",
-  },
-  resendHelp: { th: "ไม่ได้รับรหัส", en: "Not received a code?" },
-  codeResentTitle: { th: "ส่งรหัสใหม่แล้ว", en: "New code sent" },
-  codeResentBody: {
-    th: "เราส่งรหัสใหม่ไปที่ {email} แล้ว รหัสก่อนหน้าใช้ไม่ได้อีก",
-    en: "We have sent a new code to {email}. The earlier code no longer works",
-  },
-  resendTitle: { th: "ขอรหัสใหม่", en: "Get a new code" },
-  resendBody: {
-    th: "เราจะส่งรหัสใหม่ไปที่ {email} รหัสก่อนหน้าจะใช้ไม่ได้อีก",
-    en: "We will send a new code to {email}. The earlier code will stop working",
-  },
-  resendButton: { th: "ส่งรหัสใหม่", en: "Send a new code" },
-  changeEmail: { th: "ใช้อีเมลอื่น", en: "Use a different email address" },
-
-  /* Second step: challenge */
-  verifyTitle: { th: "ยืนยันว่าเป็นคุณ", en: "Confirm it is you" },
-  verifyIntro: {
-    th: "เจ้าหน้าที่ทุกคนต้องยืนยันตัวตนอีกหนึ่งขั้นตอนทุกครั้งที่เข้าสู่ระบบ",
-    en: "All staff confirm their identity in a second step each time they sign in",
-  },
-  authCodeLabel: { th: "รหัสจากแอปยืนยันตัวตน", en: "Code from your authenticator app" },
-  authCodeHint: {
-    th: "เปิดแอปยืนยันตัวตนบนอุปกรณ์ของคุณ แล้วกรอกรหัส 6 หลักที่แสดงอยู่",
-    en: "Open the authenticator app on your device and enter the 6 digit code it shows",
-  },
-  errAuthCodeRequired: { th: "กรอกรหัส 6 หลักจากแอปยืนยันตัวตน", en: "Enter the 6 digit code from your authenticator app" },
-  errAuthCodeWrong: {
-    th: "รหัสไม่ถูกต้อง ตรวจสอบรหัสในแอปแล้วลองอีกครั้ง",
-    en: "That code is not right. Check the code in the app and try again",
-  },
-  errAuthLocked: {
-    th: "กรอกรหัสผิดหลายครั้งเกินไป รอ 15 นาทีแล้วลองอีกครั้ง",
-    en: "Too many wrong codes. Wait 15 minutes and try again",
-  },
-  passkeyUseHeading: { th: "ใช้พาสคีย์", en: "Use a passkey" },
-  passkeyUseBody: {
-    th: "ยืนยันด้วยลายนิ้วมือ ใบหน้า การล็อกหน้าจอ หรือกุญแจความปลอดภัยของคุณ",
-    en: "Confirm with your fingerprint, face, screen lock or security key",
-  },
-  passkeyUseButton: { th: "ใช้พาสคีย์", en: "Use passkey" },
-  passkeyNeedsScript: {
-    th: "พาสคีย์ต้องเปิดใช้ JavaScript หากเปิดไม่ได้ ให้ใช้แอปยืนยันตัวตนหรือรหัสสำรองแทน",
-    en: "Passkeys need JavaScript. If you cannot turn it on, use your authenticator app or a backup code instead",
-  },
-  passkeyFailed: {
-    th: "ใช้พาสคีย์ไม่สำเร็จ ลองอีกครั้ง หรือเลือกวิธีอื่น",
-    en: "The passkey did not work. Try again, or choose another way",
-  },
-  backupLink: { th: "ใช้รหัสสำรอง", en: "Use a backup code" },
-  backupTitle: { th: "ใช้รหัสสำรอง", en: "Use a backup code" },
-  backupHint: {
-    th: "รหัสสำรองแต่ละรหัสใช้ได้ครั้งเดียว ใช้เมื่อคุณเข้าถึงแอปยืนยันตัวตนไม่ได้",
-    en: "Each backup code works once. Use one if you cannot get to your authenticator app",
-  },
-  backupLabel: { th: "รหัสสำรอง", en: "Backup code" },
-  errBackupRequired: { th: "กรอกรหัสสำรองของคุณ", en: "Enter one of your backup codes" },
-  errBackupWrong: {
-    th: "รหัสสำรองไม่ถูกต้องหรือเคยใช้แล้ว ลองรหัสอื่น",
-    en: "That backup code is not right or has already been used. Try another one",
-  },
-  backToAuthApp: { th: "กลับไปใช้แอปยืนยันตัวตน", en: "Go back to the authenticator app" },
-
-  /* Second step: set up */
-  setupTitle: { th: "ตั้งค่าการยืนยันตัวตนสองขั้นตอน", en: "Set up two-step verification" },
-  setupIntro: {
-    th: "เจ้าหน้าที่ทุกคนต้องยืนยันตัวตนสองขั้นตอน เพื่อปกป้องข้อมูลส่วนบุคคลของนักศึกษา เลือกวิธีที่คุณจะใช้ทุกครั้งที่เข้าสู่ระบบ",
-    en: "All staff must confirm their identity in two steps, to protect students' personal data. Choose how you will do it each time you sign in",
-  },
-  setupLegend: { th: "คุณต้องการยืนยันตัวตนด้วยวิธีใด", en: "How do you want to confirm it is you?" },
-  optAuthenticator: { th: "แอปยืนยันตัวตน", en: "Authenticator app" },
-  optAuthenticatorHint: {
-    th: "แอปบนโทรศัพท์ เช่น Google Authenticator, Microsoft Authenticator หรือ 1Password",
-    en: "An app on your phone, such as Google Authenticator, Microsoft Authenticator or 1Password",
-  },
-  optPasskey: { th: "พาสคีย์", en: "Passkey" },
-  optPasskeyHint: {
-    th: "ลายนิ้วมือ ใบหน้า การล็อกหน้าจอ หรือกุญแจความปลอดภัย",
-    en: "Your fingerprint, face, screen lock or a security key",
-  },
-  errChoiceRequired: { th: "เลือกวิธียืนยันตัวตน", en: "Select how you want to confirm it is you" },
-
-  authSetupTitle: { th: "ตั้งค่าแอปยืนยันตัวตน", en: "Set up an authenticator app" },
-  authStep1: { th: "ติดตั้งแอปยืนยันตัวตนบนโทรศัพท์ของคุณ หากยังไม่มี", en: "Install an authenticator app on your phone if you do not have one" },
-  authStep2: {
-    th: "เพิ่มบัญชีในแอปด้วยรหัสตั้งค่านี้ หรือเปิดลิงก์นี้บนโทรศัพท์ของคุณ",
-    en: "Add an account in the app using this setup key, or open the link on your phone",
-  },
-  setupKeyLabel: { th: "รหัสตั้งค่า", en: "Setup key" },
-  openInApp: { th: "เปิดในแอปยืนยันตัวตน", en: "Open in your authenticator app" },
-  authStep3: { th: "กรอกรหัส 6 หลักที่แอปแสดง เพื่อยืนยันว่าตั้งค่าถูกต้อง", en: "Enter the 6 digit code the app shows, to check it is set up correctly" },
-  authConfirmButton: { th: "ยืนยันและดำเนินการต่อ", en: "Confirm and continue" },
-  authSetupFailed: { th: "เริ่มตั้งค่าไม่สำเร็จ ลองอีกครั้ง", en: "We could not start the setup. Try again" },
-  backupDoneTitle: { th: "บันทึกรหัสสำรองของคุณ", en: "Save your backup codes" },
-  backupDoneIntro: {
-    th: "ตั้งค่าแอปยืนยันตัวตนเรียบร้อยแล้ว เก็บรหัสสำรองเหล่านี้ไว้ในที่ปลอดภัย",
-    en: "Your authenticator app is set up. Keep these backup codes somewhere safe",
-  },
-  backupDoneWarning: {
-    th: "รหัสแต่ละรหัสใช้ได้ครั้งเดียว เมื่อโทรศัพท์หายหรือเข้าแอปไม่ได้ และเราจะไม่แสดงรหัสเหล่านี้อีก",
-    en: "Each code works once, if you lose your phone or cannot get into the app. We will not show them again",
-  },
-  backupDoneGone: {
-    th: "แอปยืนยันตัวตนของคุณตั้งค่าเรียบร้อยแล้ว รหัสสำรองแสดงได้ครั้งเดียวและไม่แสดงอีก",
-    en: "Your authenticator app is set up. Backup codes are shown once, so they are not shown again",
-  },
-  backupDoneButton: { th: "ไปที่คอนโซล", en: "Go to the console" },
-  passkeySetupTitle: { th: "สร้างพาสคีย์", en: "Create a passkey" },
-  passkeySetupBody: {
-    th: "เบราว์เซอร์จะขอให้คุณยืนยันด้วยลายนิ้วมือ ใบหน้า การล็อกหน้าจอ หรือกุญแจความปลอดภัย",
-    en: "Your browser will ask you to confirm with your fingerprint, face, screen lock or security key",
-  },
-  passkeyCreateButton: { th: "สร้างพาสคีย์", en: "Create passkey" },
+  /* Passkey ceremonies: shared messages */
   passkeyCreateFailed: {
-    th: "สร้างพาสคีย์ไม่สำเร็จ ลองอีกครั้ง หรือเลือกแอปยืนยันตัวตนแทน",
-    en: "We could not create the passkey. Try again, or use an authenticator app instead",
+    th: "สร้างพาสคีย์ไม่สำเร็จ ลองอีกครั้ง",
+    en: "We could not create the passkey. Try again",
   },
-  chooseAnotherWay: { th: "เลือกวิธีอื่น", en: "Choose another way" },
+  passkeyNeedsScript: {
+    th: "การสร้างพาสคีย์ต้องเปิดใช้ JavaScript และใช้เบราว์เซอร์รุ่นใหม่ เช่น Chrome, Edge, Safari หรือ Firefox",
+    en: "Creating a passkey needs JavaScript and a recent browser, such as Chrome, Edge, Safari or Firefox",
+  },
+  passkeyErrLinkUnusable: {
+    th: "ลิงก์นี้ใช้ไม่ได้แล้ว อาจหมดอายุ ถูกใช้ไปแล้ว หรือถูกยกเลิก ขอลิงก์ใหม่จากผู้ดูแลระบบ",
+    en: "This link can no longer be used. It may have expired, been used already or been cancelled. Ask an administrator for a new one",
+  },
+  passkeyErrTooMany: {
+    th: "พยายามมากเกินไป รอ 15 นาทีแล้วลองอีกครั้ง",
+    en: "Too many attempts. Wait 15 minutes and try again",
+  },
+  passkeyErrAccountExists: {
+    th: "มีบัญชีสำหรับอีเมลนี้อยู่แล้ว เข้าสู่ระบบด้วยพาสคีย์ของคุณ แล้วเปิดลิงก์คำเชิญอีกครั้ง",
+    en: "An account already exists for this address. Sign in with your passkey, then open the invitation link again",
+  },
+  passkeyErrSignOutFirst: {
+    th: "คุณเข้าสู่ระบบเป็นบัญชีอื่นอยู่ ออกจากระบบก่อน แล้วเปิดลิงก์อีกครั้ง",
+    en: "You are signed in to a different account. Sign out, then open the link again",
+  },
+  passkeyErrVerification: {
+    th: "อุปกรณ์ไม่ได้ตรวจสอบว่าเป็นคุณ ใช้พาสคีย์ที่ขอลายนิ้วมือ ใบหน้า หรือ PIN",
+    en: "Your device did not check that it was you. Use a passkey that asks for your fingerprint, face or PIN",
+  },
+  passkeyErrDuplicate: {
+    th: "อุปกรณ์นี้มีพาสคีย์ของบัญชีนี้อยู่แล้ว ใช้อุปกรณ์อื่น หรือเอาพาสคีย์เดิมออกก่อน",
+    en: "This device already has a passkey for this account. Use another device, or remove the old one first",
+  },
+  passkeyErrCancelled: {
+    th: "ยังไม่ได้สร้างพาสคีย์ ลองอีกครั้ง และอนุญาตเมื่อเบราว์เซอร์ถาม",
+    en: "The passkey was not created. Try again, and allow it when your browser asks",
+  },
+  tooManyTokenAttempts: {
+    th: "ลองลิงก์มากเกินไปจากเครือข่ายนี้ รอ 15 นาทีแล้วลองอีกครั้ง",
+    en: "Too many attempts from this network. Wait 15 minutes and try again",
+  },
+
+  /* My security */
+  securityLink: { th: "ความปลอดภัยของฉัน", en: "My security" },
+  securityTitle: { th: "ความปลอดภัยของฉัน", en: "My security" },
+  securityIntro: {
+    th: "คุณเข้าสู่ระบบด้วยพาสคีย์เท่านั้น เพิ่มพาสคีย์ในทุกอุปกรณ์ที่คุณใช้ เช่น โทรศัพท์และแล็ปท็อป เพื่อไม่ให้ถูกล็อกออกเมื่ออุปกรณ์หาย",
+    en: "You sign in with passkeys only. Add one on each device you use, such as your phone and your laptop, so that losing a device does not lock you out",
+  },
+  passkeysHeading: { th: "พาสคีย์ของคุณ", en: "Your passkeys" },
+  colAdded: { th: "เพิ่มเมื่อ", en: "Added" },
+  colLastUsed: { th: "ใช้ล่าสุด", en: "Last used" },
+  lastUsedNever: { th: "ยังไม่เคยใช้เข้าสู่ระบบ", en: "Not used to sign in yet" },
+  passkeyUnnamed: { th: "พาสคีย์", en: "Passkey" },
+  renameLabel: { th: "ชื่อพาสคีย์", en: "Passkey name" },
+  renameSave: { th: "บันทึกชื่อ", en: "Save name" },
+  removePasskeyVisible: { th: "เอาออก", en: "Remove" },
+  removePasskeyFor: { th: "เอาพาสคีย์ {name} ออก", en: "Remove the passkey {name}" },
+  onlyPasskeyNote: {
+    th: "นี่คือพาสคีย์เดียวของคุณ จึงเอาออกไม่ได้ เพิ่มพาสคีย์อีกอันก่อน",
+    en: "This is your only passkey, so it cannot be removed. Add another first",
+  },
+  addPasskeyHeading: { th: "เพิ่มพาสคีย์", en: "Add a passkey" },
+  addPasskeyBody: {
+    th: "เบราว์เซอร์จะขอให้คุณยืนยันด้วยลายนิ้วมือ ใบหน้า การล็อกหน้าจอ หรือกุญแจความปลอดภัย เปิดหน้านี้บนอุปกรณ์เครื่องใหม่เพื่อเพิ่มพาสคีย์ของเครื่องนั้น",
+    en: "Your browser will ask you to confirm with your fingerprint, face, screen lock or security key. Open this page on a new device to add a passkey for it",
+  },
+  addPasskeyButton: { th: "เพิ่มพาสคีย์", en: "Add a passkey" },
+  passkeyAddedTitle: { th: "เพิ่มพาสคีย์แล้ว", en: "Passkey added" },
+  passkeyAddedBody: {
+    th: "ครั้งต่อไปใช้พาสคีย์นี้เข้าสู่ระบบได้ ตั้งชื่อให้จำง่ายได้ด้านล่าง",
+    en: "You can use it to sign in next time. Give it a name you will recognise below",
+  },
+  passkeyRenamedTitle: { th: "บันทึกชื่อแล้ว", en: "Name saved" },
+  passkeyRenamedBody: { th: "ชื่อใหม่แสดงในรายการด้านล่างแล้ว", en: "The new name shows in the list below" },
+  passkeyRemovedTitle: { th: "เอาพาสคีย์ออกแล้ว", en: "Passkey removed" },
+  passkeyRemovedBody: {
+    th: "พาสคีย์นั้นใช้เข้าสู่ระบบไม่ได้อีก การเปลี่ยนแปลงถูกบันทึกไว้แล้ว",
+    en: "It can no longer sign in. The change has been recorded",
+  },
+  errPasskeyName: { th: "กรอกชื่อพาสคีย์ไม่เกิน 60 ตัวอักษร", en: "Enter a passkey name of up to 60 characters" },
+  errLastPasskey: {
+    th: "เอาพาสคีย์สุดท้ายออกไม่ได้ ไม่เช่นนั้นคุณจะเข้าสู่ระบบไม่ได้ เพิ่มพาสคีย์อีกอันก่อน",
+    en: "You cannot remove your last passkey, or you could not sign in. Add another one first",
+  },
+  removePasskeyTitle: { th: "คุณต้องการเอาพาสคีย์นี้ออกหรือไม่", en: "Are you sure you want to remove this passkey?" },
+  removePasskeyBody: {
+    th: "พาสคีย์ {name} จะใช้เข้าสู่ระบบไม่ได้อีก การเปลี่ยนแปลงนี้จะถูกบันทึกไว้",
+    en: "The passkey {name} will no longer sign you in. This change is recorded",
+  },
+  removePasskeyButton: { th: "เอาพาสคีย์ออก", en: "Remove passkey" },
+  recoveredTitle: { th: "กู้คืนบัญชีเรียบร้อยแล้ว", en: "Your account is recovered" },
+  recoveredBody: {
+    th: "บันทึกพาสคีย์ใหม่แล้ว และเราออกจากระบบอุปกรณ์อื่นทั้งหมดของคุณแล้ว หากอุปกรณ์เดิมหายหรือไม่ปลอดภัย ให้เอาพาสคีย์เดิมออกตอนนี้",
+    en: "Your new passkey is saved and we have signed you out everywhere else. If the old device was lost or is not safe, remove its old passkeys now",
+  },
+  removeOlderButton: { th: "เอาพาสคีย์เดิมทั้งหมดออก", en: "Remove my older passkeys" },
+  removeOlderHint: {
+    th: "เก็บพาสคีย์ใหม่ล่าสุดไว้ และเอาพาสคีย์อื่นออก",
+    en: "Keeps the newest passkey and removes the rest",
+  },
+  olderRemovedTitle: { th: "เอาพาสคีย์เดิมออกแล้ว", en: "Older passkeys removed" },
 
   /* Dashboard */
   dashTitle: { th: "คอนโซลเจ้าหน้าที่", en: "Staff console" },
@@ -278,22 +247,32 @@ export const A = {
   cancelInviteFor: { th: "ยกเลิกคำเชิญของ {email}", en: "Cancel the invitation for {email}" },
   inviteHeading: { th: "เชิญเจ้าหน้าที่", en: "Invite a member of staff" },
   inviteIntro: {
-    th: "เราจะส่งลิงก์ไปที่อีเมลนี้ ลิงก์ใช้ได้ 7 วัน ใช้อีเมลของมหาวิทยาลัยหรืออีเมลอื่นก็ได้",
-    en: "We will email a link to this address. The link works for 7 days. It can be a university address or any other",
+    th: "เราจะสร้างลิงก์คำเชิญให้คุณส่งต่อ ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ 7 วัน อีเมลใช้ระบุบัญชี จะเป็นอีเมลของมหาวิทยาลัยหรืออีเมลอื่นก็ได้ หากตั้งค่าอีเมลไว้ เราจะส่งลิงก์ไปให้ด้วย",
+    en: "We will make an invitation link for you to pass on. It works once and for 7 days. The email address names the account; it can be a university address or any other. If email is set up, we also send the link",
   },
   inviteOrgLegend: { th: "เชิญเข้าหน่วยงานใด", en: "Which organisation are they joining?" },
   inviteRolesLegend: { th: "บทบาท", en: "Roles" },
   inviteRolesHint: { th: "เลือกได้หลายบทบาท", en: "Select all that apply" },
-  inviteSend: { th: "ส่งคำเชิญ", en: "Send invitation" },
+  inviteSend: { th: "สร้างลิงก์คำเชิญ", en: "Make invitation link" },
   errInviteEmailRequired: { th: "กรอกอีเมลของผู้ที่คุณต้องการเชิญ", en: "Enter the email address of the person you want to invite" },
   errInviteOrgRequired: { th: "เลือกหน่วยงาน", en: "Select an organisation" },
   errInviteRolesRequired: { th: "เลือกอย่างน้อยหนึ่งบทบาท", en: "Select at least one role" },
-  errInviteSendFailed: {
-    th: "ส่งอีเมลคำเชิญไม่สำเร็จ จึงยังไม่ได้สร้างคำเชิญ ลองอีกครั้ง",
-    en: "We could not send the invitation email, so no invitation was made. Try again",
+  errInviteFailed: { th: "สร้างคำเชิญไม่สำเร็จ ลองอีกครั้ง", en: "We could not make the invitation. Try again" },
+  invitedTitle: { th: "สร้างลิงก์คำเชิญแล้ว", en: "Invitation link ready" },
+  invitedBody: {
+    th: "ส่งลิงก์นี้ให้ {email} ทางข้อความส่วนตัวเท่านั้น ใครก็ตามที่เปิดลิงก์ได้จะสร้างบัญชีนี้ได้ ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ {days} วัน เราแสดงลิงก์นี้ได้ครั้งเดียว หากทำหาย ให้สร้างคำเชิญใหม่",
+    en: "Send this link to {email} in a private message only. Anyone who opens it can create the account. It works once and for {days} days. We can only show it now; if you lose it, make a new invitation",
   },
-  invitedTitle: { th: "ส่งคำเชิญแล้ว", en: "Invitation sent" },
-  invitedBody: { th: "เราส่งคำเชิญไปที่ {email} แล้ว", en: "We have sent an invitation to {email}" },
+  linkLabel: { th: "ลิงก์", en: "Link" },
+  copyLink: { th: "คัดลอกลิงก์", en: "Copy link" },
+  linkCopied: { th: "คัดลอกลิงก์แล้ว", en: "Link copied" },
+  linkCopyFailed: { th: "คัดลอกไม่ได้ ให้เลือกลิงก์ในช่องแล้วคัดลอกเอง", en: "We could not copy it. Select the link in the box and copy it yourself" },
+  emailSentNote: { th: "เราส่งลิงก์ไปที่ {email} ทางอีเมลด้วยแล้ว", en: "We have also emailed the link to {email}" },
+  emailFailedNote: {
+    th: "ส่งอีเมลไม่สำเร็จ ให้ส่งลิงก์ด้วยตัวเอง ลิงก์ยังใช้งานได้ตามปกติ",
+    en: "We could not email it, so send the link yourself. The link still works",
+  },
+  emailOffNote: { th: "ยังไม่ได้ตั้งค่าอีเมล จึงต้องส่งลิงก์ด้วยตัวเอง", en: "Email is not set up, so you need to send the link yourself" },
   roleRemovedTitle: { th: "เอาบทบาทออกแล้ว", en: "Role removed" },
   roleRemovedBody: {
     th: "การเปลี่ยนแปลงมีผลทันที และถูกบันทึกไว้แล้ว",
@@ -328,34 +307,100 @@ export const A = {
   },
   you: { th: "คุณ", en: "you" },
   backToStaff: { th: "กลับไปหน้าเจ้าหน้าที่", en: "Back to staff" },
+  colAccount: { th: "บัญชี", en: "Account" },
+  recoveryLinkVisible: { th: "สร้างลิงก์กู้คืน", en: "Make recovery link" },
+  recoveryLinkFor: { th: "สร้างลิงก์กู้คืนบัญชีของ {person}", en: "Make an account recovery link for {person}" },
+  recoveryTitle: { th: "สร้างลิงก์กู้คืนบัญชีให้ {person}", en: "Make a recovery link for {person}" },
+  recoveryIntro: {
+    th: "ใช้เมื่อ {person} ทำพาสคีย์หายทุกอัน ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ 24 ชั่วโมง เมื่อใช้แล้วจะออกจากระบบทุกอุปกรณ์ของ {person} และให้สร้างพาสคีย์ใหม่ การสร้างลิงก์นี้ถูกบันทึกไว้",
+    en: "Use this when {person} has lost every passkey. The link works once and for 24 hours. When it is used, {person} is signed out everywhere and registers a new passkey. Making this link is recorded",
+  },
+  recoveryWarning: {
+    th: "ใครก็ตามที่เปิดลิงก์ได้จะเข้าบัญชีนี้ได้ ส่งให้ตัวบุคคลทางข้อความส่วนตัวเท่านั้น และตรวจสอบให้แน่ใจว่าเป็นคนนั้นจริง",
+    en: "Anyone who opens the link can take over this account. Send it to the person in a private message only, and check it really is them",
+  },
+  recoveryButton: { th: "สร้างลิงก์กู้คืน", en: "Make recovery link" },
+  recoveryReadyTitle: { th: "สร้างลิงก์กู้คืนแล้ว", en: "Recovery link ready" },
+  recoveryReadyBody: {
+    th: "ส่งลิงก์นี้ให้ {person} ทางข้อความส่วนตัวเท่านั้น ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ {hours} ชั่วโมง เราแสดงลิงก์นี้ได้ครั้งเดียว หากทำหาย ให้สร้างใหม่",
+    en: "Send this link to {person} in a private message only. It works once and for {hours} hours. We can only show it now; if you lose it, make a new one",
+  },
+  errRecoveryFailed: { th: "สร้างลิงก์กู้คืนไม่สำเร็จ ลองอีกครั้ง", en: "We could not make the recovery link. Try again" },
+  errRecoveryScope: {
+    th: "คุณสร้างลิงก์กู้คืนได้เฉพาะเจ้าหน้าที่ของหน่วยงานที่คุณเป็นผู้ดูแลระบบ",
+    en: "You can only make recovery links for staff of organisations where you are an administrator",
+  },
+  errRecoverySelf: {
+    th: "คุณสร้างลิงก์กู้คืนให้ตัวเองไม่ได้ขณะที่เป็นผู้ดูแลระบบคนเดียว หากเข้าสู่ระบบอยู่ ให้เพิ่มพาสคีย์ในหน้าความปลอดภัยของฉัน หากถูกล็อกออก ให้ผู้ดูแลฐานข้อมูลใช้คำสั่งกู้คืน",
+    en: "You cannot make a recovery link for yourself while you are the only administrator. While signed in, add a passkey on My security instead. If you are locked out, ask whoever looks after the database to run the recovery command",
+  },
+  recoveryPendingNote: { th: "มีลิงก์กู้คืนที่ยังใช้ได้", en: "A recovery link is waiting" },
 
-  /* Accepting an invitation */
+  /* Accepting an invitation, recovering an account */
   inviteLandingTitle: { th: "คุณได้รับเชิญให้เป็นเจ้าหน้าที่", en: "You have been invited to join the staff" },
   inviteLandingBody: {
-    th: "คุณได้รับเชิญให้ร่วมงานกับ{organisation} เราจะส่งรหัสไปที่ {email} เพื่อยืนยันว่าอีเมลนี้เป็นของคุณ",
-    en: "You have been invited to join {organisation}. We will email a code to {email} to check the address is yours",
+    th: "คุณได้รับเชิญให้ร่วมงานกับ{organisation} บัญชีของคุณจะใช้อีเมล {email} สร้างบัญชีโดยบันทึกพาสคีย์ในอุปกรณ์นี้ ไม่ต้องใช้รหัสผ่านหรือรหัสทางอีเมล",
+    en: "You have been invited to join {organisation}. Your account will use {email}. Create it by saving a passkey on this device. You do not need a password or an emailed code",
   },
-  inviteLandingContinue: { th: "รับคำเชิญและรับรหัส", en: "Accept and get a code" },
+  inviteNameLabel: { th: "ชื่อของคุณ", en: "Your name" },
+  inviteNameHint: { th: "ชื่อที่เจ้าหน้าที่คนอื่นจะเห็น", en: "The name other staff will see" },
+  errNameRequired: { th: "กรอกชื่อของคุณ ไม่เกิน 100 ตัวอักษร", en: "Enter your name, up to 100 characters" },
+  inviteCreateButton: { th: "สร้างบัญชีด้วยพาสคีย์", en: "Create account with a passkey" },
+  inviteExistingTitle: { th: "คุณมีบัญชีอยู่แล้ว", en: "You already have an account" },
+  inviteExistingBody: {
+    th: "มีบัญชีสำหรับ {email} อยู่แล้ว เข้าสู่ระบบด้วยพาสคีย์ของคุณ แล้วกลับมาที่หน้านี้เพื่อรับคำเชิญ",
+    en: "There is already an account for {email}. Sign in with your passkey, then come back to this page to accept the invitation",
+  },
+  inviteSignInToAccept: { th: "เข้าสู่ระบบเพื่อรับคำเชิญ", en: "Sign in to accept" },
+  inviteAcceptTitle: { th: "รับคำเชิญ", en: "Accept the invitation" },
+  inviteAcceptBody: {
+    th: "คุณเข้าสู่ระบบเป็น {email} อยู่แล้ว รับคำเชิญเพื่อรับบทบาทด้านล่างในหน่วยงาน{organisation}",
+    en: "You are signed in as {email}. Accept to receive the roles below at {organisation}",
+  },
+  inviteAcceptButton: { th: "รับคำเชิญ", en: "Accept invitation" },
+  inviteWrongAccount: {
+    th: "คุณเข้าสู่ระบบเป็นบัญชีอื่นอยู่ ออกจากระบบก่อน แล้วเปิดลิงก์นี้อีกครั้ง",
+    en: "You are signed in to a different account. Sign out, then open this link again",
+  },
   inviteBadTitle: { th: "ใช้ลิงก์คำเชิญนี้ไม่ได้", en: "This invitation link cannot be used" },
   inviteNotFound: {
-    th: "ไม่พบคำเชิญนี้ ตรวจสอบว่าคัดลอกลิงก์ครบถ้วน หรือขอให้ผู้ดูแลระบบส่งคำเชิญใหม่",
-    en: "We could not find this invitation. Check you copied the whole link, or ask an administrator to send a new one",
+    th: "ไม่พบคำเชิญนี้ ตรวจสอบว่าคัดลอกลิงก์ครบถ้วน หรือขอให้ผู้ดูแลระบบสร้างคำเชิญใหม่",
+    en: "We could not find this invitation. Check you copied the whole link, or ask an administrator to make a new one",
   },
   inviteExpired: {
-    th: "คำเชิญนี้หมดอายุแล้ว ขอให้ผู้ดูแลระบบส่งคำเชิญใหม่",
-    en: "This invitation has expired. Ask an administrator to send you a new one",
+    th: "คำเชิญนี้หมดอายุแล้ว ขอให้ผู้ดูแลระบบสร้างคำเชิญใหม่",
+    en: "This invitation has expired. Ask an administrator to make you a new one",
   },
   inviteRevoked: {
     th: "คำเชิญนี้ถูกยกเลิกแล้ว หากคิดว่าเกิดความผิดพลาด ให้ติดต่อผู้ดูแลระบบ",
     en: "This invitation was cancelled. If you think that is a mistake, contact an administrator",
   },
   inviteAccepted: {
-    th: "คำเชิญนี้ถูกใช้ไปแล้ว หากเป็นคุณ ให้เข้าสู่ระบบตามปกติ",
-    en: "This invitation has already been used. If that was you, sign in as usual",
+    th: "คำเชิญนี้ถูกใช้ไปแล้ว หากเป็นคุณ ให้เข้าสู่ระบบด้วยพาสคีย์ตามปกติ",
+    en: "This invitation has already been used. If that was you, sign in with your passkey as usual",
   },
-  inviteEmailMismatch: {
-    th: "คำเชิญนี้ส่งถึงอีเมลอื่น",
-    en: "This invitation was sent to a different email address",
+  recoverTitle: { th: "กู้คืนบัญชีของคุณ", en: "Recover your account" },
+  recoverBody: {
+    th: "ลิงก์นี้ให้ {name} ({email}) สร้างพาสคีย์ใหม่สำหรับบัญชีเดิม เมื่อใช้แล้ว เราจะออกจากระบบทุกอุปกรณ์ของบัญชีนี้ และลิงก์จะใช้ไม่ได้อีก",
+    en: "This link lets {name} ({email}) create a new passkey for the existing account. Once you use it, we sign this account out everywhere and the link stops working",
+  },
+  recoverButton: { th: "สร้างพาสคีย์ใหม่", en: "Create a new passkey" },
+  recoverBadTitle: { th: "ใช้ลิงก์กู้คืนนี้ไม่ได้", en: "This recovery link cannot be used" },
+  recoverNotFound: {
+    th: "ไม่พบลิงก์กู้คืนนี้ ตรวจสอบว่าคัดลอกลิงก์ครบถ้วน หรือขอให้ผู้ดูแลระบบสร้างใหม่",
+    en: "We could not find this recovery link. Check you copied the whole link, or ask an administrator to make a new one",
+  },
+  recoverExpired: {
+    th: "ลิงก์กู้คืนนี้หมดอายุแล้ว ขอให้ผู้ดูแลระบบสร้างใหม่",
+    en: "This recovery link has expired. Ask an administrator to make a new one",
+  },
+  recoverRevoked: {
+    th: "ลิงก์กู้คืนนี้ถูกแทนที่ด้วยลิงก์ใหม่กว่า ใช้ลิงก์ล่าสุดที่ได้รับ",
+    en: "This recovery link was replaced by a newer one. Use the latest link you were sent",
+  },
+  recoverUsed: {
+    th: "ลิงก์กู้คืนนี้ถูกใช้ไปแล้ว หากเป็นคุณ ให้เข้าสู่ระบบด้วยพาสคีย์ใหม่",
+    en: "This recovery link has already been used. If that was you, sign in with your new passkey",
   },
 
   /* Content: navigation and hub */
@@ -565,6 +610,10 @@ export const A = {
     th: "ยังไม่ได้ตั้งค่าที่เก็บไฟล์ในสภาพแวดล้อมนี้ ผู้พัฒนาต้องตั้งค่า BLOB_READ_WRITE_TOKEN หรือ BLOB_STORE_ID ก่อน คุณยังเลือกรูปที่มีอยู่แล้วได้",
     en: "File storage is not set up in this environment. A developer needs to set BLOB_READ_WRITE_TOKEN or BLOB_STORE_ID. You can still choose pictures already in the library",
   },
+  errPhotoStorageNotConfigured: {
+    th: "ยังไม่ได้ตั้งค่าที่เก็บไฟล์ในสภาพแวดล้อมนี้ ผู้พัฒนาต้องตั้งค่า BLOB_READ_WRITE_TOKEN หรือ BLOB_STORE_ID ก่อน จึงจะเพิ่มรูปของสิ่งของได้ งานอื่นทำต่อได้ตามปกติ",
+    en: "File storage is not set up in this environment. A developer needs to set BLOB_READ_WRITE_TOKEN or BLOB_STORE_ID before item photos can be added. You can carry on with the other tasks",
+  },
   errUploadChoose: { th: "เลือกไฟล์รูปภาพ", en: "Choose a picture file" },
   errUploadAlt: { th: "กรอกคำอธิบายภาพทั้งภาษาไทยและอังกฤษ หรือเลือกว่าเป็นรูปตกแต่ง", en: "Describe the picture in Thai and English, or tick that it is only decoration" },
   errUploadTooLarge: { th: "ไฟล์ใหญ่เกินไป ลดขนาดรูปให้ไม่เกิน 4 MB", en: "That file is too large. Reduce the picture to 4 MB or less" },
@@ -669,6 +718,10 @@ export const A = {
   ...DIRECTORY_STRINGS,
   ...CANTEEN_STRINGS,
   ...MEDIA_STRINGS,
+  ...CASES_STRINGS,
+  ...COMPLAINTS_STRINGS,
+  ...LOST_FOUND_CASES_STRINGS,
+  ...PERFORMANCE_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 
 export type AdminKey = keyof typeof A;

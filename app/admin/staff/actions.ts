@@ -4,23 +4,43 @@
  * Staff management. Every action starts with `requireStaff("admin", ...)`: the
  * page being hidden from non-admins is a courtesy, this is the control. An
  * admin acts only on the organisations where they hold the admin role.
+ *
+ * Invitation and recovery links are returned to the page to show on screen
+ * (once; the database keeps only a hash). If email is configured they are also
+ * sent, but a failed email never undoes the link.
  */
 
 import { redirect } from "next/navigation";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { getAuthBaseUrl } from "@/lib/auth";
-import { isPlausibleEmail, normaliseEmail } from "@/lib/auth/domains";
+import { isPlausibleEmail, normaliseEmail } from "@/lib/auth/email-address";
 import { createInvite, INVITE_TTL_DAYS, InviteError, revokeInvite } from "@/lib/auth/invites";
+import { issueRecoveryLink, RECOVERY_TTL_HOURS, RecoveryError } from "@/lib/auth/recovery";
 import { organisationsWithRole, STAFF_ROLES } from "@/lib/auth/roles";
 import { auditContextFor, requireStaff } from "@/lib/auth/session";
 import { revokeRole } from "@/lib/auth/staff";
 import { getDb } from "@/lib/db";
-import { getEmailSender, staffInvite } from "@/lib/email";
+import { getEmailSender, isEmailConfigured, staffInvite, staffRecovery, type RenderedEmail } from "@/lib/email";
+import type { EmailOutcome } from "@/components/admin/LinkReady";
 import { a } from "@/lib/i18n/admin";
+
+/** Sends `message` when email is configured. Never throws: the link on screen is the delivery that counts. */
+async function sendIfConfigured(to: string, message: () => RenderedEmail): Promise<EmailOutcome> {
+  if (!isEmailConfigured()) return "not_configured";
+  try {
+    await getEmailSender().send({ to, ...message() });
+    return "sent";
+  } catch (error) {
+    console.error("[staff] could not send email", error);
+    return "failed";
+  }
+}
 
 export interface InviteFormState {
   values: { email: string; organisation: string; roles: string[] };
   errors: { email?: string; organisation?: string; roles?: string; form?: string };
+  /** The link just made, shown once. */
+  created?: { email: string; link: string; days: number; emailed: EmailOutcome };
 }
 
 export async function createStaffInvite(_prev: InviteFormState, formData: FormData): Promise<InviteFormState> {
@@ -46,34 +66,74 @@ export async function createStaffInvite(_prev: InviteFormState, formData: FormDa
 
   // Checked again against this specific organisation, not just "is an admin somewhere".
   const actor = await requireStaff("admin", organisationId);
-  const db = getDb();
   const context = await auditContextFor(actor, organisationId);
 
   let created;
   try {
-    created = await createInvite(db, { email: values.email, organisationId, roles: values.roles, invitedBy: actor.user.id, context });
+    created = await createInvite(getDb(), { email: values.email, organisationId, roles: values.roles, invitedBy: actor.user.id, context });
   } catch (error) {
-    if (error instanceof InviteError) return { values, errors: { form: a("errInviteSendFailed", locale) } };
+    if (error instanceof InviteError) return { values, errors: { form: a("errInviteFailed", locale) } };
     throw error;
   }
 
-  const baseUrl = getAuthBaseUrl() ?? "";
-  try {
-    const message = staffInvite({
+  const link = `${getAuthBaseUrl() ?? ""}/admin/invite/${created.token}`;
+  const emailed = await sendIfConfigured(created.invite.email, () =>
+    staffInvite({
       inviterName: actor.user.name || actor.user.email,
       organisation: { th: created.organisation.nameTh, en: created.organisation.nameEn },
-      acceptUrl: `${baseUrl}/admin/invite/${created.token}`,
+      acceptUrl: link,
       expiresInDays: INVITE_TTL_DAYS,
+    }),
+  );
+
+  return {
+    values: { email: "", organisation: values.organisation, roles: [] },
+    errors: {},
+    created: { email: created.invite.email, link, days: INVITE_TTL_DAYS, emailed },
+  };
+}
+
+export interface RecoveryFormState {
+  error?: string;
+  /** The link just made, shown once. */
+  created?: { person: string; email: string; link: string; hours: number; emailed: EmailOutcome };
+}
+
+export async function issueRecovery(_prev: RecoveryFormState, formData: FormData): Promise<RecoveryFormState> {
+  const locale = await getAdminLocale();
+  const staff = await requireStaff("admin");
+  const userId = String(formData.get("userId") ?? "");
+
+  let issued;
+  try {
+    issued = await issueRecoveryLink(getDb(), {
+      userId,
+      issuedBy: staff.user.id,
+      allowedOrganisationIds: organisationsWithRole(staff.roles, "admin"),
+      context: await auditContextFor(staff),
     });
-    await getEmailSender().send({ to: created.invite.email, ...message });
   } catch (error) {
-    console.error("[staff] could not send invitation", error);
-    // An invitation nobody received is worse than none: take it back.
-    await revokeInvite(db, { inviteId: created.invite.id, context });
-    return { values, errors: { form: a("errInviteSendFailed", locale) } };
+    if (error instanceof RecoveryError) {
+      if (error.code === "last_admin") return { error: a("errRecoverySelf", locale) };
+      if (error.code === "out_of_scope" || error.code === "not_staff" || error.code === "unknown_user") {
+        return { error: a("errRecoveryScope", locale) };
+      }
+      return { error: a("errRecoveryFailed", locale) };
+    }
+    throw error;
   }
 
-  redirect(`/admin/staff?notice=invited&email=${encodeURIComponent(created.invite.email)}`);
+  const link = `${getAuthBaseUrl() ?? ""}/admin/recover/${issued.token}`;
+  const organisationId = organisationsWithRole(staff.roles, "admin")[0];
+  const organisation = staff.organisations.find((o) => o.id === organisationId) ?? staff.organisations[0];
+  const emailed = await sendIfConfigured(issued.person.email, () =>
+    staffRecovery({
+      organisation: { th: organisation?.nameTh ?? "", en: organisation?.nameEn ?? "" },
+      recoverUrl: link,
+      expiresInHours: RECOVERY_TTL_HOURS,
+    }),
+  );
+  return { created: { person: issued.person.name || issued.person.email, email: issued.person.email, link, hours: RECOVERY_TTL_HOURS, emailed } };
 }
 
 export async function removeRole(formData: FormData): Promise<void> {

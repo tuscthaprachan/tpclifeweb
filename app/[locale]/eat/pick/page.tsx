@@ -223,7 +223,7 @@ export default async function EatPickPage({
           result
         )}
 
-        <section aria-labelledby="pick-controls" className="rounded-panel bg-welfare-soft p-[var(--space-4)] sm:p-[var(--space-6)]">
+        <section aria-labelledby="pick-controls" className="border-t border-line pt-[var(--space-6)]">
           <Stack space={4}>
             <Heading level={2} id="pick-controls" className="m-0 text-xl">
               {PICK.controlsHeading[locale]}

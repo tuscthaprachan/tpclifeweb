@@ -8,14 +8,9 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAuth, isAuthConfigured } from "@/lib/auth";
+import { safeReturnPath } from "@/lib/admin/return-path";
 import { requireSignedIn } from "@/lib/auth/session";
 import { LEGACY_LOCALE_COOKIE, LOCALE_COOKIE, LOCALE_COOKIE_MAX_AGE, isLocale } from "@/lib/i18n/config";
-
-/** Only ever send people back to a page inside the console. */
-function safeReturnPath(value: FormDataEntryValue | null): string {
-  const path = typeof value === "string" ? value : "";
-  return /^\/admin(?:\/[A-Za-z0-9\-._~/]*)?$/.test(path) ? path : "/admin";
-}
 
 export async function setAdminLocale(formData: FormData): Promise<void> {
   const locale = formData.get("locale");

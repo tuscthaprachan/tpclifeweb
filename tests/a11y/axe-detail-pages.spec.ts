@@ -68,13 +68,11 @@ async function detailPathsFrom(page: Page, locale: Locale, listing: string, deta
   );
 
   // Compared with the query string stripped. The lost and found listing links
-  // to its own report page as "/lost-and-found/report?kind=lost", which an
-  // exact match against the bare path does not catch, so the report route got
-  // audited here as though it were a detail page while the listing's real
-  // "no entries yet" state was reported as a pass.
-  const reportPath = localePath(locale, "/lost-and-found/report");
+  // to its own service pages (report, found, track, privacy), which are
+  // routes of their own and are audited by axe.spec.ts, not detail pages.
+  const servicePaths = ["report", "found", "track", "privacy"].map((p) => localePath(locale, `/lost-and-found/${p}`));
   const unique = [...new Set(hrefs)]
-    .filter((href) => (href.split("?")[0] ?? href) !== reportPath)
+    .filter((href) => !servicePaths.includes(href.split("?")[0] ?? href))
     .filter((href) => (href.split("?")[0] ?? href).length > prefix.length);
 
   return unique.slice(0, MAX_PER_LISTING);

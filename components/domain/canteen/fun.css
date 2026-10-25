@@ -1,19 +1,18 @@
 /*
  * The playful layer for "Can't decide?" and the pick reveal. Everything that
  * moves sits inside `prefers-reduced-motion: no-preference`; the rest is
- * static colour and shape. All colours are theme tokens, and every fill that
- * carries text uses --ink-on-fill or --ink-900 on a soft tint, so contrast
- * holds in both themes. Emoji and confetti are decoration (aria-hidden).
+ * static colour and shape. All colours are theme tokens. There are no tinted
+ * panels or coloured edges: the panel and the reel are white with a thin grey
+ * border, in the plain GOV.UK manner, so contrast holds in both themes. Emoji
+ * and confetti are decoration (aria-hidden).
  */
 
 .fun-panel {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border: 1px solid var(--line);
-  background:
-    radial-gradient(circle at 100% 0%, var(--fill-activity-soft) 0, transparent 55%),
-    radial-gradient(circle at 0% 100%, var(--fill-transport-soft) 0, transparent 60%), var(--fill-welfare-soft);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
 }
 
 .fun-floaters {
@@ -56,20 +55,7 @@
 }
 
 .fun-chips label > input:not(:checked) + span {
-  background: var(--fun-chip, var(--surface));
-}
-
-.fun-chips label:nth-child(4n + 1) {
-  --fun-chip: var(--fill-transport-soft);
-}
-.fun-chips label:nth-child(4n + 2) {
-  --fun-chip: var(--fill-activity-soft);
-}
-.fun-chips label:nth-child(4n + 3) {
-  --fun-chip: var(--fill-governance-soft);
-}
-.fun-chips label:nth-child(4n) {
-  --fun-chip: var(--fill-welfare-soft);
+  background: var(--surface);
 }
 
 .fun-chips label > input:checked + span {
@@ -102,8 +88,7 @@
   overflow: hidden;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-panel);
-  background: var(--fill-welfare-soft);
-  box-shadow: inset 0 0 0 4px var(--fill-transport);
+  background: var(--surface);
   --row: 3.5rem;
   height: calc(var(--row) * 3);
 }
@@ -120,12 +105,12 @@
 
 .fun-reel::before {
   top: 0;
-  background: linear-gradient(var(--fill-welfare-soft), transparent);
+  background: linear-gradient(var(--surface), transparent);
 }
 
 .fun-reel::after {
   bottom: 0;
-  background: linear-gradient(transparent, var(--fill-welfare-soft));
+  background: linear-gradient(transparent, var(--surface));
 }
 
 .fun-reel-line {

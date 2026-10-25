@@ -16,7 +16,7 @@ interface DesignPageProps {
 const TOC: Array<{ href: string; label: string }> = [
   { href: "#palette", label: "Colour palette" },
   { href: "#container", label: "Layout: Container, Stack, Cluster, Grid" },
-  { href: "#heading", label: "Content: Heading, Prose, SummaryList, DataTable, Tag, StatusTag..." },
+  { href: "#heading", label: "Content: Heading, Prose, SummaryList, DataTable, Tag, StatusTag, banners, no tinted boxes..." },
   { href: "#text-input", label: "Forms: TextInput, Select, Radios, DateInput, ErrorSummary..." },
   { href: "#button", label: "Interactive: Button, Link, Tabs, Accordion, Dialog" },
 ];

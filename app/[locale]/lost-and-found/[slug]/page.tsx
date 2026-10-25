@@ -5,8 +5,8 @@ import { notFound } from "next/navigation";
 
 import { categoryLabel, LostFoundClaimContact, LostFoundKindBadge, LostFoundStatusTag } from "@/components/domain/lostfound";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Grid, Heading, InsetText, Stack, Tag, Timestamp } from "@/components/ui";
-import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { Button, Container, Grid, Heading, InsetText, Stack, Tag, Timestamp } from "@/components/ui";
+import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getLostFoundItemBySlug, getLostFoundPage } from "@/lib/content";
 
@@ -113,7 +113,7 @@ export default async function LostFoundDetailPage({
           ) : null}
         </dl>
 
-        {isFound ? (
+        {isFound && item.status !== "returned" && item.status !== "withdrawn" ? (
           <Stack space={3} as="section" className="rounded-panel border border-line px-[var(--space-4)] py-[var(--space-4)]">
             <Heading level={2} visualLevel={3}>
               {UI.howToClaim[locale]}
@@ -130,6 +130,11 @@ export default async function LostFoundDetailPage({
             ) : null}
             {item.claimContact ? <LostFoundClaimContact contact={item.claimContact} locale={locale} /> : null}
             <InsetText>{UI.claimCheckNote[locale]}</InsetText>
+            {item.status === "open" || item.status === "matched" ? (
+              <div>
+                <Button href={localePath(locale, `/lost-and-found/${item.slug.current}/claim`)}>{UI.lfpThisIsMine[locale]}</Button>
+              </div>
+            ) : null}
           </Stack>
         ) : null}
       </Stack>

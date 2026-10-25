@@ -9,10 +9,8 @@ import "server-only";
  * without configuration throws a message that names what is missing.
  */
 
-import { getEmailSender } from "@/lib/email";
 import { getDb } from "@/lib/db";
 import { createAuth, type Auth } from "./create";
-import { getAllowedDomains } from "./domains";
 
 export type { Auth };
 
@@ -53,8 +51,6 @@ export function getAuth(): Auth {
     db: getDb(),
     secret: process.env.BETTER_AUTH_SECRET as string,
     baseURL: getAuthBaseUrl() as string,
-    allowedDomains: getAllowedDomains(),
-    getEmailSender,
   });
   return cached;
 }

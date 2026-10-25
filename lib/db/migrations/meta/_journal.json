@@ -29,6 +29,62 @@
       "when": 1792662128941,
       "tag": "0003_content_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792846202188,
+      "tag": "0004_staff_recovery_passkey_last_used",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792851897326,
+      "tag": "0005_case_engine",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792852880825,
+      "tag": "0006_lost_found_case_link",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792853235245,
+      "tag": "0007_lost_found_staff",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792853263770,
+      "tag": "0008_lost_found_public_journeys",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792911024471,
+      "tag": "0009_claim_tracking_links",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792912243653,
+      "tag": "0010_complaints",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792914862190,
+      "tag": "0011_journey_metrics",
+      "breakpoints": true
     }
   ]
 }

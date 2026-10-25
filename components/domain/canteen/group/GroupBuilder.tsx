@@ -354,7 +354,7 @@ function ShareBox({ locale, value, hydrated }: { locale: Locale; value: string; 
   }
 
   return (
-    <section aria-labelledby="share" className="flex flex-col gap-[var(--space-2)] rounded-panel bg-welfare-soft p-[var(--space-4)]">
+    <section aria-labelledby="share" className="flex flex-col gap-[var(--space-2)] border-t border-line pt-[var(--space-4)]">
       <Heading level={2} id="share" className="m-0 text-xl">
         {GROUP.shareTitle[locale]}
       </Heading>

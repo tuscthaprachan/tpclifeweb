@@ -26,8 +26,8 @@ export function CanteenShortcutCallout({ query, locale }: { query: string; local
       : "Prices come from our survey and show the day they were checked.";
 
   return (
-    <aside aria-label={locale === "th" ? "ทางลัดไปโรงอาหาร" : "Canteen shortcut"} className="rounded-panel border border-line bg-welfare-soft p-[var(--space-4)]">
-      <p className="m-0 font-medium text-ink-900">
+    <aside aria-label={locale === "th" ? "ทางลัดไปโรงอาหาร" : "Canteen shortcut"} className="border-y border-line py-[var(--space-3)]">
+      <p className="m-0 font-bold text-ink-900">
         <Link href={canteenShortcutHref(locale, shortcut)} locale={locale} className="inline-flex min-h-[var(--target-min)] items-center">
           {text}
         </Link>

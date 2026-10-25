@@ -129,10 +129,18 @@ export default async function LostAndFoundIndexPage({
           </Stack>
           {/* Prominent, since reporting something is the action most readers who cannot find their item actually want. */}
           <Cluster space={3}>
-            <Button href={localePath(locale, "/lost-and-found/report?kind=lost")}>{UI.reportLostItem[locale]}</Button>
-            <Button href={localePath(locale, "/lost-and-found/report?kind=found")} variant="secondary">
+            <Button href={localePath(locale, "/lost-and-found/report")}>{UI.reportLostItem[locale]}</Button>
+            <Button href={localePath(locale, "/lost-and-found/found")} variant="secondary">
               {UI.reportFoundItem[locale]}
             </Button>
+          </Cluster>
+          <Cluster space={4}>
+            <a href={localePath(locale, "/lost-and-found/track")} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+              {UI.lfpTrackLink[locale]}
+            </a>
+            <a href={localePath(locale, "/lost-and-found/privacy")} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+              {UI.lfpPrivacyLink[locale]}
+            </a>
           </Cluster>
         </Stack>
 
@@ -158,7 +166,7 @@ export default async function LostAndFoundIndexPage({
           <Stack space={6}>
             <Grid minColumnWidth="18rem">
               {items.map((item) => (
-                <LostFoundCard key={item._id} item={item} locale={locale} headingLevel={3} />
+                <LostFoundCard key={item._id} item={item} locale={locale} headingLevel={2} />
               ))}
             </Grid>
             <Pagination

@@ -1,7 +1,8 @@
 /**
  * Seed script: `npm run db:seed`. Idempotent, so safe to re-run. Seeds the two
  * organisations and all website content (lib/db/seed/*: site settings, forms,
- * shuttle, directory, handbook pages, FAQs, places, the surveyed canteen).
+ * shuttle, directory, handbook pages, FAQs, places, the surveyed canteen) and
+ * the complaint categories (added if missing, never overwritten).
  * Staff accounts are invited in-app, never seeded. Re-running overwrites the
  * seeded fields of seeded rows, so do not run it against a database whose
  * editors have changed them.
@@ -15,6 +16,7 @@ import { drizzle } from "drizzle-orm/neon-serverless";
 import { sql } from "drizzle-orm";
 import type { AuditExecutor } from "./audit";
 import { organisations } from "./schema/organisations";
+import { seedComplaintCategories } from "./seed/complaints";
 import { seedContent } from "./seed/content";
 
 export const ORGANISATION_SEED = [
@@ -56,6 +58,7 @@ async function main() {
     console.log(`Seeded ${ORGANISATION_SEED.length} organisations.`);
     await seedContent(db);
     console.log("Seeded website content.");
+    console.log(`Added ${await seedComplaintCategories(db)} missing complaint categories.`);
   } finally {
     await pool.end();
   }

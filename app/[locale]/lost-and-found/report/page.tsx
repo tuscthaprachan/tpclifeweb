@@ -1,107 +1,49 @@
 /**
- * The public report form. A Server Component shell around the actual form
- * (ReportForm.tsx, a Client Component only because useActionState needs one):
- * this file does the two things that must happen before any HTML reaches the
- * reader, checking whether reports can be accepted at all, and fetching the
- * place list for the location field.
- *
- * Rendered fresh on every request (`dynamic = "force-dynamic"`), not
- * prerendered: the hidden `renderedAt` timestamp ReportForm submits back is
- * the anti-spam minimum-time-on-page check, and a value baked in at build
- * time would make that check meaningless for every visitor after the build.
+ * Start page for "Report something you lost". The journey itself is a series
+ * of question pages (report/[step]) that work without JavaScript; this page
+ * explains what is needed and opens the draft. Nothing is stored until
+ * "Start now" is pressed.
  */
 
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
-import { ReportForm } from "./ReportForm";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Heading, NotificationBanner, Stack } from "@/components/ui";
-import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n/config";
-import { UI } from "@/lib/i18n/strings";
+import { StartPage } from "../_journey/StartPage";
+import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
-import { getPlaces } from "@/lib/content";
-import { isDatabaseConfigured } from "@/lib/db";
+import { UI } from "@/lib/i18n/strings";
 
 export const dynamic = "force-dynamic";
 
 type SearchParams = Record<string, string | string[] | undefined>;
+const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
 
-function firstParam(value: string | string[] | undefined): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
-
   return {
     alternates: alternatesFor(locale, "/lost-and-found/report"),
-    title: `${UI.reportLostItem[locale]} / ${UI.reportFoundItem[locale]}`,
+    title: UI.reportLostItem[locale],
+    description: UI.lfpLostIntro[locale],
   };
 }
 
-export default async function LostFoundReportPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<SearchParams>;
-}) {
+export default async function ReportLostStartPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<SearchParams> }) {
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
-
   const query = await searchParams;
-  const rawKind = firstParam(query.kind);
-  const initialKind = rawKind === "found" ? "found" : "lost";
-
-  const breadcrumbs = (
-    <Breadcrumbs
-      locale={locale}
-      items={[
-        { label: UI.home[locale], path: "/" },
-        { label: UI.lostAndFound[locale], path: "/lost-and-found" },
-        { label: initialKind === "found" ? UI.reportFoundItem[locale] : UI.reportLostItem[locale] },
-      ]}
-    />
-  );
-
-  // No DATABASE_URL means reports cannot be stored in this environment. Say so
-  // honestly (the submission action checks it too and tells the student the
-  // form is unavailable rather than accepting a report it cannot store) rather
-  // than rendering a form that can never succeed. The sitewide help block still
-  // renders from the root layout regardless, so contact details stay reachable.
-  if (!isDatabaseConfigured()) {
-    return (
-      <Container width="narrow">
-        {breadcrumbs}
-        <Stack space={4} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-          <Heading level={1}>{initialKind === "found" ? UI.reportFoundItem[locale] : UI.reportLostItem[locale]}</Heading>
-          <NotificationBanner variant="warning" title={UI.serviceUnavailableTitle[locale]}>
-            {UI.reportUnavailable[locale]}
-          </NotificationBanner>
-        </Stack>
-      </Container>
-    );
-  }
-
-  const places = await getPlaces();
+  // Older links, such as ?kind=found, still land somewhere sensible.
+  if (first(query.kind) === "found") redirect(localePath(locale, "/lost-and-found/found"));
 
   return (
-    <Container width="narrow">
-      {breadcrumbs}
-      <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-        <Stack space={2}>
-          <Heading level={1}>{initialKind === "found" ? UI.reportFoundItem[locale] : UI.reportLostItem[locale]}</Heading>
-          <p className="m-0 text-ink-600">{UI.reportLostFoundIntro[locale]}</p>
-        </Stack>
-        <ReportForm locale={locale} initialKind={initialKind} places={places} renderedAt={new Date().toISOString()} />
-      </Stack>
-    </Container>
+    <StartPage
+      kind="lost"
+      locale={locale}
+      intro={UI.lfpLostIntro[locale]}
+      need={[UI.lfpLostNeed1[locale], UI.lfpLostNeed2[locale], UI.lfpLostNeed3[locale], UI.lfpLostNeed4[locale]]}
+      expired={first(query.expired) === "1"}
+      problem={first(query.problem) === "1"}
+    />
   );
 }

@@ -16,14 +16,18 @@ interface AdminHeaderProps {
   locale: Locale;
   /** Any live session: shows "Sign out". */
   hasSession: boolean;
-  /** Has passed the second step: shows the console links. */
+  /** Signed in with a passkey: shows the console links. */
   verified: boolean;
   isAdmin: boolean;
   /** An `editor` or `admin`: shows the Content link. */
   isEditor: boolean;
+  /** Holds a case role: shows the Cases link. */
+  isCaseStaff?: boolean;
+  /** An `admin` or `unit_lead`: shows the Performance link. */
+  canSeePerformance?: boolean;
 }
 
-export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor }: AdminHeaderProps) {
+export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor, isCaseStaff = false, canSeePerformance = false }: AdminHeaderProps) {
   return (
     <header className="border-b border-line bg-surface">
       <ShellContainer className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-3">
@@ -49,6 +53,27 @@ export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor }:
                     </a>
                   </li>
                 ) : null}
+                {isCaseStaff ? (
+                  <li>
+                    <a href="/admin/cases" className="text-ink-900">
+                      {A.casesLink[locale]}
+                    </a>
+                  </li>
+                ) : null}
+                {canSeePerformance ? (
+                  <li>
+                    <a href="/admin/performance" className="text-ink-900">
+                      {A.pfLink[locale]}
+                    </a>
+                  </li>
+                ) : null}
+                {isAdmin ? (
+                  <li>
+                    <a href="/admin/complaints/categories" className="text-ink-900">
+                      {A.cpcatLink[locale]}
+                    </a>
+                  </li>
+                ) : null}
                 {isAdmin ? (
                   <li>
                     <a href="/admin/staff" className="text-ink-900">
@@ -56,6 +81,11 @@ export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor }:
                     </a>
                   </li>
                 ) : null}
+                <li>
+                  <a href="/admin/security" className="text-ink-900">
+                    {A.securityLink[locale]}
+                  </a>
+                </li>
               </ul>
             </nav>
           ) : null}

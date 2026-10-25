@@ -20,7 +20,8 @@
     "db:seed": "tsx lib/db/seed.ts",
     "db:studio": "drizzle-kit studio",
     "auth:bootstrap": "tsx scripts/auth-bootstrap.ts",
-    "check": "npm run check:contrast && npm run check:i18n && npm run typecheck && npm run lint"
+    "check:accent-boxes": "node scripts/check-no-accent-boxes.mjs",
+    "check": "npm run check:contrast && npm run check:accent-boxes && npm run check:i18n && npm run typecheck && npm run lint"
   },
   "comment:overrides": "Pins TypeScript across the tree. Without this npm oscillates between TS 5 and TS 7 resolving typescript-eslint's wide range and never terminates. TS 7 is not used because typescript-eslint 8 caps below TS 6.1.",
   "overrides": {

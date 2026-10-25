@@ -24,6 +24,7 @@ export const CACHE_TAGS = {
   canteen: "canteen",
   searchIndex: "searchIndex",
   image: "image",
+  performance: "performance",
 } as const;
 
 export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS];

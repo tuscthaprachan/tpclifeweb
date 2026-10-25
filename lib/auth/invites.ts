@@ -1,9 +1,12 @@
 /**
  * Staff invitations. The invite is the authorisation: an admin names an email
- * address, an organisation and the roles, and whoever proves they own that
- * address by entering the emailed code, from the emailed link, receives those
- * roles. Nothing here trusts the caller to be an admin; the Server Actions
- * check that (`requireStaff("admin", organisationId)`) before calling in.
+ * address, an organisation and the roles, and whoever opens the link (shown to
+ * the admin to pass on privately, and emailed too when email is configured)
+ * may create that account by registering a passkey (lib/auth/enrolment.ts), or,
+ * if the address already has an account, accept it while signed in. The token
+ * is single-use, stored hashed and expires. Nothing here trusts the caller to
+ * be an admin; the Server Actions check that (`requireStaff("admin",
+ * organisationId)`) before calling in.
  *
  * Every function takes the database as a parameter and imports nothing
  * server-only, so the same code runs under Next, under the bootstrap script
@@ -16,7 +19,7 @@ import { withAudit, type AuditContext, type AuditExecutor } from "@/lib/db/audit
 import { organisations, type Organisation } from "@/lib/db/schema/organisations";
 import { staffInvites, type StaffInvite } from "@/lib/db/schema/staff-invites";
 import { staffRoles, STAFF_ROLES, type StaffRole } from "@/lib/db/schema/staff-roles";
-import { isPlausibleEmail, normaliseEmail } from "./domains";
+import { isPlausibleEmail, normaliseEmail } from "./email-address";
 import { generateToken, hashToken } from "./tokens";
 
 export const INVITE_TTL_DAYS = 7;
@@ -32,6 +35,8 @@ export type InviteErrorCode =
   | "revoked"
   | "already_accepted"
   | "email_mismatch"
+  | "invalid_name"
+  | "account_exists"
   | "admin_exists";
 
 export class InviteError extends Error {
@@ -144,26 +149,9 @@ export async function findInviteByToken(
   return row ?? null;
 }
 
-/** True when this address has an invite that could still be accepted. */
-export async function hasPendingInviteForEmail(db: AuditExecutor, email: string, now: Date = new Date()): Promise<boolean> {
-  const [row] = await db
-    .select({ id: staffInvites.id })
-    .from(staffInvites)
-    .where(
-      and(
-        eq(staffInvites.email, normaliseEmail(email)),
-        isNull(staffInvites.acceptedAt),
-        isNull(staffInvites.revokedAt),
-        gt(staffInvites.expiresAt, now),
-      ),
-    )
-    .limit(1);
-  return Boolean(row);
-}
-
 export interface AcceptInviteInput {
   token: string;
-  /** The signed-in user who proved they own the invited address. */
+  /** The user the roles go to; their address must be the one the invite names. */
   userId: string;
   userEmail: string;
   context?: AuditContext;

@@ -4,7 +4,7 @@
  * Every email carries Thai first and English second in the same message,
  * because the recipient may read either and we cannot know which. Style
  * follows GOV.UK Notify: plain, no images, a clear subject, the one thing the
- * reader needs (code, link, reference) set out on its own line, and short
+ * reader needs (link, reference) set out on its own line, and short
  * sentences. Thai is written as Thai, not translated from the English.
  *
  * HTML is minimal on purpose: headings, paragraphs, one link, inline styles
@@ -20,7 +20,7 @@ export interface RenderedEmail {
   html: string;
 }
 
-/** One language's worth of an email. `highlight` is the code, link or reference to set apart. */
+/** One language's worth of an email. `highlight` is the link or reference to set apart. */
 interface Section {
   lang: "th" | "en";
   heading: string;
@@ -96,43 +96,6 @@ function render(subject: string, th: Section, en: Section): RenderedEmail {
   return { subject, text, html };
 }
 
-export interface SignInCodeParams {
-  /** Six digits. */
-  code: string;
-  expiresInMinutes: number;
-}
-
-export function signInCode({ code, expiresInMinutes }: SignInCodeParams): RenderedEmail {
-  if (!/^\d{6}$/.test(code)) throw new Error("Sign-in code must be six digits.");
-  const n = Math.max(1, Math.round(expiresInMinutes));
-  const subject = `รหัสเข้าสู่ระบบ ${SERVICE.th} / Your ${SERVICE.en} sign-in code`;
-  return render(
-    subject,
-    {
-      lang: "th",
-      heading: "รหัสเข้าสู่ระบบของคุณ",
-      paragraphs: ["ใช้รหัสนี้เพื่อเข้าสู่ระบบ"],
-      highlight: { label: "รหัสเข้าสู่ระบบ", value: code },
-      after: [
-        `รหัสนี้ใช้ได้ ${n} นาที และใช้ได้เพียงครั้งเดียว`,
-        "ห้ามบอกรหัสนี้กับใคร เจ้าหน้าที่จะไม่ขอรหัสนี้จากคุณ",
-        "หากคุณไม่ได้ขอรหัสนี้ ไม่ต้องทำอะไร ข้ามอีเมลฉบับนี้ไปได้เลย",
-      ],
-    },
-    {
-      lang: "en",
-      heading: "Your sign-in code",
-      paragraphs: ["Use this code to sign in."],
-      highlight: { label: "Sign-in code", value: code },
-      after: [
-        `This code expires in ${n} ${n === 1 ? "minute" : "minutes"} and can be used once.`,
-        "Do not share this code. Staff will never ask you for it.",
-        "If you did not ask for this code, ignore this email. You do not need to do anything.",
-      ],
-    },
-  );
-}
-
 export interface StaffInviteParams {
   inviterName: string;
   organisation: LocaleString;
@@ -151,11 +114,12 @@ export function staffInvite({ inviterName, organisation, acceptUrl, expiresInDay
       heading: "คำเชิญเข้าร่วมทีมเจ้าหน้าที่",
       paragraphs: [
         `${inviterName} เชิญคุณเข้าร่วมเป็นเจ้าหน้าที่ของ${organisation.th} บน${SERVICE.th}`,
-        "เปิดลิงก์ด้านล่างเพื่อรับคำเชิญและตั้งค่าบัญชีของคุณ",
+        "เปิดลิงก์ด้านล่าง กรอกชื่อของคุณ และสร้างบัญชีด้วยพาสคีย์ (ลายนิ้วมือ ใบหน้า หรือการล็อกหน้าจอ) ไม่ต้องใช้รหัสผ่าน",
       ],
       highlight: { label: "ลิงก์รับคำเชิญ", value: acceptUrl, isLink: true },
       after: [
         `ลิงก์นี้ใช้ได้ ${n} วัน`,
+        "ห้ามส่งต่อลิงก์นี้ให้ผู้อื่น",
         "หากคุณไม่รู้จักผู้เชิญ หรือไม่ได้คาดว่าจะได้รับคำเชิญนี้ ไม่ต้องทำอะไร ข้ามอีเมลฉบับนี้ไปได้เลย",
       ],
     },
@@ -164,12 +128,56 @@ export function staffInvite({ inviterName, organisation, acceptUrl, expiresInDay
       heading: "You have been invited to join the staff team",
       paragraphs: [
         `${inviterName} has invited you to join ${organisation.en} staff on ${SERVICE.en}.`,
-        "Open the link below to accept the invitation and set up your account.",
+        "Open the link below, enter your name and create your account with a passkey (your fingerprint, face or screen lock). You do not need a password.",
       ],
       highlight: { label: "Link to accept the invitation", value: acceptUrl, isLink: true },
       after: [
         `This link expires in ${n} ${n === 1 ? "day" : "days"}.`,
+        "Do not forward this link. Anyone who opens it can create the account.",
         "If you do not know who invited you, or were not expecting this, ignore this email. You do not need to do anything.",
+      ],
+    },
+  );
+}
+
+export interface StaffRecoveryParams {
+  organisation: LocaleString;
+  recoverUrl: string;
+  expiresInHours: number;
+}
+
+export function staffRecovery({ organisation, recoverUrl, expiresInHours }: StaffRecoveryParams): RenderedEmail {
+  assertHttpUrl(recoverUrl);
+  const n = Math.max(1, Math.round(expiresInHours));
+  const subject = `ลิงก์กู้คืนบัญชี ${SERVICE.th} / Your ${SERVICE.en} account recovery link`;
+  return render(
+    subject,
+    {
+      lang: "th",
+      heading: "ลิงก์กู้คืนบัญชีเจ้าหน้าที่",
+      paragraphs: [
+        `ผู้ดูแลระบบของ${organisation.th}สร้างลิงก์นี้ให้คุณ เพื่อให้คุณเข้าสู่ระบบ${SERVICE.th}ได้อีกครั้งหลังพาสคีย์เดิมหายหรือใช้ไม่ได้`,
+        "เปิดลิงก์ด้านล่างเพื่อสร้างพาสคีย์ใหม่ เมื่อใช้ลิงก์แล้ว เราจะออกจากระบบทุกอุปกรณ์ของคุณ",
+      ],
+      highlight: { label: "ลิงก์กู้คืนบัญชี", value: recoverUrl, isLink: true },
+      after: [
+        `ลิงก์นี้ใช้ได้ ${n} ชั่วโมง และใช้ได้เพียงครั้งเดียว`,
+        "ห้ามส่งต่อลิงก์นี้ให้ผู้อื่น",
+        "หากคุณไม่ได้ขอการกู้คืนบัญชี ไม่ต้องเปิดลิงก์ และแจ้งผู้ดูแลระบบ",
+      ],
+    },
+    {
+      lang: "en",
+      heading: "Your staff account recovery link",
+      paragraphs: [
+        `An administrator at ${organisation.en} made this link for you, so you can sign in to ${SERVICE.en} again after losing your passkey.`,
+        "Open the link below to create a new passkey. Once you use it, we sign you out everywhere else.",
+      ],
+      highlight: { label: "Account recovery link", value: recoverUrl, isLink: true },
+      after: [
+        `This link expires in ${n} ${n === 1 ? "hour" : "hours"} and works once.`,
+        "Do not forward this link. Anyone who opens it can take over the account.",
+        "If you did not ask for your account to be recovered, do not open the link, and tell an administrator.",
       ],
     },
   );

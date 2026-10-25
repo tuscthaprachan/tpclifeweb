@@ -57,6 +57,7 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
     { label: { th: "เกี่ยวกับ", en: "About" }, path: "/about" },
     { label: { th: "การเข้าถึง", en: "Accessibility" }, path: "/accessibility" },
     { label: { th: "คุกกี้", en: "Cookies" }, path: "/cookies" },
+    { label: { th: "ผลการดำเนินงาน", en: "Performance" }, path: "/performance" },
   ],
 
   /*
@@ -103,13 +104,26 @@ const REQUIRED_NAV: readonly { item: SiteSettings["primaryNav"][number]; after: 
   { item: { label: { th: "กินอะไรดี", en: "What to eat" }, path: "/eat" }, after: "/getting-around" },
 ];
 
-export function withRequiredNav(settings: SiteSettings): SiteSettings {
-  let nav = settings.primaryNav ?? [];
-  for (const { item, after } of REQUIRED_NAV) {
+/**
+ * The same for the footer: the Service Standard asks for performance data to
+ * be published, so the link to it must not depend on an editor adding it.
+ */
+const REQUIRED_FOOTER_NAV: readonly { item: SiteSettings["footerNav"][number]; after: string }[] = [
+  { item: { label: { th: "ผลการดำเนินงาน", en: "Performance" }, path: "/performance" }, after: "/cookies" },
+];
+
+function withRequiredItems(nav: SiteSettings["primaryNav"], required: readonly { item: SiteSettings["primaryNav"][number]; after: string }[]) {
+  for (const { item, after } of required) {
     if (nav.some((existing) => existing.path === item.path)) continue;
     const anchor = nav.findIndex((existing) => existing.path === after);
     const at = anchor === -1 ? nav.length : anchor + 1;
     nav = [...nav.slice(0, at), item, ...nav.slice(at)];
   }
-  return nav === settings.primaryNav ? settings : { ...settings, primaryNav: nav };
+  return nav;
+}
+
+export function withRequiredNav(settings: SiteSettings): SiteSettings {
+  const primaryNav = withRequiredItems(settings.primaryNav ?? [], REQUIRED_NAV);
+  const footerNav = settings.footerNav ? withRequiredItems(settings.footerNav, REQUIRED_FOOTER_NAV) : settings.footerNav;
+  return primaryNav === settings.primaryNav && footerNav === settings.footerNav ? settings : { ...settings, primaryNav, footerNav };
 }
