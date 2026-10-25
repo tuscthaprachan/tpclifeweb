@@ -89,20 +89,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <>
       <div className="rounded-b-[var(--radius-band)]" style={{ background: "var(--band-gradient)" }}>
-        <Container className="pb-[var(--space-5)] pt-[var(--space-4)]">
-          <div className="flex items-start justify-between gap-[var(--space-2)]">
-            <Heading level={1} className="m-0 max-w-[12em] text-[length:var(--text-2xl)] font-bold">
+        <Container className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-[var(--space-4)] pb-[var(--space-5)] pt-[var(--space-4)] sm:items-end sm:gap-x-[var(--space-12)] sm:pb-0 sm:pt-[var(--space-8)]">
+          <div className="contents sm:col-start-1 sm:row-start-1 sm:block sm:self-center sm:pb-[var(--space-8)]">
+            <Heading level={1} className="col-start-1 row-start-1 m-0 max-w-[12em] self-start text-[length:var(--text-2xl)] font-bold">
               {UI.homeHeading[locale]}
             </Heading>
-            <Dome className="pointer-events-none -mb-12 -mt-2 w-24 flex-none sm:-mb-[60px] sm:w-[180px]" />
+            <SearchBar
+              locale={locale}
+              label={UI.homeSearchLabel[locale]}
+              hint={UI.homeSearchHint[locale]}
+              variant="pill"
+              className="relative col-span-2 row-start-2 mt-[var(--space-2)] sm:mt-[var(--space-6)] sm:max-w-[40rem]"
+            />
           </div>
-          <SearchBar
-            locale={locale}
-            label={UI.homeSearchLabel[locale]}
-            hint={UI.homeSearchHint[locale]}
-            variant="pill"
-            className="relative mt-[var(--space-2)]"
-          />
+          <Dome className="pointer-events-none col-start-2 row-start-1 -mb-10 -mt-2 w-24 [mask-image:linear-gradient(to_bottom,#000_90%,transparent)] sm:my-0 sm:w-[170px] md:w-[220px] lg:w-[260px]" />
         </Container>
       </div>
 
