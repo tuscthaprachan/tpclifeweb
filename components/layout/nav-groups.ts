@@ -11,7 +11,7 @@
 
 import type { NavItem } from "@/lib/content/types";
 
-export const PINNED_NAV_PATHS: readonly string[] = ["/eat", "/welfare"];
+export const PINNED_NAV_PATHS: readonly string[] = ["/forms", "/getting-around", "/eat", "/welfare"];
 
 export function splitPrimaryNav(items: NavItem[]): { pinned: NavItem[]; more: NavItem[] } {
   const pinned = PINNED_NAV_PATHS.flatMap((path) => items.filter((item) => item.path === path));

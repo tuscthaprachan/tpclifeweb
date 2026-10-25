@@ -6,6 +6,7 @@
  */
 
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
+import { UI } from "@/lib/i18n/strings";
 import type { HelpContact, NavItem } from "@/lib/content/types";
 import { HelpBlock } from "./HelpBlock";
 import { ServiceNavigation } from "./ServiceNavigation";
@@ -24,18 +25,12 @@ export function SiteFooter({
   helpContacts: HelpContact[];
 }) {
   return (
-    <footer className="mt-8 border-t border-line bg-surface-alt">
+    <footer className="mt-8 rounded-t-[var(--radius-band)] bg-surface-alt">
       <ShellContainer className="py-6">
-        {/*
-         * TODO: add to UI strings. There is no existing shared vocabulary
-         * entry for the footer navigation's accessible name (UI.mainMenu is
-         * specifically the header's), so this is hardcoded per house style
-         * rather than inventing a synonym silently.
-         */}
         <ServiceNavigation
           locale={locale}
           items={footerNav}
-          label={locale === "th" ? "เมนูท้ายเว็บไซต์" : "Footer navigation"}
+          label={UI.footerMenu[locale]}
         />
 
         <HelpBlock locale={locale} contacts={helpContacts} />

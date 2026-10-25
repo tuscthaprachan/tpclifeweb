@@ -33,7 +33,7 @@ import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, type ThemeChoice } fr
 export const dynamicParams = false;
 
 const LIGHT_THEME_COLOR = "#ffffff";
-const DARK_THEME_COLOR = "#141218";
+const DARK_THEME_COLOR = "#1a1220";
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -131,7 +131,7 @@ export default async function RootLayout({
         {/* First focusable element in the document (2.4.1). */}
         <SkipLink locale={locale} />
 
-        <PhaseBanner locale={locale} phase={settings.phase} phaseNote={settings.phaseNote} />
+        <PhaseBanner locale={locale} phase={settings.phase} />
 
         <SiteHeader locale={locale} serviceName={settings.serviceName} navItems={settings.primaryNav} theme={theme} />
 
