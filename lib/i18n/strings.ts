@@ -1127,7 +1127,7 @@ export const UI = {
 
   homeHeading: { th: "ชีวิตนักศึกษาท่าพระจันทร์", en: "Student life at Tha Prachan" },
   homeSearchLabel: { th: "ค้นหา", en: "Search" },
-  homeSearchHint: { th: "พิมพ์ได้ทั้งไทยและอังกฤษ เช่น รถรับส่ง", en: "Thai or English, for example shuttle" },
+  homeSearchHint: { th: "ไทยหรืออังกฤษ เช่น รถรับส่ง", en: "Thai or English, for example shuttle" },
   homeToday: { th: "วันนี้", en: "Today" },
   homeFullTimetable: { th: "ตารางรถรับส่งทั้งหมด", en: "Full shuttle timetable" },
   homePopular: { th: "บริการที่ใช้บ่อย", en: "Popular" },

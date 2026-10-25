@@ -37,7 +37,10 @@ for (const locale of LOCALES as readonly Locale[]) {
 
       test(`page is at most ${MAX_PAGE_HEIGHT}px tall`, async ({ page }) => {
         await page.goto(localePath(locale, "/"));
-        const height = await page.evaluate(() => document.documentElement.scrollHeight);
+        const height = await page.evaluate(async () => {
+          await document.fonts.ready;
+          return document.documentElement.scrollHeight;
+        });
         expect(height).toBeLessThanOrEqual(MAX_PAGE_HEIGHT);
       });
 

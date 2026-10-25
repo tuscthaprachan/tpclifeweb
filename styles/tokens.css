@@ -167,7 +167,7 @@
    * Typography.
    * ---------------------------------------------------------------- */
   --font-en: var(--font-lexend), "Lexend", system-ui, sans-serif;
-  --font-th: var(--font-sarabun), "Sarabun", system-ui, sans-serif;
+  --font-th: "Lexend", var(--font-sarabun), "Sarabun", system-ui, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
 
   /* Fluid scale. Base is 17px on small screens, 18px from 1024px up. */
