@@ -37,16 +37,24 @@ export type ActivityItem =
   | (ActivityItemBase & { kind: "news"; href: string })
   | (ActivityItemBase & { kind: "policyUpdate"; status: PolicyStatus });
 
-const MAX_ITEMS = 8;
+const DEFAULT_MAX_ITEMS = 3;
+
+interface ActivityOptions {
+  /** Ids of items already shown elsewhere on the page. */
+  excludeIds?: readonly string[];
+  limit?: number;
+}
 
 /**
  * Combines TUSU/TUSC-owned news posts with the most recent recorded update
  * on each TUSU/TUSC-owned policy into one chronological, attributed feed,
- * newest first, capped to a readable length.
+ * newest first, capped to a readable length. News already shown elsewhere on
+ * the page is left out.
  */
-export function buildActivityItems(news: NewsPost[], policies: Policy[], locale: Locale): ActivityItem[] {
+export function buildActivityItems(news: NewsPost[], policies: Policy[], locale: Locale, options: ActivityOptions = {}): ActivityItem[] {
+  const { excludeIds = [], limit = DEFAULT_MAX_ITEMS } = options;
   const newsItems: ActivityItem[] = news
-    .filter((post) => isBodyOwner(post.owner))
+    .filter((post) => isBodyOwner(post.owner) && !excludeIds.includes(post._id))
     .map((post) => ({
       id: post._id,
       date: post.publishedAt,
@@ -78,5 +86,5 @@ export function buildActivityItems(news: NewsPost[], policies: Policy[], locale:
     });
   }
 
-  return [...newsItems, ...policyItems].sort((a, b) => b.date.localeCompare(a.date)).slice(0, MAX_ITEMS);
+  return [...newsItems, ...policyItems].sort((a, b) => b.date.localeCompare(a.date)).slice(0, limit);
 }

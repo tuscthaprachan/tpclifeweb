@@ -18,6 +18,7 @@ import { SITE_URL } from "@/lib/site-url";
 const STATIC_ROUTES = [
   "/",
   "/search",
+  "/services",
   "/forms",
   "/getting-around",
   "/welfare",
