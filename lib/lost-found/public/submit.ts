@@ -45,7 +45,7 @@ export interface SubmitContext {
 export interface SubmitOutcome {
   caseId: string;
   reference: string;
-  /** The private tracking token, to be shown once. */
+  /** The private tracking token, to be shown on the confirmation page for a short time. */
   token: string;
 }
 
@@ -278,7 +278,8 @@ export async function submitClaim(
       entityId: target.caseId,
       after: { claimId: id, reference: target.reference, movedToClaimPending: moved },
     });
-    const link = await issueTrackingLink(tx, target.caseId, actor, { now });
+    // The link is for this claim only: it shows the claim, never the item's other claims.
+    const link = await issueTrackingLink(tx, target.caseId, actor, { now, claimId: id });
     return { caseId: target.caseId, reference: target.reference, token: link.token };
   });
 }

@@ -55,7 +55,7 @@ export function PolicyProgress({ policy, locale, className }: PolicyProgressProp
           aria-valuenow={percent}
           aria-valuemin={0}
           aria-valuemax={100}
-          className="mt-[var(--space-1)] h-[var(--space-3)] w-full overflow-hidden rounded-pill bg-neutral-soft"
+          className="mt-[var(--space-1)] h-[var(--space-3)] w-full overflow-hidden rounded-pill border border-line-strong bg-surface-sunk"
         >
           <div className="h-full rounded-pill bg-governance" style={{ width: `${percent}%` }} />
         </div>

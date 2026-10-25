@@ -21,7 +21,10 @@ import { cases } from "@/lib/db/schema";
 import { CaseError, type StaffActor } from "@/lib/cases/types";
 import type { PiiEnv } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
+import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
+import type { LostFoundCategory } from "@/lib/content/types";
 import type { LOST_FOUND_CATEGORIES } from "@/lib/db/schema/content/enums";
+import type { Locale } from "@/lib/i18n/config";
 import { ownerFor } from "./common";
 import { getCaseDetails, initCaseDetails } from "./details";
 import { contentActorOf, createDraftListing, expireListing, getListingForCase, listingGaps, publishListingForCase, updateListingForCase, type Bilingual, type ListingGap } from "./listing";
@@ -48,10 +51,15 @@ export function descriptionProblems(input: Pick<ItemDescription, "title" | "desc
   return problems;
 }
 
-/** A short staff-facing summary with no personal data, for the inbox. */
-export function summaryOf(category: string, title: Bilingual): string {
-  const text = (title.en.trim() || title.th.trim()).slice(0, 120);
-  return `${category}: ${text}`;
+/**
+ * A short staff-facing summary with no personal data, for the inbox: the
+ * category as the public side names it, then the title, both in the staff
+ * member's language (the title falls back to the other language).
+ */
+export function summaryOf(category: string, title: Bilingual, staffLocale: Locale = "en"): string {
+  const other = staffLocale === "th" ? "en" : "th";
+  const text = (title[staffLocale].trim() || title[other].trim()).slice(0, 120);
+  return `${categoryLabel(category as LostFoundCategory, staffLocale)}: ${text}`;
 }
 
 export interface LoggedItem {
@@ -61,14 +69,14 @@ export interface LoggedItem {
 }
 
 /** Logs a found item: the case, its draft listing and the details row, in one transaction. */
-export async function logFoundItem(db: AuditExecutor, input: ItemDescription, actor: StaffActor, opts: { now?: Date; locale?: "th" | "en" } = {}): Promise<LoggedItem> {
+export async function logFoundItem(db: AuditExecutor, input: ItemDescription, actor: StaffActor, opts: { now?: Date; locale?: "th" | "en"; staffLocale?: Locale } = {}): Promise<LoggedItem> {
   const now = opts.now ?? new Date();
   const problems = descriptionProblems(input);
   if (problems.length > 0) throw new CaseError("invalid", `Missing: ${problems.join(", ")}.`);
   return db.transaction(async (tx) => {
     const created = await createCase(
       tx,
-      { service: "lost_found", kind: "found", summary: summaryOf(input.category, input.title), locale: opts.locale ?? null, owningOrganisationId: actor.organisationId },
+      { service: "lost_found", kind: "found", summary: summaryOf(input.category, input.title, opts.staffLocale), locale: opts.locale ?? null, owningOrganisationId: actor.organisationId },
       actor,
       { now },
     );
@@ -96,7 +104,7 @@ export async function logFoundItem(db: AuditExecutor, input: ItemDescription, ac
 }
 
 /** Changes the description of a logged item (and the summary the inbox shows). */
-export async function updateItemDescription(db: AuditExecutor, caseId: string, input: ItemDescription, actor: StaffActor, opts: { now?: Date } = {}): Promise<void> {
+export async function updateItemDescription(db: AuditExecutor, caseId: string, input: ItemDescription, actor: StaffActor, opts: { now?: Date; staffLocale?: Locale } = {}): Promise<void> {
   const now = opts.now ?? new Date();
   const problems = descriptionProblems(input);
   if (problems.length > 0) throw new CaseError("invalid", `Missing: ${problems.join(", ")}.`);
@@ -105,7 +113,7 @@ export async function updateItemDescription(db: AuditExecutor, caseId: string, i
     assertStaff(actor, row.service);
     const done = await updateListingForCase(tx, caseId, input, contentActorOf(actor), now);
     if (!done) throw new CaseError("not_found", "This case has no listing.");
-    await touchCase(tx, caseId, actor, now, { summary: summaryOf(input.category, input.title) });
+    await touchCase(tx, caseId, actor, now, { summary: summaryOf(input.category, input.title, opts.staffLocale) });
   });
   await expireListing(db, caseId);
 }
@@ -122,8 +130,20 @@ export interface IntakeProgress {
   storageDone: boolean;
   verificationDone: boolean;
   finderDone: boolean;
-  /** Everything needed to publish is in place. */
+  /** The listing text and place are in place, so it can be published. */
   canPublish: boolean;
+  /** Strongly recommended and still missing. They warn on the publish step; they do not block it. */
+  warnings: PublishWarning[];
+}
+
+/** What is worth having before publishing but is not required. */
+export type PublishWarning = "storage" | "verification";
+
+export function publishWarnings(details: { storageOrganisationId: number | null; storageShelf: string | null; hasVerificationDetail: boolean }): PublishWarning[] {
+  const warnings: PublishWarning[] = [];
+  if (!details.storageOrganisationId || !details.storageShelf) warnings.push("storage");
+  if (!details.hasVerificationDetail) warnings.push("verification");
+  return warnings;
 }
 
 /** What is done and what is missing for a found item's intake, for the task list. */
@@ -142,30 +162,33 @@ export async function intakeProgress(db: AuditExecutor, caseId: string, hasFinde
     storageDone,
     verificationDone: details.hasVerificationDetail,
     finderDone: hasFinder,
-    canPublish: gaps.length === 0 && storageDone && details.hasVerificationDetail,
+    canPublish: gaps.length === 0,
+    warnings: publishWarnings(details),
   };
 }
 
 /**
  * "Publish to the public list": moves the case to `listed` and publishes the
- * listing, together. Throws `invalid` (naming what is missing) unless the
- * listing has both languages and a place, the storage location is recorded and
- * the hidden verification detail is set. A case that is already listed just
- * has its listing published again if it had been taken down.
+ * listing, together. Throws `ListingIncompleteError` (naming what is missing)
+ * unless the listing has both languages and a place or a note about where. The
+ * storage location and the hidden verification detail are strongly
+ * recommended, not required: what is missing comes back as warnings for the
+ * publish step to show. A case that is already listed just has its listing
+ * published again if it had been taken down.
  */
-export async function publishFoundItem(db: AuditExecutor, caseId: string, actor: StaffActor, opts: { now?: Date } = {}): Promise<void> {
+export async function publishFoundItem(db: AuditExecutor, caseId: string, actor: StaffActor, opts: { now?: Date } = {}): Promise<PublishWarning[]> {
   const now = opts.now ?? new Date();
-  await db.transaction(async (tx) => {
+  const warnings = await db.transaction(async (tx) => {
     const row = await lockCase(tx, caseId);
     assertStaff(actor, row.service);
     if (row.service !== "lost_found" || row.kind !== "found") throw new CaseError("invalid", "Only a found item can be published to the list.");
-    const details = await getCaseDetails(tx, caseId);
-    if (!details.storageShelf || !details.storageOrganisationId) throw new CaseError("invalid", "Record where the item is stored first.");
-    if (!details.hasVerificationDetail) throw new CaseError("invalid", "Record the hidden verification detail first.");
+    const missing = publishWarnings(await getCaseDetails(tx, caseId));
     await publishListingForCase(tx, caseId, contentActorOf(actor), now);
     if (row.status === "logged") await transition(tx, caseId, "listed", actor, { now });
+    return missing;
   });
   await expireListing(db, caseId);
+  return warnings;
 }
 
 export interface WalkInLost extends ItemDescription {
@@ -174,7 +197,7 @@ export interface WalkInLost extends ItemDescription {
 }
 
 /** Logs a lost report taken at the desk on behalf of someone, with their contact (encrypted) and a draft listing. */
-export async function logWalkInLostReport(db: AuditExecutor, input: WalkInLost, actor: StaffActor, opts: { now?: Date; env?: PiiEnv } = {}): Promise<LoggedItem> {
+export async function logWalkInLostReport(db: AuditExecutor, input: WalkInLost, actor: StaffActor, opts: { now?: Date; env?: PiiEnv; staffLocale?: Locale } = {}): Promise<LoggedItem> {
   const now = opts.now ?? new Date();
   const problems = descriptionProblems(input);
   if (problems.length > 0) throw new CaseError("invalid", `Missing: ${problems.join(", ")}.`);
@@ -184,7 +207,7 @@ export async function logWalkInLostReport(db: AuditExecutor, input: WalkInLost, 
       {
         service: "lost_found",
         kind: "lost",
-        summary: summaryOf(input.category, input.title),
+        summary: summaryOf(input.category, input.title, opts.staffLocale),
         locale: input.locale,
         owningOrganisationId: actor.organisationId,
         contacts: [{ ...input.contact, role: "reporter" }],

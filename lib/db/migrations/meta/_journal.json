@@ -64,6 +64,20 @@
       "when": 1792853263770,
       "tag": "0008_lost_found_public_journeys",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792911024471,
+      "tag": "0009_claim_tracking_links",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792912243653,
+      "tag": "0010_complaints",
+      "breakpoints": true
     }
   ]
 }

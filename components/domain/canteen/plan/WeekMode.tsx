@@ -17,6 +17,7 @@ import { SaveWeekButton } from "@/components/domain/canteen/budget/SaveWeekButto
 import { SpendThisWeek } from "@/components/domain/canteen/budget/SpendThisWeek";
 import { WeekForm } from "@/components/domain/canteen/budget/WeekForm";
 import { WeekPlanner } from "@/components/domain/canteen/budget/WeekPlanner";
+import { UI } from "@/lib/i18n/strings";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
 import { allPins, clearPins, parseWeekRequest, weekHref, weekQuery, type WeekRequest } from "@/components/domain/canteen/budget/week-params";
 import { EmptyState, Heading, Stack, WarningText } from "@/components/ui";
@@ -181,6 +182,7 @@ function FailureBlock({
   return (
     <Stack space={4}>
       <WarningText>
+        <span className="visually-hidden">{UI.warning[locale]}: </span>
         <strong>{t(BUDGET.failTitle, locale)}.</strong> {t(FAILURE_TEXT[reason], locale)}
       </WarningText>
       {suggestions.length > 0 || countActiveValues(filters) > 0 ? (

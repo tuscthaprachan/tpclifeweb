@@ -10,6 +10,7 @@ import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema/auth";
 import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { a } from "@/lib/i18n/admin";
+import { UI } from "@/lib/i18n/strings";
 import { RecoveryForm } from "./RecoveryForm";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,10 @@ export default async function RecoveryPage({ params }: { params: Promise<{ userI
         <Heading level={1}>{a("recoveryTitle", locale, { person: name })}</Heading>
         <p className="mt-[var(--space-2)]">{a("recoveryIntro", locale, { person: name })}</p>
       </div>
-      <WarningText>{a("recoveryWarning", locale)}</WarningText>
+      <WarningText>
+        <span className="visually-hidden">{UI.warning[locale]}: </span>
+        {a("recoveryWarning", locale)}
+      </WarningText>
       <RecoveryForm locale={locale} userId={person.id} />
     </AdminPage>
   );

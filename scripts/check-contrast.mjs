@@ -117,6 +117,22 @@ function assertions() {
     out.push([`--status-${status}`, `--status-${status}-soft`, 3, `${status} icon on its own panel`]);
   }
 
+  /*
+   * GOV.UK style banners and error summary (no tinted fills). The notification
+   * banner title bar carries --colour-action-ink on --colour-action (important)
+   * or --ink-inverse on --status-success (success); the bars and the error
+   * summary border are non-text boundaries and clear 3:1 on every surface.
+   * --ink-inverse flips with the theme, so the success pair holds in both.
+   */
+  out.push(["--colour-action-ink", "--colour-action", 4.5, "notification banner title (important)"]);
+  out.push(["--ink-inverse", "--status-success", 4.5, "notification banner title (success)"]);
+  for (const surface of surfaces) {
+    for (const edge of ["--colour-action", "--status-success", "--status-error"]) {
+      out.push([edge, surface, 3, "banner and error summary border"]);
+    }
+    out.push(["--line-strong", surface, 3, "inset text rule and summary card border"]);
+  }
+
   // Ink on a saturated fill: tags, badges, panel headers. These fills are
   // identical in both themes, so they always carry --ink-on-fill.
   for (const fill of ["--fill-transport", "--fill-welfare", "--fill-activity", "--fill-governance"]) {

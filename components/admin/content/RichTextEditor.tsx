@@ -7,11 +7,12 @@ import { fieldId } from "@/lib/admin/content/form-state";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { BLOCK_DEFAULTS, normaliseEditorDoc, type BlockType } from "@/lib/rich-text/editor";
-import { CUSTOM_NODES, isSafeHref } from "@/lib/rich-text/schema";
+import { CUSTOM_NODES, isSafeHref, type CalloutBoxAttrs } from "@/lib/rich-text/schema";
 import { customBlockNodes, richTextExtensions } from "@/lib/rich-text/tiptap";
 import type { RichTextDoc } from "@/lib/rich-text/types";
 import { useContentForm } from "./context";
 import { PortalDialog } from "./PortalDialog";
+import { CalloutBoxBlock } from "@/components/domain/rich-text/blocks/CalloutBoxBlock";
 import { BlockDialog } from "./rich-text/BlockDialog";
 import { BLOCK_LABEL, summariseBlock, type RichTextRefs } from "./rich-text/blocks";
 
@@ -32,13 +33,18 @@ function BlockCard({ node, getPos, deleteNode, selected, extension }: NodeViewPr
   return (
     <NodeViewWrapper
       contentEditable={false}
-      className={`my-[var(--space-3)] flex flex-wrap items-center gap-[var(--space-3)] rounded-panel border bg-surface-alt p-[var(--space-3)] ${
+      className={`my-[var(--space-3)] flex flex-wrap items-center gap-[var(--space-3)] border bg-surface p-[var(--space-3)] ${
         selected ? "border-[length:var(--border-width-thick)] border-action" : "border-line"
       }`}
     >
       <div className="min-w-0 flex-1">
         <p className="m-0 text-sm font-semibold text-ink-600">{name}</p>
-        <p className="m-0 break-words">{summary || a("blockEmpty", locale)}</p>
+        {type === "calloutBox" && summary ? (
+          // Same rendering as the public page: inset text or warning text, never a coloured box.
+          <CalloutBoxBlock attrs={node.attrs as CalloutBoxAttrs} locale={locale} />
+        ) : (
+          <p className="m-0 break-words">{summary || a("blockEmpty", locale)}</p>
+        )}
       </div>
       <Button
         type="button"

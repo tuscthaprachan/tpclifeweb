@@ -1,5 +1,6 @@
 /**
- * Honesty banner (see CONTRIBUTING.md). Says plainly that the service is new
+ * Honesty banner (see CONTRIBUTING.md), laid out as the GOV.UK phase banner:
+ * a tag and a line of text above a bottom rule, no tinted strip. Says plainly that the service is new
  * and still being tested, rather than presenting an alpha or beta product as
  * finished. Renders nothing once `phase` is "live": the whole point of the
  * banner is to stop being true and disappear.
@@ -26,9 +27,9 @@ export function PhaseBanner({
   const note = phaseNote ? pick(phaseNote, locale) : defaultNote;
 
   return (
-    <div className="border-b border-line bg-governance-soft">
+    <div className="border-b border-line">
       <ShellContainer className="flex flex-wrap items-center gap-3 py-2 text-sm">
-        <span className="rounded-pill bg-governance px-2 py-0.5 font-semibold text-ink-on-fill">{tag}</span>
+        <strong className="rounded-pill bg-governance px-2 py-0.5 font-semibold uppercase text-ink-on-fill">{tag}</strong>
         <span className="text-ink-900">{note}</span>
       </ShellContainer>
     </div>

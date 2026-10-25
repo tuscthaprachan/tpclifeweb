@@ -48,7 +48,14 @@ describe("logFoundItem", () => {
   });
 
   it("builds an inbox summary with no personal data", () => {
-    expect(summaryOf("keys", { th: "ก", en: "Red keyring" })).toBe("keys: Red keyring");
+    // The category is named as the public side names it, in the staff member's language.
+    expect(summaryOf("keys", { th: "ก", en: "Red keyring" })).toBe("Keys: Red keyring");
+    expect(summaryOf("wallet", { th: "กระเป๋าสตางค์หนังสีดำ", en: "Black leather wallet" })).toBe("Wallet or purse: Black leather wallet");
+    expect(summaryOf("wallet", { th: "กระเป๋าสตางค์หนังสีดำ", en: "Black leather wallet" }, "th")).toBe("กระเป๋าสตางค์: กระเป๋าสตางค์หนังสีดำ");
+    // The other language fills in for an empty one.
+    expect(summaryOf("keys", { th: "", en: "Red keyring" }, "th")).toMatch(/: Red keyring$/);
+    // Never the raw category key.
+    expect(summaryOf("wallet", { th: "", en: "x" })).not.toContain("wallet:");
   });
 });
 
@@ -109,17 +116,12 @@ describe("storage and the hidden verification detail", () => {
 });
 
 describe("publishFoundItem", () => {
-  it("needs the storage location and the hidden detail, then lists the case and publishes the listing", async () => {
+  it("needs both languages and a place; storage and the hidden detail only warn", async () => {
     const logged = await logFoundItem(t.db, KEYS, t.officer, { now: NOW });
-    await expect(publishFoundItem(t.db, logged.caseId, t.officer)).rejects.toMatchObject({ code: "invalid" });
-    await saveStorageLocation(t.db, logged.caseId, { organisationId: t.officer.organisationId, shelf: "A1" }, t.officer);
-    await expect(publishFoundItem(t.db, logged.caseId, t.officer)).rejects.toMatchObject({ code: "invalid" });
-    await saveVerificationDetail(t.db, logged.caseId, DETAIL, t.officer);
+    const before = await intakeProgress(t.db, logged.caseId, false);
+    expect(before).toMatchObject({ canPublish: true, storageDone: false, verificationDone: false, warnings: ["storage", "verification"], listingStatus: "draft" });
 
-    const progress = await intakeProgress(t.db, logged.caseId, false);
-    expect(progress).toMatchObject({ canPublish: true, storageDone: true, verificationDone: true, listingStatus: "draft" });
-    await publishFoundItem(t.db, logged.caseId, t.officer, { now: NOW });
-
+    expect(await publishFoundItem(t.db, logged.caseId, t.officer, { now: NOW })).toEqual(["storage", "verification"]);
     expect(await t.statusOf(logged.caseId)).toBe("listed");
     const listing = (await getListingForCase(t.db, logged.caseId))!;
     expect(listing).toMatchObject({ status: "published" });
@@ -127,10 +129,32 @@ describe("publishFoundItem", () => {
     expect((await t.events(logged.caseId)).find((e) => e.toStatus === "listed")?.visibility).toBe("public");
   });
 
+  it("reports only what is still missing, and nothing when both are recorded", async () => {
+    const half = await logFoundItem(t.db, KEYS, t.officer, { now: NOW });
+    await saveStorageLocation(t.db, half.caseId, { organisationId: t.officer.organisationId, shelf: "A1" }, t.officer);
+    expect((await intakeProgress(t.db, half.caseId, false)).warnings).toEqual(["verification"]);
+    expect(await publishFoundItem(t.db, half.caseId, t.officer, { now: NOW })).toEqual(["verification"]);
+
+    const full = await logFoundItem(t.db, KEYS, t.officer, { now: NOW });
+    await saveStorageLocation(t.db, full.caseId, { organisationId: t.officer.organisationId, shelf: "A1" }, t.officer);
+    await saveVerificationDetail(t.db, full.caseId, DETAIL, t.officer);
+    expect((await intakeProgress(t.db, full.caseId, false)).warnings).toEqual([]);
+    expect(await publishFoundItem(t.db, full.caseId, t.officer, { now: NOW })).toEqual([]);
+  });
+
+  it("still refuses without a place or a note about where", async () => {
+    const logged = await logFoundItem(t.db, KEYS, t.officer, { now: NOW });
+    await t.db.update(lostFoundItems).set({ placeId: null, locationNoteTh: null, locationNoteEn: null }).where(eq(lostFoundItems.caseId, logged.caseId));
+    expect((await intakeProgress(t.db, logged.caseId, false)).gaps).toEqual(["location"]);
+    await expect(publishFoundItem(t.db, logged.caseId, t.officer)).rejects.toMatchObject({ name: "ListingIncompleteError", gaps: ["location"] });
+    expect(await t.statusOf(logged.caseId)).toBe("logged");
+  });
+
   it("refuses, and changes nothing, when a language is missing", async () => {
     const logged = await logFoundItem(t.db, { ...KEYS, title: { th: "กุญแจ", en: "" } }, t.officer, { now: NOW });
     await saveStorageLocation(t.db, logged.caseId, { organisationId: t.officer.organisationId, shelf: "A1" }, t.officer);
     await saveVerificationDetail(t.db, logged.caseId, DETAIL, t.officer);
+    expect((await intakeProgress(t.db, logged.caseId, false)).canPublish).toBe(false);
     await expect(publishFoundItem(t.db, logged.caseId, t.officer)).rejects.toMatchObject({ name: "ListingIncompleteError" });
     expect(await t.statusOf(logged.caseId)).toBe("logged");
     expect((await getListingForCase(t.db, logged.caseId))!.status).toBe("draft");

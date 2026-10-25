@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { clearTrackCookie, readTrackCookie, requestContext, writeTrackCookie } from "@/lib/lost-found/public/cookies";
-import { lookupTracked, parseTrackingInput, withdrawTracked } from "@/lib/lost-found/public/track";
+import { limitedQuery, lookupTracked, parseTrackingInput, withdrawTracked } from "@/lib/lost-found/public/track";
 
 const text = (form: FormData, name: string) => (typeof form.get(name) === "string" ? (form.get(name) as string) : "");
 
@@ -35,7 +35,7 @@ export async function openTracking(form: FormData): Promise<void> {
 
   const meta = await requestContext();
   const found = await lookupTracked(getDb(), parsed.reference, parsed.token, meta.ip);
-  if (found.state === "limited") redirect(trackPath(locale, "?problem=limited"));
+  if (found.state === "limited") redirect(trackPath(locale, limitedQuery(found.retryAfterSeconds)));
   if (found.state === "none") redirect(trackPath(locale, "?problem=1"));
   await writeTrackCookie({ reference: parsed.reference, token: parsed.token });
   redirect(localePath(locale, "/lost-and-found/track/status"));
@@ -49,6 +49,7 @@ export async function withdrawReport(form: FormData): Promise<void> {
   const meta = await requestContext();
   const outcome = await withdrawTracked(getDb(), cookie.reference, cookie.token, meta);
   if (outcome === "withdrawn") redirect(localePath(locale, "/lost-and-found/track/status") + "?withdrawn=1");
+  if (typeof outcome === "object") redirect(trackPath(locale, limitedQuery(outcome.retryAfterSeconds)));
   if (outcome === "none") redirect(trackPath(locale, "?problem=1"));
   redirect(localePath(locale, "/lost-and-found/track/withdraw") + "?problem=1");
 }

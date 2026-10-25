@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useId, useState, useTransition } from "react";
-import { Button, ErrorSummary, InsetText, NotificationBanner, Select, SummaryList, TextInput, Textarea } from "@/components/ui";
+import { Button, ErrorSummary, InsetText, NotificationBanner, Select, TextInput, Textarea } from "@/components/ui";
 import { compressInBrowser } from "@/components/admin/content/compress-image-browser";
 import { formatMegabytes } from "@/components/admin/content/compress-image";
 import { ID_CHECK_TYPES } from "@/lib/lost-found/constants";
@@ -519,14 +519,19 @@ export function ClaimReview({ locale, caseId, orgId, claimId, defaultReject, has
           </div>
         </div>
       ) : (
-        <div className="flex flex-wrap gap-[var(--space-2)]">
-          <Button type="submit" name="decision" value="accepted" loading={pending} loadingLabel={a("caseSaving", locale)}>
-            {L("lfcAccept", locale)}
-          </Button>
-          <Button type="button" variant="secondary" onClick={() => setRejecting(true)}>
-            {L("lfcReject", locale)}
-          </Button>
-        </div>
+        <>
+          <InsetText>{L("lfcCollectionHint", locale)}</InsetText>
+          <Textarea id={control(prefix, "collection.th")} name="collection.th" lang="th" error={errors["collection.th"]} label={`${L("lfcFieldCollectionNote", locale)} (${L("langThai", locale)})`} rows={2} maxLength={1000} />
+          <Textarea id={control(prefix, "collection.en")} name="collection.en" lang="en" error={errors["collection.en"]} label={`${L("lfcFieldCollectionNote", locale)} (${L("langEnglish", locale)})`} rows={2} maxLength={1000} />
+          <div className="flex flex-wrap gap-[var(--space-2)]">
+            <Button type="submit" name="decision" value="accepted" loading={pending} loadingLabel={a("caseSaving", locale)}>
+              {L("lfcAccept", locale)}
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setRejecting(true)}>
+              {L("lfcReject", locale)}
+            </Button>
+          </div>
+        </>
       )}
       <p className="m-0 text-sm text-ink-600">{L(hasLost ? "lfcDecisionNoteLost" : "lfcDecisionNote", locale)}</p>
     </form>
@@ -535,7 +540,7 @@ export function ClaimReview({ locale, caseId, orgId, claimId, defaultReject, has
 
 /* Handover */
 
-export function HandoverForm({ locale, caseId, orgId, desks, nowLocal, lostChoices, collectorKnown }: Base & { desks: Option[]; nowLocal: string; lostChoices: Option[]; collectorKnown: boolean }) {
+export function HandoverForm({ locale, caseId, orgId, desks, deskId, nowLocal, lostChoices, collectorKnown }: Base & { desks: Option[]; deskId: number; nowLocal: string; lostChoices: Option[]; collectorKnown: boolean }) {
   const [state, run, pending] = useActionState<LfState, FormData>(handoverAction, EMPTY);
   const prefix = useId().replace(/:/g, "");
   const errors = state.errors ?? {};
@@ -553,8 +558,7 @@ export function HandoverForm({ locale, caseId, orgId, desks, nowLocal, lostChoic
         className="max-w-[24rem]"
       />
       <TextInput {...f("collectedAt")} type="datetime-local" label={L("lfcFieldCollectedAt", locale)} defaultValue={nowLocal} className="max-w-[20rem]" />
-      <input type="hidden" name="deskOrganisationId" value={orgId} />
-      <SummaryList rows={[{ key: L("lfcFieldDesk", locale), value: desks.find((d) => d.value === String(orgId))?.label ?? "" }]} />
+      <Select {...f("deskOrganisationId")} label={L("lfcFieldHandoverDesk", locale)} hint={L("lfcFieldHandoverDeskHint", locale)} options={desks} defaultValue={String(deskId)} className="max-w-[24rem]" />
       {lostChoices.length > 1 ? <Select {...f("lostCaseId")} label={L("lfcFieldLostReport", locale)} options={lostChoices} className="max-w-[24rem]" /> : lostChoices.length === 1 ? <input type="hidden" name="lostCaseId" value={lostChoices[0]!.value} /> : null}
       <InsetText>{L("lfcHandoverNoId", locale)}</InsetText>
       <SaveButton locale={locale} pending={pending} variant="primary" label={L("lfcHandoverSave", locale)} />

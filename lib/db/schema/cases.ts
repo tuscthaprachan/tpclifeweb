@@ -28,6 +28,14 @@ export const CASE_EVENT_TYPES = [
   "tracking_link_issued",
   "tracking_link_revoked",
   "pii_deleted",
+  // Complaints
+  "resolution",
+  "recategorised",
+  "escalated",
+  "wellbeing_routed",
+  "details_viewed",
+  "evidence_viewed",
+  "survey_received",
 ] as const;
 export type CaseEventType = (typeof CASE_EVENT_TYPES)[number];
 
@@ -159,6 +167,12 @@ export const caseAccessTokens = pgTable(
       .notNull()
       .references(() => cases.id),
     tokenHash: text("token_hash").notNull(),
+    /**
+     * Set when the link belongs to one claim on a found item (lost and found):
+     * it then shows that claim and nothing else on the case. No foreign key,
+     * because the claims table lives with the lost and found schema.
+     */
+    claimId: uuid("claim_id"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
     revokedAt: timestamp("revoked_at", { withTimezone: true }),

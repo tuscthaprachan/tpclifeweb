@@ -22,6 +22,7 @@ import { getStorage } from "@/lib/storage";
 import { categoryOptions, deskOptions, placeOptions } from "../../../lost-found/data";
 import { DescribeForm, FinderForm, PhotoUpload, PublishListingForm, StorageForm, VerificationForm } from "../../../lost-found/Forms";
 import { PrivatePhotos } from "../../../lost-found/PrivatePhotos";
+import { PublishWarnings } from "../../../lost-found/PublishWarnings";
 import { TaskList, type TaskItem, type TaskState } from "../../../lost-found/TaskList";
 
 export const dynamic = "force-dynamic";
@@ -51,8 +52,9 @@ const GAP: Record<ListingGap, AdminKey> = {
 /**
  * Found item intake as a task list (the GOV.UK pattern). Each task is a page
  * of its own (`?task=`), done in any order and left half done; "Publish to the
- * public list" opens when the listing has both languages and a place, the
- * storage location is recorded and the hidden detail is set.
+ * public list" opens when the listing has both languages and a place. The
+ * storage location and the hidden detail are strongly recommended: the publish
+ * step warns when they are missing but does not stop the officer.
  */
 export default async function FoundIntakePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ task?: string; as?: string }> }) {
   const locale = await getAdminLocale();
@@ -83,8 +85,8 @@ export default async function FoundIntakePage({ params, searchParams }: { params
       state: progress.gaps.length === 0 ? "completed" : "in_progress",
     },
     { id: "photos", title: a(TITLE.photos, locale), hint: a("lfcPhotosCount", locale, { count: progress.photos }), href: `${base}?task=photos`, state: progress.photos > 0 ? "completed" : "optional" },
-    { id: "storage", title: a(TITLE.storage, locale), href: `${base}?task=storage`, state: state(progress.storageDone, Boolean(details.storageOrganisationId)) },
-    { id: "verification", title: a(TITLE.verification, locale), href: `${base}?task=verification`, state: state(progress.verificationDone) },
+    { id: "storage", title: a(TITLE.storage, locale), hint: progress.storageDone ? undefined : a("lfcRecommended", locale), href: `${base}?task=storage`, state: state(progress.storageDone, Boolean(details.storageOrganisationId)) },
+    { id: "verification", title: a(TITLE.verification, locale), hint: progress.verificationDone ? undefined : a("lfcRecommended", locale), href: `${base}?task=verification`, state: state(progress.verificationDone) },
     { id: "finder", title: a(TITLE.finder, locale), href: `${base}?task=finder`, state: progress.finderDone ? "completed" : "optional" },
     {
       id: "publish",
@@ -164,6 +166,7 @@ export default async function FoundIntakePage({ params, searchParams }: { params
               { key: a("lfcPhotosTitle", locale), value: a("lfcPhotosCount", locale, { count: progress.photos }) },
             ]}
           />
+          <PublishWarnings warnings={progress.warnings} locale={locale} />
           <PublishListingForm locale={locale} caseId={id} orgId={orgId} found openCaseAfter />
         </div>
       ) : null}

@@ -12,7 +12,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { isLocale, localePath } from "@/lib/i18n/config";
 import { encodeTrackCookie, requestContext, TRACK_COOKIE_NAME, trackCookieOptions } from "@/lib/lost-found/public/cookies";
-import { lookupTracked, parseTrackingInput } from "@/lib/lost-found/public/track";
+import { limitedQuery, lookupTracked, parseTrackingInput } from "@/lib/lost-found/public/track";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   const meta = await requestContext();
   const found = await lookupTracked(getDb(), parsed.reference, parsed.token, meta.ip);
-  if (found.state === "limited") return to(`${track}?problem=limited`);
+  if (found.state === "limited") return to(`${track}${limitedQuery(found.retryAfterSeconds)}`);
   if (found.state === "none") return to(`${track}?problem=1`);
 
   const response = to(`${track}/status`);

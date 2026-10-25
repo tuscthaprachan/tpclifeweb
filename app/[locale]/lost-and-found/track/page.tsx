@@ -13,6 +13,7 @@ import { isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
+import { parseWaitMinutes } from "@/lib/lost-found/public/track";
 import { openTracking } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +36,10 @@ export default async function TrackPage({ params, searchParams }: { params: Prom
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
-  const problem = first((await searchParams).problem);
+  const query = await searchParams;
+  const problem = first(query.problem);
+  const wait = parseWaitMinutes(first(query.wait));
+  const limited = wait === null ? UI.lfpTrackLimited[locale] : wait === 1 ? UI.lfpTrackLimitedInOne[locale] : UI.lfpTrackLimitedIn[locale].replace("{n}", String(wait));
 
   const items: ErrorSummaryItem[] =
     problem === "ref"
@@ -43,7 +47,7 @@ export default async function TrackPage({ params, searchParams }: { params: Prom
       : problem === "link"
         ? [{ href: "#link", message: UI.lfpErrTrackLink[locale] }]
         : problem === "limited"
-          ? [{ href: "#reference", message: UI.lfpTrackLimited[locale] }]
+          ? [{ href: "#reference", message: limited }]
           : problem
             ? [{ href: "#reference", message: UI.lfpTrackProblem[locale] }]
             : [];

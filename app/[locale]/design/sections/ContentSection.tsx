@@ -15,6 +15,7 @@ import { Timestamp } from "@/components/ui/Timestamp";
 import { WarningText } from "@/components/ui/WarningText";
 import type { HeadingLevel } from "@/lib/a11y";
 import type { Locale } from "@/lib/i18n/config";
+import { UI } from "@/lib/i18n/strings";
 import { ComponentDoc } from "../ComponentDoc";
 
 interface TimetableRow {
@@ -136,7 +137,7 @@ export function ContentSection({ headingLevel, locale }: { headingLevel: Heading
         name="InsetText"
         headingLevel={headingLevel}
         purpose="A quoted or supplementary passage set off from the surrounding copy: a quote from a policy document, a worked example."
-        whenNotToUse="For a warning, where WarningText carries the extra colour and icon that a plain inset does not."
+        whenNotToUse="For a warning, where WarningText carries the icon that a plain inset does not. Inset text is a grey rule and indented text: no fill and no colour."
       >
         <InsetText>A quoted passage sits here, indented and set off from the paragraph before it.</InsetText>
       </ComponentDoc>
@@ -147,9 +148,12 @@ export function ContentSection({ headingLevel, locale }: { headingLevel: Heading
         headingLevel={headingLevel}
         purpose="A warning the reader needs to notice before continuing: a deadline that has nearly passed, a form that cannot be resubmitted."
         whenNotToUse="For a page-level alert about something that just happened, where NotificationBanner is the right pattern."
-        a11yNotes={["children must include the visible word for \"Warning\" itself in the active language. There is no generic entry for it in lib/i18n/strings.ts, only specific notices, so this component cannot supply it."]}
+        a11yNotes={["The GOV.UK warning text: bold text beside a black \"!\" icon, with no box, fill or coloured border. children must start with the visually hidden word \"Warning\" in the active language (UI.warning); the icon is decorative."]}
       >
-        <WarningText>{locale === "th" ? "คำเตือน: ปิดรับคำร้องนี้ในอีก 2 วัน" : "Warning: this request closes in 2 days"}</WarningText>
+        <WarningText>
+          <span className="visually-hidden">{UI.warning[locale]}: </span>
+          {locale === "th" ? "ปิดรับคำร้องนี้ในอีก 2 วัน" : "This request closes in 2 days"}
+        </WarningText>
       </ComponentDoc>
 
       <ComponentDoc
@@ -170,12 +174,41 @@ export function ContentSection({ headingLevel, locale }: { headingLevel: Heading
         headingLevel={headingLevel}
         purpose="A page-level message: a form was submitted, a service is degraded, a warning that needs immediate attention."
         whenNotToUse="For a per-field form error, where ErrorMessage plus ErrorSummary is the correct pattern."
-        a11yNotes={["warning is announced assertively (interrupts); info and success wait for a pause, via liveRegionProps (4.1.3)."]}
+        a11yNotes={["The GOV.UK notification banner: a white body inside a solid border, with a solid title bar holding the title. Brand colour for info and warning, green for success. There is no tinted fill.", "info is a labelled region; success is role=alert and takes focus when it appears after an action; warning is announced assertively (4.1.3)."]}
       >
         <Stack space={3}>
           <NotificationBanner variant="info" title="Service notice">The shuttle timetable was updated for this semester.</NotificationBanner>
-          <NotificationBanner variant="success" title="Submitted">Your report has been sent to TUSC Tha Prachan.</NotificationBanner>
+          <NotificationBanner variant="success" title="Submitted" focusOnMount={false}>Your report has been sent to TUSC Tha Prachan.</NotificationBanner>
           <NotificationBanner variant="warning" title="Action needed">This form closes for submissions in 2 days.</NotificationBanner>
+        </Stack>
+      </ComponentDoc>
+
+      <ComponentDoc
+        id="no-accent-boxes"
+        name="No tinted accent boxes"
+        headingLevel={headingLevel}
+        purpose="Setting something apart from the text around it. This site uses the GOV.UK patterns: inset text for a quotation or supporting passage, warning text for something the reader must not miss, a notification banner for a page-level message, an error summary for a failed form, a phase banner for the service stage, and a summary card, a heading with a rule or a plain list for grouped information."
+        whenNotToUse="A coloured or tinted background panel with a coloured left or top stripe, a coloured border, or both: a callout box, alert box or soft-tinted card. These are not used anywhere, public site or admin. Structure comes from headings, spacing, rules and bold text, and colour never carries the meaning on its own."
+        a11yNotes={[
+          "Tags and status tags are labels, not boxes, so a small tinted fill behind a word is allowed there (and the word and icon always come with it).",
+          "scripts/check-no-accent-boxes.mjs runs in npm run check and fails on a class list that pairs a coloured thick border with a tinted background, and on bg-*-soft outside the tag components.",
+          "Rich text callout blocks keep their stored tones: info renders as inset text, warning and critical as warning text. Service alerts render as notification banners, critical with warning text inside.",
+        ]}
+      >
+        <Stack space={4}>
+          <Heading level={4} className="m-0 text-lg">
+            Summary card
+          </Heading>
+          <div className="border border-line-strong bg-surface">
+            <div className="border-b border-line px-[var(--space-4)] py-[var(--space-3)]">
+              <Heading level={5} className="m-0 text-lg">
+                Student ID reissue form
+              </Heading>
+            </div>
+            <div className="px-[var(--space-4)] py-[var(--space-3)]">
+              <p className="m-0">Used for a lost or damaged card. White, a thin grey border, and a title row above a rule.</p>
+            </div>
+          </div>
         </Stack>
       </ComponentDoc>
 

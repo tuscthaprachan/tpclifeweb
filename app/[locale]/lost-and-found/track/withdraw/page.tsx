@@ -14,7 +14,7 @@ import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/co
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { readTrackCookie, requestContext } from "@/lib/lost-found/public/cookies";
-import { openTracked } from "@/lib/lost-found/public/track";
+import { limitedQuery, openTracked } from "@/lib/lost-found/public/track";
 import { withdrawReport } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -44,6 +44,8 @@ export default async function WithdrawPage({ params, searchParams }: { params: P
   if (!cookie || !isDatabaseConfigured()) redirect(track);
   const meta = await requestContext();
   const tracked = await openTracked(getDb(), cookie.reference, cookie.token, meta.ip);
+  if (tracked.state === "limited") redirect(`${track}${limitedQuery(tracked.retryAfterSeconds)}`);
+  if (tracked.state === "claim") redirect(status);
   if (tracked.state !== "ok") redirect(`${track}?problem=1`);
   if (!tracked.canWithdraw) redirect(status);
   const failed = first((await searchParams).problem) === "1";

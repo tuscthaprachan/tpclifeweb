@@ -16,14 +16,16 @@ import { pick, type Locale } from "@/lib/i18n/config";
 import { listClaims } from "@/lib/lost-found/claims";
 import { DEFAULT_REJECT_MESSAGE } from "@/lib/lost-found/claims";
 import { getCaseDetails } from "@/lib/lost-found/details";
-import { getHandover } from "@/lib/lost-found/handover";
+import { defaultHandoverDesk, getHandover } from "@/lib/lost-found/handover";
 import { hasIdentifyingDetail } from "@/lib/lost-found/identifying";
 import { linkedCases } from "@/lib/lost-found/links";
 import { getListingForCase, listingGaps, type ListingGap, type ListingView } from "@/lib/lost-found/listing";
 import { describeMatch, rankMatches, type MatchCandidate } from "@/lib/lost-found/matching";
+import { publishWarnings } from "@/lib/lost-found/intake";
 import { listPrivatePhotos } from "@/lib/lost-found/photos";
 import { getStorage } from "@/lib/storage";
 import type { CasePanelProps } from "../panels";
+import { PublishWarnings } from "./PublishWarnings";
 import { caseRefs, categoryOptions, deskOptions, placeOptions } from "./data";
 import {
   AddClaimForm,
@@ -306,7 +308,7 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
   const [officer] = handover ? await db.select({ name: user.name }).from(user).where(eq(user.id, handover.officerUserId)) : [];
   const collectorKnown = summaries.some((c) => (c.role === "claimant" || c.role === "owner") && c.has.name);
   const listing: ListingView | null = await getListingForCase(db, caseId);
-  const ready = Boolean(listing && listingGaps(listing).length === 0 && details.storageShelf && details.hasVerificationDetail);
+  const ready = Boolean(listing && listingGaps(listing).length === 0);
 
   return (
     <>
@@ -321,6 +323,7 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
             <p className="m-0">
               <a href={`/admin/cases/new/found/${caseId}`}>{a("lfcContinueIntake", locale)}</a>
             </p>
+            {ready ? <PublishWarnings warnings={publishWarnings(details)} locale={locale} /> : null}
             {ready ? <PublishListingForm locale={locale} caseId={caseId} orgId={orgId} found /> : null}
           </div>
         ) : null}
@@ -462,6 +465,7 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
             caseId={caseId}
             orgId={orgId}
             desks={desks}
+            deskId={defaultHandoverDesk(details.storageOrganisationId, orgId, desks.map((d) => Number(d.value)))}
             nowLocal={formatBangkokDateTime(new Date())}
             collectorKnown={collectorKnown}
             lostChoices={activeLinks.map((l) => ({ value: l.caseId, label: refs.get(l.caseId)?.reference ?? l.caseId }))}

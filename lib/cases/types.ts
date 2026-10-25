@@ -41,5 +41,8 @@ export class CaseError extends Error {
   }
 }
 
-/** Public updates are written in both languages. */
+/** Status notes are written in both languages. */
 export type BilingualText = LocaleString;
+
+/** A public update is written in Thai, English or both; the engine needs at least one. */
+export type PublicUpdateText = { th?: string | null; en?: string | null };

@@ -11,7 +11,8 @@ import { asc, eq } from "drizzle-orm";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { caseContacts, type CaseContactRole, type CaseContactRow, type CasePreferredContact, CASE_CONTACT_ROLES, CASE_PREFERRED_CONTACTS } from "@/lib/db/schema/cases";
 import { decryptOptionalPii, encryptOptionalPii, needsReencryption, reencryptPii, type PiiEnv } from "@/lib/crypto/pii";
-import { appendEvent, auditContextOf, assertStaff, cleanText, lockCase } from "./internal";
+import { appendEvent, auditContextOf, cleanText, lockCase } from "./internal";
+import { assertCaseAccess } from "./restrictions";
 import { CaseError, type CaseActor } from "./types";
 
 export interface ContactInput {
@@ -103,7 +104,7 @@ export async function addContact(db: AuditExecutor, caseId: string, input: Conta
   const now = opts.now ?? new Date();
   return withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
-    if (actor.kind === "staff") assertStaff(actor, row.service);
+    if (actor.kind === "staff") await assertCaseAccess(tx, row, actor);
     if (row.piiDeletedAt) throw new CaseError("pii_deleted", "Personal data for this case has been deleted.");
     const id = await insertContact(tx, caseId, input, actor, now, opts.env);
     await audit({ action: "case_contact.add", entityType: "case", entityId: caseId, after: { contactId: id, role: input.role } });
@@ -126,7 +127,7 @@ function toSummary(r: CaseContactRow): ContactSummary {
 export async function listContactSummaries(db: AuditExecutor, caseId: string, actor: CaseActor): Promise<ContactSummary[]> {
   return db.transaction(async (tx) => {
     const row = await lockCase(tx, caseId);
-    assertStaff(actor, row.service);
+    await assertCaseAccess(tx, row, actor);
     const rows = await tx.select().from(caseContacts).where(eq(caseContacts.caseId, caseId)).orderBy(asc(caseContacts.createdAt));
     return rows.map(toSummary);
   });
@@ -143,7 +144,7 @@ export async function readContacts(db: AuditExecutor, caseId: string, actor: Cas
   const now = opts.now ?? new Date();
   return withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
-    assertStaff(actor, row.service);
+    await assertCaseAccess(tx, row, actor);
     const rows = await tx.select().from(caseContacts).where(eq(caseContacts.caseId, caseId)).orderBy(asc(caseContacts.createdAt));
     if (rows.length === 0) return [];
     const contacts = rows.map(

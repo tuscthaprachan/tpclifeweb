@@ -27,7 +27,7 @@ export function WeekForm({ locale, request, filters }: WeekFormProps) {
   hidden.delete("days");
 
   return (
-    <section aria-labelledby="week-form-title" className="no-print rounded-panel bg-welfare-soft p-[var(--space-4)] sm:p-[var(--space-6)]">
+    <section aria-labelledby="week-form-title" className="no-print border-t border-line pt-[var(--space-6)]">
       <Heading level={2} id="week-form-title" className="m-0 mb-[var(--space-4)] text-xl">
         {t(BUDGET.weekFormTitle, locale)}
       </Heading>

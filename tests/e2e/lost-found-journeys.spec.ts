@@ -123,6 +123,8 @@ for (const locale of LOCALES as readonly Locale[]) {
     await expect(page).toHaveURL(/\/confirmation$/);
     const main = page.locator("main");
     await expect(main.getByRole("heading", { level: 1, name: UI.reportReceivedTitle[locale] })).toBeVisible();
+    // The private link stays on this page for a short time, and the page says so (it does not claim to show it only once).
+    await expect(main.getByText(UI.lfpKeepLinkWarning[locale])).toBeVisible();
     const reference = (await main.getByText(/^LF-\d{4}-\d{4,}$/).first().textContent()) ?? "";
     expect(reference).toMatch(/^LF-\d{4}-\d{4,}$/);
     const link = await main.getByRole("link", { name: /\/lost-and-found\/track\/link\?ref=/ }).getAttribute("href");

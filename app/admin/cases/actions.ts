@@ -13,7 +13,10 @@ import { addNote, addPublicUpdate, assign, transition } from "@/lib/cases/engine
 import { readContacts, type Contact } from "@/lib/cases/contacts";
 import { staffActorForCase } from "@/lib/cases/staff";
 import { CaseError } from "@/lib/cases/types";
+import { eq } from "drizzle-orm";
 import { requireStaff } from "@/lib/auth/session";
+import { redactContactsForHandler } from "@/lib/complaints/redact";
+import { cases } from "@/lib/db/schema/cases";
 import { PiiUnavailableError } from "@/lib/crypto/pii";
 import { getDb } from "@/lib/db";
 import { a, type AdminKey } from "@/lib/i18n/admin";
@@ -78,6 +81,9 @@ export async function changeStatusAction(_prev: CaseFormState, formData: FormDat
   return run(formData, ["status"], async ({ locale, caseId, actor }) => {
     const to = text(formData, "status");
     if (!to) return { error: a("errCaseStatusRequired", locale) };
+    // Complaints have their own actions (resolve needs an outcome, reopen restarts a target); a posted form must not bypass them.
+    const [row] = await getDb().select({ service: cases.service }).from(cases).where(eq(cases.id, caseId));
+    if (row?.service === "complaint") return { error: a("errCaseUseComplaintActions", locale) };
     await transition(getDb(), caseId, to, actor, { expectedFrom: text(formData, "from") || undefined });
     return "caseSavedStatus";
   });
@@ -96,7 +102,7 @@ export async function addUpdateAction(_prev: CaseFormState, formData: FormData):
   return run(formData, ["th", "en"], async ({ locale, caseId, actor }) => {
     const th = text(formData, "th");
     const en = text(formData, "en");
-    if (!th.trim() || !en.trim()) return { error: a("errCaseUpdateBoth", locale) };
+    if (!th.trim() && !en.trim()) return { error: a("errCaseUpdateEmpty", locale) };
     await addPublicUpdate(getDb(), caseId, { th, en }, actor);
     return "caseSavedUpdate";
   });
@@ -123,7 +129,7 @@ export async function revealContactsAction(_prev: RevealState, formData: FormDat
   const caseId = text(formData, "caseId");
   try {
     const actor = await staffActorForCase(getDb(), staff, caseId, Number(text(formData, "org")) || null);
-    const contacts = await readContacts(getDb(), caseId, actor);
+    const contacts = await redactContactsForHandler(getDb(), caseId, actor.roles, await readContacts(getDb(), caseId, actor));
     revalidatePath(`/admin/cases/${caseId}`);
     return { contacts: contacts.map(({ createdAt: _createdAt, ...rest }) => (void _createdAt, rest)) };
   } catch (error) {

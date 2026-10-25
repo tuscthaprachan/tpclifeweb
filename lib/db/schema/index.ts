@@ -8,3 +8,4 @@ export * from "./content";
 export * from "./cases";
 export * from "./lost-found-staff";
 export * from "./lost-found-cases";
+export * from "./complaints";

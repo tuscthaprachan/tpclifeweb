@@ -23,6 +23,9 @@ export interface FormCalloutProps {
  * form's own page, never straight to the external `destinationUrl`, so the
  * "check before you click" page can never be skipped.
  *
+ * Laid out as a GOV.UK summary card: white, a thin border, and a title row
+ * above a rule. No tinted fill and no coloured stripe.
+ *
  * An editor dropping a form reference into a welfare page's rich text
  * body always renders from this one source of truth, so the callout can
  * never drift from what the form's own page says.
@@ -33,16 +36,20 @@ export function FormCallout({ form, locale, headingLevel, className }: FormCallo
   const href = localePath(locale, `/forms/${form.slug.current}`);
 
   return (
-    <div className={cx("rounded-panel border-l-[length:var(--border-width-thick)] border-action bg-surface-alt p-[var(--space-4)]", className)}>
-      <Heading level={headingLevel} className="text-lg">
-        <Link href={href} className="text-action no-underline hover:text-action-hover hover:underline">
-          {pick(form.title, locale)}
-        </Link>
-      </Heading>
-      <p className="m-0 mt-[var(--space-1)] text-ink-600">{pick(form.purpose, locale)}</p>
-      {form.requiresSignIn ? (
-        <StatusTag tone="warning" label={signInBadgeLabel(form.signInType, locale)} className="mt-[var(--space-2)]" />
-      ) : null}
+    <div className={cx("border border-line-strong bg-surface", className)}>
+      <div className="border-b border-line px-[var(--space-4)] py-[var(--space-3)]">
+        <Heading level={headingLevel} className="m-0 text-lg">
+          <Link href={href} className="text-action no-underline hover:text-action-hover hover:underline">
+            {pick(form.title, locale)}
+          </Link>
+        </Heading>
+      </div>
+      <div className="px-[var(--space-4)] py-[var(--space-3)]">
+        <p className="m-0 text-ink-900">{pick(form.purpose, locale)}</p>
+        {form.requiresSignIn ? (
+          <StatusTag tone="warning" label={signInBadgeLabel(form.signInType, locale)} className="mt-[var(--space-2)]" />
+        ) : null}
+      </div>
     </div>
   );
 }

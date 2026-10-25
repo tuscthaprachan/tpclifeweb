@@ -7,6 +7,7 @@
  */
 
 import { eq } from "drizzle-orm";
+import { claimTrackView, type ClaimTrackView } from "./claim-view";
 import { allowedTransitions, consumeTrackingAttempt, publicCaseView, resolveTrackingLink, transition, type CaseActor, type PublicCaseView, type TrackedCase } from "@/lib/cases";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { lostFoundItems } from "@/lib/db/schema/content/lost-found";
@@ -54,17 +55,31 @@ export async function lookupTracked(db: AuditExecutor, reference: string, token:
 
 export type TrackedView =
   | { state: "ok"; view: PublicCaseView; canWithdraw: boolean }
+  /** A claimant's link: their own claim only. */
+  | { state: "claim"; claim: ClaimTrackView }
   | { state: "limited"; retryAfterSeconds: number }
   | { state: "none" };
 
 export async function openTracked(db: AuditExecutor, reference: string, token: string, ip: string | null, now: Date = new Date()): Promise<TrackedView> {
   const found = await lookupTracked(db, reference, token, ip, now);
   if (found.state !== "ok") return found;
+  if (found.tracked.claimId) return { state: "claim", claim: await claimTrackView(db, found.tracked.id, found.tracked.claimId) };
   const view = await publicCaseView(db, found.tracked.id);
   return { state: "ok", view, canWithdraw: allowedTransitions(view.service, view.kind, view.status, "public").includes("withdrawn") };
 }
 
-export type WithdrawOutcome = "withdrawn" | "limited" | "none" | "not_allowed";
+/** The query for the track form when the attempt limit was reached: the problem and whole minutes to wait (at least one). */
+export function limitedQuery(retryAfterSeconds: number): string {
+  return `?problem=limited&wait=${Math.max(1, Math.ceil(retryAfterSeconds / 60))}`;
+}
+
+/** Minutes to wait read back from the `wait` query value, or null if it is missing or silly. */
+export function parseWaitMinutes(raw: string | undefined): number | null {
+  const n = Number(raw);
+  return Number.isInteger(n) && n >= 1 && n <= 24 * 60 ? n : null;
+}
+
+export type WithdrawOutcome = "withdrawn" | "none" | "not_allowed" | { state: "limited"; retryAfterSeconds: number };
 
 /**
  * Withdraws a lost report for the person who holds the link, and takes its
@@ -79,9 +94,10 @@ export async function withdrawTracked(
   now: Date = new Date(),
 ): Promise<WithdrawOutcome> {
   const found = await lookupTracked(db, reference, token, ctx.ip, now);
-  if (found.state === "limited") return "limited";
+  if (found.state === "limited") return found;
   if (found.state === "none") return "none";
   const { tracked } = found;
+  if (tracked.claimId) return "not_allowed";
   if (!allowedTransitions(tracked.service, tracked.kind, tracked.status, "public").includes("withdrawn")) return "not_allowed";
   const actor: CaseActor = { kind: "public", context: { ip: ctx.ip, userAgent: ctx.userAgent ?? null, requestId: ctx.requestId ?? null } };
   try {

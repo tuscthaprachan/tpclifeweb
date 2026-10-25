@@ -60,6 +60,13 @@ export function AdminHeader({ locale, hasSession, verified, isAdmin, isEditor, i
                 ) : null}
                 {isAdmin ? (
                   <li>
+                    <a href="/admin/complaints/categories" className="text-ink-900">
+                      {A.cpcatLink[locale]}
+                    </a>
+                  </li>
+                ) : null}
+                {isAdmin ? (
+                  <li>
                     <a href="/admin/staff" className="text-ink-900">
                       {A.staffLink[locale]}
                     </a>

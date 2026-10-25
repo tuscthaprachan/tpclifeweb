@@ -13,13 +13,16 @@ import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { nextReference } from "@/lib/db/references";
 import { user } from "@/lib/db/schema/auth";
 import { caseEvents, cases, type CaseEventRow, type CaseRow, type CaseService } from "@/lib/db/schema/cases";
+import { complaintCases } from "@/lib/db/schema/complaints";
 import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { bangkokDateKey } from "@/lib/i18n/format";
+import { complaintEscalated, complaintOverdue } from "@/lib/complaints/overdue";
 import { accessibleServices } from "./access";
+import { assertCaseAccess, canSeeCase, caseVisibleTo } from "./restrictions";
 import { insertContact, type ContactInput } from "./contacts";
 import { addOneYear, appendEvent, assertStaff, auditContextOf, cleanText, lockCase, NOTE_MAX, touchCase } from "./internal";
 import { allowedTransitions, getServiceDef, getStatusDef, initialStatus, isTerminalStatus, isValidKind, SERVICES } from "./services";
-import { CaseError, type BilingualText, type CaseActor, type StaffActor } from "./types";
+import { CaseError, type BilingualText, type CaseActor, type PublicUpdateText, type StaffActor } from "./types";
 import type { PiiEnv } from "@/lib/crypto/pii";
 
 export interface CreateCaseInput {
@@ -101,6 +104,14 @@ function cleanBilingual(text: BilingualText, what: string): BilingualText {
   return { th: cleanText(text.th, NOTE_MAX, `${what} (Thai)`), en: cleanText(text.en, NOTE_MAX, `${what} (English)`) };
 }
 
+/** At least one language is needed; a blank one is stored as null. */
+export function cleanPublicUpdate(text: PublicUpdateText, what: string): { th: string | null; en: string | null } {
+  const th = text.th?.trim() ?? "";
+  const en = text.en?.trim() ?? "";
+  if (!th && !en) throw new CaseError("invalid", `${what} is empty. Write it in Thai, English or both.`);
+  return { th: th ? cleanText(th, NOTE_MAX, `${what} (Thai)`) : null, en: en ? cleanText(en, NOTE_MAX, `${what} (English)`) : null };
+}
+
 /**
  * Moves a case to `to` if its state machine allows it. Records a
  * `status_changed` event (public when the new status has a public label).
@@ -115,7 +126,7 @@ export async function transition(db: AuditExecutor, caseId: string, to: string, 
   const note = opts.note ? cleanBilingual(opts.note, "Message") : null;
   return withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
-    if (actor.kind === "staff") assertStaff(actor, row.service);
+    if (actor.kind === "staff") await assertCaseAccess(tx, row, actor);
     else if (actor.kind === "system") throw new CaseError("forbidden", "Only staff or the person concerned can change a status.");
     if (opts.expectedFrom !== undefined && opts.expectedFrom !== row.status) throw new CaseError("stale", "The case has changed since it was opened.");
     const by = actor.kind === "staff" ? "staff" : "public";
@@ -159,7 +170,7 @@ export async function addNote(db: AuditExecutor, caseId: string, body: string, a
   const text = cleanText(body, NOTE_MAX, "Note");
   return withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
-    assertStaff(actor, row.service);
+    await assertCaseAccess(tx, row, actor);
     const id = await appendEvent(tx, caseId, actor, now, { type: "internal_note", body: text });
     await touchCase(tx, caseId, actor, now);
     await audit({ action: "case.note", entityType: "case", entityId: caseId, after: { eventId: id } });
@@ -167,14 +178,25 @@ export async function addNote(db: AuditExecutor, caseId: string, body: string, a
   });
 }
 
-/** Adds an update the person sees on the tracking page. Thai and English are both required. */
-export async function addPublicUpdate(db: AuditExecutor, caseId: string, text: BilingualText, actor: CaseActor, opts: { now?: Date } = {}): Promise<string> {
+/**
+ * Adds an update the person sees on the tracking page. Write it in Thai,
+ * English or both: at least one is needed, and the page shows the reader's
+ * language, falling back to the other. `metadata` tags the event (for example
+ * `{ claimId }`, which keeps it off the case's general timeline).
+ */
+export async function addPublicUpdate(
+  db: AuditExecutor,
+  caseId: string,
+  text: PublicUpdateText,
+  actor: CaseActor,
+  opts: { now?: Date; metadata?: Record<string, unknown> } = {},
+): Promise<string> {
   const now = opts.now ?? new Date();
-  const body = cleanBilingual(text, "Update");
+  const body = cleanPublicUpdate(text, "Update");
   return withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
-    assertStaff(actor, row.service);
-    const id = await appendEvent(tx, caseId, actor, now, { type: "public_update", visibility: "public", bodyTh: body.th, bodyEn: body.en });
+    await assertCaseAccess(tx, row, actor);
+    const id = await appendEvent(tx, caseId, actor, now, { type: "public_update", visibility: "public", bodyTh: body.th, bodyEn: body.en, metadata: opts.metadata });
     await touchCase(tx, caseId, actor, now);
     await audit({ action: "case.public_update", entityType: "case", entityId: caseId, after: { eventId: id } });
     return id;
@@ -186,8 +208,8 @@ export async function assign(db: AuditExecutor, caseId: string, assigneeUserId: 
   const now = opts.now ?? new Date();
   return withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
-    assertStaff(actor, row.service);
-    if (assigneeUserId !== null && !(await canWorkService(tx, assigneeUserId, row.service))) {
+    await assertCaseAccess(tx, row, actor);
+    if (assigneeUserId !== null && !((await canWorkService(tx, assigneeUserId, row.service)) && (await canSeeCase(tx, caseId, assigneeUserId)))) {
       throw new CaseError("invalid", "That person cannot work on this service.");
     }
     if (assigneeUserId === row.assignedTo) return;
@@ -221,7 +243,7 @@ export async function listAssignees(db: AuditExecutor, service: CaseService): Pr
 export async function getCase(db: AuditExecutor, caseId: string, actor: StaffActor): Promise<CaseRow> {
   const [row] = await db.select().from(cases).where(eq(cases.id, caseId));
   if (!row) throw new CaseError("not_found", "Case not found.");
-  assertStaff(actor, row.service);
+  await assertCaseAccess(db, row, actor);
   return row;
 }
 
@@ -251,12 +273,20 @@ export interface CaseListFilters {
   q?: string;
   /** Hide closed cases. */
   openOnly?: boolean;
+  /** Only complaints that are open and past a target (not acknowledged by its date, or past the resolve date). */
+  overdue?: boolean;
+  /** The moment "overdue" is judged at. Tests pass it. */
+  now?: Date;
   page?: number;
   pageSize?: number;
 }
 
 export interface CaseListRow extends Pick<CaseRow, "id" | "service" | "reference" | "kind" | "status" | "summary" | "assignedTo" | "actingOrganisationId" | "createdAt" | "updatedAt" | "closedAt"> {
   assigneeName: string | null;
+  /** A complaint that is open and past a target. Always false for other services. */
+  overdue: boolean;
+  /** A complaint the daily job has flagged as escalated and that is still open. */
+  escalated: boolean;
 }
 
 export interface CaseList {
@@ -277,14 +307,17 @@ export async function listCases(db: AuditExecutor, actor: StaffActor, filters: C
 
   const q = filters.q?.trim().replace(/[\\%_]/g, (c) => `\\${c}`);
   const assignee = filters.assignee === "me" ? actor.userId : filters.assignee;
+  const now = filters.now ?? new Date();
   const where = and(
     inArray(cases.service, allowed),
+    caseVisibleTo(actor.userId),
+    filters.overdue ? complaintOverdue(now) : undefined,
     filters.status ? eq(cases.status, filters.status) : undefined,
     assignee === "unassigned" ? isNull(cases.assignedTo) : assignee ? eq(cases.assignedTo, assignee) : undefined,
     q ? or(ilike(cases.reference, `%${q}%`)) : undefined,
     filters.openOnly ? isNull(cases.closedAt) : undefined,
   );
-  const [{ total } = { total: 0 }] = await db.select({ total: sql<number>`count(*)::int` }).from(cases).where(where);
+  const [{ total } = { total: 0 }] = await db.select({ total: sql<number>`count(*)::int` }).from(cases).leftJoin(complaintCases, eq(complaintCases.caseId, cases.id)).where(where);
   const rows = await db
     .select({
       id: cases.id,
@@ -299,9 +332,12 @@ export async function listCases(db: AuditExecutor, actor: StaffActor, filters: C
       updatedAt: cases.updatedAt,
       closedAt: cases.closedAt,
       assigneeName: user.name,
+      overdue: sql<boolean>`coalesce(${complaintOverdue(now)}, false)`,
+      escalated: sql<boolean>`coalesce(${complaintEscalated()}, false)`,
     })
     .from(cases)
     .leftJoin(user, eq(user.id, cases.assignedTo))
+    .leftJoin(complaintCases, eq(complaintCases.caseId, cases.id))
     .where(where)
     .orderBy(desc(cases.updatedAt), desc(cases.createdAt))
     .limit(pageSize)

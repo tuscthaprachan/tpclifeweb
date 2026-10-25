@@ -9,7 +9,12 @@
  *
  *   accepted  found item and lost report (if any) go to ready_to_collect
  *   rejected  found item goes back to listed (when no other claim waits) and
- *             the person gets a polite public update; the link is dismissed
+ *             the claimant gets a polite message; the link is dismissed
+ *
+ * The claimant's tracking link shows only their own claim
+ * (lib/lost-found/public/claim-view.ts). So the messages for a claim (the
+ * rejection, or collection details on acceptance) are public updates tagged
+ * with the claim id, which keeps them off the item's general timeline.
  *
  * `createClaim` also accepts the `public` actor, which is how a public claim
  * journey records its submission here. Only staff can move the found item to
@@ -22,7 +27,7 @@ import { addNote, addPublicUpdate } from "@/lib/cases/engine";
 import { insertContact, type ContactInput } from "@/lib/cases/contacts";
 import { appendEvent, assertStaff, auditContextOf, cleanText, lockCase, touchCase } from "@/lib/cases/internal";
 import { isTerminalStatus } from "@/lib/cases/services";
-import { CaseError, type BilingualText, type CaseActor, type StaffActor } from "@/lib/cases/types";
+import { CaseError, type BilingualText, type CaseActor, type PublicUpdateText, type StaffActor } from "@/lib/cases/types";
 import { decryptPii, encryptPii, type PiiEnv } from "@/lib/crypto/pii";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { caseContacts } from "@/lib/db/schema/cases";
@@ -135,6 +140,8 @@ export interface DecideInput {
   decision: ClaimDecision;
   /** Required to reject: the polite explanation the person sees, in both languages. */
   message?: BilingualText;
+  /** Optional on acceptance: where and when to collect, in Thai, English or both. Shown to the claimant only. */
+  collectionNote?: PublicUpdateText;
 }
 
 export interface DecisionResult {
@@ -191,6 +198,9 @@ export async function decideClaim(db: AuditExecutor, input: DecideInput, actor: 
           .where(and(eq(lostFoundCaseLinks.foundCaseId, found.id), eq(lostFoundCaseLinks.lostCaseId, lostCaseId)));
         await addNote(tx, lostCaseId, `Claim accepted for found item ${found.reference}.`, actor, { now });
       }
+      if (input.collectionNote?.th?.trim() || input.collectionNote?.en?.trim()) {
+        await addPublicUpdate(tx, found.id, input.collectionNote, actor, { now, metadata: { claimId: claim.id } });
+      }
       await addNote(tx, found.id, "Claim accepted: the answer matched the hidden detail.", actor, { now });
     } else {
       const message = { th: input.message!.th.trim(), en: input.message!.en.trim() };
@@ -200,12 +210,12 @@ export async function decideClaim(db: AuditExecutor, input: DecideInput, actor: 
         .where(and(eq(lostFoundClaims.caseId, found.id), isNull(lostFoundClaims.decision)));
       const otherWaiting = others.some((o) => o.id !== claim.id);
       if (found.status === "claim_pending" && !otherWaiting) {
-        await transition(tx, found.id, "listed", actor, { now, note: message });
+        await transition(tx, found.id, "listed", actor, { now });
         foundStatus = "listed";
         await setListingRegisterStatus(tx, found.id, "open", content, now);
-      } else {
-        await addPublicUpdate(tx, found.id, message, actor, { now });
       }
+      // For this claimant only: the item's general timeline does not carry it.
+      await addPublicUpdate(tx, found.id, message, actor, { now, metadata: { claimId: claim.id } });
       if (lostCaseId) {
         const [lost] = await tx.select({ status: cases.status }).from(cases).where(eq(cases.id, lostCaseId));
         if (lost?.status === "match_found" || lost?.status === "ready_to_collect") {

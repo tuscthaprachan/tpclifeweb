@@ -139,8 +139,11 @@ describe("claims", () => {
     expect(result).toMatchObject({ foundStatus: "listed", lostStatus: "searching" });
     expect(await t.statusOf(found.caseId)).toBe("listed");
     expect(await t.statusOf(lost.caseId)).toBe("searching");
+    // The item's general timeline shows it listed again; the polite message is for the claimant's own view.
     const foundPublic = await publicTimeline(t.db, found.caseId);
-    expect(foundPublic.at(-1)!.body).toEqual(DEFAULT_REJECT_MESSAGE);
+    expect(foundPublic.at(-1)).toMatchObject({ title: { en: "Listed as found" }, body: null });
+    const claimMessage = (await t.events(found.caseId)).find((e) => e.type === "public_update");
+    expect(claimMessage).toMatchObject({ visibility: "public", bodyTh: DEFAULT_REJECT_MESSAGE.th, bodyEn: DEFAULT_REJECT_MESSAGE.en, metadata: { claimId } });
     expect((await publicTimeline(t.db, lost.caseId)).at(-1)!.body).toEqual(DEFAULT_REJECT_MESSAGE);
     expect((await linkedCases(t.db, found.caseId, "found"))[0]!.status).toBe("dismissed");
     expect((await getListingForCase(t.db, found.caseId))!.registerStatus).toBe("open");

@@ -167,6 +167,13 @@ export function parseRejection(formData: FormData, locale: Locale): Parsed<{ th:
   return parsed.ok ? { ok: true, data: parsed.data.message } : { ok: false, errors: Object.fromEntries(Object.entries(parsed.errors).map(([key, m]) => [key.replace(/^message\./, "message."), m])) };
 }
 
+/** Optional collection details for an accepted claim, in Thai, English or both (fields `collection.th` and `collection.en`). */
+export function parseCollectionNote(formData: FormData, locale: Locale): Parsed<{ th: string; en: string }> {
+  const k = fieldKit(locale, false);
+  const parsed = parseForm(z.object({ collection: k.bilingual(a("lfcFieldCollectionNote", locale), { max: 1000 }) }), formDataToObject(formData));
+  return parsed.ok ? { ok: true, data: parsed.data.collection } : { ok: false, errors: parsed.errors };
+}
+
 export interface HandoverFields {
   collectedByName: string | null;
   idCheckType: (typeof ID_CHECK_TYPES)[number];

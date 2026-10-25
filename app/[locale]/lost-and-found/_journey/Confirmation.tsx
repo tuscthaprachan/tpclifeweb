@@ -27,7 +27,7 @@ const NEXT = {
 
 /**
  * The confirmation panel: the reference, the private tracking link (shown
- * here and not again, with clear advice to keep it), an optional email of the
+ * here for 30 minutes, with clear advice to keep it), an optional email of the
  * link, and what happens next.
  */
 export async function Confirmation({ kind, locale, slug, result, email, crumbs }: ConfirmationProps) {

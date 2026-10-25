@@ -65,6 +65,11 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
       },
       {
+        // The same for complaint tracking.
+        source: "/:locale/complaints/track/:path*",
+        headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
+      },
+      {
         // The search index is regenerated on revalidation, so it may be cached
         // hard at the edge but must revalidate quickly when content changes.
         source: "/api/search-index/:locale",

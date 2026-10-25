@@ -26,7 +26,7 @@ export const RESULT_TTL_MS = 30 * 60 * 1000;
 /** What a submitted journey leaves for the confirmation page. */
 export interface JourneyResult {
   reference: string;
-  /** The private tracking token, shown once. */
+  /** The private tracking token, shown on the confirmation page until the result expires. */
   token: string;
   /** For the optional "email me the link" button. Held only until the result expires. */
   email: string | null;

@@ -118,22 +118,38 @@ const FOUND: MachineDef = {
   publicActorTo: [],
 };
 
-/** Placeholder for stage C (complaints). Replace the statuses when the service is designed. */
+/**
+ * Complaint: received -> acknowledged -> in_progress -> resolved -> closed,
+ * with withdrawn (the person no longer wants to pursue it) and reopened.
+ * `resolved` is terminal, so it starts the one year personal data clock; the
+ * person may reopen it from their tracking link within the reopen window
+ * (lib/complaints/constants.ts, 30 days), which stops the clock. When the
+ * window passes a daily job moves it to `closed` (final, and the clock starts
+ * again from then). Staff may also close it early and reopen it on the
+ * person's behalf. "Escalated" is a flag on the complaint (lib/db/schema/
+ * complaints.ts), not a status, so it never changes what the person sees.
+ */
 const COMPLAINT: MachineDef = {
   initial: "received",
   statuses: {
     received: { label: s("รับเรื่องแล้ว", "Received"), publicLabel: s("รับเรื่องแล้ว", "Received"), tone: "info", terminal: false },
-    in_progress: { label: s("กำลังดำเนินการ", "In progress"), publicLabel: s("กำลังดำเนินการ", "In progress"), tone: "info", terminal: false },
+    acknowledged: { label: s("รับทราบแล้ว", "Acknowledged"), publicLabel: s("เจ้าหน้าที่รับทราบแล้ว", "Acknowledged by staff"), tone: "info", terminal: false },
+    in_progress: { label: s("กำลังดำเนินการ", "In progress"), publicLabel: s("กำลังดำเนินการ", "Being looked into"), tone: "warning", terminal: false },
+    reopened: { label: s("เปิดเรื่องอีกครั้ง", "Reopened"), publicLabel: s("เปิดเรื่องอีกครั้ง", "Reopened"), tone: "warning", terminal: false },
     resolved: { label: s("แก้ไขแล้ว", "Resolved"), publicLabel: s("แก้ไขแล้ว", "Resolved"), tone: "success", terminal: true },
+    closed: { label: s("ปิดเรื่อง", "Closed"), publicLabel: s("ปิดเรื่องแล้ว", "Closed"), tone: "neutral", terminal: true },
     withdrawn: { label: s("ผู้แจ้งยกเลิก", "Withdrawn"), publicLabel: s("ยกเลิกเรื่องแล้ว", "Withdrawn"), tone: "neutral", terminal: true },
   },
   transitions: {
-    received: ["in_progress", "resolved", "withdrawn"],
+    received: ["acknowledged", "in_progress", "resolved", "withdrawn"],
+    acknowledged: ["in_progress", "resolved", "withdrawn"],
     in_progress: ["resolved", "withdrawn"],
-    resolved: ["in_progress"],
+    reopened: ["in_progress", "resolved", "withdrawn"],
+    resolved: ["reopened", "closed"],
+    closed: [],
     withdrawn: [],
   },
-  publicActorTo: ["withdrawn"],
+  publicActorTo: ["withdrawn", "reopened"],
 };
 
 export const SERVICES: Record<CaseService, ServiceDef> = {

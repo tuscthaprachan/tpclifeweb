@@ -4,7 +4,7 @@ import { readContacts } from "@/lib/cases";
 import { caseContacts, cases } from "@/lib/db/schema";
 import { ID_CHECK_TYPES, lostFoundCaseLinks, lostFoundHandovers } from "@/lib/db/schema/lost-found-staff";
 import { createClaim, decideClaim } from "@/lib/lost-found/claims";
-import { getHandover, recordHandover } from "@/lib/lost-found/handover";
+import { defaultHandoverDesk, getHandover, recordHandover } from "@/lib/lost-found/handover";
 import { getListingForCase } from "@/lib/lost-found/listing";
 import { markPossibleMatch } from "@/lib/lost-found/links";
 import { lfSetup } from "./helpers";
@@ -54,7 +54,10 @@ describe("recordHandover", () => {
     expect((await t.db.select().from(lostFoundCaseLinks).where(eq(lostFoundCaseLinks.foundCaseId, found.caseId)))[0]!.status).toBe("confirmed");
     const notes = (await t.events(lost.caseId)).filter((e) => e.type === "internal_note");
     expect(notes.at(-1)!.body).toContain("Returned to the owner");
-    expect(notes.at(-1)!.body).toContain("student_card");
+    // The note names the ID type as the form does, never the raw key.
+    expect(notes.at(-1)!.body).toContain("ID checked: Student card");
+    expect(notes.at(-1)!.body).not.toContain("student_card");
+    expect((await t.events(found.caseId)).filter((e) => e.type === "internal_note").at(-1)!.body).toBe("Handed over. ID checked: Student card.");
 
     const handover = await getHandover(t.db, found.caseId);
     expect(handover).toMatchObject({ idCheckType: "student_card", deskOrganisationId: t.officer.organisationId, officerUserId: t.officer.userId, lostCaseId: lost.caseId });
@@ -86,12 +89,26 @@ describe("recordHandover", () => {
     expect(row!.collectedByContactId).not.toBeNull();
   });
 
-  it("records the desk as the organisation acting, and refuses another", async () => {
+  it("records the desk chosen (it may be the other desk) and the organisation acting, and refuses a non-desk", async () => {
     const { found } = await ready();
-    await expect(recordHandover(t.db, input(found.caseId, { deskOrganisationId: t.orgId("tusc") }), t.officer)).rejects.toMatchObject({ code: "invalid" });
-    await recordHandover(t.db, input(found.caseId, { deskOrganisationId: t.other.organisationId }), t.other);
-    expect((await getHandover(t.db, found.caseId))!.deskOrganisationId).toBe(t.orgId("tusc"));
+    await expect(recordHandover(t.db, input(found.caseId, { deskOrganisationId: 999_999 }), t.officer)).rejects.toMatchObject({ code: "invalid" });
+    // Acting for TUSC, handing over at the TUSU desk that holds the item.
+    await recordHandover(t.db, input(found.caseId, { deskOrganisationId: t.orgId("tusu") }), t.other);
+    expect((await getHandover(t.db, found.caseId))!.deskOrganisationId).toBe(t.orgId("tusu"));
     expect((await t.events(found.caseId)).find((e) => e.toStatus === "returned")!.actingOrganisationId).toBe(t.orgId("tusc"));
+  });
+
+  it("starts the desk on the one holding the item, else the officer's own", () => {
+    expect(defaultHandoverDesk(2, 1, [1, 2])).toBe(2);
+    expect(defaultHandoverDesk(null, 1, [1, 2])).toBe(1);
+    expect(defaultHandoverDesk(7, 1, [1, 2])).toBe(1);
+  });
+
+  it("writes the notes in Thai for Thai-speaking staff", async () => {
+    const { lost, found } = await ready();
+    await recordHandover(t.db, input(found.caseId), t.officer, { staffLocale: "th" });
+    expect((await t.events(found.caseId)).filter((e) => e.type === "internal_note").at(-1)!.body).toBe("ส่งมอบของแล้ว บัตรที่ตรวจ: บัตรนักศึกษา");
+    expect((await t.events(lost.caseId)).filter((e) => e.type === "internal_note").at(-1)!.body).toContain("บัตรนักศึกษา");
   });
 
   it("refuses an unknown ID type, a future time, a missing name and a second handover", async () => {

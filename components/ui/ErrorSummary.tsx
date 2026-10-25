@@ -34,7 +34,7 @@ export function ErrorSummary({ title, headingLevel, items, className }: ErrorSum
       {...liveRegionProps("assertive")}
       tabIndex={-1}
       autoFocus
-      className={cx("rounded-panel border-[length:var(--border-width-thick)] border-error bg-error-soft px-[var(--space-4)] py-[var(--space-4)]", className)}
+      className={cx("border-[length:var(--border-width-thick)] border-error bg-surface px-[var(--space-4)] py-[var(--space-4)] text-ink-900", className)}
     >
       <FocusParent />
       <Heading level={headingLevel} className="m-0 text-lg font-semibold text-ink-900">

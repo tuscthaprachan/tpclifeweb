@@ -11,6 +11,7 @@ import {
   listCases,
   listContactSummaries,
   publicCaseView,
+  localisedBody,
   publicTimeline,
   readContacts,
   reencryptContacts,
@@ -142,11 +143,39 @@ describe("notes, updates, assignment and the public timeline", () => {
     expect(view.timeline).toHaveLength(3);
   });
 
-  it("requires both languages for a public update and non-empty notes", async () => {
+  it("takes a public update in one language or both, and refuses an empty one", async () => {
     const c = await createCase(t.db, lost, { kind: "public" }, { now: NOW });
-    await expect(addPublicUpdate(t.db, c.id, { th: "", en: "Hello" }, officer)).rejects.toMatchObject({ code: "invalid" });
+    await addPublicUpdate(t.db, c.id, { th: "", en: "Hello" }, officer);
+    await addPublicUpdate(t.db, c.id, { th: "สวัสดี" }, officer);
+    await addPublicUpdate(t.db, c.id, { th: " both ", en: " ทั้งสอง " }, officer);
+    const bodies = (await publicTimeline(t.db, c.id)).filter((e) => e.type === "public_update").map((e) => e.body);
+    // A blank language is stored as nothing, not as an empty string.
+    expect(bodies).toEqual([
+      { th: null, en: "Hello" },
+      { th: "สวัสดี", en: null },
+      { th: "both", en: "ทั้งสอง" },
+    ]);
+    await expect(addPublicUpdate(t.db, c.id, { th: "  ", en: "" }, officer)).rejects.toMatchObject({ code: "invalid" });
+    await expect(addPublicUpdate(t.db, c.id, {}, officer)).rejects.toMatchObject({ code: "invalid" });
     await expect(addNote(t.db, c.id, "   ", officer)).rejects.toMatchObject({ code: "invalid" });
   });
+
+  it("shows the reader's language, else the other with its own language", () => {
+    expect(localisedBody({ th: "ไทย", en: "English" }, "en")).toEqual({ text: "English", lang: "en" });
+    expect(localisedBody({ th: "ไทย", en: null }, "en")).toEqual({ text: "ไทย", lang: "th" });
+    expect(localisedBody({ th: null, en: "English" }, "th")).toEqual({ text: "English", lang: "en" });
+    expect(localisedBody({ th: " ", en: null }, "th")).toBeNull();
+    expect(localisedBody(null, "en")).toBeNull();
+  });
+
+  it("keeps updates tagged with a claim off the public timeline", async () => {
+    const c = await createCase(t.db, lost, { kind: "public" }, { now: NOW });
+    await addPublicUpdate(t.db, c.id, { en: "For everyone" }, officer);
+    await addPublicUpdate(t.db, c.id, { en: "For one claimant" }, officer, { metadata: { claimId: "11111111-1111-4111-8111-111111111111" } });
+    const bodies = (await publicTimeline(t.db, c.id)).map((e) => e.body?.en).filter(Boolean);
+    expect(bodies).toEqual(["For everyone"]);
+  });
+
 
   it("only staff for the service can annotate", async () => {
     const c = await createCase(t.db, lost, { kind: "public" }, { now: NOW });

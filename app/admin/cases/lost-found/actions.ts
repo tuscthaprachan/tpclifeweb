@@ -25,7 +25,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
 import { createClaim, decideClaim, readClaimAnswer } from "@/lib/lost-found/claims";
 import { readVerificationDetail, saveStorageLocation, saveVerificationDetail } from "@/lib/lost-found/details";
-import { parseClaim, parseContactFields, parseDescription, parseHandover, parseRejection, parseStorage, parseVerification, parseWalkIn } from "@/lib/lost-found/forms";
+import { parseClaim, parseCollectionNote, parseContactFields, parseDescription, parseHandover, parseRejection, parseStorage, parseVerification, parseWalkIn } from "@/lib/lost-found/forms";
 import { recordHandover } from "@/lib/lost-found/handover";
 import { logFoundItem, logWalkInLostReport, publishFoundItem, updateItemDescription } from "@/lib/lost-found/intake";
 import { markPossibleMatch } from "@/lib/lost-found/links";
@@ -108,7 +108,7 @@ export async function updateListingAction(_prev: LfState, fd: FormData): Promise
   return onCase(fd, async ({ locale, caseId, actor }) => {
     const parsed = parseDescription(fd, locale);
     if (!parsed.ok) return { errors: parsed.errors };
-    await updateItemDescription(getDb(), caseId, parsed.data, actor);
+    await updateItemDescription(getDb(), caseId, parsed.data, actor, { staffLocale: locale });
     return { saved: "lfcSavedListing" };
   });
 }
@@ -265,13 +265,18 @@ export async function decideClaimAction(_prev: LfState, fd: FormData): Promise<L
     const decision = text(fd, "decision") === "accepted" ? "accepted" : "rejected";
     const claimId = text(fd, "claimId");
     let message: { th: string; en: string } | undefined;
+    let collectionNote: { th: string; en: string } | undefined;
     if (decision === "rejected") {
       const parsed = parseRejection(fd, locale);
       if (!parsed.ok) return { errors: parsed.errors };
       message = parsed.data;
+    } else {
+      const parsed = parseCollectionNote(fd, locale);
+      if (!parsed.ok) return { errors: parsed.errors };
+      collectionNote = parsed.data;
     }
     const db = getDb();
-    const result = await decideClaim(db, { claimId, decision, message }, actor);
+    const result = await decideClaim(db, { claimId, decision, message, collectionNote }, actor);
     refresh(result.lostCaseId, caseId);
     const notice = decision === "accepted" && result.lostCaseId ? await tell(db, result.lostCaseId, "ready_to_collect", actor, await deskOf(db, caseId)) : undefined;
     return { saved: decision === "accepted" ? "lfcSavedAccepted" : "lfcSavedRejected", notice };
@@ -285,7 +290,7 @@ export async function handoverAction(_prev: LfState, fd: FormData): Promise<LfSt
     const parsed = parseHandover(fd, locale);
     if (!parsed.ok) return { errors: parsed.errors };
     const db = getDb();
-    const result = await recordHandover(db, { foundCaseId: caseId, ...parsed.data }, actor);
+    const result = await recordHandover(db, { foundCaseId: caseId, ...parsed.data }, actor, { staffLocale: locale });
     refresh(result.lostCaseId, caseId);
     const notice = result.lostCaseId ? await tell(db, result.lostCaseId, "returned", actor, actor.organisationId) : undefined;
     return { saved: "lfcSavedHandover", notice };
@@ -312,7 +317,7 @@ export async function startFoundAction(_prev: LfState, fd: FormData): Promise<Lf
   if (!parsed.ok) return { errors: parsed.errors };
   let caseId: string;
   try {
-    ({ caseId } = await logFoundItem(getDb(), parsed.data, actor, { locale }));
+    ({ caseId } = await logFoundItem(getDb(), parsed.data, actor, { locale, staffLocale: locale }));
   } catch (error) {
     return { error: messageFor(error, locale) };
   }
@@ -325,7 +330,7 @@ export async function describeFoundAction(_prev: LfState, fd: FormData): Promise
   const done = await onCase(fd, async ({ locale, caseId, actor }) => {
     const parsed = parseDescription(fd, locale);
     if (!parsed.ok) return { errors: parsed.errors };
-    await updateItemDescription(getDb(), caseId, parsed.data, actor);
+    await updateItemDescription(getDb(), caseId, parsed.data, actor, { staffLocale: locale });
     return { saved: "lfcSavedListing" };
   });
   if (done.saved) redirect(`/admin/cases/new/found/${text(fd, "caseId")}`);
@@ -342,7 +347,7 @@ export async function logLostAction(_prev: LfState, fd: FormData): Promise<LfSta
   if (!parsed.ok) return { errors: parsed.errors };
   let caseId: string;
   try {
-    ({ caseId } = await logWalkInLostReport(getDb(), parsed.data, actor));
+    ({ caseId } = await logWalkInLostReport(getDb(), parsed.data, actor, { staffLocale: locale }));
   } catch (error) {
     return { error: messageFor(error, locale) };
   }

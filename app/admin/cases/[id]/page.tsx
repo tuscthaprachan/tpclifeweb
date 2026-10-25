@@ -7,6 +7,7 @@ import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
 import { requireStaff } from "@/lib/auth/session";
 import { actingOrganisations, canAccessService, CASE_INBOX_ROLES } from "@/lib/cases/access";
+import { assertCaseAccess } from "@/lib/cases/restrictions";
 import { listContactSummaries } from "@/lib/cases/contacts";
 import { listAssignees, staffTimeline, type StaffTimelineEntry } from "@/lib/cases/engine";
 import { allowedTransitions, getServiceDef, getStatusDef, SERVICES, statusLabel } from "@/lib/cases/services";
@@ -45,6 +46,13 @@ export default async function CasePage({ params, searchParams }: { params: Promi
   let actor;
   try {
     actor = await staffActorFor(staff, row.service, preferred);
+  } catch (error) {
+    if (error instanceof CaseError) notFound();
+    throw error;
+  }
+  // A restricted complaint is a 404 to anyone not named on its category.
+  try {
+    await assertCaseAccess(db, row, actor);
   } catch (error) {
     if (error instanceof CaseError) notFound();
     throw error;
@@ -131,7 +139,7 @@ export default async function CasePage({ params, searchParams }: { params: Promi
         </Heading>
         <div className="flex flex-col gap-[var(--space-3)]">
           <Heading level={3}>{a("caseStatusHeading", locale)}</Heading>
-          <StatusForm locale={locale} caseId={id} organisationId={actor.organisationId} from={row.status} options={next} />
+          {row.service === "complaint" ? <p className="m-0 text-ink-600">{a("cpcStatusUsePanel", locale)}</p> : <StatusForm locale={locale} caseId={id} organisationId={actor.organisationId} from={row.status} options={next} />}
         </div>
         <div className="flex flex-col gap-[var(--space-3)]">
           <Heading level={3}>{a("caseUpdateHeading", locale)}</Heading>
@@ -158,7 +166,7 @@ export default async function CasePage({ params, searchParams }: { params: Promi
           {a("caseTimelineTitle", locale)}
         </Heading>
         <p className="mt-[var(--space-2)] text-ink-600">{a("caseTimelineNote", locale)}</p>
-        <ol className="m-0 mt-[var(--space-3)] flex list-none flex-col gap-[var(--space-3)] p-0">
+        <ol className="m-0 mt-[var(--space-3)] flex list-none flex-col gap-0 p-0">
           {[...events].reverse().map((event) => (
             <TimelineItem key={event.id} event={event} locale={locale} orgName={orgName} people={people} service={row.service} kind={row.kind} />
           ))}
@@ -200,7 +208,7 @@ function TimelineItem({
   const message = event.body ?? (event.bodyTh || event.bodyEn ? [event.bodyTh, event.bodyEn].filter(Boolean).join("\n") : null);
 
   return (
-    <li className={`rounded-control border-l-4 px-[var(--space-3)] py-[var(--space-2)] ${isPublic ? "border-action bg-surface-alt" : "border-dashed border-line-strong"}`}>
+    <li className="border-b border-line py-[var(--space-3)] first:border-t">
       <div className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
         <strong>{title}</strong>
         <Tag tone={isPublic ? "governance" : "neutral"}>{a(isPublic ? "caseTagPublic" : "caseTagInternal", locale)}</Tag>

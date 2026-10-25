@@ -12,6 +12,7 @@
 import type { Locale, LocaleString } from "./config";
 import { CANTEEN_STRINGS } from "./admin-content/canteen";
 import { CASES_STRINGS } from "./admin-content/cases";
+import { COMPLAINTS_STRINGS } from "./admin-content/complaints";
 import { DIRECTORY_STRINGS } from "./admin-content/directory";
 import { LOST_FOUND_CASES_STRINGS } from "./admin-content/lost-found-cases";
 import { MEDIA_STRINGS } from "./admin-content/media";
@@ -717,6 +718,7 @@ export const A = {
   ...CANTEEN_STRINGS,
   ...MEDIA_STRINGS,
   ...CASES_STRINGS,
+  ...COMPLAINTS_STRINGS,
   ...LOST_FOUND_CASES_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 

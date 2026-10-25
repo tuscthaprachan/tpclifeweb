@@ -8,11 +8,13 @@
  *   tracking.ts   issueTrackingLink, resolveTrackingLink, revokeTrackingLinks
  *   timeline.ts   publicTimeline, publicCaseView
  *   retention.ts  purgeExpiredPii
+ *   restrictions.ts  restricted complaint categories: assertCaseAccess, caseVisibleTo
  */
 
 export * from "./access";
 export * from "./contacts";
 export * from "./engine";
+export * from "./restrictions";
 export * from "./retention";
 export * from "./services";
 export * from "./timeline";

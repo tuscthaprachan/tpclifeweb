@@ -20,7 +20,7 @@ export async function generateMetadata() {
   return adminTitle("casesTitle");
 }
 
-type Query = { service?: string; status?: string; assignee?: string; q?: string; open?: string; page?: string };
+type Query = { service?: string; status?: string; assignee?: string; q?: string; open?: string; overdue?: string; page?: string };
 
 const field = "min-h-[var(--target-min)] rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900";
 
@@ -37,13 +37,13 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
   const assignee = query.assignee === "me" || query.assignee === "unassigned" ? query.assignee : undefined;
   const page = Math.max(Number.parseInt(query.page ?? "1", 10) || 1, 1);
   const actor = await staffActorFor(staff, services[0]!);
-  const list = await listCases(getDb(), actor, { service, status, assignee, q: query.q, openOnly: query.open === "1", page });
-  const filtered = Boolean(service || status || assignee || query.q?.trim() || query.open === "1");
+  const list = await listCases(getDb(), actor, { service, status, assignee, q: query.q, openOnly: query.open === "1", overdue: query.overdue === "1", page });
+  const filtered = Boolean(service || status || assignee || query.q?.trim() || query.open === "1" || query.overdue === "1");
   const totalPages = Math.max(Math.ceil(list.total / list.pageSize), 1);
 
   const params = (p: number) => {
     const sp = new URLSearchParams();
-    for (const [k, v] of Object.entries({ service, status, assignee, q: query.q?.trim(), open: query.open === "1" ? "1" : undefined })) if (v) sp.set(k, v);
+    for (const [k, v] of Object.entries({ service, status, assignee, q: query.q?.trim(), open: query.open === "1" ? "1" : undefined, overdue: query.overdue === "1" ? "1" : undefined })) if (v) sp.set(k, v);
     if (p > 1) sp.set("page", String(p));
     const qs = sp.toString();
     return qs ? `/admin/cases?${qs}` : "/admin/cases";
@@ -65,7 +65,17 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
       header: a("casesColType", locale),
       cell: (row) => `${pick(getServiceDef(row.service).label, locale)}, ${pick(SERVICES[row.service].kinds[row.kind]?.label, locale)}`,
     },
-    { id: "summary", header: a("casesColSummary", locale), cell: (row) => row.summary ?? "" },
+    {
+      id: "summary",
+      header: a("casesColSummary", locale),
+      cell: (row) => (
+        <span className="flex flex-wrap items-center gap-x-[var(--space-2)] gap-y-[var(--space-1)]">
+          {row.summary ?? ""}
+          {row.overdue ? <StatusTag tone="error" label={a("cpcOverdue", locale)} /> : null}
+          {row.escalated ? <StatusTag tone="error" label={a("cpcEscalatedTag", locale)} /> : null}
+        </span>
+      ),
+    },
     {
       id: "status",
       header: a("casesColStatus", locale),
@@ -142,6 +152,12 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
           <input type="checkbox" name="open" value="1" defaultChecked={query.open === "1"} />
           {a("casesFilterOpenOnly", locale)}
         </label>
+        {services.includes("complaint") ? (
+          <label className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+            <input type="checkbox" name="overdue" value="1" defaultChecked={query.overdue === "1"} />
+            {a("cpcFilterOverdue", locale)}
+          </label>
+        ) : null}
         <Button type="submit" variant="secondary">
           {a("casesFilterApply", locale)}
         </Button>

@@ -15,7 +15,8 @@ import { and, eq, isNull } from "drizzle-orm";
 import { consumeRateLimit, type RateResult, type RateRule } from "@/lib/auth/rate-limit";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { caseAccessTokens, cases, type CaseService } from "@/lib/db/schema/cases";
-import { appendEvent, assertStaff, auditContextOf, lockCase } from "./internal";
+import { appendEvent, auditContextOf, lockCase } from "./internal";
+import { assertCaseAccess } from "./restrictions";
 import type { CaseActor } from "./types";
 
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
@@ -39,7 +40,9 @@ export interface IssuedTrackingLink {
 }
 
 /**
- * Makes a new link for a case. Earlier links keep working until revoked. Any
+ * Makes a new link for a case. Earlier links keep working until revoked. With
+ * `claimId` the link is for one claim on the case and shows only that claim
+ * (the tracking page checks `TrackedCase.claimId`). Any
  * actor may issue one (the journey issues it for a new report); the token is
  * the only secret, so only hand it to the person concerned.
  */
@@ -47,15 +50,15 @@ export async function issueTrackingLink(
   db: AuditExecutor,
   caseId: string,
   actor: CaseActor,
-  opts: { expiresAt?: Date | null; now?: Date } = {},
+  opts: { expiresAt?: Date | null; now?: Date; claimId?: string | null } = {},
 ): Promise<IssuedTrackingLink> {
   const now = opts.now ?? new Date();
   const token = randomBytes(32).toString("base64url");
   const expiresAt = opts.expiresAt ?? null;
   await withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
-    if (actor.kind === "staff") assertStaff(actor, row.service);
-    await tx.insert(caseAccessTokens).values({ caseId, tokenHash: hashToken(token), createdAt: now, expiresAt });
+    if (actor.kind === "staff") await assertCaseAccess(tx, row, actor);
+    await tx.insert(caseAccessTokens).values({ caseId, tokenHash: hashToken(token), claimId: opts.claimId ?? null, createdAt: now, expiresAt });
     await appendEvent(tx, caseId, actor, now, { type: "tracking_link_issued" });
     await audit({ action: "case_link.issue", entityType: "case", entityId: caseId, after: { expiresAt: expiresAt?.toISOString() ?? null } });
   });
@@ -67,7 +70,7 @@ export async function revokeTrackingLinks(db: AuditExecutor, caseId: string, act
   const now = opts.now ?? new Date();
   return withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
-    assertStaff(actor, row.service);
+    await assertCaseAccess(tx, row, actor);
     const revoked = await tx
       .update(caseAccessTokens)
       .set({ revokedAt: now })
@@ -87,6 +90,8 @@ export interface TrackedCase {
   service: CaseService;
   kind: string;
   status: string;
+  /** Set when the link is for one claim: show that claim only, never the case. */
+  claimId: string | null;
 }
 
 /** The case a reference and link point to, or null for any kind of mismatch. */
@@ -101,6 +106,7 @@ export async function resolveTrackingLink(db: AuditExecutor, reference: string, 
       kind: cases.kind,
       status: cases.status,
       tokenHash: caseAccessTokens.tokenHash,
+      claimId: caseAccessTokens.claimId,
       expiresAt: caseAccessTokens.expiresAt,
       revokedAt: caseAccessTokens.revokedAt,
     })
@@ -113,5 +119,5 @@ export async function resolveTrackingLink(db: AuditExecutor, reference: string, 
   if (stored.length !== given.length || !timingSafeEqual(stored, given)) return null;
   if (row.reference !== reference.trim().toUpperCase()) return null;
   if (row.revokedAt || (row.expiresAt && row.expiresAt <= now)) return null;
-  return { id: row.id, reference: row.reference, service: row.service, kind: row.kind, status: row.status };
+  return { id: row.id, reference: row.reference, service: row.service, kind: row.kind, status: row.status, claimId: row.claimId };
 }

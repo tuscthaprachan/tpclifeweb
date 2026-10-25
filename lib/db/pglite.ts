@@ -20,6 +20,7 @@ import { migrate } from "drizzle-orm/pglite/migrator";
 import * as schema from "./schema";
 import { siteSettings } from "./schema/content/site";
 import { seedOrganisations } from "./seed";
+import { seedComplaintCategories } from "./seed/complaints";
 import { seedContent } from "./seed/content";
 
 export async function openPglite({ dataDir }: { dataDir: string | undefined }) {
@@ -31,5 +32,7 @@ export async function openPglite({ dataDir }: { dataDir: string | undefined }) {
     await seedOrganisations(db);
     await seedContent(db);
   }
+  // Insert-if-missing, so a kept directory database gets categories added after it was first seeded.
+  await seedComplaintCategories(db);
   return db;
 }
