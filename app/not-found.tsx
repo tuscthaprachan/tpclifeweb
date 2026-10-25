@@ -29,6 +29,7 @@
 
 import Link from "next/link";
 import "@/styles/globals.css";
+import { River } from "@/components/illustrations/River";
 import { fontVariables } from "@/components/layout/fonts";
 import { HTML_LANG } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -38,6 +39,7 @@ export default function GlobalNotFound() {
     <html lang={HTML_LANG.th} className={fontVariables}>
       <body>
         <main id="main-content" className="mx-auto max-w-[var(--width-content)] px-[var(--gutter)] py-12">
+          <River className="mb-4 h-[84px] w-[120px]" />
           <h1>{UI.pageNotFoundTitle.th}</h1>
           <p className="mt-4 text-ink-600">{UI.pageNotFoundBody.th}</p>
           <ul className="mt-6 flex flex-col gap-2">

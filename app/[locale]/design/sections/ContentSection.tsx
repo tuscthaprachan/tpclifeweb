@@ -1,5 +1,6 @@
 import { DataTable, type DataTableColumn } from "@/components/ui/DataTable";
 import { Details } from "@/components/ui/Details";
+import { River } from "@/components/illustrations/River";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Heading } from "@/components/ui/Heading";
 import { InsetText } from "@/components/ui/InsetText";
@@ -239,10 +240,25 @@ export function ContentSection({ headingLevel, locale }: { headingLevel: Heading
         id="empty-state"
         name="EmptyState"
         headingLevel={headingLevel}
-        purpose="A list or search with nothing in it, so the page never looks broken or blank."
-        whenNotToUse='For an error condition, where NotificationBanner variant="warning" fits better.'
+        purpose="A list or search with nothing in it, so the page never looks broken or blank. Shows the River illustration above the title; pass illustration={false} to leave it out."
+        whenNotToUse='For an error condition, where NotificationBanner variant="warning" fits better. Turn the illustration off in dense staff tables.'
+        a11yNotes={["The illustration is decorative (aria-hidden), so the title is the only content a screen reader announces."]}
       >
-        <EmptyState title="No events scheduled">Check back closer to the new semester.</EmptyState>
+        <Stack space={4}>
+          <EmptyState title="No events scheduled">Check back closer to the new semester.</EmptyState>
+          <EmptyState title="No events scheduled" illustration={false} />
+        </Stack>
+      </ComponentDoc>
+
+      <ComponentDoc
+        id="river"
+        name="River"
+        headingLevel={headingLevel}
+        purpose="The small campus scene (sun, river and ferry) used in EmptyState, the not-found pages and the error page. Under 2 KB, coloured with fill and surface tokens so it follows the theme."
+        whenNotToUse="As the only signal of a state, or anywhere it would repeat on the same page: it is decoration and carries no meaning."
+        a11yNotes={["Renders aria-hidden and not focusable. Size it with className, for example h-[84px] w-[120px]."]}
+      >
+        <River className="h-[84px] w-[120px]" />
       </ComponentDoc>
 
       <ComponentDoc

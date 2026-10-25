@@ -18,6 +18,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
+import { River } from "@/components/illustrations/River";
 import { UI } from "@/lib/i18n/strings";
 
 export default function LocaleNotFound() {
@@ -26,6 +27,7 @@ export default function LocaleNotFound() {
 
   return (
     <div className="py-12">
+      <River className="mb-4 h-[84px] w-[120px]" />
       <h1>{UI.pageNotFoundTitle[locale]}</h1>
       <p className="mt-4 text-ink-600">{UI.pageNotFoundBody[locale]}</p>
       <ul className="mt-6 flex flex-col gap-2">
