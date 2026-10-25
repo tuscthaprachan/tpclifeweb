@@ -31,13 +31,20 @@ interface SearchBarProps {
   locale: Locale;
   /** Pre-fills the box, for example from `?q=` on the results page. */
   defaultValue?: string;
+  /** Replaces the default visible label. */
+  label?: string;
+  /** Replaces the default hint line. */
+  hint?: string;
+  /** "pill" is the home page's rounded row with a purple pill button. */
+  variant?: "default" | "pill";
   className?: string;
 }
 
 const DEBOUNCE_MS = 200;
 const MAX_SUGGESTIONS = 8;
 
-export function SearchBar({ locale, defaultValue = "", className }: SearchBarProps) {
+export function SearchBar({ locale, defaultValue = "", label, hint, variant = "default", className }: SearchBarProps) {
+  const pill = variant === "pill";
   const router = useRouter();
   const inputId = useId();
   const listboxId = useId();
@@ -161,14 +168,20 @@ export function SearchBar({ locale, defaultValue = "", className }: SearchBarPro
   return (
     <form role="search" action={localePath(locale, "/search")} method="get" className={className}>
       <label htmlFor={inputId} className="mb-[var(--space-1)] block text-base font-medium text-ink-900">
-        {UI.searchLabel[locale]}
+        {label ?? UI.searchLabel[locale]}
       </label>
-      <p id={hintId} className="mb-[var(--space-2)] text-sm text-ink-600">
-        {UI.searchHint[locale]}
+      <p id={hintId} className={cx("mb-[var(--space-2)] text-sm text-ink-600", pill && "max-w-[calc(100%-5.5rem)] sm:max-w-none")}>
+        {hint ?? UI.searchHint[locale]}
       </p>
 
-      <div className="flex gap-[var(--space-2)]">
-        <div className="relative flex-1">
+      <div
+        className={cx(
+          "flex gap-[var(--space-2)]",
+          pill &&
+            "gap-[var(--space-1)] rounded-pill border-2 border-line-strong bg-surface p-[var(--space-1)]",
+        )}
+      >
+        <div className="relative min-w-0 flex-1">
           <input
             id={inputId}
             name="q"
@@ -180,12 +193,16 @@ export function SearchBar({ locale, defaultValue = "", className }: SearchBarPro
             aria-autocomplete="list"
             aria-describedby={hintId}
             autoComplete="off"
-            placeholder={UI.searchPlaceholder[locale]}
+            placeholder={label ? undefined : UI.searchPlaceholder[locale]}
             value={query}
             onChange={(event) => handleChange(event.target.value)}
             onFocus={handleFocus}
             onKeyDown={handleKeyDown}
-            className="min-h-[var(--target-min)] w-full rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
+            style={pill ? { borderRadius: "var(--radius-pill)" } : undefined}
+            className={cx(
+              "min-h-[var(--target-min)] w-full px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900",
+              pill ? "min-h-12 rounded-pill border-0 bg-transparent px-[var(--space-4)]" : "rounded-control border border-line-strong bg-surface",
+            )}
           />
           <ul
             id={listboxId}
@@ -217,7 +234,17 @@ export function SearchBar({ locale, defaultValue = "", className }: SearchBarPro
           </ul>
         </div>
 
-        <Button type="submit">{UI.searchSubmit[locale]}</Button>
+        {pill ? (
+          <button
+            type="submit"
+            style={{ borderRadius: "var(--radius-pill)" }}
+            className="min-h-12 rounded-pill bg-action px-[var(--space-5)] font-bold text-action-ink hover:bg-action-hover press"
+          >
+            {UI.searchSubmit[locale]}
+          </button>
+        ) : (
+          <Button type="submit">{UI.searchSubmit[locale]}</Button>
+        )}
       </div>
 
       <p {...liveRegionProps("polite")} className="visually-hidden">

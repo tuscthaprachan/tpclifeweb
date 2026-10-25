@@ -1,12 +1,7 @@
-/**
- * Barrel export for the home page's own domain components. The home page
- * (`app/[locale]/page.tsx`) imports from here rather than one file at a
- * time.
- */
-
+export * from "./alerts";
 export * from "./openingHours";
-export * from "./KeyOpeningHours";
-export * from "./CanteenGlance";
-export * from "./AtAGlance";
-export * from "./EventsAndNews";
-export * from "./PriorityForms";
+export * from "./PopularTasks";
+export * from "./SectionBar";
+export * from "./TodayList";
+export * from "./TodayRow";
+export * from "./WhatsOn";
