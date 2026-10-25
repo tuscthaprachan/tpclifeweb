@@ -19,6 +19,10 @@ import { discoverRoutes } from "./support/discover-routes";
 
 const routes = discoverRoutes();
 
+function redirectedAway(finalUrl: string, requestedPath: string): boolean {
+  return new URL(finalUrl).pathname !== requestedPath;
+}
+
 test.describe("document structure", () => {
   test.beforeEach(async ({}, testInfo) => {
     test.skip(testInfo.project.name !== "desktop", "Markup only, not layout; one viewport is enough.");
@@ -69,6 +73,7 @@ test.describe("document structure", () => {
       const seen = new Map<string, string>();
       for (const route of routes) {
         await page.goto(localePath(locale, route));
+        if (redirectedAway(page.url(), localePath(locale, route))) continue;
         const title = await page.title();
         const existing = seen.get(title);
         expect(existing, `${locale}${route} has the same <title> ("${title}") as ${existing ?? ""}`).toBeUndefined();
@@ -83,6 +88,7 @@ test.describe("document structure", () => {
 
       for (const locale of LOCALES as readonly Locale[]) {
         await page.goto(localePath(locale, route));
+        test.skip(redirectedAway(page.url(), localePath(locale, route)), `${route} redirects without journey state, so its own metadata cannot be read here`);
         const entries = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((nodes) =>
           nodes.map((node) => [node.getAttribute("hreflang") ?? "", node.getAttribute("href") ?? ""] as const),
         );

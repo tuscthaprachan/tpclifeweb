@@ -10,7 +10,12 @@ import { useEffect, useRef } from "react";
 export function FocusParent() {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
-    ref.current?.parentElement?.focus();
+    const target = ref.current?.parentElement;
+    if (!target) return;
+    target.focus({ preventScroll: true });
+    const bottom = target.getBoundingClientRect().bottom + window.scrollY;
+    if (bottom <= window.innerHeight) window.scrollTo({ top: 0, behavior: "instant" });
+    else target.scrollIntoView({ block: "start", behavior: "instant" });
   }, []);
   return <span ref={ref} hidden />;
 }
