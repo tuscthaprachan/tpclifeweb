@@ -1,4 +1,6 @@
+import { and, eq, sql } from "drizzle-orm";
 import { STUDENT_BODIES } from "../../../data/harvested-inventory";
+import { DEFAULT_HOME_TASKS } from "../../content/home-tasks";
 import { siteSettings } from "../schema/content/site";
 import { excludedSet, published, type SeedDb } from "./util";
 
@@ -38,6 +40,7 @@ export async function seedSiteSettings(db: SeedDb): Promise<void> {
       nav("คุกกี้", "Cookies", "/cookies"),
       nav("ผลการดำเนินงาน", "Performance", "/performance"),
     ],
+    homeTasks: [...DEFAULT_HOME_TASKS],
     helpContacts: [
       { label: STUDENT_BODIES.tusu.name, channel: "url" as const, value: STUDENT_BODIES.tusu.linktree },
       { label: STUDENT_BODIES.tusc.name, channel: "url" as const, value: STUDENT_BODIES.tusc.linktree },
@@ -65,5 +68,9 @@ export async function seedSiteSettings(db: SeedDb): Promise<void> {
   await db
     .insert(siteSettings)
     .values(values)
-    .onConflictDoUpdate({ target: siteSettings.singletonKey, set: excludedSet(siteSettings) });
+    .onConflictDoUpdate({ target: siteSettings.singletonKey, set: excludedSet(siteSettings, ["homeTasks"]) });
+  await db
+    .update(siteSettings)
+    .set({ homeTasks: [...DEFAULT_HOME_TASKS] })
+    .where(and(eq(siteSettings.singletonKey, "site"), sql`jsonb_array_length(${siteSettings.homeTasks}) = 0`));
 }

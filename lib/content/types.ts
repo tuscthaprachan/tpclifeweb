@@ -87,6 +87,13 @@ export interface NavItem {
   children?: NavItem[];
 }
 
+export interface HomeTask {
+  label: LocaleString;
+  description: LocaleString;
+  /** Internal path without a locale prefix, like NavItem.path, for example "/forms". */
+  path: string;
+}
+
 export interface SiteSettings extends DocumentMeta {
   _type: "siteSettings";
   serviceName: LocaleString;
@@ -96,6 +103,8 @@ export interface SiteSettings extends DocumentMeta {
   phaseNote?: LocaleString;
   primaryNav: NavItem[];
   footerNav: NavItem[];
+  /** The "Popular tasks" list on the home page, shown in this order. */
+  homeTasks: HomeTask[];
   /** 3.2.6 Consistent Help. Rendered in the same place on every page. */
   helpContacts: HelpContact[];
   organisationLinks?: ExternalLink[];

@@ -59,6 +59,12 @@ export interface NavItemJson {
   children?: NavItemJson[];
 }
 
+export interface HomeTaskJson {
+  label: LocaleStringJson;
+  description: LocaleStringJson;
+  path: string;
+}
+
 export interface ExternalLinkJson {
   label: LocaleStringJson;
   url: string;

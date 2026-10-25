@@ -147,7 +147,7 @@
    * the site's one signature spot where orange and purple touch. The
    * bar carries the visibility guarantee and is a deep purple, which
    * flips to a light purple in the dark theme (12.28:1 on white here;
-   * 13.81:1 on the dark surface in the dark theme block below). The
+   * 12.03:1 on the dark surface in the dark theme block below). The
    * orange fill is --brand-orange itself and is weak against white on
    * its own (2.41:1), which is exactly why the bar is there.
    * check-contrast.mjs asserts that at least one of the two tones clears
@@ -157,6 +157,11 @@
   --focus-fill: #e7935b;
   --focus-bar: #42295e;
   --focus-width: 3px;
+
+  --band-stop-1: #fbe4d7;
+  --band-stop-2: #f8dccf;
+  --band-stop-3: #f0e4f9;
+  --band-gradient: linear-gradient(135deg, #fbe4d7 0%, #f8dccf 35%, #f0e4f9 100%);
 
   /* ---------------------------------------------------------------- *
    * Typography.
@@ -218,6 +223,8 @@
    * ---------------------------------------------------------------- */
   --radius-control: 4px;
   --radius-panel: 8px;
+  --radius-block: 16px;
+  --radius-band: 28px;
   --radius-pill: 999px;
   --border-width: 1px;
   --border-width-thick: 2px;
@@ -236,6 +243,7 @@
   --motion-state: 150ms;
   --motion-overlay: 200ms;
   --easing: cubic-bezier(0.2, 0, 0.2, 1);
+  --press-lift: translateY(1px) scale(0.98);
 
   --z-header: 100;
   --z-overlay: 200;
@@ -250,38 +258,43 @@
 }
 
 /*
- * Dark theme. One coherent, slightly cool near-neutral family: every surface
- * carries a hint of the brand purple hue at very low chroma, and the three
- * steps are evenly spaced in lightness (page < alt < sunk < overlay) with no
- * pure black and no warm/brown drift. Ink is a cool off-white. Action and
- * accent keep the purple/orange pairing but sit at a toned-down lightness so
- * the primary button does not glare. Saturated fills and brand primitives are
- * re-tuned darker than their light values; soft tints are clean desaturated
- * washes a step above --surface-alt. Measured against --surface #141218,
- * --surface-alt #1c1a21 and --surface-sunk #24212b. The two dark blocks
- * (media query and data-theme="dark") must keep identical values.
+ * Dark theme, "plum and amber". Surfaces are deep plum steps, evenly spaced in
+ * lightness (page < alt < sunk < overlay), with no pure black. Ink is a cool
+ * off-white. Action and accent keep the purple/orange pairing but sit at a
+ * toned-down lightness so the primary button does not glare. Saturated fills
+ * and brand primitives are re-tuned darker than their light values; soft tints
+ * are clean desaturated washes a step above --surface-alt. Measured against
+ * --surface #1a1220, --surface-alt #251a2d and --surface-sunk #2e2138. The band
+ * stops are the amber corner, the #241830 base and the lilac corner of
+ * --band-gradient, so text anywhere on the band is held to 4.5:1. The two dark blocks (media query and data-theme="dark") must keep
+ * identical values.
  */
 @media screen and (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink-900: #ece8f0; /* 15.38:1 --surface, 14.25:1 --surface-alt, 13.08:1 --surface-sunk */
-    --ink-600: #bab5c1; /* 9.27:1 --surface, 8.59:1 --surface-alt, 7.89:1 --surface-sunk */
-    --ink-500: #9994a2; /* 6.30:1 --surface, 5.83:1 --surface-alt, 5.36:1 --surface-sunk */
-    --ink-inverse: #141218;
+    --ink-900: #ece8f0; /* 15.09:1 --surface, 13.74:1 --surface-alt, 12.49:1 --surface-sunk */
+    --ink-600: #bab5c1; /* 9.09:1 --surface, 8.28:1 --surface-alt, 7.53:1 --surface-sunk */
+    --ink-500: #9994a2; /* 6.18:1 --surface, 5.63:1 --surface-alt, 5.11:1 --surface-sunk */
+    --ink-inverse: #1a1220;
 
-    --surface: #141218; /* page */
-    --surface-alt: #1c1a21; /* page banding */
-    --surface-sunk: #24212b; /* inset panels, code */
-    --surface-overlay: #2a2731; /* dialogs, search overlay; one step above sunk */
+    --surface: #1a1220; /* page */
+    --surface-alt: #251a2d; /* page banding */
+    --surface-sunk: #2e2138; /* inset panels, code */
+    --surface-overlay: #33263d; /* dialogs, search overlay; one step above sunk */
 
-    --line: #38353f; /* decorative only, 1.55:1 --surface, 1.43:1 --surface-alt, 1.32:1 --surface-sunk */
-    --line-strong: #7d7886; /* 4.34:1 --surface, 4.02:1 --surface-alt, 3.69:1 --surface-sunk */
+    --line: #3a2d44; /* decorative only, 1.42:1 --surface, 1.30:1 --surface-alt, 1.18:1 --surface-sunk */
+    --line-strong: #7d7886; /* 4.26:1 --surface, 3.88:1 --surface-alt, 3.53:1 --surface-sunk, 3.30:1 --surface-overlay */
 
-    --colour-action: #c4a8ee; /* 9.02:1 --surface, 8.35:1 --surface-alt, 7.67:1 --surface-sunk */
-    --colour-action-hover: #dccaf8; /* 12.26:1 --surface, 11.36:1 --surface-alt, 10.43:1 --surface-sunk */
-    --colour-action-ink: #141218; /* 9.02:1 on --colour-action, 12.26:1 on hover */
+    --band-stop-1: #5a393a;
+    --band-stop-2: #241830;
+    --band-stop-3: #503963;
+    --band-gradient: radial-gradient(120% 90% at 0% 0%, rgba(217,134,80,.30) 0%, rgba(217,134,80,0) 60%), radial-gradient(110% 100% at 100% 100%, rgba(181,133,217,.30) 0%, rgba(181,133,217,0) 65%), #241830;
 
-    --colour-accent: #e8a27c; /* 8.76:1 --surface, 8.11:1 --surface-alt, 7.45:1 --surface-sunk */
-    --colour-accent-strong: #f5c6ab; /* 12.00:1 --surface, 11.11:1 --surface-alt, 10.21:1 --surface-sunk */
+    --colour-action: #c4a8ee; /* 8.84:1 --surface, 8.05:1 --surface-alt, 7.32:1 --surface-sunk */
+    --colour-action-hover: #dccaf8; /* 12.03:1 --surface, 10.95:1 --surface-alt, 9.96:1 --surface-sunk */
+    --colour-action-ink: #1a1220; /* 8.84:1 on --colour-action, 12.03:1 on hover */
+
+    --colour-accent: #e8a27c; /* 8.59:1 --surface, 7.82:1 --surface-alt, 7.11:1 --surface-sunk */
+    --colour-accent-strong: #f5c6ab; /* 11.77:1 --surface, 10.72:1 --surface-alt, 9.74:1 --surface-sunk */
 
     /* Saturated fills are re-tuned for dark: the same hues as the light theme,
        but less luminous so they do not glare against the dark page. They still
@@ -301,19 +314,19 @@
     --fill-activity-soft: #38294a; /* ink-900 10.96:1 */
     --fill-governance-soft: #2e2f4f; /* ink-900 10.62:1 */
 
-    --status-success: #6fcfa6; /* 9.87:1 --surface, 9.15:1 --surface-alt, 8.40:1 --surface-sunk, 6.53:1 on its soft */
+    --status-success: #6fcfa6; /* 9.69:1 --surface, 8.82:1 --surface-alt, 8.02:1 --surface-sunk, 6.53:1 on its soft */
     --status-success-soft: #1f3a31; /* ink-900 10.17:1 */
-    --status-warning: #e8b25e; /* 9.70:1 --surface, 8.99:1 --surface-alt, 8.26:1 --surface-sunk, 6.29:1 on its soft */
+    --status-warning: #e8b25e; /* 9.52:1 --surface, 8.67:1 --surface-alt, 7.88:1 --surface-sunk, 6.29:1 on its soft */
     --status-warning-soft: #403519; /* ink-900 9.97:1 */
-    --status-error: #f2908a; /* 8.09:1 --surface, 7.49:1 --surface-alt, 6.88:1 --surface-sunk, 5.65:1 on its soft */
+    --status-error: #f2908a; /* 7.93:1 --surface, 7.22:1 --surface-alt, 6.57:1 --surface-sunk, 5.65:1 on its soft */
     --status-error-soft: #442a2d; /* ink-900 10.75:1 */
-    --status-info: #aaa6f0; /* 8.34:1 --surface, 7.73:1 --surface-alt, 7.10:1 --surface-sunk, 5.76:1 on its soft */
+    --status-info: #aaa6f0; /* 8.18:1 --surface, 7.45:1 --surface-alt, 6.77:1 --surface-sunk, 5.76:1 on its soft */
     --status-info-soft: #2e2f4f; /* ink-900 10.62:1 */
     --status-neutral: #bab5c1; /* == --ink-600 */
     --status-neutral-soft: #2c2a33; /* ink-900 11.69:1 */
 
-    --focus-fill: #d98650; /* 6.62:1 --surface */
-    --focus-bar: #dccaf8; /* 12.26:1 --surface */
+    --focus-fill: #d98650; /* 6.49:1 --surface */
+    --focus-bar: #dccaf8; /* 12.03:1 --surface */
 
     --elevation: 0 4px 16px -2px rgb(0 0 0 / 0.6), 0 1px 3px rgb(0 0 0 / 0.4);
   }
@@ -344,19 +357,24 @@
     --ink-900: #ece8f0;
     --ink-600: #bab5c1;
     --ink-500: #9994a2;
-    --ink-inverse: #141218;
+    --ink-inverse: #1a1220;
 
-    --surface: #141218;
-    --surface-alt: #1c1a21;
-    --surface-sunk: #24212b;
-    --surface-overlay: #2a2731;
+    --surface: #1a1220;
+    --surface-alt: #251a2d;
+    --surface-sunk: #2e2138;
+    --surface-overlay: #33263d;
 
-    --line: #38353f;
+    --line: #3a2d44;
     --line-strong: #7d7886;
+
+    --band-stop-1: #5a393a;
+    --band-stop-2: #241830;
+    --band-stop-3: #503963;
+    --band-gradient: radial-gradient(120% 90% at 0% 0%, rgba(217,134,80,.30) 0%, rgba(217,134,80,0) 60%), radial-gradient(110% 100% at 100% 100%, rgba(181,133,217,.30) 0%, rgba(181,133,217,0) 65%), #241830;
 
     --colour-action: #c4a8ee;
     --colour-action-hover: #dccaf8;
-    --colour-action-ink: #141218;
+    --colour-action-ink: #1a1220;
 
     --colour-accent: #e8a27c;
     --colour-accent-strong: #f5c6ab;

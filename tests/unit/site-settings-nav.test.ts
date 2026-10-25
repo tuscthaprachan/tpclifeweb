@@ -9,6 +9,7 @@ import type { SiteSettings } from "@/lib/content/types";
 function settings(paths: string[]): SiteSettings {
   return {
     primaryNav: paths.map((path) => ({ label: { th: path, en: path }, path })),
+    homeTasks: [{ label: { th: "a", en: "a" }, description: { th: "b", en: "b" }, path: "/forms" }],
   } as unknown as SiteSettings;
 }
 
@@ -30,9 +31,28 @@ describe("withRequiredNav", () => {
   });
 });
 
+describe("withRequiredNav home tasks", () => {
+  const base = (homeTasks?: unknown) => ({ primaryNav: [{ label: { th: "/eat", en: "/eat" }, path: "/eat" }], footerNav: [{ label: { th: "x", en: "x" }, path: "/performance" }], homeTasks }) as unknown as SiteSettings;
+
+  it("falls back to the six default tasks when the stored list is empty", () => {
+    const result = withRequiredNav(base([]));
+    expect(result.homeTasks.map((task) => task.path)).toEqual(["/forms", "/lost-and-found", "/complaints", "/welfare", "/eat", "/directory"]);
+    expect(result.homeTasks[0]?.label).toEqual({ th: "ค้นหาแบบฟอร์ม", en: "Find a form" });
+  });
+
+  it("falls back when the field is missing on an older cached row", () => {
+    expect(withRequiredNav(base(undefined)).homeTasks).toHaveLength(6);
+  });
+
+  it("keeps an editor's own list and order", () => {
+    const own = [{ label: { th: "ก", en: "A" }, description: { th: "ข", en: "B" }, path: "/news" }];
+    expect(withRequiredNav(base(own)).homeTasks).toBe(own);
+  });
+});
+
 describe("withRequiredNav footer", () => {
   const withFooter = (paths: string[]) =>
-    ({ primaryNav: [{ label: { th: "/eat", en: "/eat" }, path: "/eat" }], footerNav: paths.map((path) => ({ label: { th: path, en: path }, path })) }) as unknown as SiteSettings;
+    ({ primaryNav: [{ label: { th: "/eat", en: "/eat" }, path: "/eat" }], homeTasks: [{ label: { th: "a", en: "a" }, description: { th: "b", en: "b" }, path: "/forms" }], footerNav: paths.map((path) => ({ label: { th: path, en: path }, path })) }) as unknown as SiteSettings;
 
   it("adds Performance after Cookies when the CMS footer predates it", () => {
     const result = withRequiredNav(withFooter(["/faq", "/cookies", "/about"]));

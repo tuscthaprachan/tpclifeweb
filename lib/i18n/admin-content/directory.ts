@@ -208,6 +208,20 @@ export const DIRECTORY_STRINGS = {
     th: "กรอกที่อยู่หน้าให้ขึ้นต้นด้วย / เช่น /news โดยไม่ต้องใส่ภาษานำหน้าและไม่ต้องลงท้ายด้วย /",
     en: "Enter the page address starting with /, like /news, with no language at the start and no / at the end",
   },
+  siteGroupHomeTasks: { th: "งานยอดนิยมในหน้าแรก", en: "Popular tasks on the home page" },
+  siteFieldHomeTasks: { th: "งานยอดนิยม", en: "Popular tasks" },
+  siteHintHomeTasks: {
+    th: "แสดงตามลำดับนี้ในหน้าแรก ใส่งานที่คนใช้มากที่สุดไว้ก่อน เพิ่มได้ไม่เกิน {max} รายการ ถ้าเว้นว่างไว้ หน้าแรกจะแสดงรายการตั้งต้น",
+    en: "Shown in this order on the home page. Put the most used task first. You can add up to {max}. If you leave it empty, the home page shows the default list",
+  },
+  siteHomeTaskItem: { th: "งาน", en: "Task" },
+  siteFieldHomeTaskLabel: { th: "ชื่อที่แสดง", en: "Name to show" },
+  siteFieldHomeTaskDescription: { th: "คำอธิบายหนึ่งบรรทัด", en: "One line of detail" },
+  siteHintHomeTaskDescription: {
+    th: "บอกว่าผู้อ่านจะได้อะไรหรือต้องเตรียมอะไร",
+    en: "Say what the reader gets or needs to have ready",
+  },
+  siteErrHomeTasksMax: { th: "เพิ่มงานยอดนิยมได้ไม่เกิน {max} รายการ ลบรายการนี้ออกก่อน", en: "You can add up to {max} popular tasks. Remove this one first" },
   siteFieldHelp: { th: "ช่องทางขอความช่วยเหลือ", en: "Help contacts" },
   siteHintHelp: {
     th: "แสดงท้ายทุกหน้าใต้หัวข้อ ต้องการความช่วยเหลือ",

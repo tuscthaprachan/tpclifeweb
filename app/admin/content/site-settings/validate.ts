@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { fieldKit, formDataToObject, parseForm, type FieldKit } from "@/lib/admin/content/fields";
 import type { FieldErrors } from "@/lib/admin/content/form-state";
-import type { ExternalLinkJson, HelpContactJson, NavItemJson } from "@/lib/db/schema/content/common";
+import { MAX_HOME_TASKS } from "@/lib/content/home-tasks";
+import type { ExternalLinkJson, HelpContactJson, HomeTaskJson, NavItemJson } from "@/lib/db/schema/content/common";
 import { SERVICE_PHASES } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { LOCALES, type Locale } from "@/lib/i18n/config";
@@ -30,6 +31,26 @@ function navRow(k: FieldKit, locale: Locale, labelKey: AdminKey) {
       if (row.path && !isNavPath(row.path)) ctx.addIssue({ code: "custom", path: ["path"], message: L("siteErrNavPath") });
     })
     .transform((row): NavItemJson => ({ label: { th: row.label.th, en: row.label.en }, path: row.path }));
+}
+
+function homeTaskRow(k: FieldKit, locale: Locale) {
+  const L = (key: AdminKey) => a(key, locale);
+  return z
+    .object({
+      label: k.bilingual(L("siteFieldHomeTaskLabel"), { required: true, max: 45 }),
+      description: k.bilingual(L("siteFieldHomeTaskDescription"), { required: true, max: 120 }),
+      path: k.text(L("siteFieldNavPath"), { required: true, max: 200 }),
+    })
+    .superRefine((row, ctx) => {
+      if (row.path && !isNavPath(row.path)) ctx.addIssue({ code: "custom", path: ["path"], message: L("siteErrNavPath") });
+    })
+    .transform(
+      (row): HomeTaskJson => ({
+        label: { th: row.label.th, en: row.label.en },
+        description: { th: row.description.th, en: row.description.en },
+        path: row.path,
+      }),
+    );
 }
 
 function helpRow(k: FieldKit, locale: Locale) {
@@ -103,6 +124,13 @@ export function validateSiteSettingsForm(input: { locale: Locale; formData: Form
     phaseNote: k.bilingual(L("siteFieldPhaseNote"), { max: 300 }),
     primaryNav: rowsOf(navRow(k, locale, "siteFieldNavLabel"), { max: 12 }),
     footerNav: rowsOf(navRow(k, locale, "siteFieldNavLabel"), { max: 12 }),
+    homeTasks: rowsOf(homeTaskRow(k, locale), {
+      max: MAX_HOME_TASKS,
+      after: (rows, add) => {
+        const extra = rows[MAX_HOME_TASKS];
+        if (extra) add(extra.index, "path", a("siteErrHomeTasksMax", locale, { max: MAX_HOME_TASKS }));
+      },
+    }),
     helpContacts: rowsOf(helpRow(k, locale), { ignore: ["channel"], max: 10 }),
     organisationLinks: rowsOf(linkRow(k, locale), { max: 20 }),
   });

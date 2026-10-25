@@ -150,6 +150,13 @@ function assertions() {
   }
   out.push(["--line-strong", "--surface-overlay", 3, "control border on overlay"]);
 
+  // Text and links on the hero band, at its palest and darkest stops.
+  for (const stop of ["--band-stop-1", "--band-stop-2", "--band-stop-3"]) {
+    out.push(["--ink-900", stop, 4.5, "body text on band"]);
+    out.push(["--ink-600", stop, 4.5, "secondary text on band"]);
+    out.push(["--colour-action", stop, 4.5, "link on band"]);
+  }
+
   // Button label on the action fill.
   out.push(["--colour-action-ink", "--colour-action", 4.5, "button label"]);
   out.push(["--colour-action-ink", "--colour-action-hover", 4.5, "button label hover"]);

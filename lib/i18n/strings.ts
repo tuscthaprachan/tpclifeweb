@@ -1125,6 +1125,36 @@ export const UI = {
     en: "Where a figure is hidden, the number of cases behind it is hidden too",
   },
 
+  homeHeading: { th: "ชีวิตนักศึกษาท่าพระจันทร์", en: "Student life at Tha Prachan" },
+  homeSearchLabel: { th: "ค้นหา", en: "Search" },
+  homeSearchHint: { th: "พิมพ์ได้ทั้งไทยและอังกฤษ เช่น รถรับส่ง", en: "Thai or English, for example shuttle" },
+  homeToday: { th: "วันนี้", en: "Today" },
+  homeFullTimetable: { th: "ตารางรถรับส่งทั้งหมด", en: "Full shuttle timetable" },
+  homePopular: { th: "บริการที่ใช้บ่อย", en: "Popular" },
+  homeAllServices: { th: "บริการทั้งหมด", en: "All services" },
+  homeWhatsOn: { th: "กิจกรรมและข่าว", en: "What's on" },
+  homeEvents: { th: "กิจกรรม", en: "Events" },
+  homeNews: { th: "ข่าว", en: "News" },
+  homeUnion: { th: "อมธ. และสภานักศึกษา", en: "Student union and council" },
+  servicesIntro: { th: "บริการทั้งหมดสำหรับนักศึกษาท่าพระจันทร์", en: "Every service for Tha Prachan students" },
+  phaseNewService: { th: "บริการใหม่", en: "A new service." },
+  phaseWhatThisMeans: { th: "ดูรายละเอียด", en: "What this means" },
+
+  keyHoursTitle: { th: "เวลาทำการสถานที่สำคัญวันนี้", en: "Key opening hours today" },
+  keyHoursNotPublished: {
+    th: "ยังไม่มีการเผยแพร่เวลาทำการของสถานที่สำคัญ",
+    en: "Opening hours for key locations have not been published yet",
+  },
+  activityHeading: { th: "ความเคลื่อนไหวของ อมธ. และสภานักศึกษา ท่าพระจันทร์", en: "TUSU and TUSC activity" },
+  alertSeverityInfo: { th: "แจ้งให้ทราบ", en: "Notice" },
+  alertSeverityWarning: { th: "คำเตือน", en: "Warning" },
+  alertSeverityCritical: { th: "วิกฤต", en: "Critical" },
+  alertMoreInfo: { th: "ข้อมูลเพิ่มเติม", en: "More information" },
+  shuttleNoTimetable: {
+    th: "ยังไม่มีการเผยแพร่ตารางเวลาสำหรับเส้นทางนี้",
+    en: "A timetable for this route has not been published yet",
+  },
+
 } as const satisfies Record<string, LocaleString>;
 
 export type UiKey = keyof typeof UI;

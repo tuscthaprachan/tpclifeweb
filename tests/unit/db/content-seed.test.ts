@@ -18,6 +18,7 @@ import {
   shuttleStops,
   siteSettings,
 } from "@/lib/db/schema";
+import { readSiteSettings } from "@/lib/content/site";
 import { seedContent } from "@/lib/db/seed/content";
 import { buildDirectory } from "@/lib/db/seed/directory";
 import { GUIDE_PAGES } from "@/lib/db/seed/pages";
@@ -162,5 +163,28 @@ describe("content seed", () => {
     expect(res.rows[0]!.n).toBe(18);
     const bad = await ctx.db.select({ n: count() }).from(canteenDishes).where(sql`${canteenDishes.price} < 0`);
     expect(bad[0]!.n).toBe(0);
+  });
+});
+
+describe("site settings home tasks", () => {
+  it("seeds the six default tasks in order and maps them through the read layer", async () => {
+    const settings = await readSiteSettings(ctx.db);
+    expect(settings?.homeTasks.map((t) => t.path)).toEqual(["/forms", "/lost-and-found", "/complaints", "/welfare", "/eat", "/directory"]);
+    expect(settings?.homeTasks[2]).toEqual({
+      label: { th: "ร้องเรียน", en: "Make a complaint" },
+      description: { th: "ระบุชื่อหรือไม่ระบุชื่อก็ได้", en: "With or without your name" },
+      path: "/complaints",
+    });
+  });
+
+  it("fills an empty list on re-seed but never overwrites an editor's list", async () => {
+    await ctx.db.update(siteSettings).set({ homeTasks: [] });
+    await seedContent(ctx.db);
+    expect((await readSiteSettings(ctx.db))?.homeTasks).toHaveLength(6);
+
+    const own = [{ label: { th: "ก", en: "A" }, description: { th: "ข", en: "B" }, path: "/news" }];
+    await ctx.db.update(siteSettings).set({ homeTasks: own });
+    await seedContent(ctx.db);
+    expect((await readSiteSettings(ctx.db))?.homeTasks).toEqual(own);
   });
 });

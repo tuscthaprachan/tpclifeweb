@@ -84,6 +84,54 @@ describe("validateSiteSettingsForm", () => {
     expect(validate(form({ "helpContacts.0.channel": "phone", "helpContacts.0.value": "02 613 3000" })).ok).toBe(true);
   });
 
+  describe("home tasks", () => {
+    const task = (i: number, overrides: Record<string, string> = {}) => ({
+      [`homeTasks.${i}.label.th`]: `งาน ${i}`,
+      [`homeTasks.${i}.label.en`]: `Task ${i}`,
+      [`homeTasks.${i}.description.th`]: `รายละเอียด ${i}`,
+      [`homeTasks.${i}.description.en`]: `Detail ${i}`,
+      [`homeTasks.${i}.path`]: "/forms",
+      ...overrides,
+    });
+    const tasks = (n: number) => Object.assign({}, ...Array.from({ length: n }, (_, i) => task(i)));
+
+    it("keeps the posted order and accepts exactly eight", () => {
+      const result = validate(form(tasks(8)));
+      expect(result.ok && result.data.homeTasks.map((t) => t.label.en)).toEqual(Array.from({ length: 8 }, (_, i) => `Task ${i}`));
+      expect(result.ok && result.data.homeTasks[0]).toEqual({
+        label: { th: "งาน 0", en: "Task 0" },
+        description: { th: "รายละเอียด 0", en: "Detail 0" },
+        path: "/forms",
+      });
+    });
+
+    it("rejects a ninth task instead of dropping it silently", () => {
+      expect(validate(form(tasks(9)))).toMatchObject({ ok: false, errors: { "homeTasks.8.path": expect.stringContaining("up to 8") } });
+    });
+
+    it("does not count blank rows toward the cap", () => {
+      expect(validate(form({ ...tasks(8), "homeTasks.8.label.th": "", "homeTasks.8.path": "" })).ok).toBe(true);
+    });
+
+    it("allows an empty list", () => {
+      const result = validate(form());
+      expect(result.ok && result.data.homeTasks).toEqual([]);
+    });
+
+    it("requires both languages, the detail line and a valid path", () => {
+      expect(validate(form(task(0, { "homeTasks.0.label.en": "" })))).toMatchObject({ ok: false, errors: { "homeTasks.0.label.en": expect.any(String) } });
+      expect(validate(form(task(0, { "homeTasks.0.description.th": "" })))).toMatchObject({ ok: false, errors: { "homeTasks.0.description.th": expect.any(String) } });
+      expect(validate(form(task(0, { "homeTasks.0.path": "" })))).toMatchObject({ ok: false, errors: { "homeTasks.0.path": expect.any(String) } });
+      expect(validate(form(task(0, { "homeTasks.0.path": "/th/forms" })))).toMatchObject({ ok: false, errors: { "homeTasks.0.path": expect.any(String) } });
+    });
+
+    it("limits the label to 45 and the detail to 120 characters", () => {
+      expect(validate(form(task(0, { "homeTasks.0.label.en": "x".repeat(46) })))).toMatchObject({ ok: false });
+      expect(validate(form(task(0, { "homeTasks.0.description.en": "x".repeat(121) })))).toMatchObject({ ok: false });
+      expect(validate(form(task(0, { "homeTasks.0.label.en": "x".repeat(45), "homeTasks.0.description.en": "x".repeat(120) }))).ok).toBe(true);
+    });
+  });
+
   it("rejects an unknown phase", () => {
     expect(validate(form({ phase: "gamma" }))).toMatchObject({ ok: false, errors: { phase: expect.any(String) } });
   });
@@ -100,13 +148,13 @@ describe("validateSiteSettingsForm", () => {
         db,
         id,
         status: "published",
-        values: { singletonKey: "site", serviceNameTh: d.serviceName.th, serviceNameEn: d.serviceName.en, taglineTh: d.tagline.th, taglineEn: d.tagline.en, phase: d.phase, primaryNav: d.primaryNav, footerNav: d.footerNav, helpContacts: d.helpContacts, organisationLinks: d.organisationLinks },
+        values: { singletonKey: "site", serviceNameTh: d.serviceName.th, serviceNameEn: d.serviceName.en, taglineTh: d.tagline.th, taglineEn: d.tagline.en, phase: d.phase, primaryNav: d.primaryNav, footerNav: d.footerNav, homeTasks: d.homeTasks, helpContacts: d.helpContacts, organisationLinks: d.organisationLinks },
       });
     };
     const first = await save({});
     await save({ "serviceName.en": "Renamed", phase: "live" }, first.id);
     const settings = await readSiteSettings(db);
-    expect(settings).toMatchObject({ serviceName: { en: "Renamed" }, phase: "live", primaryNav: [{ path: "/news" }], helpContacts: [{ channel: "email" }] });
+    expect(settings).toMatchObject({ serviceName: { en: "Renamed" }, phase: "live", primaryNav: [{ path: "/news" }], helpContacts: [{ channel: "email" }], homeTasks: [] });
     expect(await db.select().from(siteSettings)).toHaveLength(1);
   });
 });

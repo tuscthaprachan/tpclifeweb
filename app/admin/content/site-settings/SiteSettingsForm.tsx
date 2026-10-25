@@ -8,6 +8,7 @@ import { siteSettings } from "@/lib/db/schema";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { HelpContactsField } from "./HelpContactsField";
+import { HomeTasksField } from "./HomeTasksField";
 import { LinksField } from "./LinksField";
 import { NavField } from "./NavField";
 import { saveSiteSettings } from "./actions";
@@ -69,6 +70,9 @@ export async function SiteSettingsForm({ locale, saved }: { locale: Locale; save
           <NavField name="footerNav" legend={L("siteFieldFooterNav")} hint={L("siteHintFooterNav")} itemLabel={L("siteFooterItem")} defaultValue={row?.footerNav ?? []} />
           <LinksField defaultValue={row?.organisationLinks ?? []} />
         </Stack>
+      </Fieldset>
+      <Fieldset id="site-home-tasks" legend={L("siteGroupHomeTasks")}>
+        <HomeTasksField defaultValue={row?.homeTasks ?? []} />
       </Fieldset>
       <Fieldset id="site-help" legend={L("siteGroupHelp")}>
         <HelpContactsField defaultValue={row?.helpContacts ?? []} />

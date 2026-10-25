@@ -285,6 +285,21 @@
   }
 }
 
+.press {
+  transition: transform var(--motion-state) var(--easing);
+}
+
+.press:active {
+  transform: var(--press-lift);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press,
+  .press:active {
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;

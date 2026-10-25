@@ -27,6 +27,7 @@ export async function readSiteSettings(db: AuditExecutor): Promise<SiteSettings 
     phaseNote: lsOpt(row.phaseNoteTh, row.phaseNoteEn),
     primaryNav: row.primaryNav,
     footerNav: row.footerNav,
+    homeTasks: row.homeTasks,
     helpContacts: row.helpContacts,
     organisationLinks: row.organisationLinks.length > 0 ? row.organisationLinks : undefined,
   };

@@ -20,6 +20,7 @@
  */
 
 import { getSiteSettings as fetchSiteSettings } from "@/lib/content";
+import { DEFAULT_HOME_TASKS } from "@/lib/content/home-tasks";
 import type { SiteSettings } from "@/lib/content/types";
 
 const FALLBACK_SITE_SETTINGS: SiteSettings = {
@@ -65,6 +66,8 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
    * channels live in data/harvested-inventory.ts (harvested from their
    * Linktrees) and should replace these once the CMS is seeded from it.
    */
+  homeTasks: [...DEFAULT_HOME_TASKS],
+
   helpContacts: [
     {
       label: { th: "อมธ. ท่าพระจันทร์", en: "TUSU Tha Prachan" },
@@ -123,7 +126,10 @@ function withRequiredItems(nav: SiteSettings["primaryNav"], required: readonly {
 }
 
 export function withRequiredNav(settings: SiteSettings): SiteSettings {
+  const homeTasks = settings.homeTasks?.length ? settings.homeTasks : [...DEFAULT_HOME_TASKS];
   const primaryNav = withRequiredItems(settings.primaryNav ?? [], REQUIRED_NAV);
   const footerNav = settings.footerNav ? withRequiredItems(settings.footerNav, REQUIRED_FOOTER_NAV) : settings.footerNav;
-  return primaryNav === settings.primaryNav && footerNav === settings.footerNav ? settings : { ...settings, primaryNav, footerNav };
+  return primaryNav === settings.primaryNav && footerNav === settings.footerNav && homeTasks === settings.homeTasks
+    ? settings
+    : { ...settings, primaryNav, footerNav, homeTasks };
 }

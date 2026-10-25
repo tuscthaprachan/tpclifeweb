@@ -26,7 +26,7 @@ export async function saveSiteSettings(_prev: ContentFormState, formData: FormDa
 
   const checked = validateSiteSettingsForm({ locale, formData });
   if (!checked.ok) return { ...EMPTY_FORM_STATE, errors: checked.errors };
-  const { serviceName, tagline, phase, phaseNote, primaryNav, footerNav, helpContacts, organisationLinks } = checked.data;
+  const { serviceName, tagline, phase, phaseNote, primaryNav, footerNav, homeTasks, helpContacts, organisationLinks } = checked.data;
 
   const [existing] = await db.select({ id: siteSettings.id }).from(siteSettings).where(eq(siteSettings.singletonKey, "site")).limit(1);
 
@@ -48,6 +48,7 @@ export async function saveSiteSettings(_prev: ContentFormState, formData: FormDa
         phaseNoteEn: phaseNote.en || null,
         primaryNav,
         footerNav,
+        homeTasks,
         helpContacts,
         organisationLinks,
       },
