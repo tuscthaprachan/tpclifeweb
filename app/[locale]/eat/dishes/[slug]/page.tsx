@@ -65,8 +65,8 @@ export default async function EatDishPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const filters = readFilters(await searchParams);
   const data = await getCanteenData();
+  const filters = readFilters(await searchParams, data);
   const index = indexCanteen(data);
   const dish = index.dishBySlug.get(slug);
   if (!dish) notFound();

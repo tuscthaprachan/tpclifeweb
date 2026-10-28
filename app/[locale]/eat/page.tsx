@@ -76,8 +76,9 @@ export default async function EatHubPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const filters = readFilters(await searchParams);
+  const query = await searchParams;
   const data = await getCanteenData();
+  const filters = readFilters(query, data);
   const now = new Date();
 
   const breadcrumbs = (

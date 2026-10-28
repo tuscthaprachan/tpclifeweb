@@ -82,7 +82,7 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
   const stallCount = filters.stall !== undefined && !hide.includes("stall") ? 1 : 0;
   const displayCount = (filters.sort !== DEFAULT_SORT ? 1 : 0) + (filters.group !== DEFAULT_GROUP ? 1 : 0);
   const clearQuery = new URLSearchParams(serialise({ ...defaultFilters(), sort: filters.sort, group: filters.group }));
-  for (const [name, value] of Object.entries(carry ?? {})) if (value !== "" && !clearQuery.has(name)) clearQuery.set(name, value);
+  for (const [name, value] of Object.entries(carry ?? {})) if (name !== "q" && value !== "" && !clearQuery.has(name)) clearQuery.set(name, value);
   const clearHref = clearQuery.size > 0 ? `${action}?${clearQuery}` : action;
   const clear =
     sticky && countActiveValues(filters) > 0 ? (

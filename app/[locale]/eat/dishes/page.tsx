@@ -63,8 +63,8 @@ export default async function EatDishesPage({
 
   const query = await searchParams;
   redirectToTidyQuery(localePath(locale, ROUTE), query);
-  const filters = readFilters(query);
   const data = await getCanteenData();
+  const filters = readFilters(query, data);
   const now = new Date();
 
   const breadcrumbs = (
