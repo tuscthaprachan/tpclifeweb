@@ -123,8 +123,8 @@ export const CANTEEN_STRINGS = {
   canteenFieldMenuNumber: { th: "เลขเมนูบนป้ายร้าน", en: "Number on the stall's board" },
   canteenHintMenuNumber: { th: "ใส่เมื่อร้านมีป้ายเมนูที่มีเลขกำกับ ไม่มีให้เว้นว่าง", en: "Only if the stall numbers its menu. Otherwise leave empty" },
   canteenHintDishSlug: {
-    th: "แนะนำให้ขึ้นต้นด้วยเลขที่ร้าน เช่น 3-pad-kra-pao ตั้งแล้วไม่ควรเปลี่ยน เพราะลิงก์เดิมจะใช้ไม่ได้",
-    en: "Best started with the stall number, for example 3-pad-kra-pao. Do not change it once the dish is live, or old links will break",
+    th: "แนะนำให้ขึ้นต้นด้วยเลขที่ร้าน เช่น 3-pad-kra-pao ตั้งแล้วไม่ควรเปลี่ยน เพราะลิงก์เดิมจะใช้ไม่ได้ และเมนูโปรดที่ผู้ใช้บันทึกไว้จะหายไป",
+    en: "Best started with the stall number, for example 3-pad-kra-pao. Do not change it once the dish is live, or old links will break and anyone who saved it as a favourite will lose it",
   },
   canteenFieldPrice: { th: "ราคา (บาท)", en: "Price (baht)" },
   canteenHintPrice: {

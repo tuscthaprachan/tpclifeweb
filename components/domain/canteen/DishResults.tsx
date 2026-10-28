@@ -121,7 +121,7 @@ export function DishResults({ data, locale, filters, groups, allGroups, headingL
           );
         }
         const whole = allGroups?.find((candidate) => candidate.key === group.key) ?? group;
-        const byPrice = [...whole.dishes].sort((a, b) => a.price - b.price);
+        const byPrice = whole.dishes;
         const stallCount = new Set(byPrice.map((dish) => dish.stallId)).size;
         return (
           <section key={`${group.key}-${group.continued}`} id={eat.itemId(first)} tabIndex={-1} className="flex outline-none scroll-mt-[calc(var(--header-height,4rem)+9rem)] flex-col gap-[var(--space-3)]">
