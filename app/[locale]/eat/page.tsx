@@ -21,14 +21,16 @@ import {
   eatHref,
   PinIcon,
   PlateIcon,
+  eat,
   readFilters,
+  RelaxSuggestions,
   SuggestedMenu,
   t,
   WokIcon,
 } from "@/components/domain/canteen";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Grid, Heading, Stack } from "@/components/ui";
-import { applyFilters } from "@/lib/canteen/filter";
+import { applyFilters, relaxSuggestions } from "@/lib/canteen/filter";
 import { commonCheckedOn, indexCanteen, stallOf } from "@/lib/canteen/derive";
 import { countActiveValues } from "@/lib/canteen/params";
 import { pickSuggested, suggestedPool } from "@/lib/canteen/random";
@@ -183,6 +185,16 @@ export default async function EatHubPage({
                   {t(EAT.seeAllDishes, locale)}
                 </Link>
               </p>
+            </Stack>
+          </section>
+        ) : filtered ? (
+          <section aria-labelledby="eat-suggested-title">
+            <Stack space={4}>
+              <Heading level={2} id="eat-suggested-title" className="m-0 text-xl">
+                {t(EAT.suggestedTitle, locale)}
+              </Heading>
+              <EmptyState title={filters.q !== undefined ? eat.noSearchResults(locale, filters.q) : t(EAT.noResultsTitle, locale)} />
+              <RelaxSuggestions locale={locale} route="/eat" headingLevel={3} stallName={stallName} suggestions={relaxSuggestions(data, filters, now)} />
             </Stack>
           </section>
         ) : null}

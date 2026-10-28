@@ -21,6 +21,8 @@ export interface WeekOptions {
   seed: string;
   /** Pinned days: weekday to dish slug. A locked day keeps its dish; the rest are planned around it. */
   locks?: Readonly<Record<number, string>>;
+  /** Weekday to dish slug: a dish a free day should move on from. Ignored when no other plan fits. */
+  skips?: Readonly<Record<number, string>>;
   now: Date;
 }
 
@@ -58,7 +60,7 @@ export type WeekResult =
   | { ok: false; reason: WeekFailure };
 
 /** Search steps before giving up, so a hard request cannot hang a page. */
-const NODE_LIMIT = 50_000;
+const NODE_LIMIT = 15_000;
 
 /** Weekdays in the order a student reads a week: Monday to Sunday. */
 const MONDAY_FIRST = [1, 2, 3, 4, 5, 6, 0];
@@ -91,6 +93,12 @@ function fairOrder(dishes: readonly CanteenDish[], rng: () => number): CanteenDi
  * with a new seed and every other day in `locks`.
  */
 export function planWeek(data: CanteenData, filters: CanteenFilters, options: WeekOptions): WeekResult {
+  const result = planWithSkips(data, filters, options);
+  if (result.ok || !options.skips || Object.keys(options.skips).length === 0) return result;
+  return planWithSkips(data, filters, { ...options, skips: {} });
+}
+
+function planWithSkips(data: CanteenData, filters: CanteenFilters, options: WeekOptions): WeekResult {
   const uniqueDays = [...new Set(options.days)];
   if (uniqueDays.length === 0) return { ok: false, reason: "noDays" };
   if (uniqueDays.some((day) => !Number.isInteger(day) || day < 0 || day > 6)) {
@@ -124,9 +132,10 @@ export function planWeek(data: CanteenData, filters: CanteenFilters, options: We
   if (spent > options.budget) return { ok: false, reason: "budgetTooLow" };
 
   const freeDays = days.filter((day) => !chosen.has(day));
-  const pool = data.dishes
-    .filter((dish) => isMealDish(dish, filters) && matchesFilters(data, dish, filters, options.now) && price(dish) <= options.budget)
+  const candidates = data.dishes
+    .filter((dish) => isMealDish(dish, filters) && matchesFilters(data, dish, filters, options.now))
     .sort((a, b) => a.slug.current.localeCompare(b.slug.current));
+  const pool = candidates.filter((dish) => price(dish) <= options.budget);
 
   // Cheapest dish per stall bounds what the remaining days must cost.
   const cheapestByStall = new Map<string, number>();
@@ -139,7 +148,10 @@ export function planWeek(data: CanteenData, filters: CanteenFilters, options: We
     .map(([, cheapest]) => cheapest)
     .sort((a, b) => a - b);
 
-  if (freeStallPrices.length < freeDays.length) return { ok: false, reason: "notEnoughStalls" };
+  if (freeStallPrices.length < freeDays.length) {
+    const stallsAtAnyPrice = new Set(candidates.filter((dish) => !usedStalls.has(dish.stallId)).map((dish) => dish.stallId));
+    return { ok: false, reason: stallsAtAnyPrice.size >= freeDays.length ? "budgetTooLow" : "notEnoughStalls" };
+  }
   const floor = freeStallPrices.slice(0, freeDays.length).reduce((sum, value) => sum + value, 0);
   if (spent + floor > options.budget) return { ok: false, reason: "budgetTooLow" };
 
@@ -158,29 +170,29 @@ export function planWeek(data: CanteenData, filters: CanteenFilters, options: We
     return Number.POSITIVE_INFINITY;
   };
 
-  const order = fairOrder(pool, rng);
   const assignment = new Map<number, CanteenDish>();
   let nodes = 0;
 
-  const search = (position: number, total: number): boolean => {
+  const search = (order: readonly CanteenDish[], position: number, total: number): boolean => {
     if (position === freeDays.length) return true;
     const remaining = freeDays.length - position - 1;
     for (const dish of order) {
-      nodes += 1;
-      if (nodes > NODE_LIMIT) return false;
       if (usedStalls.has(dish.stallId)) continue;
       if (dish.canonicalId && usedCanonicals.has(dish.canonicalId)) continue;
+      if (options.skips?.[freeDays[position]!] === dish.slug.current) continue;
 
       const cost = total + price(dish);
       // The days still to fill each need at least the cheapest stall price left.
       const reserve = remaining === 0 ? 0 : remainingFloor(remaining, dish.stallId);
       if (cost + reserve > options.budget) continue;
 
+      nodes += 1;
+      if (nodes > NODE_LIMIT) return false;
       usedStalls.add(dish.stallId);
       if (dish.canonicalId) usedCanonicals.add(dish.canonicalId);
       assignment.set(freeDays[position]!, dish);
 
-      if (search(position + 1, cost)) return true;
+      if (search(order, position + 1, cost)) return true;
 
       usedStalls.delete(dish.stallId);
       if (dish.canonicalId) usedCanonicals.delete(dish.canonicalId);
@@ -190,7 +202,13 @@ export function planWeek(data: CanteenData, filters: CanteenFilters, options: We
     return false;
   };
 
-  if (!search(0, spent)) return { ok: false, reason: "noPlan" };
+  // Seeded order first, for variety. If it fails, a cheapest first pass either finds the tight plan or runs to the end, which proves the budget is too low.
+  if (!search(fairOrder(pool, rng), 0, spent)) {
+    if (nodes <= NODE_LIMIT) return { ok: false, reason: "budgetTooLow" };
+    nodes = 0;
+    const cheapestFirst = [...pool].sort((a, b) => price(a) - price(b));
+    if (!search(cheapestFirst, 0, spent)) return { ok: false, reason: nodes <= NODE_LIMIT ? "budgetTooLow" : "noPlan" };
+  }
 
   const plan: WeekDayPlan[] = days.map((weekday) => {
     const locked = chosen.has(weekday);

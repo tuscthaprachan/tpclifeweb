@@ -195,3 +195,14 @@ describe("the canteen logic on surveyed data", () => {
     if (binding) expect(binding.stall._id).not.toBe(vacantId);
   });
 });
+
+describe("planWeek on the surveyed data", () => {
+  it("proves an impossible budget too low rather than timing out, and plans the first budget that works", () => {
+    const options = { days: [1, 2, 3, 4, 5], seed: "abc", now: NOW };
+    for (let budget = 150; budget < 165; budget += 1) {
+      expect(planWeek(data, defaultFilters(), { ...options, budget })).toEqual({ ok: false, reason: "budgetTooLow" });
+    }
+    expect(planWeek(data, defaultFilters(), { ...options, budget: 165 }).ok).toBe(true);
+    expect(planWeek(data, defaultFilters(), { ...options, budget: 25, days: [1] })).toEqual({ ok: false, reason: "budgetTooLow" });
+  });
+});

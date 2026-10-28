@@ -339,11 +339,10 @@ export function medianRicePrice(data: CanteenData, includeVariants = false): num
   return medianPrice(ricePlates(data), includeVariants);
 }
 
-/** Lowest and highest base price among the dishes, or null for none. */
-export function priceRange(dishes: readonly CanteenDish[]): { min: number; max: number } | null {
+/** Lowest base price to highest price (with the dearest variant unless `includeVariants` is false), or null for none. */
+export function priceRange(dishes: readonly CanteenDish[], includeVariants = true): { min: number; max: number } | null {
   if (dishes.length === 0) return null;
-  const prices = dishes.map((dish) => dish.price);
-  return { min: Math.min(...prices), max: Math.max(...prices) };
+  return { min: Math.min(...dishes.map((dish) => dish.price)), max: Math.max(...dishes.map((dish) => effectivePrice(dish, includeVariants))) };
 }
 
 /** Every dish mapped to a canonical dish, cheapest first, then by walking order of the stall. */

@@ -123,6 +123,9 @@ describe("show more", () => {
     expect(parseShow("9999", undefined, 752)).toBe(752);
     expect(parseShow("x", "2", 752)).toBe(96);
     expect(parseShow(["60", "80"], "2", 752)).toBe(60);
+    expect(parseShow(undefined, "0", 752)).toBe(20);
+    expect(parseShow(undefined, "-1", 752)).toBe(20);
+    expect(parseShow(undefined, "1", 752)).toBe(20);
     expect(parseShow(undefined, undefined, 0)).toBe(20);
   });
 

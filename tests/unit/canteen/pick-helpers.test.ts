@@ -8,9 +8,11 @@ import {
   reelNames,
   serverBias,
   toPickLock,
+  vetoedDishes,
   type PickParams,
 } from "@/components/domain/canteen/pick/helpers";
 import { defaultFilters, mealCombos } from "@/lib/canteen";
+import { pick } from "@/lib/canteen/random";
 
 import { NOW, makeData } from "./fixture";
 
@@ -59,7 +61,24 @@ describe("readPickParams", () => {
 
   it("caps the vetoes so a hand edited link cannot grow without limit", () => {
     const many = Array.from({ length: 200 }, (_, i) => `dish-${i}`).join(",");
-    expect(readPickParams({ not: many }).not).toHaveLength(60);
+    const not = readPickParams({ not: many }).not;
+    expect(not).toHaveLength(60);
+    expect(not[59]).toBe("dish-199");
+    expect(pickExtras({ ...base, not: readPickParams({ not: many }).not }).not?.endsWith("dish-199")).toBe(true);
+  });
+
+  it("expands a vetoed stall to all its dishes so stall mode never re-offers it", () => {
+    const data = makeData();
+    const stalls = new Set<string>();
+    let not: string[] = [];
+    const withMains = new Set(data.dishes.filter((dish) => dish.course === "main").map((dish) => dish.stallId)).size;
+    for (let i = 0; i < withMains; i += 1) {
+      const outcome = pick(data, defaultFilters(), { seed: `s${i}`, now: NOW, not: vetoedDishes(data, not) });
+      const stall = outcome.stall!;
+      expect(stalls.has(stall.slug.current)).toBe(false);
+      stalls.add(stall.slug.current);
+      not = [...not, stall.slug.current];
+    }
   });
 });
 

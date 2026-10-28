@@ -137,7 +137,7 @@ function stallName(stall: CanteenStall, locale: Locale): string {
 /** The accessible name of a tile: what the sighted reader sees, spelled out. */
 function tileLabel(stall: CanteenStall, locale: Locale, count: number | undefined, stop: number | undefined): string {
   const parts = [`${stall.number} ${stallName(stall, locale)}`];
-  if (count !== undefined) parts.push(count === 0 ? `0, ${MAP_STRINGS.matchCount(0, locale)}` : MAP_STRINGS.matchCount(count, locale));
+  if (count !== undefined) parts.push(MAP_STRINGS.matchCount(count, locale));
   if (stop !== undefined) parts.push(MAP_STRINGS.stop(stop, locale));
   return parts.join(", ");
 }

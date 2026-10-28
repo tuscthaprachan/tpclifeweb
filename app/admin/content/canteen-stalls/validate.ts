@@ -5,7 +5,7 @@ import { resolveIntent, type FieldErrors, type ResolvedIntent } from "@/lib/admi
 import { checkImages } from "@/lib/admin/content/images";
 import { isSlugTaken } from "@/lib/admin/content/slug";
 import type { AuditExecutor } from "@/lib/db/audit";
-import { canteenDishes, canteenStalls } from "@/lib/db/schema";
+import { canteenDishes, canteenSettings, canteenStalls } from "@/lib/db/schema";
 import { CANTEEN_CUISINES, DISH_COURSES, MAP_SHAPES, type ContentStatus } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
@@ -90,6 +90,12 @@ export async function validateStallForm(
         .where(and(eq(canteenStalls.number, data.number), id ? ne(canteenStalls.id, id) : undefined))
         .limit(1);
       if (clash.length > 0) errors.number = L("canteenErrNumberTaken");
+    }
+
+    const [grid] = await db.select({ cols: canteenSettings.gridCols, rows: canteenSettings.gridRows }).from(canteenSettings).limit(1);
+    if (grid && data.mapCol !== null && data.mapRow !== null && data.mapW !== null && data.mapH !== null) {
+      if (data.mapCol + data.mapW > grid.cols) errors.mapCol ??= L("canteenErrOutsideGrid");
+      if (data.mapRow + data.mapH > grid.rows) errors.mapRow ??= L("canteenErrOutsideGrid");
     }
 
     if (data.photo) {

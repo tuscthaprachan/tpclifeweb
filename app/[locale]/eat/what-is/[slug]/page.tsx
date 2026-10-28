@@ -7,12 +7,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { CanonicalCompare, EAT, eatHref, readFilters, t } from "@/components/domain/canteen";
+import { CanonicalCompare, EAT, eatHref, readFilters, redirectToTidyQuery, t } from "@/components/domain/canteen";
 import { EXTRAS } from "@/components/domain/canteen/extras";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, Stack } from "@/components/ui";
 import { dishesInCanonical, indexCanteen } from "@/lib/canteen/derive";
-import { DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, OTHER_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/content";
@@ -44,6 +44,7 @@ export default async function WhatIsDishPage({
   const locale: Locale = rawLocale;
 
   const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, `/eat/what-is/${slug}`), query);
   const filters = readFilters(query);
   const data = await getCanteenData();
   const canonical = indexCanteen(data).canonicalBySlug.get(slug);

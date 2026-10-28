@@ -72,6 +72,20 @@ describe("pinning moves", () => {
     }
   });
 
+  it("reroll moves the day off its current dish, and the skip survives a round trip through the URL", () => {
+    for (const weekday of [1, 2, 3, 4, 5]) {
+      const next = rerollDay(request, plan, weekday);
+      const current = plan.find((p) => p.weekday === weekday)!.slug;
+      expect(next.skips).toEqual({ [weekday]: current });
+      const reread = parseWeekRequest(new URLSearchParams(weekQuery(next, defaultFilters())));
+      expect(reread.skips).toEqual({ [weekday]: current });
+      const again = planWeek(data, defaultFilters(), { budget: 400, days: [1, 2, 3, 4, 5], seed: reread.seed!, locks: allPins(reread), skips: reread.skips, now: NOW });
+      expect(again.ok).toBe(true);
+      if (again.ok) expect(again.days.find((d) => d.weekday === weekday)!.dish.slug.current).not.toBe(current);
+    }
+    expect(lockDay(rerollDay(request, plan, 2), plan, 3).skips).toEqual({});
+  });
+
   it("lock and unlock keep the whole plan stable", () => {
     const locked = lockDay(request, plan, 2);
     expect(Object.keys(locked.locks)).toEqual(["2"]);

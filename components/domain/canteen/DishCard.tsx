@@ -59,8 +59,8 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-[var(--space-3)]">
-        <div className="flex min-w-0 flex-col">
+      <div className="flex flex-wrap items-start justify-between gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
+        <div className="flex flex-1 flex-col [overflow-wrap:break-word]">
           <Heading level={headingLevel} visualLevel={3} className="m-0 leading-tight">
             <Link
               href={dishHref(locale, dish.slug.current, filters)}
@@ -75,7 +75,7 @@ export function DishCard({ dish, stall, locale, filters, headingLevel = 3, showF
             </p>
           ) : null}
         </div>
-        <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} hideChecked={hideChecked} className="shrink-0 items-end whitespace-nowrap text-right" />
+        <PriceTag price={dish.price} variants={dish.variants} checkedOn={dish.checkedOn} locale={locale} hideChecked={hideChecked} className="ml-auto shrink-0 items-end whitespace-nowrap text-right" />
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-x-[var(--space-2)] text-sm text-ink-600">

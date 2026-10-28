@@ -6,7 +6,7 @@ import { validateCanteenSettingsForm } from "@/app/admin/content/canteen-setting
 import { parsePriceForm } from "@/app/admin/content/canteen-stalls/prices";
 import { validateStallForm } from "@/app/admin/content/canteen-stalls/validate";
 import { surveyCanteenData } from "@/lib/canteen/dataset";
-import { canonicalDishes, canteenDishes, canteenStallAddOns, canteenStalls } from "@/lib/db/schema";
+import { canonicalDishes, canteenDishes, canteenSettings, canteenStallAddOns, canteenStalls } from "@/lib/db/schema";
 import { createTestDb } from "../db/harness";
 
 type Db = Awaited<ReturnType<typeof createTestDb>>["db"];
@@ -59,6 +59,17 @@ describe("validateStallForm", () => {
       errors: { "hours.0.opens": expect.stringContaining("time"), "hours.0.closes": expect.stringContaining("Enter") },
     });
     expect(await stall({ "hours.0.opens": "08:30", "hours.0.closes": "09:00" })).toMatchObject({ ok: false, errors: { "hours.0.daysOfWeek": expect.any(String) } });
+  });
+
+  it("keeps the stall inside the floor plan grid", async () => {
+    await db.insert(canteenSettings).values({ gridCols: 12, gridRows: 8 });
+    try {
+      expect(await stall({ mapCol: "10", mapW: "2", mapRow: "6", mapH: "2" })).toMatchObject({ ok: true });
+      expect(await stall({ mapCol: "11", mapW: "2" })).toMatchObject({ ok: false, errors: { mapCol: expect.stringContaining("outside") } });
+      expect(await stall({ mapRow: "7", mapH: "2" })).toMatchObject({ ok: false, errors: { mapRow: expect.stringContaining("outside") } });
+    } finally {
+      await db.delete(canteenSettings);
+    }
   });
 
   it("requires both languages in a started add-on, and a price", async () => {

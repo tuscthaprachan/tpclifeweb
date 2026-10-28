@@ -35,8 +35,8 @@ export function DishRow({ dish, stall, locale, filters, matches, className }: Di
   const otherName = pick(dish.name, other);
 
   return (
-    <div className={cx("relative flex items-start justify-between gap-[var(--space-4)] py-[var(--space-3)] [&_button]:relative [&_button]:z-10", className)}>
-      <div className="flex min-w-0 flex-col gap-[var(--space-1)]">
+    <div className={cx("relative flex flex-wrap items-start justify-between gap-x-[var(--space-4)] gap-y-[var(--space-1)] py-[var(--space-3)] [&_button]:relative [&_button]:z-10", className)}>
+      <div className="flex flex-1 flex-col gap-[var(--space-1)] [overflow-wrap:break-word]">
         <Link href={dishHref(locale, dish.slug.current, filters)} className={cx("inline-flex min-h-[var(--target-min)] items-center text-lg font-semibold no-underline after:absolute after:inset-0 after:content-[''] hover:text-action hover:underline", matches === false ? "text-ink-600" : "text-ink-900")}>
           {name}
         </Link>
@@ -54,7 +54,7 @@ export function DishRow({ dish, stall, locale, filters, matches, className }: Di
         <HowToSay dish={dish} locale={locale} />
         <DietTags tags={dishDietTags(dish, stall).filter((tag) => tag.key !== "halal")} locale={locale} />
       </div>
-      <p className={cx("m-0 shrink-0 text-right font-semibold", matches === false ? "text-ink-600" : "text-ink-900")}>{priceText(locale, dish.price, dish.variants)}</p>
+      <p className={cx("m-0 ml-auto shrink-0 text-right font-semibold", matches === false ? "text-ink-600" : "text-ink-900")}>{priceText(locale, dish.price, dish.variants)}</p>
     </div>
   );
 }

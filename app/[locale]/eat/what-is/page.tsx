@@ -8,12 +8,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { EAT, eatHref, readFilters, t } from "@/components/domain/canteen";
+import { EAT, eatHref, readFilters, redirectToTidyQuery, t } from "@/components/domain/canteen";
 import { EXTRAS, excerpt, extras } from "@/components/domain/canteen/extras";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Grid, Heading, Stack } from "@/components/ui";
 import { dishesInCanonical, priceRange } from "@/lib/canteen/derive";
-import { DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, OTHER_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/content";
@@ -39,7 +39,9 @@ export default async function WhatIsIndexPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const filters = readFilters(await searchParams);
+  const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, "/eat/what-is"), query);
+  const filters = readFilters(query);
   const data = await getCanteenData();
   const other = OTHER_LOCALE[locale];
 

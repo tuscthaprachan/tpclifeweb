@@ -39,7 +39,7 @@ import type { CanteenData } from "@/lib/content/types";
 
 import { eat } from "../strings";
 import "../fun.css";
-import { biasNeedsDevice, reelNames, toPickLock, type PickParams } from "./helpers";
+import { biasNeedsDevice, reelNames, toPickLock, vetoedDishes, type PickParams } from "./helpers";
 import { PickEmpty } from "./PickEmpty";
 import { PickResult } from "./PickResult";
 import { consumeSpin, SpinListener } from "./SpinListener";
@@ -147,7 +147,7 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
       seed: params.seed ?? "",
       bias: params.bias,
       lock: toPickLock(params),
-      not: params.not,
+      not: vetoedDishes(data, params.not),
       history: snapshot.history,
       favourites: snapshot.favourites,
       dislikes: snapshot.dislikes,

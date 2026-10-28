@@ -30,6 +30,14 @@ describe("group encoding", () => {
     expect(encodeGroup(people)).toBe("Mint.50.np-v~Ben.80");
   });
 
+  it("drops a budget above the form's maximum", () => {
+    expect(decodeGroup("A.5000.np~B.5001~C.99999")).toEqual([
+      { name: "A", max: 5000, diet: ["nopork"], avoid: [] },
+      { name: "B", diet: [], avoid: [] },
+      { name: "C", diet: [], avoid: [] },
+    ]);
+  });
+
   it("still reads old links that carried a spice limit, ignoring it", () => {
     expect(decodeGroup("Mint.50.np-v.s1.eg~Ben.80..s3")).toEqual([
       { name: "Mint", max: 50, diet: ["nopork", "vegetarian"], avoid: ["egg"] },

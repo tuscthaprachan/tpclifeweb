@@ -11,7 +11,7 @@ import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/content/types
 
 import { effectivePrice, indexCanteen, stallOf } from "./derive";
 import { matchesFilters } from "./filter";
-import type { CanteenFilters } from "./params";
+import { MAX_BUDGET, type CanteenFilters } from "./params";
 
 export interface ComboOptions {
   /** Drink and dessert must come from the same stall as the main. */
@@ -20,6 +20,8 @@ export interface ComboOptions {
   now: Date;
   /** How many combos to return, best first. Default 30. */
   limit?: number;
+  /** The most combos that may share a main, so the list is not one main with a dozen drinks. Default: no limit. */
+  perMain?: number;
 }
 
 /** One way to spend the budget. */
@@ -43,7 +45,7 @@ export interface MealCombo {
  * fewest stalls to walk to, then a fixed tie-break so the order is stable.
  *
  * The filters apply to the main in full. For the drink and dessert the budget
- * is replaced by the combo total, and `type` and `feel` are ignored, since
+ * is replaced by the combo total (each dish still honours the per-dish `max`), and `type` and `feel` are ignored, since
  * "noodles" or "hot" describe the main and would otherwise rule out every
  * drink and dessert. Diet, avoid, stall and open still apply to all
  * three, so a no-pork, halal-only filter holds for the whole meal. When
@@ -58,8 +60,7 @@ export function mealCombos(
   const { walkRank } = indexCanteen(data);
   const price = (dish: CanteenDish) => effectivePrice(dish, filters.variants);
 
-  const mainFilters: CanteenFilters = { ...filters, max: undefined };
-  const sideFilters: CanteenFilters = { ...mainFilters, type: [], feel: [] };
+  const sideFilters: CanteenFilters = { ...filters, type: [], feel: [] };
 
   const byPrice = (a: CanteenDish, b: CanteenDish) =>
     price(a) - price(b) || a.slug.current.localeCompare(b.slug.current);
@@ -69,7 +70,7 @@ export function mealCombos(
       .filter((dish) => dish.course === course && price(dish) <= budget && matchesFilters(data, dish, against, options.now))
       .sort(byPrice);
 
-  const mains = pickCourse("main", mainFilters);
+  const mains = pickCourse("main", filters);
   const drinks = pickCourse("drink", sideFilters);
   const desserts = pickCourse("dessert", sideFilters);
 
@@ -102,8 +103,14 @@ export function mealCombos(
 
   const best: Candidate[] = [];
   const worstChange = () => (best.length < limit ? Infinity : best[best.length - 1]!.change);
+  const perMain = Math.max(1, options.perMain ?? Number.POSITIVE_INFINITY);
   const consider = (next: Candidate) => {
-    if (best.length === limit && compare(next, best[best.length - 1]!) >= 0) return;
+    const sharing = best.filter((item) => item.main === next.main);
+    if (sharing.length >= perMain) {
+      const worst = sharing[sharing.length - 1]!;
+      if (compare(next, worst) >= 0) return;
+      best.splice(best.indexOf(worst), 1);
+    } else if (best.length === limit && compare(next, best[best.length - 1]!) >= 0) return;
     let at = best.length;
     while (at > 0 && compare(next, best[at - 1]!) < 0) at -= 1;
     best.splice(at, 0, next);
@@ -149,4 +156,29 @@ export function mealCombos(
     }
     return { main, ...(drink ? { drink } : {}), ...(dessert ? { dessert } : {}), items, total: budget - change, change, stalls };
   });
+}
+
+/**
+ * Why `budget` buys no meal: the price of the cheapest main that passes the
+ * filters, and the smallest raise (in steps of 5 baht, at most 100 more) that
+ * makes a meal fit.
+ */
+export function mealShortfall(
+  data: CanteenData,
+  filters: CanteenFilters,
+  budget: number,
+  options: ComboOptions,
+): { cheapest?: number; raiseTo?: number } {
+  const mains = data.dishes
+    .filter((dish) => dish.course === "main" && matchesFilters(data, dish, filters, options.now))
+    .map((dish) => effectivePrice(dish, filters.variants));
+  const cheapest = mains.length > 0 ? Math.min(...mains) : undefined;
+  let raiseTo: number | undefined;
+  for (let step = 5; step <= 100 && budget + step <= MAX_BUDGET; step += 5) {
+    if (mealCombos(data, filters, budget + step, { ...options, limit: 1 }).length > 0) {
+      raiseTo = budget + step;
+      break;
+    }
+  }
+  return { ...(cheapest !== undefined ? { cheapest } : {}), ...(raiseTo !== undefined ? { raiseTo } : {}) };
 }

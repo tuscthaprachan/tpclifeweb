@@ -16,6 +16,7 @@ import { BIASES, createRng, type Bias, type LockKey, type PickLock } from "@/lib
 import type { MealCombo } from "@/lib/canteen/combos";
 import { parseMealBudget, type CanteenFilters, type RawParams } from "@/lib/canteen/params";
 import type { Locale } from "@/lib/i18n/config";
+import type { CanteenData } from "@/lib/content/types";
 
 export const PICK_ROUTE = "/eat/pick";
 
@@ -38,7 +39,7 @@ export interface PickParams {
   lock: LockKey[];
   /** Slug of the previous dish the locks are relative to. */
   of?: string;
-  /** Vetoed dish slugs. */
+  /** Vetoed slugs, oldest first: dishes, or stalls in stall mode. */
   not: string[];
   /** Meal mode only: drink and dessert come from the main's stall (`same=1`). */
   sameStall: boolean;
@@ -62,7 +63,7 @@ export function readPickParams(raw: RawParams): PickParams {
   const sameStall = all(raw, "same")[0] === "1";
   const of = all(raw, "of")[0];
   const lockTokens = new Set(all(raw, "lock"));
-  const not = [...new Set(all(raw, "not").filter((slug) => SLUG.test(slug)))].slice(0, MAX_VETOES);
+  const not = [...new Set(all(raw, "not").filter((slug) => SLUG.test(slug)))].slice(-MAX_VETOES);
 
   const lock = LOCK_KEYS.filter((key) => lockTokens.has(key));
   const validOf = of !== undefined && SLUG.test(of) ? of : undefined;
@@ -78,6 +79,14 @@ export function readPickParams(raw: RawParams): PickParams {
     sameStall,
     ...(meal !== undefined ? { meal } : {}),
   };
+}
+
+/** `not` as dish slugs: a vetoed stall's slug stands for every dish at that stall. */
+export function vetoedDishes(data: CanteenData, not: readonly string[]): string[] {
+  if (not.length === 0) return [];
+  const stallIds = new Set(data.stalls.filter((stall) => not.includes(stall.slug.current)).map((stall) => stall._id));
+  if (stallIds.size === 0) return [...not];
+  return [...not, ...data.dishes.filter((dish) => stallIds.has(dish.stallId)).map((dish) => dish.slug.current)];
 }
 
 /** Whether a bias needs what only the device knows. */
@@ -116,7 +125,7 @@ export function pickExtras(params: PickParams, change: Partial<PickParams> = {})
     bias: next.bias === "fair" ? undefined : next.bias,
     lock: lock.length > 0 ? lock.join(",") : undefined,
     of: lock.length > 0 ? next.of : undefined,
-    not: next.not.length > 0 ? next.not.slice(0, MAX_VETOES).join(",") : undefined,
+    not: next.not.length > 0 ? next.not.slice(-MAX_VETOES).join(",") : undefined,
     same: next.sameStall ? "1" : undefined,
     meal: next.mode === "meal" && next.meal !== undefined ? String(next.meal) : undefined,
   };

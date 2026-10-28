@@ -36,6 +36,7 @@ import {
   reelNames,
   serverBias,
   toPickLock,
+  vetoedDishes,
   type PickParams,
 } from "@/components/domain/canteen/pick";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -44,6 +45,7 @@ import { mealCombos } from "@/lib/canteen/combos";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { applyFilters } from "@/lib/canteen/filter";
 import { canonicalMealQuery, toSearchParams } from "@/components/domain/canteen/query";
+import { invalidMealBudget } from "@/lib/canteen/params";
 import { newSeed, pick as runPick } from "@/lib/canteen/random";
 import { DEFAULT_LOCALE, isLocale, localePath, pick as localised, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -91,8 +93,8 @@ export default async function EatPickPage({
   const seed = parsed.seed;
   const pickParams: PickParams = { ...parsed, seed };
 
-  const filters = readFilters(query);
   const data = await getCanteenData();
+  const filters = readFilters(query, data);
   const now = new Date();
   const index = indexCanteen(data);
 
@@ -138,10 +140,10 @@ export default async function EatPickPage({
     if (budget === undefined) {
       result = <PickEmpty locale={locale} data={data} filters={filters} reason="budget" now={now} />;
     } else {
-      const combos = mealCombos(data, filters, budget, { now, limit: 30, sameStallOnly: pickParams.sameStall });
+      const combos = mealCombos(data, filters, budget, { now, limit: 30, perMain: 2, sameStallOnly: pickParams.sameStall });
       const { combo, vetoRelaxed } = chooseCombo(combos, seed, pickParams.not);
       if (!combo) {
-        result = <PickEmpty locale={locale} data={data} filters={filters} reason="meal" now={now} />;
+        result = <PickEmpty locale={locale} data={data} filters={filters} reason="meal" now={now} meal={{ amount: budget, sameStall: pickParams.sameStall }} />;
       } else {
         const text = combo.items.map((dish) => localised(dish.name, locale)).join(", ");
         reel = reelNames(
@@ -160,7 +162,7 @@ export default async function EatPickPage({
       seed,
       bias: serverBias(pickParams.bias),
       lock: toPickLock(pickParams),
-      not: pickParams.not,
+      not: vetoedDishes(data, pickParams.not),
       now,
     });
     if (!outcome.dish || !outcome.stall) {
@@ -228,7 +230,7 @@ export default async function EatPickPage({
             <Heading level={2} id="pick-controls" className="m-0 text-xl">
               {PICK.controlsHeading[locale]}
             </Heading>
-            <PickControls locale={locale} filters={filters} mode={pickParams.mode} bias={pickParams.bias} meal={pickParams.meal} sameStall={pickParams.sameStall} />
+            <PickControls locale={locale} filters={filters} mode={pickParams.mode} bias={pickParams.bias} meal={pickParams.meal} invalid={invalidMealBudget(query)} sameStall={pickParams.sameStall} />
             <Link href={eatHref(locale, "/eat/dishes", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
               {t(EAT.editFilters, locale)}
             </Link>

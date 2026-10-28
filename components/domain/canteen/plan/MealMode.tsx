@@ -26,10 +26,10 @@ import { MealForm } from "@/components/domain/canteen/budget/MealForm";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
 import { canonicalMealQuery } from "@/components/domain/canteen/query";
 import { Button, EmptyState, Heading, Stack } from "@/components/ui";
-import { mealCombos } from "@/lib/canteen/combos";
-import { effectivePrice, indexCanteen } from "@/lib/canteen/derive";
-import { facetCounts, matchesFilters, relaxSuggestions } from "@/lib/canteen/filter";
-import { MAX_BUDGET, parseMealBudget } from "@/lib/canteen/params";
+import { mealCombos, mealShortfall } from "@/lib/canteen/combos";
+import { indexCanteen } from "@/lib/canteen/derive";
+import { facetCounts, relaxSuggestions } from "@/lib/canteen/filter";
+import { invalidMealBudget, parseMealBudget } from "@/lib/canteen/params";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { getCanteenData } from "@/lib/content";
 
@@ -50,10 +50,10 @@ export async function MealMode({
 }) {
   const canonical = canonicalMealQuery(query);
   if (canonical !== null) redirect(canonical ? `${localePath(locale, ROUTE)}?${canonical}` : localePath(locale, ROUTE));
-  const filters = readFilters(query);
   const sameValue = Array.isArray(query.same) ? query.same[0] : query.same;
   const sameStall = sameValue === "1";
   const data = await getCanteenData();
+  const filters = readFilters(query, data);
   const now = new Date();
 
   if (data.dishes.length === 0) {
@@ -79,21 +79,11 @@ export async function MealMode({
       <EmptyState title={t(BUDGET.mealPromptTitle, locale)}>{t(BUDGET.mealPromptBody, locale)}</EmptyState>
     );
   } else {
-    const combos = mealCombos(data, filters, amount, { sameStallOnly: sameStall, now, limit: MAX_SHOWN });
+    const combos = mealCombos(data, filters, amount, { sameStallOnly: sameStall, now, limit: MAX_SHOWN, perMain: 2 });
 
     if (combos.length === 0) {
       // Why nothing fits: the cheapest main that passes the filters, and the smallest raise that works.
-      const mains = data.dishes
-        .filter((dish) => dish.course === "main" && matchesFilters(data, dish, filters, now))
-        .map((dish) => effectivePrice(dish, filters.variants));
-      const cheapest = mains.length > 0 ? Math.min(...mains) : undefined;
-      let raiseTo: number | undefined;
-      for (let step = 5; step <= 100 && amount + step <= MAX_BUDGET; step += 5) {
-        if (mealCombos(data, filters, amount + step, { sameStallOnly: sameStall, now, limit: 1 }).length > 0) {
-          raiseTo = amount + step;
-          break;
-        }
-      }
+      const { cheapest, raiseTo } = mealShortfall(data, filters, amount, { sameStallOnly: sameStall, now });
       const others = relaxSuggestions(data, filters, now);
       results = (
         <Stack space={6}>
@@ -173,7 +163,7 @@ export async function MealMode({
 
   return (
     <Stack space={6}>
-      <MealForm locale={locale} filters={filters} meal={amount} sameStall={sameStall} />
+      <MealForm locale={locale} filters={filters} meal={amount} sameStall={sameStall} invalid={invalidMealBudget(query)} />
       <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry} hide={["max"]}>
         <Stack space={6}>
           {results}

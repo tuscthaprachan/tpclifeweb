@@ -91,10 +91,33 @@ describe("form query", () => {
   });
 });
 
+describe("readFilters with known stalls", () => {
+  it("drops a stall that does not exist and keeps one that does", () => {
+    const real = data.stalls[0]!.slug.current;
+    expect(readFilters({ stall: "nope" }).stall).toBe("nope");
+    expect(readFilters({ stall: "nope" }, data).stall).toBeUndefined();
+    expect(readFilters({ stall: real }, data).stall).toBe(real);
+  });
+});
+
 describe("tidyQuery", () => {
   it("drops the empty values a no JavaScript submit sends", () => {
     expect(tidyQuery({ max: "", maxOther: "", diet: "nopork" })).toBe("diet=nopork");
     expect(tidyQuery({ max: "", maxOther: "" })).toBe("");
+  });
+
+  it("keeps an empty days in week mode, and drops the empty one beside ticked days", () => {
+    expect(tidyQuery({ mode: "week", budget: "300", days: [""] })).toBeNull();
+    expect(tidyQuery(new URLSearchParams("mode=week&budget=300&days=&max="))).toBe("mode=week&budget=300&days=");
+    expect(tidyQuery(new URLSearchParams("mode=week&days=&days=1&days=2"))).toBe("mode=week&days=1&days=2");
+    expect(tidyQuery({ days: "" })).toBe("");
+  });
+
+  it("drops default sort and group and an invalid max, whatever the order", () => {
+    expect(tidyQuery(new URLSearchParams("q=ice&diet=halal&sort=price&group=none&max=55"))).toBe("q=ice&diet=halal&max=55");
+    expect(tidyQuery(new URLSearchParams("q=ice&sort=name&group=stall&max=0"))).toBe("q=ice&sort=name&group=stall");
+    expect(tidyQuery({ max: "99999999999", maxOther: "" })).toBe("");
+    expect(tidyQuery({ max: "other", maxOther: "0" })).toBe("");
   });
 
   it("folds a typed amount into max and keeps other parameters in order", () => {
@@ -130,7 +153,7 @@ describe("meal budget parameter", () => {
 
   it("folds meal=other and the typed amount into meal", () => {
     expect(tidyQuery({ meal: "other", mealOther: "75", same: "1" })).toBe("meal=75&same=1");
-    expect(tidyQuery({ meal: "other", mealOther: "" })).toBe("");
+    expect(tidyQuery({ meal: "other", mealOther: "" })).toBe("meal=other");
     expect(tidyQuery({ meal: "60", mealOther: "75" })).toBe("meal=60");
     expect(tidyQuery({ meal: "60", mealOther: "" })).toBe("meal=60");
     expect(tidyQuery({ meal: "60" })).toBeNull();

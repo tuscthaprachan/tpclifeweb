@@ -8,6 +8,8 @@ import { DiceIcon } from "../icons";
 import "../fun.css";
 import "./pick-controls.css";
 import { PICK_ROUTE, type PickMode } from "./helpers";
+import { BUDGET } from "../budget/strings";
+import { t } from "../strings";
 import { PICK } from "./strings";
 import type { Bias } from "@/lib/canteen/random";
 
@@ -18,6 +20,8 @@ interface PickControlsProps {
   bias: Bias;
   /** The whole-meal budget in the address, if any. Only meal mode uses it. */
   meal?: number;
+  /** What was typed when it is not a valid budget, shown back with an error. */
+  invalid?: string;
   /** Keep `same=1` through a new spin. */
   sameStall?: boolean;
 }
@@ -29,7 +33,7 @@ interface PickControlsProps {
  * visible without). It carries every filter as a hidden field and leaves out `seed`, `lock`, `of` and `not`, so submitting
  * starts a fresh spin (the page adds a new seed). Works without JavaScript.
  */
-export function PickControls({ locale, filters, mode, bias, meal, sameStall = false }: PickControlsProps) {
+export function PickControls({ locale, filters, mode, bias, meal, invalid, sameStall = false }: PickControlsProps) {
   const hidden = new URLSearchParams(serialise(filters));
   return (
     <form method="get" action={localePath(locale, PICK_ROUTE)} className="pick-form flex flex-col gap-[var(--space-4)]">
@@ -73,7 +77,8 @@ export function PickControls({ locale, filters, mode, bias, meal, sameStall = fa
         type="text"
         inputMode="numeric"
         pattern="[0-9]*"
-        defaultValue={meal === undefined ? "" : String(meal)}
+        defaultValue={invalid !== undefined ? (invalid === "other" ? "" : invalid) : meal === undefined ? "" : String(meal)}
+        error={invalid !== undefined && mode === "meal" ? t(BUDGET.mealInvalid, locale) : undefined}
         className="meal-only max-w-[16rem]"
       />
       <div>

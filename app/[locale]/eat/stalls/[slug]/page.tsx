@@ -21,6 +21,7 @@ import {
   eat,
   eatHref,
   readFilters,
+  redirectToTidyQuery,
   stallHalalTag,
   t,
 } from "@/components/domain/canteen";
@@ -31,7 +32,7 @@ import { commonCheckedOn, indexCanteen, priceRange } from "@/lib/canteen/derive"
 import { matchesFilters } from "@/lib/canteen/filter";
 import { DISH_TYPES } from "@/lib/canteen/options";
 import { countActiveValues } from "@/lib/canteen/params";
-import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
@@ -63,7 +64,9 @@ export default async function EatStallPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const filters = readFilters(await searchParams);
+  const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, `/eat/stalls/${slug}`), query);
+  const filters = readFilters(query);
   const data = await getCanteenData();
   const stall = indexCanteen(data).stallBySlug.get(slug);
   if (!stall) notFound();
@@ -122,7 +125,7 @@ export default async function EatStallPage({
             {eat.dishCount(locale, dishes.length)}
             {range ? ` · ${eat.priceRange(locale, range.min, range.max)}` : ""}
           </p>
-          {filtered ? (
+          {filtered && dishes.length > 0 ? (
             <>
               <p className="m-0 text-ink-900">{eat.stallMatchCount(locale, matching, dishes.length)}</p>
               <p className="m-0">

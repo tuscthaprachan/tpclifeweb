@@ -13,6 +13,7 @@ import {
   DietTags,
   DishTypeIcon,
   EAT,
+  FavouriteToggle,
   HowToSay,
   PinIcon,
   PriceTag,
@@ -95,7 +96,10 @@ export default async function EatDishPage({
             <DishTypeIcon type={dish.type} />
             {TYPE_LABEL[dish.type][locale]}
           </p>
-          <Heading level={1} className="text-3xl leading-tight">{name}</Heading>
+          <div className="flex flex-wrap items-start justify-between gap-x-[var(--space-3)]">
+            <Heading level={1} className="text-3xl leading-tight">{name}</Heading>
+            <FavouriteToggle slug={dish.slug.current} name={name} locale={locale} />
+          </div>
           {otherName && otherName !== name ? (
             <p lang={other} className="m-0 text-lg text-ink-600">
               {otherName}
@@ -104,7 +108,7 @@ export default async function EatDishPage({
           <HowToSay dish={dish} locale={locale} className="text-base" />
         </Stack>
 
-        <Grid minColumnWidth="18rem" space={4}>
+        <Grid minColumnWidth="18rem" space={4} className="items-start">
           <section aria-labelledby="eat-dish-price" className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
             <Stack space={3}>
               <Heading level={2} id="eat-dish-price" className="m-0 text-xl">

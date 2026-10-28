@@ -62,13 +62,13 @@ export function parsePage(raw: string | string[] | undefined): number {
 
 /**
  * How many dishes the list shows, from `?show=` (the count so far) or an
- * old `?page=` link (which becomes everything up to the end of that page).
+ * old `?page=` link from page 2 on (which becomes everything up to the end of that page).
  * At least one page of `size` and at most `total`.
  */
 export function parseShow(show: string | string[] | undefined, page: string | string[] | undefined, total: number, size = DISH_PAGE_SIZE): number {
   const value = Array.isArray(show) ? show[0] : show;
   const parsed = value !== undefined ? Number.parseInt(value, 10) : Number.NaN;
-  const wanted = Number.isFinite(parsed) && parsed > 0 ? parsed : page !== undefined ? parsePage(page) * LEGACY_PAGE_SIZE : size;
+  const wanted = Number.isFinite(parsed) && parsed > 0 ? parsed : parsePage(page) >= 2 ? parsePage(page) * LEGACY_PAGE_SIZE : size;
   return Math.min(Math.max(size, wanted), Math.max(size, total));
 }
 

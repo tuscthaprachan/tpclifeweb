@@ -69,7 +69,7 @@ export const EAT = {
     en: "Pick a budget and a diet, and we will choose a dish.",
   },
   decideButton: { th: "เลือกให้หน่อย", en: "Decide for me" },
-  decideWithThese: { th: "เลือกให้ จากตัวกรองนี้", en: "Decide for me with these" },
+  decideWithThese: { th: "เลือกให้จากตัวกรองนี้", en: "Decide for me with these" },
   budgetLegend: { th: "งบต่อจาน", en: "Budget per dish" },
   budgetAny: { th: "ไม่จำกัด", en: "Any" },
   budgetOther: { th: "จำนวนเงิน (บาท)", en: "Amount in baht" },
@@ -188,8 +188,8 @@ export const EAT = {
   noWayfinding: { th: "ยังไม่มีคำอธิบายทางเดิน ดูเลขร้านบนแผนที่", en: "No directions yet. Look for the stall number on the map." },
   vegetarianStall: { th: "ร้านมังสวิรัติ", en: "Vegetarian stall" },
   noMenuYet: {
-    th: "แผงนี้ยังไม่มีร้าน จึงยังไม่มีเมนู",
-    en: "There is no shop in this stall yet, so there is no menu.",
+    th: "ยังไม่มีเมนูของแผงนี้",
+    en: "No menu is listed for this stall yet.",
   },
   stallMatches: { th: "ตรงกับตัวกรองของคุณ", en: "match your filters" },
   viewStall: { th: "ดูเมนูร้านนี้", en: "See this stall's menu" },
@@ -201,7 +201,7 @@ export const EAT = {
   orWord: { th: "หรือ", en: "or" },
   hearLabel: { th: "ฟังเสียงภาษาไทย", en: "Hear it in Thai" },
   menuNumberLabel: { th: "เมนูหมายเลข", en: "Number on the board:" },
-  favouriteFailed: { th: "เก็บไม่ได้ ที่เก็บข้อมูลในเบราว์เซอร์ถูกปิดอยู่", en: "Could not save. Browser storage is switched off." },
+  favouriteFailed: { th: "เก็บลงในอุปกรณ์นี้ไม่ได้", en: "Could not save to this device." },
 
   /* ---- Search and show more ---- */
   searchLabel: { th: "ค้นหาเมนู", en: "Search dishes" },
@@ -340,7 +340,7 @@ export const eat = {
     if (!filtered) return eat.atStalls(locale, total);
     return locale === "th"
       ? `${n(shown, locale)} จาก ${n(total, locale)} ร้านมีเมนูที่ตรงกับตัวกรอง`
-      : `${n(shown, locale)} of ${n(total, locale)} stalls have matching dishes`;
+      : `${n(shown, locale)} of ${n(total, locale)} stalls ${shown === 1 ? "has" : "have"} matching dishes`;
   },
 
   /** "Page 2 of 5" is provided by ui Pagination; this is the "showing" line under the list. */

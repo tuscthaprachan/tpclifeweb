@@ -23,6 +23,14 @@ export const BUDGET = {
   budgetOther: { th: "จำนวนเงิน (บาท)", en: "Amount in baht" },
   sameStall: { th: "ร้านเดียวพอ", en: "Same stall only" },
   sameStallHint: { th: "เครื่องดื่มและของหวานต้องมาจากร้านเดียวกับจานหลัก จะได้ไม่ต้องต่อคิวสองที่", en: "Drink and dessert come from the same stall as the main, so you queue once." },
+  mealInvalid: {
+    th: "ใส่จำนวนเงินเป็นบาท เป็นจำนวนเต็มตั้งแต่ 1 ถึง 5,000",
+    en: "Enter a whole number of baht from 1 to 5,000.",
+  },
+  weekBudgetInvalid: {
+    th: "ใส่จำนวนเงินเป็นบาท เป็นจำนวนเต็มตั้งแต่ 1 ถึง 20,000",
+    en: "Enter a whole number of baht from 1 to 20,000.",
+  },
   mealSubmit: { th: "หามื้อให้พอดีงบ", en: "Find meals" },
   mealPromptTitle: { th: "ใส่งบก่อน แล้วเราจะจัดให้", en: "Pick a budget and we will put meals together" },
   mealPromptBody: { th: "เลือกจำนวนเงินด้านบน หรือเลือก \"จำนวนอื่น\" แล้วพิมพ์เอง", en: "Choose an amount above, or pick Other and type your own." },
@@ -162,7 +170,7 @@ export const BUDGET = {
   staleDish: { th: "ไม่มีในเมนูแล้ว", en: "No longer on the menu" },
   remove: { th: "เอาออก", en: "Remove" },
   clearTitle: { th: "ล้างทุกอย่าง", en: "Clear everything" },
-  clearHint: { th: "ลบรายการโปรด ประวัติ ตัวกรอง และแผนที่เก็บไว้ในเครื่องนี้ทั้งหมด", en: "Deletes your favourites, history, filters and saved week from this device." },
+  clearHint: { th: "ลบเมนูโปรด ประวัติ ตัวกรอง และแผนที่เก็บไว้ในเครื่องนี้ทั้งหมด", en: "Deletes your favourites, history, filters and saved week from this device." },
   clearAsk: { th: "ล้างข้อมูลทั้งหมดในเครื่องนี้?", en: "Clear everything on this device?" },
   clearAskBody: { th: "ลบแล้วเอากลับไม่ได้ ข้อมูลอยู่ในเครื่องนี้ที่เดียว", en: "This cannot be undone. This device is the only place the data lives." },
   clearConfirm: { th: "ใช่ ล้างทั้งหมด", en: "Yes, clear everything" },

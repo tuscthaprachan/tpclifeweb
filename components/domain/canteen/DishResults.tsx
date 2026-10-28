@@ -9,6 +9,7 @@ import type { CanteenData, CanteenDish } from "@/lib/content/types";
 import { CanonicalCompare } from "./CanonicalCompare";
 import { CheckedOnNote } from "./CheckedOnNote";
 import { DishCard } from "./DishCard";
+import { FocusOnHash } from "./FocusOnHash";
 import type { DishGroup } from "@/lib/canteen/filter";
 import type { PagedGroup } from "./paginate";
 import { stallHref } from "./links";
@@ -20,6 +21,8 @@ interface DishResultsProps {
   filters: CanteenFilters;
   /** From `showGroups`: the first dishes of the list, from position 1. One group keyed "all" when not grouped. */
   groups: PagedGroup[];
+  /** The whole, unsliced list. A price comparison reads its stall count and cheapest from here, so "show more" does not change them. Defaults to `groups`. */
+  allGroups?: readonly DishGroup[];
   /** The outline depth for group headings. Dish cards sit one level below. Defaults to 3. */
   headingLevel?: HeadingLevel;
 }
@@ -49,7 +52,7 @@ function DishGrid({ data, locale, filters, dishes, headingLevel, checkedOn, firs
   return (
     <Grid as="ul" minColumnWidth="16rem" className="m-0 list-none p-0">
       {dishes.map((dish, position) => (
-        <li key={dish._id} id={eat.itemId(first + position)} className="min-w-0 scroll-mt-[calc(var(--header-height,4rem)+9rem)]">
+        <li key={dish._id} id={eat.itemId(first + position)} tabIndex={-1} className="min-w-0 outline-none scroll-mt-[calc(var(--header-height,4rem)+9rem)]">
           <DishCard dish={dish} stall={stallOf(data, dish)} locale={locale} filters={filters} headingLevel={headingLevel} hideChecked={dish.checkedOn === checkedOn} />
         </li>
       ))}
@@ -63,7 +66,7 @@ function DishGrid({ data, locale, filters, dishes, headingLevel, checkedOn, firs
  * By dish: a section per canonical dish with the price at each stall and the
  * cheapest marked, then the dishes with no canonical dish as plain cards.
  */
-export function DishResults({ data, locale, filters, groups, headingLevel = 3 }: DishResultsProps) {
+export function DishResults({ data, locale, filters, groups, allGroups, headingLevel = 3 }: DishResultsProps) {
   const cardLevel = Math.min(6, headingLevel + 1) as HeadingLevel;
   const cardDishes = groups
     .filter((group) => filters.group !== "canonical" || !group.dishes[0] || !canonicalOf(data, group.dishes[0]))
@@ -76,6 +79,7 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
     const dishes = groups.flatMap((group) => group.dishes);
     return (
       <div className="flex flex-col gap-[var(--space-3)]">
+        <FocusOnHash />
         {note}
         <DishGrid data={data} locale={locale} filters={filters} dishes={dishes} headingLevel={headingLevel} checkedOn={checkedOn} first={1} />
       </div>
@@ -84,6 +88,7 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
 
   return (
     <div className="flex flex-col gap-[var(--space-8)]">
+      <FocusOnHash />
       {note}
       {groups.map((group, groupIndex) => {
         const first = firsts[groupIndex] ?? 1;
@@ -115,15 +120,16 @@ export function DishResults({ data, locale, filters, groups, headingLevel = 3 }:
             </section>
           );
         }
-        const byPrice = [...group.dishes].sort((a, b) => a.price - b.price);
+        const whole = allGroups?.find((candidate) => candidate.key === group.key) ?? group;
+        const byPrice = [...whole.dishes].sort((a, b) => a.price - b.price);
         const stallCount = new Set(byPrice.map((dish) => dish.stallId)).size;
         return (
-          <section key={`${group.key}-${group.continued}`} id={eat.itemId(first)} className="flex scroll-mt-[calc(var(--header-height,4rem)+9rem)] flex-col gap-[var(--space-3)]">
+          <section key={`${group.key}-${group.continued}`} id={eat.itemId(first)} tabIndex={-1} className="flex outline-none scroll-mt-[calc(var(--header-height,4rem)+9rem)] flex-col gap-[var(--space-3)]">
             <Heading level={headingLevel} visualLevel={3} className="m-0">
               {pick(canonical.name, locale)}
               <span className="text-sm font-normal text-ink-600"> · {eat.atStalls(locale, stallCount)}</span>
             </Heading>
-            <CanonicalCompare data={data} dishes={byPrice} locale={locale} filters={filters} />
+            <CanonicalCompare data={data} dishes={byPrice} locale={locale} filters={filters} limit={group.dishes.length} />
           </section>
         );
       })}

@@ -19,7 +19,7 @@ import { WeekForm } from "@/components/domain/canteen/budget/WeekForm";
 import { WeekPlanner } from "@/components/domain/canteen/budget/WeekPlanner";
 import { UI } from "@/lib/i18n/strings";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
-import { allPins, clearPins, parseWeekRequest, weekHref, weekQuery, type WeekRequest } from "@/components/domain/canteen/budget/week-params";
+import { MAX_WEEK_BUDGET, allPins, clearPins, invalidWeekBudget, parseWeekRequest, weekHref, weekQuery, type WeekRequest } from "@/components/domain/canteen/budget/week-params";
 import { EmptyState, Heading, Stack, WarningText } from "@/components/ui";
 import { facetCounts } from "@/lib/canteen/filter";
 import { countActiveValues, defaultFilters, type CanteenFilters } from "@/lib/canteen/params";
@@ -50,7 +50,8 @@ export async function WeekMode({
   query: Record<string, string | string[] | undefined>;
 }) {
   redirectToTidyQuery(localePath(locale, ROUTE), query);
-  const filters = readFilters(query);
+  const data = await getCanteenData();
+  const filters = readFilters(query, data);
   const request = parseWeekRequest(query);
   const path = localePath(locale, ROUTE);
 
@@ -59,7 +60,6 @@ export async function WeekMode({
     redirect(weekHref(path, { ...request, seed: newSeed() }, filters));
   }
 
-  const data = await getCanteenData();
   const now = new Date();
 
   if (data.dishes.length === 0) {
@@ -73,6 +73,7 @@ export async function WeekMode({
       days: overrides.days ?? request.days,
       seed: request.seed ?? "",
       locks: allPins(request),
+      skips: request.skips,
       now,
     });
 
@@ -117,7 +118,7 @@ export async function WeekMode({
 
   return (
     <Stack space={6}>
-      <WeekForm locale={locale} request={request} filters={filters} />
+      <WeekForm locale={locale} request={request} filters={filters} invalid={invalidWeekBudget(query)} />
       <div className="no-print">
         <SpendThisWeek locale={locale} explain={false} />
         <p className="m-0 mt-[var(--space-2)] text-base">
@@ -139,17 +140,31 @@ interface Suggestion {
   value?: number;
 }
 
+/** The smallest budget above `from`, in steps of 5 baht, for which `works` is true; undefined if none up to the most a week may cost. Assumes a dearer budget never does worse. */
+function smallestWorkingBudget(from: number, works: (budget: number) => boolean): number | undefined {
+  const next = (amount: number) => Math.min(MAX_WEEK_BUDGET, amount);
+  let low = from;
+  let high = next(from + 5);
+  while (!works(high)) {
+    if (high >= MAX_WEEK_BUDGET) return undefined;
+    low = high;
+    high = next(high + (high - from) * 2);
+  }
+  while (high - low > 5) {
+    const middle = low + Math.ceil((high - low) / 10) * 5;
+    if (works(middle)) high = middle;
+    else low = middle;
+  }
+  return high;
+}
+
 /** Concrete next steps for a failure: a budget that works, fewer days, or fewer pins. Computed, never guessed. */
 function suggestionsFor(reason: WeekFailure, request: WeekRequest, attempt: (o: Partial<{ budget: number; days: number[] }>) => WeekResult): Suggestion[] {
   const out: Suggestion[] = [];
   const budgetNow = request.budget ?? 0;
   if (reason === "budgetTooLow" || reason === "noPlan") {
-    for (const extra of [20, 40, 60, 80, 100, 150, 200, 300, 400, 600]) {
-      if (attempt({ budget: budgetNow + extra }).ok) {
-        out.push({ key: "raise", kind: "raise", value: budgetNow + extra });
-        break;
-      }
-    }
+    const raised = smallestWorkingBudget(budgetNow, (amount) => attempt({ budget: amount }).ok);
+    if (raised !== undefined) out.push({ key: "raise", kind: "raise", value: raised });
   }
   if (reason === "notEnoughStalls" || reason === "budgetTooLow" || reason === "noPlan") {
     for (let days = request.days.length - 1; days >= 1; days -= 1) {

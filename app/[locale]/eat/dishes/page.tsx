@@ -177,7 +177,7 @@ export default async function EatDishesPage({
               </Stack>
             ) : (
               <Stack space={4}>
-                <DishResults data={data} locale={locale} filters={filters} groups={shown.groups} headingLevel={2} />
+                <DishResults data={data} locale={locale} filters={filters} groups={shown.groups} allGroups={allGroups} headingLevel={2} />
                 <Stack space={2}>
                   <p className="m-0 text-sm text-ink-600">{eat.showingRange(locale, 1, shown.shown, shown.total)}</p>
                   {shown.nextCount > 0 ? (

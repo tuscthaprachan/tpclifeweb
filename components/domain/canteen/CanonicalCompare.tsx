@@ -3,13 +3,14 @@ import { Heading } from "@/components/ui/Heading";
 import { Timestamp } from "@/components/ui/Timestamp";
 import { cx } from "@/components/ui/cx";
 import type { HeadingLevel } from "@/lib/a11y";
-import { stallOf } from "@/lib/canteen/derive";
+import { effectivePrice, stallOf } from "@/lib/canteen/derive";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { CanteenData, CanteenDish } from "@/lib/content/types";
 import { cheapestSlugs } from "./compare";
 import { CoinIcon } from "./icons";
 import { dishHref } from "./links";
+import { priceText } from "./PriceTag";
 import { EAT, eat, t } from "./strings";
 
 interface CanonicalCompareProps {
@@ -20,6 +21,8 @@ interface CanonicalCompareProps {
   filters: CanteenFilters;
   /** The dish the reader is looking at, shown as "This one" instead of a link. */
   currentSlug?: string;
+  /** Show only the first this many rows of the sorted list; the cheapest mark still reads the whole list. */
+  limit?: number;
   /** When set, shows a heading above the list at this outline depth. */
   title?: string;
   headingLevel?: HeadingLevel;
@@ -32,8 +35,10 @@ interface CanonicalCompareProps {
  * (1.4.1: not colour alone). Each price keeps its checked-on date. Rendered
  * as a list, not a table, so it stacks at 320 px.
  */
-export function CanonicalCompare({ data, dishes, locale, filters, currentSlug, title, headingLevel = 3, className }: CanonicalCompareProps) {
+export function CanonicalCompare({ data, dishes, locale, filters, currentSlug, limit, title, headingLevel = 3, className }: CanonicalCompareProps) {
   const cheapest = cheapestSlugs(dishes);
+  const sorted = [...dishes].sort((a, b) => effectivePrice(a, filters.variants) - effectivePrice(b, filters.variants));
+  const rows = limit === undefined ? sorted : sorted.slice(0, limit);
   return (
     <section className={cx("flex flex-col gap-[var(--space-3)]", className)}>
       {title ? (
@@ -42,9 +47,10 @@ export function CanonicalCompare({ data, dishes, locale, filters, currentSlug, t
         </Heading>
       ) : null}
       <ul className="m-0 flex list-none flex-col p-0">
-        {dishes.map((dish) => {
+        {rows.map((dish) => {
           const stall = stallOf(data, dish);
           const current = dish.slug.current === currentSlug;
+          const dishName = pick(dish.name, locale);
           const stallLine = stall ? eat.stallFull(locale, stall.number, pick(stall.name, locale)) : "";
           return (
             <li
@@ -54,14 +60,14 @@ export function CanonicalCompare({ data, dishes, locale, filters, currentSlug, t
               <div className="flex min-w-0 flex-col">
                 {current ? (
                   <span className="font-medium text-ink-900">
-                    {stallLine} <span className="text-ink-600">({t(EAT.thisOne, locale)})</span>
+                    {dishName} <span className="text-ink-600">({t(EAT.thisOne, locale)})</span>
                   </span>
                 ) : (
                   <Link href={dishHref(locale, dish.slug.current, filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
-                    {stallLine}
-                    <span className="visually-hidden">: {pick(dish.name, locale)}</span>
+                    {dishName}
                   </Link>
                 )}
+                <span className="text-sm text-ink-900">{stallLine}</span>
                 <span className="text-sm text-ink-600">
                   {t(EAT.priceCheckedOn, locale)} <Timestamp value={dish.checkedOn} locale={locale} />
                 </span>
@@ -73,7 +79,7 @@ export function CanonicalCompare({ data, dishes, locale, filters, currentSlug, t
                     {t(EAT.cheapestWord, locale)}
                   </span>
                 ) : null}
-                <span className="text-lg font-semibold text-ink-900">{eat.baht(locale, dish.price)}</span>
+                <span className="text-lg font-semibold text-ink-900">{priceText(locale, dish.price, dish.variants)}</span>
               </div>
             </li>
           );

@@ -138,14 +138,15 @@ export default async function CanteenMapPage({
   const named = parseHighlightSlugs(query.highlight)
     .map((slug) => stallBySlug.get(slug))
     .filter((stall): stall is CanteenStall => stall !== undefined);
-  const entranceIndex = named.length > 0 || query.from !== undefined ? (parseEntranceIndex(firstParam(query.from), entrances.length) ?? (entrances.length > 0 ? 0 : undefined)) : undefined;
+  const fromIndex = parseEntranceIndex(firstParam(query.from), entrances.length);
+  const entranceIndex = fromIndex ?? (named.length > 0 && entrances.length > 0 ? 0 : undefined);
   const origin = entranceIndex !== undefined ? entrances[entranceIndex] : undefined;
   const start = origin ? entrancePoint(origin) : named[0] ? cellCentre(named[0].mapCell) : undefined;
   const route = start ? routeOrder(named, start) : named;
   const view = firstParam(query.view) === "list" ? "list" : "plan";
   const carried: Record<string, string> = {};
   for (const name of ["highlight", "from", "view"]) {
-    const value = name === "highlight" ? parseHighlightSlugs(query.highlight).join(",") : firstParam(query[name]);
+    const value = name === "highlight" ? parseHighlightSlugs(query.highlight).join(",") : name === "from" ? fromIndex?.toString() : firstParam(query[name]);
     if (value) carried[name] = value;
   }
   const viewHref = (next: "list" | undefined) => {

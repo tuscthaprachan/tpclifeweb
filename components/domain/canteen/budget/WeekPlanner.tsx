@@ -33,7 +33,7 @@ export function WeekPlanner({ locale, plan, request, filters, path }: WeekPlanne
   const pinDays = plan.days.map((day) => ({ weekday: day.weekday, slug: day.dish.slug.current, locked: day.locked }));
   const href = (next: WeekRequest) => weekHref(path, next, filters, ANCHOR);
   const budgetAmount = request.budget ?? plan.total + plan.change;
-  const allowance = Math.round(plan.allowance * 10) / 10;
+  const allowance = Math.round(plan.allowance);
   const other = OTHER_LOCALE[locale];
 
   return (

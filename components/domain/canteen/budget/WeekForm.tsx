@@ -7,12 +7,14 @@ import { localePath, type Locale } from "@/lib/i18n/config";
 import { ChoiceGroup } from "../ChoiceGroup";
 import { t } from "../strings";
 import { BUDGET, MONDAY_FIRST, WEEKDAY_NAME } from "./strings";
-import { MAX_WEEK_BUDGET, weekQuery, type WeekRequest } from "./week-params";
+import { weekQuery, type WeekRequest } from "./week-params";
 
 interface WeekFormProps {
   locale: Locale;
   request: WeekRequest;
   filters: CanteenFilters;
+  /** What was typed when it is not a valid budget, shown back with an error. */
+  invalid?: string;
 }
 
 /**
@@ -21,7 +23,7 @@ interface WeekFormProps {
  * The seed, the pins and the filters ride along as hidden fields, so changing
  * the budget or the days keeps the plan as stable as the change allows.
  */
-export function WeekForm({ locale, request, filters }: WeekFormProps) {
+export function WeekForm({ locale, request, filters, invalid }: WeekFormProps) {
   const hidden = new URLSearchParams(weekQuery(request, filters));
   hidden.delete("budget");
   hidden.delete("days");
@@ -40,15 +42,14 @@ export function WeekForm({ locale, request, filters }: WeekFormProps) {
         <TextInput
           id="week-budget"
           name="budget"
-          type="number"
+          type="text"
           inputMode="numeric"
-          min={1}
-          max={MAX_WEEK_BUDGET}
-          step={1}
+          pattern="[0-9]*"
           required
           label={t(BUDGET.weekBudgetLabel, locale)}
           hint={t(BUDGET.weekBudgetHint, locale)}
-          defaultValue={request.budget}
+          defaultValue={invalid ?? request.budget}
+          error={invalid !== undefined ? t(BUDGET.weekBudgetInvalid, locale) : undefined}
           className="max-w-[14rem]"
         />
 

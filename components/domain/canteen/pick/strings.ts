@@ -124,6 +124,9 @@ export const pickText = {
     return locale === "th" ? `ขอ${type}เหมือนเดิม เปลี่ยนร้าน` : `Keep ${type.toLowerCase()}, change the stall`;
   },
   mealTotal(locale: Locale, total: number, change: number, budget: number): string {
+    if (change === 0) {
+      return locale === "th" ? `รวม ${n(total, locale)} บาท พอดีงบ` : `${n(total, locale)} baht, exactly on budget`;
+    }
     return locale === "th"
       ? `รวม ${n(total, locale)} บาท จากงบ ${n(budget, locale)} บาท เหลือ ${n(change, locale)} บาท`
       : `${n(total, locale)} baht of your ${n(budget, locale)} baht, ${n(change, locale)} baht left`;

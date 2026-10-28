@@ -144,7 +144,7 @@ function Actions({
   eat: React.ReactNode;
   locks?: React.ReactNode;
 }) {
-  const not = [...new Set([...params.not, ...vetoSlugs])];
+  const not = [...params.not.filter((slug) => !vetoSlugs.includes(slug)), ...vetoSlugs];
   return (
     <div className="flex flex-col gap-[var(--space-4)]" role="group" aria-label={PICK.actionsLabel[locale]}>
       {eatNode}
@@ -155,7 +155,7 @@ function Actions({
           </span>
           {PICK.spinAgain[locale]}
         </Button>
-        <Button variant="quiet" href={pickHref(locale, filters, params, { seed: nextSeed, not })}>
+        <Button variant="quiet" href={pickHref(locale, filters, params, { seed: nextSeed, not })} className="px-0!">
           {PICK.notThis[locale]}
         </Button>
       </div>
@@ -303,7 +303,7 @@ function StallCard({ locale, data, filters, params, nextSeed, outcome, stallDish
         filters={filters}
         params={params}
         nextSeed={nextSeed}
-        vetoSlugs={stallDishes.map((dish) => dish.slug.current)}
+        vetoSlugs={[stall.slug.current]}
         eat={
           <Button href={stallHref(locale, stall.slug.current, filters)} className="fun-roll w-full sm:w-auto">
             {PICK.seeStall[locale]}

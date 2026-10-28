@@ -18,6 +18,8 @@ interface MealFormProps {
   /** The whole-meal budget in the address, if any. */
   meal?: number;
   sameStall: boolean;
+  /** What was typed when it is not a valid budget, shown back with an error. */
+  invalid?: string;
 }
 
 /**
@@ -28,9 +30,10 @@ interface MealFormProps {
  * otherwise where `:has` is supported. Every filter rides along as a hidden
  * field.
  */
-export function MealForm({ locale, filters, meal, sameStall }: MealFormProps) {
+export function MealForm({ locale, filters, meal, sameStall, invalid }: MealFormProps) {
   const hidden = new URLSearchParams(serialise({ ...filters, variants: false }));
-  const custom = meal !== undefined && !MEAL_BUDGETS.includes(meal);
+  const custom = invalid !== undefined || (meal !== undefined && !MEAL_BUDGETS.includes(meal));
+  const typed = invalid !== undefined ? (invalid === "other" ? undefined : invalid) : custom ? meal : undefined;
 
   return (
     <section aria-labelledby="meal-form-title" className="border-t border-line pt-[var(--space-6)]">
@@ -62,7 +65,8 @@ export function MealForm({ locale, filters, meal, sameStall }: MealFormProps) {
           inputMode="numeric"
           pattern="[0-9]*"
           label={t(BUDGET.budgetOther, locale)}
-          defaultValue={custom ? meal : undefined}
+          defaultValue={typed}
+          error={invalid !== undefined ? t(BUDGET.mealInvalid, locale) : undefined}
           className="meal-other max-w-[14rem]"
         />
 

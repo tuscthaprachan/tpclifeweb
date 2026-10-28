@@ -76,6 +76,20 @@ describe("planWeek", () => {
     expect(plan("x", { days: [1, 2], budget: 200 }, f({ diet: ["halal"] }))).toEqual({ ok: false, reason: "notEnoughStalls" });
   });
 
+  it("blames the budget, not the stall count, when stalls would suffice at a higher price", () => {
+    expect(plan("x", { days: [1], budget: 20 })).toEqual({ ok: false, reason: "budgetTooLow" });
+    expect(plan("x", { days: [1, 2], budget: 60 })).toEqual({ ok: false, reason: "budgetTooLow" });
+  });
+
+  it("ignores a skip when no other plan fits", () => {
+    const only = plan("x", { days: [1], budget: 35 });
+    if (!only.ok) throw new Error("expected a plan");
+    const slug = only.days[0]!.dish.slug.current;
+    expect(plan("x", { days: [1], budget: 35, skips: { 1: slug } })).toEqual(only);
+    const roomy = plan("x", { days: [1], budget: 100, skips: { 1: slug } });
+    expect(roomy.ok && roomy.days[0]!.dish.slug.current).not.toBe(slug);
+  });
+
   it("finds a tight plan by search, not luck", () => {
     // Cheapest main per stall: 35 + 40 + 45 + 40 + 38 = 198. A budget of 198 has exactly one answer set.
     for (let i = 0; i < 10; i += 1) {

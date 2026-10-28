@@ -75,7 +75,7 @@ export default async function EatPlanPage({
           items={[
             { label: UI.home[locale], path: "/" },
             { label: t(EAT.title, locale), path: "/eat" },
-            { label: t(EAT.planTitle, locale) },
+            { label: t(copy.title, locale) },
           ]}
         />
       </div>

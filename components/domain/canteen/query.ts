@@ -13,7 +13,7 @@
  * budget in `max` are moved to `meal` by `canonicalMealQuery`.
  */
 
-import { parse, parseMealBudget, serialise, type CanteenFilters, type RawParams } from "@/lib/canteen/params";
+import { defaultFilters, parse, parseMealBudget, serialise, type CanteenFilters, type RawParams } from "@/lib/canteen/params";
 
 /** Flattens Next's `searchParams` (or a plain object) into URLSearchParams. */
 export function toSearchParams(raw: RawParams): URLSearchParams {
@@ -34,43 +34,59 @@ function typedMax(params: URLSearchParams): string | undefined {
 /**
  * Filters out of a request's query. Same as `parse`, plus the `maxOther`
  * box, which sets the budget when the "Other" chip (`max=other`) is chosen
- * or no chip is.
+ * or no chip is. Given the canteen data, a stall that does not exist is dropped.
  */
-export function readFilters(raw: RawParams): CanteenFilters {
+export function readFilters(raw: RawParams, known?: { stalls: readonly { slug: { current: string } }[] }): CanteenFilters {
   const params = toSearchParams(raw);
   const other = typedMax(params);
   if (other) {
     params.delete("max");
     params.set("max", other);
   }
-  return parse(params);
+  const filters = parse(params);
+  if (known && filters.stall !== undefined && !known.stalls.some((stall) => stall.slug.current === filters.stall)) filters.stall = undefined;
+  return filters;
 }
 
 /**
  * The tidy form of a request's query, or null when it is already tidy.
  * A plain GET of the filter form sends every field, so the address fills with
- * empty values such as `max=&maxOther=`. Tidy drops empty values, folds a
+ * empty values such as `max=&maxOther=`. Tidy drops empty values (except an empty `days` in week mode, which means no day is ticked), the default `sort` and `group` and a `max` that is not a valid budget, folds a
  * typed amount (`maxOther`) into `max` and a typed meal amount (`mealOther`,
- * used when `meal=other`) into `meal`, and leaves everything else, in order,
+ * used when `meal=other`) into `meal` (a bare `meal=other` stays, so the form can ask for the amount), and leaves everything else, in order,
  * alone. Returns the query string without the leading `?`.
  */
 export function tidyQuery(raw: RawParams): string | null {
   const before = toSearchParams(raw);
   const other = typedMax(before);
   const mealOther = before.get("mealOther")?.trim();
+  const noDays = before.get("mode") === "week" && before.has("days") && before.getAll("days").every((value) => value.trim() === "");
   const after = new URLSearchParams();
   for (const [name, value] of before) {
     if (name === "maxOther" || name === "mealOther") continue;
+    if (name === "days" && noDays) {
+      if (!after.has("days")) after.append("days", "");
+      continue;
+    }
     if (value.trim() === "") continue;
     if (name === "max" && (other || value.trim() === "other")) continue;
     if (name === "meal" && value.trim() === "other") {
-      if (mealOther) after.append("meal", mealOther);
+      after.append("meal", mealOther || "other");
       continue;
     }
     after.append(name, value);
   }
   if (other) after.append("max", other);
-  return before.toString() === after.toString() ? null : after.toString();
+  const read = parse(after);
+  const defaults = defaultFilters();
+  const canonical = new URLSearchParams();
+  for (const [name, value] of after) {
+    if (name === "sort" && read.sort === defaults.sort) continue;
+    if (name === "group" && read.group === defaults.group) continue;
+    if (name === "max" && read.max === undefined) continue;
+    canonical.append(name, value);
+  }
+  return before.toString() === canonical.toString() ? null : canonical.toString();
 }
 
 /**

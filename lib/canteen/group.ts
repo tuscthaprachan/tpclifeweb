@@ -32,6 +32,7 @@ import { isMealDish, matchesFilters } from "./filter";
 import {
   AVOID_KEYS,
   DIET_KEYS,
+  MAX_BUDGET,
   defaultFilters,
   type AvoidKey,
   type CanteenFilters,
@@ -142,7 +143,7 @@ export function decodeGroup(encoded: string | null | undefined): Person[] {
       diet: [],
       avoid: [],
     };
-    if (/^\d{1,5}$/.test(max) && Number(max) >= 1) person.max = Number(max);
+    if (/^\d{1,5}$/.test(max) && Number(max) >= 1 && Number(max) <= MAX_BUDGET) person.max = Number(max);
     const dietCodes = new Set(diet.split("-").map((code) => (code === "c" ? "h" : code)));
     person.diet = DIET_KEYS.filter((key) => dietCodes.has(DIET_CODES[key]));
     const avoidCodes = new Set(avoid.split("-"));

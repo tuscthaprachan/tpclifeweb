@@ -152,6 +152,12 @@ export function parseMealBudget(raw: RawParams): number | undefined {
   return budgetValue(first(raw, "meal"));
 }
 
+/** What was typed into `meal` when it is not a valid budget (so the form can say so and keep it), or undefined. */
+export function invalidMealBudget(raw: RawParams): string | undefined {
+  const text = first(raw, "meal");
+  return text !== undefined && budgetValue(text) === undefined ? text : undefined;
+}
+
 /**
  * Reads the canteen filters out of URL parameters. Never throws. Anything
  * invalid is dropped, so a hand edited or stale link degrades to fewer

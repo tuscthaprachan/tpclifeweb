@@ -92,7 +92,7 @@ export default async function EatStallsPage({
   const rows = index.stallsInWalkOrder.map((stall) => {
     const dishes = data.dishes.filter((dish) => dish.stallId === stall._id);
     const matching = filtered ? dishes.filter((dish) => matchesFilters(data, dish, filters, now)) : dishes;
-    return { stall, dishCount: dishes.length, matchCount: filtered ? matching.length : undefined, range: priceRange(matching) };
+    return { stall, dishCount: dishes.length, matchCount: filtered ? matching.length : undefined, range: priceRange(matching, filters.max === undefined || filters.variants) };
   });
   const withMatches = rows.filter((row) => row.matchCount === undefined || row.matchCount > 0).length;
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { defaultFilters, mealCombos, type CanteenFilters } from "@/lib/canteen";
+import { mealShortfall } from "@/lib/canteen/combos";
 
 import { NOW, makeData } from "./fixture";
 
@@ -32,6 +33,32 @@ describe("mealCombos", () => {
     // 60 baht exactly with one stall to visit would beat any 60 with two, if one existed. Here the best has two or three.
     const exact = combos.filter((c) => c.change === 0);
     expect(exact[0]!.stalls.length).toBe(Math.min(...exact.map((c) => c.stalls.length)));
+  });
+
+  it("holds the per-dish max for every dish in a combo", () => {
+    const combos = mealCombos(data, f({ max: 45 }), 100, { now: NOW, limit: 500 });
+    expect(combos.some((c) => c.drink)).toBe(true);
+    for (const combo of combos) {
+      expect(combo.total).toBeLessThanOrEqual(100);
+      for (const dish of combo.items) expect(dish.price).toBeLessThanOrEqual(45);
+    }
+  });
+
+  it("perMain keeps one main from filling the list, without losing the best combos", () => {
+    const all = mealCombos(data, f(), 100, { now: NOW, limit: 500 });
+    const capped = mealCombos(data, f(), 100, { now: NOW, limit: 500, perMain: 2 });
+    const perMain = new Map<string, number>();
+    for (const combo of capped) perMain.set(combo.main.slug.current, (perMain.get(combo.main.slug.current) ?? 0) + 1);
+    expect(Math.max(...perMain.values())).toBeLessThanOrEqual(2);
+    expect(capped.length).toBeLessThan(all.length);
+    expect(capped[0]!.change).toBe(all[0]!.change);
+    const limited = mealCombos(data, f(), 100, { now: NOW, limit: 5, perMain: 1 });
+    expect(new Set(limited.map((c) => c.main.slug.current)).size).toBe(limited.length);
+  });
+
+  it("explains an empty result with the cheapest main and the smallest raise", () => {
+    expect(mealCombos(data, f(), 30, { now: NOW })).toEqual([]);
+    expect(mealShortfall(data, f(), 30, { now: NOW })).toEqual({ cheapest: 35, raiseTo: 35 });
   });
 
   it("lists the stalls once each, in walking order", () => {

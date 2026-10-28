@@ -14,6 +14,8 @@
  *   lock.<d>   a day the student pinned on purpose. Shown as "Locked".
  *   keep.<d>   a day pinned only so that rerolling another day leaves it
  *              alone. Planned like a lock, shown as unlocked.
+ *   skip.<d>   the dish a reroll of that day moved on from. The day gets a
+ *              different dish whenever one fits.
  *
  * Every link the page makes pins the whole plan that is on screen (locks and
  * keeps) except the day being rerolled, so only that day changes.
@@ -37,6 +39,7 @@ export interface WeekRequest {
   seed?: string;
   locks: Pins;
   keeps: Pins;
+  skips?: Pins;
 }
 
 function parseInt10(text: string | null | undefined, min: number, max: number): number | undefined {
@@ -45,13 +48,20 @@ function parseInt10(text: string | null | undefined, min: number, max: number): 
   return value >= min && value <= max ? value : undefined;
 }
 
-function pins(params: URLSearchParams, prefix: "lock" | "keep"): Pins {
+function pins(params: URLSearchParams, prefix: "lock" | "keep" | "skip"): Pins {
   const out: Pins = {};
   for (let day = 0; day <= 6; day += 1) {
     const slug = params.get(`${prefix}.${day}`);
     if (slug && SLUG.test(slug)) out[day] = slug;
   }
   return out;
+}
+
+/** What was typed into the budget when it is not a valid weekly budget (so the form can say so and keep it), or undefined. */
+export function invalidWeekBudget(raw: RawParams): string | undefined {
+  const params = toSearchParams(raw);
+  const text = (params.get("budget") ?? params.get("weekBudget"))?.trim();
+  return text && parseInt10(text, 1, MAX_WEEK_BUDGET) === undefined ? text : undefined;
 }
 
 /** Reads the week parameters. Never throws; anything invalid is dropped. */
@@ -75,7 +85,7 @@ export function parseWeekRequest(raw: RawParams): WeekRequest {
 
   const seedText = params.get("seed")?.toLowerCase();
   const seed = seedText && SEED.test(seedText) ? seedText : undefined;
-  return { ...(budget !== undefined ? { budget } : {}), days, ...(seed ? { seed } : {}), locks: pins(params, "lock"), keeps: pins(params, "keep") };
+  return { ...(budget !== undefined ? { budget } : {}), days, ...(seed ? { seed } : {}), locks: pins(params, "lock"), keeps: pins(params, "keep"), skips: pins(params, "skip") };
 }
 
 /** Locks and keeps together, with locks winning, for `planWeek`. Only days that are on campus matter to it. */
@@ -98,6 +108,10 @@ export function weekQuery(request: WeekRequest, filters: CanteenFilters): string
   for (let day = 0; day <= 6; day += 1) {
     const slug = request.keeps[day];
     if (slug && !request.locks[day]) parts.push(`keep.${day}=${encodeURIComponent(slug)}`);
+  }
+  for (let day = 0; day <= 6; day += 1) {
+    const slug = request.skips?.[day];
+    if (slug && !request.locks[day]) parts.push(`skip.${day}=${encodeURIComponent(slug)}`);
   }
   return parts.join("&");
 }
@@ -137,7 +151,7 @@ export function lockDay(request: WeekRequest, plan: readonly PinDay[], weekday: 
     locks[weekday] = slug;
     delete keeps[weekday];
   }
-  return { ...request, locks, keeps };
+  return { ...request, locks, keeps, skips: {} };
 }
 
 export function unlockDay(request: WeekRequest, plan: readonly PinDay[], weekday: number): WeekRequest {
@@ -147,23 +161,24 @@ export function unlockDay(request: WeekRequest, plan: readonly PinDay[], weekday
     delete locks[weekday];
     keeps[weekday] = slug;
   }
-  return { ...request, locks, keeps };
+  return { ...request, locks, keeps, skips: {} };
 }
 
-/** A new plan for one day: a new seed, every other day pinned as it is. */
+/** A new plan for one day: a new seed, every other day pinned as it is, and the day's current dish set aside. */
 export function rerollDay(request: WeekRequest, plan: readonly PinDay[], weekday: number): WeekRequest {
   const others = plan.filter((day) => day.weekday !== weekday);
   const { locks, keeps } = pinnedState(others);
-  return { ...request, seed: rerollSeed(request.seed ?? "", weekday), locks, keeps };
+  const current = plan.find((day) => day.weekday === weekday)?.slug;
+  return { ...request, seed: rerollSeed(request.seed ?? "", weekday), locks, keeps, skips: current ? { [weekday]: current } : {} };
 }
 
 /** A new plan for every day that is not locked. */
 export function rerollAll(request: WeekRequest, plan: readonly PinDay[]): WeekRequest {
   const { locks } = pinnedState(plan);
-  return { ...request, seed: rerollSeed(request.seed ?? "", 7), locks, keeps: {} };
+  return { ...request, seed: rerollSeed(request.seed ?? "", 7), locks, keeps: {}, skips: {} };
 }
 
 /** Drops every pin, keeping the seed. */
 export function clearPins(request: WeekRequest): WeekRequest {
-  return { ...request, locks: {}, keeps: {} };
+  return { ...request, locks: {}, keeps: {}, skips: {} };
 }
