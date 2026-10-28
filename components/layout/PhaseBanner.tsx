@@ -19,7 +19,7 @@ export function PhaseBanner({ locale, phase }: { locale: Locale; phase: ServiceP
   const tag = phase === "alpha" ? UI.phaseAlpha[locale] : UI.phaseBeta[locale];
 
   return (
-    <div className="border-b border-line">
+    <aside aria-label={tag} className="border-b border-line">
       <ShellContainer className="flex items-center gap-2 py-1 text-sm">
         <strong className="shrink-0 rounded-pill bg-governance px-2 py-0.5 font-semibold uppercase text-ink-on-fill">{tag}</strong>
         <span className="text-ink-900">
@@ -29,6 +29,6 @@ export function PhaseBanner({ locale, phase }: { locale: Locale; phase: ServiceP
           </Link>
         </span>
       </ShellContainer>
-    </div>
+    </aside>
   );
 }

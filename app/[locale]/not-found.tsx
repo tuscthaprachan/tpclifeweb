@@ -27,6 +27,7 @@ export default function LocaleNotFound() {
 
   return (
     <div className="py-12">
+      <title>{UI.pageNotFoundTitle[locale]}</title>
       <River className="mb-4 h-[84px] w-[120px]" />
       <h1>{UI.pageNotFoundTitle[locale]}</h1>
       <p className="mt-4 text-ink-600">{UI.pageNotFoundBody[locale]}</p>
