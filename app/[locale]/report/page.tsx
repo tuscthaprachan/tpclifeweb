@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Heading, Link, NotificationBanner, Stack, StatusTag } from "@/components/ui";
-import { EXTERNAL_SERVICES, FORMS } from "@/data/harvested-inventory";
+import { Container, Heading, Link, Stack, StatusTag } from "@/components/ui";
+import { EXTERNAL_SERVICES } from "@/data/harvested-inventory";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { LocaleString } from "@/lib/content/types";
@@ -16,14 +16,10 @@ import { alternatesFor } from "@/lib/i18n/metadata";
  * that only some of them have). The runtime checks below exist only to fail
  * loudly if the source file's order ever changes, since this page reads
  * these three records by real URL, not by invented content: CONTRIBUTING.md
- * requires that, and getting the emergency route wrong is the one failure
- * this page exists to prevent.
+ * requires that. The emergency report Google Form that used to open this page
+ * is superseded by the issue reporting service at /complaints; it stays in the
+ * inventory as a historical record and is no longer linked.
  */
-const emergencyForm = FORMS[0];
-if (emergencyForm.key !== "emergencyReport") {
-  throw new Error('data/harvested-inventory.ts: FORMS[0] is no longer "emergencyReport". Update app/[locale]/report/page.tsx to match.');
-}
-
 const traffyFondue = EXTERNAL_SERVICES[1];
 if (traffyFondue.key !== "traffyFondue") {
   throw new Error('data/harvested-inventory.ts: EXTERNAL_SERVICES[1] is no longer "traffyFondue". Update app/[locale]/report/page.tsx to match.');
@@ -47,8 +43,8 @@ const PAGE_INTRO: LocaleString = {
   en: "Pick the route that matches what you need to report. There are three, sorted by what kind of problem it is",
 }; // TODO: add to UI strings
 const ROUTE_1_USE_WHEN: LocaleString = {
-  th: "ใช้ช่องทางนี้เมื่อเกิดเหตุฉุกเฉิน หรือมีเรื่องร้องเรียนเกี่ยวกับเหตุการณ์ในพื้นที่ธรรมศาสตร์ท่าพระจันทร์",
-  en: "Use this for an emergency, or a complaint about something that happened at Thammasat Tha Prachan",
+  th: "ใช้ช่องทางนี้เมื่อมีปัญหาเกี่ยวกับรายวิชา คณะ หรือมหาวิทยาลัย หรือต้องการร้องเรียน อมธ. และ สภานักศึกษา หากมีใครตกอยู่ในอันตราย โทร 191 หรือ 1669",
+  en: "Use this for a problem with a course, your faculty or the university, or to complain about TUSU or TUSC. If anyone is in danger, call 191 or 1669",
 }; // TODO: add to UI strings
 const ROUTE_2_USE_WHEN: LocaleString = {
   th: "ใช้ช่องทางนี้เมื่อพบปัญหาสภาพแวดล้อมหรือสิ่งอำนวยความสะดวกในมหาวิทยาลัย เช่น ไฟดับ น้ำรั่ว หรือทางเดินชำรุด",
@@ -82,20 +78,12 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
         </Stack>
 
         <Stack space={3} as="section">
-          <Heading level={2}>{pick(emergencyForm.title, locale)}</Heading>
+          <Heading level={2}>{UI.cpServiceName[locale]}</Heading>
           <p className="m-0 text-ink-600">{ROUTE_1_USE_WHEN[locale]}</p>
-          <NotificationBanner variant="warning" title={UI.requiresSignIn[locale]}>
-            {UI.requiresGoogleSignIn[locale]}
-          </NotificationBanner>
+          <StatusTag tone="neutral" label={UI.noSignInNeeded[locale]} />
           <p className="m-0">
-            <Link href={emergencyForm.destinationUrl} locale={locale} className="font-semibold text-action">
-              {UI.startForm[locale]}
-            </Link>
-          </p>
-          <p className="m-0 text-ink-600">
-            {UI.cpFromReport[locale]}{" "}
             <Link href="/complaints" locale={locale} className="font-semibold text-action">
-              {UI.cpServiceName[locale]}
+              {UI.startForm[locale]}
             </Link>
           </p>
         </Stack>

@@ -17,7 +17,7 @@
 import { expect, test } from "@playwright/test";
 import { LOCALES, localePath, type Locale } from "../../lib/i18n/config";
 import { UI } from "../../lib/i18n/strings";
-import { answerComplaint, start } from "../a11y/support/complaint-journey";
+import { answerComplaint, answerTriage, start } from "../a11y/support/complaint-journey";
 
 test.use({ javaScriptEnabled: false });
 
@@ -33,7 +33,8 @@ for (const locale of LOCALES as readonly Locale[]) {
     const main = page.locator("main");
     await expect(main.getByRole("heading", { level: 1, name: UI.cpServiceName[locale] })).toBeVisible();
     await expect(main.getByRole("heading", { name: UI.cpEmergencyTitle[locale] })).toBeVisible();
-    await expect(main.getByRole("link", { name: UI.cpEmergencyRoute[locale] })).toHaveAttribute("href", localePath(locale, "/report"));
+    await expect(main.getByRole("heading", { name: UI.cpLevelsHeading[locale] })).toBeVisible();
+    await expect(main.getByRole("link", { name: "1669", exact: true })).toHaveAttribute("href", "tel:1669");
     await expect(main.getByRole("link", { name: "191", exact: true })).toHaveAttribute("href", "tel:191");
     await expect(main.getByRole("link", { name: UI.cpPrivacyLink[locale] })).toBeVisible();
     // The emergency box comes before the Start button.
@@ -44,6 +45,86 @@ for (const locale of LOCALES as readonly Locale[]) {
     expect(order).toBe(true);
     await main.getByRole("link", { name: UI.cpPrivacyLink[locale] }).click();
     await expect(page.locator("h1")).toBeVisible();
+  });
+
+  test(`${locale}: yes to danger ends at emergency help, counts nothing personal and offers to carry on`, async ({ page }) => {
+    await answerTriage(page, locale, "emergency");
+    const main = page.locator("main");
+    await expect(main.getByRole("heading", { level: 1, name: UI.cpUrgentTitle[locale] })).toBeVisible();
+    await expect(main.getByRole("link", { name: "191", exact: true })).toHaveAttribute("href", "tel:191");
+    await expect(main.getByRole("link", { name: "1669", exact: true })).toHaveAttribute("href", "tel:1669");
+    await expect(main.getByRole("heading", { name: UI.cpWellbeingTitle[locale] })).toBeVisible();
+    // Refreshing the ending does not send the person anywhere else.
+    await page.reload();
+    await expect(page).toHaveURL(/\/urgent$/);
+    await main.getByRole("button", { name: UI.cpUrgentContinue[locale] }).click();
+    await expect(page).toHaveURL(/\/level$/);
+    await expect(main.getByRole("heading", { level: 1, name: UI.cpQLevel[locale] })).toBeVisible();
+  });
+
+  test(`${locale}: a course issue the lecturer can hear ends at advice, with Start again and Report something else`, async ({ page }) => {
+    await answerTriage(page, locale, "course-lecturer");
+    const main = page.locator("main");
+    await expect(main.getByRole("heading", { level: 1, name: UI.cpSignLecturerTitle[locale] })).toBeVisible();
+    await expect(main.getByRole("heading", { name: UI.cpSignHowTitle[locale] })).toBeVisible();
+    await expect(main.getByRole("heading", { name: UI.cpSignNotResolvedTitle[locale] })).toBeVisible();
+    await expect(main.getByRole("link", { name: UI.cpSignElse[locale] })).toHaveAttribute("href", localePath(locale, "/report"));
+    await expect(main.getByRole("link", { name: UI.cpExitPage[locale] })).toHaveCount(0);
+    await page.getByRole("link", { name: UI.back[locale], exact: true }).click();
+    await expect(page).toHaveURL(/\/lecturer$/);
+    await expect(page.locator('input[name="lecturer"][value="yes"]')).toBeChecked();
+    await page.goto(localePath(locale, "/complaints/signpost"));
+    await main.getByRole("link", { name: UI.cpSignStartAgain[locale] }).click();
+    await expect(page).toHaveURL(/\/emergency$/);
+  });
+
+  test(`${locale}: a course issue the lecturer cannot hear goes to the faculty office`, async ({ page }) => {
+    await answerTriage(page, locale, "course-other");
+    const main = page.locator("main");
+    await expect(main.getByRole("heading", { level: 1, name: UI.cpSignOtherTitle[locale] })).toBeVisible();
+    await expect(main.getByRole("heading", { level: 3, name: new RegExp(UI.cpRedirectOfficeHeading[locale]) })).toBeVisible();
+  });
+
+  test(`${locale}: harassment on a course offers support, a way off the page and a confidential complaint with the category chosen`, async ({ page }) => {
+    await answerTriage(page, locale, "course-harassment");
+    const main = page.locator("main");
+    await expect(main.getByRole("heading", { level: 1, name: UI.cpSignSafetyTitle[locale] })).toBeVisible();
+    await expect(main.getByRole("link", { name: UI.cpExitPage[locale] })).toHaveAttribute("href", /^https:\/\//);
+    await expect(main.getByRole("heading", { name: UI.cpWellbeingTitle[locale] })).toBeVisible();
+    await main.getByRole("button", { name: UI.cpSignTusuButton[locale] }).click();
+    await expect(page).toHaveURL(/\/identity$/);
+    await page.locator('input[name="identity"][value="anonymous"]').check();
+    await page.getByRole("button", { name: UI.cpContinue[locale], exact: true }).click();
+    await expect(page).toHaveURL(/\/category$/);
+    await expect(page.locator('input[name="category"][value="harassment"]')).toBeChecked();
+  });
+
+  test(`${locale}: a faculty issue ends at the programme association or the faculty bodies`, async ({ page }) => {
+    await answerTriage(page, locale, "faculty-programme");
+    const main = page.locator("main");
+    await expect(main.getByRole("heading", { level: 1, name: UI.cpSignFacultyTitle[locale] })).toBeVisible();
+    await expect(main.getByRole("heading", { name: UI.cpRedirectBodiesHeading[locale] })).toBeVisible();
+    await expect(main.getByRole("link", { name: /Instagram/ }).first()).toBeVisible();
+    await answerTriage(page, locale, "faculty-wide");
+    await expect(page.locator("main").getByRole("heading", { level: 1, name: UI.cpSignFacultyTitle[locale] })).toBeVisible();
+  });
+
+  test(`${locale}: a page off the route, or before its questions are answered, sends the person back`, async ({ page }) => {
+    await start(page, locale);
+    await page.goto(localePath(locale, "/complaints/describe"));
+    await expect(page).toHaveURL(/\/emergency$/);
+    await page.goto(localePath(locale, "/complaints/signpost"));
+    await expect(page).toHaveURL(/\/emergency$/);
+  });
+
+  test(`${locale}: the triage questions give an error summary when unanswered`, async ({ page }) => {
+    await start(page, locale);
+    await page.getByRole("button", { name: UI.cpContinue[locale], exact: true }).click();
+    await expect(page.locator("main").getByRole("link", { name: UI.cpErrEmergency[locale] })).toBeVisible();
+    await page.locator('input[name="emergency"][value="no"]').check();
+    await page.getByRole("button", { name: UI.cpContinue[locale], exact: true }).click();
+    await page.getByRole("button", { name: UI.cpContinue[locale], exact: true }).click();
+    await expect(page.locator("main").getByRole("link", { name: UI.cpErrLevel[locale] })).toBeVisible();
   });
 
   test(`${locale}: a named complaint can be answered page by page and checked, with no JavaScript`, async ({ page }) => {
@@ -80,8 +161,8 @@ for (const locale of LOCALES as readonly Locale[]) {
     await start(page, locale);
     await page.getByRole("button", { name: UI.cpContinue[locale], exact: true }).click();
     await expect(page.getByRole("heading", { name: UI.errorSummaryTitle[locale] })).toBeVisible();
-    await expect(page).toHaveURL(/\/identity$/);
-    await expect(page.locator("main").getByRole("link", { name: UI.cpErrIdentity[locale] })).toBeVisible();
+    await expect(page).toHaveURL(/\/emergency$/);
+    await expect(page.locator("main").getByRole("link", { name: UI.cpErrEmergency[locale] })).toBeVisible();
     await page.reload();
     await expect(page.getByRole("heading", { name: UI.errorSummaryTitle[locale] })).toHaveCount(0);
   });

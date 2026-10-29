@@ -1,8 +1,8 @@
 /**
- * Start page for making a complaint. The journey itself is a series of question
+ * Start page for reporting an issue. The journey itself is a series of question
  * pages ([step]) that work without JavaScript; this page explains what the
- * service is for, puts the emergency route first, and opens the draft. Nothing
- * is stored until "Start now" is pressed.
+ * service is for and who deals with what, puts the emergency numbers first,
+ * and opens the draft. Nothing is stored until "Start now" is pressed.
  */
 
 import type { Metadata } from "next";
@@ -61,6 +61,16 @@ export default async function ComplaintsStartPage({ params, searchParams }: { pa
             {UI.cpSubmitFailed[locale]}
           </NotificationBanner>
         ) : null}
+
+        <Stack space={2} as="section">
+          <Heading level={2}>{UI.cpLevelsHeading[locale]}</Heading>
+          <p className="m-0">{UI.cpLevelsBody[locale]}</p>
+          <ul className="m-0 flex list-disc flex-col gap-[var(--space-1)] pl-[var(--space-6)]">
+            <li>{UI.cpLevelsCourse[locale]}</li>
+            <li>{UI.cpLevelsFaculty[locale]}</li>
+            <li>{UI.cpLevelsUniversity[locale]}</li>
+          </ul>
+        </Stack>
 
         <Stack space={2} as="section">
           <Heading level={2}>{UI.cpYouChoose[locale]}</Heading>

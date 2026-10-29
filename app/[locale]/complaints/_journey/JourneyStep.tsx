@@ -16,19 +16,23 @@ import { listCategories } from "@/lib/complaints/categories";
 import { MAX_EVIDENCE_BYTES, MAX_EVIDENCE_FILES } from "@/lib/complaints/constants";
 import { readJourneyToken } from "@/lib/complaints/public/cookies";
 import { isEvidenceStorageAvailable, listJourneyFiles } from "@/lib/complaints/public/evidence";
-import { isStep, JOURNEY_BASE, previousStep, stepPath, type DraftValues } from "@/lib/complaints/public/steps";
+import { isStep, JOURNEY_BASE, NO_PROGRAMME, previousStep, stepPath, type DraftValues } from "@/lib/complaints/public/steps";
 import { loadJourney, saveJourney, type JourneyData } from "@/lib/complaints/public/store";
-import { firstProblem } from "@/lib/complaints/public/validate";
+import { facultyChoices, firstProblem, hasProgrammes, misroute } from "@/lib/complaints/public/validate";
+import { getFacultiesWithOrganisations } from "@/lib/content";
 import { isPiiAvailable } from "@/lib/crypto/pii";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getStorage } from "@/lib/storage";
 import { removeEvidence, saveStep, uploadEvidence } from "./actions";
+import { BackLink } from "./BackLink";
 import { CheckAnswers } from "./CheckAnswers";
 import { Confirmation } from "./Confirmation";
 import { errorAnchor, stepTitle } from "./copy";
+import { Signpost } from "./Signpost";
 import { Unavailable } from "./Unavailable";
+import { Urgent } from "./Urgent";
 
 interface JourneyStepProps {
   locale: string;
@@ -43,14 +47,6 @@ function Question({ children }: { children: ReactNode }) {
     <Heading level={1} className="m-0">
       {children}
     </Heading>
-  );
-}
-
-function BackLink({ href, locale }: { href: string; locale: Locale }) {
-  return (
-    <a href={href} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
-      {UI.back[locale]}
-    </a>
   );
 }
 
@@ -93,6 +89,14 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
 
   const categories = await listCategories(db, { activeOnly: true });
   const identity = data.values.identity;
+  const faculties = await getFacultiesWithOrganisations();
+  const choices = facultyChoices(faculties);
+  const programmes = hasProgrammes(choices, data.values.faculty);
+  const faculty = faculties.find((f) => f.slug === data.values.faculty) ?? null;
+
+  // Only the pages on this person's route, and none before the questions ahead of it are answered.
+  const elsewhere = misroute(step, data.values, categories.map((c) => c.key), choices);
+  if (elsewhere) redirect(localePath(locale, stepPath(elsewhere)));
 
   // A page for a stage that does not apply (contact, for an anonymous complaint) is skipped.
   if (step === "contact" && identity === "anonymous") redirect(localePath(locale, stepPath("check")));
@@ -109,7 +113,7 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
       <Container width="narrow">
         {crumbs}
         <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-          <BackLink href={localePath(locale, stepPath(previousStep(identity, "check") ?? "identity"))} locale={locale} />
+          <BackLink href={localePath(locale, stepPath(previousStep(data.values, "check") ?? "identity"))} locale={locale} />
           {flash?.errors.form ? (
             <NotificationBanner variant="warning" title={UI.cpSubmitProblemTitle[locale]}>
               {UI[flash.errors.form][locale]}
@@ -130,10 +134,13 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
   };
 
   const fromCheck = from === "check";
-  const previous = previousStep(identity, step);
+  const previous = previousStep(data.values, step, programmes);
   const backHref = fromCheck ? localePath(locale, stepPath("check")) : previous ? localePath(locale, stepPath(previous)) : base;
   const title = stepTitle(step, locale);
   const values = data.values;
+
+  if (step === "urgent") return <Urgent locale={locale} crumbs={crumbs} backHref={backHref} />;
+  if (step === "signpost") return <Signpost locale={locale} crumbs={crumbs} backHref={backHref} values={values} faculty={faculty} />;
 
   return (
     <Container width="narrow">
@@ -149,6 +156,79 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
             <input type="hidden" name="locale" value={locale} />
             {fromCheck ? <input type="hidden" name="from" value="check" /> : null}
             <Stack space={6}>
+              {step === "emergency" ? (
+                <Radios
+                  id="emergency"
+                  name="emergency"
+                  legend={<Question>{title}</Question>}
+                  defaultValue={values.emergency}
+                  error={err("emergency")}
+                  options={[
+                    { value: "yes", label: UI.cpEmergencyYes[locale], hint: UI.cpEmergencyYesHint[locale] },
+                    { value: "no", label: UI.cpEmergencyNo[locale], hint: UI.cpEmergencyNoHint[locale] },
+                  ]}
+                />
+              ) : null}
+
+              {step === "level" ? (
+                <Radios
+                  id="level"
+                  name="level"
+                  legend={<Question>{title}</Question>}
+                  hint={UI.cpLevelHint[locale]}
+                  defaultValue={values.level}
+                  error={err("level")}
+                  options={[
+                    { value: "course", label: UI.cpLevelCourse[locale], hint: UI.cpLevelCourseHint[locale] },
+                    { value: "faculty", label: UI.cpLevelFaculty[locale], hint: UI.cpLevelFacultyHint[locale] },
+                    { value: "university", label: UI.cpLevelUniversity[locale], hint: UI.cpLevelUniversityHint[locale] },
+                    { value: "unsure", label: UI.cpLevelUnsure[locale], hint: UI.cpLevelUnsureHint[locale] },
+                  ]}
+                />
+              ) : null}
+
+              {step === "faculty" ? (
+                <Radios
+                  id="faculty"
+                  name="faculty"
+                  legend={<Question>{title}</Question>}
+                  hint={(values.level === "course" ? UI.cpFacultyHintCourse : UI.cpFacultyHintFaculty)[locale]}
+                  defaultValue={values.faculty}
+                  error={err("faculty")}
+                  options={faculties.map((f) => ({ value: f.slug, label: pick(f.name, locale) }))}
+                />
+              ) : null}
+
+              {step === "lecturer" ? (
+                <Radios
+                  id="lecturer"
+                  name="lecturer"
+                  legend={<Question>{title}</Question>}
+                  defaultValue={values.lecturer}
+                  error={err("lecturer")}
+                  options={[
+                    { value: "yes", label: UI.cpLecturerYes[locale] },
+                    { value: "harassment", label: UI.cpLecturerHarassment[locale] },
+                    { value: "other", label: UI.cpLecturerOther[locale], hint: UI.cpLecturerOtherHint[locale] },
+                  ]}
+                />
+              ) : null}
+
+              {step === "programme" ? (
+                <Radios
+                  id="programme"
+                  name="programme"
+                  legend={<Question>{title}</Question>}
+                  hint={UI.cpProgrammeHint[locale]}
+                  defaultValue={values.programme}
+                  error={err("programme")}
+                  options={[
+                    ...(faculty?.programmes ?? []).map((p) => ({ value: p._id, label: pick(p.programme ?? p.name, locale) })),
+                    { value: NO_PROGRAMME, label: UI.cpProgrammeNone[locale] },
+                  ]}
+                />
+              ) : null}
+
               {step === "identity" ? (
                 <Radios
                   id="identity"

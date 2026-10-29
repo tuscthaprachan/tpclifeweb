@@ -312,7 +312,11 @@ describe("content pages and FAQs", () => {
 
   it("resolves related forms and pages in order, and skips drafts", async () => {
     const [page] = await ctx.db.insert(contentPages).values({ kind: "guide", slug: "related-test", titleEn: "Related test", category: "welfare", sortOrder: 0, ...published() }).returning();
-    const [formA, formB] = await ctx.db.select().from(forms).limit(2);
+    const [formA] = await ctx.db.select().from(forms).limit(1);
+    const [formB] = await ctx.db
+      .insert(forms)
+      .values({ slug: "related-form", titleEn: "Related form", category: "welfare", owner: "tusu", destinationType: "email", ...published() })
+      .returning();
     await ctx.db.insert(contentPageForms).values([
       { pageId: page!.id, formId: formB!.id, position: 1 },
       { pageId: page!.id, formId: formA!.id, position: 0 },

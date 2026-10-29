@@ -29,6 +29,8 @@ export function CheckAnswers({ locale, values, category, fileNames }: CheckAnswe
   const rows: SummaryListRow[] = [];
   const add = (key: string, value: ReactNode, step: string) => rows.push({ key, value, actions: change(step, key) });
 
+  add(UI.cpRowEmergency[locale], UI.cpEmergencyNo[locale], "emergency");
+  add(UI.cpRowLevel[locale], (values.level === "unsure" ? UI.cpLevelUnsure : UI.cpLevelUniversity)[locale], "level");
   const identityLabel = values.identity === "named" ? UI.cpIdentityNamed : values.identity === "pseudonymous" ? UI.cpIdentityPseudonymous : UI.cpIdentityAnonymous;
   add(UI.cpRowIdentity[locale], identityLabel[locale], "identity");
   add(

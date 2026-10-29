@@ -119,7 +119,8 @@ export async function loadJourney(db: AuditExecutor, token: string | undefined, 
   try {
     const data = JSON.parse(decryptPii(row.dataEnc, journeyAad(row.id), opts.env)) as JourneyData;
     if (data.v !== 1) return null;
-    return { id: row.id, data };
+    // A draft saved before the triage questions existed has no such answers: they read as not answered.
+    return { id: row.id, data: { ...data, values: { ...emptyValues(), ...data.values } } };
   } catch {
     return null;
   }

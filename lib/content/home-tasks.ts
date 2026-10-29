@@ -14,8 +14,8 @@ export const DEFAULT_HOME_TASKS: readonly HomeTask[] = [
     path: "/lost-and-found",
   },
   {
-    label: { th: "ร้องเรียน", en: "Make a complaint" },
-    description: { th: "ระบุชื่อหรือไม่ระบุชื่อก็ได้", en: "With or without your name" },
+    label: { th: "แจ้งปัญหา", en: "Report an issue" },
+    description: { th: "เรื่องรายวิชา คณะ หรือมหาวิทยาลัย", en: "A course, your faculty or the university" },
     path: "/complaints",
   },
   {

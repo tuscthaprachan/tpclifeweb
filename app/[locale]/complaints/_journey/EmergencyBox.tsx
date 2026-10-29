@@ -1,12 +1,13 @@
 import { InsetText, WarningText } from "@/components/ui";
 import { EMERGENCY_NUMBERS } from "@/lib/complaints/constants";
-import { localePath, type Locale } from "@/lib/i18n/config";
+import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 
 /**
  * A complaint goes into a queue that is read in working hours. Anything that
  * cannot wait is routed around it: this box sits on the start page and the
- * confirmation and points to the existing emergency route and phone numbers.
+ * confirmation and gives the national emergency numbers. The first question
+ * of the journey asks the same thing and leads to ./Urgent.tsx.
  */
 export function EmergencyBox({ locale }: { locale: Locale }) {
   return (
@@ -21,11 +22,6 @@ export function EmergencyBox({ locale }: { locale: Locale }) {
         </WarningText>
       </div>
       <ul className="m-0 mt-[var(--space-3)] flex list-none flex-col gap-[var(--space-2)] p-0">
-        <li>
-          <a href={localePath(locale, "/report")} className="font-semibold text-action underline">
-            {UI.cpEmergencyRoute[locale]}
-          </a>
-        </li>
         {EMERGENCY_NUMBERS.map((n) => (
           <li key={n.number}>
             <span>{UI[n.number === "191" ? "cpEmergencyPolice" : "cpEmergencyMedical"][locale]}: </span>
@@ -43,12 +39,7 @@ export function EmergencyBox({ locale }: { locale: Locale }) {
 export function EmergencyLine({ locale }: { locale: Locale }) {
   return (
     <InsetText>
-      <p className="m-0">
-        {UI.cpEmergencyShort[locale]}{" "}
-        <a href={localePath(locale, "/report")} className="text-action underline">
-          {UI.cpEmergencyRoute[locale]}
-        </a>
-      </p>
+      <p className="m-0">{UI.cpEmergencyShort[locale]}</p>
     </InsetText>
   );
 }

@@ -14,7 +14,7 @@ import type { SeedDb } from "./util";
  * relates to them. Idempotent: re-running upserts by slug / natural key and
  * leaves row counts unchanged.
  *
- * Seeded: site settings, 2 forms, 4 hand-built guide pages, 2 shuttle routes,
+ * Seeded: site settings, 1 form, 4 hand-built guide pages, 2 shuttle routes,
  * the faculties (names only, before the directory that links to them), the
  * directory (harvested + handbook organisations), the handbook (FAQs, welfare
  * pages, guide pages, places) and the whole surveyed canteen.

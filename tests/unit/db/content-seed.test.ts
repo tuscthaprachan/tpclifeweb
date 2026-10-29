@@ -118,7 +118,8 @@ describe("content seed", () => {
     expect(before.places).toBe(PLACE_DOCS.length + 1);
     expect(before.directory_organisations).toBe(buildDirectory().length);
     expect(before.faculties).toBe(10);
-    expect(before.forms).toBe(FORMS.length);
+    // The emergency report Google Form is superseded by /complaints and is not seeded.
+    expect(before.forms).toBe(FORMS.length - 1);
     expect(before.shuttle_routes).toBe(SHUTTLE_ROUTES.length);
     expect(before.shuttle_stops).toBe(SHUTTLE_ROUTES.reduce((n, r) => n + r.stops.length, 0));
     expect(before.site_settings).toBe(1);
@@ -174,8 +175,8 @@ describe("site settings home tasks", () => {
     const settings = await readSiteSettings(ctx.db);
     expect(settings?.homeTasks.map((t) => t.path)).toEqual(["/forms", "/lost-and-found", "/complaints", "/welfare", "/eat", "/directory"]);
     expect(settings?.homeTasks[2]).toEqual({
-      label: { th: "ร้องเรียน", en: "Make a complaint" },
-      description: { th: "ระบุชื่อหรือไม่ระบุชื่อก็ได้", en: "With or without your name" },
+      label: { th: "แจ้งปัญหา", en: "Report an issue" },
+      description: { th: "เรื่องรายวิชา คณะ หรือมหาวิทยาลัย", en: "A course, your faculty or the university" },
       path: "/complaints",
     });
   });

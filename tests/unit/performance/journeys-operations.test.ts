@@ -7,6 +7,7 @@ import { journeyMeasures, JOURNEY_SETTLE_MS, recordJourneyFinish, recordJourneyS
 import { getOperations } from "@/lib/performance/operations";
 import { rangeFor } from "@/lib/performance/period";
 import { buildPerformanceReport } from "@/lib/performance/report";
+import { signpostLevel } from "@/lib/complaints/public/steps";
 import { setupComplaints, NOW, type Ctx } from "../complaints/helpers";
 
 // Each suite builds a migrated database, which is slow on a busy runner.
@@ -87,6 +88,20 @@ describe("signposts", () => {
     const journeys = await journeyMeasures(t.db, rangeFor("all", now), now);
     expect(journeys.map((r) => r.kind)).toEqual(["lost", "found", "claim", "complaint"]);
     expect(journeys.every((r) => r.started.suppressed)).toBe(true);
+  });
+
+  it("records one signpost per ending of the issue reporting journey, and none for a question page", async () => {
+    const t2 = await setupComplaints();
+    const reached = [
+      signpostLevel("urgent", { level: "" }),
+      signpostLevel("signpost", { level: "course" }),
+      signpostLevel("signpost", { level: "faculty" }),
+      signpostLevel("lecturer", { level: "course" }),
+      signpostLevel("identity", { level: "university" }),
+    ];
+    for (const level of reached) if (level) await recordSignpost(t2.db, level, now);
+    const rows = await t2.db.select({ kind: journeyMetrics.kind }).from(journeyMetrics);
+    expect(rows.map((r) => r.kind).sort()).toEqual(["signpost_course", "signpost_emergency", "signpost_faculty"]);
   });
 
   it("is in the report, and counting never throws", async () => {

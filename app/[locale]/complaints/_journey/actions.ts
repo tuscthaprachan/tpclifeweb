@@ -19,14 +19,16 @@ import { clearJourneyToken, readJourneyToken, requestContext, siteOrigin, writeJ
 import { sendTrackingLinkEmail } from "@/lib/complaints/public/email";
 import { addJourneyFile, removeJourneyFile } from "@/lib/complaints/public/evidence";
 import { finishJourney, JourneyTooFastError } from "@/lib/complaints/public/journey";
-import { isStep, nextStep, STEP_FIELDS, stepPath } from "@/lib/complaints/public/steps";
+import { isStep, nextStep, reachesCase, signpostLevel, STEP_FIELDS, stepPath } from "@/lib/complaints/public/steps";
 import { loadJourney, saveJourney, startJourney, type JourneyData } from "@/lib/complaints/public/store";
 import { consumeSubmitAttempt, consumeUploadAttempt, JourneyInvalidError } from "@/lib/complaints/public/submit";
 import { trackingLinkUrl } from "@/lib/complaints/public/track";
-import { firstProblem, readStepValues, validateStep } from "@/lib/complaints/public/validate";
+import { facultyChoices, firstProblem, hasProgrammes, readStepValues, validateStep } from "@/lib/complaints/public/validate";
+import { getFacultiesWithOrganisations } from "@/lib/content";
 import { isPiiAvailable, PiiUnavailableError } from "@/lib/crypto/pii";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
+import { recordSignpost } from "@/lib/performance/journeys";
 import { getStorage } from "@/lib/storage";
 
 function localeOf(form: FormData): Locale {
@@ -41,7 +43,7 @@ async function currentDraft() {
   return loadJourney(getDb(), await readJourneyToken());
 }
 
-/** Start now: opens a fresh draft, sets the cookie, and goes to the first question. */
+/** Start now: opens a fresh draft, sets the cookie, and goes to the first question (is anyone in danger). */
 export async function beginJourney(form: FormData): Promise<void> {
   const locale = localeOf(form);
   if (!isDatabaseConfigured() || !isPiiAvailable()) redirect(basePath(locale));
@@ -53,7 +55,7 @@ export async function beginJourney(form: FormData): Promise<void> {
   }
   if (!started) redirect(`${basePath(locale)}?problem=1`);
   await writeJourneyToken(started.token);
-  redirect(pathTo(locale, "identity"));
+  redirect(pathTo(locale, "emergency"));
 }
 
 /** Saves one question page, or comes back to it with errors. */
@@ -69,18 +71,51 @@ export async function saveStep(form: FormData): Promise<void> {
   const read = readStepValues(step, form);
   // Choosing to stay anonymous drops any contact details typed earlier: an anonymous complaint holds none.
   const anonymous = step === "identity" && read.identity === "anonymous";
-  const values = { ...draft.data.values, ...read, ...(anonymous ? { name: "", email: "", phone: "", lineId: "", preferred: "", consent: "" } : {}) };
+  // A different faculty makes the programme chosen before it meaningless.
+  const newFaculty = step === "faculty" && read.faculty !== draft.data.values.faculty;
+  const values = { ...draft.data.values, ...read, ...(anonymous ? { name: "", email: "", phone: "", lineId: "", preferred: "", consent: "" } : {}), ...(newFaculty ? { programme: "" } : {}) };
   const data: JourneyData = { ...draft.data, locale, values };
-  const keys = (await listCategories(getDb(), { activeOnly: true })).map((c) => c.key);
-  const errors = validateStep(step, values, keys);
+  const db = getDb();
+  const keys = (await listCategories(db, { activeOnly: true })).map((c) => c.key);
+  const faculties = facultyChoices(step === "faculty" || step === "programme" ? await getFacultiesWithOrganisations() : []);
+  const errors = validateStep(step, values, keys, faculties);
   if (Object.keys(errors).length > 0) {
-    await saveJourney(getDb(), draft.id, { ...data, flash: { step, errors } });
+    await saveJourney(db, draft.id, { ...data, flash: { step, errors } });
     redirect(pathTo(locale, step, fromCheck ? "?from=check" : ""));
   }
-  await saveJourney(getDb(), draft.id, { ...data, flash: undefined });
-  // Coming back from "check" goes straight back, unless the change needs another page answering (switching to named needs a contact page).
-  if (fromCheck) redirect(pathTo(locale, firstProblem(values, keys)?.step ?? "check"));
-  redirect(pathTo(locale, nextStep(values.identity, step) ?? "check"));
+  await saveJourney(db, draft.id, { ...data, flash: undefined });
+  // Coming back from "check" goes straight back, unless the change needs another page answering (switching to named needs a contact page) or no longer leads to a complaint.
+  if (fromCheck && reachesCase(values)) redirect(pathTo(locale, firstProblem(values, keys)?.step ?? "check"));
+  const next = nextStep(values, step, hasProgrammes(faculties, values.faculty)) ?? "check";
+  // Counted here, on the post that routes there, so reloading the page does not count again.
+  const counted = signpostLevel(next, values);
+  if (counted) await recordSignpost(db, counted);
+  redirect(pathTo(locale, next));
+}
+
+/** "Report it afterwards" on the emergency page: the danger has passed, so carry on to the next question. */
+export async function afterEmergency(form: FormData): Promise<void> {
+  const locale = localeOf(form);
+  const draft = await currentDraft();
+  if (!draft) redirect(`${basePath(locale)}?expired=1`);
+  await saveJourney(getDb(), draft.id, { ...draft.data, locale, values: { ...draft.data.values, emergency: "no" }, flash: undefined });
+  redirect(pathTo(locale, "level"));
+}
+
+/**
+ * "Make a confidential complaint" after a course issue involving harassment or
+ * safety: the same journey as any university level complaint, with the
+ * restricted category chosen for the person (they can change it).
+ */
+export async function continueToTusu(form: FormData): Promise<void> {
+  const locale = localeOf(form);
+  const draft = await currentDraft();
+  if (!draft) redirect(`${basePath(locale)}?expired=1`);
+  const db = getDb();
+  const categories = await listCategories(db, { activeOnly: true });
+  const category = categories.some((c) => c.key === "harassment") ? "harassment" : draft.data.values.category;
+  await saveJourney(db, draft.id, { ...draft.data, locale, values: { ...draft.data.values, emergency: "no", level: "university", category }, flash: undefined });
+  redirect(pathTo(locale, "identity"));
 }
 
 const UPLOAD_ERRORS = {

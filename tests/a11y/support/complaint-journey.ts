@@ -27,12 +27,57 @@ export async function start(page: Page, locale: Locale) {
   await page.getByRole("button", { name: UI.cpStartNow[locale], exact: true }).click();
 }
 
+export type TriagePath = "emergency" | "course-lecturer" | "course-other" | "course-harassment" | "faculty-programme" | "faculty-wide";
+
+/**
+ * Answers the questions that decide who the issue belongs to, for a route that
+ * ends in emergency help or a signpost, and leaves that page open. The faculty
+ * with programme associations is the first one offered and the choice of
+ * programme is its first association.
+ */
+export async function answerTriage(page: Page, locale: Locale, path: TriagePath, onPage?: OnPage) {
+  const carryOn = () => page.getByRole("button", { name: UI.cpContinue[locale], exact: true }).click();
+  await start(page, locale);
+  await next(page, "emergency", onPage);
+  await page.locator(`input[name="emergency"][value="${path === "emergency" ? "yes" : "no"}"]`).check();
+  await carryOn();
+  if (path === "emergency") return next(page, "urgent", onPage);
+
+  await next(page, "level", onPage);
+  await page.locator(`input[name="level"][value="${path.startsWith("course") ? "course" : "faculty"}"]`).check();
+  await carryOn();
+
+  await next(page, "faculty", onPage);
+  await page.locator('input[name="faculty"][value="liberal-arts"]').check();
+  await carryOn();
+
+  if (path.startsWith("course")) {
+    await next(page, "lecturer", onPage);
+    await page.locator(`input[name="lecturer"][value="${path === "course-lecturer" ? "yes" : path === "course-other" ? "other" : "harassment"}"]`).check();
+    await carryOn();
+  } else {
+    await next(page, "programme", onPage);
+    if (path === "faculty-wide") await page.locator('input[name="programme"][value="none"]').check();
+    else await page.locator('input[name="programme"]:not([value="none"])').first().check();
+    await carryOn();
+  }
+  await next(page, "signpost", onPage);
+}
+
 /** Answers the complaint up to the check your answers page, which it leaves open. */
 export async function answerComplaint(page: Page, locale: Locale, opts: { identity?: Identity; category?: string; onPage?: OnPage } = {}) {
   const { identity = "named", onPage } = opts;
   const carryOn = (label: string) => page.getByRole("button", { name: label, exact: true }).click();
 
   await start(page, locale);
+  await next(page, "emergency", onPage);
+  await page.locator('input[name="emergency"][value="no"]').check();
+  await carryOn(UI.cpContinue[locale]);
+
+  await next(page, "level", onPage);
+  await page.locator('input[name="level"][value="university"]').check();
+  await carryOn(UI.cpContinue[locale]);
+
   await next(page, "identity", onPage);
   // Each option's label carries its hint, so pick the radio by value rather than by its full name.
   await page.locator(`input[name="identity"][value="${identity}"]`).check();

@@ -4,6 +4,20 @@ import { UI } from "@/lib/i18n/strings";
 /** The question a page asks, which is also its heading and its title. */
 export function stepTitle(step: string, locale: Locale): string {
   switch (step) {
+    case "emergency":
+      return UI.cpQEmergency[locale];
+    case "urgent":
+      return UI.cpUrgentTitle[locale];
+    case "level":
+      return UI.cpQLevel[locale];
+    case "faculty":
+      return UI.cpQFaculty[locale];
+    case "lecturer":
+      return UI.cpQLecturer[locale];
+    case "programme":
+      return UI.cpQProgramme[locale];
+    case "signpost":
+      return UI.cpSignpostTitle[locale];
     case "identity":
       return UI.cpQIdentity[locale];
     case "category":
@@ -28,6 +42,11 @@ export function stepTitle(step: string, locale: Locale): string {
 /** The element a field error links to. */
 export function errorAnchor(field: string): string {
   switch (field) {
+    case "emergency":
+    case "level":
+    case "faculty":
+    case "lecturer":
+    case "programme":
     case "identity":
     case "category":
     case "preferred":
