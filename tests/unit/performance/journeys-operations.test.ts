@@ -86,7 +86,7 @@ describe("signposts", () => {
     expect(rows).toHaveLength(7);
     expect(rows[0]!.finishedAt).toEqual(rows[0]!.startedAt);
     const journeys = await journeyMeasures(t.db, rangeFor("all", now), now);
-    expect(journeys.map((r) => r.kind)).toEqual(["lost", "found", "claim", "complaint"]);
+    expect(journeys.map((r) => r.kind)).toEqual(["lost", "found", "claim", "complaint", "borrow"]);
     expect(journeys.every((r) => r.started.suppressed)).toBe(true);
   });
 
@@ -159,6 +159,6 @@ describe("the whole report", () => {
     const report = await buildPerformanceReport(t.db, "12m", NOW);
     expect(report.lostFound.lostReceived).toEqual({ suppressed: true });
     expect(report.complaints.byCategory).toEqual([]);
-    expect(report.journeys).toHaveLength(4);
+    expect(report.journeys).toHaveLength(5);
   });
 });
