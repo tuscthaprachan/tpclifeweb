@@ -1,11 +1,12 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, BilingualTextField, CheckboxField, DateTimeField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { ImagePicker } from "@/components/admin/content/ImagePicker";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
-import { Fieldset, Stack } from "@/components/ui";
+import { Stack } from "@/components/ui";
 import { formatBangkokDateTime } from "@/lib/admin/content/datetime";
 import { loadChoices, userNames } from "@/lib/admin/content/list";
 import { categoryOptions, ownerOptions } from "@/lib/admin/content/options";
@@ -48,7 +49,7 @@ export async function EventForm({ locale, id, saved }: { locale: Locale; id?: st
       listHref={contentPath(def)}
       saved={saved}
     >
-      <Fieldset legend={L("eventsGroupAbout")} id="g-about">
+      <FormSection icon="edit" legend={L("eventsGroupAbout")} id="g-about">
         <Stack space={4}>
           <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: event?.titleTh, en: event?.titleEn }} />
           <SlugField label={L("fieldSlug")} defaultValue={event?.slug} />
@@ -64,24 +65,24 @@ export async function EventForm({ locale, id, saved }: { locale: Locale; id?: st
             defaultValue={event?.coverImageId ? [event.coverImageId] : []}
           />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset legend={L("eventsGroupWhen")} id="g-when">
+      <FormSection icon="events" legend={L("eventsGroupWhen")} id="g-when">
         <Stack space={4}>
           <DateTimeField name="startsAt" label={L("eventsFieldStartsAt")} defaultValue={formatBangkokDateTime(event?.startsAt)} />
           <DateTimeField name="endsAt" label={L("eventsFieldEndsAt")} hint={L("eventsHintEndsAt")} defaultValue={formatBangkokDateTime(event?.endsAt)} />
           <CheckboxField name="isAllDay" label={L("eventsFieldAllDay")} hint={L("eventsHintAllDay")} defaultChecked={event?.isAllDay} />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset legend={L("eventsGroupWhere")} id="g-where">
+      <FormSection icon="places" legend={L("eventsGroupWhere")} id="g-where">
         <Stack space={4}>
           <BilingualTextField name="location" label={L("eventsFieldLocation")} hint={L("eventsHintLocation")} maxLength={200} defaultValue={{ th: event?.locationTh, en: event?.locationEn }} />
           <ReferencePicker name="place" label={L("eventsFieldPlace")} hint={L("eventsHintPlace")} options={placeChoices} defaultValue={event?.placeId} />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset legend={L("eventsGroupJoin")} id="g-join">
+      <FormSection icon="forms" legend={L("eventsGroupJoin")} id="g-join">
         <Stack space={4}>
           <TextField
             name="registrationUrl"
@@ -100,9 +101,9 @@ export async function EventForm({ locale, id, saved }: { locale: Locale; id?: st
             defaultValue={event?.relatedFormId}
           />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset legend={L("eventsGroupCancel")} id="g-cancel">
+      <FormSection icon="warning" legend={L("eventsGroupCancel")} id="g-cancel">
         <Stack space={4}>
           <CheckboxField name="isCancelled" label={L("eventsFieldCancelled")} hint={L("eventsHintCancelled")} defaultChecked={event?.isCancelled} />
           <BilingualTextarea
@@ -114,7 +115,7 @@ export async function EventForm({ locale, id, saved }: { locale: Locale; id?: st
             defaultValue={{ th: event?.cancellationNoteTh, en: event?.cancellationNoteEn }}
           />
         </Stack>
-      </Fieldset>
+      </FormSection>
     </ContentForm>
   );
 }

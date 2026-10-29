@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { FileText, ListChecks, Lock, Paperclip, Scale } from "lucide-react";
 import { Heading, StatusTag, SummaryList, Tag, Timestamp } from "@/components/ui";
 import { requireStaff } from "@/lib/auth/session";
 import { CASE_INBOX_ROLES } from "@/lib/cases/access";
@@ -7,14 +8,13 @@ import { listCategories } from "@/lib/complaints/categories";
 import { readFacultiesWithOrganisations } from "@/lib/content/faculties";
 import { loadRedirectTarget, type RedirectTarget } from "@/lib/complaints/redirect";
 import { getComplaintFacts, type ComplaintFacts } from "@/lib/complaints/details";
-import { workingDaysUntil } from "@/lib/complaints/working-days";
 import { getDb } from "@/lib/db";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { CasePanelProps } from "../panels";
+import { Glyph, SectionCard } from "../SectionCard";
+import { WORKING_STATUSES as WORKING } from "./Targets";
 import { AcknowledgeForm, CloseButton, EvidenceReveal, RecategoriseForm, RedirectForm, ReopenButton, ResolveForm, StartButton, TextReveal, WellbeingButton, WithdrawButton } from "./Forms";
-
-const WORKING = new Set(["received", "acknowledged", "in_progress", "reopened"]);
 
 /**
  * The complaints part of the case page (registered in ../panels.ts): category
@@ -36,25 +36,21 @@ export async function ComplaintPanel(props: CasePanelProps) {
   const piiGone = facts.hasText === false && facts.evidenceCount === 0 && ["resolved", "closed", "withdrawn", "redirected"].includes(status);
 
   return (
-    <section aria-labelledby="cp-panel" className="flex flex-col gap-[var(--space-6)]">
-      <Heading level={2} id="cp-panel">
-        {a("cpcTitle", locale)}
-      </Heading>
+    <>
+      <SectionCard id="cp-panel" icon={Scale} title={a("cpcTitle", locale)}>
+        <Facts facts={facts} locale={locale} redirected={redirected} />
+      </SectionCard>
 
-      <Facts facts={facts} status={status} locale={locale} now={new Date()} redirected={redirected} />
-
-      <div className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={3}>{a("cpcTextHeading", locale)}</Heading>
+      <SectionCard id="cp-text" icon={FileText} title={a("cpcTextHeading", locale)}>
         {piiGone ? <p className="m-0 text-ink-600">{a("cpcTextGone", locale)}</p> : <TextReveal {...base} />}
-      </div>
+      </SectionCard>
 
-      <div className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={3}>{a("cpcEvidenceHeading", locale)}</Heading>
+      <SectionCard id="cp-evidence" icon={Paperclip} title={a("cpcEvidenceHeading", locale)}>
         {facts.evidenceCount === 0 ? <p className="m-0 text-ink-600">{a("cpcEvidenceNone", locale)}</p> : <EvidenceReveal {...base} count={facts.evidenceCount} />}
-      </div>
+      </SectionCard>
 
-      <div className="flex flex-col gap-[var(--space-6)]">
-        <Heading level={3}>{a("cpcHandlingHeading", locale)}</Heading>
+      <SectionCard id="cp-handling" icon={ListChecks} title={a("cpcHandlingHeading", locale)}>
+        <div className="flex flex-col gap-[var(--space-6)]">
         {status === "received" ? (
           <Step title={a("cpcAcknowledge", locale)}>
             <AcknowledgeForm {...base} />
@@ -113,15 +109,16 @@ export async function ComplaintPanel(props: CasePanelProps) {
             <WithdrawButton {...base} from={status} />
           </Step>
         ) : null}
-      </div>
-    </section>
+        </div>
+      </SectionCard>
+    </>
   );
 }
 
 function Step({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-[var(--space-2)]">
-      <Heading level={4}>{title}</Heading>
+      <Heading level={3}>{title}</Heading>
       {hint ? <p className="m-0 text-ink-600">{hint}</p> : null}
       {children}
     </div>
@@ -129,23 +126,7 @@ function Step({ title, hint, children }: { title: string; hint?: string; childre
 }
 
 /** The category, identity and the two targets with how long is left, as plain facts with no personal data. */
-function Facts({ facts, status, locale, now, redirected }: { facts: ComplaintFacts; status: string; locale: Locale; now: Date; redirected: RedirectTarget | null }) {
-  const open = WORKING.has(status);
-  const target = (due: Date, done: Date | null): ReactNode => {
-    if (done) return a("cpcTargetMet", locale);
-    if (!open) return a("cpcTargetNa", locale);
-    const left = workingDaysUntil(now, due);
-    return (
-      <span className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
-        <Timestamp value={due} locale={locale} format="date" />
-        {due.getTime() < now.getTime() ? (
-          <StatusTag tone="error" label={a("cpcOverdue", locale)} />
-        ) : (
-          <span className="text-ink-600">{left <= 0 ? a("cpcDueToday", locale) : a(left === 1 ? "cpcWorkingDaysLeftOne" : "cpcWorkingDaysLeft", locale, { count: left })}</span>
-        )}
-      </span>
-    );
-  };
+function Facts({ facts, locale, redirected }: { facts: ComplaintFacts; locale: Locale; redirected: RedirectTarget | null }) {
   const identity = a(`cpcIdentity_${facts.identity}` as AdminKey, locale);
   return (
     <SummaryList
@@ -155,13 +136,16 @@ function Facts({ facts, status, locale, now, redirected }: { facts: ComplaintFac
           value: (
             <span className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
               {pick({ th: facts.category.nameTh, en: facts.category.nameEn }, locale)}
-              {facts.category.restricted ? <Tag tone="governance">{a("cpcRestricted", locale)}</Tag> : null}
+              {facts.category.restricted ? (
+                <Tag tone="governance">
+                  <Glyph icon={Lock} size={14} className="me-[var(--space-1)] inline" />
+                  {a("cpcRestricted", locale)}
+                </Tag>
+              ) : null}
             </span>
           ),
         },
         { key: a("cpcRowIdentity", locale), value: identity },
-        { key: a("cpcRowAcknowledgeDue", locale), value: target(facts.acknowledgeDueAt, facts.acknowledgedAt) },
-        { key: a("cpcRowResolveDue", locale), value: target(facts.resolveDueAt, facts.resolvedAt) },
         { key: a("cpcRowTargets", locale), value: a("cpcTargetsText", locale, { ack: facts.category.acknowledgeDays, resolve: facts.category.resolveDays }) },
         ...(facts.escalatedAt
           ? [

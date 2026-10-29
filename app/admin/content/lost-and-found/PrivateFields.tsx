@@ -1,6 +1,7 @@
 "use client";
 
 import { InsetText, Textarea } from "@/components/ui";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { useContentForm } from "@/components/admin/content/context";
 import { fieldId } from "@/lib/admin/content/form-state";
 import { a } from "@/lib/i18n/admin";
@@ -12,13 +13,8 @@ import { a } from "@/lib/i18n/admin";
 export function PrivateFields({ submitterContact, staffVerificationDetail }: { submitterContact: string | null; staffVerificationDetail: string | null }) {
   const { errors, locale } = useContentForm();
   return (
-    <section aria-labelledby="lf-private" className="flex flex-col gap-[var(--space-4)] rounded-panel border-[length:var(--border-width-thick)] border-line-strong p-[var(--space-4)]">
-      <div className="flex flex-col gap-[var(--space-2)]">
-        <h2 id="lf-private" className="m-0 text-xl font-semibold text-ink-900">
-          {a("lfSectionPrivate", locale)}
-        </h2>
-        <InsetText>{a("lfSectionPrivateHint", locale)}</InsetText>
-      </div>
+    <FormSection id="lf-private" icon="security" legend={a("lfSectionPrivate", locale)}>
+      <InsetText>{a("lfSectionPrivateHint", locale)}</InsetText>
       <Textarea
         id={fieldId("submitterContact")}
         name="submitterContact"
@@ -41,6 +37,6 @@ export function PrivateFields({ submitterContact, staffVerificationDetail }: { s
         maxLength={2000}
         autoComplete="off"
       />
-    </section>
+    </FormSection>
   );
 }

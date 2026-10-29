@@ -12,6 +12,8 @@ import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { RepeatRows, type RowValue } from "../canteen-stalls/RepeatRows";
 import { deleteCanonicalDish, saveCanonicalDish } from "./actions";
 import { canonicalDishUsage } from "./usage";
+import { FormSection } from "@/components/admin/content/FormSection";
+import { Languages } from "lucide-react";
 
 /** The canonical dish form, for the "new" page (no `id`) and the edit page. */
 export async function CanonicalDishForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
@@ -59,31 +61,37 @@ export async function CanonicalDishForm({ locale, id, saved }: { locale: Locale;
           {usage.total > usage.dishes.length ? <p className="m-0 mt-[var(--space-2)]">{a("canteenCanonicalInUseMore", locale, { n: usage.total - usage.dishes.length })}</p> : null}
         </NotificationBanner>
       ) : null}
-      <BilingualTextField name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: dish?.nameTh, en: dish?.nameEn }} />
-      <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={dish?.slug} />
-      <RepeatRows
-        name="aliases"
-        legend={L("canteenFieldAliases")}
-        hint={L("canteenHintAliases")}
-        itemLabel={L("canteenItemAlias")}
-        max={30}
-        defaultRows={aliasRows}
-        fields={[{ key: "value", label: L("canteenFieldAlias"), kind: "text" }]}
-      />
-      <BilingualTextarea name="explainer" label={L("canteenFieldExplainer")} hint={L("canteenHintExplainer")} maxLength={1000} rows={5} defaultValue={{ th: dish?.explainerTh, en: dish?.explainerEn }} />
-      <RepeatRows
-        name="howToOrder"
-        legend={L("canteenFieldHowToOrder")}
-        hint={L("canteenHintHowToOrder")}
-        itemLabel={L("canteenItemPhrase")}
-        max={10}
-        defaultRows={phraseRows}
-        fields={[
-          { key: "th", label: L("canteenFieldPhraseTh"), kind: "text", lang: "th" },
-          { key: "romanised", label: L("canteenFieldSayRomanised"), kind: "text", lang: "en" },
-          { key: "en", label: L("canteenFieldPhraseEn"), kind: "text", lang: "en" },
-        ]}
-      />
+      <FormSection id="canon-name" icon="canonicalDishes" legend={L("cfSecName")}>
+        <BilingualTextField name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: dish?.nameTh, en: dish?.nameEn }} />
+        <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={dish?.slug} />
+      </FormSection>
+      <FormSection id="canon-about" icon="guides" legend={L("cfSecAliasesExplainer")}>
+        <RepeatRows
+          name="aliases"
+          legend={L("canteenFieldAliases")}
+          hint={L("canteenHintAliases")}
+          itemLabel={L("canteenItemAlias")}
+          max={30}
+          defaultRows={aliasRows}
+          fields={[{ key: "value", label: L("canteenFieldAlias"), kind: "text" }]}
+        />
+        <BilingualTextarea name="explainer" label={L("canteenFieldExplainer")} hint={L("canteenHintExplainer")} maxLength={1000} rows={5} defaultValue={{ th: dish?.explainerTh, en: dish?.explainerEn }} />
+      </FormSection>
+      <FormSection id="canon-order" icon={Languages} legend={L("cfSecHowToOrder")}>
+        <RepeatRows
+          name="howToOrder"
+          legend={L("canteenFieldHowToOrder")}
+          hint={L("canteenHintHowToOrder")}
+          itemLabel={L("canteenItemPhrase")}
+          max={10}
+          defaultRows={phraseRows}
+          fields={[
+            { key: "th", label: L("canteenFieldPhraseTh"), kind: "text", lang: "th" },
+            { key: "romanised", label: L("canteenFieldSayRomanised"), kind: "text", lang: "en" },
+            { key: "en", label: L("canteenFieldPhraseEn"), kind: "text", lang: "en" },
+          ]}
+        />
+      </FormSection>
     </ContentForm>
   );
 }

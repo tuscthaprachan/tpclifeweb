@@ -1,9 +1,10 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { BilingualTextarea, BilingualTextField, CheckboxField, EnumSelect, SlugField } from "@/components/admin/content/fields";
-import { Fieldset, Stack } from "@/components/ui";
+import { Stack } from "@/components/ui";
 import { loadChoices, userNames } from "@/lib/admin/content/list";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
 import { getDb } from "@/lib/db";
@@ -59,7 +60,7 @@ export async function OrganisationForm({ locale, id, saved }: { locale: Locale; 
       listHref={contentPath(def)}
       saved={saved}
     >
-      <Fieldset id="org-about" legend={L("dirGroupAbout")}>
+      <FormSection icon="organisations" id="org-about" legend={L("dirGroupAbout")}>
         <Stack space={4}>
           <BilingualTextField name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: org?.nameTh, en: org?.nameEn }} />
           <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={org?.slug} />
@@ -83,7 +84,7 @@ export async function OrganisationForm({ locale, id, saved }: { locale: Locale; 
           <BilingualTextField name="location" label={L("dirFieldLocation")} hint={L("dirHintLocation")} maxLength={200} defaultValue={{ th: org?.locationTh, en: org?.locationEn }} />
           <CheckboxField name="isActive" label={L("dirFieldActive")} hint={L("dirHintActive")} defaultChecked={org?.isActive ?? true} />
         </Stack>
-      </Fieldset>
+      </FormSection>
       <ContactsField defaultValue={org?.contacts ?? []} />
     </ContentForm>
   );

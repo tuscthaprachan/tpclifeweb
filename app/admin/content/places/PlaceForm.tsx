@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, BilingualTextField, CheckboxField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
-import { Fieldset, NotificationBanner, Stack } from "@/components/ui";
+import { NotificationBanner, Stack } from "@/components/ui";
 import { userNames } from "@/lib/admin/content/list";
 import { categoryOptions } from "@/lib/admin/content/options";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
@@ -57,7 +58,7 @@ export async function PlaceForm({ locale, id, saved, error }: { locale: Locale; 
           {a("placesInUseBody", locale, { uses })}
         </NotificationBanner>
       ) : null}
-      <Fieldset id="place-about" legend={L("placesGroupAbout")}>
+      <FormSection icon="places" id="place-about" legend={L("placesGroupAbout")}>
         <Stack space={4}>
           <BilingualTextField name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: place?.nameTh, en: place?.nameEn }} />
           <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={place?.slug} />
@@ -78,8 +79,8 @@ export async function PlaceForm({ locale, id, saved, error }: { locale: Locale; 
           <BilingualTextarea name="description" label={L("dirFieldDescription")} maxLength={1500} rows={4} defaultValue={{ th: place?.descriptionTh, en: place?.descriptionEn }} />
           <CheckboxField name="isKeyLocation" label={L("placesLabelKey")} hint={L("placesHintKey")} defaultChecked={place?.isKeyLocation ?? false} />
         </Stack>
-      </Fieldset>
-      <Fieldset id="place-hours" legend={L("placesGroupHours")}>
+      </FormSection>
+      <FormSection icon="overdue" id="place-hours" legend={L("placesGroupHours")}>
         <Stack space={4}>
           <HoursField defaultValue={place?.openingHours ?? []} />
           <BilingualTextField
@@ -90,13 +91,13 @@ export async function PlaceForm({ locale, id, saved, error }: { locale: Locale; 
             defaultValue={{ th: place?.closureNoteTh, en: place?.closureNoteEn }}
           />
         </Stack>
-      </Fieldset>
-      <Fieldset id="place-map" legend={L("placesGroupMap")} hint={L("placesHintMap")}>
+      </FormSection>
+      <FormSection icon="places" id="place-map" legend={L("placesGroupMap")} hint={L("placesHintMap")}>
         <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
           <TextField name="lat" label={L("dirFieldLat")} inputMode="text" maxLength={20} defaultValue={place?.lat != null ? String(place.lat) : ""} />
           <TextField name="lng" label={L("dirFieldLng")} inputMode="text" maxLength={20} defaultValue={place?.lng != null ? String(place.lng) : ""} />
         </div>
-      </Fieldset>
+      </FormSection>
     </ContentForm>
   );
 }

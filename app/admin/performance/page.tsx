@@ -1,8 +1,8 @@
-import { AdminPage } from "@/components/admin/AdminPage";
+import { Building2, Clock, Inbox } from "lucide-react";
+import { ConsoleIcon } from "@/components/admin/icons";
+import { ConsolePage, FilterChips, PageHeader, StatCard } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { PerformanceFigures } from "@/components/domain/performance/PerformanceFigures";
-import { PeriodLinks } from "@/components/domain/performance/PeriodLinks";
-import { DataTable, Heading, Stack, SummaryList, Timestamp } from "@/components/ui";
+import { Button, DataTable, Heading, SummaryList, Timestamp } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { adminTitle } from "@/lib/admin/metadata";
 import { isAuthConfigured } from "@/lib/auth";
@@ -12,9 +12,12 @@ import { getDb } from "@/lib/db";
 import { a } from "@/lib/i18n/admin";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
+import { UI } from "@/lib/i18n/strings";
+import { SectionCard } from "../cases/SectionCard";
+import { HeadlineStats, PerformanceCards } from "./Figures";
 import { PERFORMANCE_ROLES } from "@/lib/performance/access";
 import { getOperations, type DeskRow, type OpenByStatus } from "@/lib/performance/operations";
-import { parsePeriod } from "@/lib/performance/period";
+import { PERIODS, parsePeriod } from "@/lib/performance/period";
 import { buildPerformanceReport, type PerformanceReport } from "@/lib/performance/report";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +25,8 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata() {
   return adminTitle("pfTitle");
 }
+
+const PERIOD_LABEL = { "30d": "perfPeriod30d", "12m": "perfPeriod12m", all: "perfPeriodAll" } as const;
 
 function statusLabel(row: OpenByStatus, locale: Locale): string {
   const def = getStatusDef(row.service, row.kind, row.status);
@@ -47,27 +52,59 @@ export default async function AdminPerformancePage({ searchParams }: { searchPar
   const c = operations.complaints;
   const deskName = (d: DeskRow) => (d.organisationId === null ? a("pfNoDesk", locale) : pick({ th: d.nameTh ?? "", en: d.nameEn ?? "" }, locale));
 
-  return (
-    <AdminPage width="content">
-      <div>
-        <a href="/admin">{a("homeLink", locale)}</a>
-        <Heading level={1} className="mt-[var(--space-2)]">
-          {a("pfTitle", locale)}
-        </Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">{a("pfIntro", locale)}</p>
-        <p className="mt-[var(--space-2)]">
-          <a href={localePath(locale, "/performance")}>{a("pfPublicLink", locale)}</a>
-        </p>
-      </div>
+  const periodOptions = PERIODS.map((p) => ({ id: p, label: UI[PERIOD_LABEL[p]][locale], href: `/admin/performance?period=${p}` }));
 
-      <Stack space={6} as="section">
+  return (
+    <ConsolePage width="content">
+      <PageHeader
+        icon="performance"
+        title={a("pfTitle", locale)}
+        description={a("pfIntro", locale)}
+        actions={
+          <Button href={localePath(locale, "/performance")} variant="secondary" icon={<ConsoleIcon name="viewLive" />}>
+            {a("pfPublicLink", locale)}
+          </Button>
+        }
+      />
+
+      <section aria-labelledby="pf-figures" className="flex flex-col gap-[var(--space-4)]">
+        <div className="flex flex-wrap items-end justify-between gap-[var(--space-3)]">
+          <div>
+            <Heading level={2} id="pf-figures">
+              {a("pfFiguresHeading", locale)}
+            </Heading>
+            <p className="m-0 mt-[var(--space-1)] text-ink-600">{a("pfFiguresIntro", locale)}</p>
+          </div>
+          <FilterChips label={UI.perfPeriodLabel[locale]} options={periodOptions} current={period} />
+        </div>
+        {report ? (
+          <>
+            <p className="m-0 text-sm text-ink-600">
+              <Timestamp value={report.generatedAt} locale={locale} format="datetime" />
+            </p>
+            <HeadlineStats report={report} locale={locale} />
+            <PerformanceCards report={report} locale={locale} />
+          </>
+        ) : (
+          <p className="m-0 text-ink-900">{a("pfUnavailable", locale)}</p>
+        )}
+      </section>
+
+      <section aria-labelledby="pf-ops" className="flex flex-col gap-[var(--space-4)]">
         <div>
-          <Heading level={2}>{a("pfOpsHeading", locale)}</Heading>
-          <p className="mt-[var(--space-2)] text-ink-600">{a("pfOpsIntro", locale)}</p>
+          <Heading level={2} id="pf-ops">
+            {a("pfOpsHeading", locale)}
+          </Heading>
+          <p className="m-0 mt-[var(--space-1)] text-ink-600">{a("pfOpsIntro", locale)}</p>
         </div>
 
-        <Stack space={3}>
-          <Heading level={3}>{a("pfOpenHeading", locale)}</Heading>
+        <div className="grid gap-[var(--space-3)] [grid-template-columns:repeat(auto-fit,minmax(14rem,1fr))]">
+          <StatCard icon="cases" label={a("pfComplaintsOpen", locale)} value={n(c.open)} />
+          <StatCard icon="overdue" label={a("pfOverdueAny", locale)} value={n(c.overdue)} tone={c.overdue > 0 ? "attention" : "neutral"} hint={c.overdue > 0 ? a("pfOverdueIntro", locale) : undefined} />
+          <StatCard icon="escalated" label={a("pfEscalated", locale)} value={n(c.escalated)} />
+        </div>
+
+        <SectionCard level={3} icon={Inbox} title={a("pfOpenHeading", locale)}>
           {operations.openByStatus.length === 0 ? (
             <p className="m-0 text-ink-600">{a("pfNoneOpen", locale)}</p>
           ) : (
@@ -83,11 +120,9 @@ export default async function AdminPerformancePage({ searchParams }: { searchPar
               getRowKey={(r) => `${r.service}:${r.kind}:${r.status}`}
             />
           )}
-        </Stack>
+        </SectionCard>
 
-        <Stack space={3}>
-          <Heading level={3}>{a("pfOverdueHeading", locale)}</Heading>
-          <p className="m-0 text-ink-600">{a("pfOverdueIntro", locale)}</p>
+        <SectionCard level={3} icon={Clock} title={a("pfOverdueHeading", locale)} description={a("pfOverdueIntro", locale)}>
           <SummaryList
             rows={[
               { key: a("pfComplaintsOpen", locale), value: <strong>{n(c.open)}</strong> },
@@ -97,10 +132,9 @@ export default async function AdminPerformancePage({ searchParams }: { searchPar
               { key: a("pfEscalated", locale), value: <Count value={n(c.escalated)} note={a("pfEscalatedDef", locale)} /> },
             ]}
           />
-        </Stack>
+        </SectionCard>
 
-        <Stack space={3}>
-          <Heading level={3}>{a("pfDesksHeading", locale)}</Heading>
+        <SectionCard level={3} icon={Building2} title={a("pfDesksHeading", locale)}>
           <DataTable
             caption={a("pfDesksCaption", locale)}
             columns={[
@@ -112,27 +146,9 @@ export default async function AdminPerformancePage({ searchParams }: { searchPar
             getRowKey={(r) => r.slug ?? "none"}
           />
           <p className="m-0 text-sm text-ink-600">{a("pfDesksNote", locale)}</p>
-        </Stack>
-      </Stack>
-
-      <Stack space={6} as="section">
-        <div>
-          <Heading level={2}>{a("pfFiguresHeading", locale)}</Heading>
-          <p className="mt-[var(--space-2)] text-ink-600">{a("pfFiguresIntro", locale)}</p>
-        </div>
-        <PeriodLinks locale={locale} current={period} basePath="/admin/performance" />
-        {report ? (
-          <>
-            <p className="m-0 text-sm text-ink-600">
-              <Timestamp value={report.generatedAt} locale={locale} format="datetime" />
-            </p>
-            <PerformanceFigures report={report} locale={locale} headingLevel={3} />
-          </>
-        ) : (
-          <p className="m-0 text-ink-900">{a("pfUnavailable", locale)}</p>
-        )}
-      </Stack>
-    </AdminPage>
+        </SectionCard>
+      </section>
+    </ConsolePage>
   );
 }
 

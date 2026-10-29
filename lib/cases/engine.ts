@@ -275,6 +275,8 @@ export interface CaseListFilters {
   openOnly?: boolean;
   /** Only complaints that are open and past a target (not acknowledged by its date, or past the resolve date). */
   overdue?: boolean;
+  /** Only complaints the daily job has flagged as escalated and that are still open. */
+  escalated?: boolean;
   /** The moment "overdue" is judged at. Tests pass it. */
   now?: Date;
   page?: number;
@@ -312,6 +314,7 @@ export async function listCases(db: AuditExecutor, actor: StaffActor, filters: C
     inArray(cases.service, allowed),
     caseVisibleTo(actor.userId),
     filters.overdue ? complaintOverdue(now) : undefined,
+    filters.escalated ? complaintEscalated() : undefined,
     filters.status ? eq(cases.status, filters.status) : undefined,
     assignee === "unassigned" ? isNull(cases.assignedTo) : assignee ? eq(cases.assignedTo, assignee) : undefined,
     q ? or(ilike(cases.reference, `%${q}%`)) : undefined,

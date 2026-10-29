@@ -1,5 +1,6 @@
 import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualListField, BilingualTextarea, BilingualTextField, DateTimeField, EnumSelect, SlugField } from "@/components/admin/content/fields";
 import { ImagePicker } from "@/components/admin/content/ImagePicker";
@@ -56,40 +57,48 @@ export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: str
       listHref={contentPath(def)}
       saved={saved}
     >
-      <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: post?.titleTh, en: post?.titleEn }} />
-      <SlugField label={L("fieldSlug")} defaultValue={post?.slug} />
-      <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: post?.summaryTh, en: post?.summaryEn }} />
-      <BilingualRichTextField name="body" label={L("fieldBody")} refs={refs} defaultValue={{ th: post?.bodyTh, en: post?.bodyEn }} />
-      <EnumSelect
-        name="owner"
-        label={L("fieldOwner")}
-        defaultValue={post?.owner ?? ""}
-        options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]}
-      />
-      <EnumSelect
-        name="category"
-        label={L("fieldCategory")}
-        defaultValue={post?.category ?? ""}
-        options={[{ value: "", label: L("choiceNone") }, ...categoryOptions(locale)]}
-      />
-      <DateTimeField name="publishedAt" label={L("fieldPublishedAt")} hint={L("hintPublishedAt")} defaultValue={formatBangkokDateTime(post?.publishedAt)} />
-      <ImagePicker
-        name="cover"
-        label={L("fieldCoverImage")}
-        images={refs.images}
-        storageConfigured={refs.storageConfigured}
-        defaultValue={post?.coverImageId ? [post.coverImageId] : []}
-      />
-      <ImagePicker
-        name="gallery"
-        label={L("fieldGallery")}
-        hint={L("hintGallery")}
-        multiple
-        images={refs.images}
-        storageConfigured={refs.storageConfigured}
-        defaultValue={gallery.map((g) => g.imageId)}
-      />
-      <BilingualListField name="tags" label={L("fieldTags")} itemLabel={L("fieldTag")} defaultValue={tags.map((t) => ({ th: t.labelTh, en: t.labelEn }))} />
+      <FormSection id="news-title" icon="edit" legend={L("cfSecTitleSummary")}>
+        <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: post?.titleTh, en: post?.titleEn }} />
+        <SlugField label={L("fieldSlug")} defaultValue={post?.slug} />
+        <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: post?.summaryTh, en: post?.summaryEn }} />
+      </FormSection>
+      <FormSection id="news-body" icon="guides" legend={L("cfSecBody")}>
+        <BilingualRichTextField name="body" label={L("fieldBody")} refs={refs} defaultValue={{ th: post?.bodyTh, en: post?.bodyEn }} />
+      </FormSection>
+      <FormSection id="news-images" icon="images" legend={L("cfSecImages")}>
+        <ImagePicker
+          name="cover"
+          label={L("fieldCoverImage")}
+          images={refs.images}
+          storageConfigured={refs.storageConfigured}
+          defaultValue={post?.coverImageId ? [post.coverImageId] : []}
+        />
+        <ImagePicker
+          name="gallery"
+          label={L("fieldGallery")}
+          hint={L("hintGallery")}
+          multiple
+          images={refs.images}
+          storageConfigured={refs.storageConfigured}
+          defaultValue={gallery.map((g) => g.imageId)}
+        />
+      </FormSection>
+      <FormSection id="news-publishing" icon="publish" legend={L("cfSecPublishing")}>
+        <EnumSelect
+          name="owner"
+          label={L("fieldOwner")}
+          defaultValue={post?.owner ?? ""}
+          options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]}
+        />
+        <EnumSelect
+          name="category"
+          label={L("fieldCategory")}
+          defaultValue={post?.category ?? ""}
+          options={[{ value: "", label: L("choiceNone") }, ...categoryOptions(locale)]}
+        />
+        <DateTimeField name="publishedAt" label={L("fieldPublishedAt")} hint={L("hintPublishedAt")} defaultValue={formatBangkokDateTime(post?.publishedAt)} />
+        <BilingualListField name="tags" label={L("fieldTags")} itemLabel={L("fieldTag")} defaultValue={tags.map((t) => ({ th: t.labelTh, en: t.labelEn }))} />
+      </FormSection>
     </ContentForm>
   );
 }

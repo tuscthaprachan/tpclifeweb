@@ -51,11 +51,11 @@ export async function FaqForm({ locale, id, saved }: { locale: Locale; id?: stri
       listHref={contentPath(def)}
       saved={saved}
     >
-      <Group id="group-text" legend={L("pagesGroupText")}>
+      <Group icon="edit" id="group-text" legend={L("pagesGroupText")}>
         <BilingualTextField name="question" label={L("faqsFieldQuestion")} maxLength={300} defaultValue={{ th: faq?.questionTh, en: faq?.questionEn }} />
         <BilingualRichTextField name="answer" label={L("faqsFieldAnswer")} refs={refs} defaultValue={{ th: faq?.answerTh, en: faq?.answerEn }} />
       </Group>
-      <Group id="group-placement" legend={L("pagesGroupPlacement")}>
+      <Group icon="guides" id="group-placement" legend={L("pagesGroupPlacement")}>
         <EnumSelect
           name="category"
           label={L("fieldCategory")}

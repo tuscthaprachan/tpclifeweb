@@ -1,7 +1,9 @@
+import { CircleCheck, CircleDashed, CircleDot, Lock, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { StatusTag } from "@/components/ui";
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
+import { Glyph } from "../SectionCard";
 
 export type TaskState = "completed" | "in_progress" | "not_started" | "optional" | "cannot_start";
 
@@ -15,6 +17,7 @@ export interface TaskItem {
 }
 
 const TONE = { completed: "success", in_progress: "warning", not_started: "info", optional: "neutral", cannot_start: "neutral" } as const;
+const ICON: Record<TaskState, LucideIcon> = { completed: CircleCheck, in_progress: CircleDot, not_started: CircleDashed, optional: CircleDashed, cannot_start: Lock };
 const LABEL = {
   completed: "lfcTaskCompleted",
   in_progress: "lfcTaskInProgress",
@@ -39,8 +42,9 @@ export function TaskList({ items, locale }: { items: TaskItem[]; locale: Locale 
         {items.map((item, index) => (
           <li key={item.id} className="flex flex-wrap items-start justify-between gap-x-[var(--space-4)] gap-y-[var(--space-1)] border-b border-line py-[var(--space-3)] first:border-t">
             <div className="min-w-0 flex-1">
-              <p className="m-0 text-lg">
-                <span className="text-ink-600">{index + 1}. </span>
+              <p className="m-0 flex items-baseline gap-[var(--space-2)] text-base">
+                <Glyph icon={ICON[item.state]} className="translate-y-[0.2em] text-ink-600" />
+                <span className="text-ink-600">{index + 1}.</span>
                 {item.href ? (
                   <a href={item.href} className="font-medium" aria-describedby={`task-${item.id}-status`}>
                     {item.title}
@@ -51,7 +55,7 @@ export function TaskList({ items, locale }: { items: TaskItem[]; locale: Locale 
                   </span>
                 )}
               </p>
-              {item.hint ? <p className="m-0 mt-[var(--space-1)] text-sm text-ink-600">{item.hint}</p> : null}
+              {item.hint ? <p className="m-0 mt-[var(--space-1)] ps-[calc(18px+var(--space-2))] text-sm text-ink-600">{item.hint}</p> : null}
             </div>
             <span id={`task-${item.id}-status`}>
               <StatusTag tone={TONE[item.state]} label={a(LABEL[item.state], locale)} />

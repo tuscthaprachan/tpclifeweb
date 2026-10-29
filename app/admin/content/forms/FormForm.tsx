@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, BilingualTextField, CheckboxField, DateField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
-import { NotificationBanner } from "@/components/ui";
+import { Fieldset, NotificationBanner } from "@/components/ui";
 import { categoryOptions, ownerOptions } from "@/lib/admin/content/options";
 import { userNames } from "@/lib/admin/content/list";
 import { loadRichTextRefs } from "@/lib/admin/content/refs";
@@ -82,7 +82,7 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
         listHref={contentPath(def)}
         saved={saved}
       >
-        <Group id="group-basics" legend={L("formsGroupBasics")}>
+        <Group icon="forms" id="group-basics" legend={L("formsGroupBasics")}>
           <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={pair(form?.titleTh, form?.titleEn)} />
           <SlugField label={L("fieldSlug")} defaultValue={form?.slug} />
           <BilingualTextField name="purpose" label={L("formsFieldPurpose")} hint={L("formsHintPurpose")} maxLength={300} defaultValue={pair(form?.purposeTh, form?.purposeEn)} />
@@ -103,7 +103,7 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
           <BilingualTextarea name="audience" label={L("formsFieldAudience")} hint={L("formsHintAudience")} rows={2} maxLength={500} defaultValue={pair(form?.audienceTh, form?.audienceEn)} />
         </Group>
 
-        <Group id="group-before" legend={L("formsGroupBefore")}>
+        <Group icon="check" id="group-before" legend={L("formsGroupBefore")}>
           <ObjectListField
             name="prerequisites"
             label={L("formsFieldPrerequisites")}
@@ -118,7 +118,7 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
           />
         </Group>
 
-        <Group id="group-destination" legend={L("formsGroupDestination")}>
+        <Group icon="viewLive" id="group-destination" legend={L("formsGroupDestination")}>
           <EnumSelect
             name="destinationType"
             label={L("formsFieldDestinationType")}
@@ -131,7 +131,7 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
           <TextField name="destinationUrl" label={L("formsFieldDestinationUrl")} hint={L("formsHintDestinationUrl")} defaultValue={form?.destinationUrl} maxLength={2048} className="max-w-[40rem]" />
         </Group>
 
-        <Group id="group-signin" legend={L("formsGroupSignIn")} hint={L("formsHintSignIn")}>
+        <Group icon="security" id="group-signin" legend={L("formsGroupSignIn")} hint={L("formsHintSignIn")}>
           <CheckboxField name="requiresSignIn" label={L("formsFieldRequiresSignIn")} hint={L("formsHintRequiresSignIn")} defaultChecked={form?.requiresSignIn ?? false} />
           <EnumSelect
             name="signInType"
@@ -145,11 +145,12 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
           <BilingualTextarea name="signInNote" label={L("formsFieldSignInNote")} rows={2} maxLength={500} defaultValue={pair(form?.signInNoteTh, form?.signInNoteEn)} />
         </Group>
 
-        <Group id="group-timing" legend={L("formsGroupTiming")}>
+        <Group icon="overdue" id="group-timing" legend={L("formsGroupTiming")}>
           <TextField name="estimatedMinutes" type="number" inputMode="numeric" label={L("formsFieldMinutes")} hint={L("formsHintMinutes")} defaultValue={form?.estimatedMinutes?.toString()} className="max-w-[12rem]" />
           <BilingualTextField name="turnaround" label={L("formsFieldTurnaround")} hint={L("formsHintTurnaround")} maxLength={300} defaultValue={pair(form?.turnaroundTh, form?.turnaroundEn)} />
           <DateField name="deadline" label={L("formsFieldDeadline")} defaultValue={form?.deadline} />
-          <Group id="group-contact" legend={L("formsFieldContact")} hint={L("formsHintContact")}>
+          <Fieldset id="group-contact" legend={L("formsFieldContact")} hint={L("formsHintContact")}>
+            <div className="flex flex-col gap-[var(--space-5)]">
             <BilingualTextField name="contact.label" label={L("formsFieldContactLabel")} maxLength={200} defaultValue={pair(form?.contact?.label.th, form?.contact?.label.en)} />
             <EnumSelect
               name="contact.channel"
@@ -159,10 +160,11 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
             />
             <TextField name="contact.value" label={L("formsFieldContactValue")} hint={L("blockContactValueHint")} defaultValue={form?.contact?.value} maxLength={300} className="max-w-[32rem]" />
             <BilingualTextField name="contact.hours" label={L("blockContactHours")} maxLength={200} defaultValue={pair(form?.contact?.hours?.th, form?.contact?.hours?.en)} />
-          </Group>
+          </div>
+          </Fieldset>
         </Group>
 
-        <Group id="group-visibility" legend={L("formsGroupVisibility")}>
+        <Group icon="info" id="group-visibility" legend={L("formsGroupVisibility")}>
           <CheckboxField name="isActive" label={L("formsFieldIsActive")} hint={L("formsHintIsActive")} defaultChecked={form?.isActive ?? true} />
           <CheckboxField name="isPriority" label={L("formsFieldIsPriority")} hint={L("formsHintIsPriority")} defaultChecked={form?.isPriority ?? false} />
           <DateField name="lastVerified" label={L("formsFieldLastVerified")} hint={L("formsHintLastVerified")} defaultValue={form?.lastVerified} />

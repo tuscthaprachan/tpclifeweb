@@ -13,6 +13,8 @@ import { LANDMARK_KEY, SIDE_KEY } from "../canteen-stalls/labels";
 import { RepeatRows, type RowValue } from "../canteen-stalls/RepeatRows";
 import { saveCanteenSettings } from "./actions";
 import { LANDMARK_KINDS } from "./validate";
+import { FormSection } from "@/components/admin/content/FormSection";
+import { Grid3x3, DoorOpen, Map as MapIcon } from "lucide-react";
 
 /** The floor plan form. There is one row: it is edited in place, and created on first save. */
 export async function CanteenSettingsForm({ locale, saved }: { locale: Locale; saved?: string }) {
@@ -57,64 +59,70 @@ export async function CanteenSettingsForm({ locale, saved }: { locale: Locale; s
       hasStatus={false}
     >
       <p className="m-0">{L("canteenSettingsIntro")}</p>
-      <ReferencePicker name="canteenPlace" label={L("canteenFieldPlace")} hint={L("canteenHintPlace")} options={placeChoices} defaultValue={settings?.canteenPlaceId} />
-      <div className="grid gap-[var(--space-4)] sm:grid-cols-2 md:grid-cols-3">
-        <TextField name="gridCols" label={L("canteenFieldGridCols")} hint={L("canteenHintGrid")} inputMode="numeric" defaultValue={settings ? String(settings.gridCols) : ""} />
-        <TextField name="gridRows" label={L("canteenFieldGridRows")} inputMode="numeric" defaultValue={settings ? String(settings.gridRows) : ""} />
-        <EnumSelect
-          name="riverSide"
-          label={L("canteenFieldRiverSide")}
-          hint={L("canteenHintRiverSide")}
-          defaultValue={settings?.riverSide ?? ""}
-          options={[{ value: "", label: L("choiceNone") }, ...sideOptions]}
+      <FormSection id="cs-place" icon={Grid3x3} legend={L("cfSecPlaceGrid")}>
+        <ReferencePicker name="canteenPlace" label={L("canteenFieldPlace")} hint={L("canteenHintPlace")} options={placeChoices} defaultValue={settings?.canteenPlaceId} />
+        <div className="grid gap-[var(--space-4)] sm:grid-cols-2 md:grid-cols-3">
+          <TextField name="gridCols" label={L("canteenFieldGridCols")} hint={L("canteenHintGrid")} inputMode="numeric" defaultValue={settings ? String(settings.gridCols) : ""} />
+          <TextField name="gridRows" label={L("canteenFieldGridRows")} inputMode="numeric" defaultValue={settings ? String(settings.gridRows) : ""} />
+          <EnumSelect
+            name="riverSide"
+            label={L("canteenFieldRiverSide")}
+            hint={L("canteenHintRiverSide")}
+            defaultValue={settings?.riverSide ?? ""}
+            options={[{ value: "", label: L("choiceNone") }, ...sideOptions]}
+          />
+        </div>
+      </FormSection>
+      <FormSection id="cs-rooms" icon={DoorOpen} legend={L("cfSecEntrancesSeating")}>
+        <RepeatRows
+          name="entrances"
+          legend={L("canteenFieldEntrances")}
+          hint={L("canteenHintCells")}
+          itemLabel={L("canteenItemEntrance")}
+          defaultRows={entranceRows}
+          fields={[
+            ...pair(L("canteenFieldLabel")),
+            num("col", "canteenFieldCol"),
+            num("row", "canteenFieldRow"),
+            { key: "side", label: L("canteenFieldSide"), kind: "select", options: withSelect(sideOptions) },
+          ]}
         />
-      </div>
-      <RepeatRows
-        name="entrances"
-        legend={L("canteenFieldEntrances")}
-        hint={L("canteenHintCells")}
-        itemLabel={L("canteenItemEntrance")}
-        defaultRows={entranceRows}
-        fields={[
-          ...pair(L("canteenFieldLabel")),
-          num("col", "canteenFieldCol"),
-          num("row", "canteenFieldRow"),
-          { key: "side", label: L("canteenFieldSide"), kind: "select", options: withSelect(sideOptions) },
-        ]}
-      />
-      <RepeatRows
-        name="seatingZones"
-        legend={L("canteenFieldSeating")}
-        hint={L("canteenHintCells")}
-        itemLabel={L("canteenItemSeating")}
-        defaultRows={zoneRows}
-        fields={[...pair(L("canteenFieldLabel")), num("col", "canteenFieldCol"), num("row", "canteenFieldRow"), num("w", "canteenFieldW"), num("h", "canteenFieldH")]}
-      />
-      <RepeatRows
-        name="outline"
-        legend={L("canteenFieldOutline")}
-        hint={L("canteenHintOutline")}
-        itemLabel={L("canteenItemPoint")}
-        max={60}
-        defaultRows={outlineRows}
-        fields={[num("col", "canteenFieldCol"), num("row", "canteenFieldRow")]}
-      />
-      <RepeatRows
-        name="landmarks"
-        legend={L("canteenFieldLandmarks")}
-        hint={L("canteenHintCells")}
-        itemLabel={L("canteenItemLandmark")}
-        max={40}
-        defaultRows={landmarkRows}
-        fields={[
-          { key: "kind", label: L("canteenFieldLandmarkKind"), kind: "select", options: withSelect(kindOptions) },
-          ...pair(L("canteenFieldLabel")),
-          num("col", "canteenFieldCol"),
-          num("row", "canteenFieldRow"),
-          num("w", "canteenFieldW"),
-          num("h", "canteenFieldH"),
-        ]}
-      />
+        <RepeatRows
+          name="seatingZones"
+          legend={L("canteenFieldSeating")}
+          hint={L("canteenHintCells")}
+          itemLabel={L("canteenItemSeating")}
+          defaultRows={zoneRows}
+          fields={[...pair(L("canteenFieldLabel")), num("col", "canteenFieldCol"), num("row", "canteenFieldRow"), num("w", "canteenFieldW"), num("h", "canteenFieldH")]}
+        />
+      </FormSection>
+      <FormSection id="cs-outline" icon={MapIcon} legend={L("cfSecOutlineLandmarks")}>
+        <RepeatRows
+          name="outline"
+          legend={L("canteenFieldOutline")}
+          hint={L("canteenHintOutline")}
+          itemLabel={L("canteenItemPoint")}
+          max={60}
+          defaultRows={outlineRows}
+          fields={[num("col", "canteenFieldCol"), num("row", "canteenFieldRow")]}
+        />
+        <RepeatRows
+          name="landmarks"
+          legend={L("canteenFieldLandmarks")}
+          hint={L("canteenHintCells")}
+          itemLabel={L("canteenItemLandmark")}
+          max={40}
+          defaultRows={landmarkRows}
+          fields={[
+            { key: "kind", label: L("canteenFieldLandmarkKind"), kind: "select", options: withSelect(kindOptions) },
+            ...pair(L("canteenFieldLabel")),
+            num("col", "canteenFieldCol"),
+            num("row", "canteenFieldRow"),
+            num("w", "canteenFieldW"),
+            num("h", "canteenFieldH"),
+          ]}
+        />
+      </FormSection>
     </ContentForm>
   );
 }

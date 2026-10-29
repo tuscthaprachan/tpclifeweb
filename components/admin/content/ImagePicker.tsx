@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { useState, useTransition } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { uploadImageAction } from "@/app/admin/content/actions";
+import { ConsoleIcon } from "@/components/admin/icons";
 import { Button, ErrorMessage, NotificationBanner } from "@/components/ui";
 import { fieldId } from "@/lib/admin/content/form-state";
 import type { ImageChoice } from "@/lib/admin/content/images";
@@ -13,6 +15,8 @@ import { useContentForm } from "./context";
 import { compressInBrowser } from "./compress-image-browser";
 import { formatMegabytes } from "./compress-image";
 import { PortalDialog } from "./PortalDialog";
+
+const ARROW = { size: 18, strokeWidth: 1.75, absoluteStrokeWidth: true, "aria-hidden": true, focusable: false } as const;
 
 interface ImagePickerProps {
   /** Form name. Posts one value per chosen picture (an image id), in order. */
@@ -125,18 +129,18 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
               <span className="min-w-0 flex-1 text-sm">{altOf(byId.get(imageId))}</span>
               <span className="flex flex-wrap gap-[var(--space-1)]">
                 {multiple && index > 0 ? (
-                  <Button type="button" variant="quiet" size="sm" onClick={() => move(index, -1)}>
+                  <Button type="button" variant="quiet" size="sm" icon={<ArrowUp {...ARROW} />} onClick={() => move(index, -1)}>
                     {a("moveUp", locale)}
                     <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
                   </Button>
                 ) : null}
                 {multiple && index < chosen.length - 1 ? (
-                  <Button type="button" variant="quiet" size="sm" onClick={() => move(index, 1)}>
+                  <Button type="button" variant="quiet" size="sm" icon={<ArrowDown {...ARROW} />} onClick={() => move(index, 1)}>
                     {a("moveDown", locale)}
                     <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
                   </Button>
                 ) : null}
-                <Button type="button" variant="quiet" size="sm" onClick={() => update(chosen.filter((x) => x !== imageId))}>
+                <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="delete" />} onClick={() => update(chosen.filter((x) => x !== imageId))}>
                   {a("remove", locale)}
                   <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
                 </Button>
@@ -149,7 +153,7 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
       )}
       {error ? <ErrorMessage id={`${id}-error`}>{error}</ErrorMessage> : null}
       <div>
-        <Button type="button" variant="secondary" size="sm" onClick={() => setOpen(true)}>
+        <Button type="button" variant="secondary" size="sm" icon={<ConsoleIcon name={multiple ? "add" : "images"} />} onClick={() => setOpen(true)}>
           {multiple ? a("imageAdd", locale) : chosen.length > 0 ? a("imageChange", locale) : a("imageChoose", locale)}
         </Button>
       </div>
@@ -224,6 +228,7 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
                 <div>
                   <Button
                     type="button"
+                    icon={<ConsoleIcon name="upload" />}
                     loading={uploading}
                     loadingLabel={a("imageUploading", locale)}
                     onClick={(e) => upload(e.currentTarget.closest("[data-upload-form]") as HTMLElement)}

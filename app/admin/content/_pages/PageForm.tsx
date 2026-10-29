@@ -89,14 +89,14 @@ export async function PageForm({ kind, locale, id, saved }: { kind: ContentPageK
       listHref={contentPath(def)}
       saved={saved}
     >
-      <Group id="group-text" legend={L("pagesGroupText")}>
+      <Group icon="edit" id="group-text" legend={L("pagesGroupText")}>
         <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: page?.titleTh, en: page?.titleEn }} />
         <SlugField label={L("fieldSlug")} defaultValue={page?.slug} />
         <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: page?.summaryTh, en: page?.summaryEn }} />
         <BilingualRichTextField name="body" label={L("fieldBody")} refs={refs} defaultValue={{ th: page?.bodyTh, en: page?.bodyEn }} />
       </Group>
 
-      <Group id="group-placement" legend={L("pagesGroupPlacement")}>
+      <Group icon="guides" id="group-placement" legend={L("pagesGroupPlacement")}>
         <EnumSelect
           name="category"
           label={L("fieldCategory")}
@@ -108,7 +108,7 @@ export async function PageForm({ kind, locale, id, saved }: { kind: ContentPageK
         <DateField name="lastReviewed" label={L("pagesFieldLastReviewed")} hint={L("pagesHintLastReviewed")} defaultValue={page?.lastReviewed} />
       </Group>
 
-      <Group id="group-related" legend={L("pagesGroupRelated")}>
+      <Group icon="forms" id="group-related" legend={L("pagesGroupRelated")}>
         <ReferencePicker name="forms" label={L("pagesFieldRelatedForms")} hint={L("pagesHintRelatedForms")} multiple options={refs.forms} defaultValue={formLinks.map((l) => l.formId)} />
         <ReferencePicker name="related" label={L("pagesFieldRelatedPages")} hint={L("pagesHintRelatedPages")} multiple options={relatedChoices} defaultValue={relatedLinks.map((l) => l.relatedPageId)} />
         <ObjectListField

@@ -1,13 +1,16 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ClipboardList, Clock, Contact, History, MessageSquare, UserCheck, Workflow } from "lucide-react";
+import { ConsoleIcon } from "@/components/admin/icons";
+import { Card, ConsolePage, PageHeader } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Heading, StatusTag, SummaryList, Tag, Timestamp } from "@/components/ui";
+import { Button, Heading, StatusTag, SummaryList, Tag, Timestamp } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
 import { requireStaff } from "@/lib/auth/session";
 import { actingOrganisations, canAccessService, CASE_INBOX_ROLES } from "@/lib/cases/access";
 import { assertCaseAccess } from "@/lib/cases/restrictions";
+import { getComplaintFacts } from "@/lib/complaints/details";
 import { listContactSummaries } from "@/lib/cases/contacts";
 import { listAssignees, staffTimeline, type StaffTimelineEntry } from "@/lib/cases/engine";
 import { allowedTransitions, getServiceDef, getStatusDef, SERVICES, statusLabel } from "@/lib/cases/services";
@@ -22,6 +25,10 @@ import { pick, type Locale } from "@/lib/i18n/config";
 import { CASE_PANELS } from "../panels";
 import { AssignForm, NoteForm, StatusForm, UpdateForm } from "../CaseForms";
 import { ContactDetails } from "../ContactDetails";
+import { ComplaintTargets } from "../complaints/Targets";
+import { CopyReference } from "../CopyReference";
+import { serviceIcon } from "../icons";
+import { Glyph, SectionCard } from "../SectionCard";
 
 export const dynamic = "force-dynamic";
 
@@ -71,37 +78,88 @@ export default async function CasePage({ params, searchParams }: { params: Promi
   const Panel = CASE_PANELS[row.service];
   const people = new Map(assignees.map((p) => [p.id, p.name || p.email]));
 
-  return (
-    <AdminPage width="content">
-      <div>
-        <a href="/admin/cases">{a("caseBack", locale)}</a>
-        <Heading level={1} className="mt-[var(--space-2)]">
-          {row.reference}
-        </Heading>
-        {orgIds.length > 1 ? (
-          <p className="mt-[var(--space-2)] text-ink-600">
-            {a("caseActingFor", locale)}:{" "}
-            {orgIds.map((oid, i) => (
-              <span key={oid}>
-                {i > 0 ? " | " : ""}
-                {oid === actor.organisationId ? <strong>{orgName.get(oid)}</strong> : <a href={`/admin/cases/${id}?as=${oid}`}>{orgName.get(oid)}</a>}
-              </span>
-            ))}
-          </p>
-        ) : null}
-      </div>
+  const facts = row.service === "complaint" ? await getComplaintFacts(db, id, actor) : null;
+  const statusTag = <StatusTag tone={status?.tone ?? "neutral"} label={pick(statusLabel(row.service, row.kind, row.status), locale)} />;
+  const Icon = serviceIcon(row.service, row.kind);
 
-      <section aria-labelledby="case-summary">
-        <Heading level={2} id="case-summary">
-          {a("caseSummaryTitle", locale)}
-        </Heading>
+  const main = (
+    <>
+      {Panel ? <Panel caseId={id} reference={row.reference} service={row.service} kind={row.kind} status={row.status} locale={locale} organisationId={actor.organisationId} /> : null}
+
+      <SectionCard id="case-messages" icon={MessageSquare} title={a("ckMessagesTitle", locale)} description={a("ckMessagesIntro", locale)}>
+        <div className="flex flex-col gap-[var(--space-3)]">
+          <Heading level={3}>{a("caseUpdateHeading", locale)}</Heading>
+          <UpdateForm locale={locale} caseId={id} organisationId={actor.organisationId} />
+        </div>
+        <div className="flex flex-col gap-[var(--space-3)] border-t border-line pt-[var(--space-4)]">
+          <Heading level={3}>{a("caseNoteHeading", locale)}</Heading>
+          <NoteForm locale={locale} caseId={id} organisationId={actor.organisationId} />
+        </div>
+      </SectionCard>
+
+      <SectionCard id="case-timeline" icon={History} title={a("caseTimelineTitle", locale)} description={a("caseTimelineNote", locale)}>
+        <ol className="m-0 flex list-none flex-col gap-0 p-0">
+          {[...events].reverse().map((event) => (
+            <TimelineItem key={event.id} event={event} locale={locale} orgName={orgName} people={people} service={row.service} kind={row.kind} />
+          ))}
+        </ol>
+      </SectionCard>
+    </>
+  );
+
+  const aside = (
+    <>
+      <Card title={a("ckAsideReference", locale)} icon="cases" level={2}>
+        <CopyReference reference={row.reference} copyLabel={a("ckCopyReference", locale)} copiedLabel={a("ckCopied", locale)} />
+      </Card>
+
+      <SectionCard id="case-actions" icon={Workflow} title={a("caseStatusHeading", locale)}>
+        <p className="m-0 flex flex-wrap items-center gap-[var(--space-2)]">
+          <span className="text-ink-600">{a("ckCurrentStatus", locale)}</span>
+          {statusTag}
+        </p>
+        {row.service === "complaint" ? (
+          <p className="m-0 text-ink-600">{a("cpcStatusUsePanel", locale)}</p>
+        ) : next.length > 0 ? (
+          <>
+            <p className="m-0 text-sm text-ink-600">{a("ckNextSteps", locale, { steps: next.map((n) => n.label).join(", ") })}</p>
+            <StatusForm locale={locale} caseId={id} organisationId={actor.organisationId} from={row.status} options={next} />
+          </>
+        ) : (
+          <StatusForm locale={locale} caseId={id} organisationId={actor.organisationId} from={row.status} options={next} />
+        )}
+      </SectionCard>
+
+      <SectionCard id="case-assign" icon={UserCheck} title={a("caseAssignHeading", locale)}>
+        <p className="m-0">
+          <span className="text-ink-600">{a("caseRowAssigned", locale)}: </span>
+          {row.assignedTo ? (people.get(row.assignedTo) ?? row.assignedTo) : a("casesUnassigned", locale)}
+        </p>
+        <AssignForm locale={locale} caseId={id} organisationId={actor.organisationId} current={row.assignedTo} assignees={assignees.map((p) => ({ value: p.id, label: p.name || p.email }))} />
+      </SectionCard>
+
+      {facts ? (
+        <SectionCard id="case-deadlines" icon={Clock} title={a("ckDeadlines", locale)}>
+          <ComplaintTargets facts={facts} status={row.status} locale={locale} now={new Date()} />
+        </SectionCard>
+      ) : null}
+
+      <SectionCard id="case-contacts" icon={Contact} title={a("caseContactsTitle", locale)}>
+        {row.piiDeletedAt ? (
+          <p className="m-0 text-ink-600">{a("caseContactsDeleted", locale)}</p>
+        ) : contacts.length === 0 ? (
+          <p className="m-0 text-ink-600">{a("caseContactsNone", locale)}</p>
+        ) : (
+          <ContactDetails locale={locale} caseId={id} organisationId={actor.organisationId} count={contacts.length} />
+        )}
+      </SectionCard>
+
+      <SectionCard id="case-summary" icon={ClipboardList} title={a("caseSummaryTitle", locale)}>
         <SummaryList
           rows={[
             { key: a("caseRowService", locale), value: pick(service.label, locale) },
             { key: a("caseRowType", locale), value: pick(SERVICES[row.service].kinds[row.kind]?.label, locale) },
-            { key: a("caseRowStatus", locale), value: <StatusTag tone={status?.tone ?? "neutral"} label={pick(statusLabel(row.service, row.kind, row.status), locale)} /> },
             ...(row.summary ? [{ key: a("caseRowDetails", locale), value: row.summary }] : []),
-            { key: a("caseRowAssigned", locale), value: row.assignedTo ? (people.get(row.assignedTo) ?? row.assignedTo) : a("casesUnassigned", locale) },
             { key: a("caseRowActedBy", locale), value: row.actingOrganisationId ? (orgName.get(row.actingOrganisationId) ?? "") : a("caseNone", locale) },
             ...(row.owningOrganisationId ? [{ key: a("caseRowDesk", locale), value: orgName.get(row.owningOrganisationId) ?? "" }] : []),
             { key: a("caseRowOpened", locale), value: <Timestamp value={row.createdAt} locale={locale} format="datetime" /> },
@@ -114,65 +172,50 @@ export default async function CasePage({ params, searchParams }: { params: Promi
                 : []),
           ]}
         />
-      </section>
+      </SectionCard>
+    </>
+  );
 
-      <section aria-labelledby="case-contacts">
-        <Heading level={2} id="case-contacts">
-          {a("caseContactsTitle", locale)}
-        </Heading>
-        {row.piiDeletedAt ? (
-          <p className="mt-[var(--space-2)] text-ink-600">{a("caseContactsDeleted", locale)}</p>
-        ) : contacts.length === 0 ? (
-          <p className="mt-[var(--space-2)] text-ink-600">{a("caseContactsNone", locale)}</p>
-        ) : (
-          <div className="mt-[var(--space-2)]">
-            <ContactDetails locale={locale} caseId={id} organisationId={actor.organisationId} count={contacts.length} />
-          </div>
-        )}
-      </section>
-
-      {Panel ? <Panel caseId={id} reference={row.reference} service={row.service} kind={row.kind} status={row.status} locale={locale} organisationId={actor.organisationId} /> : null}
-
-      <section aria-labelledby="case-actions" className="flex flex-col gap-[var(--space-6)]">
-        <Heading level={2} id="case-actions">
-          {a("caseActionsTitle", locale)}
-        </Heading>
-        <div className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={3}>{a("caseStatusHeading", locale)}</Heading>
-          {row.service === "complaint" ? <p className="m-0 text-ink-600">{a("cpcStatusUsePanel", locale)}</p> : <StatusForm locale={locale} caseId={id} organisationId={actor.organisationId} from={row.status} options={next} />}
-        </div>
-        <div className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={3}>{a("caseUpdateHeading", locale)}</Heading>
-          <UpdateForm locale={locale} caseId={id} organisationId={actor.organisationId} />
-        </div>
-        <div className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={3}>{a("caseNoteHeading", locale)}</Heading>
-          <NoteForm locale={locale} caseId={id} organisationId={actor.organisationId} />
-        </div>
-        <div className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={3}>{a("caseAssignHeading", locale)}</Heading>
-          <AssignForm
-            locale={locale}
-            caseId={id}
-            organisationId={actor.organisationId}
-            current={row.assignedTo}
-            assignees={assignees.map((p) => ({ value: p.id, label: p.name || p.email }))}
-          />
-        </div>
-      </section>
-
-      <section aria-labelledby="case-timeline">
-        <Heading level={2} id="case-timeline">
-          {a("caseTimelineTitle", locale)}
-        </Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">{a("caseTimelineNote", locale)}</p>
-        <ol className="m-0 mt-[var(--space-3)] flex list-none flex-col gap-0 p-0">
-          {[...events].reverse().map((event) => (
-            <TimelineItem key={event.id} event={event} locale={locale} orgName={orgName} people={people} service={row.service} kind={row.kind} />
+  return (
+    <ConsolePage width="wide">
+      <PageHeader
+        icon="cases"
+        title={row.reference}
+        status={
+          <>
+            {statusTag}
+            <span className="inline-flex items-center gap-[var(--space-1)] text-sm text-ink-600">
+              <Glyph icon={Icon} size={16} />
+              {`${pick(service.label, locale)}, ${pick(SERVICES[row.service].kinds[row.kind]?.label, locale)}`}
+            </span>
+          </>
+        }
+        description={row.summary ?? undefined}
+        actions={
+          <Button href="/admin/cases" variant="secondary" icon={<ConsoleIcon name="back" />}>
+            {a("caseBack", locale)}
+          </Button>
+        }
+      />
+      {orgIds.length > 1 ? (
+        <p className="m-0 text-ink-600">
+          {a("caseActingFor", locale)}:{" "}
+          {orgIds.map((oid, i) => (
+            <span key={oid}>
+              {i > 0 ? " | " : ""}
+              {oid === actor.organisationId ? <strong>{orgName.get(oid)}</strong> : <a href={`/admin/cases/${id}?as=${oid}`}>{orgName.get(oid)}</a>}
+            </span>
           ))}
-        </ol>
-      </section>
-    </AdminPage>
+        </p>
+      ) : null}
+
+      <div className="console-form-layout console-form-layout-aside">
+        <div className="flex min-w-0 flex-col gap-[var(--space-6)]">{main}</div>
+        <aside aria-label={a("ckAsideLabel", locale)} className="flex min-w-0 flex-col gap-[var(--space-4)]">
+          {aside}
+        </aside>
+      </div>
+    </ConsolePage>
   );
 }
 

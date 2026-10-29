@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ConsoleIcon, type ConsoleIconName } from "@/components/admin/icons";
+import { Card, ConsolePage, PageHeader } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Heading, InsetText, SummaryList } from "@/components/ui";
+import { Button, InsetText, SummaryList } from "@/components/ui";
 import { isStorageConfigured } from "@/lib/admin/content/images";
 import { isUuid } from "@/lib/admin/content/form-state";
 import { getAdminLocale } from "@/lib/admin/locale";
@@ -41,6 +42,7 @@ const TITLE: Record<IntakeTask, AdminKey> = {
   finder: "lfcTaskFinder",
   publish: "lfcTaskPublish",
 };
+const TASK_ICON: Record<IntakeTask, ConsoleIconName> = { describe: "edit", photos: "images", storage: "places", verification: "security", finder: "account", publish: "publish" };
 const GAP: Record<ListingGap, AdminKey> = {
   title_th: "lfcGapTitleTh",
   title_en: "lfcGapTitleEn",
@@ -98,22 +100,29 @@ export default async function FoundIntakePage({ params, searchParams }: { params
   ];
 
   return (
-    <AdminPage width="content">
-      <div>
-        {task ? <a href={base}>{a("lfcBackToTasks", locale)}</a> : <a href={`/admin/cases/${id}`}>{a("lfcOpenCase", locale)}</a>}
-        <Heading level={1} className="mt-[var(--space-2)]">
-          {task ? a(TITLE[task], locale) : a("lfcFoundTitle", locale)}
-        </Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">{a("lfcReferenceIs", locale, { reference: row.reference })}</p>
-      </div>
+    <ConsolePage width="content">
+      <PageHeader
+        icon="lostFound"
+        title={task ? a(TITLE[task], locale) : a("lfcFoundTitle", locale)}
+        description={a("lfcReferenceIs", locale, { reference: row.reference })}
+        actions={
+          <Button href={task ? base : `/admin/cases/${id}`} variant="secondary" icon={<ConsoleIcon name="back" />}>
+            {task ? a("lfcBackToTasks", locale) : a("lfcOpenCase", locale)}
+          </Button>
+        }
+      />
 
       {!task ? (
         <>
-          <TaskList locale={locale} items={items} />
+          <Card title={a("ckIntakeSteps", locale)} icon="check">
+            <TaskList locale={locale} items={items} />
+          </Card>
           <InsetText>{a("lfcTaskListNote", locale)}</InsetText>
         </>
       ) : null}
 
+      {task ? (
+        <Card title={a("ckTaskDetails", locale)} icon={TASK_ICON[task]}>
       {task === "describe" && listing ? (
         <DescribeForm
           locale={locale}
@@ -170,6 +179,8 @@ export default async function FoundIntakePage({ params, searchParams }: { params
           <PublishListingForm locale={locale} caseId={id} orgId={orgId} found openCaseAfter />
         </div>
       ) : null}
-    </AdminPage>
+        </Card>
+      ) : null}
+    </ConsolePage>
   );
 }

@@ -7,7 +7,7 @@ import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
 import { kindLabel } from "@/components/domain/lostfound/kindLabel";
 import { statusLabel } from "@/components/domain/lostfound/statusLabel";
-import { Heading, InsetText, NotificationBanner } from "@/components/ui";
+import { InsetText, NotificationBanner } from "@/components/ui";
 import { formatBangkokDateTime } from "@/lib/admin/content/datetime";
 import { isStorageConfigured, listImageChoices } from "@/lib/admin/content/images";
 import { loadChoices, userNames } from "@/lib/admin/content/list";
@@ -21,6 +21,8 @@ import { localePath, type Locale } from "@/lib/i18n/config";
 import { deleteLostFound, saveLostFound } from "./actions";
 import { PrivateFields } from "./PrivateFields";
 import { CLAIM_CHANNELS } from "./validate";
+import { FormSection } from "@/components/admin/content/FormSection";
+import { Package } from "lucide-react";
 
 /**
  * The lost and found listing form, for the "new" page (no `id`) and the edit
@@ -71,14 +73,11 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
         </NotificationBanner>
       ) : null}
 
-      <section aria-labelledby="lf-public" className="flex flex-col gap-[var(--space-4)]">
-        <div>
-          <Heading level={2} id="lf-public">
-            {L("lfSectionPublic")}
-          </Heading>
-          <p className="m-0 text-sm text-ink-600">{L("lfSectionPublicHint")}</p>
-          {item ? <p className="m-0 mt-[var(--space-1)] text-sm font-medium text-ink-900">{a("lfReference", locale, { reference: item.reference })}</p> : null}
-        </div>
+      <div className="flex flex-col gap-[var(--space-1)]">
+        <p className="m-0 text-ink-600">{L("lfSectionPublicHint")}</p>
+        {item ? <p className="m-0 text-sm font-medium text-ink-900">{a("lfReference", locale, { reference: item.reference })}</p> : null}
+      </div>
+      <FormSection id="lf-item" icon={Package} legend={L("cfSecLfItem")}>
         <EnumSelect
           name="kind"
           label={L("lfFieldKind")}
@@ -100,6 +99,8 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
           defaultValue={item?.category ?? ""}
           options={[{ value: "", label: L("choiceSelect") }, ...LOST_FOUND_CATEGORIES.map((value) => ({ value, label: categoryLabel(value, locale) }))]}
         />
+      </FormSection>
+      <FormSection id="lf-where" icon="places" legend={L("cfSecLfWhere")}>
         <ReferencePicker name="placeId" label={L("lfFieldPlace")} options={placeChoices} defaultValue={item?.placeId ?? null} emptyLabel={L("lfPlaceNone")} />
         <BilingualTextField
           name="locationNote"
@@ -109,13 +110,8 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
           defaultValue={{ th: item?.locationNoteTh, en: item?.locationNoteEn }}
         />
         <DateField name="occurredOn" label={L("lfFieldOccurredOn")} defaultValue={item?.occurredOn} />
-        <EnumSelect
-          name="registerStatus"
-          label={L("lfFieldProgress")}
-          hint={L("lfFieldProgressHint")}
-          defaultValue={item?.registerStatus ?? "open"}
-          options={LOST_FOUND_STATUSES.map((value) => ({ value, label: statusLabel(value, locale) }))}
-        />
+      </FormSection>
+      <FormSection id="lf-photos" icon="images" legend={L("cfSecPhotos")}>
         <ImagePicker
           name="photos"
           label={L("lfFieldPhotos")}
@@ -124,6 +120,15 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
           images={imageChoices}
           storageConfigured={isStorageConfigured()}
           defaultValue={photos.map((p) => p.imageId)}
+        />
+      </FormSection>
+      <FormSection id="lf-handling" icon="lostFound" legend={L("cfSecLfHandling")}>
+        <EnumSelect
+          name="registerStatus"
+          label={L("lfFieldProgress")}
+          hint={L("lfFieldProgressHint")}
+          defaultValue={item?.registerStatus ?? "open"}
+          options={LOST_FOUND_STATUSES.map((value) => ({ value, label: statusLabel(value, locale) }))}
         />
         <BilingualTextField
           name="heldAt"
@@ -153,18 +158,14 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
           options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]}
         />
         <DateTimeField name="resolvedAt" label={L("lfFieldResolvedAt")} hint={L("lfFieldResolvedAtHint")} defaultValue={formatBangkokDateTime(item?.resolvedAt)} />
-      </section>
-
+      </FormSection>
       {item?.caseId ? (
-        <section aria-labelledby="lf-case" className="flex flex-col gap-[var(--space-3)] rounded-panel border-[length:var(--border-width-thick)] border-line-strong p-[var(--space-4)]">
-          <Heading level={2} id="lf-case">
-            {L("lfcEditorCaseTitle")}
-          </Heading>
+        <FormSection id="lf-case" icon="cases" legend={L("lfcEditorCaseTitle")}>
           <InsetText>{L("lfcEditorCaseBody")}</InsetText>
           <p className="m-0">
             <a href={`/admin/cases/${item.caseId}`}>{a("lfcEditorCaseLink", locale, { reference: caseReference ?? item.reference })}</a>
           </p>
-        </section>
+        </FormSection>
       ) : item ? (
         // A listing made before cases existed keeps its two plaintext private fields until it is moved to a case.
         <PrivateFields submitterContact={item.submitterContact ?? null} staffVerificationDetail={item.staffVerificationDetail ?? null} />

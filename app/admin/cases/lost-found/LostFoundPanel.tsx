@@ -1,3 +1,4 @@
+import { Archive, Camera, ClipboardList, Fingerprint, HandHelping, Link2, PackageCheck, Phone, ShieldCheck, UserRound } from "lucide-react";
 import { Heading, InsetText, StatusTag, SummaryList, Tag, Timestamp } from "@/components/ui";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
 import { canEditContent } from "@/lib/admin/content/access";
@@ -43,6 +44,7 @@ import {
   VerificationReveal,
 } from "./Forms";
 import { PrivatePhotos } from "./PrivatePhotos";
+import { SectionCard } from "../SectionCard";
 
 /**
  * The lost and found part of the case page (registered in ../panels.ts).
@@ -238,31 +240,19 @@ async function LostPanel({ caseId, locale, orgId, canEdit, status }: PanelProps)
   const handoverTarget = links.find((l) => l.status === "confirmed") ?? links.find((l) => l.status === "possible");
   return (
     <>
-      <section aria-labelledby="lf-listing" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-listing">
-          {a("lfcLostListingTitle", locale)}
-        </Heading>
+      <SectionCard id="lf-listing" icon={ClipboardList} title={a("lfcLostListingTitle", locale)}>
         <p className="m-0 text-ink-600">{a("lfcLostListingNote", locale)}</p>
         <ListingSection caseId={caseId} locale={locale} orgId={orgId} canEdit={canEdit} found={false} status={status} />
-      </section>
-      <section aria-labelledby="lf-identifying" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-identifying">
-          {a("lfcIdentifyingHeading", locale)}
-        </Heading>
+      </SectionCard>
+      <SectionCard id="lf-identifying" icon={Fingerprint} title={a("lfcIdentifyingHeading", locale)}>
         <p className="m-0 text-ink-600">{a("lfcIdentifyingNote", locale)}</p>
         {identifying ? <IdentifyingReveal locale={locale} caseId={caseId} orgId={orgId} /> : <p className="m-0 text-ink-600">{a("lfcIdentifyingNone", locale)}</p>}
-      </section>
-      <section aria-labelledby="lf-matches" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-matches">
-          {a("lfcMatchesTitle", locale)}
-        </Heading>
+      </SectionCard>
+      <SectionCard id="lf-matches" icon={Link2} title={a("lfcMatchesTitle", locale)}>
         <MatchesSection caseId={caseId} locale={locale} orgId={orgId} kind="lost" status={status} />
-      </section>
+      </SectionCard>
       {waiting ? (
-        <section aria-labelledby="lf-contact" className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={2} id="lf-contact">
-            {a("lfcContactTitle", locale)}
-          </Heading>
+        <SectionCard id="lf-contact" icon={Phone} title={a("lfcContactTitle", locale)}>
           <InsetText>
             <p className="m-0">
               {reporter
@@ -279,7 +269,7 @@ async function LostPanel({ caseId, locale, orgId, canEdit, status }: PanelProps)
               <a href={`/admin/cases/${handoverTarget.caseId}`}>{a("lfcGoToHandover", locale, { reference: refs.get(handoverTarget.caseId)?.reference ?? "" })}</a>
             </p>
           ) : null}
-        </section>
+        </SectionCard>
       ) : null}
     </>
   );
@@ -312,10 +302,7 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
 
   return (
     <>
-      <section aria-labelledby="lf-listing" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-listing">
-          {a("lfcFoundListingTitle", locale)}
-        </Heading>
+      <SectionCard id="lf-listing" icon={ClipboardList} title={a("lfcFoundListingTitle", locale)}>
         <ListingSection caseId={caseId} locale={locale} orgId={orgId} canEdit={canEdit} found status={status} />
         {status === "logged" ? (
           <div className="flex flex-col gap-[var(--space-3)]">
@@ -327,12 +314,9 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
             {ready ? <PublishListingForm locale={locale} caseId={caseId} orgId={orgId} found /> : null}
           </div>
         ) : null}
-      </section>
+      </SectionCard>
 
-      <section aria-labelledby="lf-storage" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-storage">
-          {a("lfcStorageTitle", locale)}
-        </Heading>
+      <SectionCard id="lf-storage" icon={Archive} title={a("lfcStorageTitle", locale)}>
         <SummaryList
           rows={[
             { key: a("lfcFieldDesk", locale), value: deskLabel ?? a("lfcNotRecorded", locale) },
@@ -347,12 +331,9 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
             </div>
           </details>
         ) : null}
-      </section>
+      </SectionCard>
 
-      <section aria-labelledby="lf-verification" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-verification">
-          {a("lfcVerificationHeading", locale)}
-        </Heading>
+      <SectionCard id="lf-verification" icon={ShieldCheck} title={a("lfcVerificationHeading", locale)}>
         <p className="m-0 text-ink-600">{a("lfcVerificationNote", locale)}</p>
         {details.hasVerificationDetail ? <VerificationReveal locale={locale} caseId={caseId} orgId={orgId} /> : <p className="m-0 text-ink-600">{a("lfcVerificationNone", locale)}</p>}
         {open ? (
@@ -363,12 +344,9 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
             </div>
           </details>
         ) : null}
-      </section>
+      </SectionCard>
 
-      <section aria-labelledby="lf-photos" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-photos">
-          {a("lfcPhotosTitle", locale)}
-        </Heading>
+      <SectionCard id="lf-photos" icon={Camera} title={a("lfcPhotosTitle", locale)}>
         <PrivatePhotos photos={photos} locale={locale} />
         {open ? (
           <details className="rounded-panel border border-line">
@@ -378,21 +356,15 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
             </div>
           </details>
         ) : null}
-      </section>
+      </SectionCard>
 
       {open ? (
-        <section aria-labelledby="lf-matches" className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={2} id="lf-matches">
-            {a("lfcMatchesTitle", locale)}
-          </Heading>
+        <SectionCard id="lf-matches" icon={Link2} title={a("lfcMatchesTitle", locale)}>
           <MatchesSection caseId={caseId} locale={locale} orgId={orgId} kind="found" status={status} />
-        </section>
+        </SectionCard>
       ) : null}
 
-      <section aria-labelledby="lf-claims" className="flex flex-col gap-[var(--space-4)]">
-        <Heading level={2} id="lf-claims">
-          {a("lfcClaimsTitle", locale)}
-        </Heading>
+      <SectionCard id="lf-claims" icon={HandHelping} title={a("lfcClaimsTitle", locale)}>
         {claims.length === 0 ? <p className="m-0 text-ink-600">{a("lfcClaimsNone", locale)}</p> : <p className="m-0 text-ink-600">{a("lfcClaimsNote", locale)}</p>}
         {claims.map((claim, index) => (
           <div key={claim.id} className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-4)]">
@@ -429,12 +401,9 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
             </div>
           </details>
         ) : null}
-      </section>
+      </SectionCard>
 
-      <section aria-labelledby="lf-finder" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-finder">
-          {a("lfcFinderTitle", locale)}
-        </Heading>
+      <SectionCard id="lf-finder" icon={UserRound} title={a("lfcFinderTitle", locale)}>
         <p className="m-0 text-ink-600">{a(summaries.some((c) => c.role === "finder") ? "lfcFinderHeld" : "lfcFinderNone", locale)}</p>
         {open ? (
           <details className="rounded-panel border border-line">
@@ -444,12 +413,9 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
             </div>
           </details>
         ) : null}
-      </section>
+      </SectionCard>
 
-      <section aria-labelledby="lf-handover" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-handover">
-          {a("lfcHandoverTitle", locale)}
-        </Heading>
+      <SectionCard id="lf-handover" icon={PackageCheck} title={a("lfcHandoverTitle", locale)}>
         {handover ? (
           <SummaryList
             rows={[
@@ -473,7 +439,7 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
         ) : (
           <p className="m-0 text-ink-600">{a("lfcHandoverNotReady", locale)}</p>
         )}
-      </section>
+      </SectionCard>
     </>
   );
 }

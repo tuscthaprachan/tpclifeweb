@@ -6,6 +6,7 @@ import { CheckboxField } from "@/components/admin/content/fields";
 import { useContentForm } from "@/components/admin/content/context";
 import { fieldId } from "@/lib/admin/content/form-state";
 import { a } from "@/lib/i18n/admin";
+import { AddRowButton, RowActions } from "@/components/admin/content/RowButtons";
 
 /** One input inside a row. Plain data, so a server component can pass it down. */
 export type RowFieldSpec =
@@ -125,8 +126,6 @@ export function ObjectListField({
     );
   };
 
-  const buttonClass = "inline-flex min-h-[var(--target-min)] items-center text-action underline disabled:text-ink-600 disabled:no-underline";
-
   return (
     <fieldset className="m-0 border-0 p-0">
       <legend className="mb-[var(--space-1)] text-lg font-semibold text-ink-900">{label}</legend>
@@ -138,43 +137,30 @@ export function ObjectListField({
               {itemLabel} {index + 1}
             </p>
             {fields.map((field, i) => input(row, index, field, i === 0))}
-            <div className="flex flex-wrap gap-[var(--space-4)]">
-              <button type="button" className={buttonClass} disabled={index === 0} onClick={() => move(index, -1)}>
-                {a("moveUp", locale)}
-                <span className="visually-hidden"> {itemLabel} {index + 1}</span>
-              </button>
-              <button type="button" className={buttonClass} disabled={index === rows.length - 1} onClick={() => move(index, 1)}>
-                {a("moveDown", locale)}
-                <span className="visually-hidden"> {itemLabel} {index + 1}</span>
-              </button>
-              <button
-                type="button"
-                className={buttonClass}
-                onClick={() => {
-                  setRows((cur) => cur.filter((r) => r.key !== row.key));
-                  markDirty();
-                }}
-              >
-                {a("remove", locale)}
-                <span className="visually-hidden"> {itemLabel} {index + 1}</span>
-              </button>
-            </div>
+            <RowActions
+              locale={locale}
+              label={`${itemLabel} ${index + 1}`}
+              first={index === 0}
+              last={index === rows.length - 1}
+              onMove={(by) => move(index, by)}
+              onRemove={() => {
+                setRows((cur) => cur.filter((r) => r.key !== row.key));
+                markDirty();
+              }}
+            />
           </li>
         ))}
       </ul>
       {rows.length < max ? (
-        <button
-          type="button"
+        <AddRowButton
+          label={a("listAddItem", locale, { item: itemLabel.toLowerCase() })}
           onClick={() => {
             const key = nextKey.current++;
             setRows((cur) => [...cur, { key, value: {} }]);
             setFocusKey(key);
             markDirty();
           }}
-          className="mt-[var(--space-3)] inline-flex min-h-[var(--target-min)] items-center rounded-control border border-line-strong bg-surface px-[var(--space-4)] py-[var(--space-2)] font-medium"
-        >
-          {a("listAddItem", locale, { item: itemLabel.toLowerCase() })}
-        </button>
+        />
       ) : null}
     </fieldset>
   );

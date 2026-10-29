@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, BilingualTextField, SlugField, TextField } from "@/components/admin/content/fields";
-import { Fieldset, NotificationBanner, Stack } from "@/components/ui";
+import { NotificationBanner, Stack } from "@/components/ui";
 import { userNames } from "@/lib/admin/content/list";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
 import { getDb } from "@/lib/db";
@@ -54,7 +55,7 @@ export async function FacultyForm({ locale, id, saved, error }: { locale: Locale
           {a("facInUseBody", locale, { uses })}
         </NotificationBanner>
       ) : null}
-      <Fieldset id="faculty-about" legend={L("facGroupAbout")}>
+      <FormSection icon="faculties" id="faculty-about" legend={L("facGroupAbout")}>
         <Stack space={4}>
           <BilingualTextField name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: faculty?.nameTh, en: faculty?.nameEn }} />
           <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={faculty?.slug} />
@@ -68,8 +69,8 @@ export async function FacultyForm({ locale, id, saved, error }: { locale: Locale
             className="max-w-[12rem]"
           />
         </Stack>
-      </Fieldset>
-      <Fieldset id="faculty-office" legend={L("facGroupOffice")}>
+      </FormSection>
+      <FormSection icon="organisations" id="faculty-office" legend={L("facGroupOffice")}>
         <Stack space={4}>
           <p className="m-0 text-ink-600">{L("facHintOffice")}</p>
           <BilingualTextField
@@ -91,7 +92,7 @@ export async function FacultyForm({ locale, id, saved, error }: { locale: Locale
             defaultValue={{ th: faculty?.officeNoteTh, en: faculty?.officeNoteEn }}
           />
         </Stack>
-      </Fieldset>
+      </FormSection>
     </ContentForm>
   );
 }

@@ -1,8 +1,9 @@
 import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, BilingualTextField, CheckboxField, DateField, SlugField, TextField } from "@/components/admin/content/fields";
-import { Fieldset, Stack } from "@/components/ui";
+import { Stack } from "@/components/ui";
 import { userNames } from "@/lib/admin/content/list";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
 import { getDb } from "@/lib/db";
@@ -48,16 +49,16 @@ export async function ShuttleForm({ locale, id, saved }: { locale: Locale; id?: 
       listHref={contentPath(def)}
       saved={saved}
     >
-      <Fieldset id="shuttle-route" legend={L("shuttleGroupRoute")}>
+      <FormSection icon="shuttle" id="shuttle-route" legend={L("shuttleGroupRoute")}>
         <Stack space={4}>
           <BilingualTextField name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: route?.nameTh, en: route?.nameEn }} />
           <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={route?.slug} />
           <BilingualTextarea name="description" label={L("dirFieldDescription")} maxLength={1500} rows={3} defaultValue={{ th: route?.descriptionTh, en: route?.descriptionEn }} />
           <CheckboxField name="isActive" label={L("shuttleLabelActive")} hint={L("shuttleHintActive")} defaultChecked={route?.isActive ?? true} />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset id="shuttle-calendar" legend={L("shuttleGroupCalendar")}>
+      <FormSection icon="events" id="shuttle-calendar" legend={L("shuttleGroupCalendar")}>
         <Stack space={4}>
           <DaysField name="daysOfWeek" legend={L("shuttleFieldDays")} defaultValue={route?.daysOfWeek ?? [1, 2, 3, 4, 5]} />
           <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
@@ -85,9 +86,9 @@ export async function ShuttleForm({ locale, id, saved }: { locale: Locale; id?: 
             max={120}
           />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset id="shuttle-times" legend={L("shuttleGroupTimetable")}>
+      <FormSection icon="overdue" id="shuttle-times" legend={L("shuttleGroupTimetable")}>
         <ValueListField
           name="departures"
           legend={L("shuttleFieldDepartures")}
@@ -98,13 +99,13 @@ export async function ShuttleForm({ locale, id, saved }: { locale: Locale; id?: 
           defaultValue={route?.departures ?? []}
           max={200}
         />
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset id="shuttle-stops" legend={L("shuttleGroupStops")}>
+      <FormSection icon="places" id="shuttle-stops" legend={L("shuttleGroupStops")}>
         <StopsField defaultValue={stops.map((s) => ({ nameTh: s.nameTh, nameEn: s.nameEn, offsetMinutes: s.offsetMinutes, noteTh: s.noteTh, noteEn: s.noteEn, lat: s.lat, lng: s.lng }))} />
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset id="shuttle-more" legend={L("shuttleGroupMore")}>
+      <FormSection icon="info" id="shuttle-more" legend={L("shuttleGroupMore")}>
         <Stack space={4}>
           <BilingualTextField name="fare" label={L("shuttleFieldFare")} maxLength={300} defaultValue={{ th: route?.fareTh, en: route?.fareEn }} />
           <BilingualTextarea name="notes" label={L("shuttleFieldNotes")} maxLength={1500} rows={3} defaultValue={{ th: route?.notesTh, en: route?.notesEn }} />
@@ -112,7 +113,7 @@ export async function ShuttleForm({ locale, id, saved }: { locale: Locale; id?: 
           <BilingualTextField name="sourceNote" label={L("shuttleFieldSource")} hint={L("shuttleHintSource")} maxLength={300} defaultValue={{ th: route?.sourceNoteTh, en: route?.sourceNoteEn }} />
           <DateField name="lastVerified" label={L("shuttleFieldVerified")} defaultValue={route?.lastVerified} />
         </Stack>
-      </Fieldset>
+      </FormSection>
     </ContentForm>
   );
 }

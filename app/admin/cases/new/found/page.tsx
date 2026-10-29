@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ConsoleIcon } from "@/components/admin/icons";
+import { Card, ConsolePage, PageHeader } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Heading } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { adminTitle } from "@/lib/admin/metadata";
 import { isAuthConfigured } from "@/lib/auth";
@@ -35,14 +36,9 @@ export default async function NewFoundItemPage({ searchParams }: { searchParams:
   const places = await placeOptions(getDb(), locale);
 
   return (
-    <AdminPage width="content">
-      <div>
-        <a href="/admin/cases">{a("caseBack", locale)}</a>
-        <Heading level={1} className="mt-[var(--space-2)]">
-          {a("lfcFoundTitle", locale)}
-        </Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">{a("lfcFoundIntro", locale)}</p>
-      </div>
+    <ConsolePage width="content">
+      <PageHeader icon="lostFound" title={a("lfcFoundTitle", locale)} description={a("lfcFoundIntro", locale)} actions={<Button href="/admin/cases" variant="secondary" icon={<ConsoleIcon name="back" />}>{a("caseBack", locale)}</Button>} />
+      <Card title={a("ckIntakeSteps", locale)} icon="check">
       <TaskList
         locale={locale}
         items={[
@@ -54,12 +50,12 @@ export default async function NewFoundItemPage({ searchParams }: { searchParams:
           { id: "publish", title: a("lfcTaskPublish", locale), href: null, state: "cannot_start" },
         ]}
       />
-      <section aria-labelledby="task-describe" className="flex flex-col gap-[var(--space-4)]">
-        <Heading level={2} id="task-describe">
-          {a("lfcTaskDescribe", locale)}
-        </Heading>
+      </Card>
+      <div id="task-describe" tabIndex={-1}>
+      <Card title={a("lfcTaskDescribe", locale)} icon="edit">
         <DescribeForm locale={locale} mode="start" orgId={actor.organisationId} defaults={{}} categories={categoryOptions(locale)} places={places} />
-      </section>
-    </AdminPage>
+      </Card>
+      </div>
+    </ConsolePage>
   );
 }

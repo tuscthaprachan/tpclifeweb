@@ -1,10 +1,11 @@
 import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, BilingualTextField, DateField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
-import { Fieldset, Stack } from "@/components/ui";
+import { Stack } from "@/components/ui";
 import { formatBangkokDateTime } from "@/lib/admin/content/datetime";
 import { loadChoices, userNames } from "@/lib/admin/content/list";
 import { ownerOptions } from "@/lib/admin/content/options";
@@ -64,7 +65,7 @@ export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: s
       listHref={contentPath(def)}
       saved={saved}
     >
-      <Fieldset legend={L("policiesGroupAbout")} id="g-about">
+      <FormSection icon="edit" legend={L("policiesGroupAbout")} id="g-about">
         <Stack space={4}>
           <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: policy?.titleTh, en: policy?.titleEn }} />
           <SlugField label={L("fieldSlug")} defaultValue={policy?.slug} />
@@ -73,9 +74,9 @@ export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: s
           <EnumSelect name="owner" label={L("fieldOwner")} defaultValue={policy?.owner ?? ""} options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]} />
           <BilingualTextField name="area" label={L("policiesFieldArea")} hint={L("policiesHintArea")} maxLength={100} defaultValue={{ th: policy?.policyAreaTh, en: policy?.policyAreaEn }} />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset legend={L("policiesGroupProgress")} id="g-progress">
+      <FormSection icon="performance" legend={L("policiesGroupProgress")} id="g-progress">
         <Stack space={4}>
           <EnumSelect name="policyStatus" label={L("policiesFieldStatus")} defaultValue={policy?.policyStatus ?? "notStarted"} options={statusOptions} />
           <TextField
@@ -91,9 +92,9 @@ export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: s
           <DateField name="targetDate" label={L("policiesFieldTarget")} defaultValue={policy?.targetDate} />
           <DateField name="completedAt" label={L("policiesFieldCompleted")} defaultValue={policy?.completedAt} />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset legend={L("policiesGroupUpdates")} id="g-updates">
+      <FormSection icon="policies" legend={L("policiesGroupUpdates")} id="g-updates">
         <PolicyUpdatesField
           statusOptions={statusOptions}
           defaultValue={updates.map((u) => ({
@@ -105,9 +106,9 @@ export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: s
           }))}
           newRow={{ date: today, note: { th: "", en: "" }, status: policy?.policyStatus ?? "notStarted", author: { th: "", en: "" }, evidenceUrl: "" }}
         />
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset legend={L("policiesGroupLinks")} id="g-links">
+      <FormSection icon="forms" legend={L("policiesGroupLinks")} id="g-links">
         <Stack space={4}>
           <ReferencePicker
             name="oversightOf"
@@ -125,7 +126,7 @@ export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: s
             }))}
           />
         </Stack>
-      </Fieldset>
+      </FormSection>
     </ContentForm>
   );
 }

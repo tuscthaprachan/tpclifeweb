@@ -18,6 +18,8 @@ import { CheckGroup } from "./CheckGroup";
 import { RepeatRows, type RowValue } from "./RepeatRows";
 import { deleteCanteenStall, saveCanteenStall } from "./actions";
 import { labelled } from "./shared";
+import { FormSection } from "@/components/admin/content/FormSection";
+import { Clock, Map as MapIcon, Camera, PlusCircle } from "lucide-react";
 
 /** The stall form, for the "new" page (no `id`) and the edit page. */
 export async function CanteenStallForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
@@ -101,68 +103,76 @@ export async function CanteenStallForm({ locale, id, saved }: { locale: Locale; 
         saved={saved}
       >
         {stall && dishCount > 0 ? <InsetText>{a("canteenStallHasDishes", locale, { count: dishCount })}</InsetText> : null}
-        <BilingualTextField name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: stall?.nameTh, en: stall?.nameEn }} />
-        <SlugField label={L("fieldSlug")} suggestFrom="name.en" hint={L("canteenHintStallSlug")} defaultValue={stall?.slug} />
-        <TextField name="number" label={L("canteenFieldNumber")} hint={L("canteenHintStallNumber")} inputMode="numeric" className="max-w-[10rem]" defaultValue={stall ? String(stall.number) : ""} />
-        <CheckGroup name="cuisine" label={L("canteenFieldCuisine")} options={cuisineOptions} defaultValue={stall?.cuisine} />
-        <CheckboxField name="halal" label={L("canteenFieldHalal")} hint={L("canteenHintHalal")} defaultChecked={stall?.halal} />
-        <CheckboxField name="vegetarianStall" label={L("canteenFieldVegetarianStall")} hint={L("canteenHintVegetarianStall")} defaultChecked={stall?.vegetarianStall} />
-        <RepeatRows
-          name="hours"
-          legend={L("canteenFieldHours")}
-          hint={L("canteenHintHours")}
-          itemLabel={L("canteenItemHours")}
-          max={14}
-          defaultRows={hoursRows}
-          fields={[
-            { key: "daysOfWeek", label: L("canteenFieldDays"), kind: "checks", options: dayOptions },
-            { key: "opens", label: L("canteenFieldOpens"), kind: "time" },
-            { key: "closes", label: L("canteenFieldCloses"), kind: "time" },
-            { key: "note.th", label: `${L("canteenFieldHoursNote")} (${L("langThai")})`, kind: "text", lang: "th" },
-            { key: "note.en", label: `${L("canteenFieldHoursNote")} (${L("langEnglish")})`, kind: "text", lang: "en" },
-          ]}
-        />
-        <fieldset className="m-0 flex flex-col gap-[var(--space-3)] border-0 p-0">
-          <legend className="mb-[var(--space-1)] text-lg font-semibold text-ink-900">{L("canteenFieldMapGroup")}</legend>
-          <p className="m-0 text-sm text-ink-600">{L("canteenHintMap")}</p>
-          <div className="grid gap-[var(--space-3)] sm:grid-cols-2 md:grid-cols-4">
-            <TextField name="mapCol" label={L("canteenFieldMapCol")} inputMode="numeric" defaultValue={stall ? String(stall.mapCol) : ""} />
-            <TextField name="mapRow" label={L("canteenFieldMapRow")} inputMode="numeric" defaultValue={stall ? String(stall.mapRow) : ""} />
-            <TextField name="mapW" label={L("canteenFieldMapW")} inputMode="numeric" defaultValue={stall ? String(stall.mapW) : "1"} />
-            <TextField name="mapH" label={L("canteenFieldMapH")} inputMode="numeric" defaultValue={stall ? String(stall.mapH) : "1"} />
-          </div>
-          <EnumSelect
-            name="mapShape"
-            label={L("canteenFieldMapShape")}
-            defaultValue={stall?.mapShape ?? "rect"}
-            options={MAP_SHAPES.map((value) => ({ value, label: L(value === "rect" ? "canteenShapeRect" : value === "triangleBottomRight" ? "canteenShapeTriBR" : "canteenShapeTriBL") }))}
+      <FormSection id="stall-name" icon="stalls" legend={L("cfSecStallIdentity")}>
+          <BilingualTextField name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: stall?.nameTh, en: stall?.nameEn }} />
+          <SlugField label={L("fieldSlug")} suggestFrom="name.en" hint={L("canteenHintStallSlug")} defaultValue={stall?.slug} />
+          <TextField name="number" label={L("canteenFieldNumber")} hint={L("canteenHintStallNumber")} inputMode="numeric" className="max-w-[10rem]" defaultValue={stall ? String(stall.number) : ""} />
+          <CheckGroup name="cuisine" label={L("canteenFieldCuisine")} options={cuisineOptions} defaultValue={stall?.cuisine} />
+          <CheckboxField name="halal" label={L("canteenFieldHalal")} hint={L("canteenHintHalal")} defaultChecked={stall?.halal} />
+          <CheckboxField name="vegetarianStall" label={L("canteenFieldVegetarianStall")} hint={L("canteenHintVegetarianStall")} defaultChecked={stall?.vegetarianStall} />
+      </FormSection>
+      <FormSection id="stall-hours" icon={Clock} legend={L("cfSecHours")}>
+          <RepeatRows
+            name="hours"
+            legend={L("canteenFieldHours")}
+            hint={L("canteenHintHours")}
+            itemLabel={L("canteenItemHours")}
+            max={14}
+            defaultRows={hoursRows}
+            fields={[
+              { key: "daysOfWeek", label: L("canteenFieldDays"), kind: "checks", options: dayOptions },
+              { key: "opens", label: L("canteenFieldOpens"), kind: "time" },
+              { key: "closes", label: L("canteenFieldCloses"), kind: "time" },
+              { key: "note.th", label: `${L("canteenFieldHoursNote")} (${L("langThai")})`, kind: "text", lang: "th" },
+              { key: "note.en", label: `${L("canteenFieldHoursNote")} (${L("langEnglish")})`, kind: "text", lang: "en" },
+            ]}
           />
-        </fieldset>
-        <BilingualTextarea name="wayfinding" label={L("canteenFieldWayfinding")} hint={L("canteenHintWayfinding")} maxLength={500} rows={3} defaultValue={{ th: stall?.wayfindingTh, en: stall?.wayfindingEn }} />
-        <ImagePicker
-          name="photo"
-          label={L("canteenFieldPhoto")}
-          images={images}
-          storageConfigured={isStorageConfigured()}
-          defaultValue={stall?.photoId ? [stall.photoId] : []}
-        />
-        <RepeatRows
-          name="addOns"
-          legend={L("canteenFieldAddOns")}
-          hint={stall ? L("canteenHintAddOns") : L("canteenHintAddOnsNew")}
-          itemLabel={L("canteenItemAddOn")}
-          max={30}
-          defaultRows={addOnRows}
-          fields={[
-            { key: "label.th", label: `${L("canteenFieldAddOnLabel")} (${L("langThai")})`, kind: "text", lang: "th" },
-            { key: "label.en", label: `${L("canteenFieldAddOnLabel")} (${L("langEnglish")})`, kind: "text", lang: "en" },
-            { key: "delta", label: L("canteenFieldDelta"), kind: "number", hint: L("canteenHintDelta") },
-            { key: "courses", label: L("canteenFieldCourses"), kind: "checks", options: courseOptions, hint: L("canteenHintAddOnCourses") },
-            ...(stall && dishOptions.length > 0
-              ? [{ key: "dishIds", label: L("canteenFieldAddOnDishes"), kind: "checks" as const, options: dishOptions, scroll: true, hint: L("canteenHintAddOnDishes") }]
-              : []),
-          ]}
-        />
+      </FormSection>
+      <FormSection id="stall-map" icon={MapIcon} legend={L("canteenFieldMapGroup")} hint={L("canteenHintMap")}>
+          <div className="flex flex-col gap-[var(--space-3)]">
+            <div className="grid gap-[var(--space-3)] sm:grid-cols-2 md:grid-cols-4">
+              <TextField name="mapCol" label={L("canteenFieldMapCol")} inputMode="numeric" defaultValue={stall ? String(stall.mapCol) : ""} />
+              <TextField name="mapRow" label={L("canteenFieldMapRow")} inputMode="numeric" defaultValue={stall ? String(stall.mapRow) : ""} />
+              <TextField name="mapW" label={L("canteenFieldMapW")} inputMode="numeric" defaultValue={stall ? String(stall.mapW) : "1"} />
+              <TextField name="mapH" label={L("canteenFieldMapH")} inputMode="numeric" defaultValue={stall ? String(stall.mapH) : "1"} />
+            </div>
+            <EnumSelect
+              name="mapShape"
+              label={L("canteenFieldMapShape")}
+              defaultValue={stall?.mapShape ?? "rect"}
+              options={MAP_SHAPES.map((value) => ({ value, label: L(value === "rect" ? "canteenShapeRect" : value === "triangleBottomRight" ? "canteenShapeTriBR" : "canteenShapeTriBL") }))}
+            />
+          </div>
+          <BilingualTextarea name="wayfinding" label={L("canteenFieldWayfinding")} hint={L("canteenHintWayfinding")} maxLength={500} rows={3} defaultValue={{ th: stall?.wayfindingTh, en: stall?.wayfindingEn }} />
+      </FormSection>
+      <FormSection id="stall-photo" icon={Camera} legend={L("cfSecPhoto")}>
+          <ImagePicker
+            name="photo"
+            label={L("canteenFieldPhoto")}
+            images={images}
+            storageConfigured={isStorageConfigured()}
+            defaultValue={stall?.photoId ? [stall.photoId] : []}
+          />
+      </FormSection>
+      <FormSection id="stall-addons" icon={PlusCircle} legend={L("canteenFieldAddOns")}>
+          <RepeatRows
+            name="addOns"
+            legend={L("canteenFieldAddOns")}
+            hint={stall ? L("canteenHintAddOns") : L("canteenHintAddOnsNew")}
+            itemLabel={L("canteenItemAddOn")}
+            max={30}
+            defaultRows={addOnRows}
+            fields={[
+              { key: "label.th", label: `${L("canteenFieldAddOnLabel")} (${L("langThai")})`, kind: "text", lang: "th" },
+              { key: "label.en", label: `${L("canteenFieldAddOnLabel")} (${L("langEnglish")})`, kind: "text", lang: "en" },
+              { key: "delta", label: L("canteenFieldDelta"), kind: "number", hint: L("canteenHintDelta") },
+              { key: "courses", label: L("canteenFieldCourses"), kind: "checks", options: courseOptions, hint: L("canteenHintAddOnCourses") },
+              ...(stall && dishOptions.length > 0
+                ? [{ key: "dishIds", label: L("canteenFieldAddOnDishes"), kind: "checks" as const, options: dishOptions, scroll: true, hint: L("canteenHintAddOnDishes") }]
+                : []),
+            ]}
+          />
+      </FormSection>
       </ContentForm>
     </>
   );

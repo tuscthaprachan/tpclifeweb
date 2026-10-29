@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextField, CheckboxField } from "@/components/admin/content/fields";
-import { Heading, InsetText, NotificationBanner } from "@/components/ui";
+import { InsetText, NotificationBanner } from "@/components/ui";
 import { rowTitle } from "@/components/admin/content/ContentList";
 import { userNames } from "@/lib/admin/content/list";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
@@ -56,15 +57,6 @@ export async function ImageForm({ locale, id, notice, blocked }: { locale: Local
         </NotificationBanner>
       ) : null}
 
-      <figure className="m-0 flex flex-col gap-[var(--space-2)]">
-        <figcaption className="text-base font-medium text-ink-900">{a("mediaPreview", locale)}</figcaption>
-        {url ? (
-          <Image src={url} alt="" width={480} height={320} unoptimized className="h-auto max-h-80 w-auto max-w-full rounded-control bg-surface-sunk object-contain" />
-        ) : (
-          <InsetText>{a("errStorageNotConfigured", locale)}</InsetText>
-        )}
-      </figure>
-
       <ContentForm
         key={[image.altTh, image.altEn, image.isDecorative, image.captionTh, image.captionEn].join("|")}
         locale={locale}
@@ -74,51 +66,58 @@ export async function ImageForm({ locale, id, notice, blocked }: { locale: Local
         listHref={contentPath(def)}
         hasStatus={false}
       >
-        <BilingualTextField
-          name="alt"
-          label={a("mediaFieldAlt", locale)}
-          hint={a("mediaFieldAltHint", locale)}
-          maxLength={300}
-          defaultValue={{ th: image.altTh, en: image.altEn }}
-        />
-        <CheckboxField name="isDecorative" label={a("imageDecorativeLabel", locale)} hint={a("mediaDecorativeHint", locale)} defaultChecked={image.isDecorative} />
-        <BilingualTextField
-          name="caption"
-          label={a("mediaFieldCaption", locale)}
-          hint={a("mediaFieldCaptionHint", locale)}
-          maxLength={300}
-          defaultValue={{ th: image.captionTh, en: image.captionEn }}
-        />
+        <FormSection id="media-preview" icon="images" legend={a("mediaPreview", locale)}>
+          <figure className="m-0">
+            {url ? (
+              <Image src={url} alt="" width={480} height={320} unoptimized className="h-auto max-h-80 w-auto max-w-full rounded-control bg-surface-sunk object-contain" />
+            ) : (
+              <InsetText>{a("errStorageNotConfigured", locale)}</InsetText>
+            )}
+          </figure>
+        </FormSection>
+        <FormSection id="media-details" icon="edit" legend={a("cfSecImageDetails", locale)}>
+          <BilingualTextField
+            name="alt"
+            label={a("mediaFieldAlt", locale)}
+            hint={a("mediaFieldAltHint", locale)}
+            maxLength={300}
+            defaultValue={{ th: image.altTh, en: image.altEn }}
+          />
+          <CheckboxField name="isDecorative" label={a("imageDecorativeLabel", locale)} hint={a("mediaDecorativeHint", locale)} defaultChecked={image.isDecorative} />
+          <BilingualTextField
+            name="caption"
+            label={a("mediaFieldCaption", locale)}
+            hint={a("mediaFieldCaptionHint", locale)}
+            maxLength={300}
+            defaultValue={{ th: image.captionTh, en: image.captionEn }}
+          />
+        </FormSection>
+        <FormSection id="media-used" icon="info" legend={a("mediaUsedTitle", locale)}>
+          {used ? (
+            <>
+              <p className="m-0 text-ink-600">{a("mediaUsedBlocked", locale)}</p>
+              <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
+                {uses.map((use, index) => {
+                  const type = getContentType(use.segment);
+                  const typeName = type ? a(type.labelKey, locale) : use.segment;
+                  const title = rowTitle(use.title, locale);
+                  return (
+                    <li key={`${use.segment}-${use.id}-${use.role}-${index}`}>
+                      {type?.available ? <a href={contentPath(type, use.id)}>{title}</a> : title}
+                      <span className="text-ink-600">
+                        {" "}
+                        ({typeName}, {a(ROLE_KEY[use.role], locale)})
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          ) : (
+            <p className="m-0 text-ink-600">{a("mediaUsedNone", locale)}</p>
+          )}
+        </FormSection>
       </ContentForm>
-
-      <section aria-labelledby="media-used" className="flex flex-col gap-[var(--space-2)]">
-        <Heading level={2} id="media-used">
-          {a("mediaUsedTitle", locale)}
-        </Heading>
-        {used ? (
-          <>
-            <p className="m-0 text-ink-600">{a("mediaUsedBlocked", locale)}</p>
-            <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
-              {uses.map((use, index) => {
-                const type = getContentType(use.segment);
-                const typeName = type ? a(type.labelKey, locale) : use.segment;
-                const title = rowTitle(use.title, locale);
-                return (
-                  <li key={`${use.segment}-${use.id}-${use.role}-${index}`}>
-                    {type?.available ? <a href={contentPath(type, use.id)}>{title}</a> : title}
-                    <span className="text-ink-600">
-                      {" "}
-                      ({typeName}, {a(ROLE_KEY[use.role], locale)})
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        ) : (
-          <p className="m-0 text-ink-600">{a("mediaUsedNone", locale)}</p>
-        )}
-      </section>
     </div>
   );
 }

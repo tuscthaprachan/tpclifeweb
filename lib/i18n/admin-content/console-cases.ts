@@ -1,4 +1,31 @@
 import type { LocaleString } from "../config";
 
 /** Cases inbox, case pages, complaint categories and performance strings. Keys start with `ck`. */
-export const CONSOLE_CASES_STRINGS = {} as const satisfies Record<string, LocaleString>;
+export const CONSOLE_CASES_STRINGS = {
+  ckViewsLabel: { th: "มุมมองที่บันทึกไว้", en: "Saved views" },
+  ckViewAll: { th: "ทั้งหมด", en: "All cases" },
+  ckViewOpen: { th: "ที่ยังเปิดอยู่", en: "All open" },
+  ckViewMine: { th: "มอบหมายให้ฉัน", en: "Assigned to me" },
+  ckViewUnassigned: { th: "ยังไม่มีผู้รับผิดชอบ", en: "Unassigned" },
+  ckViewOverdue: { th: "เกินกำหนด", en: "Overdue" },
+  ckViewEscalated: { th: "ส่งต่อแล้ว", en: "Escalated" },
+  ckFilterEscalated: { th: "แสดงเฉพาะเรื่องที่ส่งต่อแล้ว", en: "Escalated only" },
+  ckFiltersLabel: { th: "ตัวกรองรายการเรื่อง", en: "Filter cases" },
+  ckSearch: { th: "ค้นหา", en: "Search" },
+  ckNoneTitle: { th: "ยังไม่มีเรื่อง", en: "No cases yet" },
+  ckNoneBody: { th: "เรื่องที่ส่งเข้ามาหรือที่บันทึกที่เคาน์เตอร์จะแสดงที่นี่", en: "Cases sent in or logged at the desk will appear here." },
+  ckNoMatchBody: { th: "ลองล้างตัวกรองหรือค้นหาด้วยเลขอ้างอิงอื่น", en: "Try clearing the filters or searching for a different reference." },
+  ckAsideLabel: { th: "สถานะและรายละเอียดของเรื่อง", en: "Case status and details" },
+  ckAsideReference: { th: "เลขอ้างอิง", en: "Reference" },
+  ckCopyReference: { th: "คัดลอก", en: "Copy" },
+  ckCopied: { th: "คัดลอกแล้ว", en: "Copied" },
+  ckCurrentStatus: { th: "สถานะตอนนี้", en: "Current status" },
+  ckNextSteps: { th: "เปลี่ยนเป็นสถานะต่อไปนี้ได้: {steps}", en: "Can move to: {steps}" },
+  ckDeadlines: { th: "กำหนดเวลา", en: "Deadlines" },
+  ckMessagesTitle: { th: "ข้อความและบันทึก", en: "Messages and notes" },
+  ckMessagesIntro: { th: "ข้อความถึงผู้แจ้งและบันทึกภายในสำหรับเจ้าหน้าที่", en: "Messages to the person and internal notes for staff." },
+  ckFormDetails: { th: "รายละเอียดที่ต้องบันทึก", en: "Details to record" },
+  ckLostFormHint: { th: "กรอกข้อมูลตามที่ผู้แจ้งบอกที่เคาน์เตอร์หรือทางโทรศัพท์", en: "Enter what the person tells you at the desk or by phone." },
+  ckIntakeSteps: { th: "ขั้นตอนการบันทึก", en: "Intake steps" },
+  ckTaskDetails: { th: "รายละเอียดของขั้นตอนนี้", en: "Step details" },
+} as const satisfies Record<string, LocaleString>;

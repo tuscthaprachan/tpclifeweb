@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
+import { Card, ConsolePage, PageHeader } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Heading } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { adminTitle } from "@/lib/admin/metadata";
 import { isAuthConfigured } from "@/lib/auth";
@@ -11,7 +10,8 @@ import { staffActorFor } from "@/lib/cases/staff";
 import { getDb } from "@/lib/db";
 import { isPiiAvailable } from "@/lib/crypto/pii";
 import { a } from "@/lib/i18n/admin";
-import { NotificationBanner } from "@/components/ui";
+import { Button, NotificationBanner } from "@/components/ui";
+import { ConsoleIcon } from "@/components/admin/icons";
 import { categoryOptions, placeOptions } from "../../lost-found/data";
 import { WalkInLostForm } from "../../lost-found/Forms";
 
@@ -32,21 +32,17 @@ export default async function NewLostReportPage({ searchParams }: { searchParams
   const places = await placeOptions(getDb(), locale);
 
   return (
-    <AdminPage width="content">
-      <div>
-        <a href="/admin/cases">{a("caseBack", locale)}</a>
-        <Heading level={1} className="mt-[var(--space-2)]">
-          {a("lfcLostTitle", locale)}
-        </Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">{a("lfcLostIntro", locale)}</p>
-      </div>
+    <ConsolePage width="content">
+      <PageHeader icon="lostFound" title={a("lfcLostTitle", locale)} description={a("lfcLostIntro", locale)} actions={<Button href="/admin/cases" variant="secondary" icon={<ConsoleIcon name="back" />}>{a("caseBack", locale)}</Button>} />
       {isPiiAvailable() ? (
-        <WalkInLostForm locale={locale} orgId={actor.organisationId} categories={categoryOptions(locale)} places={places} />
+        <Card title={a("ckFormDetails", locale)} icon="lostFound" description={a("ckLostFormHint", locale)}>
+          <WalkInLostForm locale={locale} orgId={actor.organisationId} categories={categoryOptions(locale)} places={places} />
+        </Card>
       ) : (
         <NotificationBanner variant="warning" title={a("errCaseUnavailable", locale)}>
           {a("lfcPiiUnavailable", locale)}
         </NotificationBanner>
       )}
-    </AdminPage>
+    </ConsolePage>
   );
 }

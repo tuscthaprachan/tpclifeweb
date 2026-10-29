@@ -1,9 +1,10 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, BilingualTextField, DateTimeField, EnumRadios, TextField } from "@/components/admin/content/fields";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
-import { Fieldset, Stack } from "@/components/ui";
+import { Stack } from "@/components/ui";
 import { formatBangkokDateTime } from "@/lib/admin/content/datetime";
 import { userNames } from "@/lib/admin/content/list";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
@@ -51,7 +52,7 @@ export async function AlertForm({ locale, id, saved }: { locale: Locale; id?: st
       listHref={contentPath(def)}
       saved={saved}
     >
-      <Fieldset legend={L("alertsGroupMessage")} id="g-message">
+      <FormSection icon="alerts" legend={L("alertsGroupMessage")} id="g-message">
         <Stack space={4}>
           <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: alert?.titleTh, en: alert?.titleEn }} />
           <BilingualTextarea
@@ -72,9 +73,9 @@ export async function AlertForm({ locale, id, saved }: { locale: Locale; id?: st
             className="max-w-[32rem]"
           />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset legend={L("alertsGroupWhere")} id="g-where">
+      <FormSection icon="places" legend={L("alertsGroupWhere")} id="g-where">
         <Stack space={4}>
           <EnumRadios
             name="severity"
@@ -91,14 +92,14 @@ export async function AlertForm({ locale, id, saved }: { locale: Locale; id?: st
             defaultValue={alert?.affects ?? []}
           />
         </Stack>
-      </Fieldset>
+      </FormSection>
 
-      <Fieldset legend={L("alertsGroupWhen")} id="g-when">
+      <FormSection icon="events" legend={L("alertsGroupWhen")} id="g-when">
         <Stack space={4}>
           <DateTimeField name="startsAt" label={L("alertsFieldStartsAt")} hint={L("alertsHintStartsAt")} defaultValue={startsAt} />
           <DateTimeField name="endsAt" label={L("alertsFieldEndsAt")} hint={L("alertsHintEndsAt")} defaultValue={formatBangkokDateTime(alert?.endsAt)} />
         </Stack>
-      </Fieldset>
+      </FormSection>
     </ContentForm>
   );
 }

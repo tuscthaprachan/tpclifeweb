@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-import { Fieldset } from "@/components/ui";
+import { FormSection, type FormSectionProps } from "@/components/admin/content/FormSection";
 
-/** A titled set of related fields, so a long form reads in short sections. */
-export function Group({ id, legend, hint, children }: { id: string; legend: string; hint?: string; children: ReactNode }) {
+/** A titled card of related fields, so a long form reads in short sections. */
+export function Group({ id, legend, hint, icon, children }: { id: string; legend: string; hint?: string; icon?: FormSectionProps["icon"]; children: ReactNode }) {
   return (
-    <Fieldset id={id} legend={legend} hint={hint}>
-      <div className="flex flex-col gap-[var(--space-5)]">{children}</div>
-    </Fieldset>
+    <FormSection id={id} legend={legend} hint={hint} icon={icon}>
+      {children}
+    </FormSection>
   );
 }

@@ -4,6 +4,7 @@ import { useRef, useState, type ReactNode } from "react";
 import { useContentForm } from "@/components/admin/content/context";
 import { fieldId } from "@/lib/admin/content/form-state";
 import { a } from "@/lib/i18n/admin";
+import { AddRowButton, RowActions } from "@/components/admin/content/RowButtons";
 
 export interface RowContext {
   /** Position in the list right now; use it to build field names (`${name}.${index}.field`). */
@@ -28,8 +29,6 @@ interface RowListProps<R> {
   /** One line per row without a titled box, for lists of single values (times, dates). */
   compact?: boolean;
 }
-
-const BUTTON = "inline-flex min-h-[var(--target-min)] items-center text-action underline disabled:text-ink-600 disabled:no-underline";
 
 /**
  * A repeatable group of rows on a content form: add, remove, move up and
@@ -67,47 +66,30 @@ export function RowList<R>({ name, legend, hint, itemLabel, initial, blank, rend
             <fieldset className={compact ? "m-0 flex flex-wrap items-end gap-[var(--space-3)] border-0 p-0" : "m-0 flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-3)]"}>
               <legend className={compact ? "visually-hidden" : "px-[var(--space-1)] font-semibold text-ink-900"}>{item(index)}</legend>
               {renderRow(row.value, { index })}
-              <div className="flex flex-wrap gap-x-[var(--space-4)]">
-                {orderable ? (
-                  <>
-                    <button type="button" className={BUTTON} disabled={index === 0} onClick={() => move(index, -1)}>
-                      {a("moveUp", locale)}
-                      <span className="visually-hidden"> {item(index)}</span>
-                    </button>
-                    <button type="button" className={BUTTON} disabled={index === rows.length - 1} onClick={() => move(index, 1)}>
-                      {a("moveDown", locale)}
-                      <span className="visually-hidden"> {item(index)}</span>
-                    </button>
-                  </>
-                ) : null}
-                <button
-                  type="button"
-                  className={BUTTON}
-                  onClick={() => {
-                    setRows((cur) => cur.filter((r) => r.key !== row.key));
-                    markDirty();
-                  }}
-                >
-                  {a("remove", locale)}
-                  <span className="visually-hidden"> {item(index)}</span>
-                </button>
-              </div>
+              <RowActions
+                locale={locale}
+                label={item(index)}
+                first={index === 0}
+                last={index === rows.length - 1}
+                onMove={orderable ? (by) => move(index, by) : undefined}
+                onRemove={() => {
+                  setRows((cur) => cur.filter((r) => r.key !== row.key));
+                  markDirty();
+                }}
+              />
             </fieldset>
           </li>
         ))}
       </ol>
       {rows.length < max ? (
-        <button
-          type="button"
+        <AddRowButton
+          label={a("listAddItem", locale, { item: itemLabel.toLowerCase() })}
           onClick={() => {
             const key = nextKey.current++;
             setRows((cur) => [...cur, { key, value: blank() }]);
             markDirty();
           }}
-          className="mt-[var(--space-3)] inline-flex min-h-[var(--target-min)] items-center rounded-control border border-line-strong bg-surface px-[var(--space-4)] py-[var(--space-2)] font-medium"
-        >
-          {a("listAddItem", locale, { item: itemLabel.toLowerCase() })}
-        </button>
+        />
       ) : null}
     </fieldset>
   );

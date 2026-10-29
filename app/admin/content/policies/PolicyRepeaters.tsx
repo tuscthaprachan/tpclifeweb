@@ -5,6 +5,8 @@ import { Select, Textarea, TextInput, type SelectOption } from "@/components/ui"
 import { useContentForm } from "@/components/admin/content/context";
 import { fieldId } from "@/lib/admin/content/form-state";
 import { a } from "@/lib/i18n/admin";
+import { AddRowButton, RowActions } from "@/components/admin/content/RowButtons";
+import type { Locale } from "@/lib/i18n/config";
 
 /**
  * Growing lists on the policy form: progress updates and evidence links.
@@ -46,27 +48,17 @@ function RepeaterShell({
       <legend className="mb-[var(--space-1)] text-lg font-semibold text-ink-900">{legend}</legend>
       {hint ? <p className="mb-[var(--space-2)] text-sm text-ink-600">{hint}</p> : null}
       <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">{children}</ul>
-      <button
-        type="button"
-        onClick={onAdd}
-        className="mt-[var(--space-3)] inline-flex min-h-[var(--target-min)] items-center rounded-control border border-line-strong bg-surface px-[var(--space-4)] py-[var(--space-2)] font-medium"
-      >
-        {addLabel}
-      </button>
+      <AddRowButton label={addLabel} onClick={onAdd} />
     </fieldset>
   );
 }
 
-function RowShell({ title, removeLabel, onRemove, children }: { title: string; removeLabel: string; onRemove: () => void; children: ReactNode }) {
+function RowShell({ title, locale, onRemove, children }: { title: string; locale: Locale; onRemove: () => void; children: ReactNode }) {
   return (
     <li className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-3)]">
       <p className="m-0 font-semibold text-ink-900">{title}</p>
       {children}
-      <div>
-        <button type="button" onClick={onRemove} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
-          {removeLabel}
-        </button>
-      </div>
+      <RowActions locale={locale} label={title} onRemove={onRemove} />
     </li>
   );
 }
@@ -111,7 +103,7 @@ export function PolicyUpdatesField({
           <RowShell
             key={row.key}
             title={`${L("policiesFieldUpdate")} ${index + 1}`}
-            removeLabel={`${L("remove")} ${L("policiesFieldUpdate")} ${index + 1}`}
+            locale={locale}
             onRemove={() => {
               remove(row.key);
               markDirty();
@@ -212,7 +204,7 @@ export function EvidenceLinksField({ defaultValue }: { defaultValue: EvidenceRow
           <RowShell
             key={row.key}
             title={`${L("policiesFieldEvidenceItem")} ${index + 1}`}
-            removeLabel={`${L("remove")} ${L("policiesFieldEvidenceItem")} ${index + 1}`}
+            locale={locale}
             onRemove={() => {
               remove(row.key);
               markDirty();

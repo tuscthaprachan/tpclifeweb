@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
+import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextField, EnumSelect } from "@/components/admin/content/fields";
-import { Fieldset, Stack } from "@/components/ui";
+import { Stack } from "@/components/ui";
 import { userNames } from "@/lib/admin/content/list";
 import { getDb } from "@/lib/db";
 import { siteSettings } from "@/lib/db/schema";
@@ -40,7 +41,7 @@ export async function SiteSettingsForm({ locale, saved }: { locale: Locale; save
       saved={saved}
       hasStatus={false}
     >
-      <Fieldset id="site-identity" legend={L("siteGroupIdentity")}>
+      <FormSection icon="siteSettings" id="site-identity" legend={L("siteGroupIdentity")}>
         <Stack space={4}>
           <BilingualTextField name="serviceName" label={L("siteFieldServiceName")} maxLength={100} defaultValue={{ th: row?.serviceNameTh, en: row?.serviceNameEn }} />
           <BilingualTextField name="tagline" label={L("siteFieldTagline")} hint={L("siteHintTagline")} maxLength={250} defaultValue={{ th: row?.taglineTh, en: row?.taglineEn }} />
@@ -63,20 +64,20 @@ export async function SiteSettingsForm({ locale, saved }: { locale: Locale; save
             defaultValue={{ th: row?.phaseNoteTh, en: row?.phaseNoteEn }}
           />
         </Stack>
-      </Fieldset>
-      <Fieldset id="site-menus" legend={L("siteGroupMenus")}>
+      </FormSection>
+      <FormSection icon="menu" id="site-menus" legend={L("siteGroupMenus")}>
         <Stack space={6}>
           <NavField name="primaryNav" legend={L("siteFieldNav")} hint={L("siteHintNav")} itemLabel={L("siteNavItem")} defaultValue={row?.primaryNav ?? []} />
           <NavField name="footerNav" legend={L("siteFieldFooterNav")} hint={L("siteHintFooterNav")} itemLabel={L("siteFooterItem")} defaultValue={row?.footerNav ?? []} />
           <LinksField defaultValue={row?.organisationLinks ?? []} />
         </Stack>
-      </Fieldset>
-      <Fieldset id="site-home-tasks" legend={L("siteGroupHomeTasks")}>
+      </FormSection>
+      <FormSection icon="dashboard" id="site-home-tasks" legend={L("siteGroupHomeTasks")}>
         <HomeTasksField defaultValue={row?.homeTasks ?? []} />
-      </Fieldset>
-      <Fieldset id="site-help" legend={L("siteGroupHelp")}>
+      </FormSection>
+      <FormSection icon="info" id="site-help" legend={L("siteGroupHelp")}>
         <HelpContactsField defaultValue={row?.helpContacts ?? []} />
-      </Fieldset>
+      </FormSection>
     </ContentForm>
   );
 }

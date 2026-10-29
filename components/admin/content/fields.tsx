@@ -6,6 +6,7 @@ import { fieldId } from "@/lib/admin/content/form-state";
 import { slugify } from "@/lib/admin/content/slug";
 import { a } from "@/lib/i18n/admin";
 import { useContentForm } from "./context";
+import { AddRowButton, RowActions } from "./RowButtons";
 
 /**
  * Form controls for content forms. Each takes the field's `name` (dotted for
@@ -295,35 +296,27 @@ export function BilingualListField({
                 );
               })}
             </div>
-            <div>
-              <button
-                type="button"
-                onClick={() => {
-                  setRows((cur) => cur.filter((r) => r.key !== row.key));
-                  markDirty();
-                }}
-                className="inline-flex min-h-[var(--target-min)] items-center text-action underline"
-              >
-                {a("remove", locale)}
-                <span className="visually-hidden"> {itemLabel} {index + 1}</span>
-              </button>
-            </div>
+            <RowActions
+              locale={locale}
+              label={`${itemLabel} ${index + 1}`}
+              onRemove={() => {
+                setRows((cur) => cur.filter((r) => r.key !== row.key));
+                markDirty();
+              }}
+            />
           </li>
         ))}
       </ul>
       {rows.length < max ? (
-        <button
-          type="button"
+        <AddRowButton
+          label={a("listAddItem", locale, { item: itemLabel.toLowerCase() })}
           onClick={() => {
             const key = nextKey.current++;
             setRows((cur) => [...cur, { key, value: { th: "", en: "" } }]);
             setFocusKey(key);
             markDirty();
           }}
-          className="mt-[var(--space-3)] inline-flex min-h-[var(--target-min)] items-center rounded-control border border-line-strong bg-surface px-[var(--space-4)] py-[var(--space-2)] font-medium"
-        >
-          {a("listAddItem", locale, { item: itemLabel.toLowerCase() })}
-        </button>
+        />
       ) : null}
     </fieldset>
   );
