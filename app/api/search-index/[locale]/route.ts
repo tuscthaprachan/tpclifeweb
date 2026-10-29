@@ -1,10 +1,11 @@
 /**
  * Serves the prebuilt search index as JSON, for the client-side combobox in
  * `components/domain/search/SearchBar.tsx` to fetch lazily on first
- * interaction. The server-rendered results page
- * (`app/[locale]/search/page.tsx`) does not call this: it calls
- * `getSearchIndex()` directly, since it is already running server-side and a
- * self-fetch would be a pointless network hop.
+ * interaction, and for the static results page
+ * (`components/domain/search/LiveSearch.tsx`) to rank results in the browser.
+ * The server-rendered copy (`app/[locale]/filtered/search/page.tsx`) does not
+ * call this: it calls `getSearchIndex()` directly, since it is already
+ * running server-side and a self-fetch would be a pointless network hop.
  *
  * `[locale]` only validates the request; the response is the same
  * `SearchIndex` either way, because every `SearchRecord` already carries

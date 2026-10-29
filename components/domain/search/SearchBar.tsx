@@ -4,7 +4,7 @@
  * The site search box: the first and largest element on the home page.
  *
  * Baseline (works with JavaScript off): a real `<form method="get">` that
- * submits a named `q` input straight to the server-rendered results page
+ * submits a named `q` input straight to the search results page
  * (`app/[locale]/search/page.tsx`). Nothing below depends on JavaScript for
  * that to work; every handler here is an enhancement layered on top of a
  * form and button that already do their job natively.

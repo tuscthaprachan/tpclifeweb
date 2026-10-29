@@ -4,8 +4,9 @@
  * Zero-result search logging.
  *
  * A query that returns nothing is a content gap signal worth knowing about,
- * so the search results page (`app/[locale]/search/page.tsx`) calls this
- * once, server-side, whenever a non-empty query produces zero results.
+ * so the search results page (`components/domain/search/LiveSearch.tsx` in the
+ * browser, `app/[locale]/filtered/search/page.tsx` on the server) calls this
+ * once whenever a non-empty query produces zero results.
  *
  * What is stored, exactly: the trimmed query text and an ISO timestamp,
  * written as one JSON line to stdout, where the hosting platform's own log
@@ -19,10 +20,10 @@
  * extension of this function.
  */
 export async function logZeroResultSearch(query: string): Promise<void> {
-  const trimmed = query.trim();
+  if (typeof query !== "string") return;
+  const trimmed = query.trim().slice(0, 200);
   if (trimmed.length === 0) return;
 
-   
   console.log(
     JSON.stringify({
       event: "search.zero_results",

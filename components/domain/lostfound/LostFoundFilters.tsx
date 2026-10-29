@@ -29,9 +29,11 @@ interface LostFoundFiltersProps {
 /**
  * The register's filter bar. Same pattern as FormFilters
  * (components/domain/form/FormFilters.tsx): a real `<form method="get">`
- * that works fully with JavaScript off, since app/[locale]/lost-and-found/page.tsx
- * reads `kind` / `category` / `status` off the URL query string and does the
- * actual filtering server-side, in SQL (getLostFoundPage). The only thing
+ * that works fully with JavaScript off, since the register
+ * (components/domain/lostfound/LostFoundResults.tsx) reads `kind` / `category` /
+ * `status` off the URL query string and does the actual filtering: in the
+ * browser on the static page, on the server for a direct load of a filtered
+ * URL. The only thing
  * "use client" buys here is submitting on change, a convenience the submit
  * button already provides without it.
  */

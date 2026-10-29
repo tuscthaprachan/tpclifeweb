@@ -4,13 +4,18 @@ import NextLink from "next/link";
 import { Heading, Tag, Timestamp } from "@/components/ui";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import type { LostFoundItem } from "@/lib/content/types";
+import type { ContentImage, LostFoundItem } from "@/lib/content/types";
 import { categoryLabel } from "./categoryLabel";
 import { LostFoundKindBadge } from "./LostFoundKindBadge";
 import { LostFoundStatusTag } from "./LostFoundStatusTag";
 
+/** The fields the card reads, so the register can ship a slim list to the browser. */
+export type LostFoundCardItem = Pick<LostFoundItem, "_id" | "reference" | "kind" | "title" | "slug" | "category" | "status" | "occurredOn"> & {
+  photos?: Array<Pick<ContentImage, "url" | "alt" | "isDecorative">>;
+};
+
 interface LostFoundCardProps {
-  item: LostFoundItem;
+  item: LostFoundCardItem;
   locale: Locale;
   /** Depth of this card's own title in the page outline. */
   headingLevel: HeadingLevel;
