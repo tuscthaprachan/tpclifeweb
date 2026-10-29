@@ -44,6 +44,17 @@ Both need `CRON_SECRET` (Vercel sends it as a bearer token); without it the rout
 - Public page `/[locale]/performance`: period by `?period=30d|12m|all` links (works without JavaScript), tables with captions, no charts. Cached for an hour (`lib/performance/read.ts`, tag `performance`). In the sitemap and the footer (added in code by `withRequiredNav` if the CMS footer lacks it, and in the seed).
 - Staff page `/admin/performance` (`admin` and `unit_lead`): the same figures plus live open cases by status, overdue and escalated complaints, and cases by desk. Counts respect restricted categories (`caseVisibleTo`), so an administrator not named on a category does not see those complaints counted.
 
+## Equipment borrowing (phase 7)
+
+Design and questionnaire architecture: `docs/borrowing-plan.md`. Replaces the equipment Google Form and its four PDF forms.
+
+- Foundation: `lib/db/schema/borrowing.ts`, migration 0014 (adds `equipment_officer` to `staff_role`, `borrowing` to `case_service`, BR references, `borrow` journey metric), `lib/cases/services.ts` (kind `loan`), `lib/borrowing/{availability,rules,time,terms,create}.ts`, inventory seed `lib/db/seed/equipment.ts` (insert if missing).
+- Borrower: `/[locale]/borrow` journey (dates, items, quantities, event, group, student, details, contact, terms, check), tracking and cancellation at `/borrow/track`, privacy notice, availability calendar `/borrow/availability`. The forms index entry for the old Google Form now starts `/borrow`; a home task points there too.
+- Staff: case panel (approve, decline, handover with deposit, return per line with damage and loss, compensation, settle), `/admin/borrowing` schedule, `/admin/borrowing/calendar`, `/admin/borrowing/items` inventory. The generic status form and action refuse loans.
+- Jobs: `/api/cron/borrowing` daily 01:41 UTC (return reminders, one overdue notice, abandoned journey sweep). Retention clears the student number and affiliation with the contacts.
+
+Before deploying to production: `npm run db:migrate` (0014) and `npm run db:seed` (adds the equipment), then grant `equipment_officer` (for TUSU) at `/admin/staff`. Without 0014 the case inbox fails for admins and unit leads, because it queries the new service.
+
 ## Branch state
 
 - `main` (`108c15d`): phases 1 to 3 (Postgres content, content editing) with the earlier email-code sign-in; the passkey-only change is only on the branch. Production runs this.
@@ -97,6 +108,8 @@ Use `next start`, not `next dev`, for Playwright. Never run `playwright install`
 - Thai review of the email templates, the lost and found and complaints question pages and privacy notices, and the performance page wording. Menu names flagged unverified earlier (stall 3 vegetarian dishes, most of stalls 5 and 17, the stall 12 "(ป้ายภาพ)" placeholder, possible duplicate smoothies at stall 5) are still open.
 - Name a service owner for each service (Service Standard point 6) and decide who reads `/admin/performance` regularly.
 - Cleanup after the merge: the eight `SANITY_*` env vars and the Sanity integration, the unused `CANTEEN_DEMO` preview var, Neon Auth (`NEON_AUTH_BASE_URL`, `VITE_NEON_AUTH_URL`), `AUTH_ALLOWED_EMAIL_DOMAINS` (no longer read), and the stray `tmp-skip` branch on GitHub (the proxy refuses branch deletion from the session).
+
+- Borrowing: the desk must confirm every stock count at `/admin/borrowing/items` (seeded placeholders), desk days and hours (Monday to Friday, 09:00 to 17:00, `lib/borrowing/constants.ts`), the 14 day longest loan and 90 days ahead, and whether non-radio loans need one card per item rather than one per request. Thai review of the borrowing pages and emails. Borrowing is not on the staff dashboard's needs-attention counts or the performance page yet.
 
 ## Known gaps
 

@@ -40,7 +40,7 @@ export const AVAIL = {
   previousMonth: { th: "เดือนก่อนหน้า", en: "Previous month" },
   nextMonth: { th: "เดือนถัดไป", en: "Next month" },
   captionFor: { th: "{item} ประจำเดือน {month}", en: "{item}, {month}" },
-  lendableStock: { th: "จำนวนที่ให้ยืมได้ทั้งหมด {count} {unit}", en: "{count} {unit} can be lent in total" },
+  lendableStock: { th: "จำนวนที่ให้ยืมได้ทั้งหมด {count} {unit}", en: "Total that can be lent: {count}" },
   category: { th: "หมวด", en: "Category" },
   inactiveTag: { th: "ปิดใช้งาน", en: "switched off" },
   inactiveNote: { th: "รายการนี้ปิดใช้งานอยู่ จึงไม่แสดงต่อผู้ยืม", en: "This item is switched off, so borrowers cannot see it." },

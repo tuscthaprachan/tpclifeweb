@@ -41,7 +41,7 @@ export function localisedBody(body: PublicBody | null | undefined, locale: Local
   return null;
 }
 
-const CREATED_TITLE: LocaleString = { th: "รับเรื่องแล้ว", en: "Report received" };
+const CREATED_TITLE: LocaleString = { th: "รับเรื่องแล้ว", en: "Received" };
 const UPDATE_TITLE: LocaleString = { th: "ข้อความจากเจ้าหน้าที่", en: "Message from staff" };
 
 /** Public events for a case that are not about one claim, oldest first. */

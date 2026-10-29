@@ -118,8 +118,8 @@ describe("content seed", () => {
     expect(before.places).toBe(PLACE_DOCS.length + 1);
     expect(before.directory_organisations).toBe(buildDirectory().length);
     expect(before.faculties).toBe(10);
-    // The emergency report and equipment request Google Forms are superseded by /complaints and /borrow and are not seeded.
-    expect(before.forms).toBe(FORMS.length - 2);
+    // The emergency report Google Form is superseded by /complaints and is not seeded.
+    expect(before.forms).toBe(FORMS.length - 1);
     expect(before.shuttle_routes).toBe(SHUTTLE_ROUTES.length);
     expect(before.shuttle_stops).toBe(SHUTTLE_ROUTES.reduce((n, r) => n + r.stops.length, 0));
     expect(before.site_settings).toBe(1);

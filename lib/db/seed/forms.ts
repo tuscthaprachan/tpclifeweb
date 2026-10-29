@@ -14,14 +14,18 @@ import { excludedSet, published, slugify, type SeedDb } from "./util";
  * its row; unpublish it at /admin/content/forms.
  *
  * The equipment request form (a Google Form, with four paper forms to download
- * and upload) is superseded by the borrowing service at /borrow, which takes
- * the same request, with every item and quantity in one go. Same handling.
+ * and upload) is replaced by the borrowing service at /borrow. Its entry stays
+ * in the index, because people look for it there, but starts the new service:
+ * no sign-in, no Google Form. The bare path redirects to the reader's language.
  */
-const SUPERSEDED = new Set(["emergencyReport", "equipmentRequest"]);
+const SUPERSEDED = new Set(["emergencyReport"]);
+const REPLACED: Record<string, { destinationUrl: string }> = { equipmentRequest: { destinationUrl: "/borrow" } };
 
 export async function seedForms(db: SeedDb): Promise<void> {
   for (const form of FORMS.filter((f) => !SUPERSEDED.has(f.key))) {
-    const hasUrl = Boolean(form.destinationUrl);
+    const replaced = REPLACED[form.key];
+    const destinationUrl = replaced?.destinationUrl ?? form.destinationUrl;
+    const hasUrl = Boolean(destinationUrl);
     await db
       .insert(forms)
       .values({
@@ -34,10 +38,10 @@ export async function seedForms(db: SeedDb): Promise<void> {
         purposeEn: form.purpose.en,
         category: form.category,
         owner: form.owner,
-        requiresSignIn: form.requiresSignIn,
-        signInType: form.signInType,
-        destinationType: form.destinationType,
-        destinationUrl: hasUrl ? form.destinationUrl : null,
+        requiresSignIn: replaced ? false : form.requiresSignIn,
+        signInType: replaced ? null : form.signInType,
+        destinationType: replaced ? "externalSite" : form.destinationType,
+        destinationUrl: hasUrl ? destinationUrl : null,
         isActive: true,
         isPriority: form.isPriority,
         lastVerified: "2026-08-16",
