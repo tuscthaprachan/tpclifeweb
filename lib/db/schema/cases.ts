@@ -93,7 +93,7 @@ export const cases = pgTable(
     check("cases_reference_format", sql`${t.reference} ~ '^(LF|CP|BR)-[0-9]{4}-[0-9]{4,}$'`),
     check(
       "cases_reference_matches_service",
-      sql`(${t.service} = 'lost_found' and ${t.reference} like 'LF-%') or (${t.service} = 'complaint' and ${t.reference} like 'CP-%') or (${t.service} = 'borrowing' and ${t.reference} like 'BR-%')`,
+      sql`(${t.service}::text = 'lost_found' and ${t.reference} like 'LF-%') or (${t.service}::text = 'complaint' and ${t.reference} like 'CP-%') or (${t.service}::text = 'borrowing' and ${t.reference} like 'BR-%')`,
     ),
     index("cases_inbox_idx").on(t.service, t.status, t.updatedAt.desc()),
     index("cases_assigned_idx").on(t.assignedTo),

@@ -6920,7 +6920,7 @@
         },
         "cases_reference_matches_service": {
           "name": "cases_reference_matches_service",
-          "value": "(\"cases\".\"service\" = 'lost_found' and \"cases\".\"reference\" like 'LF-%') or (\"cases\".\"service\" = 'complaint' and \"cases\".\"reference\" like 'CP-%') or (\"cases\".\"service\" = 'borrowing' and \"cases\".\"reference\" like 'BR-%')"
+          "value": "(\"cases\".\"service\"::text = 'lost_found' and \"cases\".\"reference\" like 'LF-%') or (\"cases\".\"service\"::text = 'complaint' and \"cases\".\"reference\" like 'CP-%') or (\"cases\".\"service\"::text = 'borrowing' and \"cases\".\"reference\" like 'BR-%')"
         }
       },
       "isRLSEnabled": false

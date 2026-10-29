@@ -117,5 +117,5 @@ CREATE INDEX "borrowing_lines_item_idx" ON "borrowing_lines" USING btree ("item_
 CREATE INDEX "borrowing_requests_period_idx" ON "borrowing_requests" USING btree ("collect_at","return_due_at");--> statement-breakpoint
 CREATE INDEX "equipment_items_category_idx" ON "equipment_items" USING btree ("category_id","position");--> statement-breakpoint
 ALTER TABLE "cases" ADD CONSTRAINT "cases_reference_format" CHECK ("cases"."reference" ~ '^(LF|CP|BR)-[0-9]{4}-[0-9]{4,}$');--> statement-breakpoint
-ALTER TABLE "cases" ADD CONSTRAINT "cases_reference_matches_service" CHECK (("cases"."service" = 'lost_found' and "cases"."reference" like 'LF-%') or ("cases"."service" = 'complaint' and "cases"."reference" like 'CP-%') or ("cases"."service" = 'borrowing' and "cases"."reference" like 'BR-%'));--> statement-breakpoint
+ALTER TABLE "cases" ADD CONSTRAINT "cases_reference_matches_service" CHECK (("cases"."service"::text = 'lost_found' and "cases"."reference" like 'LF-%') or ("cases"."service"::text = 'complaint' and "cases"."reference" like 'CP-%') or ("cases"."service"::text = 'borrowing' and "cases"."reference" like 'BR-%'));--> statement-breakpoint
 ALTER TABLE "journey_metrics" ADD CONSTRAINT "journey_metrics_kind" CHECK ("journey_metrics"."kind" in ('lost', 'found', 'claim', 'complaint', 'borrow', 'signpost_faculty', 'signpost_course', 'signpost_emergency'));
