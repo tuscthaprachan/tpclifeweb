@@ -32,10 +32,10 @@ test.beforeEach(async ({}, testInfo) => {
 test("pinned navigation works with JavaScript disabled", async ({ page }) => {
   await page.goto(localePath("th", "/"));
 
-  await page.locator("header").getByRole("link", { name: UI.forms.th, exact: true }).first().click();
+  await page.locator("header").getByRole("link", { name: "แจ้งปัญหา", exact: true }).first().click();
 
-  await expect(page).toHaveURL(new RegExp(`${localePath("th", "/forms")}$`));
-  await expect(page.locator("h1")).toHaveText(UI.forms.th);
+  await expect(page).toHaveURL(new RegExp(`${localePath("th", "/complaints")}$`));
+  await expect(page.locator("h1")).toHaveText(UI.cpServiceName.th);
 });
 
 test("the More disclosure opens and navigates with JavaScript disabled", async ({ page }) => {
