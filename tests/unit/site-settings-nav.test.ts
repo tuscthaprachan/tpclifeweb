@@ -27,26 +27,32 @@ describe("withRequiredNav", () => {
 
   it("leaves an editor's own entry alone", () => {
     const input = settings(["/eat", "/forms"]);
-    expect(withRequiredNav(input)).toBe(input);
+    expect(withRequiredNav(input).primaryNav).toBe(input.primaryNav);
   });
 });
 
 describe("withRequiredNav home tasks", () => {
   const base = (homeTasks?: unknown) => ({ primaryNav: [{ label: { th: "/eat", en: "/eat" }, path: "/eat" }], footerNav: [{ label: { th: "x", en: "x" }, path: "/performance" }], homeTasks }) as unknown as SiteSettings;
 
-  it("falls back to the seven default tasks when the stored list is empty", () => {
+  it("falls back to the default tasks, services first, when the stored list is empty", () => {
     const result = withRequiredNav(base([]));
-    expect(result.homeTasks.map((task) => task.path)).toEqual(["/forms", "/lost-and-found", "/complaints", "/borrow", "/welfare", "/eat", "/directory"]);
-    expect(result.homeTasks[0]?.label).toEqual({ th: "ค้นหาแบบฟอร์ม", en: "Find a form" });
+    expect(result.homeTasks.map((task) => task.path)).toEqual(["/complaints", "/borrow", "/lost-and-found", "/welfare", "/eat", "/directory"]);
+    expect(result.homeTasks[0]?.label).toEqual({ th: "แจ้งปัญหา", en: "Report an issue" });
   });
 
   it("falls back when the field is missing on an older cached row", () => {
-    expect(withRequiredNav(base(undefined)).homeTasks).toHaveLength(7);
+    expect(withRequiredNav(base(undefined)).homeTasks).toHaveLength(6);
   });
 
-  it("keeps an editor's own list and order", () => {
-    const own = [{ label: { th: "ก", en: "A" }, description: { th: "ข", en: "B" }, path: "/news" }];
-    expect(withRequiredNav(base(own)).homeTasks).toBe(own);
+  it("puts the services first, keeps an editor's wording and other tiles, and drops Find a form", () => {
+    const own = [
+      { label: { th: "ก", en: "A" }, description: { th: "ข", en: "B" }, path: "/news" },
+      { label: { th: "ฟ", en: "Forms" }, description: { th: "ฟ", en: "F" }, path: "/forms" },
+      { label: { th: "ห", en: "Own lost and found" }, description: { th: "ห", en: "L" }, path: "/lost-and-found" },
+    ];
+    const result = withRequiredNav(base(own)).homeTasks;
+    expect(result.map((task) => task.path)).toEqual(["/complaints", "/borrow", "/lost-and-found", "/news"]);
+    expect(result[2]?.label.en).toBe("Own lost and found");
   });
 });
 
@@ -62,7 +68,7 @@ describe("withRequiredNav footer", () => {
 
   it("leaves a footer that already links to it alone", () => {
     const input = withFooter(["/performance", "/faq"]);
-    expect(withRequiredNav(input)).toBe(input);
+    expect(withRequiredNav(input).footerNav).toBe(input.footerNav);
   });
 });
 
