@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 
-/** A neutral page to leave for. The GOV.UK pattern uses a weather page; any ordinary site does the same job. */
-const EXIT_URL = "https://www.bbc.com/weather";
+/** A neutral page to leave for. Any ordinary site does the job. */
+const EXIT_URL = "https://www.thaipbs.or.th/";
 
 /**
  * The GOV.UK "Exit this page" pattern for a page someone may need to leave at
