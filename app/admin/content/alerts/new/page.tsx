@@ -1,6 +1,7 @@
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ConsolePage } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Heading } from "@/components/ui";
+import { FormPageHeader } from "@/app/admin/content/_list/FormPageHeader";
+import { contentTypeBySegment } from "@/app/admin/content/_list/placement";
 import { requireEditor } from "@/lib/admin/content/access";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
@@ -19,9 +20,9 @@ export default async function NewAlertPage() {
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
   await requireEditor();
   return (
-    <AdminPage width="content">
-      <Heading level={1}>{a("listAdd", locale, { item: a("typeAlertsOne", locale) })}</Heading>
+    <ConsolePage width="wide">
+      <FormPageHeader def={contentTypeBySegment("alerts")} locale={locale} mode="new" />
       <AlertForm locale={locale} />
-    </AdminPage>
+    </ConsolePage>
   );
 }

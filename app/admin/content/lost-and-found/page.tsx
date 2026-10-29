@@ -1,8 +1,11 @@
-import { AdminPage } from "@/components/admin/AdminPage";
+import { contentPlacement } from "@/app/admin/content/_list/placement";
+import { PublishState, ResultCount, RowAction } from "@/app/admin/content/_list/parts";
+import { ConsoleIcon } from "@/components/admin/icons";
+import { Card, ConsolePage, EmptyPanel, PageHeader, SearchField, Toolbar } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { kindLabel } from "@/components/domain/lostfound/kindLabel";
 import { statusLabel } from "@/components/domain/lostfound/statusLabel";
-import { Button, DataTable, EmptyState, Heading, NotificationBanner, StatusTag, Timestamp, type DataTableColumn } from "@/components/ui";
+import { Button, DataTable, NotificationBanner, Timestamp, type DataTableColumn } from "@/components/ui";
 import { rowTitle } from "@/components/admin/content/ContentList";
 import { requireEditor } from "@/lib/admin/content/access";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
@@ -42,9 +45,7 @@ export default async function LostFoundListPage({ searchParams }: { searchParams
           {
             id: "status",
             header: a("listStatus", locale),
-            cell: (row: LostFoundListRow) => (
-              <StatusTag tone={row.status === "published" ? "success" : "neutral"} label={a(row.status === "published" ? "statusPublished" : "statusDraft", locale)} />
-            ),
+            cell: (row: LostFoundListRow) => <PublishState published={row.status === "published"} locale={locale} />,
           },
           { id: "progress", header: a("lfColProgress", locale), cell: (row: LostFoundListRow) => statusLabel(row.registerStatus, locale) },
           { id: "updated", header: a("listUpdated", locale), cell: (row: LostFoundListRow) => <Timestamp value={row.updatedAt} locale={locale} format="datetime" /> },
@@ -55,74 +56,67 @@ export default async function LostFoundListPage({ searchParams }: { searchParams
       header: a("listActions", locale),
       align: "end",
       cell: (row) => (
-        <a href={contentPath(def, row.id)}>
+        <RowAction href={contentPath(def, row.id)} icon="edit" name={row.reference}>
           {a("edit", locale)}
-          <span className="visually-hidden"> {row.reference}</span>
-        </a>
+        </RowAction>
       ),
     },
   ];
 
+  const place = contentPlacement(def);
+  const add = (
+    <Button href={`${contentPath(def)}/new`} icon={<ConsoleIcon name="add" />}>
+      {a("listAdd", locale, { item: a(def.oneKey, locale) })}
+    </Button>
+  );
+
   return (
-    <AdminPage width="content">
-      <div>
-        <Heading level={1}>{a(def.labelKey, locale)}</Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">{a("lfIntro", locale)}</p>
-      </div>
+    <ConsolePage width="wide">
+      <PageHeader title={a(def.labelKey, locale)} icon={place.icon} description={a("lfIntro", locale)} actions={add} />
       {notice === "deleted" ? (
         <NotificationBanner variant="success" title={a("listDeleted", locale)}>
           {a("listDeletedNote", locale)}
         </NotificationBanner>
       ) : null}
 
-      <section aria-labelledby="lf-pending" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-pending">
-          {a("lfPendingTitle", locale)}
-        </Heading>
-        <p className="m-0 text-ink-600">{a("lfPendingNote", locale)}</p>
+      <Card title={a("lfPendingTitle", locale)} icon="draft" description={a("lfPendingNote", locale)} padded={pending.length === 0}>
         {pending.length === 0 ? (
-          <EmptyState illustration={false} title={a("lfPendingNone", locale)} />
+          <p className="m-0 flex items-center gap-[var(--space-2)] text-ink-600">
+            <ConsoleIcon name="check" />
+            {a("lfPendingNone", locale)}
+          </p>
         ) : (
           <DataTable columns={columns(false)} rows={pending} getRowKey={(r) => r.id} caption={a("lfPendingTitle", locale)} />
         )}
-      </section>
+      </Card>
 
-      <section aria-labelledby="lf-all" className="flex flex-col gap-[var(--space-3)]">
-        <Heading level={2} id="lf-all">
-          {a("lfAllTitle", locale)}
-        </Heading>
-        <div className="flex flex-wrap items-end justify-between gap-[var(--space-4)]">
-          <form method="get" role="search" className="flex flex-wrap items-end gap-[var(--space-2)]">
-            <div className="flex flex-col gap-[var(--space-1)]">
-              <label htmlFor="content-filter" className="text-base font-medium">
-                {a("listFilter", locale)}
-              </label>
-              <input
-                id="content-filter"
-                type="search"
-                name="q"
-                defaultValue={q}
-                autoComplete="off"
-                className="min-h-[var(--target-min)] rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)]"
-              />
-            </div>
-            <Button type="submit" variant="secondary">
-              {a("listFilterApply", locale)}
-            </Button>
-            {q ? (
-              <Button href={contentPath(def)} variant="quiet">
-                {a("listFilterClear", locale)}
-              </Button>
-            ) : null}
-          </form>
-          <Button href={`${contentPath(def)}/new`}>{a("listAdd", locale, { item: a(def.oneKey, locale) })}</Button>
+      <Card title={a("lfAllTitle", locale)} icon={place.icon} padded={false}>
+        <div className="flex flex-col gap-[var(--space-3)] p-[var(--space-3)]">
+          <Toolbar search={<SearchField label={a("ccSearchLabel", locale, { label: a("lfAllTitle", locale).toLowerCase() })} submitLabel={a("ccSearchSubmit", locale)} defaultValue={q} />} />
+          {rows.length === 0 ? (
+            q ? (
+              <EmptyPanel
+                icon="search"
+                title={a("listNoMatches", locale)}
+                action={
+                  <Button href={contentPath(def)} variant="secondary">
+                    {a("ccClearFilters", locale)}
+                  </Button>
+                }
+              >
+                {a("ccNoMatchesHint", locale)}
+              </EmptyPanel>
+            ) : (
+              <EmptyPanel icon={place.icon} title={a("lfListEmpty", locale)} action={add} />
+            )
+          ) : (
+            <>
+              <ResultCount text={a("ccResultCount", locale, { total: rows.length })} />
+              <DataTable columns={columns(true)} rows={rows} getRowKey={(r) => r.id} caption={a("listCaption", locale, { shown: rows.length, total: rows.length, label: a(def.labelKey, locale) })} />
+            </>
+          )}
         </div>
-        {rows.length === 0 ? (
-          <EmptyState illustration={false} title={q ? a("listNoMatches", locale) : a("lfListEmpty", locale)} />
-        ) : (
-          <DataTable columns={columns(true)} rows={rows} getRowKey={(r) => r.id} caption={a("listCaption", locale, { shown: rows.length, total: rows.length, label: a(def.labelKey, locale) })} />
-        )}
-      </section>
-    </AdminPage>
+      </Card>
+    </ConsolePage>
   );
 }

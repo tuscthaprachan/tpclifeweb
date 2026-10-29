@@ -1,6 +1,7 @@
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ConsolePage } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Heading } from "@/components/ui";
+import { FormPageHeader } from "@/app/admin/content/_list/FormPageHeader";
+import { contentTypeBySegment } from "@/app/admin/content/_list/placement";
 import { requireEditor } from "@/lib/admin/content/access";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
@@ -20,9 +21,9 @@ export default async function NewCanteenDishPage({ searchParams }: { searchParam
   await requireEditor();
   const { stall } = await searchParams;
   return (
-    <AdminPage width="content">
-      <Heading level={1}>{a("listAdd", locale, { item: a("typeCanteenDishesOne", locale) })}</Heading>
+    <ConsolePage width="wide">
+      <FormPageHeader def={contentTypeBySegment("canteen-dishes")} locale={locale} mode="new" />
       <CanteenDishForm locale={locale} stallId={stall} />
-    </AdminPage>
+    </ConsolePage>
   );
 }

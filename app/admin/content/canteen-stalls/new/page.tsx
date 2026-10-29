@@ -1,6 +1,7 @@
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ConsolePage } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Heading } from "@/components/ui";
+import { FormPageHeader } from "@/app/admin/content/_list/FormPageHeader";
+import { contentTypeBySegment } from "@/app/admin/content/_list/placement";
 import { requireEditor } from "@/lib/admin/content/access";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
@@ -19,9 +20,9 @@ export default async function NewCanteenStallPage() {
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
   await requireEditor();
   return (
-    <AdminPage width="content">
-      <Heading level={1}>{a("listAdd", locale, { item: a("typeCanteenStallsOne", locale) })}</Heading>
+    <ConsolePage width="wide">
+      <FormPageHeader def={contentTypeBySegment("canteen-stalls")} locale={locale} mode="new" />
       <CanteenStallForm locale={locale} />
-    </AdminPage>
+    </ConsolePage>
   );
 }

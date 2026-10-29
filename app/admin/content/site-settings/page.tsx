@@ -1,6 +1,7 @@
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ConsolePage } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Heading } from "@/components/ui";
+import { FormPageHeader } from "@/app/admin/content/_list/FormPageHeader";
+import { contentTypeBySegment } from "@/app/admin/content/_list/placement";
 import { requireEditor } from "@/lib/admin/content/access";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
@@ -22,9 +23,9 @@ export default async function SiteSettingsPage({ searchParams }: { searchParams:
   const { saved } = await searchParams;
 
   return (
-    <AdminPage width="content">
-      <Heading level={1}>{a("typeSiteSettings", locale)}</Heading>
+    <ConsolePage width="wide">
+      <FormPageHeader def={contentTypeBySegment("site-settings")} locale={locale} mode="page" />
       <SiteSettingsForm locale={locale} saved={saved} />
-    </AdminPage>
+    </ConsolePage>
   );
 }

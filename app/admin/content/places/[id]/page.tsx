@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ConsolePage } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Heading } from "@/components/ui";
+import { FormPageHeader } from "@/app/admin/content/_list/FormPageHeader";
+import { contentTypeBySegment } from "@/app/admin/content/_list/placement";
 import { requireEditor } from "@/lib/admin/content/access";
 import { isUuid } from "@/lib/admin/content/form-state";
 import { getAdminLocale } from "@/lib/admin/locale";
@@ -25,9 +26,9 @@ export default async function EditPlacePage({ params, searchParams }: { params: 
   const { saved, error } = await searchParams;
 
   return (
-    <AdminPage width="content">
-      <Heading level={1}>{a("editItem", locale, { item: a("typePlacesOne", locale) })}</Heading>
+    <ConsolePage width="wide">
+      <FormPageHeader def={contentTypeBySegment("places")} locale={locale} mode="edit" />
       <PlaceForm locale={locale} id={id} saved={saved} error={error} />
-    </AdminPage>
+    </ConsolePage>
   );
 }

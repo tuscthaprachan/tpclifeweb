@@ -1,10 +1,12 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ConsolePage } from "@/components/admin/ui";
 import { ContentForm } from "@/components/admin/content/ContentForm";
 import { CheckboxField, DateField, TextField } from "@/components/admin/content/fields";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { EmptyState, Heading } from "@/components/ui";
+import { FormPageHeader } from "@/app/admin/content/_list/FormPageHeader";
+import { contentTypeBySegment } from "@/app/admin/content/_list/placement";
+import { EmptyState } from "@/components/ui";
 import { requireEditor } from "@/lib/admin/content/access";
 import { isUuid } from "@/lib/admin/content/form-state";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
@@ -42,9 +44,15 @@ export default async function StallPricesPage({ params, searchParams }: { params
   const dishesHref = `${contentPath(getContentType("canteen-dishes")!)}?stall=${id}`;
 
   return (
-    <AdminPage width="content">
-      <Heading level={1}>{a("canteenPricesHeading", locale, { number: stall.number, name: stallName })}</Heading>
-      <p className="m-0">{a("canteenPricesIntro", locale)}</p>
+    <ConsolePage width="wide">
+      <FormPageHeader
+        def={contentTypeBySegment("canteen-stalls")}
+        locale={locale}
+        mode="edit"
+        title={a("canteenPricesHeading", locale, { number: stall.number, name: stallName })}
+        trail={[{ label: stallName, href: contentPath(getContentType("canteen-stalls")!, id) }]}
+        description={a("canteenPricesIntro", locale)}
+      />
       {dishes.length === 0 ? (
         <EmptyState illustration={false} title={a("canteenPricesEmpty", locale)} />
       ) : (
@@ -74,6 +82,6 @@ export default async function StallPricesPage({ params, searchParams }: { params
       <p className="m-0">
         <a href={dishesHref}>{a("canteenPricesToDishes", locale)}</a>
       </p>
-    </AdminPage>
+    </ConsolePage>
   );
 }

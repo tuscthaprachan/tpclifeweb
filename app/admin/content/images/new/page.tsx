@@ -1,6 +1,8 @@
-import { AdminPage } from "@/components/admin/AdminPage";
+import { ConsolePage } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Button, Heading, NotificationBanner } from "@/components/ui";
+import { FormPageHeader } from "@/app/admin/content/_list/FormPageHeader";
+import { contentTypeBySegment } from "@/app/admin/content/_list/placement";
+import { Button, NotificationBanner } from "@/components/ui";
 import { requireEditor } from "@/lib/admin/content/access";
 import { isStorageConfigured } from "@/lib/admin/content/images";
 import { getAdminLocale } from "@/lib/admin/locale";
@@ -20,8 +22,8 @@ export default async function UploadImagePage() {
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
   await requireEditor();
   return (
-    <AdminPage width="content">
-      <Heading level={1}>{a("mediaUploadNew", locale)}</Heading>
+    <ConsolePage width="wide">
+      <FormPageHeader def={contentTypeBySegment("images")} locale={locale} mode="new" title={a("mediaUploadNew", locale)} />
       {isStorageConfigured() ? (
         <>
           <p className="m-0 text-ink-600">{a("mediaUploadIntro", locale)}</p>
@@ -37,6 +39,6 @@ export default async function UploadImagePage() {
           {a("formBackToList", locale)}
         </Button>
       </div>
-    </AdminPage>
+    </ConsolePage>
   );
 }
