@@ -177,7 +177,7 @@ test("Decide for me on /eat is a GET form to /eat/pick", async ({ page }) => {
   const form = page.locator('form[action$="/eat/pick"]');
   test.skip((await form.count()) === 0, "No canteen data in this environment, so there is no Decide for me block.");
 
-  await expect(form).toHaveAttribute("method", "get");
+  expect(await form.evaluate((element: HTMLFormElement) => element.method)).toBe("get");
   await expect(form.getByRole("button", { name: "Decide for me" })).toBeVisible();
 });
 
@@ -210,7 +210,7 @@ test("Decide for me redirects to a seeded URL and every action is a plain link",
 test("/eat/plan budget form is a GET form and works without JavaScript", async ({ page }) => {
   await page.goto(localePath("en", "/eat/plan?max=60"));
   const form = page.locator('form[action$="/eat/plan"]').first();
-  await expect(form).toHaveAttribute("method", "get");
+  expect(await form.evaluate((element: HTMLFormElement) => element.method)).toBe("get");
   await expect(form.getByRole("button", { name: "Find meals" })).toBeVisible();
 });
 
