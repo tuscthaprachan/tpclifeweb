@@ -1,0 +1,15 @@
+import { notFound } from "next/navigation";
+import { EatHub } from "../../eat/EatHub";
+import { assertFilteredRewrite } from "@/lib/filtered-route";
+import { isLocale } from "@/lib/i18n/config";
+
+export { generateMetadata } from "../../eat/page";
+
+export const dynamic = "force-dynamic";
+
+export default async function FilteredEatHubPage({ params }: { params: Promise<{ locale: string }> }) {
+  await assertFilteredRewrite();
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  return <EatHub locale={locale} filtered />;
+}

@@ -6,8 +6,8 @@
  *
  * WHERE THE RANDOMNESS COMES FROM. Everything is seeded: the same URL gives
  * the same result. The server cannot see the device (history, favourites,
- * dislikes live in localStorage), so the server render uses bias `fair` or
- * `cheap` and no history. The client island may re-run `pick()` with the
+ * dislikes live in localStorage), so the pick the page works out from the
+ * address uses bias `fair` or `cheap` and no history. The client island may re-run `pick()` with the
  * device data and replace the result; see `Randomiser.tsx`.
  */
 

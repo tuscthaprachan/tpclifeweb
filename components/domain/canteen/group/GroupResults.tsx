@@ -15,7 +15,6 @@ import {
   type Person,
 } from "@/lib/canteen/group";
 import { defaultFilters } from "@/lib/canteen/params";
-import { newSeed } from "@/lib/canteen/random";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/content/types";
 
@@ -45,6 +44,8 @@ interface GroupResultsProps {
   /** The page path, for example "/th/eat/plan?mode=group". */
   path: string;
   now: Date;
+  /** A fresh seed for the links that start a random pick. Made by the page, so this component stays pure. */
+  freshSeed: string;
 }
 
 const DISHES_PER_PERSON = 4;
@@ -71,13 +72,12 @@ function PersonName({ person, index, locale }: { person: Person; index: number; 
   );
 }
 
-/** The results: strategy links, then whichever strategy is chosen. A server component, no script needed. */
-export function GroupResults({ locale, data, state, path, now }: GroupResultsProps) {
+/** The results: strategy links, then whichever strategy is chosen. Plain links, so no script is needed. */
+export function GroupResults({ locale, data, state, path, now, freshSeed }: GroupResultsProps) {
   const { people, strategy } = state;
   const name = (index: number) => personLabel(people[index]!, index, (num) => group.person(num, locale));
   const stallLabel = (stall: CanteenStall) => eat.stallFull(locale, stall.number, pick(stall.name, locale));
   const filters = defaultFilters();
-  const freshSeed = newSeed();
 
   return (
     <section aria-labelledby="results" className="flex flex-col gap-[var(--space-6)]">
@@ -280,7 +280,7 @@ export function GroupResults({ locale, data, state, path, now }: GroupResultsPro
       order: entry.first + 1,
       label: entry.who.map((index) => `${personBadge(people[index]!, index)} ${name(index)}`).join(", "),
     }));
-    const spinHref = groupHref(path, { ...state, strategy: "random", seed: newSeed(), rerolls: [] }, "results");
+    const spinHref = groupHref(path, { ...state, strategy: "random", seed: freshSeed, rerolls: [] }, "results");
     const ownChecked = commonCheckedOn(own.picks.flatMap((entry) => (entry.dish ? [entry.dish] : [])));
     const zoneName = own.seating ? pick(own.seating.zone.label, locale) : null;
 

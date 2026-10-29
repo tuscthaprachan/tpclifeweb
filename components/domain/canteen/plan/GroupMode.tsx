@@ -2,52 +2,47 @@
  * Eat as a group. The whole group lives in the URL parameter `p`, so there is
  * no server storage and nothing to sign in to. The builder is a GET form that
  * works without JavaScript: a submit lands here with per person fields, and
- * this page redirects to the compact canonical URL, which renders the form
- * again from `p`. See components/domain/canteen/group/state.ts.
+ * the request is sent on to the compact canonical URL (see `planTarget`),
+ * which renders the form again from `p`. See components/domain/canteen/group/state.ts.
+ *
+ * `query` is the group the results are for. With JavaScript the builder edits
+ * the address bar as it goes, but the results only follow when "Show results"
+ * is pressed, so the page that holds this keeps the two apart.
  */
-
-import { redirect } from "next/navigation";
 
 import { GroupBuilder } from "@/components/domain/canteen/group/GroupBuilder";
 import { GroupResults } from "@/components/domain/canteen/group/GroupResults";
 import { GROUP } from "@/components/domain/canteen/group/strings";
-import {
-  blankPerson,
-  groupHref,
-  isFormSubmission,
-  readGroupState,
-  stateFromForm,
-} from "@/components/domain/canteen/group/state";
+import { blankPerson, encodeGroupKey, readGroupState } from "@/components/domain/canteen/group/state";
 import { Details, EmptyState, Heading, Stack } from "@/components/ui";
-import { newSeed } from "@/lib/canteen/random";
+import type { RawParams } from "@/lib/canteen/params";
 import { localePath, type Locale } from "@/lib/i18n/config";
-import { getCanteenData } from "@/lib/content";
+import type { CanteenData } from "@/lib/content/types";
 
 import { PLAN_ROUTE } from "./mode";
 
-export async function GroupMode({
+export function GroupMode({
   locale,
+  data,
   query,
+  now,
+  freshSeed,
+  onEdit,
+  onShow,
 }: {
   locale: Locale;
-  query: Record<string, string | string[] | undefined>;
+  data: CanteenData;
+  query: RawParams;
+  now: Date;
+  /** A fresh seed for the links that start a random pick. */
+  freshSeed: string;
+  /** The builder changed the address bar to this query. */
+  onEdit: (search: string) => void;
+  /** "Show results" was pressed: the results are for this address. */
+  onShow: (href: string) => void;
 }) {
   const path = `${localePath(locale, PLAN_ROUTE)}?mode=group`;
-
-  // A submitted builder form: turn it into the compact URL.
-  if (isFormSubmission(query)) {
-    const { state, hash } = stateFromForm(query);
-    redirect(groupHref(path, state, hash));
-  }
-
   const state = readGroupState(query);
-  // "Random for all" needs a seed in the URL so a reload shows the same picks.
-  if (state.strategy === "random" && state.people.length > 0 && !state.seed) {
-    redirect(groupHref(path, { ...state, seed: newSeed() }, "results"));
-  }
-
-  const data = await getCanteenData();
-  const now = new Date();
 
   if (data.dishes.length === 0) {
     return <EmptyState title={GROUP.emptyTitle[locale]}>{GROUP.emptyBody[locale]}</EmptyState>;
@@ -62,12 +57,15 @@ export async function GroupMode({
           {GROUP.builderTitle[locale]}
         </Heading>
         <GroupBuilder
+          key={encodeGroupKey(state)}
           locale={locale}
           action={path}
           initialPeople={people}
           strategy={state.strategy}
           seed={state.seed}
           showShare={state.people.length > 0}
+          onEdit={onEdit}
+          onShow={onShow}
         />
         <p className="m-0 text-sm text-ink-600">{GROUP.privacyNote[locale]}</p>
         <Details summary={GROUP.howTitle[locale]}>
@@ -85,7 +83,7 @@ export async function GroupMode({
       </section>
 
       {state.people.length > 0 ? (
-        <GroupResults locale={locale} data={data} state={state} path={path} now={now} />
+        <GroupResults locale={locale} data={data} state={state} path={path} now={now} freshSeed={freshSeed} />
       ) : null}
     </Stack>
   );

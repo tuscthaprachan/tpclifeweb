@@ -6,11 +6,11 @@
  * The budget for the whole meal is its own `meal` parameter. `max` stays the
  * filter column's highest price per dish and applies inside every combo, so
  * the two never get mixed up. `same=1` keeps drink and dessert at the main's
- * stall. An old link with the meal budget in `max` is redirected to `meal`. Server rendered end to end: it works with JavaScript off.
+ * stall. An old link with the meal budget in `max` is redirected to `meal` (see `planTarget`). Worked out from the
+ * query in the browser, and by the server for a full page load: it works with JavaScript off.
  */
 
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import {
   EAT,
@@ -24,14 +24,14 @@ import {
 import { ComboCard } from "@/components/domain/canteen/budget/ComboCard";
 import { MealForm } from "@/components/domain/canteen/budget/MealForm";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
-import { canonicalMealQuery } from "@/components/domain/canteen/query";
+import { firstParam } from "@/components/domain/canteen/query";
 import { Button, EmptyState, Heading, Stack } from "@/components/ui";
 import { mealCombos, mealShortfall } from "@/lib/canteen/combos";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { facetCounts, relaxSuggestions } from "@/lib/canteen/filter";
-import { invalidMealBudget, parseMealBudget } from "@/lib/canteen/params";
-import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import { getCanteenData } from "@/lib/content";
+import { invalidMealBudget, parseMealBudget, serialise, type RawParams } from "@/lib/canteen/params";
+import { pick, type Locale } from "@/lib/i18n/config";
+import type { CanteenData } from "@/lib/content/types";
 
 import { PLAN_ROUTE } from "./mode";
 
@@ -41,20 +41,19 @@ const FIRST = 6;
 const STEP = 6;
 const MAX_SHOWN = 24;
 
-export async function MealMode({
+export function MealMode({
   locale,
+  data,
   query,
+  now,
 }: {
   locale: Locale;
-  query: Record<string, string | string[] | undefined>;
+  data: CanteenData;
+  query: RawParams;
+  now: Date;
 }) {
-  const canonical = canonicalMealQuery(query);
-  if (canonical !== null) redirect(canonical ? `${localePath(locale, ROUTE)}?${canonical}` : localePath(locale, ROUTE));
-  const sameValue = Array.isArray(query.same) ? query.same[0] : query.same;
-  const sameStall = sameValue === "1";
-  const data = await getCanteenData();
+  const sameStall = firstParam(query, "same") === "1";
   const filters = readFilters(query, data);
-  const now = new Date();
 
   if (data.dishes.length === 0) {
     return <EmptyState title={t(EAT.noDataTitle, locale)}>{t(EAT.noDataBody, locale)}</EmptyState>;
@@ -119,8 +118,7 @@ export async function MealMode({
         </Stack>
       );
     } else {
-      const showValue = Array.isArray(query.show) ? query.show[0] : query.show;
-      const requested = Number.parseInt(showValue ?? "", 10);
+      const requested = Number.parseInt(firstParam(query, "show") ?? "", 10);
       const shown = Math.min(combos.length, Number.isFinite(requested) ? Math.min(MAX_SHOWN, Math.max(FIRST, requested)) : FIRST);
       const visible = combos.slice(0, shown);
       const more = shown < combos.length ? Math.min(STEP, combos.length - shown) : 0;
@@ -163,7 +161,7 @@ export async function MealMode({
 
   return (
     <Stack space={6}>
-      <MealForm locale={locale} filters={filters} meal={amount} sameStall={sameStall} invalid={invalidMealBudget(query)} />
+      <MealForm key={`${serialise(filters)}|${amount ?? ""}|${sameStall}|${invalidMealBudget(query) ?? ""}`} locale={locale} filters={filters} meal={amount} sameStall={sameStall} invalid={invalidMealBudget(query)} />
       <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry} hide={["max"]}>
         <Stack space={6}>
           {results}

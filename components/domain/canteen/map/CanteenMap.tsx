@@ -2,7 +2,7 @@
  * The canteen floor plan as an inline SVG, drawn from `canteenSettings` and
  * each stall's `mapCell`, so editors move stalls without touching code.
  *
- * It is a server component with no script: links, focus rings and the
+ * It is plain markup with no script of its own: links, focus rings and the
  * responsive scaling are all markup and CSS. The plan is SUPPLEMENTARY.
  * `StallList` carries the same information as text and is what a screen
  * reader should meet first.

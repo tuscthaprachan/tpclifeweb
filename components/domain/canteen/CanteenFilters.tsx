@@ -62,8 +62,9 @@ function withCount(label: string, count: number, locale: Locale): string {
  * mobile (see `ActiveFilterBar`). A real `<form method="get">`: every facet is
  * a native input inside a fieldset with a legend, there is a submit button,
  * and it works with JavaScript off. A small client wrapper (`FilterForm`)
- * adds instant apply and nothing else. Server rendered, so the counts in
- * brackets are computed on the server too.
+ * adds instant apply and nothing else. Plain markup, so the counts in
+ * brackets are in the HTML: worked out from the address by the server for a
+ * full page load and by the browser otherwise.
  *
  * Budget, diet, type and feel stay open. "Allergies and dislikes", "Stall" and
  * "Sort and group" are collapsed sections that start open when any of their

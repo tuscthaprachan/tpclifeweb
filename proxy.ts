@@ -52,7 +52,7 @@ export function proxy(request: NextRequest) {
       return NextResponse.rewrite(new URL(`/${firstSegment}/${FILTERED_SEGMENT}-not-found`, request.url));
     }
     const isDocument = request.headers.get("rsc") !== "1";
-    if (isDocument && hasReaderQuery(request.nextUrl.searchParams) && isQueryRoute(rest)) {
+    if (isDocument && isQueryRoute(rest) && (hasReaderQuery(request.nextUrl.searchParams) || rest === "/eat/pick")) {
       const target = request.nextUrl.clone();
       target.pathname = `/${firstSegment}/${FILTERED_SEGMENT}${rest}`;
       const headers = new Headers(request.headers);

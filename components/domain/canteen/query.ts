@@ -167,3 +167,10 @@ export function carriedParams(raw: RawParams): Record<string, string> {
   }
   return out;
 }
+
+/** The first value of a query parameter, from Next's `searchParams`, a plain object or `URLSearchParams`. */
+export function firstParam(raw: RawParams, name: string): string | undefined {
+  if (raw instanceof URLSearchParams) return raw.get(name) ?? undefined;
+  const value = raw[name];
+  return Array.isArray(value) ? value[0] : value;
+}

@@ -29,8 +29,8 @@ interface StallCardProps {
 
 /**
  * One stall in the list: its painted number, name, cuisine, the halal answer
- * in the stall's own words, how many dishes and the price range. Server
- * component, no JavaScript needed.
+ * in the stall's own words, how many dishes and the price range. Plain
+ * markup, no JavaScript needed.
  */
 export function StallCard({ stall, locale, filters, dishCount, matchCount, priceRange, headingLevel = 3, className }: StallCardProps) {
   const halalTag = stallHalalTag(stall);

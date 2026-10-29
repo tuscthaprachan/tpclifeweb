@@ -8,7 +8,6 @@ import { pick, type Locale } from "@/lib/i18n/config";
 import type { CanteenData, CanteenDish } from "@/lib/content/types";
 import { CheckedOnNote } from "./CheckedOnNote";
 import { DishCard } from "./DishCard";
-import { FocusOnHash } from "./FocusOnHash";
 import type { DishGroup } from "@/lib/canteen/filter";
 import type { PagedGroup } from "./paginate";
 import { stallHref } from "./links";
@@ -78,7 +77,6 @@ export function DishResults({ data, locale, filters, groups, allGroups, headingL
     const dishes = groups.flatMap((group) => group.dishes);
     return (
       <div className="flex flex-col gap-[var(--space-3)]">
-        <FocusOnHash />
         {note}
         <DishGrid data={data} locale={locale} filters={filters} dishes={dishes} headingLevel={headingLevel} checkedOn={checkedOn} first={1} />
       </div>
@@ -87,7 +85,6 @@ export function DishResults({ data, locale, filters, groups, allGroups, headingL
 
   return (
     <div className="flex flex-col gap-[var(--space-8)]">
-      <FocusOnHash />
       {note}
       {groups.map((group, groupIndex) => {
         const first = firsts[groupIndex] ?? 1;

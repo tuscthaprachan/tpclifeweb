@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * The client island around the server rendered result.
+ * The client island around the result the page worked out from the address.
  *
  * WHAT THE SERVER CAN AND CANNOT SEE. History, favourites and the
  * never-suggest list live in `localStorage` (see `lib/canteen/device.ts`), so
- * the server render uses bias `fair` or `cheap` and no history. It is a
+ * the page's own pick (the server's for a full page load) uses bias `fair` or `cheap` and no history. It is a
  * complete, correct pick on its own, and it is what you get without
  * JavaScript. With JavaScript this island reads the device, and when there is
  * anything to apply (any history, favourites or dislikes, or the `new` and
@@ -59,7 +59,7 @@ interface RandomiserProps {
   reel: string[];
   /** What the live region says once the result has settled. */
   announce: string;
-  /** The server rendered result, shown until (and unless) the device changes the pick. */
+  /** The result worked out from the address, shown until (and unless) the device changes the pick. */
   children: ReactNode;
 }
 

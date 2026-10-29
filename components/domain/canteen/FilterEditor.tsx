@@ -12,7 +12,7 @@ interface FilterEditorProps {
   locale: Locale;
   /** How many filter values are on, for the button label. */
   count: number;
-  /** The filter form, rendered on the server, shown inside the dialog. */
+  /** The filter form, shown inside the dialog. */
   children: ReactNode;
 }
 

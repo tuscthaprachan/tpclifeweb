@@ -4,15 +4,14 @@
  *
  * Everything is in the URL, so a plan is shareable and reopens the same:
  *   budget, days, seed, lock.<weekday>, keep.<weekday> (see week-params.ts)
- * With a budget but no seed the page redirects to the same URL plus a fresh
- * seed. Lock, unlock and reroll are plain links; JavaScript adds only "Save
- * this week to my device" and a print button.
+ * With a budget but no seed the request is sent on to the same URL plus a
+ * fresh seed (see `planTarget`). Lock, unlock and reroll are plain links;
+ * JavaScript adds only "Save this week to my device" and a print button.
  */
 
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
-import { EAT, EatFilteredLayout, eatHref, readFilters, redirectToTidyQuery, t, type Bilingual } from "@/components/domain/canteen";
+import { EAT, EatFilteredLayout, eatHref, readFilters, t, type Bilingual } from "@/components/domain/canteen";
 import { SaveWeekButton } from "@/components/domain/canteen/budget/SaveWeekButton";
 import { SpendThisWeek } from "@/components/domain/canteen/budget/SpendThisWeek";
 import { WeekForm } from "@/components/domain/canteen/budget/WeekForm";
@@ -22,11 +21,10 @@ import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
 import { MAX_WEEK_BUDGET, allPins, clearPins, invalidWeekBudget, parseWeekRequest, weekHref, weekQuery, type WeekRequest } from "@/components/domain/canteen/budget/week-params";
 import { EmptyState, Heading, Stack, WarningText } from "@/components/ui";
 import { facetCounts } from "@/lib/canteen/filter";
-import { countActiveValues, defaultFilters, type CanteenFilters } from "@/lib/canteen/params";
-import { newSeed } from "@/lib/canteen/random";
+import { countActiveValues, defaultFilters, type CanteenFilters, type RawParams } from "@/lib/canteen/params";
 import { planWeek, type WeekFailure, type WeekResult } from "@/lib/canteen/week";
 import { localePath, type Locale } from "@/lib/i18n/config";
-import { getCanteenData } from "@/lib/content";
+import type { CanteenData } from "@/lib/content/types";
 
 import { PLAN_ROUTE } from "./mode";
 
@@ -42,25 +40,20 @@ const FAILURE_TEXT: Record<WeekFailure, Bilingual> = {
   noPlan: BUDGET.failNoPlan,
 };
 
-export async function WeekMode({
+export function WeekMode({
   locale,
+  data,
   query,
+  now,
 }: {
   locale: Locale;
-  query: Record<string, string | string[] | undefined>;
+  data: CanteenData;
+  query: RawParams;
+  now: Date;
 }) {
-  redirectToTidyQuery(localePath(locale, ROUTE), query);
-  const data = await getCanteenData();
   const filters = readFilters(query, data);
   const request = parseWeekRequest(query);
   const path = localePath(locale, ROUTE);
-
-  // A plan needs a seed to be shareable. Give it one and send the reader to the permanent link.
-  if (request.budget !== undefined && request.days.length > 0 && !request.seed) {
-    redirect(weekHref(path, { ...request, seed: newSeed() }, filters));
-  }
-
-  const now = new Date();
 
   if (data.dishes.length === 0) {
     return <EmptyState title={t(EAT.noDataTitle, locale)}>{t(EAT.noDataBody, locale)}</EmptyState>;
@@ -118,7 +111,7 @@ export async function WeekMode({
 
   return (
     <Stack space={6}>
-      <WeekForm locale={locale} request={request} filters={filters} invalid={invalidWeekBudget(query)} />
+      <WeekForm key={`${weekQuery(request, filters)}|${invalidWeekBudget(query) ?? ""}`} locale={locale} request={request} filters={filters} invalid={invalidWeekBudget(query)} />
       <div className="no-print">
         <SpendThisWeek locale={locale} explain={false} />
         <p className="m-0 mt-[var(--space-2)] text-base">

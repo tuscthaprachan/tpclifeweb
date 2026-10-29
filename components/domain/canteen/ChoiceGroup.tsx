@@ -29,7 +29,7 @@ interface ChoiceGroupProps {
 
 /**
  * A group of native checkboxes or radios inside a fieldset with a legend,
- * each with its count. Server rendered, so the form works without
+ * each with its count. Plain markup, so the form works without
  * JavaScript. An option that would give no dishes is disabled and shows
  * "(0)": it stays in place so the layout does not jump.
  *

@@ -12,7 +12,7 @@ interface FilterFormProps {
   action: string;
   /** Parameters this form does not own but must keep, for example `seed`. Sent as hidden fields so the no JavaScript submit keeps them too. */
   carry?: Record<string, string>;
-  /** `serialise(filters)` of the filters the server rendered the fields with. Used to tell "the server caught up with what I did" from "the URL changed some other way". */
+  /** `serialise(filters)` of the filters the fields were rendered with. Used to tell "the page caught up with what I did" from "the URL changed some other way". */
   queryKey: string;
   /** The submit button's text, for example "Show 23 dishes". */
   submitLabel: string;
@@ -20,7 +20,7 @@ interface FilterFormProps {
   footer?: "sticky" | "flow";
   /** Shown left of the submit button in the sticky footer, for example a "Clear all" link. */
   clear?: ReactNode;
-  /** The server rendered fields. Passed through as children so they stay server components. */
+  /** The fields. Passed through as children. */
   children: ReactNode;
 }
 

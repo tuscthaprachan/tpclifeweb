@@ -61,8 +61,8 @@ const RELAXED_TEXT: Record<Relaxation, keyof typeof PICK> = {
 };
 
 /**
- * The result card of "Decide for me", for all three modes. Pure and
- * server renderable; it is also rendered by the client island when the
+ * The result card of "Decide for me", for all three modes. Pure: it is
+ * rendered with the rest of the page and again by the client island when the
  * device history changes the pick. Everything it links to is a plain link
  * with a seed in it, so every action works without JavaScript. The only
  * client parts are "Go with this" (logs to the device) and "Share". One filled

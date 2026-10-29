@@ -3,42 +3,29 @@
  * With filters on, a line says how many of its dishes match, but the whole
  * menu is always shown: a stall page is the place to see everything.
  * Matching dishes carry a tag and come first within each type.
+ *
+ * Prerendered for every stall: it does not read the query.
+ * components/domain/canteen/pages/StallDetail.tsx reads the filters in the browser, and a full page load of a URL
+ * with a query is answered by the copy under `filtered/` instead.
  */
 
 import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 
-import {
-  CUISINE_LABEL,
-  CheckedOnNote,
-  DietTag,
-  DishRow,
-  DishTypeIcon,
-  EAT,
-  PinIcon,
-  TYPE_LABEL,
-  eat,
-  eatHref,
-  readFilters,
-  redirectToTidyQuery,
-  stallHalalTag,
-  t,
-} from "@/components/domain/canteen";
-import { StallMiniMap } from "@/components/domain/canteen/pick/StallMiniMap";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Heading, InsetText, Stack, Tag } from "@/components/ui";
-import { commonCheckedOn, indexCanteen, priceRange } from "@/lib/canteen/derive";
-import { matchesFilters } from "@/lib/canteen/filter";
-import { DISH_TYPES } from "@/lib/canteen/options";
-import { countActiveValues } from "@/lib/canteen/params";
-import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
-import { formatNumber } from "@/lib/i18n/format";
+import { EAT, eat, t } from "@/components/domain/canteen";
+import { indexCanteen } from "@/lib/canteen/derive";
+import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
-import { UI } from "@/lib/i18n/strings";
+import { slugParams } from "@/lib/static-params";
 import { getCanteenData } from "@/lib/content";
+import { notFound } from "next/navigation";
+import { EatStall } from "./EatStall";
 
 type Params = Promise<{ locale: string; slug: string }>;
+
+export async function generateStaticParams() {
+  const data = await getCanteenData();
+  return slugParams(data.stalls.map((stall) => stall.slug.current));
+}
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale: rawLocale, slug } = await params;
@@ -53,143 +40,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   };
 }
 
-export default async function EatStallPage({
-  params,
-  searchParams,
-}: {
-  params: Params;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const { locale: rawLocale, slug } = await params;
-  if (!isLocale(rawLocale)) notFound();
-  const locale: Locale = rawLocale;
-
-  const query = await searchParams;
-  redirectToTidyQuery(localePath(locale, `/eat/stalls/${slug}`), query);
-  const filters = readFilters(query);
-  const data = await getCanteenData();
-  const stall = indexCanteen(data).stallBySlug.get(slug);
-  if (!stall) notFound();
-
-  const now = new Date();
-  const dishes = data.dishes.filter((dish) => dish.stallId === stall._id);
-  const range = priceRange(dishes);
-  const checkedOn = commonCheckedOn(dishes);
-  const filtered = countActiveValues(filters) > 0;
-  const matchingIds = new Set(dishes.filter((dish) => matchesFilters(data, dish, filters, now)).map((dish) => dish._id));
-  const matching = matchingIds.size;
-  const halalTag = stallHalalTag(stall);
-  const name = pick(stall.name, locale);
-
-  const sections = DISH_TYPES.map((type) => ({
-    type,
-    dishes: dishes.filter((dish) => dish.type === type).sort((a, b) => (filtered ? Number(matchingIds.has(b._id)) - Number(matchingIds.has(a._id)) : 0) || a.price - b.price || pick(a.name, locale).localeCompare(pick(b.name, locale), locale)),
-  })).filter((section) => section.dishes.length > 0);
-
-  return (
-    <Container className="pb-8 pt-2">
-      <Breadcrumbs
-        locale={locale}
-        items={[
-          { label: UI.home[locale], path: "/" },
-          { label: t(EAT.title, locale), path: "/eat" },
-          { label: t(EAT.stallsTitle, locale), path: "/eat/stalls" },
-          { label: name },
-        ]}
-      />
-
-      <Stack space={8}>
-        <Stack space={2}>
-          <p className="m-0 inline-flex w-fit items-center rounded-control bg-welfare px-[var(--space-3)] py-[var(--space-1)] text-lg font-semibold text-ink-on-fill">
-            {eat.stallNumber(locale, stall.number)}
-          </p>
-          <Heading level={1} className="text-3xl leading-tight">{name}</Heading>
-          <ul className="m-0 flex list-none flex-wrap gap-[var(--space-2)] p-0">
-            {stall.cuisine.map((cuisine) => (
-              <li key={cuisine}>
-                <Tag tone="neutral">{CUISINE_LABEL[cuisine][locale]}</Tag>
-              </li>
-            ))}
-            {stall.vegetarianStall ? (
-              <li>
-                <Tag tone="neutral">{t(EAT.vegetarianStall, locale)}</Tag>
-              </li>
-            ) : null}
-            {halalTag ? (
-              <li>
-                <DietTag tag={halalTag} locale={locale} />
-              </li>
-            ) : null}
-          </ul>
-          <p className="m-0 text-ink-600">
-            {eat.dishCount(locale, dishes.length)}
-            {range ? ` · ${eat.priceRange(locale, range.min, range.max)}` : ""}
-          </p>
-          {filtered && dishes.length > 0 ? (
-            <>
-              <p className="m-0 text-ink-900">{eat.stallMatchCount(locale, matching, dishes.length)}</p>
-              <p className="m-0">
-                <Link href={eatHref(locale, "/eat/dishes", { ...filters, stall: stall.slug.current })} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
-                  {t(EAT.showOnlyMatching, locale)}
-                </Link>
-              </p>
-            </>
-          ) : null}
-        </Stack>
-
-        <section aria-labelledby="eat-stall-where" className="rounded-panel border border-line bg-surface p-[var(--space-4)]">
-          <Stack space={3}>
-            <Heading level={2} id="eat-stall-where" className="m-0 text-xl">
-              {t(EAT.wayfindingTitle, locale)}
-            </Heading>
-            <p className="m-0 flex items-start gap-[var(--space-1)] text-ink-900">
-              <PinIcon className="mt-[calc((1lh-18px)/2)] shrink-0 text-ink-600" size={18} />
-              {stall.wayfinding ? pick(stall.wayfinding, locale) : t(EAT.noWayfinding, locale)}
-            </p>
-            <div data-slot="mini-map">
-              <StallMiniMap locale={locale} data={data} stalls={[stall]} filters={filters} idPrefix="stall" />
-            </div>
-          </Stack>
-        </section>
-
-        <section aria-labelledby="eat-stall-menu">
-          <Stack space={8}>
-            <Heading level={2} id="eat-stall-menu" className="m-0 text-xl">
-              {t(EAT.menuTitle, locale)}
-            </Heading>
-            {checkedOn ? <CheckedOnNote checkedOn={checkedOn} locale={locale} className="-mt-[var(--space-4)]" /> : null}
-            {dishes.length === 0 ? (
-              <InsetText>
-                <p className="m-0 text-ink-900">{t(EAT.noMenuYet, locale)}</p>
-              </InsetText>
-            ) : null}
-            {sections.map((section) => (
-              <section key={section.type} aria-labelledby={`eat-stall-type-${section.type}`}>
-                <Stack space={3}>
-                  <Heading level={3} id={`eat-stall-type-${section.type}`} className="m-0 flex items-center text-lg gap-[var(--space-2)]">
-                    <DishTypeIcon type={section.type} size={20} />
-                    {TYPE_LABEL[section.type][locale]}
-                    <span className="text-sm font-normal text-ink-600"> ({formatNumber(section.dishes.length, locale)})</span>
-                  </Heading>
-                  <ul className="m-0 list-none divide-y divide-line border-y border-line p-0">
-                    {section.dishes.map((dish) => (
-                      <li key={dish._id}>
-                        <DishRow dish={dish} stall={stall} locale={locale} filters={filters} matches={filtered ? matchingIds.has(dish._id) : undefined} />
-                      </li>
-                    ))}
-                  </ul>
-                </Stack>
-              </section>
-            ))}
-          </Stack>
-        </section>
-
-        <p className="m-0">
-          <Link href={eatHref(locale, "/eat/stalls", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
-            {t(EAT.backToStalls, locale)}
-          </Link>
-        </p>
-      </Stack>
-    </Container>
-  );
+export default async function EatStallPage({ params }: { params: Params }) {
+  const { locale, slug } = await params;
+  if (!isLocale(locale)) notFound();
+  return <EatStall locale={locale} slug={slug} filtered={false} />;
 }

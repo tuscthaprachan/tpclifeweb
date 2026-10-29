@@ -29,7 +29,7 @@ function markSpin() {
   } catch {}
 }
 
-/** The id of the style element that keeps the server rendered result hidden until the reel takes over. */
+/** The id of the style element that keeps the result hidden until the reel takes over. */
 export const SPIN_PENDING_ID = "canteen-spin-pending";
 
 /** Runs before the result paints: hides it while a fresh spin waits for the reel, and shows it again after 5 s whatever happens. */

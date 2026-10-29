@@ -16,6 +16,7 @@ export * from "./chips";
 export * from "./query";
 export * from "./tidy";
 export * from "./paginate";
+export * from "./slim";
 
 export * from "./DietTag";
 export * from "./PriceTag";

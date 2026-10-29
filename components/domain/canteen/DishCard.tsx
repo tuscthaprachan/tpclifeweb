@@ -34,7 +34,7 @@ interface DishCardProps {
 /**
  * One dish, compact: the name and the surveyed price on one row, the other
  * language's name under it, one line with the stall and the type, then the
- * diet tags and how to say it. A server component: everything works without
+ * diet tags and how to say it. Plain markup: everything works without
  * JavaScript except the favourite toggle and the speaker buttons, which are
  * client islands and simply are not there until JavaScript runs.
  *

@@ -29,6 +29,10 @@ interface GroupBuilderProps {
   seed?: string;
   /** Whether the group has been submitted, so the link has everyone in it. */
   showShare?: boolean;
+  /** The address bar now holds this query (as `URLSearchParams` writes it), because the group was edited. Called before the address changes. */
+  onEdit: (search: string) => void;
+  /** "Show results" was pressed. `href` is the compact link to the group, ending in `#results`. */
+  onShow: (href: string) => void;
 }
 
 interface Row {
@@ -48,10 +52,11 @@ const noopSubscribe = () => () => {};
  *
  * With JavaScript the same markup becomes instant: add and remove change
  * state in place, the address bar follows (history.replaceState), and Show
- * results navigates to the compact URL. A Share box with a Copy button is
- * added; without JavaScript it is a read only input.
+ * results hands the compact URL to the page, which works the results out in
+ * the browser. A Share box with a Copy button is added; without JavaScript it
+ * is a read only input.
  */
-export function GroupBuilder({ locale, action, initialPeople, strategy, seed, showShare = false }: GroupBuilderProps) {
+export function GroupBuilder({ locale, action, initialPeople, strategy, seed, showShare = false, onEdit, onShow }: GroupBuilderProps) {
   const nextKey = useRef(initialPeople.length);
   const [rows, setRows] = useState<Row[]>(() => initialPeople.map((person, key) => ({ key, person: { ...person, ...foldRetiredAvoid(person.diet, person.avoid) } })));
   const [dirty, setDirty] = useState(false);
@@ -66,6 +71,7 @@ export function GroupBuilder({ locale, action, initialPeople, strategy, seed, sh
   useEffect(() => {
     if (!dirty) return;
     const href = groupHref(action, { people, strategy, seed });
+    onEdit(new URLSearchParams(href.split("?")[1] ?? "").toString());
     window.history.replaceState(window.history.state, "", href);
     // Only the people changing should rewrite the address bar, not a later tab or reroll link.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,12 +123,7 @@ export function GroupBuilder({ locale, action, initialPeople, strategy, seed, sh
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setDirty(false);
-    // The address bar already follows the edits, so a router push would see no change.
-    // A plain navigation always asks the server for results for exactly these people.
-    const target = groupHref(action, { people, strategy, seed }, "results");
-    const here = `${window.location.pathname}${window.location.search}`;
-    window.location.assign(target);
-    if (target.split("#")[0] === here) window.location.reload();
+    onShow(groupHref(action, { people, strategy, seed }, "results"));
   }
 
   const origin = useSyncExternalStore(
