@@ -12,6 +12,11 @@
 import type { Locale, LocaleString } from "./config";
 import { CANTEEN_STRINGS } from "./admin-content/canteen";
 import { CASES_STRINGS } from "./admin-content/cases";
+import { CONSOLE_STRINGS } from "./admin-content/console";
+import { CONSOLE_HOME_STRINGS } from "./admin-content/console-home";
+import { CONSOLE_CONTENT_STRINGS } from "./admin-content/console-content";
+import { CONSOLE_CASES_STRINGS } from "./admin-content/console-cases";
+import { CONSOLE_PEOPLE_STRINGS } from "./admin-content/console-people";
 import { COMPLAINTS_STRINGS } from "./admin-content/complaints";
 import { DIRECTORY_STRINGS } from "./admin-content/directory";
 import { LOST_FOUND_CASES_STRINGS } from "./admin-content/lost-found-cases";
@@ -725,6 +730,11 @@ export const A = {
   ...COMPLAINTS_STRINGS,
   ...LOST_FOUND_CASES_STRINGS,
   ...PERFORMANCE_STRINGS,
+  ...CONSOLE_STRINGS,
+  ...CONSOLE_HOME_STRINGS,
+  ...CONSOLE_CONTENT_STRINGS,
+  ...CONSOLE_CASES_STRINGS,
+  ...CONSOLE_PEOPLE_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 
 export type AdminKey = keyof typeof A;

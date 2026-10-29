@@ -49,9 +49,9 @@ const THEME_LABEL_KEY: Record<ThemeChoice, "themeLight" | "themeDark" | "themeSy
   system: "themeSystem",
 };
 
-const THEME_CHANGE_EVENT = "trytpc:theme-change";
+export const THEME_CHANGE_EVENT = "trytpc:theme-change";
 
-function applyThemeOnClient(choice: ThemeChoice) {
+export function applyThemeOnClient(choice: ThemeChoice) {
   const root = document.documentElement;
   if (choice === "system") {
     root.removeAttribute("data-theme");

@@ -11,6 +11,8 @@ interface ButtonOwnProps {
   loading?: boolean;
   /** Announced politely while `loading` is true, since the visible label does not change to say so itself. Required whenever `loading` can be true. */
   loadingLabel?: string;
+  /** A leading icon (for example `<ConsoleIcon name="add" />`). Decorative: the label still names the button. */
+  icon?: ReactNode;
   className?: string;
   children: ReactNode;
 }
@@ -49,13 +51,14 @@ const SIZE_CLASS: Record<ButtonSize, string> = {
  * action apart by looking, only by what actually happens (2.4.4).
  */
 export function Button(props: ButtonProps) {
-  const { variant = "primary", size = "md", loading, loadingLabel, className, children, href, ...rest } = props;
+  const { variant = "primary", size = "md", loading, loadingLabel, className, children, href, icon, ...rest } = props;
   const classes = cx(BASE, VARIANT_CLASS[variant], SIZE_CLASS[size], className);
 
   if (href !== undefined) {
     const anchorRest = rest as Omit<ComponentPropsWithoutRef<"a">, "href" | "className" | "children">;
     return (
       <a href={href} className={classes} {...anchorRest}>
+        {icon}
         {children}
       </a>
     );
@@ -66,6 +69,7 @@ export function Button(props: ButtonProps) {
 
   return (
     <button type={type ?? "button"} className={classes} disabled={isDisabled} {...buttonRest}>
+      {icon}
       {children}
       {loading ? (
         <span role="status" aria-live="polite" className="visually-hidden">

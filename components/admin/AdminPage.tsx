@@ -1,13 +1,7 @@
 import type { ReactNode } from "react";
-import { Container, Stack } from "@/components/ui";
+import { ConsolePage } from "@/components/admin/ui";
 
-/** The page body every console page shares: one centred column with the usual rhythm. */
+/** Kept so existing pages compile unchanged. New pages use `ConsolePage`, which also offers `wide` and `full`. */
 export function AdminPage({ children, width = "narrow" }: { children: ReactNode; width?: "narrow" | "content" }) {
-  return (
-    <Container width={width}>
-      <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-6)]">
-        {children}
-      </Stack>
-    </Container>
-  );
+  return <ConsolePage width={width}>{children}</ConsolePage>;
 }

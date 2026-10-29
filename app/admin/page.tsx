@@ -1,5 +1,5 @@
-import { AdminPage } from "@/components/admin/AdminPage";
 import { NotConfigured } from "@/components/admin/NotConfigured";
+import { ConsolePage, PageHeader } from "@/components/admin/ui";
 import { Button, Heading, SummaryList, Timestamp } from "@/components/ui";
 import { CONTENT_TYPES, contentPath } from "@/lib/admin/content/types";
 import { adminTitle } from "@/lib/admin/metadata";
@@ -30,11 +30,8 @@ export default async function AdminDashboardPage() {
   );
 
   return (
-    <AdminPage>
-      <div>
-        <Heading level={1}>{a("dashTitle", locale)}</Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">{a("dashIntro", locale)}</p>
-      </div>
+    <ConsolePage>
+      <PageHeader title={a("dashTitle", locale)} description={a("dashIntro", locale)} icon="dashboard" />
       <section>
         <Heading level={2}>{a("yourDetails", locale)}</Heading>
         <SummaryList
@@ -94,7 +91,7 @@ export default async function AdminDashboardPage() {
           </Button>
         </div>
       ) : null}
-    </AdminPage>
+    </ConsolePage>
   );
 }
 
