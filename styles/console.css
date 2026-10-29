@@ -256,7 +256,7 @@
     transition: none;
   }
 
-  .console-drawer-close {
+  .console-icon-button.console-drawer-close {
     display: none;
   }
 
@@ -298,7 +298,7 @@
     justify-content: center;
   }
 
-  .console-menu-button {
+  .console-icon-button.console-menu-button {
     display: none;
   }
 }
