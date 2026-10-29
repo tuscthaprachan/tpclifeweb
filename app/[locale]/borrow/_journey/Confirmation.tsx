@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Button, Container, Heading, InsetText, NotificationBanner, Panel, Stack, WarningText } from "@/components/ui";
 import { siteOrigin } from "@/lib/borrowing/public/cookies";
@@ -57,9 +58,9 @@ export async function Confirmation({ locale, result, email, crumbs }: Confirmati
           <InsetText>
             <p className="m-0 text-sm text-ink-600">{UI.brYourLink[locale]}</p>
             <p className="m-0 break-all">
-              <a href={link} className="text-action underline">
+              <Link href={link} className="text-action underline">
                 {link}
-              </a>
+              </Link>
             </p>
           </InsetText>
           <div>
@@ -94,9 +95,9 @@ export async function Confirmation({ locale, result, email, crumbs }: Confirmati
         ) : null}
 
         <p className="m-0">
-          <a href={localePath(locale, "/borrow/privacy")} className="text-action underline">
+          <Link href={localePath(locale, "/borrow/privacy")} className="text-action underline">
             {UI.brPrivacyLink[locale]}
-          </a>
+          </Link>
         </p>
       </Stack>
     </Container>

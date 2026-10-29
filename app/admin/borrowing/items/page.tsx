@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Package, Plus } from "lucide-react";
 import { ConsolePage, PageHeader } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
@@ -75,10 +76,10 @@ function Items({ items, locale, caption }: { items: EquipmentItemRow[]; locale: 
       header: a("brInvColItem", locale),
       cell: (i) => (
         <span className="flex flex-wrap items-center gap-x-[var(--space-2)]">
-          <a href={`/admin/borrowing/items/${i.id}`} className="font-medium">
+          <Link href={`/admin/borrowing/items/${i.id}`} className="font-medium">
             {pick({ th: i.nameTh, en: i.nameEn }, locale)}
             <span className="visually-hidden"> {a("brInvEditItem", locale)}</span>
-          </a>
+          </Link>
           {!i.active ? <Tag tone="neutral">{a("brInvInactive", locale)}</Tag> : null}
         </span>
       ),

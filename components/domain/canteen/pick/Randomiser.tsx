@@ -28,6 +28,7 @@
  * during the reel), so a focused link keeps focus while the reel plays.
  */
 
+import Link from "next/link";
 import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 
 import { cx } from "@/components/ui/cx";
@@ -244,7 +245,7 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
       )}
       {applied ? (
         <p className="m-0 text-sm text-ink-600">
-          {PICK.noteApplied[locale]} <a href={localePath(locale, "/eat/mine")}>{PICK.noteAppliedLink[locale]}</a>
+          {PICK.noteApplied[locale]} <Link href={localePath(locale, "/eat/mine")}>{PICK.noteAppliedLink[locale]}</Link>
         </p>
       ) : null}
     </div>

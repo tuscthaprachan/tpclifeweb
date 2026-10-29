@@ -7,6 +7,7 @@
  * back navigation (3.3.7).
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -118,9 +119,9 @@ export default async function FormsIndexPage({
               // dropdown filter with no matches.
               title={locale === "th" ? "ไม่พบแบบฟอร์มที่ตรงกับตัวกรองที่เลือก" : "No forms match these filters"}
               action={
-                <a href={localePath(locale, "/forms")} className="text-action underline">
+                <Link href={localePath(locale, "/forms")} className="text-action underline">
                   {UI.clearFilters[locale]}
-                </a>
+                </Link>
               }
             />
           )

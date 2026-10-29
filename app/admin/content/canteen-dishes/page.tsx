@@ -1,3 +1,5 @@
+import Form from "next/form";
+import Link from "next/link";
 import { asc } from "drizzle-orm";
 import { contentPlacement } from "@/app/admin/content/_list/placement";
 import { PublishState, queryString, ResultCount, RowAction } from "@/app/admin/content/_list/parts";
@@ -53,9 +55,9 @@ export default async function CanteenDishListPage({ searchParams }: { searchPara
       id: "name",
       header: a("canteenColName", locale),
       cell: (row) => (
-        <a href={contentPath(def, row.id)} className="font-medium">
+        <Link href={contentPath(def, row.id)} className="font-medium">
           {rowTitle(row.name, locale)}
-        </a>
+        </Link>
       ),
     },
     {
@@ -116,7 +118,7 @@ export default async function CanteenDishListPage({ searchParams }: { searchPara
       <Toolbar
         search={<SearchField label={a("ccSearchLabel", locale, { label: label.toLowerCase() })} submitLabel={a("ccSearchSubmit", locale)} defaultValue={q} hidden={stallId ? { stall: stallId } : undefined} />}
         filters={
-          <form method="get" className="flex flex-wrap items-end gap-[var(--space-2)]">
+          <Form action="" className="flex flex-wrap items-end gap-[var(--space-2)]">
             {q ? <input type="hidden" name="q" value={q} /> : null}
             <div className="flex flex-col gap-[var(--space-1)]">
               <label htmlFor="dish-stall" className="text-sm font-medium">
@@ -134,7 +136,7 @@ export default async function CanteenDishListPage({ searchParams }: { searchPara
             <Button type="submit" variant="secondary">
               {a("ccShowStall", locale)}
             </Button>
-          </form>
+          </Form>
         }
       />
 

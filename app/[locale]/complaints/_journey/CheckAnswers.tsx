@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Button, Heading, InsetText, Stack, SummaryList, type SummaryListRow } from "@/components/ui";
 import { stepPath, type DraftValues } from "@/lib/complaints/public/steps";
@@ -20,10 +21,10 @@ const lines = (text: string): ReactNode => <span className="whitespace-pre-line"
 /** The check your answers page: every answer, a change link for each, and the one button that sends it. */
 export function CheckAnswers({ locale, values, category, fileNames }: CheckAnswersProps) {
   const change = (step: string, what: string): ReactNode => (
-    <a href={`${localePath(locale, stepPath(step))}?from=check`} className="text-action underline">
+    <Link href={`${localePath(locale, stepPath(step))}?from=check`} className="text-action underline">
       {UI.cpChange[locale]}
       <span className="visually-hidden"> {what}</span>
-    </a>
+    </Link>
   );
   const missing = <span className="text-ink-600">{UI.cpNotGiven[locale]}</span>;
   const rows: SummaryListRow[] = [];
@@ -94,9 +95,9 @@ export function CheckAnswers({ locale, values, category, fileNames }: CheckAnswe
         <Stack space={4}>
           <p className="m-0 text-ink-900">
             {UI.cpCheckPrivacy[locale]}{" "}
-            <a href={localePath(locale, "/complaints/privacy")} className="text-action underline">
+            <Link href={localePath(locale, "/complaints/privacy")} className="text-action underline">
               {UI.cpPrivacyLink[locale]}
-            </a>
+            </Link>
           </p>
           <div>
             <Button type="submit">{UI.cpSend[locale]}</Button>

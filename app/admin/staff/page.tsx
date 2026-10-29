@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { PeopleIcon } from "@/components/admin/PeopleIcon";
 import { Card, ConsolePage, EmptyPanel, PageHeader } from "@/components/admin/ui";
@@ -101,14 +102,14 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
                       <li key={g.id} className="flex flex-wrap items-center gap-x-[var(--space-2)] py-[var(--space-1)]">
                         <Tag>{a(ROLE_LABEL[g.role], locale)}</Tag>
                         <span className="text-sm text-ink-600">{orgName.get(g.organisationId) ?? ""}</span>
-                        <a href={`/admin/staff/roles/${g.id}/remove`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)] text-sm">
+                        <Link href={`/admin/staff/roles/${g.id}/remove`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)] text-sm">
                           <PeopleIcon name="cancel" size={16} />
                           {a("removeRoleVisible", locale)}
                           <span className="visually-hidden">
                             {" "}
                             {a("removeRoleFor", locale, { role: a(ROLE_LABEL[g.role], locale), person: p.name || p.email })}
                           </span>
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -122,11 +123,11 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
                     {p.userId === staff.user.id && !otherAdmin ? (
                       <span className="text-sm text-ink-600">-</span>
                     ) : (
-                      <a href={`/admin/staff/recovery/${encodeURIComponent(p.userId)}`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)]">
+                      <Link href={`/admin/staff/recovery/${encodeURIComponent(p.userId)}`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)]">
                         <PeopleIcon name="lifeBuoy" size={16} />
                         {a("recoveryLinkVisible", locale)}
                         <span className="visually-hidden"> {a("recoveryLinkFor", locale, { person: p.name || p.email })}</span>
-                      </a>
+                      </Link>
                     )}
                     {withRecovery.has(p.userId) ? (
                       <span className="flex items-center gap-[var(--space-1)] text-sm text-ink-600">
@@ -178,11 +179,11 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
                 id: "cancel",
                 header: a("cpColActions", locale),
                 cell: (i) => (
-                  <a href={`/admin/staff/invites/${i.id}/cancel`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)]">
+                  <Link href={`/admin/staff/invites/${i.id}/cancel`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)]">
                     <PeopleIcon name="cancel" size={16} />
                     {a("cancelInvite", locale)}
                     <span className="visually-hidden"> {a("cancelInviteFor", locale, { email: i.email })}</span>
-                  </a>
+                  </Link>
                 ),
               },
             ]}

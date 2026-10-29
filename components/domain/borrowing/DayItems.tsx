@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DataTable, Heading, InsetText, StatusTag, type DataTableColumn } from "@/components/ui";
 import type { DayAvailability, DayItem } from "@/lib/borrowing/calendar";
 import type { Locale } from "@/lib/i18n/config";
@@ -37,10 +38,10 @@ export function DayItems({ locale, data, basePath, headingLevel = 2 }: DayItemsP
             id: "item",
             header: av("colItem", locale),
             cell: (row) => (
-              <a href={monthHref(basePath, row.item.slug, month)}>
+              <Link href={monthHref(basePath, row.item.slug, month)}>
                 {itemName(row.item, locale)}
                 <span className="visually-hidden">: {av("viewMonth", locale)}</span>
-              </a>
+              </Link>
             ),
           },
           { id: "free", header: av("colFree", locale), cell: (row) => <FreeCell row={row} locale={locale} reason={reason} /> },

@@ -4,6 +4,7 @@
  * the move while the request is waiting or approved.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -76,9 +77,9 @@ export default async function CancelRequestPage({ params, searchParams }: { para
             <Button type="submit" variant="destructive">
               {UI.brCancelYes[locale]}
             </Button>
-            <a href={status} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+            <Link href={status} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
               {UI.brCancelNo[locale]}
-            </a>
+            </Link>
           </div>
         </form>
       </Stack>

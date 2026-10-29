@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CircleCheck, CircleDashed, CircleDot, Lock, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { StatusTag } from "@/components/ui";
@@ -46,9 +47,9 @@ export function TaskList({ items, locale }: { items: TaskItem[]; locale: Locale 
                 <Glyph icon={ICON[item.state]} className="translate-y-[0.2em] text-ink-600" />
                 <span className="text-ink-600">{index + 1}.</span>
                 {item.href ? (
-                  <a href={item.href} className="font-medium" aria-describedby={`task-${item.id}-status`}>
+                  <Link href={item.href} className="font-medium" aria-describedby={`task-${item.id}-status`}>
                     {item.title}
-                  </a>
+                  </Link>
                 ) : (
                   <span className="font-medium" aria-describedby={`task-${item.id}-status`}>
                     {item.title}

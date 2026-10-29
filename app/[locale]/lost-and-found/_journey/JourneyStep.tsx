@@ -7,6 +7,7 @@
  * expired after two hours) the reader goes back to the start page.
  */
 
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { categoryLabel, LOST_FOUND_CATEGORIES } from "@/components/domain/lostfound";
@@ -47,9 +48,9 @@ function Question({ children }: { children: ReactNode }) {
 
 function BackLink({ href, locale }: { href: string; locale: Locale }) {
   return (
-    <a href={href} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+    <Link href={href} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
       {UI.back[locale]}
-    </a>
+    </Link>
   );
 }
 

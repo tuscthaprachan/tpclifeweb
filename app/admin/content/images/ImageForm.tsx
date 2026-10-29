@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { FormSection } from "@/components/admin/content/FormSection";
@@ -43,7 +44,7 @@ export async function ImageForm({ locale, id, notice, blocked }: { locale: Local
       {notice === "uploaded" ? (
         <NotificationBanner variant="success" title={a("mediaUploaded", locale)}>
           {a("mediaUploadedNote", locale)}{" "}
-          <a href={`${contentPath(def)}/new`}>{a("mediaUploadAnother", locale)}</a>
+          <Link href={`${contentPath(def)}/new`}>{a("mediaUploadAnother", locale)}</Link>
         </NotificationBanner>
       ) : null}
       {notice === "saved" ? (
@@ -103,7 +104,7 @@ export async function ImageForm({ locale, id, notice, blocked }: { locale: Local
                   const title = rowTitle(use.title, locale);
                   return (
                     <li key={`${use.segment}-${use.id}-${use.role}-${index}`}>
-                      {type?.available ? <a href={contentPath(type, use.id)}>{title}</a> : title}
+                      {type?.available ? <Link href={contentPath(type, use.id)}>{title}</Link> : title}
                       <span className="text-ink-600">
                         {" "}
                         ({typeName}, {a(ROLE_KEY[use.role], locale)})

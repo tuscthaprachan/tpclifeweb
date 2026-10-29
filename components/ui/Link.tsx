@@ -1,6 +1,8 @@
+import NextLink from "next/link";
 import type { ReactNode } from "react";
 import type { Locale } from "@/lib/i18n/config";
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
+import { isAppHref } from "./app-href";
 
 interface LinkProps {
   href: string;
@@ -20,6 +22,14 @@ export function Link({ href, children, locale, className, newTab }: LinkProps) {
   const external = isExternalUrl(href);
   const opensNewTab = newTab ?? external;
   const suffix = externalLinkSuffix(locale, opensNewTab);
+
+  if (!opensNewTab && isAppHref(href)) {
+    return (
+      <NextLink href={href} className={className}>
+        {children}
+      </NextLink>
+    );
+  }
 
   return (
     <a href={href} className={className} {...externalLinkProps(opensNewTab)}>

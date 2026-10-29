@@ -5,6 +5,7 @@
  * the two body-specific pages.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -51,14 +52,14 @@ export default async function AboutIndexPage({
         <Heading level={1}>{UI.about[locale]}</Heading>
         <ul className="m-0 flex flex-col gap-[var(--space-2)] pl-[var(--space-6)]">
           <li>
-            <a href={localePath(locale, "/about/tusu")} className="font-medium text-action underline">
+            <Link href={localePath(locale, "/about/tusu")} className="font-medium text-action underline">
               {STUDENT_BODIES.tusu.name[locale]}
-            </a>
+            </Link>
           </li>
           <li>
-            <a href={localePath(locale, "/about/tusc")} className="font-medium text-action underline">
+            <Link href={localePath(locale, "/about/tusc")} className="font-medium text-action underline">
               {STUDENT_BODIES.tusc.name[locale]}
-            </a>
+            </Link>
           </li>
         </ul>
       </Stack>

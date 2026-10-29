@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { signOutAction } from "@/app/admin/actions";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Popover } from "./Popover";
@@ -37,16 +38,16 @@ export function AccountMenu({ name, email, roles, labels }: AccountMenuProps) {
       ) : null}
       <ul className="console-menu-list mt-[var(--space-3)] border-t border-line pt-[var(--space-2)]">
         <li>
-          <a href="/admin/account" className="console-menu-item">
+          <Link href="/admin/account" className="console-menu-item">
             <ConsoleIcon name="account" />
             <span>{labels.accountDetails}</span>
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/admin/security" className="console-menu-item">
+          <Link href="/admin/security" className="console-menu-item">
             <ConsoleIcon name="security" />
             <span>{labels.accountSecurity}</span>
-          </a>
+          </Link>
         </li>
         <li>
           <form action={signOutAction}>

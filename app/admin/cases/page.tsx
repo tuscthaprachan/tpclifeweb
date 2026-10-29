@@ -1,3 +1,5 @@
+import Form from "next/form";
+import Link from "next/link";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { ConsolePage, EmptyPanel, FilterChips, PageHeader, SearchField, Toolbar } from "@/components/admin/ui";
@@ -57,10 +59,10 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
       id: "reference",
       header: a("casesColReference", locale),
       cell: (row) => (
-        <a href={`/admin/cases/${row.id}`} className="font-medium">
+        <Link href={`/admin/cases/${row.id}`} className="font-medium">
           {row.reference}
           <span className="visually-hidden"> {a("casesOpenCase", locale)}</span>
-        </a>
+        </Link>
       ),
     },
     {
@@ -139,7 +141,7 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
         filters={<FilterChips label={a("ckViewsLabel", locale)} options={views} current={view} />}
       />
 
-      <form method="get" role="search" aria-label={a("ckFiltersLabel", locale)} className="console-filter-row flex flex-wrap items-end gap-[var(--space-3)]">
+      <Form action="" role="search" aria-label={a("ckFiltersLabel", locale)} className="console-filter-row flex flex-wrap items-end gap-[var(--space-3)]">
         {query.q?.trim() ? <input type="hidden" name="q" value={query.q.trim()} /> : null}
         {services.length > 1 ? (
           <div className="flex flex-col gap-[var(--space-1)]">
@@ -203,7 +205,7 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
             {a("casesFilterClear", locale)}
           </Button>
         ) : null}
-      </form>
+      </Form>
 
       <p className="m-0 text-ink-600" role="status">
         {list.total === 1 ? a("casesTotalOne", locale) : a("casesTotal", locale, { count: formatNumber(list.total, locale) })}

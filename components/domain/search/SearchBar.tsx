@@ -18,6 +18,7 @@
  * request per keystroke; only the initial index fetch touches the network.
  */
 
+import Form from "next/form";
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { liveRegionProps } from "@/lib/a11y";
@@ -166,7 +167,7 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
   const activeId = activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined;
 
   return (
-    <form role="search" action={localePath(locale, "/search")} method="get" className={className}>
+    <Form role="search" action={localePath(locale, "/search")} className={className}>
       <label htmlFor={inputId} className="mb-[var(--space-1)] block text-base font-medium text-ink-900">
         {label ?? UI.searchLabel[locale]}
       </label>
@@ -250,6 +251,6 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
       <p {...liveRegionProps("polite")} className="visually-hidden">
         {announcement}
       </p>
-    </form>
+    </Form>
   );
 }

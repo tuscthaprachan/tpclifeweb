@@ -1,5 +1,7 @@
 "use client";
 
+import Form from "next/form";
+import Link from "next/link";
 import { Button, Select } from "@/components/ui";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -55,7 +57,7 @@ export function DirectoryFilterForm({ locale, action, currentType, currentFacult
   const hasActiveFilter = currentType !== "" || currentFaculty !== "";
 
   return (
-    <form method="get" action={action} aria-label={UI.filter[locale]} className="flex flex-wrap items-end gap-[var(--space-4)]">
+    <Form action={action} aria-label={UI.filter[locale]} className="flex flex-wrap items-end gap-[var(--space-4)]">
       <Select
         id="directory-type"
         name="type"
@@ -74,10 +76,10 @@ export function DirectoryFilterForm({ locale, action, currentType, currentFacult
       />
       <Button type="submit">{UI.applyFilters[locale]}</Button>
       {hasActiveFilter ? (
-        <a href={action} className="text-base text-action underline">
+        <Link href={action} className="text-base text-action underline">
           {UI.clearFilters[locale]}
-        </a>
+        </Link>
       ) : null}
-    </form>
+    </Form>
   );
 }

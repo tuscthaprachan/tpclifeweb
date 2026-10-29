@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button, Container, Heading, Stack, WarningText } from "@/components/ui";
 import { EMERGENCY_NUMBERS } from "@/lib/complaints/constants";
 import { localePath, type Locale } from "@/lib/i18n/config";
@@ -46,14 +47,14 @@ export function Urgent({ locale, crumbs, backHref }: { locale: Locale; crumbs: R
         </Stack>
         <ul className="m-0 flex list-none flex-col gap-[var(--space-1)] p-0">
           <li>
-            <a href={localePath(locale, "/complaints/emergency")} className="text-action underline">
+            <Link href={localePath(locale, "/complaints/emergency")} className="text-action underline">
               {UI.cpSignStartAgain[locale]}
-            </a>
+            </Link>
           </li>
           <li>
-            <a href={localePath(locale, "/report")} className="text-action underline">
+            <Link href={localePath(locale, "/report")} className="text-action underline">
               {UI.cpSignElse[locale]}
-            </a>
+            </Link>
           </li>
         </ul>
       </Stack>

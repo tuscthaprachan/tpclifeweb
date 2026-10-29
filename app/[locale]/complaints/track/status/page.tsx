@@ -8,6 +8,7 @@
  * message.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -158,24 +159,24 @@ export default async function ComplaintStatusPage({ params, searchParams }: { pa
             <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
               {c.survey === "open" ? (
                 <li>
-                  <a href={localePath(locale, "/complaints/track/survey")} className="text-action underline">
+                  <Link href={localePath(locale, "/complaints/track/survey")} className="text-action underline">
                     {UI.cpSurveyLink[locale]}
-                  </a>
+                  </Link>
                 </li>
               ) : null}
               {c.canReopen && c.reopenUntil ? (
                 <li>
-                  <a href={localePath(locale, "/complaints/track/reopen")} className="text-action underline">
+                  <Link href={localePath(locale, "/complaints/track/reopen")} className="text-action underline">
                     {UI.cpReopenLink[locale]}
-                  </a>{" "}
+                  </Link>{" "}
                   <span className="text-ink-600">{UI.cpReopenUntil[locale].replace("{date}", formatDate(c.reopenUntil, locale))}</span>
                 </li>
               ) : null}
               {c.canWithdraw ? (
                 <li>
-                  <a href={localePath(locale, "/complaints/track/withdraw")} className="text-action underline">
+                  <Link href={localePath(locale, "/complaints/track/withdraw")} className="text-action underline">
                     {UI.cpWithdrawLink[locale]}
-                  </a>
+                  </Link>
                 </li>
               ) : null}
             </ul>

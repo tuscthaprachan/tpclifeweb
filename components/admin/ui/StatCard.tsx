@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { ConsoleIcon, type ConsoleIconName } from "@/components/admin/icons";
 
@@ -20,9 +21,9 @@ export function StatCard({ icon, label, value, hint, href, tone = "neutral", cla
       <p className="m-0 flex items-center gap-[var(--space-2)] text-sm text-ink-600">
         {icon ? <ConsoleIcon name={icon} /> : null}
         {href ? (
-          <a href={href} className="console-stat-anchor">
+          <Link href={href} className="console-stat-anchor">
             {label}
-          </a>
+          </Link>
         ) : (
           <span>{label}</span>
         )}

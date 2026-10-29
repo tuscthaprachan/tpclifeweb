@@ -18,9 +18,9 @@
  * Baseline (JavaScript off): clicking a button submits its form to
  * `/api/theme`, a route handler that sets `THEME_COOKIE` and 303-redirects
  * back to `redirectTo` (the current path, carried as a hidden field). The
- * next response has `data-theme` stamped on `<html>` server-side by
- * `app/[locale]/layout.tsx`, so the new theme is there from first paint,
- * no flash.
+ * pages are prerendered without reading the cookie, so the inline
+ * THEME_BOOT_SCRIPT in `app/[locale]/layout.tsx` applies it before first
+ * paint; with scripts off the page follows `prefers-color-scheme`.
  *
  * Enhancement (JavaScript on): `onClick` calls `preventDefault` and applies
  * the choice on the client instead, an instant switch with no navigation at
@@ -36,12 +36,12 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { CheckIcon } from "@/components/ui/icons";
 import { cx } from "@/components/ui/cx";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { LEGACY_THEME_COOKIE, THEME_CHOICES, THEME_COOKIE, THEME_COOKIE_MAX_AGE, type ThemeChoice } from "@/lib/theme/config";
+import { LEGACY_THEME_COOKIE, readAppliedTheme, THEME_CHOICES, THEME_COOKIE, THEME_COOKIE_MAX_AGE, type ThemeChoice } from "@/lib/theme/config";
 
 const THEME_LABEL_KEY: Record<ThemeChoice, "themeLight" | "themeDark" | "themeSystem"> = {
   light: "themeLight",
@@ -69,26 +69,20 @@ export function applyThemeOnClient(choice: ThemeChoice) {
   document.dispatchEvent(new CustomEvent<ThemeChoice>(THEME_CHANGE_EVENT, { detail: choice }));
 }
 
+function subscribeToTheme(onChange: () => void) {
+  document.addEventListener(THEME_CHANGE_EVENT, onChange);
+  return () => document.removeEventListener(THEME_CHANGE_EVENT, onChange);
+}
+
 export function ThemeToggle({
   locale,
-  current,
   className = "",
 }: {
   locale: Locale;
-  /** The theme resolved server-side (from the cookie, or "system" if absent), so first paint already matches. */
-  current: ThemeChoice;
   className?: string;
 }) {
   const pathname = usePathname();
-  const [active, setActive] = useState(current);
-
-  useEffect(() => {
-    function onThemeChange(event: Event) {
-      setActive((event as CustomEvent<ThemeChoice>).detail);
-    }
-    document.addEventListener(THEME_CHANGE_EVENT, onThemeChange);
-    return () => document.removeEventListener(THEME_CHANGE_EVENT, onThemeChange);
-  }, []);
+  const active = useSyncExternalStore(subscribeToTheme, readAppliedTheme, () => "system" as const);
 
   return (
     <div role="group" aria-label={UI.theme[locale]} className={cx("flex flex-wrap items-center gap-2", className)}>

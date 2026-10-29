@@ -7,6 +7,7 @@
  * against the address's attempt limit, on every view.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -119,9 +120,9 @@ export default async function BorrowStatusPage({ params, searchParams }: { param
           <Stack space={2} as="section">
             <Heading level={2}>{UI.brYouCan[locale]}</Heading>
             <p className="m-0">
-              <a href={localePath(locale, "/borrow/track/cancel")} className="text-action underline">
+              <Link href={localePath(locale, "/borrow/track/cancel")} className="text-action underline">
                 {UI.brCancelLink[locale]}
-              </a>
+              </Link>
             </p>
           </Stack>
         ) : null}

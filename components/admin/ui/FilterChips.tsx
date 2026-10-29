@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Badge } from "./Badge";
 
@@ -27,11 +28,11 @@ export function FilterChips({ label, options, current, className = "" }: FilterC
           const selected = option.id === current;
           return (
             <li key={option.id}>
-              <a href={option.href} aria-current={selected ? "true" : undefined} className="console-chip">
+              <Link href={option.href} aria-current={selected ? "true" : undefined} className="console-chip">
                 {selected ? <ConsoleIcon name="check" size={14} /> : null}
                 <span>{option.label}</span>
                 {option.count !== undefined ? <Badge>{option.count}</Badge> : null}
-              </a>
+              </Link>
             </li>
           );
         })}

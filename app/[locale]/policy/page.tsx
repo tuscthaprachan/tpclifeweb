@@ -7,6 +7,7 @@
  * of app/[locale]/forms/page.tsx.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -135,9 +136,9 @@ export default async function PolicyDashboardPage({
               // no matches.
               title={locale === "th" ? "ไม่พบนโยบายที่ตรงกับตัวกรองที่เลือก" : "No policies match these filters"}
               action={
-                <a href={localePath(locale, "/policy")} className="text-action underline">
+                <Link href={localePath(locale, "/policy")} className="text-action underline">
                   {UI.clearFilters[locale]}
-                </a>
+                </Link>
               }
             />
           )

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Card, ConsolePage, EmptyPanel, PageHeader, StatCard } from "@/components/admin/ui";
@@ -127,10 +128,10 @@ export default async function AdminDashboardPage() {
                   <ul className="m-0 grid list-none gap-[var(--space-1)] p-0">
                     {more.map((q) => (
                       <li key={q.id}>
-                        <a href={q.href} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+                        <Link href={q.href} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
                           <ConsoleIcon name="add" />
                           {createLabel(q)}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
@@ -166,10 +167,10 @@ export default async function AdminDashboardPage() {
 function ShortcutLink({ href, icon, label }: { href: string; icon: Parameters<typeof ConsoleIcon>[0]["name"]; label: string }) {
   return (
     <li>
-      <a href={href} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+      <Link href={href} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
         <ConsoleIcon name={icon} />
         {label}
-      </a>
+      </Link>
     </li>
   );
 }
@@ -229,9 +230,9 @@ function RecentRow({ item, locale, icon }: { item: RecentItem; locale: "th" | "e
     <li className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)] border-t border-line px-[var(--space-4)] py-[var(--space-2)] first:border-t-0">
       <ConsoleIcon name={icon} className="text-ink-600" />
       <div className="min-w-0 flex-1">
-        <a href={contentPath(def, item.id)} className="font-medium">
+        <Link href={contentPath(def, item.id)} className="font-medium">
           {title}
-        </a>
+        </Link>
         <p className="m-0 text-sm text-ink-600">
           {a(def.oneKey, locale)}
           {" · "}

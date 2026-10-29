@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { categoryLabel } from "@/components/domain/lostfound";
 import { Button, Heading, Stack, SummaryList, type SummaryListRow } from "@/components/ui";
@@ -24,10 +25,10 @@ const lines = (text: string): ReactNode => <span className="whitespace-pre-line"
 /** The check your answers page: every answer, a change link for each, and the one button that sends it. */
 export function CheckAnswers({ kind, locale, slug, values, placeName }: CheckAnswersProps) {
   const change = (step: string, what: string): ReactNode => (
-    <a href={`${localePath(locale, stepPath(kind, step, slug))}?from=check`} className="text-action underline">
+    <Link href={`${localePath(locale, stepPath(kind, step, slug))}?from=check`} className="text-action underline">
       {UI.lfpChange[locale]}
       <span className="visually-hidden"> {what}</span>
-    </a>
+    </Link>
   );
   const found = kind === "found";
   const rows: SummaryListRow[] = [];
@@ -94,9 +95,9 @@ export function CheckAnswers({ kind, locale, slug, values, placeName }: CheckAns
         <Stack space={4}>
           <p className="m-0 text-ink-900">
             {UI.lfpCheckPrivacy[locale]}{" "}
-            <a href={localePath(locale, "/lost-and-found/privacy")} className="text-action underline">
+            <Link href={localePath(locale, "/lost-and-found/privacy")} className="text-action underline">
               {UI.lfpPrivacyLink[locale]}
-            </a>
+            </Link>
           </p>
           <div>
             <Button type="submit">{(kind === "claim" ? UI.lfpSendClaim : UI.lfpSendReport)[locale]}</Button>

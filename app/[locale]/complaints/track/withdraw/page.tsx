@@ -4,6 +4,7 @@
  * the move for a status the person may choose.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -76,9 +77,9 @@ export default async function WithdrawComplaintPage({ params, searchParams }: { 
             <Button type="submit" variant="destructive">
               {UI.cpWithdrawYes[locale]}
             </Button>
-            <a href={status} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+            <Link href={status} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
               {UI.cpWithdrawNo[locale]}
-            </a>
+            </Link>
           </div>
         </form>
       </Stack>

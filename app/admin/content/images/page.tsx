@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { and, count, desc, eq, ilike, or, sql } from "drizzle-orm";
 import Image from "next/image";
 import { contentPlacement } from "@/app/admin/content/_list/placement";
@@ -120,9 +121,9 @@ export default async function ImagesListPage({ searchParams }: { searchParams: P
                     <span className="flex h-40 w-full items-center justify-center bg-surface-sunk text-sm text-ink-600">{a("mediaNoPreview", locale)}</span>
                   )}
                   <div className="flex flex-1 flex-col items-start gap-[var(--space-2)] p-[var(--space-3)]">
-                    <a href={contentPath(def, row.id)} className="font-medium">
+                    <Link href={contentPath(def, row.id)} className="font-medium">
                       {text || a("imageNoAlt", locale)}
-                    </a>
+                    </Link>
                     {!row.isDecorative && (!row.altTh.trim() || !row.altEn.trim()) ? <StatusTag tone="warning" label={a("mediaNeedsDescription", locale)} /> : null}
                     <p className="m-0 text-sm text-ink-600">
                       {a("mediaColAdded", locale)}: <Timestamp value={row.createdAt} locale={locale} format="datetime" />

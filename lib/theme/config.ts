@@ -36,3 +36,10 @@ export const THEME_COOKIE = "trytpc_theme";
 /** The cookie name before the rebrand. Still read as a fallback, and deleted whenever the new one is written. */
 export const LEGACY_THEME_COOKIE = "tpclife_theme";
 export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+export const THEME_BOOT_SCRIPT = `(function(){try{var m=document.cookie.match(/(?:^|; )(?:${THEME_COOKIE}|${LEGACY_THEME_COOKIE})=(light|dark)(?:;|$)/);if(m){var r=document.documentElement;r.setAttribute("data-theme",m[1]);r.style.colorScheme=m[1]}}catch(e){}})()`;
+
+export function readAppliedTheme(): ThemeChoice {
+  const value = document.documentElement.getAttribute("data-theme");
+  return isStoredTheme(value) ? value : "system";
+}

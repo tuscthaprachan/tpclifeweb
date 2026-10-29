@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Button, DataTable, NotificationBanner, Pagination, Timestamp, type DataTableColumn } from "@/components/ui";
 import { ConsolePage, EmptyPanel, FilterChips, PageHeader, SearchField, Toolbar } from "@/components/admin/ui";
@@ -54,9 +55,9 @@ export function ContentList({ def, locale, rows, total, q, status, counts, page 
       id: "title",
       header: a("listTitle", locale),
       cell: (row) => (
-        <a href={contentPath(def, row.id)} className="font-medium">
+        <Link href={contentPath(def, row.id)} className="font-medium">
           {rowTitle(row.title, locale)}
-        </a>
+        </Link>
       ),
     },
     ...(hasStatus

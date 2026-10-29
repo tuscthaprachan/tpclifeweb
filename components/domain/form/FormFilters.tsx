@@ -1,5 +1,6 @@
 "use client";
 
+import Form from "next/form";
 import { useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Cluster } from "@/components/ui/Cluster";
@@ -67,7 +68,7 @@ export function FormFilters({ locale, value, hasActiveFilters, className }: Form
   }
 
   return (
-    <form ref={formRef} method="get" action={localePath(locale, "/forms")} aria-label={UI.filterBy[locale]} className={className}>
+    <Form ref={formRef} action={localePath(locale, "/forms")} aria-label={UI.filterBy[locale]} className={className}>
       <Cluster space={4} align="end">
         <Select
           id="forms-filter-category"
@@ -102,6 +103,6 @@ export function FormFilters({ locale, value, hasActiveFilters, className }: Form
           </Button>
         ) : null}
       </Cluster>
-    </form>
+    </Form>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { findActive } from "@/lib/admin/nav-match";
 import { useOptionalConsoleNav } from "@/components/admin/shell/ShellContext";
@@ -22,9 +23,9 @@ export function Breadcrumbs({ items, label }: { items: Crumb[]; label: string })
           return (
             <li key={`${i}-${crumb.label}`} className="flex items-center gap-x-1">
               {crumb.href && !last ? (
-                <a href={crumb.href} className="text-ink-600 hover:text-ink-900">
+                <Link href={crumb.href} className="text-ink-600 hover:text-ink-900">
                   {crumb.label}
-                </a>
+                </Link>
               ) : (
                 <span aria-current={last ? "page" : undefined} className={last ? "text-ink-900" : "text-ink-600"}>
                   {crumb.label}

@@ -1,3 +1,4 @@
+import Form from "next/form";
 import { Button } from "@/components/ui/Button";
 import { Heading } from "@/components/ui/Heading";
 import { TextInput } from "@/components/ui/TextInput";
@@ -33,7 +34,7 @@ export function WeekForm({ locale, request, filters, invalid }: WeekFormProps) {
       <Heading level={2} id="week-form-title" className="m-0 mb-[var(--space-4)] text-xl">
         {t(BUDGET.weekFormTitle, locale)}
       </Heading>
-      <form method="get" action={localePath(locale, "/eat/plan")} className="flex flex-col gap-[var(--space-4)]">
+      <Form action={localePath(locale, "/eat/plan")} className="flex flex-col gap-[var(--space-4)]">
         {[...hidden.entries()].map(([name, value]) => (
           <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
         ))}
@@ -66,7 +67,7 @@ export function WeekForm({ locale, request, filters, invalid }: WeekFormProps) {
         <div>
           <Button type="submit">{t(BUDGET.weekSubmit, locale)}</Button>
         </div>
-      </form>
+      </Form>
     </section>
   );
 }

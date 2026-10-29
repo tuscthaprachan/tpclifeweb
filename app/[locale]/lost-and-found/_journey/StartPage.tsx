@@ -5,6 +5,7 @@
  * personal data right now.
  */
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Button, Container, Heading, InsetText, NotificationBanner, Stack } from "@/components/ui";
@@ -87,14 +88,14 @@ export function StartPage({ kind, locale, slug, intro, need, note, subject, expi
 
         <ul className="m-0 flex list-none flex-col gap-[var(--space-1)] p-0">
           <li>
-            <a href={localePath(locale, "/lost-and-found/privacy")} className="text-action underline">
+            <Link href={localePath(locale, "/lost-and-found/privacy")} className="text-action underline">
               {UI.lfpPrivacyLink[locale]}
-            </a>
+            </Link>
           </li>
           <li>
-            <a href={localePath(locale, "/lost-and-found/track")} className="text-action underline">
+            <Link href={localePath(locale, "/lost-and-found/track")} className="text-action underline">
               {UI.lfpTrackLink[locale]}
-            </a>
+            </Link>
           </li>
         </ul>
       </Stack>

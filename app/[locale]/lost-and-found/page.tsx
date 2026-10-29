@@ -14,6 +14,7 @@
  * "no status filter", not as "fall back to the default".
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -135,12 +136,12 @@ export default async function LostAndFoundIndexPage({
             </Button>
           </Cluster>
           <Cluster space={4}>
-            <a href={localePath(locale, "/lost-and-found/track")} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+            <Link href={localePath(locale, "/lost-and-found/track")} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
               {UI.lfpTrackLink[locale]}
-            </a>
-            <a href={localePath(locale, "/lost-and-found/privacy")} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+            </Link>
+            <Link href={localePath(locale, "/lost-and-found/privacy")} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
               {UI.lfpPrivacyLink[locale]}
-            </a>
+            </Link>
           </Cluster>
         </Stack>
 
@@ -156,9 +157,9 @@ export default async function LostAndFoundIndexPage({
             title={UI.noLostFoundItems[locale]}
             action={
               hasActiveFilters ? (
-                <a href={localePath(locale, "/lost-and-found")} className="text-action underline">
+                <Link href={localePath(locale, "/lost-and-found")} className="text-action underline">
                   {UI.clearFilters[locale]}
-                </a>
+                </Link>
               ) : undefined
             }
           />

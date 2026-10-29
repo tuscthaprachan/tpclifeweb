@@ -1,5 +1,6 @@
 "use client";
 
+import Form from "next/form";
 import { useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Cluster } from "@/components/ui/Cluster";
@@ -58,7 +59,7 @@ export function LostFoundFilters({ locale, value, hasActiveFilters, className }:
   }
 
   return (
-    <form ref={formRef} method="get" action={localePath(locale, "/lost-and-found")} aria-label={UI.filterBy[locale]} className={className}>
+    <Form ref={formRef} action={localePath(locale, "/lost-and-found")} aria-label={UI.filterBy[locale]} className={className}>
       <Cluster space={4} align="end">
         <Select
           id="lost-found-filter-kind"
@@ -91,6 +92,6 @@ export function LostFoundFilters({ locale, value, hasActiveFilters, className }:
           </Button>
         ) : null}
       </Cluster>
-    </form>
+    </Form>
   );
 }

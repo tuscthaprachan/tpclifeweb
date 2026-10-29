@@ -5,6 +5,7 @@
  * draft. Nothing is stored until "Start now" is pressed.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -106,9 +107,9 @@ export default async function BorrowStartPage({ params, searchParams }: { params
         <InsetText>
           <p className="m-0">{UI.brRulesNote[locale].replace("{loan}", String(MAX_LOAN_DAYS)).replace("{ahead}", String(MAX_ADVANCE_DAYS))}</p>
           <p className="m-0 mt-[var(--space-2)]">
-            <a href={localePath(locale, "/borrow/availability")} className="text-action underline">
+            <Link href={localePath(locale, "/borrow/availability")} className="text-action underline">
               {UI.brSeeAvailability[locale]}
-            </a>
+            </Link>
           </p>
         </InsetText>
 
@@ -125,14 +126,14 @@ export default async function BorrowStartPage({ params, searchParams }: { params
 
         <ul className="m-0 flex list-none flex-col gap-[var(--space-1)] p-0">
           <li>
-            <a href={localePath(locale, "/borrow/privacy")} className="text-action underline">
+            <Link href={localePath(locale, "/borrow/privacy")} className="text-action underline">
               {UI.brPrivacyLink[locale]}
-            </a>
+            </Link>
           </li>
           <li>
-            <a href={localePath(locale, "/borrow/track")} className="text-action underline">
+            <Link href={localePath(locale, "/borrow/track")} className="text-action underline">
               {UI.brTrackLink[locale]}
-            </a>
+            </Link>
           </li>
         </ul>
       </Stack>

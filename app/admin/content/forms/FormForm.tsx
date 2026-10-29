@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
@@ -65,9 +66,9 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
           <ul>
             {usages.map((use) => (
               <li key={`${use.kind}:${use.id}`}>
-                <a href={contentPath({ segment: use.segment }, use.id)}>
+                <Link href={contentPath({ segment: use.segment }, use.id)}>
                   {L(USE_LABEL[use.kind])}: {pick(use.title, locale) || use.title.th || use.title.en || L("untitled")}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

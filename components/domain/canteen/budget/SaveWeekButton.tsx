@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 
 import { Button } from "@/components/ui/Button";
@@ -65,9 +66,9 @@ export function SaveWeekButton({ locale, seed, budget, days }: SaveWeekButtonPro
         {result === "saved" ? (
           <>
             {t(BUDGET.saveWeekDone, locale)}{" "}
-            <a href={localePath(locale, "/eat/mine")} className="font-medium">
+            <Link href={localePath(locale, "/eat/mine")} className="font-medium">
               {t(BUDGET.openMine, locale)}
-            </a>
+            </Link>
           </>
         ) : null}
         {result === "failed" ? t(BUDGET.saveWeekFailed, locale) : null}

@@ -92,13 +92,13 @@ export function Sidebar() {
   return (
     <div ref={panel} className="console-sidebar">
       <div className="console-sidebar-head">
-        <a href="/admin" className="console-brand">
+        <Link href="/admin" className="console-brand">
           <SiteLogo size={28} priority />
           <span className="console-label console-brand-text">
             <span className="block font-semibold leading-tight">{labels.serviceName}</span>
             <span className="block text-sm leading-tight text-ink-600">{labels.consoleName}</span>
           </span>
-        </a>
+        </Link>
         <button type="button" onClick={closeDrawer} className="console-icon-button console-drawer-close" aria-label={labels.closeMenu} title={labels.closeMenu}>
           <ConsoleIcon name="close" />
         </button>

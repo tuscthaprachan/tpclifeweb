@@ -77,9 +77,7 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
 
   // Show the errors from the last rejected post once, then forget them.
   const flash = data.flash && data.flash.step === step ? data.flash : undefined;
-  if (data.flash) await saveJourney(db, loaded.id, { ...data, flash: undefined });
-
-  const ctx = await loadContext(db, values);
+  const [ctx] = await Promise.all([loadContext(db, values), data.flash ? saveJourney(db, loaded.id, { ...data, flash: undefined }) : null]);
 
   // No page before the questions ahead of it are answered and still hold.
   const elsewhere = misroute(step, values, ctx);

@@ -1,3 +1,4 @@
+import Form from "next/form";
 import { Button } from "@/components/ui/Button";
 import { TextInput } from "@/components/ui/TextInput";
 import { serialise, type CanteenFilters } from "@/lib/canteen/params";
@@ -36,7 +37,7 @@ interface PickControlsProps {
 export function PickControls({ locale, filters, mode, bias, meal, invalid, sameStall = false }: PickControlsProps) {
   const hidden = new URLSearchParams(serialise(filters));
   return (
-    <form method="get" action={localePath(locale, PICK_ROUTE)} className="pick-form flex flex-col gap-[var(--space-4)]">
+    <Form action={localePath(locale, PICK_ROUTE)} className="pick-form flex flex-col gap-[var(--space-4)]">
       {[...hidden.entries()].map(([name, value]) => (
         <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
       ))}
@@ -89,6 +90,6 @@ export function PickControls({ locale, filters, mode, bias, meal, invalid, sameS
           {PICK.spin[locale]}
         </Button>
       </div>
-    </form>
+    </Form>
   );
 }

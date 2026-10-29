@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AlarmClock, CalendarCheck, CalendarClock, CircleDollarSign, ClipboardCheck, PackageCheck, PackageMinus, Undo2, type LucideIcon } from "lucide-react";
 import { ConsolePage, PageHeader } from "@/components/admin/ui";
 import { NotConfigured } from "@/components/admin/NotConfigured";
@@ -82,9 +83,9 @@ function Table({ section, locale }: { section: SectionDef; locale: Locale }) {
       id: "reference",
       header: a("brColReference", locale),
       cell: (r) => (
-        <a href={`/admin/cases/${r.caseId}`} className="font-medium">
+        <Link href={`/admin/cases/${r.caseId}`} className="font-medium">
           {r.reference}
-        </a>
+        </Link>
       ),
     },
     { id: "for", header: a("brColFor", locale), cell: (r) => (r.kind === "group" ? (r.groupName ?? "") : a("brForPersonal", locale)) },

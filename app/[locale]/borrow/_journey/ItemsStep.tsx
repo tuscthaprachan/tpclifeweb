@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Fieldset, InsetText, NotificationBanner, Stack } from "@/components/ui";
 import { hasNotice, earliestFor } from "@/lib/borrowing/rules";
 import { dayStart } from "@/lib/borrowing/time";
@@ -36,9 +37,9 @@ export function ItemsStep({ locale, title, values, ctx, fromCheck, err }: ItemsS
       {!anyFree ? (
         <NotificationBanner variant="info" title={UI.brNothingFreeTitle[locale]}>
           {UI.brNothingFree[locale]}{" "}
-          <a href={changeDates} className="text-action underline">
+          <Link href={changeDates} className="text-action underline">
             {UI.brChangeDates[locale]}
-          </a>
+          </Link>
         </NotificationBanner>
       ) : null}
       <div id="items" tabIndex={-1} className="flex flex-col gap-[var(--space-6)]">
@@ -53,9 +54,9 @@ export function ItemsStep({ locale, title, values, ctx, fromCheck, err }: ItemsS
                 <InsetText>
                   <p className="m-0">
                     {UI.brCategoryNotice[locale].replace("{n}", String(category.noticeWorkingDays)).replace("{date}", formatDate(dayStart(earliestFor(category, ctx.now)), locale))}{" "}
-                    <a href={changeDates} className="text-action underline">
+                    <Link href={changeDates} className="text-action underline">
                       {UI.brChangeDates[locale]}
-                    </a>
+                    </Link>
                   </p>
                 </InsetText>
               ) : null}

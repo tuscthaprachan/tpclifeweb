@@ -4,6 +4,7 @@
  * window again when the form is posted.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -76,9 +77,9 @@ export default async function ReopenComplaintPage({ params, searchParams }: { pa
             <Textarea id="reason" name="reason" label={UI.cpReopenReasonLabel[locale]} hint={UI.cpReopenReasonHint[locale]} error={problem === "long" ? UI.cpErrReasonLong[locale] : undefined} rows={5} autoComplete="off" />
             <div className="flex flex-wrap items-center gap-[var(--space-4)]">
               <Button type="submit">{UI.cpReopenYes[locale]}</Button>
-              <a href={status} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+              <Link href={status} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
                 {UI.cpReopenNo[locale]}
-              </a>
+              </Link>
             </div>
           </Stack>
         </form>

@@ -8,6 +8,7 @@
  * the person is sent to the track form with a generic message.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -198,9 +199,9 @@ export default async function TrackStatusPage({ params, searchParams }: { params
 
         {canWithdraw ? (
           <p className="m-0">
-            <a href={localePath(locale, "/lost-and-found/track/withdraw")} className="text-action underline">
+            <Link href={localePath(locale, "/lost-and-found/track/withdraw")} className="text-action underline">
               {UI.lfpWithdrawLink[locale]}
-            </a>
+            </Link>
           </p>
         ) : null}
 

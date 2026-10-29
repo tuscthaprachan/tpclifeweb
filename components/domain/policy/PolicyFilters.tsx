@@ -1,5 +1,6 @@
 "use client";
 
+import Form from "next/form";
 import { useRef } from "react";
 import { OWNER_LABEL_KEY } from "@/components/domain/form";
 import { Button } from "@/components/ui/Button";
@@ -73,7 +74,7 @@ export function PolicyFilters({ locale, value, areaOptions, hasActiveFilters, cl
   }
 
   return (
-    <form ref={formRef} method="get" action={localePath(locale, "/policy")} aria-label={UI.filterBy[locale]} className={className}>
+    <Form ref={formRef} action={localePath(locale, "/policy")} aria-label={UI.filterBy[locale]} className={className}>
       <Cluster space={4} align="end">
         <Select
           id="policy-filter-owner"
@@ -106,6 +107,6 @@ export function PolicyFilters({ locale, value, areaOptions, hasActiveFilters, cl
           </Button>
         ) : null}
       </Cluster>
-    </form>
+    </Form>
   );
 }

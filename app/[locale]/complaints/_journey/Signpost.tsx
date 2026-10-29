@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Button, Container, Heading, InsetText, Stack } from "@/components/ui";
 import { bodiesFor } from "@/lib/complaints/redirect";
@@ -82,14 +83,14 @@ export function Signpost({ locale, crumbs, backHref, values, faculty }: { locale
 
         <ul className="m-0 flex list-none flex-col gap-[var(--space-1)] p-0">
           <li>
-            <a href={localePath(locale, "/complaints/emergency")} className="text-action underline">
+            <Link href={localePath(locale, "/complaints/emergency")} className="text-action underline">
               {UI.cpSignStartAgain[locale]}
-            </a>
+            </Link>
           </li>
           <li>
-            <a href={localePath(locale, "/report")} className="text-action underline">
+            <Link href={localePath(locale, "/report")} className="text-action underline">
               {UI.cpSignElse[locale]}
-            </a>
+            </Link>
           </li>
         </ul>
       </Stack>

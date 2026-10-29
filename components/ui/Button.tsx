@@ -1,4 +1,9 @@
+"use client";
+
+import NextLink from "next/link";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import { useFormStatus } from "react-dom";
+import { isAppHref } from "./app-href";
 import { cx } from "./cx";
 
 export type ButtonVariant = "primary" | "secondary" | "quiet" | "destructive";
@@ -51,11 +56,20 @@ const SIZE_CLASS: Record<ButtonSize, string> = {
  * action apart by looking, only by what actually happens (2.4.4).
  */
 export function Button(props: ButtonProps) {
+  const { pending } = useFormStatus();
   const { variant = "primary", size = "md", loading, loadingLabel, className, children, href, icon, ...rest } = props;
   const classes = cx(BASE, VARIANT_CLASS[variant], SIZE_CLASS[size], className);
 
   if (href !== undefined) {
     const anchorRest = rest as Omit<ComponentPropsWithoutRef<"a">, "href" | "className" | "children">;
+    if (isAppHref(href) && anchorRest.target === undefined && anchorRest.download === undefined) {
+      return (
+        <NextLink href={href} className={classes} {...anchorRest}>
+          {icon}
+          {children}
+        </NextLink>
+      );
+    }
     return (
       <a href={href} className={classes} {...anchorRest}>
         {icon}
@@ -64,11 +78,19 @@ export function Button(props: ButtonProps) {
     );
   }
 
-  const { type, disabled, ...buttonRest } = rest as Omit<ComponentPropsWithoutRef<"button">, "href" | "className" | "children">;
+  const { type, disabled, onClick, ...buttonRest } = rest as Omit<ComponentPropsWithoutRef<"button">, "href" | "className" | "children">;
   const isDisabled = loading === true || disabled === true;
+  const isPending = pending && (type === "submit" || buttonRest.formAction !== undefined);
 
   return (
-    <button type={type ?? "button"} className={classes} disabled={isDisabled} {...buttonRest}>
+    <button
+      type={type ?? "button"}
+      className={cx(classes, isPending && "cursor-progress")}
+      disabled={isDisabled}
+      aria-disabled={isPending || undefined}
+      {...buttonRest}
+      onClick={isPending ? (event) => event.preventDefault() : onClick}
+    >
       {icon}
       {children}
       {loading ? (

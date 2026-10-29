@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Button, Heading, Stack, SummaryList, type SummaryListRow } from "@/components/ui";
 import type { InventoryCategory } from "@/lib/borrowing/availability";
@@ -22,10 +23,10 @@ const lines = (text: string): ReactNode => <span className="whitespace-pre-line"
 export function CheckAnswers({ locale, values, inventory, facultyName }: CheckAnswersProps) {
   const period = periodOf(values)!;
   const change = (step: string, what: string): ReactNode => (
-    <a href={`${localePath(locale, stepPath(step))}?from=check`} className="text-action underline">
+    <Link href={`${localePath(locale, stepPath(step))}?from=check`} className="text-action underline">
       {UI.brChange[locale]}
       <span className="visually-hidden"> {what}</span>
-    </a>
+    </Link>
   );
   const row = (key: string, value: ReactNode, step: string): SummaryListRow => ({ key, value, actions: change(step, key) });
   const chosen = inventory.flatMap((c) => c.items.filter((i) => values.items.includes(i.id)));
@@ -74,9 +75,9 @@ export function CheckAnswers({ locale, values, inventory, facultyName }: CheckAn
         </Stack>
       ))}
       <p className="m-0">
-        <a href={`${localePath(locale, stepPath("items"))}?from=check`} className="text-action underline">
+        <Link href={`${localePath(locale, stepPath("items"))}?from=check`} className="text-action underline">
           {UI.brChangeItems[locale]}
-        </a>
+        </Link>
       </p>
       <form action={sendJourney} noValidate>
         <input type="hidden" name="locale" value={locale} />
@@ -88,9 +89,9 @@ export function CheckAnswers({ locale, values, inventory, facultyName }: CheckAn
         <Stack space={4}>
           <p className="m-0 text-ink-900">
             {UI.brCheckPrivacy[locale]}{" "}
-            <a href={localePath(locale, "/borrow/privacy")} className="text-action underline">
+            <Link href={localePath(locale, "/borrow/privacy")} className="text-action underline">
               {UI.brPrivacyLink[locale]}
-            </a>
+            </Link>
           </p>
           <div>
             <Button type="submit">{UI.brSend[locale]}</Button>

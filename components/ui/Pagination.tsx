@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
@@ -35,10 +36,10 @@ export function Pagination({ currentPage, totalPages, buildHref, locale, classNa
       className={cx("flex flex-wrap items-center justify-between gap-[var(--space-4)]", className)}
     >
       {previousPage ? (
-        <a href={buildHref(previousPage)} className={LINK_CLASS} rel="prev">
+        <Link href={buildHref(previousPage)} className={LINK_CLASS} rel="prev">
           <ArrowLeftIcon />
           {UI.previousPage[locale]}
-        </a>
+        </Link>
       ) : (
         <span />
       )}
@@ -48,10 +49,10 @@ export function Pagination({ currentPage, totalPages, buildHref, locale, classNa
       </p>
 
       {nextPage ? (
-        <a href={buildHref(nextPage)} className={LINK_CLASS} rel="next">
+        <Link href={buildHref(nextPage)} className={LINK_CLASS} rel="next">
           {UI.nextPage[locale]}
           <ArrowRightIcon />
-        </a>
+        </Link>
       ) : (
         <span />
       )}

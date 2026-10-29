@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { CalendarClock, ListChecks, Lock, Package, Table2 } from "lucide-react";
 import { DataTable, Heading, StatusTag, SummaryList, Timestamp, type DataTableColumn } from "@/components/ui";
@@ -58,9 +59,9 @@ export async function BorrowingPanel(props: CasePanelProps) {
               <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
                 {clashes.map((c) => (
                   <li key={`${c.caseId}-${c.itemId}`} className="border-b border-line pb-[var(--space-2)]">
-                    <a href={`/admin/cases/${c.caseId}`} className="font-medium">
+                    <Link href={`/admin/cases/${c.caseId}`} className="font-medium">
                       {c.reference}
-                    </a>{" "}
+                    </Link>{" "}
                     <StatusTag tone={c.status === "on_loan" ? "warning" : c.status === "approved" ? "success" : "info"} label={pick(statusLabel("borrowing", "loan", c.status), locale)} />
                     <p className="m-0 text-sm text-ink-600">
                       {a("brClashLine", locale, { qty: c.quantity, item: itemName.get(c.itemId) ?? "" })}

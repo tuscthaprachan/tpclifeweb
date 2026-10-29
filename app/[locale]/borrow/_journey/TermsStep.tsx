@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Checkboxes, Heading, Stack, WarningText } from "@/components/ui";
 import { depositCardsFor } from "@/lib/borrowing/rules";
 import { SHARED_TERMS } from "@/lib/borrowing/terms";
@@ -56,9 +57,9 @@ export function TermsStep({ locale, title, categories, agreed, error }: TermsSte
       ) : null}
       <p className="m-0 text-ink-900">
         {UI.brTermsPrivacy[locale]}{" "}
-        <a href={localePath(locale, "/borrow/privacy")} className="text-action underline">
+        <Link href={localePath(locale, "/borrow/privacy")} className="text-action underline">
           {UI.brPrivacyLink[locale]}
-        </a>
+        </Link>
       </p>
       <Checkboxes id="terms" name="terms" legend={UI.brTermsLegend[locale]} error={error} defaultValue={agreed ? ["yes"] : []} options={[{ value: "yes", label: UI.brTermsAgree[locale] }]} />
     </>

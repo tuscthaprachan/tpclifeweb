@@ -85,11 +85,12 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
 
   // Show the errors from the last rejected post once, then forget them.
   const flash = data.flash && data.flash.step === step ? data.flash : undefined;
-  if (data.flash) await saveJourney(db, loaded.id, { ...data, flash: undefined });
-
-  const categories = await listCategories(db, { activeOnly: true });
+  const [categories, faculties] = await Promise.all([
+    listCategories(db, { activeOnly: true }),
+    getFacultiesWithOrganisations(),
+    data.flash ? saveJourney(db, loaded.id, { ...data, flash: undefined }) : null,
+  ]);
   const identity = data.values.identity;
-  const faculties = await getFacultiesWithOrganisations();
   const choices = facultyChoices(faculties);
   const programmes = hasProgrammes(choices, data.values.faculty);
   const faculty = faculties.find((f) => f.slug === data.values.faculty) ?? null;

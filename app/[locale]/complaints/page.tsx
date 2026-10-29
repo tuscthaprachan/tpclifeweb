@@ -5,6 +5,7 @@
  * and opens the draft. Nothing is stored until "Start now" is pressed.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -108,14 +109,14 @@ export default async function ComplaintsStartPage({ params, searchParams }: { pa
 
         <ul className="m-0 flex list-none flex-col gap-[var(--space-1)] p-0">
           <li>
-            <a href={localePath(locale, "/complaints/privacy")} className="text-action underline">
+            <Link href={localePath(locale, "/complaints/privacy")} className="text-action underline">
               {UI.cpPrivacyLink[locale]}
-            </a>
+            </Link>
           </li>
           <li>
-            <a href={localePath(locale, "/complaints/track")} className="text-action underline">
+            <Link href={localePath(locale, "/complaints/track")} className="text-action underline">
               {UI.cpTrackLink[locale]}
-            </a>
+            </Link>
           </li>
         </ul>
       </Stack>

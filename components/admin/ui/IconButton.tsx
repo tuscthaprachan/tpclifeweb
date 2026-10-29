@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ComponentPropsWithoutRef } from "react";
 import { ConsoleIcon, type ConsoleIconName } from "@/components/admin/icons";
 
@@ -21,9 +22,9 @@ export function IconButton(props: IconButtonProps) {
   const content = <ConsoleIcon name={icon} size={size} />;
   if (href !== undefined) {
     return (
-      <a href={href} aria-label={label} title={label} className={classes} {...(rest as Omit<ComponentPropsWithoutRef<"a">, "href">)}>
+      <Link href={href} aria-label={label} title={label} className={classes} {...(rest as Omit<ComponentPropsWithoutRef<"a">, "href">)}>
         {content}
-      </a>
+      </Link>
     );
   }
   const { type, ...buttonRest } = rest as Omit<ComponentPropsWithoutRef<"button">, "children">;

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ClipboardList, Clock, Contact, History, MessageSquare, UserCheck, Workflow } from "lucide-react";
@@ -205,7 +206,7 @@ export default async function CasePage({ params, searchParams }: { params: Promi
           {orgIds.map((oid, i) => (
             <span key={oid}>
               {i > 0 ? " | " : ""}
-              {oid === actor.organisationId ? <strong>{orgName.get(oid)}</strong> : <a href={`/admin/cases/${id}?as=${oid}`}>{orgName.get(oid)}</a>}
+              {oid === actor.organisationId ? <strong>{orgName.get(oid)}</strong> : <Link href={`/admin/cases/${id}?as=${oid}`}>{orgName.get(oid)}</Link>}
             </span>
           ))}
         </p>

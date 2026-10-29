@@ -4,6 +4,7 @@
  * and paste the link (or its code). Works without JavaScript.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -102,9 +103,9 @@ export default async function TrackPage({ params, searchParams }: { params: Prom
           </NotificationBanner>
         )}
         <p className="m-0">
-          <a href={localePath(locale, "/lost-and-found/privacy")} className="text-action underline">
+          <Link href={localePath(locale, "/lost-and-found/privacy")} className="text-action underline">
             {UI.lfpPrivacyLink[locale]}
-          </a>
+          </Link>
         </p>
       </Stack>
     </Container>

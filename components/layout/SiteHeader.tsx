@@ -46,7 +46,6 @@ import { MenuIcon, SearchIcon } from "@/components/ui/icons";
 import { SearchBar } from "@/components/domain/search/SearchBar";
 import { localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { ThemeChoice } from "@/lib/theme/config";
 import type { NavItem } from "@/lib/content/types";
 import { LanguageToggle } from "./LanguageToggle";
 import { ServiceNavigation } from "./ServiceNavigation";
@@ -94,12 +93,10 @@ export function SiteHeader({
   locale,
   serviceName,
   navItems,
-  theme,
 }: {
   locale: Locale;
   serviceName: LocaleString;
   navItems: NavItem[];
-  theme: ThemeChoice;
 }) {
   const headerRef = useRef<HTMLElement>(null);
   const detailsRef = useRef<HTMLDetailsElement>(null);
@@ -181,7 +178,7 @@ export function SiteHeader({
             </Link>
           )}
           <LanguageToggle locale={locale} />
-          <ThemeToggle locale={locale} current={theme} />
+          <ThemeToggle locale={locale} />
         </div>
 
         {/* Mobile/tablet: a compact search shortcut plus the disclosure
@@ -226,7 +223,7 @@ export function SiteHeader({
                 <ServiceNavigation locale={locale} items={navItems} label={navLabel} variant="vertical" />
                 <div className="flex flex-wrap items-center gap-3 border-t border-line pt-4">
                   <LanguageToggle locale={locale} />
-                  <ThemeToggle locale={locale} current={theme} />
+                  <ThemeToggle locale={locale} />
                 </div>
               </ShellContainer>
             </div>

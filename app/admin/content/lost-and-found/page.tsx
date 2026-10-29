@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { contentPlacement } from "@/app/admin/content/_list/placement";
 import { PublishState, ResultCount, RowAction } from "@/app/admin/content/_list/parts";
 import { ConsoleIcon } from "@/components/admin/icons";
@@ -32,9 +33,9 @@ export default async function LostFoundListPage({ searchParams }: { searchParams
   const [pending, rows] = await Promise.all([listPendingReports(db), listLostFound(db, q)]);
 
   const link = (row: LostFoundListRow) => (
-    <a href={contentPath(def, row.id)} className="font-medium">
+    <Link href={contentPath(def, row.id)} className="font-medium">
       {rowTitle(row.title, locale)}
-    </a>
+    </Link>
   );
   const columns = (withStatus: boolean): DataTableColumn<LostFoundListRow>[] => [
     { id: "reference", header: a("lfColReference", locale), cell: (row) => row.reference },

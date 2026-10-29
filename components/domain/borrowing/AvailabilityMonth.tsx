@@ -1,3 +1,5 @@
+import Form from "next/form";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import type { HeadingLevel } from "@/lib/a11y";
 import { Button, Heading, InsetText, StatusTag, Tag, type StatusTone } from "@/components/ui";
@@ -115,7 +117,7 @@ export function AvailabilityMonth({ locale, data, inventory, basePath, previousM
 /** A GET form, so choosing an item works without JavaScript. */
 export function ItemChooser({ locale, inventory, basePath, selected, month }: { locale: Locale; inventory: InventoryCategory[]; basePath: string; selected?: string; month?: string }) {
   return (
-    <form method="get" action={basePath} className="flex flex-wrap items-end gap-[var(--space-3)]">
+    <Form action={basePath} className="flex flex-wrap items-end gap-[var(--space-3)]">
       {month ? <input type="hidden" name="month" value={month} /> : null}
       <div className="flex min-w-0 max-w-full flex-col gap-[var(--space-1)]">
         <label htmlFor="avail-item" className="text-base font-medium text-ink-900">
@@ -145,7 +147,7 @@ export function ItemChooser({ locale, inventory, basePath, selected, month }: { 
       <Button type="submit" variant="secondary">
         {av("chooserSubmit", locale)}
       </Button>
-    </form>
+    </Form>
   );
 }
 
@@ -161,10 +163,10 @@ function DayNumber({ day, locale, dayHref }: { day: CalendarDay; locale: Locale;
     );
   }
   return (
-    <a href={dayHref(day.dayKey)} className="font-semibold">
+    <Link href={dayHref(day.dayKey)} className="font-semibold">
       {n}
       <span className="visually-hidden"> ({full})</span>
-    </a>
+    </Link>
   );
 }
 
@@ -186,9 +188,9 @@ function Bookings({ bookings, locale }: { bookings: DayBooking[]; locale: Locale
       {bookings.map((b) => (
         <li key={b.caseId} className="flex flex-col">
           <span>
-            <a href={`/admin/cases/${b.caseId}`} className="font-medium">
+            <Link href={`/admin/cases/${b.caseId}`} className="font-medium">
               {b.reference}
-            </a>
+            </Link>
             , {av("bookingQuantity", locale, { count: formatNumber(b.quantity, locale) })}
           </span>
           <span className="text-ink-600">
@@ -260,9 +262,9 @@ function MonthList({ locale, caption, days, staff, dayHref }: { locale: Locale; 
               <div className="flex flex-wrap items-center justify-between gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
                 <span className="min-w-0">
                   {dayHref ? (
-                    <a href={dayHref(day.dayKey)} className="font-semibold">
+                    <Link href={dayHref(day.dayKey)} className="font-semibold">
                       {formatDate(day.dayKey, locale)}
-                    </a>
+                    </Link>
                   ) : (
                     <span className="font-semibold text-ink-900">{formatDate(day.dayKey, locale)}</span>
                   )}

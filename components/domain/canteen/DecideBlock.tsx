@@ -1,3 +1,4 @@
+import Form from "next/form";
 import { Button } from "@/components/ui/Button";
 import { Heading } from "@/components/ui/Heading";
 import type { HeadingLevel } from "@/lib/a11y";
@@ -66,7 +67,7 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
         </div>
       </div>
 
-      <form method="get" action={localePath(locale, "/eat/pick")} className="mt-[var(--space-4)] flex flex-col gap-[var(--space-4)]">
+      <Form action={localePath(locale, "/eat/pick")} className="mt-[var(--space-4)] flex flex-col gap-[var(--space-4)]">
         {[...hidden.entries()].map(([name, value]) => (
           <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
         ))}
@@ -111,7 +112,7 @@ export function DecideBlock({ locale, filters, headingLevel = 2 }: DecideBlockPr
             {t(EAT.decideButton, locale)}
           </Button>
         </div>
-      </form>
+      </Form>
     </section>
   );
 }

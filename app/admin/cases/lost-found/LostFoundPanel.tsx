@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Archive, Camera, ClipboardList, Fingerprint, HandHelping, Link2, PackageCheck, Phone, ShieldCheck, UserRound } from "lucide-react";
 import { Heading, InsetText, StatusTag, SummaryList, Tag, Timestamp } from "@/components/ui";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
@@ -131,7 +132,7 @@ async function ListingSection({ caseId, locale, orgId, canEdit, found, status }:
       </details>
       {canEdit ? (
         <p className="m-0">
-          <a href={`/admin/content/lost-and-found/${listing.id}`}>{a("lfcListingOpenEditor", locale)}</a>
+          <Link href={`/admin/content/lost-and-found/${listing.id}`}>{a("lfcListingOpenEditor", locale)}</Link>
         </p>
       ) : null}
     </div>
@@ -165,9 +166,9 @@ function Candidates({ candidates, locale, caseId, orgId, subjectIsLost }: { cand
         return (
           <li key={c.caseId} className="flex flex-col gap-[var(--space-2)] rounded-panel border border-line p-[var(--space-4)]">
             <div className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
-              <a href={`/admin/cases/${c.caseId}`} className="font-medium">
+              <Link href={`/admin/cases/${c.caseId}`} className="font-medium">
                 {c.reference}
-              </a>
+              </Link>
               <StatusTag tone={def?.tone ?? "neutral"} label={pick(statusLabel("lost_found", c.kind, c.status), locale)} />
               <Tag tone="governance">{a("lfcMatchScore", locale, { score: c.score })}</Tag>
             </div>
@@ -209,9 +210,9 @@ async function MatchesSection({ caseId, locale, orgId, kind, status }: { caseId:
           <ul className="m-0 mt-[var(--space-2)] list-none p-0">
             {active.map((l) => (
               <li key={l.linkId} className="py-[var(--space-1)]">
-                <a href={`/admin/cases/${l.caseId}`} className="font-medium">
+                <Link href={`/admin/cases/${l.caseId}`} className="font-medium">
                   {refs.get(l.caseId)?.reference ?? l.caseId}
-                </a>{" "}
+                </Link>{" "}
                 <Tag tone="neutral">{a(l.status === "confirmed" ? "lfcLinkConfirmed" : "lfcLinkPossible", locale)}</Tag>
               </li>
             ))}
@@ -266,7 +267,7 @@ async function LostPanel({ caseId, locale, orgId, canEdit, status }: PanelProps)
           </InsetText>
           {handoverTarget ? (
             <p className="m-0">
-              <a href={`/admin/cases/${handoverTarget.caseId}`}>{a("lfcGoToHandover", locale, { reference: refs.get(handoverTarget.caseId)?.reference ?? "" })}</a>
+              <Link href={`/admin/cases/${handoverTarget.caseId}`}>{a("lfcGoToHandover", locale, { reference: refs.get(handoverTarget.caseId)?.reference ?? "" })}</Link>
             </p>
           ) : null}
         </SectionCard>
@@ -308,7 +309,7 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
           <div className="flex flex-col gap-[var(--space-3)]">
             <InsetText>{a(ready ? "lfcPublishReady" : "lfcPublishNotReady", locale)}</InsetText>
             <p className="m-0">
-              <a href={`/admin/cases/new/found/${caseId}`}>{a("lfcContinueIntake", locale)}</a>
+              <Link href={`/admin/cases/new/found/${caseId}`}>{a("lfcContinueIntake", locale)}</Link>
             </p>
             {ready ? <PublishWarnings warnings={publishWarnings(details)} locale={locale} /> : null}
             {ready ? <PublishListingForm locale={locale} caseId={caseId} orgId={orgId} found /> : null}
@@ -378,7 +379,7 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
             {claim.lostReference ? (
               <p className="m-0 text-sm">
                 {a("lfcClaimLostReport", locale)}:{" "}
-                <a href={`/admin/cases/${claim.lostCaseId}`}>{claim.lostReference}</a>
+                <Link href={`/admin/cases/${claim.lostCaseId}`}>{claim.lostReference}</Link>
               </p>
             ) : null}
             {claim.hasAnswer && !claim.decision ? (

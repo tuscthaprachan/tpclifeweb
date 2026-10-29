@@ -5,6 +5,7 @@
  * bookings, so the page calls them a guide and never live.
  */
 
+import Form from "next/form";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
@@ -85,7 +86,7 @@ export default async function AvailabilityPage({ params, searchParams }: { param
             <ItemChooser locale={locale} inventory={inventory} basePath={basePath} month={month} />
           </>
         )}
-        <form method="get" action={basePath} className="flex flex-wrap items-end gap-[var(--space-3)]">
+        <Form action={basePath} className="flex flex-wrap items-end gap-[var(--space-3)]">
           <div className="flex min-w-0 flex-col gap-[var(--space-1)]">
             <label htmlFor="avail-date" className="text-base font-medium text-ink-900">
               {av("dayFormLabel", locale)}
@@ -102,7 +103,7 @@ export default async function AvailabilityPage({ params, searchParams }: { param
           <Button type="submit" variant="secondary">
             {av("dayFormSubmit", locale)}
           </Button>
-        </form>
+        </Form>
       </Stack>
     );
   }

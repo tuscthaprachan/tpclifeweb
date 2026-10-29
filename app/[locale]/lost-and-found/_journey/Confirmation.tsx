@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Button, Container, Heading, InsetText, NotificationBanner, Panel, Stack, WarningText } from "@/components/ui";
 import { isEmailConfigured } from "@/lib/email";
@@ -53,9 +54,9 @@ export async function Confirmation({ kind, locale, slug, result, email, crumbs }
           <InsetText>
             <p className="m-0 text-sm text-ink-600">{UI.lfpYourLink[locale]}</p>
             <p className="m-0 break-all">
-              <a href={link} className="text-action underline">
+              <Link href={link} className="text-action underline">
                 {link}
-              </a>
+              </Link>
             </p>
           </InsetText>
           <div>
@@ -95,9 +96,9 @@ export async function Confirmation({ kind, locale, slug, result, email, crumbs }
             ))}
           </ol>
           <p className="m-0">
-            <a href={localePath(locale, "/lost-and-found/privacy")} className="text-action underline">
+            <Link href={localePath(locale, "/lost-and-found/privacy")} className="text-action underline">
               {UI.lfpPrivacyLink[locale]}
-            </a>
+            </Link>
           </p>
         </Stack>
       </Stack>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ConsolePage } from "@/components/admin/ui";
@@ -80,7 +81,7 @@ export default async function StallPricesPage({ params, searchParams }: { params
         </ContentForm>
       )}
       <p className="m-0">
-        <a href={dishesHref}>{a("canteenPricesToDishes", locale)}</a>
+        <Link href={dishesHref}>{a("canteenPricesToDishes", locale)}</Link>
       </p>
     </ConsolePage>
   );

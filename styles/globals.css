@@ -366,3 +366,36 @@
   color: var(--colour-action);
   text-decoration: underline;
 }
+
+.nav-progress {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: 100;
+  block-size: 3px;
+  inline-size: 0;
+  background: var(--colour-action);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-progress[data-active] {
+  animation:
+    nav-progress-show 0s linear 100ms forwards,
+    nav-progress-grow 8s cubic-bezier(0.1, 0.7, 0.2, 1) 100ms forwards;
+}
+
+@keyframes nav-progress-show {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nav-progress-grow {
+  from {
+    inline-size: 10%;
+  }
+  to {
+    inline-size: 90%;
+  }
+}

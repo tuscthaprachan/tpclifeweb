@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
@@ -163,7 +164,7 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
         <FormSection id="lf-case" icon="cases" legend={L("lfcEditorCaseTitle")}>
           <InsetText>{L("lfcEditorCaseBody")}</InsetText>
           <p className="m-0">
-            <a href={`/admin/cases/${item.caseId}`}>{a("lfcEditorCaseLink", locale, { reference: caseReference ?? item.reference })}</a>
+            <Link href={`/admin/cases/${item.caseId}`}>{a("lfcEditorCaseLink", locale, { reference: caseReference ?? item.reference })}</Link>
           </p>
         </FormSection>
       ) : item ? (
@@ -173,9 +174,9 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
         <InsetText>
           <p className="m-0">{L("lfcEditorNewNote")}</p>
           <p className="m-0 mt-[var(--space-2)]">
-            <a href="/admin/cases/new/found">{L("lfcEditorLogFound")}</a>
+            <Link href="/admin/cases/new/found">{L("lfcEditorLogFound")}</Link>
             {" | "}
-            <a href="/admin/cases/new/lost">{L("lfcEditorLogLost")}</a>
+            <Link href="/admin/cases/new/lost">{L("lfcEditorLogLost")}</Link>
           </p>
         </InsetText>
       )}

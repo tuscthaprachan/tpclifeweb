@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { AdminLanguageSwitch } from "@/components/admin/AdminLanguageSwitch";
 import { SiteLogo } from "@/components/layout/SiteLogo";
@@ -19,13 +20,13 @@ export function AuthShell({ locale, theme, children }: { locale: Locale; theme: 
   return (
     <div className="console-auth bg-surface-alt">
       <header className="console-auth-header">
-        <a href="/admin" className="console-brand">
+        <Link href="/admin" className="console-brand">
           <SiteLogo size={28} priority />
           <span className="console-brand-text">
             <span className="block font-semibold leading-tight">{UI.serviceName[locale]}</span>
             <span className="block text-sm leading-tight text-ink-600">{a("consoleName", locale)}</span>
           </span>
-        </a>
+        </Link>
         <div className="console-topbar-tools">
           <AdminLanguageSwitch locale={locale} />
           <ThemeMenu

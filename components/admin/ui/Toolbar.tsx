@@ -1,3 +1,4 @@
+import Form from "next/form";
 import type { ReactNode } from "react";
 import { ConsoleIcon } from "@/components/admin/icons";
 
@@ -40,7 +41,7 @@ export interface SearchFieldProps {
 /** A GET search form, so it works without JavaScript and the result is a shareable URL. */
 export function SearchField({ label, submitLabel, name = "q", defaultValue, placeholder, hidden, action }: SearchFieldProps) {
   return (
-    <form role="search" method="get" action={action} aria-label={label} className="console-search-field">
+    <Form role="search" action={action ?? ""} aria-label={label} className="console-search-field">
       {Object.entries(hidden ?? {}).map(([key, value]) => (
         <input key={key} type="hidden" name={key} value={value} />
       ))}
@@ -49,6 +50,6 @@ export function SearchField({ label, submitLabel, name = "q", defaultValue, plac
       <button type="submit" className="console-search-field-button">
         {submitLabel}
       </button>
-    </form>
+    </Form>
   );
 }

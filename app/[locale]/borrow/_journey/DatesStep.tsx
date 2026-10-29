@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DateInput, InsetText, Select, Stack } from "@/components/ui";
 import { deskSlots } from "@/lib/borrowing/time";
 import { shortestNotice } from "@/lib/borrowing/rules";
@@ -42,9 +43,9 @@ export function DatesStep({ locale, title, values, ctx, err }: DatesStepProps) {
         ))}
         <p className="m-0 mt-[var(--space-1)]">
           {UI.brDeskHours[locale]}{" "}
-          <a href={localePath(locale, "/borrow/availability")} className="text-action underline">
+          <Link href={localePath(locale, "/borrow/availability")} className="text-action underline">
             {UI.brSeeAvailability[locale]}
-          </a>
+          </Link>
         </p>
       </InsetText>
       <Stack space={4}>

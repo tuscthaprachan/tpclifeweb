@@ -65,7 +65,12 @@ export async function saveStep(form: FormData): Promise<void> {
   if (!isStep(step) || (!(step in STEP_FIELDS) && step !== "evidence")) redirect(basePath(locale));
   const fromCheck = form.get("from") === "check";
 
-  const draft = await currentDraft();
+  const db = getDb();
+  const [draft, categories, facultyList] = await Promise.all([
+    currentDraft(),
+    listCategories(db, { activeOnly: true }),
+    step === "faculty" || step === "programme" ? getFacultiesWithOrganisations() : [],
+  ]);
   if (!draft) redirect(`${basePath(locale)}?expired=1`);
 
   const read = readStepValues(step, form);
@@ -75,9 +80,8 @@ export async function saveStep(form: FormData): Promise<void> {
   const newFaculty = step === "faculty" && read.faculty !== draft.data.values.faculty;
   const values = { ...draft.data.values, ...read, ...(anonymous ? { name: "", email: "", phone: "", lineId: "", preferred: "", consent: "" } : {}), ...(newFaculty ? { programme: "" } : {}) };
   const data: JourneyData = { ...draft.data, locale, values };
-  const db = getDb();
-  const keys = (await listCategories(db, { activeOnly: true })).map((c) => c.key);
-  const faculties = facultyChoices(step === "faculty" || step === "programme" ? await getFacultiesWithOrganisations() : []);
+  const keys = categories.map((c) => c.key);
+  const faculties = facultyChoices(facultyList);
   const errors = validateStep(step, values, keys, faculties);
   if (Object.keys(errors).length > 0) {
     await saveJourney(db, draft.id, { ...data, flash: { step, errors } });

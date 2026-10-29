@@ -10,6 +10,7 @@
  * contract.
  */
 
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -213,9 +214,9 @@ export default async function BorrowPrivacyPage({ params }: { params: Promise<{ 
           <Heading level={2}>{CONTACT_HEADING[locale]}</Heading>
           <p className="m-0 text-ink-900">{CONTACT[locale]}</p>
           <p className="m-0">
-            <a href={localePath(locale, "/borrow")} className="text-action underline">
+            <Link href={localePath(locale, "/borrow")} className="text-action underline">
               {UI.brServiceName[locale]}
-            </a>
+            </Link>
           </p>
         </Stack>
       </Stack>

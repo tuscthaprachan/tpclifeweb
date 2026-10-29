@@ -7,6 +7,7 @@
  * and, when nothing matches, the best ways to get dishes back. Server rendered end to end, so it works without JavaScript.
  */
 
+import Form from "next/form";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -118,7 +119,7 @@ export default async function EatDishesPage({
 
         <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} carry={filters.q !== undefined ? { q: filters.q } : undefined}>
           <Stack space={4}>
-            <form method="get" action={localePath(locale, ROUTE)} role="search" aria-label={t(EAT.searchLabel, locale)} className="flex flex-col gap-[var(--space-1)]">
+            <Form action={localePath(locale, ROUTE)} role="search" aria-label={t(EAT.searchLabel, locale)} className="flex flex-col gap-[var(--space-1)]">
               {hiddenFilters.map(([name, value]) => (
                 <input key={`${name}-${value}`} type="hidden" name={name} value={value} />
               ))}
@@ -151,7 +152,7 @@ export default async function EatDishesPage({
                   </Link>
                 </p>
               ) : null}
-            </form>
+            </Form>
 
             <ResultCount locale={locale} dishes={matched.length} stalls={countStalls(data, matched)} />
 

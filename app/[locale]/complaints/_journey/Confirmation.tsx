@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Button, Heading, InsetText, NotificationBanner, Panel, Stack, WarningText, Container } from "@/components/ui";
 import { getConfirmationFacts } from "@/lib/complaints/public/confirmation";
@@ -53,9 +54,9 @@ export async function Confirmation({ locale, result, email, crumbs }: Confirmati
           <InsetText>
             <p className="m-0 text-sm text-ink-600">{UI.cpYourLink[locale]}</p>
             <p className="m-0 break-all">
-              <a href={link} className="text-action underline">
+              <Link href={link} className="text-action underline">
                 {link}
-              </a>
+              </Link>
             </p>
           </InsetText>
           <div>
@@ -104,9 +105,9 @@ export async function Confirmation({ locale, result, email, crumbs }: Confirmati
           {facts ? <p className="m-0 text-sm text-ink-600">{UI.cpTargetNote[locale]}</p> : null}
           {facts ? <p className="m-0 text-sm text-ink-600">{pick(facts.category.name, locale)}</p> : null}
           <p className="m-0">
-            <a href={localePath(locale, "/complaints/privacy")} className="text-action underline">
+            <Link href={localePath(locale, "/complaints/privacy")} className="text-action underline">
               {UI.cpPrivacyLink[locale]}
-            </a>
+            </Link>
           </p>
         </Stack>
 

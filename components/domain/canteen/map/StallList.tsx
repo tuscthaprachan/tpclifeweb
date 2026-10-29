@@ -5,6 +5,7 @@
  * drawing. Works with no script.
  */
 
+import Link from "next/link";
 import { compareStallsByWalk } from "@/lib/canteen/derive";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import type { CanteenData } from "@/lib/content/types";
@@ -82,9 +83,9 @@ export function StallList({
               ) : null}
               <p className="m-0 font-semibold text-ink-900">
                 {linkStalls ? (
-                  <a href={`${localePath(locale, `/eat/stalls/${stall.slug.current}`)}${search}`} className="text-action underline">
+                  <Link href={`${localePath(locale, `/eat/stalls/${stall.slug.current}`)}${search}`} className="text-action underline">
                     {name}
-                  </a>
+                  </Link>
                 ) : (
                   name
                 )}

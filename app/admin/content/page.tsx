@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { contentPlacement } from "@/app/admin/content/_list/placement";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { ConsoleIcon } from "@/components/admin/icons";
@@ -47,18 +48,18 @@ export default async function ContentHubPage() {
           <ConsoleIcon name={place.icon} size={22} className="mt-[2px] text-ink-600" />
           <div className="min-w-0 flex-1">
             <Heading level={3} visualLevel={5} className="m-0 font-semibold">
-              <a href={href}>{label}</a>
+              <Link href={href}>{label}</Link>
             </Heading>
             <p className="m-0 text-sm text-ink-600">{a(def.descriptionKey, locale)}</p>
           </div>
           {!single ? (
-            <a
+            <Link
               href={`${href}/new`}
               className="inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center rounded-control border border-line-strong bg-surface text-ink-900 hover:bg-surface-alt"
             >
               <ConsoleIcon name="add" />
               <span className="visually-hidden">{a("listAdd", locale, { item: a(def.oneKey, locale) })}</span>
-            </a>
+            </Link>
           ) : null}
         </div>
         <p className="m-0 flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
@@ -68,10 +69,10 @@ export default async function ContentHubPage() {
                 <ConsoleIcon name="info" size={14} />
                 {a("ccHubSingle", locale)}
               </span>
-              <a href={href} className="inline-flex items-center gap-[var(--space-1)] text-sm">
+              <Link href={href} className="inline-flex items-center gap-[var(--space-1)] text-sm">
                 <ConsoleIcon name="edit" size={14} />
                 {a("ccHubEditPage", locale)}
-              </a>
+              </Link>
             </>
           ) : count && !def.columns.status ? (
             <span className={meta}>

@@ -4,6 +4,7 @@
  * a link. `basePath` is the page's own path without the query.
  */
 
+import Link from "next/link";
 import { PERIODS, type Period } from "@/lib/performance/period";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -22,9 +23,9 @@ export function PeriodLinks({ locale, current, basePath }: { locale: Locale; cur
                 {UI[LABEL[period]][locale]}
               </span>
             ) : (
-              <a href={`${basePath}?period=${period}`} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+              <Link href={`${basePath}?period=${period}`} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
                 {UI[LABEL[period]][locale]}
-              </a>
+              </Link>
             )}
           </li>
         ))}
