@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { CanonicalCompare, EAT, eatHref, readFilters, redirectToTidyQuery, t } from "@/components/domain/canteen";
+import { CanonicalStalls, EAT, eatHref, readFilters, redirectToTidyQuery, t } from "@/components/domain/canteen";
 import { EXTRAS } from "@/components/domain/canteen/extras";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, Stack } from "@/components/ui";
@@ -94,9 +94,7 @@ export default async function WhatIsDishPage({
               {EXTRAS.stallsTitle[locale]}
             </Heading>
             {dishes.length > 0 ? (
-              <>
-                <CanonicalCompare data={data} dishes={dishes} locale={locale} filters={filters} />
-              </>
+              <CanonicalStalls data={data} dishes={dishes} locale={locale} filters={filters} />
             ) : (
               <p className="m-0 text-ink-900">{EXTRAS.noStallNow[locale]}</p>
             )}

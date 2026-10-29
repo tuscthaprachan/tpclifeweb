@@ -6,7 +6,6 @@ import { canonicalOf, commonCheckedOn, stallOf } from "@/lib/canteen/derive";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { CanteenData, CanteenDish } from "@/lib/content/types";
-import { CanonicalCompare } from "./CanonicalCompare";
 import { CheckedOnNote } from "./CheckedOnNote";
 import { DishCard } from "./DishCard";
 import { FocusOnHash } from "./FocusOnHash";
@@ -121,15 +120,14 @@ export function DishResults({ data, locale, filters, groups, allGroups, headingL
           );
         }
         const whole = allGroups?.find((candidate) => candidate.key === group.key) ?? group;
-        const byPrice = whole.dishes;
-        const stallCount = new Set(byPrice.map((dish) => dish.stallId)).size;
+        const stallCount = new Set(whole.dishes.map((dish) => dish.stallId)).size;
         return (
-          <section key={`${group.key}-${group.continued}`} id={eat.itemId(first)} tabIndex={-1} className="flex outline-none scroll-mt-[calc(var(--header-height,4rem)+9rem)] flex-col gap-[var(--space-3)]">
+          <section key={`${group.key}-${group.continued}`} className="flex flex-col gap-[var(--space-3)]">
             <Heading level={headingLevel} visualLevel={3} className="m-0">
               {pick(canonical.name, locale)}
               <span className="text-sm font-normal text-ink-600"> · {eat.atStalls(locale, stallCount)}</span>
             </Heading>
-            <CanonicalCompare data={data} dishes={byPrice} locale={locale} filters={filters} limit={group.dishes.length} />
+            <DishGrid data={data} locale={locale} filters={filters} dishes={group.dishes} headingLevel={cardLevel} checkedOn={checkedOn} first={first} />
           </section>
         );
       })}

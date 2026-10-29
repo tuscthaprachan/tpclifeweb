@@ -9,7 +9,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import {
-  CanonicalCompare,
+  CanonicalStalls,
   DietTags,
   DishTypeIcon,
   EAT,
@@ -188,15 +188,12 @@ export default async function EatDishPage({
           </section>
         ) : null}
 
-        {canonical && sameDish.length > 1 ? (
+        {canonical && sameDish.some((other) => other.stallId !== dish.stallId) ? (
           <section aria-labelledby="eat-dish-also" className="flex flex-col gap-[var(--space-3)]">
             <Heading level={2} id="eat-dish-also" className="m-0 text-xl">
-              {t(EAT.compareTitle, locale)}
+              {eat.atOtherStalls(locale, pick(canonical.name, locale))}
             </Heading>
-            <p className="m-0 text-sm text-ink-600">
-              {pick(canonical.name, locale)}. {t(EAT.compareNote, locale)}
-            </p>
-            <CanonicalCompare data={data} dishes={sameDish} locale={locale} filters={filters} currentSlug={dish.slug.current} />
+            <CanonicalStalls data={data} dishes={sameDish} locale={locale} filters={filters} excludeStallId={dish.stallId} />
           </section>
         ) : null}
 

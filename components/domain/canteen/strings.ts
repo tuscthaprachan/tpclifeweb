@@ -140,13 +140,6 @@ export const EAT = {
   relaxWithoutBudget: { th: "เอาเรื่องงบออก", en: "Remove the budget limit" },
   relaxWithoutVariants: { th: "นับเฉพาะราคาปกติ", en: "Count only the base price" },
   noResultsStalls: { th: "ไม่มีเมนูที่ตรงกับตัวกรอง", en: "No matching dishes" },
-  cheapestWord: { th: "ถูกที่สุด", en: "Cheapest" },
-  thisOne: { th: "จานนี้", en: "This one" },
-  compareTitle: { th: "เมนูเดียวกัน ร้านอื่น", en: "Same dish, other stalls" },
-  compareNote: {
-    th: "เรียงจากราคาถูกไปแพง",
-    en: "Cheapest first.",
-  },
   otherDishes: { th: "เมนูอื่น ๆ", en: "Other dishes" },
   pageWord: { th: "หน้า", en: "Page" },
 
@@ -233,6 +226,16 @@ export const eat = {
   /** "from 25 baht". */
   fromBaht(locale: Locale, amount: number): string {
     return locale === "th" ? `เริ่ม ${n(amount, locale)} บาท` : `from ${n(amount, locale)} baht`;
+  },
+
+  /** "Fried rice at other stalls". */
+  atOtherStalls(locale: Locale, name: string): string {
+    return locale === "th" ? `ร้านอื่นที่มี${name}` : `${name} at other stalls`;
+  },
+
+  /** "and 13 more at this stall". */
+  moreAtStall(locale: Locale, count: number): string {
+    return locale === "th" ? `และอีก ${n(count, locale)} เมนูที่ร้านนี้` : `and ${n(count, locale)} more at this stall`;
   },
 
   /** "+10 baht". */

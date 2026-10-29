@@ -1,17 +1,31 @@
 /**
- * Price comparison helpers for one canonical dish across stalls. Pure.
+ * One canonical dish across stalls, grouped by stall. Pure.
  */
 
-import type { CanteenDish } from "@/lib/content/types";
+import { stallOf } from "@/lib/canteen/derive";
+import type { CanteenData, CanteenDish, CanteenStall } from "@/lib/content/types";
 
-/**
- * The slugs to mark "Cheapest": every dish at the lowest price, but only when
- * some other dish costs more. If every stall charges the same there is no
- * cheapest to point at, so nothing is marked.
- */
-export function cheapestSlugs(dishes: readonly CanteenDish[]): Set<string> {
-  if (dishes.length < 2) return new Set();
-  const lowest = Math.min(...dishes.map((dish) => dish.price));
-  if (!dishes.some((dish) => dish.price > lowest)) return new Set();
-  return new Set(dishes.filter((dish) => dish.price === lowest).map((dish) => dish.slug.current));
+export interface StallWithDishes {
+  stall: CanteenStall;
+  /** This stall's dishes of the canonical dish, cheapest first. */
+  dishes: CanteenDish[];
+  /** The lowest base price among them. */
+  from: number;
+}
+
+/** The stalls that make any of `dishes`, cheapest first then by stall number, leaving out `excludeStallId`. */
+export function stallsWithDishes(data: CanteenData, dishes: readonly CanteenDish[], excludeStallId?: string): StallWithDishes[] {
+  const byStall = new Map<string, StallWithDishes>();
+  for (const dish of dishes) {
+    if (dish.stallId === excludeStallId) continue;
+    const stall = stallOf(data, dish);
+    if (!stall) continue;
+    const entry = byStall.get(stall._id) ?? { stall, dishes: [], from: dish.price };
+    entry.dishes.push(dish);
+    entry.from = Math.min(entry.from, dish.price);
+    byStall.set(stall._id, entry);
+  }
+  const out = [...byStall.values()];
+  for (const entry of out) entry.dishes.sort((a, b) => a.price - b.price || a.slug.current.localeCompare(b.slug.current));
+  return out.sort((a, b) => a.from - b.from || a.stall.number - b.stall.number);
 }

@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { dishDietTags, stallHalalTag } from "@/components/domain/canteen/diet";
-import { cheapestSlugs } from "@/components/domain/canteen/compare";
 import { activeChips, filterSummary } from "@/components/domain/canteen/chips";
 import { paginateGroups, parsePage } from "@/components/domain/canteen/paginate";
 import { canonicalMealQuery, carriedParams, formQuery, legacyMealQuery, readFilters, tidyQuery } from "@/components/domain/canteen/query";
@@ -26,15 +25,6 @@ describe("dishDietTags", () => {
     expect(stallHalalTag(stallOf("a"))).toBeNull();
     expect(stallHalalTag(stallOf("e"))).toBeNull();
     expect(stallHalalTag(stallOf("i"))?.key).toBe("halalWholeStall");
-  });
-});
-
-describe("cheapestSlugs", () => {
-  it("marks the lowest price only when prices differ", () => {
-    expect([...cheapestSlugs([dish("a"), dish("b")])]).toEqual(["fixture-dish-a"]);
-    expect(cheapestSlugs([dish("a")]).size).toBe(0);
-    const same = [dish("a"), { ...dish("b"), price: 40 }];
-    expect(cheapestSlugs(same).size).toBe(0);
   });
 });
 
