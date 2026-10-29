@@ -1,7 +1,8 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
-import { Button, Heading } from "@/components/ui";
+import { ConfirmPanel } from "@/components/admin/ConfirmPanel";
+import { PeopleIcon } from "@/components/admin/PeopleIcon";
+import { Button } from "@/components/ui";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { organisationsWithRole } from "@/lib/auth/roles";
@@ -31,18 +32,16 @@ export default async function CancelInvitePage({ params }: { params: Promise<{ i
   if (!invite || !organisationsWithRole(staff.roles, "admin").includes(invite.organisationId)) redirect("/admin/staff?notice=gone");
 
   return (
-    <AdminPage>
-      <div>
-        <Heading level={1}>{a("cancelInviteTitle", locale)}</Heading>
-        <p className="mt-[var(--space-2)]">{a("cancelInviteBody", locale, { email: invite.email })}</p>
-      </div>
-      <form action={cancelInvite} className="flex flex-wrap items-center gap-[var(--space-4)]">
+    <ConfirmPanel locale={locale} title={a("cancelInviteTitle", locale)} icon="staff" warning={a("cancelInviteBody", locale, { email: invite.email })}>
+      <form action={cancelInvite} className="flex flex-wrap items-center gap-[var(--space-3)]">
         <input type="hidden" name="inviteId" value={inviteId} />
-        <Button type="submit" variant="destructive">
+        <Button type="submit" variant="destructive" icon={<PeopleIcon name="cancel" />}>
           {a("cancelInviteButton", locale)}
         </Button>
-        <a href="/admin/staff">{a("keepIt", locale)}</a>
+        <Button href="/admin/staff" variant="secondary">
+          {a("keepIt", locale)}
+        </Button>
       </form>
-    </AdminPage>
+    </ConfirmPanel>
   );
 }

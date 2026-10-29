@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { LinkReady } from "@/components/admin/LinkReady";
+import { PeopleIcon } from "@/components/admin/PeopleIcon";
 import { Button, ErrorSummary, Stack } from "@/components/ui";
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
@@ -24,7 +25,9 @@ export function RecoveryForm({ locale, userId }: { locale: Locale; userId: strin
           emailed={state.created.emailed}
         />
         <p className="m-0">
-          <a href="/admin/staff">{a("backToStaff", locale)}</a>
+          <Button href="/admin/staff" variant="secondary">
+            {a("backToStaff", locale)}
+          </Button>
         </p>
       </Stack>
     );
@@ -37,11 +40,13 @@ export function RecoveryForm({ locale, userId }: { locale: Locale; userId: strin
         {state.error ? (
           <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={[{ href: "#admin-recovery-submit", message: state.error }]} />
         ) : null}
-        <div className="flex flex-wrap items-center gap-[var(--space-4)]">
-          <Button id="admin-recovery-submit" type="submit" loading={pending} loadingLabel={a("recoveryButton", locale)}>
+        <div className="flex flex-wrap items-center gap-[var(--space-3)]">
+          <Button id="admin-recovery-submit" type="submit" icon={<PeopleIcon name="lifeBuoy" />} loading={pending} loadingLabel={a("recoveryButton", locale)}>
             {a("recoveryButton", locale)}
           </Button>
-          <a href="/admin/staff">{a("keepIt", locale)}</a>
+          <Button href="/admin/staff" variant="secondary">
+            {a("keepIt", locale)}
+          </Button>
         </div>
       </Stack>
     </form>

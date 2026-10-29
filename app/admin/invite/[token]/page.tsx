@@ -1,7 +1,7 @@
-import { AdminPage } from "@/components/admin/AdminPage";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { CreateAccountForm } from "@/components/admin/PasskeyButton";
-import { Button, Heading, InsetText, SummaryList } from "@/components/ui";
+import { AuthCard } from "@/components/admin/shell/AuthShell";
+import { Button, InsetText, SummaryList } from "@/components/ui";
 import { signOutAction } from "@/app/admin/actions";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
@@ -32,10 +32,9 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   const attempt = await consumeTokenAttempt(db, (await getRequestMeta()).ip);
   if (!attempt.allowed) {
     return (
-      <AdminPage>
-        <Heading level={1}>{a("inviteBadTitle", locale)}</Heading>
-        <p className="m-0">{a("tooManyTokenAttempts", locale)}</p>
-      </AdminPage>
+      <AuthCard icon="mailOpen" title={a("inviteBadTitle", locale)}>
+        <p className="m-0 text-ink-600">{a("tooManyTokenAttempts", locale)}</p>
+      </AuthCard>
     );
   }
 
@@ -52,15 +51,14 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
             ? a("inviteAccepted", locale)
             : a("inviteNotFound", locale);
     return (
-      <AdminPage>
-        <Heading level={1}>{a("inviteBadTitle", locale)}</Heading>
-        <p className="m-0">{message}</p>
+      <AuthCard icon="mailOpen" title={a("inviteBadTitle", locale)}>
+        <p className="m-0 text-ink-600">{message}</p>
         {status === "accepted" ? (
           <div>
             <Button href="/admin/sign-in">{a("signInAgain", locale)}</Button>
           </div>
         ) : null}
-      </AdminPage>
+      </AuthCard>
     );
   }
 
@@ -81,60 +79,46 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
 
   if (session && !signedInAsInvitee) {
     return (
-      <AdminPage>
-        <Heading level={1}>{a("inviteLandingTitle", locale)}</Heading>
-        <p className="m-0">{a("inviteWrongAccount", locale)}</p>
+      <AuthCard icon="mailOpen" title={a("inviteLandingTitle", locale)}>
+        <p className="m-0 text-ink-600">{a("inviteWrongAccount", locale)}</p>
         <form action={signOutAction}>
           <Button type="submit" variant="secondary">
             {a("signOut", locale)}
           </Button>
         </form>
-      </AdminPage>
+      </AuthCard>
     );
   }
 
   if (hasAccount) {
-    return (
-      <AdminPage>
-        {signedInAsInvitee ? (
-          <>
-            <div>
-              <Heading level={1}>{a("inviteAcceptTitle", locale)}</Heading>
-              <p className="mt-[var(--space-2)] text-ink-600">{a("inviteAcceptBody", locale, { email, organisation })}</p>
-            </div>
-            {summary}
-            <form action={acceptInviteAction}>
-              <input type="hidden" name="token" value={token} />
-              <Button type="submit">{a("inviteAcceptButton", locale)}</Button>
-            </form>
-          </>
-        ) : (
-          <>
-            <div>
-              <Heading level={1}>{a("inviteExistingTitle", locale)}</Heading>
-              <p className="mt-[var(--space-2)] text-ink-600">{a("inviteExistingBody", locale, { email })}</p>
-            </div>
-            {summary}
-            <div>
-              <Button href={`/admin/sign-in?next=${encodeURIComponent(`/admin/invite/${token}`)}`}>{a("inviteSignInToAccept", locale)}</Button>
-            </div>
-          </>
-        )}
-      </AdminPage>
+    return signedInAsInvitee ? (
+      <AuthCard icon="mailOpen" title={a("inviteAcceptTitle", locale)}>
+        <p className="m-0 text-ink-600">{a("inviteAcceptBody", locale, { email, organisation })}</p>
+        {summary}
+        <form action={acceptInviteAction}>
+          <input type="hidden" name="token" value={token} />
+          <Button type="submit">{a("inviteAcceptButton", locale)}</Button>
+        </form>
+      </AuthCard>
+    ) : (
+      <AuthCard icon="mailOpen" title={a("inviteExistingTitle", locale)}>
+        <p className="m-0 text-ink-600">{a("inviteExistingBody", locale, { email })}</p>
+        {summary}
+        <div>
+          <Button href={`/admin/sign-in?next=${encodeURIComponent(`/admin/invite/${token}`)}`}>{a("inviteSignInToAccept", locale)}</Button>
+        </div>
+      </AuthCard>
     );
   }
 
   return (
-    <AdminPage>
-      <div>
-        <Heading level={1}>{a("inviteLandingTitle", locale)}</Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">{a("inviteLandingBody", locale, { organisation, email })}</p>
-      </div>
+    <AuthCard icon="mailOpen" title={a("inviteLandingTitle", locale)}>
+      <p className="m-0 text-ink-600">{a("inviteLandingBody", locale, { organisation, email })}</p>
       {summary}
       <CreateAccountForm locale={locale} token={token} />
       <noscript>
         <InsetText>{a("passkeyNeedsScript", locale)}</InsetText>
       </noscript>
-    </AdminPage>
+    </AuthCard>
   );
 }

@@ -1,7 +1,7 @@
-import { AdminPage } from "@/components/admin/AdminPage";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { RecoverButton } from "@/components/admin/PasskeyButton";
-import { Button, Heading, InsetText } from "@/components/ui";
+import { AuthCard } from "@/components/admin/shell/AuthShell";
+import { Button, InsetText } from "@/components/ui";
 import { signOutAction } from "@/app/admin/actions";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
@@ -28,10 +28,9 @@ export default async function RecoverPage({ params }: { params: Promise<{ token:
   const attempt = await consumeTokenAttempt(db, (await getRequestMeta()).ip);
   if (!attempt.allowed) {
     return (
-      <AdminPage>
-        <Heading level={1}>{a("recoverBadTitle", locale)}</Heading>
-        <p className="m-0">{a("tooManyTokenAttempts", locale)}</p>
-      </AdminPage>
+      <AuthCard icon="lifeBuoy" title={a("recoverBadTitle", locale)}>
+        <p className="m-0 text-ink-600">{a("tooManyTokenAttempts", locale)}</p>
+      </AuthCard>
     );
   }
 
@@ -48,45 +47,38 @@ export default async function RecoverPage({ params }: { params: Promise<{ token:
             ? a("recoverUsed", locale)
             : a("recoverNotFound", locale);
     return (
-      <AdminPage>
-        <Heading level={1}>{a("recoverBadTitle", locale)}</Heading>
-        <p className="m-0">{message}</p>
+      <AuthCard icon="lifeBuoy" title={a("recoverBadTitle", locale)}>
+        <p className="m-0 text-ink-600">{message}</p>
         {status === "used" ? (
           <div>
             <Button href="/admin/sign-in">{a("signInAgain", locale)}</Button>
           </div>
         ) : null}
-      </AdminPage>
+      </AuthCard>
     );
   }
 
   const session = await getAdminSession();
   if (session && session.user.id !== found.person.id) {
     return (
-      <AdminPage>
-        <Heading level={1}>{a("recoverTitle", locale)}</Heading>
-        <p className="m-0">{a("inviteWrongAccount", locale)}</p>
+      <AuthCard icon="lifeBuoy" title={a("recoverTitle", locale)}>
+        <p className="m-0 text-ink-600">{a("inviteWrongAccount", locale)}</p>
         <form action={signOutAction}>
           <Button type="submit" variant="secondary">
             {a("signOut", locale)}
           </Button>
         </form>
-      </AdminPage>
+      </AuthCard>
     );
   }
 
   return (
-    <AdminPage>
-      <div>
-        <Heading level={1}>{a("recoverTitle", locale)}</Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">
-          {a("recoverBody", locale, { name: found.person.name || found.person.email, email: found.person.email })}
-        </p>
-      </div>
+    <AuthCard icon="lifeBuoy" title={a("recoverTitle", locale)}>
+      <p className="m-0 text-ink-600">{a("recoverBody", locale, { name: found.person.name || found.person.email, email: found.person.email })}</p>
       <RecoverButton locale={locale} token={token} />
       <noscript>
         <InsetText>{a("passkeyNeedsScript", locale)}</InsetText>
       </noscript>
-    </AdminPage>
+    </AuthCard>
   );
 }

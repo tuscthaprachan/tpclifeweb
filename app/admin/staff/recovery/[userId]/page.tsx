@@ -1,7 +1,6 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
-import { Heading, WarningText } from "@/components/ui";
+import { ConfirmPanel } from "@/components/admin/ConfirmPanel";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { organisationsWithRole } from "@/lib/auth/roles";
@@ -10,7 +9,6 @@ import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema/auth";
 import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { a } from "@/lib/i18n/admin";
-import { UI } from "@/lib/i18n/strings";
 import { RecoveryForm } from "./RecoveryForm";
 
 export const dynamic = "force-dynamic";
@@ -35,16 +33,14 @@ export default async function RecoveryPage({ params }: { params: Promise<{ userI
 
   const name = person.name || person.email;
   return (
-    <AdminPage>
-      <div>
-        <Heading level={1}>{a("recoveryTitle", locale, { person: name })}</Heading>
-        <p className="mt-[var(--space-2)]">{a("recoveryIntro", locale, { person: name })}</p>
-      </div>
-      <WarningText>
-        <span className="visually-hidden">{UI.warning[locale]}: </span>
-        {a("recoveryWarning", locale)}
-      </WarningText>
+    <ConfirmPanel
+      locale={locale}
+      title={a("recoveryTitle", locale, { person: name })}
+      icon="staff"
+      description={a("recoveryIntro", locale, { person: name })}
+      warning={a("recoveryWarning", locale)}
+    >
       <RecoveryForm locale={locale} userId={person.id} />
-    </AdminPage>
+    </ConfirmPanel>
   );
 }

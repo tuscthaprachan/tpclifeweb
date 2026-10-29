@@ -16,6 +16,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { ConsoleIcon } from "@/components/admin/icons";
 import { Button, Dialog } from "@/components/ui";
 import { extendSession, signOutAction } from "@/app/admin/actions";
 import { a } from "@/lib/i18n/admin";
@@ -92,13 +93,16 @@ export function SessionTimeout({ endsAt: initialEndsAt, serverNow, locale }: Ses
       {/* Rendered only while open: it depends on the clock, which differs between server and browser. */}
       {open ? (
         <>
-          <p className="m-0">{a("timeoutBody", locale, { time: formatRemaining(remaining, locale) })}</p>
+          <p className="m-0 flex items-start gap-[var(--space-3)]">
+            <ConsoleIcon name="overdue" size={24} className="mt-[0.1em] text-ink-900" />
+            <span>{a("timeoutBody", locale, { time: formatRemaining(remaining, locale) })}</span>
+          </p>
           <div className="mt-[var(--space-4)] flex flex-wrap items-center gap-[var(--space-4)]">
-            <Button type="button" onClick={() => void stay()} loading={staying} loadingLabel="…">
+            <Button type="button" icon={<ConsoleIcon name="check" />} onClick={() => void stay()} loading={staying} loadingLabel="…">
               {a("staySignedIn", locale)}
             </Button>
             <form action={signOutAction}>
-              <Button type="submit" variant="secondary">
+              <Button type="submit" variant="secondary" icon={<ConsoleIcon name="signOut" />}>
                 {a("signOut", locale)}
               </Button>
             </form>

@@ -1,6 +1,7 @@
-import { AdminPage } from "@/components/admin/AdminPage";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Button, Heading } from "@/components/ui";
+import { AuthCard } from "@/components/admin/shell/AuthShell";
+import { signOutAction } from "@/app/admin/actions";
+import { Button } from "@/components/ui";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
@@ -27,21 +28,25 @@ export default async function NoAccessPage({ searchParams }: { searchParams: Pro
   const staff = isStaff(ctx.roles);
 
   return (
-    <AdminPage>
-      <Heading level={1}>{a("noAccessTitle", locale)}</Heading>
+    <AuthCard icon="lock" title={a("noAccessTitle", locale)}>
       {staff && reason === "role" ? (
         <>
-          <p className="m-0">{a("noAccessRoleBody", locale)}</p>
+          <p className="m-0 text-ink-600">{a("noAccessRoleBody", locale)}</p>
           <div>
             <Button href="/admin">{a("backToConsole", locale)}</Button>
           </div>
         </>
       ) : (
         <>
-          <p className="m-0">{a("noAccessBody", locale, { email: ctx.user.email })}</p>
-          <p className="m-0 text-ink-600">{a("noAccessHelp", locale)}</p>
+          <p className="m-0 text-ink-600">{a("noAccessBody", locale, { email: ctx.user.email })}</p>
+          <p className="m-0 text-sm text-ink-600">{a("noAccessHelp", locale)}</p>
+          <form action={signOutAction}>
+            <Button type="submit" variant="secondary">
+              {a("signOut", locale)}
+            </Button>
+          </form>
         </>
       )}
-    </AdminPage>
+    </AuthCard>
   );
 }

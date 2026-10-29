@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { SignInWithPasskey } from "@/components/admin/PasskeyButton";
+import { AuthCard } from "@/components/admin/shell/AuthShell";
 import { Heading, InsetText } from "@/components/ui";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
@@ -25,19 +25,18 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   if (session?.secondFactorAt) redirect(next);
 
   return (
-    <AdminPage>
-      <div>
-        <Heading level={1}>{a("signInTitle", locale)}</Heading>
-        <p className="mt-[var(--space-2)] text-ink-600">{a("signInIntro", locale)}</p>
-      </div>
+    <AuthCard icon="key" title={a("signInTitle", locale)}>
+      <p className="m-0 text-ink-600">{a("signInIntro", locale)}</p>
       <SignInWithPasskey locale={locale} next={next} />
       <noscript>
         <InsetText>{a("signInNeedsScript", locale)}</InsetText>
       </noscript>
-      <section>
-        <Heading level={2}>{a("signInLostHeading", locale)}</Heading>
-        <p className="mt-[var(--space-2)]">{a("signInLostBody", locale)}</p>
+      <section className="border-t border-line pt-[var(--space-4)]">
+        <Heading level={2} visualLevel={4} className="m-0 font-semibold">
+          {a("signInLostHeading", locale)}
+        </Heading>
+        <p className="m-0 mt-[var(--space-1)] text-sm text-ink-600">{a("signInLostBody", locale)}</p>
       </section>
-    </AdminPage>
+    </AuthCard>
   );
 }

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
-import { Button, Heading } from "@/components/ui";
+import { ConfirmPanel } from "@/components/admin/ConfirmPanel";
+import { PeopleIcon } from "@/components/admin/PeopleIcon";
+import { Button } from "@/components/ui";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { listPasskeys } from "@/lib/auth/passkeys";
@@ -27,18 +28,16 @@ export default async function RemovePasskeyPage({ params }: { params: Promise<{ 
   const label = key.name || `${a("passkeyUnnamed", locale)} ${index + 1}`;
 
   return (
-    <AdminPage>
-      <div>
-        <Heading level={1}>{a("removePasskeyTitle", locale)}</Heading>
-        <p className="mt-[var(--space-2)]">{a("removePasskeyBody", locale, { name: label })}</p>
-      </div>
-      <form action={removePasskeyAction} className="flex flex-wrap items-center gap-[var(--space-4)]">
+    <ConfirmPanel locale={locale} title={a("removePasskeyTitle", locale)} icon="security" warning={a("removePasskeyBody", locale, { name: label })}>
+      <form action={removePasskeyAction} className="flex flex-wrap items-center gap-[var(--space-3)]">
         <input type="hidden" name="passkeyId" value={key.id} />
-        <Button type="submit" variant="destructive">
+        <Button type="submit" variant="destructive" icon={<PeopleIcon name="trash" />}>
           {a("removePasskeyButton", locale)}
         </Button>
-        <a href="/admin/security">{a("keepIt", locale)}</a>
+        <Button href="/admin/security" variant="secondary">
+          {a("keepIt", locale)}
+        </Button>
       </form>
-    </AdminPage>
+    </ConfirmPanel>
   );
 }

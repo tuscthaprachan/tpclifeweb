@@ -1,5 +1,4 @@
-import { AdminPage } from "@/components/admin/AdminPage";
-import { Heading, NotificationBanner } from "@/components/ui";
+import { AuthCard } from "@/components/admin/shell/AuthShell";
 import { missingAuthConfig } from "@/lib/auth";
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
@@ -11,11 +10,8 @@ import type { Locale } from "@/lib/i18n/config";
  */
 export function NotConfigured({ locale }: { locale: Locale }) {
   return (
-    <AdminPage>
-      <Heading level={1}>{a("notConfiguredTitle", locale)}</Heading>
-      <NotificationBanner variant="warning" title={a("notConfiguredTitle", locale)}>
-        {a("notConfiguredBody", locale, { vars: missingAuthConfig().join(", ") })}
-      </NotificationBanner>
-    </AdminPage>
+    <AuthCard icon="settings" title={a("notConfiguredTitle", locale)}>
+      <p className="m-0">{a("notConfiguredBody", locale, { vars: missingAuthConfig().join(", ") })}</p>
+    </AuthCard>
   );
 }

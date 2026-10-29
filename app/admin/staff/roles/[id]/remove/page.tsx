@@ -1,7 +1,8 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { AdminPage } from "@/components/admin/AdminPage";
-import { Button, ErrorSummary, Heading } from "@/components/ui";
+import { ConfirmPanel } from "@/components/admin/ConfirmPanel";
+import { PeopleIcon } from "@/components/admin/PeopleIcon";
+import { Button, ErrorSummary } from "@/components/ui";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { organisationsWithRole } from "@/lib/auth/roles";
@@ -44,27 +45,30 @@ export default async function RemoveRolePage({
 
   const { error } = await searchParams;
   return (
-    <AdminPage>
-      {error === "last-admin" ? (
-        <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={[{ href: "#remove-role", message: a("errLastAdmin", locale) }]} />
-      ) : null}
-      <div>
-        <Heading level={1}>{a("removeRoleTitle", locale)}</Heading>
-        <p className="mt-[var(--space-2)]">
-          {a("removeRoleBody", locale, {
-            person: row.name || row.email,
-            role: a(ROLE_LABEL[row.role], locale),
-            organisation: pick({ th: row.nameTh, en: row.nameEn }, locale),
-          })}
-        </p>
-      </div>
-      <form action={removeRole} className="flex flex-wrap items-center gap-[var(--space-4)]">
+    <ConfirmPanel
+      locale={locale}
+      title={a("removeRoleTitle", locale)}
+      icon="staff"
+      errors={
+        error === "last-admin" ? (
+          <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={[{ href: "#remove-role", message: a("errLastAdmin", locale) }]} />
+        ) : null
+      }
+      warning={a("removeRoleBody", locale, {
+        person: row.name || row.email,
+        role: a(ROLE_LABEL[row.role], locale),
+        organisation: pick({ th: row.nameTh, en: row.nameEn }, locale),
+      })}
+    >
+      <form action={removeRole} className="flex flex-wrap items-center gap-[var(--space-3)]">
         <input type="hidden" name="roleId" value={roleId} />
-        <Button id="remove-role" type="submit" variant="destructive">
+        <Button id="remove-role" type="submit" variant="destructive" icon={<PeopleIcon name="cancel" />}>
           {a("removeRoleButton", locale)}
         </Button>
-        <a href="/admin/staff">{a("keepIt", locale)}</a>
+        <Button href="/admin/staff" variant="secondary">
+          {a("keepIt", locale)}
+        </Button>
       </form>
-    </AdminPage>
+    </ConfirmPanel>
   );
 }

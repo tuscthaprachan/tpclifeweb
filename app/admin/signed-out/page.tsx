@@ -1,5 +1,5 @@
-import { AdminPage } from "@/components/admin/AdminPage";
-import { Button, Heading } from "@/components/ui";
+import { AuthCard } from "@/components/admin/shell/AuthShell";
+import { Button } from "@/components/ui";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { a } from "@/lib/i18n/admin";
@@ -17,12 +17,11 @@ export default async function SignedOutPage({ searchParams }: { searchParams: Pr
   const timedOut = reason === "timeout";
 
   return (
-    <AdminPage>
-      <Heading level={1}>{timedOut ? a("signedOutTitle", locale) : a("signedOutManual", locale)}</Heading>
-      {timedOut ? <p className="m-0">{a("signedOutTimeout", locale)}</p> : null}
+    <AuthCard icon={timedOut ? "clock" : "logOut"} title={timedOut ? a("signedOutTitle", locale) : a("signedOutManual", locale)}>
+      {timedOut ? <p className="m-0 text-ink-600">{a("signedOutTimeout", locale)}</p> : null}
       <div>
         <Button href="/admin/sign-in">{a("signInAgain", locale)}</Button>
       </div>
-    </AdminPage>
+    </AuthCard>
   );
 }

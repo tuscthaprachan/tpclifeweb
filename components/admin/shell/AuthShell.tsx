@@ -5,6 +5,8 @@ import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { ThemeChoice } from "@/lib/theme/config";
+import { PeopleIcon, type PeopleIconName } from "@/components/admin/PeopleIcon";
+import { Heading } from "@/components/ui";
 import { ThemeMenu } from "./ThemeMenu";
 
 /**
@@ -15,7 +17,7 @@ import { ThemeMenu } from "./ThemeMenu";
  */
 export function AuthShell({ locale, theme, children }: { locale: Locale; theme: ThemeChoice; children: ReactNode }) {
   return (
-    <div className="console-auth">
+    <div className="console-auth bg-surface-alt">
       <header className="console-auth-header">
         <a href="/admin" className="console-brand">
           <SiteLogo size={28} priority />
@@ -39,9 +41,26 @@ export function AuthShell({ locale, theme, children }: { locale: Locale; theme: 
         </div>
       </header>
       <main id="main-content" tabIndex={-1} className="console-auth-main">
-        {children}
+        <div className="mx-auto flex w-full max-w-[30rem] flex-col gap-[var(--space-5)]">{children}</div>
       </main>
       <footer className="console-auth-footer">{a("notIndexedNote", locale)}</footer>
+    </div>
+  );
+}
+
+/** The card every signed-out page puts its single message in: an icon, the h1, a short body and the primary action. */
+export function AuthCard({ icon, title, children }: { icon: PeopleIconName; title: ReactNode; children?: ReactNode }) {
+  return (
+    <div className="console-card">
+      <div className="console-card-body flex flex-col gap-[var(--space-4)]">
+        <span className="inline-flex size-12 items-center justify-center rounded-pill border border-line bg-surface-alt text-ink-900">
+          <PeopleIcon name={icon} size={24} />
+        </span>
+        <Heading level={1} className="m-0">
+          {title}
+        </Heading>
+        {children}
+      </div>
     </div>
   );
 }

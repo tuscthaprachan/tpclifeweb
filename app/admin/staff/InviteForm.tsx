@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { PeopleIcon } from "@/components/admin/PeopleIcon";
 import { LinkReady } from "@/components/admin/LinkReady";
 import { Button, Checkboxes, ErrorSummary, NotificationBanner, Radios, Stack, TextInput, type ErrorSummaryItem } from "@/components/ui";
 import { a, ROLE_HINT, ROLE_LABEL } from "@/lib/i18n/admin";
@@ -84,7 +85,7 @@ export function InviteForm({ locale, organisations }: { locale: Locale; organisa
         />
 
         <div>
-          <Button type="submit" loading={pending} loadingLabel={a("inviteSend", locale)}>
+          <Button type="submit" icon={<PeopleIcon name="userPlus" />} loading={pending} loadingLabel={a("inviteSend", locale)}>
             {a("inviteSend", locale)}
           </Button>
         </div>
