@@ -19,8 +19,9 @@ import { staffActorForCase } from "@/lib/cases/staff";
 import { CaseError, type StaffActor } from "@/lib/cases/types";
 import { ComplaintError } from "@/lib/complaints/errors";
 import { readComplaintText, readEvidence, type ComplaintText, type EvidenceItem } from "@/lib/complaints/details";
-import { notifyComplainant, type NoticeOutcome } from "@/lib/complaints/notify";
-import { acknowledgeComplaint, closeComplaint, recategoriseComplaint, reopenComplaint, resolveComplaint, routeToWellbeing, startComplaint } from "@/lib/complaints/workflow";
+import { notifyComplainant, notifyRedirected, type NoticeOutcome } from "@/lib/complaints/notify";
+import { acknowledgeComplaint, closeComplaint, recategoriseComplaint, redirectComplaint, reopenComplaint, resolveComplaint, routeToWellbeing, startComplaint } from "@/lib/complaints/workflow";
+import { COMPLAINT_REDIRECT_LEVELS, type ComplaintRedirectLevel } from "@/lib/db/schema/complaints";
 import { PiiUnavailableError } from "@/lib/crypto/pii";
 import { getDb } from "@/lib/db";
 import { a, type AdminKey } from "@/lib/i18n/admin";
@@ -32,7 +33,7 @@ export interface CpState {
   error?: string;
   saved?: AdminKey;
   /** What happened when the person was told by email, or the reminder to do it by hand. */
-  notice?: NoticeOutcome & { kind: "acknowledged" | "resolved" };
+  notice?: NoticeOutcome & { kind: "acknowledged" | "resolved" | "redirected" };
   /** Decrypted for this response only; the client clears it on "Hide". */
   text?: ComplaintText | null;
   evidence?: EvidenceItem[];
@@ -160,6 +161,20 @@ export async function withdrawAction(_prev: CpState, fd: FormData): Promise<CpSt
   return onCase(fd, [], async ({ caseId, actor }) => {
     await transition(getDb(), caseId, "withdrawn", actor, { expectedFrom: text(fd, "from") || undefined });
     return { saved: "cpcSavedWithdrawn" };
+  });
+}
+
+export async function redirectAction(_prev: CpState, fd: FormData): Promise<CpState> {
+  return onCase(fd, ["level", "faculty", "body"], async ({ locale, caseId, actor }) => {
+    const level = COMPLAINT_REDIRECT_LEVELS.find((l) => l === text(fd, "level")) as ComplaintRedirectLevel | undefined;
+    const facultyId = text(fd, "faculty");
+    const organisationId = text(fd, "body");
+    const values = { level: text(fd, "level"), faculty: facultyId, body: organisationId };
+    if (!level || !isUuid(facultyId) || (organisationId && !isUuid(organisationId)) || text(fd, "confirm") !== "yes") return { error: a("errCpInvalid", locale), values };
+    const db = getDb();
+    await redirectComplaint(db, caseId, { level, facultyId, organisationId: level === "faculty" ? organisationId || null : null }, actor);
+    const notice = await notifyRedirected(db, caseId, actor);
+    return { saved: "cpcSavedRedirected", notice: { ...notice, kind: "redirected" } };
   });
 }
 

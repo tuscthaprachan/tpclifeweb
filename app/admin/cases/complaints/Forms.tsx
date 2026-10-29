@@ -10,6 +10,7 @@ import {
   acknowledgeAction,
   closeAction,
   recategoriseAction,
+  redirectAction,
   reopenAction,
   resolveAction,
   revealEvidenceAction,
@@ -304,5 +305,70 @@ export function EvidenceReveal({ locale, caseId, orgId, count }: Base & { count:
       )}
       <p className="m-0 text-sm text-ink-600">{a("cpcEvidenceLogged", locale)}</p>
     </div>
+  );
+}
+
+export interface RedirectFaculty {
+  value: string;
+  label: string;
+  bodies: Array<{ value: string; label: string }>;
+}
+
+/** Redirect: close a matter outside the union's remit and point the person to a faculty (and programme association) or to a course lecturer. Final, so it asks for a confirmation. */
+export function RedirectForm({ locale, caseId, orgId, faculties }: Base & { faculties: RedirectFaculty[] }) {
+  const [state, run, pending] = useActionState<CpState, FormData>(redirectAction, EMPTY);
+  const [level, setLevel] = useState(state.values?.level || "faculty");
+  const [facultyId, setFacultyId] = useState(state.values?.faculty ?? "");
+  const bodies = faculties.find((f) => f.value === facultyId)?.bodies ?? [];
+  if (faculties.length === 0) return <p className="m-0 text-ink-600">{a("cpcRedirectNoFaculties", locale)}</p>;
+  return (
+    <form action={run} noValidate>
+      <Stack space={3}>
+        <Feedback state={state} locale={locale} anchor="cp-redirect-level" />
+        <Ids caseId={caseId} orgId={orgId} />
+        <Select
+          id="cp-redirect-level"
+          name="level"
+          label={a("cpcRedirectLevel", locale)}
+          value={level}
+          onChange={(event) => setLevel(event.target.value)}
+          options={[
+            { value: "faculty", label: a("cpcRedirectLevelFaculty", locale) },
+            { value: "course", label: a("cpcRedirectLevelCourse", locale) },
+          ]}
+          className="max-w-[28rem]"
+        />
+        <Select
+          id="cp-redirect-faculty"
+          name="faculty"
+          label={a("cpcRedirectFaculty", locale)}
+          value={facultyId}
+          onChange={(event) => setFacultyId(event.target.value)}
+          options={[{ value: "", label: a("cpcRedirectChoose", locale) }, ...faculties.map((f) => ({ value: f.value, label: f.label }))]}
+          className="max-w-[28rem]"
+        />
+        {level === "faculty" ? (
+          <Select
+            id="cp-redirect-body"
+            name="body"
+            label={a("cpcRedirectBody", locale)}
+            hint={a("cpcRedirectBodyHint", locale)}
+            key={facultyId}
+            defaultValue=""
+            options={[{ value: "", label: a("cpcRedirectBodyNone", locale) }, ...bodies]}
+            className="max-w-[28rem]"
+          />
+        ) : null}
+        <label className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+          <input type="checkbox" name="confirm" value="yes" className="size-5" />
+          {a("cpcRedirectConfirm", locale)}
+        </label>
+        <div>
+          <Button type="submit" variant="secondary" loading={pending} loadingLabel={a("caseSaving", locale)} disabled={!facultyId}>
+            {a("cpcRedirect", locale)}
+          </Button>
+        </div>
+      </Stack>
+    </form>
   );
 }

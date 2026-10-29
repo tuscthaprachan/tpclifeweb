@@ -83,7 +83,7 @@ const JOURNEY_NAME = { lost: "perfJLost", found: "perfJFound", claim: "perfJClai
 
 /** `headingLevel` is the depth of each service heading: 2 on the public page, 3 where the figures sit under a heading of their own. */
 export function PerformanceFigures({ report, locale, headingLevel = 2 }: { report: PerformanceReport; locale: Locale; headingLevel?: 2 | 3 }) {
-  const { lostFound: lf, complaints: cp, journeys } = report;
+  const { lostFound: lf, complaints: cp, journeys, signposts } = report;
   const f = (measure: Measure, as?: FigureProps["as"], basis?: UiKey) => <Figure measure={measure} locale={locale} as={as} basis={basis} />;
 
   return (
@@ -105,6 +105,7 @@ export function PerformanceFigures({ report, locale, headingLevel = 2 }: { repor
         <SummaryList
           rows={[
             row(UI.perfCpReceived[locale], UI.perfCpReceivedDef[locale], f(cp.received)),
+            row(UI.perfCpRedirected[locale], UI.perfCpRedirectedDef[locale], f(cp.redirected)),
             row(UI.perfCpAck[locale], UI.perfCpAckDef[locale], f(cp.acknowledgedOnTime, "percent", "perfOfComplaints")),
             row(UI.perfCpResolved[locale], UI.perfCpResolvedDef[locale], f(cp.resolvedOnTime, "percent", "perfOfComplaints")),
             row(UI.perfCpMedian[locale], UI.perfCpMedianDef[locale], f(cp.medianDaysToResolution, "days", "perfOfComplaints")),
@@ -145,6 +146,16 @@ export function PerformanceFigures({ report, locale, headingLevel = 2 }: { repor
         ) : (
           <p className="m-0 text-ink-600">{UI.perfNotEnough[locale]}</p>
         )}
+      </Section>
+
+      <Section level={headingLevel} title={UI.perfSpHeading[locale]}>
+        <p className="m-0 text-ink-600">{UI.perfSpIntro[locale]}</p>
+        <SummaryList
+          rows={[
+            row(UI.perfSpFaculty[locale], UI.perfSpFacultyDef[locale], f(signposts.faculty)),
+            row(UI.perfSpCourse[locale], UI.perfSpCourseDef[locale], f(signposts.course)),
+          ]}
+        />
       </Section>
 
       <Section level={headingLevel} title={UI.perfJHeading[locale]}>

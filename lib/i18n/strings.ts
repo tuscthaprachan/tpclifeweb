@@ -950,6 +950,43 @@ export const UI = {
   cpWithdrawLink: { th: "ยกเลิกข้อร้องเรียนนี้", en: "Withdraw this complaint" },
   cpForgetNote: { th: "ลบข้อมูลที่จำไว้ในเบราว์เซอร์เครื่องนี้ ลิงก์ส่วนตัวยังใช้ได้อยู่", en: "This clears what this device remembers. Your private link still works" },
   cpForgetThisDevice: { th: "ออกจากหน้านี้บนอุปกรณ์นี้", en: "Forget this complaint on this device" },
+  /* Complaints: redirected to a faculty or a course (who to contact instead) */
+  cpRedirectedBanner: { th: "เรื่องนี้ต้องติดต่อหน่วยงานอื่น", en: "This needs someone else" },
+  cpRedirectedBannerBody: {
+    th: "เจ้าหน้าที่พบว่าเรื่องนี้อยู่นอกขอบเขตขององค์การนักศึกษาและสภานักศึกษา จึงปิดเรื่องและแนะนำผู้ที่คุณควรติดต่อด้านล่าง",
+    en: "Staff found this is outside what the Student Union and Student Council can act on, so it is closed. Who to contact instead is below",
+  },
+  cpRedirectHeading: { th: "ติดต่อใครต่อ", en: "Who to contact instead" },
+  cpRedirectFacultyIntro: {
+    th: "เรื่องนี้เป็นเรื่องของคณะ จึงอยู่นอกขอบเขตที่องค์การนักศึกษาและสภานักศึกษาดำเนินการได้ กรุณาติดต่อหน่วยงานต่อไปนี้",
+    en: "This is a matter for your faculty, which is outside what the Student Union and Student Council can act on. Please contact the people below",
+  },
+  cpRedirectCourseIntro: {
+    th: "เรื่องนี้เป็นเรื่องของรายวิชา ผู้สอนเป็นผู้ตัดสินขั้นสุดท้าย กรุณาเสนอเรื่องกับผู้สอนก่อน",
+    en: "This is a matter for your course. The lecturer has the final say, so please raise it with them first",
+  },
+  cpRedirectCourseOffice: {
+    th: "หากไม่สามารถเสนอเรื่องกับผู้สอนได้ ให้ติดต่อสำนักงานคณะ",
+    en: "If you cannot raise it with the lecturer, contact your faculty office",
+  },
+  cpRedirectBodiesHeading: { th: "สภาหรือสโมสรนักศึกษา", en: "Student council or association" },
+  cpRedirectProgramme: { th: "หลักสูตร: {programme}", en: "Programme: {programme}" },
+  cpRedirectNoBodies: {
+    th: "เรายังไม่มีสภาหรือสโมสรนักศึกษาของ{faculty}ในรายการ ติดต่อสำนักงานคณะได้",
+    en: "We do not list a student council or association for {faculty}. You can contact the faculty office",
+  },
+  cpRedirectOfficeHeading: { th: "สำนักงานคณะ", en: "Faculty office" },
+  cpRedirectOfficeLocation: { th: "ที่ตั้ง", en: "Where" },
+  cpRedirectOfficePhone: { th: "โทรศัพท์", en: "Phone" },
+  cpRedirectOfficeEmail: { th: "อีเมล", en: "Email" },
+  cpRedirectOfficeWebsite: { th: "เว็บไซต์", en: "Website" },
+  cpRedirectOfficeNote: { th: "เวลาทำการและหมายเหตุ", en: "Opening hours and notes" },
+  cpRedirectOfficeNone: {
+    th: "เรายังไม่มีข้อมูลติดต่อสำนักงานนี้ ลองสอบถามที่คณะหรือค้นหาในเว็บไซต์ของคณะ",
+    en: "We do not have this office's contact details yet. Ask at the faculty, or look on its website",
+  },
+  cpRedirectGone: { th: "ไม่พบรายละเอียดของหน่วยงานที่แนะนำแล้ว กรุณาสอบถามที่คณะของคุณ", en: "The details we gave are no longer available. Please ask at your faculty" },
+  cpRedirectOpensNewTab: { th: "(เปิดในแท็บใหม่)", en: "(opens in a new tab)" },
   cpWithdrawTitle: { th: "ยกเลิกข้อร้องเรียนนี้หรือไม่", en: "Do you want to withdraw this complaint?" },
   cpWithdrawBody: { th: "เจ้าหน้าที่จะหยุดดำเนินการ ยกเลิกแล้วทำต่อไม่ได้ ถ้ายังต้องการ ต้องส่งเรื่องใหม่", en: "Staff will stop work on it. This cannot be undone. If you change your mind you will need to send a new complaint" },
   cpWithdrawYes: { th: "ใช่ ยกเลิกข้อร้องเรียน", en: "Yes, withdraw the complaint" },
@@ -1050,21 +1087,29 @@ export const UI = {
 
   perfCpHeading: { th: "ข้อร้องเรียน", en: "Complaints" },
   perfCpReceived: { th: "ข้อร้องเรียนที่ได้รับ", en: "Complaints received" },
-  perfCpReceivedDef: { th: "จำนวนข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้", en: "Complaints opened in the period" },
+  perfCpReceivedDef: {
+    th: "จำนวนข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้ รวมเรื่องที่ถูกส่งต่อให้คณะหรือผู้สอนภายหลัง",
+    en: "Complaints opened in the period, including any later redirected to a faculty or a course",
+  },
+  perfCpRedirected: { th: "ข้อร้องเรียนที่ส่งต่อให้คณะหรือผู้สอน", en: "Complaints redirected to a faculty or course" },
+  perfCpRedirectedDef: {
+    th: "จากข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้ จำนวนที่อยู่นอกขอบเขตขององค์การนักศึกษาและสภานักศึกษา จึงปิดเรื่องและแนะนำให้ผู้ร้องติดต่อคณะหรือผู้สอน เรื่องเหล่านี้ไม่นับในตัวเลขแก้ไขภายในเวลาที่กำหนดและจำนวนวันที่ใช้แก้ไข",
+    en: "Of complaints opened in the period, those outside the remit of the Student Union and Student Council, which were closed and the person pointed to their faculty or lecturer. They are not counted in resolved on time or in the days to resolution",
+  },
   perfCpAck: { th: "รับทราบภายในเวลาที่กำหนด", en: "Acknowledged on time" },
   perfCpAckDef: {
-    th: "จากข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้ และได้รับทราบแล้วหรือถึงกำหนดรับทราบแล้ว สัดส่วนที่เจ้าหน้าที่รับทราบทันกำหนดของหมวดนั้น ไม่นับเรื่องที่ผู้ร้องยกเลิกก่อนมีการรับทราบ",
-    en: "Of complaints opened in the period that have been acknowledged or whose acknowledgement date has passed, the share staff acknowledged by the date set for their category. Complaints withdrawn before they were acknowledged are left out",
+    th: "จากข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้ และได้รับทราบแล้วหรือถึงกำหนดรับทราบแล้ว สัดส่วนที่เจ้าหน้าที่รับทราบทันกำหนดของหมวดนั้น ไม่นับเรื่องที่ผู้ร้องยกเลิกหรือถูกส่งต่อให้คณะหรือผู้สอนก่อนมีการรับทราบ",
+    en: "Of complaints opened in the period that have been acknowledged or whose acknowledgement date has passed, the share staff acknowledged by the date set for their category. Complaints withdrawn or redirected before they were acknowledged are left out",
   },
   perfCpResolved: { th: "แก้ไขภายในเวลาที่กำหนด", en: "Resolved on time" },
   perfCpResolvedDef: {
-    th: "จากข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้ และแก้ไขแล้วหรือถึงกำหนดแก้ไขแล้ว สัดส่วนที่แก้ไขทันกำหนดของหมวดนั้น เรื่องที่เปิดอีกครั้งจะได้กำหนดใหม่นับจากวันที่เปิดอีกครั้ง",
-    en: "Of complaints opened in the period that have been resolved or whose resolution date has passed, the share resolved by the date set for their category. A complaint that is reopened gets a new date from the day it was reopened",
+    th: "จากข้อร้องเรียนที่เปิดเรื่องในช่วงเวลานี้ และแก้ไขแล้วหรือถึงกำหนดแก้ไขแล้ว สัดส่วนที่แก้ไขทันกำหนดของหมวดนั้น เรื่องที่เปิดอีกครั้งจะได้กำหนดใหม่นับจากวันที่เปิดอีกครั้ง ไม่นับเรื่องที่ถูกส่งต่อให้คณะหรือผู้สอน",
+    en: "Of complaints opened in the period that have been resolved or whose resolution date has passed, the share resolved by the date set for their category. A complaint that is reopened gets a new date from the day it was reopened. Redirected complaints are left out",
   },
   perfCpMedian: { th: "จำนวนวันที่ใช้แก้ไข (ค่ามัธยฐาน)", en: "Median days to resolution" },
   perfCpMedianDef: {
-    th: "สำหรับข้อร้องเรียนที่แก้ไขในช่วงเวลานี้ จำนวนวันตรงกลางนับจากวันที่ได้รับเรื่องจนถึงวันที่แก้ไข นับทุกวันในปฏิทิน",
-    en: "For complaints resolved in the period, the middle number of days from receiving the complaint to resolving it, counting every calendar day",
+    th: "สำหรับข้อร้องเรียนที่แก้ไขในช่วงเวลานี้ จำนวนวันตรงกลางนับจากวันที่ได้รับเรื่องจนถึงวันที่แก้ไข นับทุกวันในปฏิทิน ไม่นับเรื่องที่ถูกส่งต่อให้คณะหรือผู้สอน",
+    en: "For complaints resolved in the period, the middle number of days from receiving the complaint to resolving it, counting every calendar day. Redirected complaints are not included",
   },
   perfCpSatisfaction: { th: "ความพึงพอใจ (คะแนนเฉลี่ย)", en: "User satisfaction (average score)" },
   perfCpSatisfactionDef: {
@@ -1096,6 +1141,22 @@ export const UI = {
   perfPoolSensitive: { th: "อ่อนไหว", en: "Sensitive" },
   perfPoolOther: { th: "หมวดอื่น ๆ", en: "Other categories" },
   perfPoolSensitiveOther: { th: "อ่อนไหวและหมวดอื่น ๆ", en: "Sensitive and other categories" },
+
+  perfSpHeading: { th: "ปัญหาที่เราแนะนำให้ติดต่อคณะหรือผู้สอน", en: "Issues signposted to faculty or course level" },
+  perfSpIntro: {
+    th: "นักศึกษาที่แจ้งปัญหากับเราและพบว่าเรื่องของตนเป็นเรื่องของคณะหรือรายวิชา จะได้รับการแนะนำช่องทางติดต่อโดยไม่เปิดเป็นข้อร้องเรียน ตารางนี้นับเฉพาะจำนวนครั้ง ไม่เก็บข้อมูลส่วนตัว",
+    en: "Students who report an issue and find it belongs to a faculty or a course are shown who to contact, without it becoming a complaint. These are counts only and hold no personal data",
+  },
+  perfSpFaculty: { th: "แนะนำให้ติดต่อคณะหรือสภาและสโมสรนักศึกษาของคณะ", en: "Signposted to a faculty or its student body" },
+  perfSpFacultyDef: {
+    th: "จำนวนครั้งในช่วงเวลานี้ที่นักศึกษาได้รับการแนะนำให้ติดต่อสำนักงานคณะ หรือสภาและสโมสรนักศึกษาของคณะ",
+    en: "Times in the period a student was shown their faculty office, or its student council or association",
+  },
+  perfSpCourse: { th: "แนะนำให้ติดต่อผู้สอนของรายวิชา", en: "Signposted to a course lecturer" },
+  perfSpCourseDef: {
+    th: "จำนวนครั้งในช่วงเวลานี้ที่นักศึกษาได้รับการแนะนำให้เสนอเรื่องกับผู้สอน หรือติดต่อสำนักงานคณะหากทำไม่ได้",
+    en: "Times in the period a student was told to raise it with their lecturer, or the faculty office if they cannot",
+  },
 
   perfJHeading: { th: "การส่งเรื่องผ่านเว็บไซต์ให้สำเร็จ", en: "Finishing an online form" },
   perfJIntro: {

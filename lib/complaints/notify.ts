@@ -23,9 +23,11 @@ import { cases } from "@/lib/db/schema/cases";
 import { complaintCategoryAccess } from "@/lib/db/schema/complaints";
 import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { getEmailSender, isEmailConfigured, type EmailSender } from "@/lib/email";
-import { complaintAcknowledged, complaintResolved, complaintsEscalated } from "@/lib/email/complaint-templates";
+import { complaintAcknowledged, complaintRedirected, complaintResolved, complaintsEscalated } from "@/lib/email/complaint-templates";
+import type { RenderedEmail } from "@/lib/email/templates";
+import { loadRedirectTarget } from "./redirect";
 
-export type ComplainantNotice = "acknowledged" | "resolved";
+export type ComplainantNotice = "acknowledged" | "resolved" | "redirected";
 
 export type ReminderReason = "no_contact" | "no_consent" | "no_email" | "email_not_configured" | "send_failed";
 
@@ -45,16 +47,32 @@ export function decideComplainantNotice(input: { hasContact: boolean; hasEmail: 
 const NOTE: Record<ComplainantNotice, { sent: string; failed: string }> = {
   acknowledged: { sent: "Emailed the complainant the acknowledgement.", failed: "Could not email the complainant the acknowledgement." },
   resolved: { sent: "Emailed the complainant that there is an outcome.", failed: "Could not email the complainant that there is an outcome." },
+  redirected: { sent: "Emailed the complainant who to contact instead.", failed: "Could not email the complainant who to contact instead." },
 };
 
+type NotifyOpts = { sender?: EmailSender; emailConfigured?: boolean; now?: Date; env?: PiiEnv };
+
 /** Tells the complainant by email when they agreed to it. Never throws for a delivery problem; the staff member is shown a reminder instead. */
-export async function notifyComplainant(
-  db: AuditExecutor,
-  caseId: string,
-  kind: ComplainantNotice,
-  actor: StaffActor,
-  opts: { sender?: EmailSender; emailConfigured?: boolean; now?: Date; env?: PiiEnv } = {},
-): Promise<NoticeOutcome> {
+export async function notifyComplainant(db: AuditExecutor, caseId: string, kind: Exclude<ComplainantNotice, "redirected">, actor: StaffActor, opts: NotifyOpts = {}): Promise<NoticeOutcome> {
+  return send(db, caseId, kind, actor, opts, async (reference) => (kind === "acknowledged" ? complaintAcknowledged({ reference }) : complaintResolved({ reference })));
+}
+
+/**
+ * Tells the complainant their complaint was redirected, and who to contact
+ * instead (the association or council's Instagram, the faculty office where
+ * filled in, or for a course that the lecturer has the final say). Same rules
+ * as every complainant email: only with consent, an address and email set up,
+ * and a failure never blocks the redirect.
+ */
+export async function notifyRedirected(db: AuditExecutor, caseId: string, actor: StaffActor, opts: NotifyOpts = {}): Promise<NoticeOutcome> {
+  return send(db, caseId, "redirected", actor, opts, async (reference) => {
+    const target = await loadRedirectTarget(db, caseId);
+    if (!target) throw new Error("The complaint has no redirect target.");
+    return complaintRedirected({ reference, target });
+  });
+}
+
+async function send(db: AuditExecutor, caseId: string, kind: ComplainantNotice, actor: StaffActor, opts: NotifyOpts, render: (reference: string) => Promise<RenderedEmail>): Promise<NoticeOutcome> {
   const summaries = await listContactSummaries(db, caseId, actor);
   const person = summaries.find((c) => c.role === "reporter") ?? summaries[0];
   const decision = decideComplainantNotice({
@@ -70,8 +88,7 @@ export async function notifyComplainant(
     const contacts = await readContacts(db, caseId, actor, { now: opts.now, env: opts.env });
     const to = contacts.find((c) => c.id === person!.id)?.email;
     if (!to) return { result: "remind", reason: "no_email" };
-    const params = { reference: row!.reference };
-    await (opts.sender ?? getEmailSender()).send({ to, ...(kind === "acknowledged" ? complaintAcknowledged(params) : complaintResolved(params)) });
+    await (opts.sender ?? getEmailSender()).send({ to, ...(await render(row!.reference)) });
     await addNote(db, caseId, NOTE[kind].sent, actor, { now: opts.now });
     return { result: "sent" };
   } catch (error) {

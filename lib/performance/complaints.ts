@@ -5,14 +5,22 @@
  * those into "Sensitive". Keep the definitions in step with the `perf` strings.
  *
  *   received            complaints opened in the period (also by month)
+ *   redirected          of those, the ones closed as outside the union's
+ *                       remit and sent to a faculty or a course. They are
+ *                       received, so they stay in `received`, but they are
+ *                       left out of the on-time and median figures below:
+ *                       nothing was owed to the person except the pointer
  *   acknowledged on time  of complaints opened in the period that have been
  *                       acknowledged or whose acknowledge date has passed
- *                       (withdrawn ones that were never acknowledged left
- *                       out), the share acknowledged by that date
- *   resolved on time    the same for the resolve date. A reopened complaint
- *                       has a new resolve date from the reopening
+ *                       (withdrawn or redirected ones that were never
+ *                       acknowledged left out), the share acknowledged by
+ *                       that date
+ *   resolved on time    the same for the resolve date, with redirected ones
+ *                       left out. A reopened complaint has a new resolve
+ *                       date from the reopening
  *   median days         from opened to resolved, for complaints resolved in
- *                       the period (calendar days)
+ *                       the period (calendar days); redirected ones are
+ *                       never resolved, so they are not in it
  *   satisfaction        survey scores given in the period, 1 to 5: the mean,
  *                       and the share scoring 4 or 5
  *   reopen rate         of complaints opened in the period that have been
@@ -34,6 +42,8 @@ export const MAX_MONTHS = 36;
 
 export interface ComplaintMeasures {
   received: Measure;
+  /** Of those received, closed as redirected to a faculty or a course. */
+  redirected: Measure;
   /** Oldest first. Empty for periods shorter than a month. */
   byMonth: Array<{ month: string; received: Measure }>;
   byCategory: GroupedRow[];
@@ -55,6 +65,11 @@ export async function complaintMeasures(db: AuditExecutor, range: Range, now: Da
   const total = await queryOne<{ n: number }>(
     db,
     sql`select count(*)::int as n from ${cases} where service = 'complaint' and ${opened}`,
+  );
+
+  const redirected = await queryOne<{ n: number }>(
+    db,
+    sql`select count(*)::int as n from ${cases} where service = 'complaint' and status = 'redirected' and ${opened}`,
   );
 
   const monthRows = monthly
@@ -81,7 +96,7 @@ export async function complaintMeasures(db: AuditExecutor, range: Range, now: Da
         (count(*) filter (where cc.acknowledged_at is not null and cc.acknowledged_at <= cc.acknowledge_due_at))::int as ok
       from ${complaintCases} cc inner join ${cases} on ${cases.id} = cc.case_id
       where ${opened}
-        and (cc.acknowledged_at is not null or (${cases.status} <> 'withdrawn' and cc.acknowledge_due_at < ${at}::timestamptz))`,
+        and (cc.acknowledged_at is not null or (${cases.status} not in ('withdrawn', 'redirected') and cc.acknowledge_due_at < ${at}::timestamptz))`,
   );
 
   const resolve = await queryOne<{ base: number; ok: number }>(
@@ -90,7 +105,7 @@ export async function complaintMeasures(db: AuditExecutor, range: Range, now: Da
         (count(*) filter (where cc.resolved_at is not null and cc.resolved_at <= cc.resolve_due_at))::int as ok
       from ${complaintCases} cc inner join ${cases} on ${cases.id} = cc.case_id
       where ${opened}
-        and (cc.resolved_at is not null or (${cases.status} <> 'withdrawn' and cc.resolve_due_at < ${at}::timestamptz))`,
+        and (cc.resolved_at is not null or (${cases.status} not in ('withdrawn', 'redirected') and cc.resolve_due_at < ${at}::timestamptz))`,
   );
 
   const median = await queryOne<{ n: number; median: number | null }>(
@@ -98,7 +113,7 @@ export async function complaintMeasures(db: AuditExecutor, range: Range, now: Da
     sql`select count(*)::int as n,
         (percentile_cont(0.5) within group (order by extract(epoch from (cc.resolved_at - ${cases.createdAt})) / 86400.0))::float8 as median
       from ${complaintCases} cc inner join ${cases} on ${cases.id} = cc.case_id
-      where cc.resolved_at is not null and ${within(sql`cc.resolved_at`, range)}`,
+      where cc.resolved_at is not null and ${cases.status} <> 'redirected' and ${within(sql`cc.resolved_at`, range)}`,
   );
 
   const survey = await queryOne<{ n: number; mean: number | null; satisfied: number }>(
@@ -128,6 +143,7 @@ export async function complaintMeasures(db: AuditExecutor, range: Range, now: Da
   const meanScore = numOrNull(survey.mean);
   return {
     received: countMeasure(num(total.n)),
+    redirected: countMeasure(num(redirected.n)),
     byMonth: monthly ? monthTable(monthRows, range, now) : [],
     byCategory: groupCategoryCounts(
       categoryRows.map((r) => ({ key: r.key, nameTh: r.name_th, nameEn: r.name_en, restricted: r.restricted, n: num(r.n) })),

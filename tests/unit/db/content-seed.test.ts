@@ -11,6 +11,7 @@ import {
   canteenStalls,
   contentPages,
   directoryOrganisations,
+  faculties,
   faqs,
   forms,
   places,
@@ -42,6 +43,7 @@ const TABLES = {
   shuttle_routes: shuttleRoutes,
   shuttle_stops: shuttleStops,
   directory_organisations: directoryOrganisations,
+  faculties,
   content_pages: contentPages,
   faqs,
   places,
@@ -115,6 +117,7 @@ describe("content seed", () => {
     // Handbook places plus the canteen place.
     expect(before.places).toBe(PLACE_DOCS.length + 1);
     expect(before.directory_organisations).toBe(buildDirectory().length);
+    expect(before.faculties).toBe(10);
     expect(before.forms).toBe(FORMS.length);
     expect(before.shuttle_routes).toBe(SHUTTLE_ROUTES.length);
     expect(before.shuttle_stops).toBe(SHUTTLE_ROUTES.reduce((n, r) => n + r.stops.length, 0));

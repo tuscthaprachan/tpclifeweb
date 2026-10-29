@@ -1,6 +1,7 @@
 import { ORGANISATIONS } from "../../../data/harvested-inventory";
 import { directoryOrganisations, type OrganisationContactJson } from "../schema/content/directory";
 import { ENRICHMENTS, NEW_ORGANISATION_DOCS } from "./data/handbook";
+import { FACULTY_LINKS, linkOrganisationToFaculty } from "./faculties";
 import { excludedSet, published, slugify, type Bi, type SeedDb } from "./util";
 
 /**
@@ -8,6 +9,10 @@ import { excludedSet, published, slugify, type Bi, type SeedDb } from "./util";
  * (data/harvested-inventory.ts), the handbook's additional ones, and the
  * handbook's Thai names and descriptions applied over the harvested entries
  * that only had an English display name (the old "enrichment" patches).
+ *
+ * Faculty committees are then linked to their faculty (./faculties.ts, which
+ * documents how the faculty-wide and programme scopes were inferred), so the
+ * faculties are seeded first.
  *
  * Instagram handles are stored bare (no @, no URL), as
  * components/domain/directory/contactHref.ts expects.
@@ -80,7 +85,12 @@ export async function seedDirectory(db: SeedDb): Promise<void> {
         contacts: org.contacts,
         isActive: true,
       })
-      // organisation_id is set by hand (TUSU/TUSC entries); a re-seed must not clear it.
-      .onConflictDoUpdate({ target: directoryOrganisations.slug, set: excludedSet(directoryOrganisations, ["organisationId"]) });
+      // organisation_id is set by hand (TUSU/TUSC entries), and the faculty link and scope by editors; a re-seed must not clear them.
+      .onConflictDoUpdate({
+        target: directoryOrganisations.slug,
+        set: excludedSet(directoryOrganisations, ["organisationId", "facultyId", "scope", "programmeNameTh", "programmeNameEn"]),
+      });
+    const link = FACULTY_LINKS[org.contacts[0]?.value ?? ""];
+    if (link) await linkOrganisationToFaculty(db, org.slug, link);
   }
 }

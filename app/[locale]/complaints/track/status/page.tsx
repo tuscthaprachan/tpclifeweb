@@ -22,6 +22,7 @@ import { formatDate } from "@/lib/i18n/format";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { Unavailable } from "../../_journey/Unavailable";
+import { RedirectSignpost } from "../../_journey/RedirectSignpost";
 import { WellbeingBox } from "../../_journey/WellbeingBox";
 import { forgetTracking } from "../actions";
 
@@ -60,7 +61,7 @@ export default async function ComplaintStatusPage({ params, searchParams }: { pa
   const { view } = c;
 
   const tone = getStatusDef(view.service, view.kind, view.status)?.tone ?? "neutral";
-  const open = !["resolved", "closed", "withdrawn"].includes(view.status);
+  const open = !["resolved", "closed", "withdrawn", "redirected"].includes(view.status);
   const outcome = localisedBody(c.outcome, locale);
   const rows: SummaryListRow[] = [
     { key: UI.cpReference[locale], value: <span className="font-semibold">{view.reference}</span> },
@@ -102,7 +103,15 @@ export default async function ComplaintStatusPage({ params, searchParams }: { pa
           </NotificationBanner>
         ) : null}
 
+        {view.status === "redirected" ? (
+          <NotificationBanner variant="info" title={UI.cpRedirectedBanner[locale]}>
+            {UI.cpRedirectedBannerBody[locale]}
+          </NotificationBanner>
+        ) : null}
+
         <SummaryList rows={rows} />
+
+        {c.redirect ? <RedirectSignpost target={c.redirect} locale={locale} /> : null}
 
         {outcome ? (
           <Stack space={2} as="section">

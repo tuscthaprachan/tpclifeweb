@@ -22,12 +22,13 @@ const cc = async (id: string) => (await t.db.select().from(complaintCases).where
 describe("machine", () => {
   it("has the planned statuses and moves", () => {
     const m = getMachine("complaint", "complaint")!;
-    expect(Object.keys(m.statuses).sort()).toEqual(["acknowledged", "closed", "in_progress", "received", "reopened", "resolved", "withdrawn"]);
+    expect(Object.keys(m.statuses).sort()).toEqual(["acknowledged", "closed", "in_progress", "received", "redirected", "reopened", "resolved", "withdrawn"]);
     expect(m.initial).toBe("received");
-    expect(allowedTransitions("complaint", "complaint", "received")).toEqual(["acknowledged", "in_progress", "resolved", "withdrawn"]);
+    expect(allowedTransitions("complaint", "complaint", "received")).toEqual(["acknowledged", "in_progress", "resolved", "redirected", "withdrawn"]);
     expect(canTransition("complaint", "complaint", "resolved", "closed")).toBe(true);
     expect(allowedTransitions("complaint", "complaint", "closed")).toEqual([]);
     expect(allowedTransitions("complaint", "complaint", "withdrawn")).toEqual([]);
+    expect(allowedTransitions("complaint", "complaint", "redirected")).toEqual([]);
     expect(allowedTransitions("complaint", "complaint", "resolved", "public")).toEqual(["reopened"]);
     expect(allowedTransitions("complaint", "complaint", "in_progress", "public")).toEqual(["withdrawn"]);
     expect(allowedTransitions("complaint", "complaint", "closed", "public")).toEqual([]);

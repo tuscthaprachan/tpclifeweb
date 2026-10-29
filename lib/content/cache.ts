@@ -18,6 +18,7 @@ export const CACHE_TAGS = {
   policy: "policy",
   content: "content",
   directory: "directory",
+  faculty: "faculty",
   place: "place",
   faq: "faq",
   lostFound: "lostFound",

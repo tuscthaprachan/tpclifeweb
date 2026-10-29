@@ -12,6 +12,7 @@ export * from "./cache";
 export * from "./canteen";
 export * from "./directory";
 export * from "./events";
+export * from "./faculties";
 export * from "./forms";
 export * from "./lost-found";
 export * from "./news";

@@ -33,6 +33,7 @@ export const CASE_EVENT_TYPES = [
   "recategorised",
   "escalated",
   "wellbeing_routed",
+  "redirected",
   "details_viewed",
   "evidence_viewed",
   "survey_received",

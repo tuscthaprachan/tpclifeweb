@@ -1,6 +1,8 @@
 /** Complaint measures on PGlite: the definitions in lib/performance/complaints.ts, the five-case rule and the Sensitive grouping. */
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { acknowledgeComplaint, reopenComplaint, resolveComplaint } from "@/lib/complaints/workflow";
+import { acknowledgeComplaint, redirectComplaint, reopenComplaint, resolveComplaint } from "@/lib/complaints/workflow";
+import { faculties } from "@/lib/db/schema";
+import { seedFaculties } from "@/lib/db/seed/faculties";
 import { submitSurvey } from "@/lib/complaints/survey";
 import { complaintMeasures } from "@/lib/performance/complaints";
 import { rangeFor } from "@/lib/performance/period";
@@ -139,5 +141,49 @@ describe("restricted categories", () => {
     expect(m.byCategory.every((row) => row.n >= 5)).toBe(true);
     expect(m.byCategory).toEqual([{ type: "pool", pool: "sensitive_other", n: 10 }]);
     expect(JSON.stringify(m)).not.toMatch(/harassment|facilities/);
+  });
+});
+
+describe("redirected complaints", () => {
+  let t: Ctx;
+  beforeAll(async () => {
+    t = await setupComplaints();
+    await seedFaculties(t.db);
+    const [law] = await t.db.select().from(faculties);
+    const ids: string[] = [];
+    for (let i = 0; i < 10; i++) ids.push((await t.file()).caseId);
+    // Five are answered on time; five are outside the union's remit and redirected, never acknowledged.
+    for (const id of ids.slice(0, 5)) {
+      await acknowledgeComplaint(t.db, id, {}, t.handler, { now: at(1) });
+      await resolveComplaint(t.db, id, { outcome: { en: "Fixed" } }, t.handler, { now: at(3) });
+    }
+    for (const [i, id] of ids.slice(5).entries()) await redirectComplaint(t.db, id, { level: i % 2 === 0 ? "faculty" : "course", facultyId: law!.id }, t.handler, { now: at(1) });
+  });
+
+  it("counts them as received and, separately, as redirected", async () => {
+    const m = await measures(t);
+    expect(m.received).toEqual({ suppressed: false, n: 10, value: 10 });
+    expect(m.redirected).toEqual({ suppressed: false, n: 5, value: 5 });
+  });
+
+  it("leaves them out of acknowledged on time, resolved on time and the median", async () => {
+    const m = await measures(t);
+    // Without the exclusion their passed targets would make the base 10 and the rates 50.
+    expect(m.acknowledgedOnTime).toEqual({ suppressed: false, n: 5, value: 100 });
+    expect(m.resolvedOnTime).toEqual({ suppressed: false, n: 5, value: 100 });
+    expect(m.medianDaysToResolution).toEqual({ suppressed: false, n: 5, value: 3 });
+  });
+
+  it("hides the redirected count below five, like any figure", async () => {
+    const t2 = await setupComplaints();
+    await seedFaculties(t2.db);
+    const [faculty] = await t2.db.select().from(faculties);
+    for (let i = 0; i < 6; i++) {
+      const c = await t2.file();
+      if (i < 4) await redirectComplaint(t2.db, c.caseId, { level: "course", facultyId: faculty!.id }, t2.handler, { now: at(1) });
+    }
+    const m = await measures(t2);
+    expect(m.received).toMatchObject({ suppressed: false, value: 6 });
+    expect(m.redirected).toEqual({ suppressed: true });
   });
 });

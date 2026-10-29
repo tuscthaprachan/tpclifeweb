@@ -5,6 +5,7 @@ export * from "./site";
 export * from "./alerts";
 export * from "./shuttle";
 export * from "./forms";
+export * from "./faculties";
 export * from "./directory";
 export * from "./news-events";
 export * from "./policies";

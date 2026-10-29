@@ -1,5 +1,6 @@
 import { seedCanteen } from "./canteen";
 import { seedDirectory } from "./directory";
+import { seedFaculties } from "./faculties";
 import { seedForms } from "./forms";
 import { seedHandbook } from "./handbook";
 import { seedGuidePages } from "./pages";
@@ -14,8 +15,9 @@ import type { SeedDb } from "./util";
  * leaves row counts unchanged.
  *
  * Seeded: site settings, 2 forms, 4 hand-built guide pages, 2 shuttle routes,
- * the directory (harvested + handbook organisations), the handbook (FAQs,
- * welfare pages, guide pages, places) and the whole surveyed canteen.
+ * the faculties (names only, before the directory that links to them), the
+ * directory (harvested + handbook organisations), the handbook (FAQs, welfare
+ * pages, guide pages, places) and the whole surveyed canteen.
  * Deliberately NOT seeded because the sources have none: news, events, policies,
  * service alerts, lost and found entries. Page-level copy that lives in code
  * (the about pages, TRANSPORT facts on /getting-around, the /report page) stays
@@ -26,6 +28,7 @@ export async function seedContent(db: SeedDb): Promise<void> {
     await seedSiteSettings(tx);
     await seedForms(tx);
     await seedShuttle(tx);
+    await seedFaculties(tx);
     await seedDirectory(tx);
     await seedGuidePages(tx);
     await seedHandbook(tx);

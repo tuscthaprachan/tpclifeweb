@@ -1,9 +1,9 @@
 import type { LocaleString } from "../config";
 
 /**
- * Staff console strings for the directory, places, shuttle and site settings
- * forms. `dir` keys are shared by all four; `places`, `shuttle` and `site`
- * keys belong to one form each.
+ * Staff console strings for the directory, faculties, places, shuttle and site
+ * settings forms. `dir` keys are shared by all of them; `fac`, `places`,
+ * `shuttle` and `site` keys belong to one form each.
  */
 export const DIRECTORY_STRINGS = {
   /* Shared */
@@ -78,6 +78,47 @@ export const DIRECTORY_STRINGS = {
   },
   dirErrLineId: { th: "กรอก LINE ID ให้ถูกต้อง โดยไม่เว้นวรรค", en: "Enter the LINE ID without spaces" },
   dirErrChannel: { th: "เลือกช่องทาง", en: "Select the channel" },
+
+  dirFieldFacultyLink: { th: "คณะหรือวิทยาลัยในรายการ", en: "Faculty in the faculty list" },
+  dirHintFacultyLink: {
+    th: "เลือกเพื่อให้นักศึกษาที่ต้องติดต่อคณะเห็นคณะกรรมการนี้ เว้นว่างไว้ได้หากเป็นประเภทอื่น",
+    en: "Choose it so students who need their faculty are shown this committee. Leave empty for other types",
+  },
+  dirFieldScope: { th: "ขอบเขตของคณะกรรมการ", en: "What the committee covers" },
+  dirHintScope: {
+    th: "สภาหรือคณะกรรมการของทั้งคณะ หรือสโมสรของหลักสูตรเดียว ใช้เมื่อเลือกคณะด้านบนแล้ว",
+    en: "The council or committee of the whole faculty, or the association of one programme. Used once a faculty is chosen above",
+  },
+  dirScopeFaculty: { th: "ทั้งคณะ (สภาหรือคณะกรรมการนักศึกษาคณะ)", en: "The whole faculty (student council or committee)" },
+  dirScopeProgramme: { th: "หลักสูตรเดียว (สโมสรหรือสมาคมของหลักสูตร)", en: "One programme (the programme's association)" },
+  dirFieldProgramme: { th: "ชื่อหลักสูตร", en: "Programme" },
+  dirHintProgramme: { th: "ใช้เมื่อขอบเขตเป็นหลักสูตรเดียว เช่น หลักสูตรนิติศาสตรบัณฑิต", en: "For a one-programme committee, for example the LL.B. programme" },
+  dirErrScopeNeedsFaculty: { th: "เลือกคณะก่อนกำหนดขอบเขตหรือชื่อหลักสูตร", en: "Choose a faculty before setting what the committee covers or the programme" },
+  dirErrFacultyUnknown: { th: "ไม่พบคณะที่เลือก ลองเลือกอีกครั้ง", en: "That faculty was not found. Choose it again" },
+
+  /* Faculties */
+  facGroupAbout: { th: "ข้อมูลคณะ", en: "About the faculty" },
+  facGroupOffice: { th: "สำนักงานคณะ", en: "Faculty office" },
+  facHintOffice: {
+    th: "นักศึกษาจะเห็นเฉพาะช่องที่กรอก เว้นว่างช่องที่ยังไม่ทราบ ห้ามเดาข้อมูล",
+    en: "Students are shown only the boxes you fill in. Leave out what you do not know, and do not guess",
+  },
+  facFieldSortOrder: { th: "ลำดับในรายการ", en: "Order in the list" },
+  facHintSortOrder: { th: "เลขน้อยแสดงก่อน ถ้าเท่ากันจะเรียงตามชื่อ", en: "Lower numbers come first. Faculties with the same number are put in name order" },
+  facFieldOfficeLocation: { th: "ที่ตั้งสำนักงาน", en: "Where the office is" },
+  facHintOfficeLocation: { th: "เช่น อาคาร ชั้น และห้อง", en: "For example, the building, floor and room" },
+  facFieldOfficePhone: { th: "โทรศัพท์สำนักงาน", en: "Office phone" },
+  facFieldOfficeEmail: { th: "อีเมลสำนักงาน", en: "Office email" },
+  facFieldOfficeWebsite: { th: "เว็บไซต์ของคณะ", en: "Faculty website" },
+  facFieldOfficeNote: { th: "เวลาทำการหรือหมายเหตุ", en: "Opening hours or a note" },
+  facHintOfficeNote: { th: "ข้อความอิสระ เช่น เวลาทำการ หรือช่องทางที่ควรใช้ก่อน", en: "Free text, for example opening hours or the best way to reach them first" },
+  facInUseTitle: { th: "ลบคณะนี้ไม่ได้", en: "This faculty cannot be deleted" },
+  facInUseBody: {
+    th: "คณะนี้ยังถูกใช้อยู่ ให้เอาคณะนี้ออกจากรายการเหล่านี้ก่อน แล้วลองลบอีกครั้ง: {uses}",
+    en: "This faculty is still in use. Remove it from these first, then try deleting again: {uses}",
+  },
+  facUseOrganisations: { th: "คณะกรรมการนักศึกษา {n} รายการ", en: "student committees: {n}" },
+  facUseRedirects: { th: "ข้อร้องเรียนที่ส่งต่อมาที่คณะนี้ {n} รายการ", en: "complaints sent on to this faculty: {n}" },
 
   /* Places */
   placesFieldBuilding: { th: "อาคารและชั้น", en: "Building and floor" },

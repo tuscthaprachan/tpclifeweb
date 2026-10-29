@@ -52,6 +52,10 @@ export const DIRECTORY_ORGANISATION_TYPES = [
 ] as const;
 export const directoryOrganisationTypeEnum = pgEnum("directory_organisation_type", DIRECTORY_ORGANISATION_TYPES);
 
+/** Whether a faculty committee speaks for the whole faculty (council) or for one programme (association). */
+export const DIRECTORY_ORGANISATION_SCOPES = ["faculty", "programme"] as const;
+export const directoryOrganisationScopeEnum = pgEnum("directory_organisation_scope", DIRECTORY_ORGANISATION_SCOPES);
+
 /* Lost and found */
 
 export const LOST_FOUND_KINDS = ["lost", "found"] as const;

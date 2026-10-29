@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
 import { journeyMetrics } from "@/lib/db/schema";
 import { acknowledgeComplaint } from "@/lib/complaints/workflow";
-import { journeyMeasures, JOURNEY_SETTLE_MS, recordJourneyFinish, recordJourneyStart } from "@/lib/performance/journeys";
+import { journeyMeasures, JOURNEY_SETTLE_MS, recordJourneyFinish, recordJourneyStart, recordSignpost, signpostMeasures } from "@/lib/performance/journeys";
 import { getOperations } from "@/lib/performance/operations";
 import { rangeFor } from "@/lib/performance/period";
 import { buildPerformanceReport } from "@/lib/performance/report";
@@ -58,6 +58,41 @@ describe("journey completion", () => {
 
   it("the table holds nothing but the kind and two times", () => {
     expect(Object.keys(journeyMetrics).filter((k) => !k.startsWith("_") && k !== "enableRLS").sort()).toEqual(["finishedAt", "id", "kind", "startedAt"]);
+  });
+});
+
+describe("signposts", () => {
+  const now = new Date("2026-06-15T05:00:00Z");
+  let t: Ctx;
+  beforeAll(async () => {
+    t = await setupComplaints();
+    for (let i = 0; i < 6; i++) await recordSignpost(t.db, "faculty", new Date(now.getTime() - DAY));
+    for (let i = 0; i < 4; i++) await recordSignpost(t.db, "course", new Date(now.getTime() - DAY));
+    for (let i = 0; i < 7; i++) await recordSignpost(t.db, "emergency", new Date(now.getTime() - DAY));
+    await recordSignpost(t.db, "course", new Date(now.getTime() - 90 * DAY));
+  });
+
+  it("counts faculty and course signposts, hides a count under five, and does not publish emergency ones", async () => {
+    const all = await signpostMeasures(t.db, rangeFor("all", now));
+    expect(all).toEqual({ faculty: { suppressed: false, n: 6, value: 6 }, course: { suppressed: false, n: 5, value: 5 } });
+    const recent = await signpostMeasures(t.db, rangeFor("30d", now));
+    expect(recent).toEqual({ faculty: { suppressed: false, n: 6, value: 6 }, course: { suppressed: true } });
+    expect(JSON.stringify(all)).not.toContain("emergency");
+  });
+
+  it("stores one row per signpost with no personal data, and keeps them out of the completion rates", async () => {
+    const rows = await t.db.select().from(journeyMetrics).where(eq(journeyMetrics.kind, "signpost_emergency"));
+    expect(rows).toHaveLength(7);
+    expect(rows[0]!.finishedAt).toEqual(rows[0]!.startedAt);
+    const journeys = await journeyMeasures(t.db, rangeFor("all", now), now);
+    expect(journeys.map((r) => r.kind)).toEqual(["lost", "found", "claim", "complaint"]);
+    expect(journeys.every((r) => r.started.suppressed)).toBe(true);
+  });
+
+  it("is in the report, and counting never throws", async () => {
+    const report = await buildPerformanceReport(t.db, "all", now);
+    expect(report.signposts.faculty).toMatchObject({ suppressed: false, value: 6 });
+    await expect(recordSignpost(t.db, "bogus" as "faculty", now)).resolves.toBeUndefined();
   });
 });
 

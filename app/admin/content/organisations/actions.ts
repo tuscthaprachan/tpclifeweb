@@ -30,7 +30,7 @@ export async function saveOrganisation(id: string | null, _prev: ContentFormStat
   const checked = await validateOrganisationForm(db, { locale, id, formData, existingStatus: existing?.status });
   if (!checked.ok) return { ...EMPTY_FORM_STATE, errors: checked.errors };
   const { status, intent } = checked;
-  const { slug, name, type, faculty, description, location, isActive, contacts } = checked.data;
+  const { slug, name, type, faculty, facultyId, scope, programme, description, location, isActive, contacts } = checked.data;
 
   let saved;
   try {
@@ -47,6 +47,10 @@ export async function saveOrganisation(id: string | null, _prev: ContentFormStat
         type,
         facultyTh: faculty.th || null,
         facultyEn: faculty.en || null,
+        facultyId,
+        scope: facultyId ? scope : null,
+        programmeNameTh: facultyId ? programme.th || null : null,
+        programmeNameEn: facultyId ? programme.en || null : null,
         descriptionTh: description.th || null,
         descriptionEn: description.en || null,
         contacts,

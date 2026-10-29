@@ -10,7 +10,7 @@
  * Do not move a complaint with the engine's `transition` directly: use these.
  */
 
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { addPublicUpdate, canSeeCase, transition, type CaseActor, type PublicUpdateText, type StaffActor } from "@/lib/cases";
 import { appendEvent, auditContextOf, lockCase, touchCase } from "@/lib/cases/internal";
 import { assertCaseAccess } from "@/lib/cases/restrictions";
@@ -18,7 +18,8 @@ import { CaseError } from "@/lib/cases/types";
 import { encryptOptionalPii, type PiiEnv } from "@/lib/crypto/pii";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { cases } from "@/lib/db/schema/cases";
-import { complaintCases, type ComplaintCaseRow } from "@/lib/db/schema/complaints";
+import { directoryOrganisations, faculties } from "@/lib/db/schema/content";
+import { COMPLAINT_REDIRECT_LEVELS, complaintCases, type ComplaintCaseRow, type ComplaintRedirectLevel } from "@/lib/db/schema/complaints";
 import { complaintTextAad } from "./aad";
 import { getCategory } from "./categories";
 import { REOPEN_WINDOW_DAYS } from "./constants";
@@ -240,5 +241,56 @@ export async function routeToWellbeing(db: AuditExecutor, caseId: string, actor:
     await appendEvent(tx, caseId, actor, now, { type: "wellbeing_routed" });
     await audit({ action: "complaint.wellbeing_route", entityType: "case", entityId: caseId });
     return true;
+  });
+}
+
+export interface RedirectInput {
+  /** `faculty`: a matter for the faculty or a programme. `course`: a matter for the lecturer, who has the final say. */
+  level: ComplaintRedirectLevel;
+  facultyId: string;
+  /** Faculty level only: the programme association (or council) to point to. Must belong to the faculty. */
+  organisationId?: string | null;
+}
+
+/**
+ * Closes a complaint that is outside the student union's remit as
+ * `redirected`, recording where it was sent. It is final (the machine gives
+ * `redirected` no way back, so the matter cannot re-enter the queue) and,
+ * like any closure, starts the one year personal data clock. The person sees
+ * the status and the contacts on their tracking page; emailing them is
+ * separate (./notify.ts `notifyRedirected`). Needs a published faculty, and for
+ * a faculty matter an optional published, active committee of that faculty.
+ */
+export async function redirectComplaint(db: AuditExecutor, caseId: string, input: RedirectInput, actor: StaffActor, opts: { now?: Date } = {}): Promise<void> {
+  const now = opts.now ?? new Date();
+  if (!COMPLAINT_REDIRECT_LEVELS.includes(input.level)) throw new ComplaintError("invalid", "Unknown redirect level.");
+  const organisationId = input.level === "faculty" ? input.organisationId || null : null;
+  if (input.level === "course" && input.organisationId) throw new ComplaintError("invalid", "A course matter has no programme association.");
+  await withAudit(db, auditContextOf(actor), async (tx, audit) => {
+    const row = await lockCase(tx, caseId);
+    await assertCaseAccess(tx, row, actor);
+    await lockComplaint(tx, caseId);
+    const [faculty] = await tx.select({ id: faculties.id }).from(faculties).where(and(eq(faculties.id, input.facultyId), eq(faculties.status, "published")));
+    if (!faculty) throw new ComplaintError("invalid", "Unknown faculty.");
+    if (organisationId) {
+      const [body] = await tx
+        .select({ id: directoryOrganisations.id })
+        .from(directoryOrganisations)
+        .where(and(eq(directoryOrganisations.id, organisationId), eq(directoryOrganisations.facultyId, faculty.id), eq(directoryOrganisations.status, "published")));
+      if (!body) throw new ComplaintError("invalid", "That committee does not belong to the faculty.");
+    }
+    await transition(tx, caseId, "redirected", actor, { expectedFrom: row.status, now });
+    await tx
+      .update(complaintCases)
+      .set({ redirectedAt: now, redirectLevel: input.level, redirectFacultyId: faculty.id, redirectOrganisationId: organisationId })
+      .where(eq(complaintCases.caseId, caseId));
+    await appendEvent(tx, caseId, actor, now, { type: "redirected", metadata: { level: input.level, facultyId: faculty.id, organisationId } });
+    await audit({
+      action: "complaint.redirect",
+      entityType: "case",
+      entityId: caseId,
+      before: { status: row.status },
+      after: { status: "redirected", level: input.level, facultyId: faculty.id, organisationId },
+    });
   });
 }

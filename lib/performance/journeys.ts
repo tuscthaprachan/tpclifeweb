@@ -10,11 +10,15 @@
  *                    is sent or has been idle long enough for its draft to
  *                    expire, so one still open is neither a success nor a
  *                    drop-out. Starting again counts as a new journey
+ *   signposted       issues the reporting service pointed to a faculty or to
+ *                    the lecturer of a course instead of taking them as a
+ *                    complaint. One row per signpost, nothing personal; the
+ *                    kind is `signpost_<level>` (SIGNPOST_LEVELS)
  */
 
 import { and, eq, isNull, sql } from "drizzle-orm";
 import type { AuditExecutor } from "@/lib/db/audit";
-import { journeyMetrics, JOURNEY_METRIC_KINDS, type JourneyMetricKind } from "@/lib/db/schema/journey-metrics";
+import { journeyMetrics, JOURNEY_METRIC_KINDS, type JourneyMetricKind, type SignpostLevel } from "@/lib/db/schema/journey-metrics";
 import type { Range } from "./period";
 import { countMeasure, shareMeasure, type Measure } from "./suppress";
 import { num, queryRows, within } from "./sql";
@@ -41,6 +45,38 @@ export async function journeyMeasures(db: AuditExecutor, range: Range, now: Date
     const row = rows.find((r) => r.kind === kind);
     return { kind, started: countMeasure(num(row?.started)), completionRate: shareMeasure(num(row?.done), num(row?.settled)) };
   });
+}
+
+export interface SignpostMeasures {
+  /** Issues pointed to a faculty or programme body. */
+  faculty: Measure;
+  /** Issues pointed to the lecturer of a course (and the faculty office if that fails). */
+  course: Measure;
+}
+
+/** Issues signposted to faculty and course level in the period. Emergency signposts are recorded but not published. */
+export async function signpostMeasures(db: AuditExecutor, range: Range): Promise<SignpostMeasures> {
+  const rows = await queryRows<{ kind: string; n: number }>(
+    db,
+    sql`select kind, count(*)::int as n from ${journeyMetrics}
+      where kind in ('signpost_faculty', 'signpost_course') and ${within(journeyMetrics.startedAt, range)} group by kind`,
+  );
+  const count = (kind: string) => countMeasure(num(rows.find((r) => r.kind === kind)?.n));
+  return { faculty: count("signpost_faculty"), course: count("signpost_course") };
+}
+
+/**
+ * Records that a student was signposted to `level` (faculty, course or
+ * emergency help) instead of making a complaint. No personal data and no link
+ * to anything else. Never throws: counting must not stop a person getting the
+ * contact details.
+ */
+export async function recordSignpost(db: AuditExecutor, level: SignpostLevel, now: Date = new Date()): Promise<void> {
+  try {
+    await db.insert(journeyMetrics).values({ id: crypto.randomUUID(), kind: `signpost_${level}`, startedAt: now, finishedAt: now });
+  } catch (error) {
+    console.error("[performance] could not count a signpost", error instanceof Error ? error.message : error);
+  }
 }
 
 /** Records that a journey has started. Never throws: counting must not stop a person starting. */

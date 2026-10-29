@@ -120,7 +120,12 @@ const FOUND: MachineDef = {
 
 /**
  * Complaint: received -> acknowledged -> in_progress -> resolved -> closed,
- * with withdrawn (the person no longer wants to pursue it) and reopened.
+ * with withdrawn (the person no longer wants to pursue it), reopened, and
+ * redirected (the matter belongs to a faculty or a course, outside the student
+ * union's remit; staff close it and point the person to who to contact).
+ * `redirected` is terminal and final: it has no way back, like `closed` and
+ * `withdrawn`, because reopening it would put a matter the union cannot act on
+ * back into its queue. A person who disagrees makes a new complaint.
  * `resolved` is terminal, so it starts the one year personal data clock; the
  * person may reopen it from their tracking link within the reopen window
  * (lib/complaints/constants.ts, 30 days), which stops the clock. When the
@@ -137,15 +142,17 @@ const COMPLAINT: MachineDef = {
     in_progress: { label: s("กำลังดำเนินการ", "In progress"), publicLabel: s("กำลังดำเนินการ", "Being looked into"), tone: "warning", terminal: false },
     reopened: { label: s("เปิดเรื่องอีกครั้ง", "Reopened"), publicLabel: s("เปิดเรื่องอีกครั้ง", "Reopened"), tone: "warning", terminal: false },
     resolved: { label: s("แก้ไขแล้ว", "Resolved"), publicLabel: s("แก้ไขแล้ว", "Resolved"), tone: "success", terminal: true },
+    redirected: { label: s("ส่งต่อให้คณะหรือผู้สอน", "Redirected"), publicLabel: s("แนะนำหน่วยงานที่รับผิดชอบแล้ว", "Redirected to the right people"), tone: "neutral", terminal: true },
     closed: { label: s("ปิดเรื่อง", "Closed"), publicLabel: s("ปิดเรื่องแล้ว", "Closed"), tone: "neutral", terminal: true },
     withdrawn: { label: s("ผู้แจ้งยกเลิก", "Withdrawn"), publicLabel: s("ยกเลิกเรื่องแล้ว", "Withdrawn"), tone: "neutral", terminal: true },
   },
   transitions: {
-    received: ["acknowledged", "in_progress", "resolved", "withdrawn"],
-    acknowledged: ["in_progress", "resolved", "withdrawn"],
-    in_progress: ["resolved", "withdrawn"],
-    reopened: ["in_progress", "resolved", "withdrawn"],
+    received: ["acknowledged", "in_progress", "resolved", "redirected", "withdrawn"],
+    acknowledged: ["in_progress", "resolved", "redirected", "withdrawn"],
+    in_progress: ["resolved", "redirected", "withdrawn"],
+    reopened: ["in_progress", "resolved", "redirected", "withdrawn"],
     resolved: ["reopened", "closed"],
+    redirected: [],
     closed: [],
     withdrawn: [],
   },

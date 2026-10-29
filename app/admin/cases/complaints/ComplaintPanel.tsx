@@ -4,13 +4,15 @@ import { requireStaff } from "@/lib/auth/session";
 import { CASE_INBOX_ROLES } from "@/lib/cases/access";
 import { staffActorFor } from "@/lib/cases/staff";
 import { listCategories } from "@/lib/complaints/categories";
+import { readFacultiesWithOrganisations } from "@/lib/content/faculties";
+import { loadRedirectTarget, type RedirectTarget } from "@/lib/complaints/redirect";
 import { getComplaintFacts, type ComplaintFacts } from "@/lib/complaints/details";
 import { workingDaysUntil } from "@/lib/complaints/working-days";
 import { getDb } from "@/lib/db";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { CasePanelProps } from "../panels";
-import { AcknowledgeForm, CloseButton, EvidenceReveal, RecategoriseForm, ReopenButton, ResolveForm, StartButton, TextReveal, WellbeingButton, WithdrawButton } from "./Forms";
+import { AcknowledgeForm, CloseButton, EvidenceReveal, RecategoriseForm, RedirectForm, ReopenButton, ResolveForm, StartButton, TextReveal, WellbeingButton, WithdrawButton } from "./Forms";
 
 const WORKING = new Set(["received", "acknowledged", "in_progress", "reopened"]);
 
@@ -25,11 +27,13 @@ export async function ComplaintPanel(props: CasePanelProps) {
   const staff = await requireStaff(CASE_INBOX_ROLES);
   const actor = await staffActorFor(staff, "complaint", props.organisationId);
   const db = getDb();
-  const facts = await getComplaintFacts(db, props.caseId, actor);
-  const categories = await listCategories(db);
   const { locale, status, caseId } = props;
+  const facts = await getComplaintFacts(db, caseId, actor);
+  const categories = await listCategories(db);
+  const redirectFaculties = WORKING.has(status) ? await readFacultiesWithOrganisations(db) : [];
+  const redirected = status === "redirected" ? await loadRedirectTarget(db, caseId) : null;
   const base = { locale, caseId, orgId: actor.organisationId };
-  const piiGone = facts.hasText === false && facts.evidenceCount === 0 && ["resolved", "closed", "withdrawn"].includes(status);
+  const piiGone = facts.hasText === false && facts.evidenceCount === 0 && ["resolved", "closed", "withdrawn", "redirected"].includes(status);
 
   return (
     <section aria-labelledby="cp-panel" className="flex flex-col gap-[var(--space-6)]">
@@ -37,7 +41,7 @@ export async function ComplaintPanel(props: CasePanelProps) {
         {a("cpcTitle", locale)}
       </Heading>
 
-      <Facts facts={facts} status={status} locale={locale} now={new Date()} />
+      <Facts facts={facts} status={status} locale={locale} now={new Date()} redirected={redirected} />
 
       <div className="flex flex-col gap-[var(--space-3)]">
         <Heading level={3}>{a("cpcTextHeading", locale)}</Heading>
@@ -76,6 +80,18 @@ export async function ComplaintPanel(props: CasePanelProps) {
             </Step>
           </>
         ) : null}
+        {WORKING.has(status) ? (
+          <Step title={a("cpcRedirectHeading", locale)} hint={a("cpcRedirectHint", locale)}>
+            <RedirectForm
+              {...base}
+              faculties={redirectFaculties.map((f) => ({
+                value: f._id,
+                label: pick(f.name, locale),
+                bodies: [...f.councils, ...f.programmes].map((b) => ({ value: b._id, label: b.programme ? `${pick(b.name, locale)} (${pick(b.programme, locale)})` : pick(b.name, locale) })),
+              }))}
+            />
+          </Step>
+        ) : null}
         <Step title={a("cpcCategoryHeading", locale)} hint={a("cpcCategoryHint", locale)}>
           <RecategoriseForm
             {...base}
@@ -113,7 +129,7 @@ function Step({ title, hint, children }: { title: string; hint?: string; childre
 }
 
 /** The category, identity and the two targets with how long is left, as plain facts with no personal data. */
-function Facts({ facts, status, locale, now }: { facts: ComplaintFacts; status: string; locale: Locale; now: Date }) {
+function Facts({ facts, status, locale, now, redirected }: { facts: ComplaintFacts; status: string; locale: Locale; now: Date; redirected: RedirectTarget | null }) {
   const open = WORKING.has(status);
   const target = (due: Date, done: Date | null): ReactNode => {
     if (done) return a("cpcTargetMet", locale);
@@ -157,6 +173,14 @@ function Facts({ facts, status, locale, now }: { facts: ComplaintFacts; status: 
                     <Timestamp value={facts.escalatedAt} locale={locale} format="date" />
                   </span>
                 ),
+              },
+            ]
+          : []),
+        ...(redirected
+          ? [
+              {
+                key: a("cpcRowRedirected", locale),
+                value: `${a(redirected.level === "course" ? "cpcRedirectLevelCourse" : "cpcRedirectLevelFaculty", locale)}${redirected.faculty ? `: ${pick(redirected.faculty.name, locale)}` : ""}`,
               },
             ]
           : []),

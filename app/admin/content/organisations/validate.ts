@@ -1,11 +1,12 @@
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { fieldKit, formDataToObject, parseForm, type FieldKit } from "@/lib/admin/content/fields";
 import { resolveIntent, type FieldErrors, type ResolvedIntent } from "@/lib/admin/content/form-state";
 import { isSlugTaken } from "@/lib/admin/content/slug";
 import type { AuditExecutor } from "@/lib/db/audit";
-import { directoryOrganisations } from "@/lib/db/schema";
+import { directoryOrganisations, faculties } from "@/lib/db/schema";
 import type { OrganisationContactJson } from "@/lib/db/schema/content/directory";
-import { DIRECTORY_ORGANISATION_TYPES, type ContentStatus } from "@/lib/db/schema/content/enums";
+import { DIRECTORY_ORGANISATION_SCOPES, DIRECTORY_ORGANISATION_TYPES, type ContentStatus } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { rowsOf } from "./_shared/rows";
@@ -97,6 +98,9 @@ export async function validateOrganisationForm(
     name: k.bilingual(L("dirFieldName"), { required: true, max: 150 }),
     type: k.enumOf(L("dirFieldType"), DIRECTORY_ORGANISATION_TYPES),
     faculty: k.bilingual(L("dirFieldFaculty"), { max: 150 }),
+    facultyId: k.reference(L("dirFieldFacultyLink")),
+    scope: k.enumOf(L("dirFieldScope"), DIRECTORY_ORGANISATION_SCOPES, { required: false }),
+    programme: k.bilingual(L("dirFieldProgramme"), { max: 150 }),
     description: k.bilingual(L("dirFieldDescription"), { max: 1500 }),
     location: k.bilingual(L("dirFieldLocation"), { max: 200 }),
     isActive: k.checkbox(),
@@ -107,6 +111,13 @@ export async function validateOrganisationForm(
   const errors: FieldErrors = parsed.ok ? {} : { ...parsed.errors };
 
   if (parsed.ok) {
+    const { facultyId, scope, programme } = parsed.data;
+    if (facultyId) {
+      const [found] = await db.select({ id: faculties.id }).from(faculties).where(eq(faculties.id, facultyId));
+      if (!found) errors.facultyId = L("dirErrFacultyUnknown");
+    } else if (scope || programme.th || programme.en) {
+      errors.scope = L("dirErrScopeNeedsFaculty");
+    }
     const taken = await isSlugTaken(db, {
       table: directoryOrganisations,
       slugColumn: directoryOrganisations.slug,

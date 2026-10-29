@@ -2,6 +2,8 @@ import { sql } from "drizzle-orm";
 import { boolean, check, index, integer, pgTable, primaryKey, smallint, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { caseAttachments, cases } from "./cases";
+import { directoryOrganisations } from "./content/directory";
+import { faculties } from "./content/faculties";
 
 /**
  * Complaints (lib/complaints), additive to the case engine's tables. A
@@ -69,6 +71,10 @@ export const complaintCategoryAccess = pgTable(
 export const COMPLAINT_IDENTITIES = ["named", "pseudonymous", "anonymous"] as const;
 export type ComplaintIdentity = (typeof COMPLAINT_IDENTITIES)[number];
 
+/** Where a complaint outside the student union's remit was sent: a faculty or programme body, or the lecturer of a course. */
+export const COMPLAINT_REDIRECT_LEVELS = ["faculty", "course"] as const;
+export type ComplaintRedirectLevel = (typeof COMPLAINT_REDIRECT_LEVELS)[number];
+
 export const COMPLAINT_ESCALATION_REASONS = ["acknowledge", "resolve"] as const;
 export type ComplaintEscalationReason = (typeof COMPLAINT_ESCALATION_REASONS)[number];
 
@@ -78,6 +84,14 @@ export type ComplaintEscalationReason = (typeof COMPLAINT_ESCALATION_REASONS)[nu
  * category's targets, so a later change to a target never moves a promise
  * already made to a person. `escalated_at` is the flag the daily job sets when
  * a target is missed; it is not a status.
+ *
+ * REDIRECTED. A complaint that turns out to belong to a faculty or a course is
+ * closed as `redirected` (a final status). `redirect_*` say where: the level,
+ * the faculty, and for a faculty matter optionally the programme association.
+ * They are references to public directory rows, not personal data, so they
+ * outlive retention and let the status page and the email name the right
+ * people. A faculty or organisation that is later removed is blocked while a
+ * redirect points at it.
  */
 export const complaintCases = pgTable(
   "complaint_cases",
@@ -107,10 +121,15 @@ export const complaintCases = pgTable(
     escalatedReason: text("escalated_reason"),
     wellbeingRoutedAt: timestamp("wellbeing_routed_at", { withTimezone: true }),
     reopenCount: integer("reopen_count").notNull().default(0),
+    redirectedAt: timestamp("redirected_at", { withTimezone: true }),
+    redirectLevel: text("redirect_level"),
+    redirectFacultyId: uuid("redirect_faculty_id").references(() => faculties.id),
+    redirectOrganisationId: uuid("redirect_organisation_id").references(() => directoryOrganisations.id),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
     check("complaint_cases_identity", sql`${t.identity} in ('named', 'pseudonymous', 'anonymous')`),
+    check("complaint_cases_redirect_level", sql`${t.redirectLevel} is null or ${t.redirectLevel} in ('faculty', 'course')`),
     index("complaint_cases_category_idx").on(t.categoryId),
     index("complaint_cases_resolved_idx").on(t.resolvedAt),
   ],

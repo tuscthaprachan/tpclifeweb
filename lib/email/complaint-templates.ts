@@ -8,6 +8,8 @@
  */
 
 import { REOPEN_WINDOW_DAYS } from "@/lib/complaints/constants";
+import type { RedirectTarget } from "@/lib/complaints/redirect";
+import type { FacultyBody, FacultyOffice } from "@/lib/content/faculties";
 import { UI } from "@/lib/i18n/strings";
 import type { RenderedEmail } from "./templates";
 
@@ -112,6 +114,75 @@ export function complaintResolved({ reference }: ComplaintEmailParams): Rendered
       ],
       reference: { label: "Your reference", value: reference },
       after: ["Anyone with the private link can see this complaint, so do not share it."],
+    },
+  );
+}
+
+export interface RedirectedEmailParams extends ComplaintEmailParams {
+  target: RedirectTarget;
+}
+
+const instagramOf = (body: FacultyBody): string[] => body.contacts.filter((c) => c.channel === "instagram").map((c) => `@${c.value}`);
+
+/** The office details an editor has filled in, one line each. Empty when none are. */
+function officeLines(office: FacultyOffice, lang: "th" | "en"): string[] {
+  const label = lang === "th" ? { where: "ที่ตั้ง", phone: "โทรศัพท์", email: "อีเมล", web: "เว็บไซต์" } : { where: "Where", phone: "Phone", email: "Email", web: "Website" };
+  return [
+    office.location?.[lang] ? `${label.where}: ${office.location[lang]}` : "",
+    office.phone ? `${label.phone}: ${office.phone}` : "",
+    office.email ? `${label.email}: ${office.email}` : "",
+    office.website ? `${label.web}: ${office.website}` : "",
+    office.note?.[lang] ?? "",
+  ].filter(Boolean);
+}
+
+/** Who to contact instead, as plain paragraphs in one language. */
+function redirectParagraphs({ level, faculty, bodies }: RedirectTarget, lang: "th" | "en"): string[] {
+  const th = lang === "th";
+  const out: string[] = [];
+  if (level === "course") {
+    out.push(th ? "เรื่องนี้เป็นเรื่องของรายวิชา ผู้สอนเป็นผู้ตัดสินขั้นสุดท้าย กรุณาเสนอเรื่องกับผู้สอนก่อน" : "This is a matter for your course. The lecturer has the final say, so please raise it with them first.");
+    out.push(th ? "หากไม่สามารถเสนอเรื่องกับผู้สอนได้ ให้ติดต่อสำนักงานคณะ" : "If you cannot raise it with the lecturer, contact your faculty office.");
+  } else {
+    out.push(
+      th
+        ? "เรื่องนี้เป็นเรื่องของคณะ จึงอยู่นอกขอบเขตที่องค์การนักศึกษาและสภานักศึกษาดำเนินการได้ กรุณาติดต่อหน่วยงานต่อไปนี้"
+        : "This is a matter for your faculty, which is outside what the Student Union and Student Council can act on. Please contact the people below.",
+    );
+    for (const body of bodies) {
+      const handles = instagramOf(body);
+      const programme = body.programme?.[lang];
+      out.push([body.name[lang] || body.name[th ? "en" : "th"], programme ? (th ? `(หลักสูตร: ${programme})` : `(programme: ${programme})`) : "", handles.length ? `Instagram: ${handles.join(", ")}` : ""].filter(Boolean).join(" "));
+    }
+  }
+  if (faculty) {
+    const lines = officeLines(faculty.office, lang);
+    out.push(`${th ? "สำนักงานคณะ" : "Faculty office"}: ${faculty.name[lang] || faculty.name[th ? "en" : "th"]}`);
+    if (lines.length > 0) out.push(...lines);
+    else out.push(th ? "เรายังไม่มีข้อมูลติดต่อสำนักงานนี้ ลองสอบถามที่คณะหรือค้นหาในเว็บไซต์ของคณะ" : "We do not have this office's contact details yet. Ask at the faculty, or look on its website.");
+  } else {
+    out.push(th ? "สอบถามรายละเอียดได้ที่คณะของคุณ" : "Please ask at your faculty for the details.");
+  }
+  return out;
+}
+
+/** The complaint is outside the union's remit and has been closed as redirected; says who to contact instead. */
+export function complaintRedirected({ reference, target }: RedirectedEmailParams): RenderedEmail {
+  return render(
+    `เรื่องร้องเรียนของคุณอยู่นอกขอบเขตของเรา ${reference} / Your complaint is outside our remit ${reference}`,
+    {
+      lang: "th",
+      heading: "เรื่องของคุณต้องติดต่อหน่วยงานอื่น",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}อ่านเรื่องร้องเรียนของคุณแล้ว พบว่าเป็นเรื่องที่อยู่นอกขอบเขตของเรา จึงปิดเรื่องนี้`, ...redirectParagraphs(target, "th")],
+      reference: { label: "เลขอ้างอิงของคุณ", value: reference },
+      after: ["ดูข้อมูลนี้อีกครั้งได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง ใครมีลิงก์ก็ดูเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น"],
+    },
+    {
+      lang: "en",
+      heading: "Your issue needs someone else",
+      paragraphs: [`Staff at ${SERVICE.en} have read your complaint and found it is outside our remit, so we have closed it.`, ...redirectParagraphs(target, "en")],
+      reference: { label: "Your reference", value: reference },
+      after: ["You can see this again from the private link you were given when you sent it. Anyone with the link can see this complaint, so do not share it."],
     },
   );
 }

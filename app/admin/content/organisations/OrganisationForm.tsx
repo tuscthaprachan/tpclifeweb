@@ -1,17 +1,23 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { BilingualTextarea, BilingualTextField, CheckboxField, EnumSelect, SlugField } from "@/components/admin/content/fields";
 import { Fieldset, Stack } from "@/components/ui";
-import { userNames } from "@/lib/admin/content/list";
+import { loadChoices, userNames } from "@/lib/admin/content/list";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
 import { getDb } from "@/lib/db";
 import { directoryOrganisations } from "@/lib/db/schema";
-import { DIRECTORY_ORGANISATION_TYPES } from "@/lib/db/schema/content/enums";
+import { DIRECTORY_ORGANISATION_SCOPES, DIRECTORY_ORGANISATION_TYPES } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { ContactsField } from "./ContactsField";
 import { deleteOrganisation, saveOrganisation } from "./actions";
+
+const SCOPE_KEY: Record<(typeof DIRECTORY_ORGANISATION_SCOPES)[number], AdminKey> = {
+  faculty: "dirScopeFaculty",
+  programme: "dirScopeProgramme",
+};
 
 const TYPE_KEY: Record<(typeof DIRECTORY_ORGANISATION_TYPES)[number], AdminKey> = {
   facultyCommittee: "dirTypeFacultyCommittee",
@@ -27,7 +33,10 @@ export async function OrganisationForm({ locale, id, saved }: { locale: Locale; 
   const def = getContentType("organisations")!;
   const [org] = id ? await db.select().from(directoryOrganisations).where(eq(directoryOrganisations.id, id)) : [];
   if (id && !org) notFound();
-  const names = org ? await userNames(db, [org.updatedBy]) : new Map<string, string>();
+  const [names, facultyChoices] = await Promise.all([
+    org ? userNames(db, [org.updatedBy]) : new Map<string, string>(),
+    loadChoices(db, getContentType("faculties")!),
+  ]);
 
   const record: ContentRecordInfo | undefined = org
     ? {
@@ -61,6 +70,15 @@ export async function OrganisationForm({ locale, id, saved }: { locale: Locale; 
             options={[{ value: "", label: L("choiceSelect") }, ...DIRECTORY_ORGANISATION_TYPES.map((value) => ({ value, label: L(TYPE_KEY[value]) }))]}
           />
           <BilingualTextField name="faculty" label={L("dirFieldFaculty")} hint={L("dirHintFaculty")} maxLength={150} defaultValue={{ th: org?.facultyTh, en: org?.facultyEn }} />
+          <ReferencePicker name="facultyId" label={L("dirFieldFacultyLink")} hint={L("dirHintFacultyLink")} options={facultyChoices} defaultValue={org?.facultyId} />
+          <EnumSelect
+            name="scope"
+            label={L("dirFieldScope")}
+            hint={L("dirHintScope")}
+            defaultValue={org?.scope ?? ""}
+            options={[{ value: "", label: L("choiceSelect") }, ...DIRECTORY_ORGANISATION_SCOPES.map((value) => ({ value, label: L(SCOPE_KEY[value]) }))]}
+          />
+          <BilingualTextField name="programme" label={L("dirFieldProgramme")} hint={L("dirHintProgramme")} maxLength={150} defaultValue={{ th: org?.programmeNameTh, en: org?.programmeNameEn }} />
           <BilingualTextarea name="description" label={L("dirFieldDescription")} maxLength={1500} rows={4} defaultValue={{ th: org?.descriptionTh, en: org?.descriptionEn }} />
           <BilingualTextField name="location" label={L("dirFieldLocation")} hint={L("dirHintLocation")} maxLength={200} defaultValue={{ th: org?.locationTh, en: org?.locationEn }} />
           <CheckboxField name="isActive" label={L("dirFieldActive")} hint={L("dirHintActive")} defaultChecked={org?.isActive ?? true} />

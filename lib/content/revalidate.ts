@@ -21,6 +21,7 @@ export type ContentEntityType =
   | "guidePage"
   | "faq"
   | "organisation"
+  | "faculty"
   | "place"
   | "lostFoundItem"
   | "canteenSettings"
@@ -43,7 +44,9 @@ export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
   welfarePage: [CACHE_TAGS.content, CACHE_TAGS.searchIndex],
   guidePage: [CACHE_TAGS.content, CACHE_TAGS.searchIndex],
   faq: [CACHE_TAGS.faq, CACHE_TAGS.searchIndex],
-  organisation: [CACHE_TAGS.directory, CACHE_TAGS.searchIndex],
+  // Faculty committees are also read through their faculty by the issue reporting service.
+  organisation: [CACHE_TAGS.directory, CACHE_TAGS.faculty, CACHE_TAGS.searchIndex],
+  faculty: [CACHE_TAGS.faculty],
   // The canteen dataset, events and lost and found embed their place, so a place edit refreshes them too.
   place: [CACHE_TAGS.place, CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
   lostFoundItem: [CACHE_TAGS.lostFound, CACHE_TAGS.searchIndex],

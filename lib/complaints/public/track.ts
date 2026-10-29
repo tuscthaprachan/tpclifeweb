@@ -16,6 +16,7 @@ import { complaintCases, complaintCategories, type ComplaintIdentity } from "@/l
 import { localePath, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { SITE_URL } from "@/lib/site-url";
 import { ComplaintError } from "../errors";
+import { loadRedirectTarget, type RedirectTarget } from "../redirect";
 import { surveyState, submitSurvey, type SurveyOutcome } from "../survey";
 import { canReopenNow, reopenComplaint, reopenWindowEnds } from "../workflow";
 
@@ -67,6 +68,8 @@ export interface TrackedComplaint {
   outcome: { th: string | null; en: string | null } | null;
   /** Staff pointed the person to the TU wellbeing centre. */
   wellbeingRouted: boolean;
+  /** Set once the complaint was redirected to a faculty or a course: who to contact instead. */
+  redirect: RedirectTarget | null;
   canWithdraw: boolean;
   canReopen: boolean;
   reopenUntil: Date | null;
@@ -105,6 +108,7 @@ export async function openTracked(db: AuditExecutor, reference: string, token: s
       resolvedAt: cc.cc.resolvedAt,
       outcome: showOutcome && outcome && (outcome.th || outcome.en) ? outcome : null,
       wellbeingRouted: Boolean(cc.cc.wellbeingRoutedAt),
+      redirect: view.status === "redirected" ? await loadRedirectTarget(db, id) : null,
       canWithdraw: allowedTransitions(view.service, view.kind, view.status, "public").includes("withdrawn"),
       canReopen: canReopenNow(cc.cc.resolvedAt, view.status, now),
       reopenUntil: view.status === "resolved" && cc.cc.resolvedAt ? reopenWindowEnds(cc.cc.resolvedAt) : null,

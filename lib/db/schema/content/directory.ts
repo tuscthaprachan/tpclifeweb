@@ -1,8 +1,9 @@
 import { sql } from "drizzle-orm";
-import { boolean, doublePrecision, index, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core";
+import { boolean, doublePrecision, index, integer, jsonb, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { contentColumns, type OpeningHoursJson } from "./common";
-import { categoryEnum, directoryOrganisationTypeEnum } from "./enums";
+import { categoryEnum, directoryOrganisationScopeEnum, directoryOrganisationTypeEnum } from "./enums";
 import { organisations } from "../organisations";
+import { faculties } from "./faculties";
 
 export interface OrganisationContactJson {
   channel: "instagram" | "facebook" | "line" | "email" | "phone" | "website";
@@ -25,6 +26,13 @@ export interface OrganisationContactJson {
  * "staff of this entry" feature needs no guesswork.
  *
  * Contacts are jsonb: rendered whole on the directory card, never filtered.
+ *
+ * `faculty_th`/`faculty_en` stay as the text the directory groups by.
+ * `faculty_id` links a faculty committee to its `faculties` row (the issue
+ * reporting service signposts students to it), and `scope` says whether the
+ * committee is the faculty-wide council (`faculty`) or the association of one
+ * programme (`programme`, named in `programme_name_*`). Both are null for
+ * clubs and other entries that belong to no faculty.
  */
 export const directoryOrganisations = pgTable(
   "directory_organisations",
@@ -44,8 +52,15 @@ export const directoryOrganisations = pgTable(
     isActive: boolean("is_active").notNull().default(true),
     /** Set when this entry is the TUSU or TUSC principal from `organisations`. */
     organisationId: integer("organisation_id").references(() => organisations.id),
+    facultyId: uuid("faculty_id").references(() => faculties.id),
+    scope: directoryOrganisationScopeEnum("scope"),
+    programmeNameTh: text("programme_name_th"),
+    programmeNameEn: text("programme_name_en"),
   },
-  (t) => [index("directory_organisations_listing_idx").on(t.status, t.isActive, t.nameEn)],
+  (t) => [
+    index("directory_organisations_listing_idx").on(t.status, t.isActive, t.nameEn),
+    index("directory_organisations_faculty_idx").on(t.facultyId),
+  ],
 );
 
 /**
