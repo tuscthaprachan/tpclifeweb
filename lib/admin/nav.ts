@@ -10,8 +10,8 @@ import type { ConsoleIconName } from "@/components/admin/icons";
 import { canEditContent } from "@/lib/admin/content/access";
 import { CONTENT_TYPES, contentPath, type ContentTypeDef } from "@/lib/admin/content/types";
 import { findActive, type ConsoleGroupId, type ResolvedNav } from "@/lib/admin/nav-match";
-import { canUseCaseInbox } from "@/lib/cases/access";
-import { hasRole, type ActiveRole } from "@/lib/auth/roles";
+import { canAccessService, canUseCaseInbox } from "@/lib/cases/access";
+import { hasAnyRole, hasRole, type ActiveRole } from "@/lib/auth/roles";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { canSeePerformance } from "@/lib/performance/access";
@@ -59,6 +59,7 @@ const GROUPS: readonly { id: ConsoleGroupId; labelKey: AdminKey; icon: ConsoleIc
   { id: "directory", labelKey: "csGroupDirectory", icon: "groupDirectory" },
   { id: "canteen", labelKey: "csGroupCanteen", icon: "groupCanteen" },
   { id: "lostFound", labelKey: "csGroupLostFound", icon: "groupLostFound" },
+  { id: "borrowing", labelKey: "brNavGroup", icon: "groupBorrowing" },
   { id: "media", labelKey: "csGroupMedia", icon: "groupMedia" },
   { id: "settings", labelKey: "csGroupSettings", icon: "groupSettings" },
 ];
@@ -124,6 +125,14 @@ export function buildConsoleNav(roles: readonly ActiveRole[]): ConsoleNav {
           groupId: place.group,
         });
       }
+    }
+  }
+
+  if (canAccessService(roles, "borrowing")) {
+    add("borrowing", { id: "borrowing-schedule", href: "/admin/borrowing", labelKey: "brNavSchedule", icon: "borrowSchedule", matchPrefix: "/admin/borrowing", exact: true });
+    add("borrowing", { id: "borrowing-calendar", href: "/admin/borrowing/calendar", labelKey: "brNavCalendar", icon: "borrowCalendar", matchPrefix: "/admin/borrowing/calendar" });
+    if (hasAnyRole(roles, ["equipment_officer", "admin"])) {
+      add("borrowing", { id: "borrowing-items", href: "/admin/borrowing/items", labelKey: "brNavInventory", icon: "borrowInventory", matchPrefix: "/admin/borrowing/items" });
     }
   }
 

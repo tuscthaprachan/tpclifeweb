@@ -13,6 +13,7 @@ export type ConsoleGroupId =
   | "directory"
   | "canteen"
   | "lostFound"
+  | "borrowing"
   | "media"
   | "settings";
 

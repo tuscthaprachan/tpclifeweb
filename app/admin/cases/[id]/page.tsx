@@ -120,6 +120,8 @@ export default async function CasePage({ params, searchParams }: { params: Promi
         </p>
         {row.service === "complaint" ? (
           <p className="m-0 text-ink-600">{a("cpcStatusUsePanel", locale)}</p>
+        ) : row.service === "borrowing" ? (
+          <p className="m-0 text-ink-600">{a("brStatusUsePanel", locale)}</p>
         ) : next.length > 0 ? (
           <>
             <p className="m-0 text-sm text-ink-600">{a("ckNextSteps", locale, { steps: next.map((n) => n.label).join(", ") })}</p>

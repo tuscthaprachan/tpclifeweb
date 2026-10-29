@@ -22,7 +22,7 @@ export const COMPLAINTS_STRINGS = {
   caseEvent_escalated: { th: "ส่งต่อเพราะเกินกำหนด", en: "Escalated: target missed" },
   caseEvent_wellbeing_routed: { th: "แนะนำศูนย์สุขภาวะ", en: "Pointed to the wellbeing centre" },
   caseEvent_redirected: { th: "ส่งต่อให้คณะหรือผู้สอน", en: "Redirected to a faculty or course" },
-  caseEvent_details_viewed: { th: "เปิดดูข้อความของผู้ร้องเรียน", en: "Complaint text viewed" },
+  caseEvent_details_viewed: { th: "เปิดดูข้อมูลส่วนบุคคล", en: "Personal details viewed" },
   caseEvent_evidence_viewed: { th: "เปิดดูไฟล์หลักฐาน", en: "Evidence viewed" },
   caseEvent_survey_received: { th: "ได้รับแบบประเมินความพึงพอใจ", en: "Satisfaction survey received" },
 

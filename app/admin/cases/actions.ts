@@ -81,9 +81,10 @@ export async function changeStatusAction(_prev: CaseFormState, formData: FormDat
   return run(formData, ["status"], async ({ locale, caseId, actor }) => {
     const to = text(formData, "status");
     if (!to) return { error: a("errCaseStatusRequired", locale) };
-    // Complaints have their own actions (resolve needs an outcome, reopen restarts a target); a posted form must not bypass them.
+    // Complaints and loans have their own actions (resolve needs an outcome, a handover records the deposit); a posted form must not bypass them.
     const [row] = await getDb().select({ service: cases.service }).from(cases).where(eq(cases.id, caseId));
     if (row?.service === "complaint") return { error: a("errCaseUseComplaintActions", locale) };
+    if (row?.service === "borrowing") return { error: a("errCaseUseLoanActions", locale) };
     await transition(getDb(), caseId, to, actor, { expectedFrom: text(formData, "from") || undefined });
     return "caseSavedStatus";
   });

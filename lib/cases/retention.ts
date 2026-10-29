@@ -15,6 +15,7 @@ import { and, eq, isNotNull, isNull, lte } from "drizzle-orm";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { caseAccessTokens, caseAttachments, caseContacts, cases } from "@/lib/db/schema/cases";
 import type { Storage } from "@/lib/storage/types";
+import { purgeBorrowingPii } from "@/lib/borrowing/retention";
 import { purgeComplaintPii } from "@/lib/complaints/retention";
 import { purgeLostFoundPii } from "@/lib/lost-found/retention";
 import { appendEvent } from "./internal";
@@ -59,6 +60,8 @@ export async function purgeExpiredPii(db: AuditExecutor, now: Date, getStorage?:
         await purgeLostFoundPii(tx, item.id);
         // Complaints: what the person wrote, evidence names and survey comments. Scores stay.
         await purgeComplaintPii(tx, item.id);
+        // Borrowing: the student number and affiliation. The loan facts stay.
+        await purgeBorrowingPii(tx, item.id);
         await tx.update(caseAccessTokens).set({ revokedAt: now }).where(and(eq(caseAccessTokens.caseId, item.id), isNull(caseAccessTokens.revokedAt)));
         await tx.update(cases).set({ piiDeletedAt: now }).where(eq(cases.id, item.id));
         await appendEvent(tx, item.id, { kind: "system" }, now, { type: "pii_deleted", metadata: { contacts: gone.length, attachments: objects.length } });
