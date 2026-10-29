@@ -80,8 +80,9 @@ describe("role access", () => {
   it("maps roles to services", () => {
     expect(accessibleServices(lf)).toEqual(["lost_found"]);
     expect(accessibleServices(cp)).toEqual(["complaint"]);
-    expect(accessibleServices([{ role: "unit_lead", organisationId: 1 }])).toEqual(["lost_found", "complaint"]);
-    expect(accessibleServices([{ role: "admin", organisationId: 1 }])).toEqual(["lost_found", "complaint"]);
+    expect(accessibleServices([{ role: "equipment_officer", organisationId: 1 }])).toEqual(["borrowing"]);
+    expect(accessibleServices([{ role: "unit_lead", organisationId: 1 }])).toEqual(["lost_found", "complaint", "borrowing"]);
+    expect(accessibleServices([{ role: "admin", organisationId: 1 }])).toEqual(["lost_found", "complaint", "borrowing"]);
     expect(accessibleServices([{ role: "editor", organisationId: 1 }])).toEqual([]);
   });
   it("inbox visibility", () => {
