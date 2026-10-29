@@ -73,6 +73,11 @@ export default async function ContentHubPage() {
                 {a("ccHubEditPage", locale)}
               </a>
             </>
+          ) : count && !def.columns.status ? (
+            <span className={meta}>
+              <ConsoleIcon name="images" size={14} />
+              {a("csCount", locale, { count: count.total })}
+            </span>
           ) : count ? (
             <>
               <span className={meta}>

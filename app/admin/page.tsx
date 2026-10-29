@@ -72,7 +72,7 @@ export default async function AdminDashboardPage() {
           <h2 id="needs-you" className="mb-[var(--space-3)] text-lg font-semibold">
             {a("chNeedsYou", locale)}
           </h2>
-          <div className="grid gap-[var(--space-3)] sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-[var(--space-3)] lg:grid-cols-3">
             {caseCounts ? <CaseStats counts={caseCounts} locale={locale} /> : null}
             {editorCounts ? <EditorStats counts={editorCounts} locale={locale} /> : null}
           </div>
@@ -195,7 +195,7 @@ function CaseStats({ counts, locale }: { counts: CaseCounts; locale: "th" | "en"
           value={n(counts.escalated)}
           hint={counts.escalated > 0 ? a("chHintEscalated", locale) : undefined}
           tone={counts.escalated > 0 ? "attention" : "neutral"}
-          href="/admin/cases?service=complaint&open=1"
+          href="/admin/cases?escalated=1&open=1"
         />
       ) : null}
       <StatCard

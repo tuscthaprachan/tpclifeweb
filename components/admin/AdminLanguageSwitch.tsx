@@ -22,7 +22,7 @@ export function AdminLanguageSwitch({ locale }: { locale: Locale }) {
       <button
         type="submit"
         lang={target}
-        className="inline-flex min-h-[var(--target-min)] items-center rounded-control border border-line-strong px-3 py-1 text-base font-medium text-ink-900 hover:text-action"
+        className="inline-flex h-9 min-h-[var(--target-min)] items-center rounded-control border border-line-strong px-3 text-sm font-medium leading-none text-ink-900 hover:text-action"
       >
         {LOCALE_LABEL[target]}
         <span className="visually-hidden"> ({UI.changeLanguage[locale]})</span>
