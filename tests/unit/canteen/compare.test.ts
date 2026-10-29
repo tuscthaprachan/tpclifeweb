@@ -16,7 +16,7 @@ describe("stallsWithDishes", () => {
   });
 
   it("leaves out the excluded stall", () => {
-    const stallId = friedRice[0].stallId;
+    const stallId = friedRice[0]!.stallId;
     expect(stallsWithDishes(data, friedRice, stallId).some((row) => row.stall._id === stallId)).toBe(false);
   });
 });

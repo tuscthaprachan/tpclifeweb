@@ -30,6 +30,7 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 
+import { cx } from "@/components/ui/cx";
 import { device } from "@/lib/canteen";
 import { applyFilters } from "@/lib/canteen/filter";
 import { pick, type HistoryEntry } from "@/lib/canteen/random";
@@ -42,7 +43,7 @@ import "../fun.css";
 import { biasNeedsDevice, reelNames, toPickLock, vetoedDishes, type PickParams } from "./helpers";
 import { PickEmpty } from "./PickEmpty";
 import { PickResult } from "./PickResult";
-import { consumeSpin, SpinListener } from "./SpinListener";
+import { consumeSpin, SPIN_PENDING_ID, SPIN_PENDING_SCRIPT, SpinListener } from "./SpinListener";
 import { PICK, pickText } from "./strings";
 
 interface RandomiserProps {
@@ -182,6 +183,10 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
   const strip = useMemo(() => reelStrip(names), [names]);
 
   useEffect(() => {
+    if (hydrated) document.getElementById(SPIN_PENDING_ID)?.remove();
+  }, [hydrated]);
+
+  useEffect(() => {
     if (!playing) return;
     const stop = window.setTimeout(() => setDoneKey(pickKey), REEL_MS + 400);
     return () => window.clearTimeout(stop);
@@ -213,6 +218,7 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
       <p role="status" className="visually-hidden">
         {hydrated && !playing ? spoken : ""}
       </p>
+      <script dangerouslySetInnerHTML={{ __html: SPIN_PENDING_SCRIPT }} />
       <div className="relative grid grid-cols-[minmax(0,1fr)] overflow-x-clip">
         {playing ? (
           <div aria-hidden="true" className="pointer-events-none z-10 [grid-area:1/1]">
@@ -228,7 +234,7 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
             </div>
           </div>
         ) : null}
-        <div className={playing ? "opacity-0 [grid-area:1/1]" : celebrate ? "fun-pop [grid-area:1/1]" : "[grid-area:1/1]"}>{content}</div>
+        <div className={cx("fun-result [grid-area:1/1]", playing ? "opacity-0" : celebrate ? "fun-pop" : undefined)}>{content}</div>
         {celebrate ? <Confetti /> : null}
       </div>
       {params.mode === "meal" ? null : (

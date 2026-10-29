@@ -29,6 +29,12 @@ function markSpin() {
   } catch {}
 }
 
+/** The id of the style element that keeps the server rendered result hidden until the reel takes over. */
+export const SPIN_PENDING_ID = "canteen-spin-pending";
+
+/** Runs before the result paints: hides it while a fresh spin waits for the reel, and shows it again after 5 s whatever happens. */
+export const SPIN_PENDING_SCRIPT = `try{var r=sessionStorage.getItem(${JSON.stringify(SPIN_KEY)}),a=Date.now()-Number(r);if(r!==null&&a>=0&&a<${SPIN_FRESH_MS}&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&!document.getElementById(${JSON.stringify(SPIN_PENDING_ID)})){var s=document.createElement("style");s.id=${JSON.stringify(SPIN_PENDING_ID)};s.textContent=".fun-result{visibility:hidden}";document.head.appendChild(s);setTimeout(function(){s.remove()},5000)}}catch(e){}`;
+
 /** True once if a fresh spin flag exists. The flag is always cleared. */
 export function consumeSpin(): boolean {
   try {
