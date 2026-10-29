@@ -1,5 +1,3 @@
-"use client";
-
 import Form from "next/form";
 import Link from "next/link";
 
@@ -15,14 +13,11 @@ import type { CanteenData } from "@/lib/content/types";
 import { DishResults, showMoreTarget } from "../DishResults";
 import { EatFilteredLayout } from "../EatFilteredLayout";
 import { EatTabs } from "../EatTabs";
-import { FocusOnHash } from "../FocusOnHash";
 import { eatHref } from "../links";
-import { CanonicalRedirect, useRenderState, useSearch, type ServerRender } from "../live";
 import { DISH_PAGE_SIZE, showGroups, parseShow } from "../paginate";
 import { firstParam, readFilters } from "../query";
 import { RelaxSuggestions } from "../RelaxSuggestions";
 import { ResultCount } from "../ResultCount";
-import { tidyTarget } from "../redirects";
 import { EAT, eat, t } from "../strings";
 
 export const DISHES_ROUTE = "/eat/dishes";
@@ -30,18 +25,6 @@ export const DISHES_ROUTE = "/eat/dishes";
 interface DishesResultsProps {
   locale: Locale;
   data: CanteenData;
-}
-
-export function LiveDishesResults({ locale, data, server }: DishesResultsProps & { server?: ServerRender }) {
-  const search = useSearch();
-  const { now } = useRenderState(search.toString(), server);
-  return (
-    <>
-      <CanonicalRedirect search={search.toString()} compute={() => tidyTarget(localePath(locale, DISHES_ROUTE), search)} />
-      <FocusOnHash />
-      <DishesResults locale={locale} data={data} query={search} now={now} />
-    </>
-  );
 }
 
 export function DishesResults({ locale, data, query, now }: DishesResultsProps & { query: RawParams; now: Date }) {

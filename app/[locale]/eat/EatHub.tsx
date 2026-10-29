@@ -1,13 +1,16 @@
 import { EAT, t } from "@/components/domain/canteen";
-import { EatHubResults, LiveEatHubResults } from "@/components/domain/canteen/pages/EatHub";
+import { EatHubResults } from "@/components/domain/canteen/pages/EatHub";
+import { LiveEatHubResults } from "@/components/domain/canteen/pages/EatHubLive";
+import { PreloadCanteenData } from "@/components/domain/canteen/pages/Preload";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Heading, Stack } from "@/components/ui";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
+import type { RawParams } from "@/lib/canteen/params";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/content";
 
-export async function EatHub({ locale, filtered }: { locale: Locale; filtered: boolean }) {
+export async function EatHub({ locale, filtered, query = {} }: { locale: Locale; filtered: boolean; query?: RawParams }) {
   const data = await getCanteenData();
   const now = new Date();
 
@@ -39,8 +42,9 @@ export async function EatHub({ locale, filtered }: { locale: Locale; filtered: b
       {breadcrumbs}
       <Stack space={8}>
         {header}
+        <PreloadCanteenData />
         <QueryBoundary filtered={filtered} fallback={<EatHubResults locale={locale} data={data} query={{}} now={now} />}>
-          <LiveEatHubResults locale={locale} data={data} server={filtered ? { now: now.toISOString() } : undefined} />
+          {filtered ? <EatHubResults locale={locale} data={data} query={query} now={now} /> : <LiveEatHubResults locale={locale} />}
         </QueryBoundary>
       </Stack>
     </Container>

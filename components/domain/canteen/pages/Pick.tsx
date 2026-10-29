@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Decide for me. A seeded random pick worked out from the address: the same URL always gives the same result, so
  * every result is shareable and reproducible, in the browser and for the server's full page load alike. With no
@@ -15,12 +13,11 @@ import { mealCombos } from "@/lib/canteen/combos";
 import { indexCanteen } from "@/lib/canteen/derive";
 import { applyFilters } from "@/lib/canteen/filter";
 import { invalidMealBudget, type RawParams } from "@/lib/canteen/params";
-import { newSeed, pick as runPick } from "@/lib/canteen/random";
+import { pick as runPick } from "@/lib/canteen/random";
 import { localePath, pick as localised, type Locale } from "@/lib/i18n/config";
 import type { CanteenData, CanteenStall } from "@/lib/content/types";
 
 import { eatHref } from "../links";
-import { CanonicalRedirect, useRenderState, useSearch, type ServerRender } from "../live";
 import {
   PICK_ROUTE,
   chooseCombo,
@@ -37,23 +34,11 @@ import { PickResult } from "../pick/PickResult";
 import { Randomiser } from "../pick/Randomiser";
 import { PICK, pickText } from "../pick/strings";
 import { readFilters, toSearchParams } from "../query";
-import { pickTarget } from "../redirects";
 import { EAT, eat, t } from "../strings";
 
 interface PickResultsProps {
   locale: Locale;
   data: CanteenData;
-}
-
-export function LivePickResults({ locale, data, server }: PickResultsProps & { server?: ServerRender }) {
-  const search = useSearch();
-  const { now, seed } = useRenderState(search.toString(), server);
-  return (
-    <>
-      <CanonicalRedirect search={search.toString()} compute={() => pickTarget(locale, search, newSeed())} />
-      <PickResults locale={locale} data={data} query={search} now={now} nextSeed={seed} />
-    </>
-  );
 }
 
 export function PickResults({

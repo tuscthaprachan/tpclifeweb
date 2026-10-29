@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import { Grid } from "@/components/ui/Grid";
@@ -7,30 +5,18 @@ import { Heading } from "@/components/ui/Heading";
 import { Stack } from "@/components/ui/Stack";
 import { dishesInCanonical, priceRange } from "@/lib/canteen/derive";
 import type { RawParams } from "@/lib/canteen/params";
-import { OTHER_LOCALE, localePath, pick, type Locale } from "@/lib/i18n/config";
+import { OTHER_LOCALE, pick, type Locale } from "@/lib/i18n/config";
 import type { CanonicalDish, CanteenData } from "@/lib/content/types";
 
 import { EXTRAS, excerpt, extras } from "../extras";
 import { eatHref } from "../links";
-import { CanonicalRedirect, useSearch } from "../live";
 import { readFilters } from "../query";
-import { tidyTarget } from "../redirects";
 import { CanonicalStalls } from "../CanonicalStalls";
 
 interface WhatIsListProps {
   locale: Locale;
   /** The canonical dishes with the dishes that map to them; see `dataForCanonicals`. */
   data: CanteenData;
-}
-
-export function LiveWhatIsList({ locale, data }: WhatIsListProps) {
-  const search = useSearch();
-  return (
-    <>
-      <CanonicalRedirect search={search.toString()} compute={() => tidyTarget(localePath(locale, "/eat/what-is"), search)} />
-      <WhatIsList locale={locale} data={data} query={search} />
-    </>
-  );
 }
 
 export function WhatIsList({ locale, data, query }: WhatIsListProps & { query: RawParams }) {
@@ -79,16 +65,6 @@ interface WhatIsDetailProps {
   /** The dish's own dishes and the stalls; see `dataForCanonicals`. */
   data: CanteenData;
   canonical: CanonicalDish;
-}
-
-export function LiveWhatIsDetail({ locale, data, canonical }: WhatIsDetailProps) {
-  const search = useSearch();
-  return (
-    <>
-      <CanonicalRedirect search={search.toString()} compute={() => tidyTarget(localePath(locale, `/eat/what-is/${canonical.slug.current}`), search)} />
-      <WhatIsDetail locale={locale} data={data} canonical={canonical} query={search} />
-    </>
-  );
 }
 
 export function WhatIsDetail({ locale, data, canonical, query }: WhatIsDetailProps & { query: RawParams }) {

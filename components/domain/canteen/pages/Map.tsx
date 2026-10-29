@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -12,11 +10,9 @@ import type { CanteenData, CanteenStall } from "@/lib/content/types";
 import { ActiveFilterBar } from "../ActiveFilterBar";
 import { EatTabs } from "../EatTabs";
 import { eatHref } from "../links";
-import { CanonicalRedirect, useRenderState, useSearch, type ServerRender } from "../live";
 import { CanteenMapWithList, MAP_STRINGS, cellCentre, entrancePoint, hasFloorPlan, routeOrder } from "../map";
 import type { MapHighlight } from "../map";
 import { firstParam, readFilters, toSearchParams } from "../query";
-import { tidyTarget } from "../redirects";
 
 export const MAP_ROUTE = "/eat/map";
 
@@ -39,17 +35,6 @@ function parseEntranceIndex(raw: string | undefined, count: number): number | un
 interface MapResultsProps {
   locale: Locale;
   data: CanteenData;
-}
-
-export function LiveMapResults({ locale, data, server }: MapResultsProps & { server?: ServerRender }) {
-  const search = useSearch();
-  const { now } = useRenderState(search.toString(), server);
-  return (
-    <>
-      <CanonicalRedirect search={search.toString()} compute={() => tidyTarget(localePath(locale, MAP_ROUTE), search)} />
-      <MapResults locale={locale} data={data} query={search} now={now} />
-    </>
-  );
 }
 
 export function MapResults({ locale, data, query, now }: MapResultsProps & { query: RawParams; now: Date }) {

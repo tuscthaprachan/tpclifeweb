@@ -19,7 +19,8 @@ export default async function FilteredEatPickPage({
   await assertFilteredRewrite();
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  const target = pickTarget(locale, await searchParams, newSeed());
+  const query = await searchParams;
+  const target = pickTarget(locale, query, newSeed());
   if (target !== null) redirect(target);
-  return <EatPick locale={locale} filtered />;
+  return <EatPick locale={locale} filtered query={query} />;
 }

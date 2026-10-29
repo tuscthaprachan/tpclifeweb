@@ -18,6 +18,7 @@ export default async function FilteredWhatIsIndexPage({
   await assertFilteredRewrite();
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  redirectToTidyQuery(localePath(locale, "/eat/what-is"), await searchParams);
-  return <EatWhatIs locale={locale} filtered />;
+  const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, "/eat/what-is"), query);
+  return <EatWhatIs locale={locale} filtered query={query} />;
 }

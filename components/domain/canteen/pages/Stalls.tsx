@@ -1,18 +1,14 @@
-"use client";
-
 import { Grid } from "@/components/ui/Grid";
 import { Stack } from "@/components/ui/Stack";
 import { indexCanteen, priceRange } from "@/lib/canteen/derive";
 import { facetCounts, matchesFilters } from "@/lib/canteen/filter";
 import { countActiveValues, type RawParams } from "@/lib/canteen/params";
-import { localePath, type Locale } from "@/lib/i18n/config";
+import type { Locale } from "@/lib/i18n/config";
 import type { CanteenData } from "@/lib/content/types";
 
 import { EatFilteredLayout } from "../EatFilteredLayout";
 import { EatTabs } from "../EatTabs";
-import { CanonicalRedirect, useRenderState, useSearch, type ServerRender } from "../live";
 import { readFilters } from "../query";
-import { tidyTarget } from "../redirects";
 import { StallCard } from "../StallCard";
 import { eat } from "../strings";
 
@@ -21,17 +17,6 @@ export const STALLS_ROUTE = "/eat/stalls";
 interface StallsResultsProps {
   locale: Locale;
   data: CanteenData;
-}
-
-export function LiveStallsResults({ locale, data, server }: StallsResultsProps & { server?: ServerRender }) {
-  const search = useSearch();
-  const { now } = useRenderState(search.toString(), server);
-  return (
-    <>
-      <CanonicalRedirect search={search.toString()} compute={() => tidyTarget(localePath(locale, STALLS_ROUTE), search)} />
-      <StallsResults locale={locale} data={data} query={search} now={now} />
-    </>
-  );
 }
 
 export function StallsResults({ locale, data, query, now }: StallsResultsProps & { query: RawParams; now: Date }) {

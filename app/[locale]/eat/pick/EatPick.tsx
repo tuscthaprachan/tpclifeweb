@@ -1,15 +1,18 @@
 import { EAT, t } from "@/components/domain/canteen";
-import { PickResults, LivePickResults } from "@/components/domain/canteen/pages/Pick";
+import { PickResults } from "@/components/domain/canteen/pages/Pick";
+import { LivePickResults } from "@/components/domain/canteen/pages/PickLive";
+import { PreloadCanteenData } from "@/components/domain/canteen/pages/Preload";
 import { PICK } from "@/components/domain/canteen/pick";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Heading, Stack } from "@/components/ui";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { newSeed } from "@/lib/canteen/random";
+import type { RawParams } from "@/lib/canteen/params";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/content";
 
-export async function EatPick({ locale, filtered }: { locale: Locale; filtered: boolean }) {
+export async function EatPick({ locale, filtered, query = {} }: { locale: Locale; filtered: boolean; query?: RawParams }) {
   const data = await getCanteenData();
   const now = new Date();
 
@@ -46,8 +49,9 @@ export async function EatPick({ locale, filtered }: { locale: Locale; filtered: 
       {crumbs}
       <Stack space={8}>
         {header}
+        <PreloadCanteenData />
         <QueryBoundary filtered={filtered} fallback={<PickResults locale={locale} data={data} query={{}} now={now} nextSeed="" />}>
-          <LivePickResults locale={locale} data={data} server={filtered ? { now: now.toISOString(), seed: newSeed() } : undefined} />
+          {filtered ? <PickResults locale={locale} data={data} query={query} now={now} nextSeed={newSeed()} /> : <LivePickResults locale={locale} />}
         </QueryBoundary>
       </Stack>
     </Container>

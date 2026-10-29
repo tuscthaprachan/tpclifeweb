@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import { Heading } from "@/components/ui/Heading";
@@ -10,7 +8,7 @@ import { commonCheckedOn, priceRange } from "@/lib/canteen/derive";
 import { matchesFilters } from "@/lib/canteen/filter";
 import { DISH_TYPES } from "@/lib/canteen/options";
 import { countActiveValues, type RawParams } from "@/lib/canteen/params";
-import { localePath, pick, type Locale } from "@/lib/i18n/config";
+import { pick, type Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import type { CanteenData, CanteenStall } from "@/lib/content/types";
 
@@ -21,10 +19,8 @@ import { DishRow } from "../DishRow";
 import { DishTypeIcon, PinIcon } from "../icons";
 import { CUISINE_LABEL, TYPE_LABEL } from "../labels";
 import { eatHref } from "../links";
-import { CanonicalRedirect, useRenderState, useSearch, type ServerRender } from "../live";
 import { StallMiniMap } from "../pick/StallMiniMap";
 import { readFilters } from "../query";
-import { tidyTarget } from "../redirects";
 import { EAT, eat, t } from "../strings";
 
 interface StallDetailProps {
@@ -32,17 +28,6 @@ interface StallDetailProps {
   /** The stall's own dishes and the stalls and settings the map needs; see `dataForStall`. */
   data: CanteenData;
   stall: CanteenStall;
-}
-
-export function LiveStallDetail({ locale, data, stall, server }: StallDetailProps & { server?: ServerRender }) {
-  const search = useSearch();
-  const { now } = useRenderState(search.toString(), server);
-  return (
-    <>
-      <CanonicalRedirect search={search.toString()} compute={() => tidyTarget(localePath(locale, `/eat/stalls/${stall.slug.current}`), search)} />
-      <StallDetail locale={locale} data={data} stall={stall} query={search} now={now} />
-    </>
-  );
 }
 
 export function StallDetail({ locale, data, stall, query, now }: StallDetailProps & { query: RawParams; now: Date }) {

@@ -18,6 +18,7 @@ export default async function FilteredCanteenMapPage({
   await assertFilteredRewrite();
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  redirectToTidyQuery(localePath(locale, "/eat/map"), await searchParams);
-  return <EatMap locale={locale} filtered />;
+  const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, "/eat/map"), query);
+  return <EatMap locale={locale} filtered query={query} />;
 }

@@ -8,9 +8,15 @@ export { generateMetadata } from "../../../../eat/dishes/[slug]/page";
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
-export default async function FilteredEatDishPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+export default async function FilteredEatDishPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   await assertFilteredRewrite();
   const { locale, slug } = await params;
   if (!isLocale(locale)) notFound();
-  return <EatDish locale={locale} slug={slug} filtered />;
+  return <EatDish locale={locale} slug={slug} filtered query={await searchParams} />;
 }

@@ -18,6 +18,7 @@ export default async function FilteredEatStallsPage({
   await assertFilteredRewrite();
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
-  redirectToTidyQuery(localePath(locale, "/eat/stalls"), await searchParams);
-  return <EatStalls locale={locale} filtered />;
+  const query = await searchParams;
+  redirectToTidyQuery(localePath(locale, "/eat/stalls"), query);
+  return <EatStalls locale={locale} filtered query={query} />;
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import { Button } from "@/components/ui/Button";
@@ -19,7 +17,6 @@ import { HowToSay } from "../HowToSay";
 import { DishTypeIcon, PinIcon } from "../icons";
 import { ALLERGEN_LABEL, PROTEIN_LABEL, STYLE_LABEL, TYPE_LABEL } from "../labels";
 import { eatHref, mapHref, stallHref } from "../links";
-import { useSearch } from "../live";
 import { StallMiniMap } from "../pick/StallMiniMap";
 import { PriceTag } from "../PriceTag";
 import { readFilters } from "../query";
@@ -30,10 +27,6 @@ interface DishDetailProps {
   /** The dish, the other dishes of its canonical dish, and the stalls and settings; see `dataForDish`. */
   data: CanteenData;
   dish: CanteenDish;
-}
-
-export function LiveDishDetail({ locale, data, dish }: DishDetailProps) {
-  return <DishDetail locale={locale} data={data} dish={dish} query={useSearch()} />;
 }
 
 export function DishDetail({ locale, data, dish, query }: DishDetailProps & { query: RawParams }) {

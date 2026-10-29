@@ -1,16 +1,19 @@
 import { notFound } from "next/navigation";
 
 import { EAT, dataForStall, t } from "@/components/domain/canteen";
-import { LiveStallDetail, StallDetail } from "@/components/domain/canteen/pages/StallDetail";
+import { StallDetail } from "@/components/domain/canteen/pages/StallDetail";
+import { LiveStallDetail } from "@/components/domain/canteen/pages/StallDetailLive";
+import { PreloadCanteenData } from "@/components/domain/canteen/pages/Preload";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { indexCanteen } from "@/lib/canteen/derive";
+import type { RawParams } from "@/lib/canteen/params";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/content";
 
-export async function EatStall({ locale, slug, filtered }: { locale: Locale; slug: string; filtered: boolean }) {
+export async function EatStall({ locale, slug, filtered, query = {} }: { locale: Locale; slug: string; filtered: boolean; query?: RawParams }) {
   const full = await getCanteenData();
   const stall = indexCanteen(full).stallBySlug.get(slug);
   if (!stall) notFound();
@@ -29,8 +32,9 @@ export async function EatStall({ locale, slug, filtered }: { locale: Locale; slu
         ]}
       />
 
+      <PreloadCanteenData />
       <QueryBoundary filtered={filtered} fallback={<StallDetail locale={locale} data={data} stall={stall} query={{}} now={now} />}>
-        <LiveStallDetail locale={locale} data={data} stall={stall} server={filtered ? { now: now.toISOString() } : undefined} />
+        {filtered ? <StallDetail locale={locale} data={data} stall={stall} query={query} now={now} /> : <LiveStallDetail locale={locale} slug={slug} />}
       </QueryBoundary>
     </Container>
   );

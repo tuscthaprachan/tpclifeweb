@@ -1,16 +1,19 @@
 import { EAT, t } from "@/components/domain/canteen";
 import { MAP_STRINGS, hasFloorPlan } from "@/components/domain/canteen/map";
-import { LiveMapResults, MapResults } from "@/components/domain/canteen/pages/Map";
+import { MapResults } from "@/components/domain/canteen/pages/Map";
+import { LiveMapResults } from "@/components/domain/canteen/pages/MapLive";
+import { PreloadCanteenData } from "@/components/domain/canteen/pages/Preload";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { Heading } from "@/components/ui/Heading";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { Stack } from "@/components/ui/Stack";
+import type { RawParams } from "@/lib/canteen/params";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getCanteenData } from "@/lib/content";
 
-export async function EatMap({ locale, filtered }: { locale: Locale; filtered: boolean }) {
+export async function EatMap({ locale, filtered, query = {} }: { locale: Locale; filtered: boolean; query?: RawParams }) {
   const data = await getCanteenData();
   const now = new Date();
 
@@ -31,8 +34,9 @@ export async function EatMap({ locale, filtered }: { locale: Locale; filtered: b
       <Breadcrumbs locale={locale} items={crumbs} />
       <Stack space={hasFloorPlan(data.settings, data.stalls) ? 4 : 6}>
         {header}
+        <PreloadCanteenData />
         <QueryBoundary filtered={filtered} fallback={<MapResults locale={locale} data={data} query={{}} now={now} />}>
-          <LiveMapResults locale={locale} data={data} server={filtered ? { now: now.toISOString() } : undefined} />
+          {filtered ? <MapResults locale={locale} data={data} query={query} now={now} /> : <LiveMapResults locale={locale} />}
         </QueryBoundary>
       </Stack>
     </Container>

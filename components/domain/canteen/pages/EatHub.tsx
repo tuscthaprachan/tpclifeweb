@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -19,7 +17,6 @@ import { DecideBlock } from "../DecideBlock";
 import { DishCard } from "../DishCard";
 import { PinIcon, PlateIcon, WokIcon } from "../icons";
 import { eatHref } from "../links";
-import { useRenderState, useSearch, type ServerRender } from "../live";
 import { readFilters } from "../query";
 import { RelaxSuggestions } from "../RelaxSuggestions";
 import { SuggestedMenu } from "../SuggestedMenu";
@@ -44,12 +41,6 @@ const TOOLS = [
 interface EatHubResultsProps {
   locale: Locale;
   data: CanteenData;
-}
-
-export function LiveEatHubResults({ locale, data, server }: EatHubResultsProps & { server?: ServerRender }) {
-  const search = useSearch();
-  const { now } = useRenderState(search.toString(), server);
-  return <EatHubResults locale={locale} data={data} query={search} now={now} />;
 }
 
 export function EatHubResults({ locale, data, query, now }: EatHubResultsProps & { query: RawParams; now: Date }) {
