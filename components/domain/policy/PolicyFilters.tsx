@@ -44,8 +44,8 @@ interface PolicyFiltersProps {
  * The policy dashboard's filter bar. A real `<form method="get">`: three
  * selects and a submit button, reachable and functional with JavaScript off,
  * since the page that reads `owner` / `area` / `status` off the URL query
- * string does all the actual filtering server-side
- * (app/[locale]/policy/page.tsx). That also satisfies 3.3.7 Redundant Entry:
+ * string does all the actual filtering (components/domain/policy/PolicyResults.tsx,
+ * in the browser, or on the server for a plain document request). That also satisfies 3.3.7 Redundant Entry:
  * the chosen filters live in the URL, so a filtered view is shareable and
  * survives a reload or a back navigation. Mirrors FormFilters
  * (components/domain/form/FormFilters.tsx).
