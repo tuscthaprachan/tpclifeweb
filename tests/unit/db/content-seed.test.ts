@@ -118,8 +118,8 @@ describe("content seed", () => {
     expect(before.places).toBe(PLACE_DOCS.length + 1);
     expect(before.directory_organisations).toBe(buildDirectory().length);
     expect(before.faculties).toBe(10);
-    // The emergency report Google Form is superseded by /complaints and is not seeded.
-    expect(before.forms).toBe(FORMS.length - 1);
+    // The emergency report and equipment request Google Forms are superseded by /complaints and /borrow and are not seeded.
+    expect(before.forms).toBe(FORMS.length - 2);
     expect(before.shuttle_routes).toBe(SHUTTLE_ROUTES.length);
     expect(before.shuttle_stops).toBe(SHUTTLE_ROUTES.reduce((n, r) => n + r.stops.length, 0));
     expect(before.site_settings).toBe(1);
@@ -171,9 +171,9 @@ describe("content seed", () => {
 });
 
 describe("site settings home tasks", () => {
-  it("seeds the six default tasks in order and maps them through the read layer", async () => {
+  it("seeds the seven default tasks in order and maps them through the read layer", async () => {
     const settings = await readSiteSettings(ctx.db);
-    expect(settings?.homeTasks.map((t) => t.path)).toEqual(["/forms", "/lost-and-found", "/complaints", "/welfare", "/eat", "/directory"]);
+    expect(settings?.homeTasks.map((t) => t.path)).toEqual(["/forms", "/lost-and-found", "/complaints", "/borrow", "/welfare", "/eat", "/directory"]);
     expect(settings?.homeTasks[2]).toEqual({
       label: { th: "แจ้งปัญหา", en: "Report an issue" },
       description: { th: "เรื่องรายวิชา คณะ หรือมหาวิทยาลัย", en: "A course, your faculty or the university" },
@@ -184,7 +184,7 @@ describe("site settings home tasks", () => {
   it("fills an empty list on re-seed but never overwrites an editor's list", async () => {
     await ctx.db.update(siteSettings).set({ homeTasks: [] });
     await seedContent(ctx.db);
-    expect((await readSiteSettings(ctx.db))?.homeTasks).toHaveLength(6);
+    expect((await readSiteSettings(ctx.db))?.homeTasks).toHaveLength(7);
 
     const own = [{ label: { th: "ก", en: "A" }, description: { th: "ข", en: "B" }, path: "/news" }];
     await ctx.db.update(siteSettings).set({ homeTasks: own });

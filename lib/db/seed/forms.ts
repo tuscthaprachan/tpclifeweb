@@ -12,8 +12,12 @@ import { excludedSet, published, slugify, type SeedDb } from "./util";
  * seeded: no /forms page, search result or home task points at it. It stays in
  * the inventory as a historical record. A database seeded earlier still holds
  * its row; unpublish it at /admin/content/forms.
+ *
+ * The equipment request form (a Google Form, with four paper forms to download
+ * and upload) is superseded by the borrowing service at /borrow, which takes
+ * the same request, with every item and quantity in one go. Same handling.
  */
-const SUPERSEDED = new Set(["emergencyReport"]);
+const SUPERSEDED = new Set(["emergencyReport", "equipmentRequest"]);
 
 export async function seedForms(db: SeedDb): Promise<void> {
   for (const form of FORMS.filter((f) => !SUPERSEDED.has(f.key))) {

@@ -19,6 +19,11 @@ export const DEFAULT_HOME_TASKS: readonly HomeTask[] = [
     path: "/complaints",
   },
   {
+    label: { th: "ยืมอุปกรณ์", en: "Borrow equipment" },
+    description: { th: "อุปกรณ์กีฬา วิทยุสื่อสาร ชุดปฐมพยาบาล", en: "Sports kit, radios and first aid kits" },
+    path: "/borrow",
+  },
+  {
     label: { th: "สวัสดิการและสุขภาพ", en: "Welfare and health" },
     description: { th: "ทุน ประกันอุบัติเหตุ สุขภาพจิต", en: "Grants, accident insurance, mental health" },
     path: "/welfare",

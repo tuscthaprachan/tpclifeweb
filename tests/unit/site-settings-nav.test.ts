@@ -34,14 +34,14 @@ describe("withRequiredNav", () => {
 describe("withRequiredNav home tasks", () => {
   const base = (homeTasks?: unknown) => ({ primaryNav: [{ label: { th: "/eat", en: "/eat" }, path: "/eat" }], footerNav: [{ label: { th: "x", en: "x" }, path: "/performance" }], homeTasks }) as unknown as SiteSettings;
 
-  it("falls back to the six default tasks when the stored list is empty", () => {
+  it("falls back to the seven default tasks when the stored list is empty", () => {
     const result = withRequiredNav(base([]));
-    expect(result.homeTasks.map((task) => task.path)).toEqual(["/forms", "/lost-and-found", "/complaints", "/welfare", "/eat", "/directory"]);
+    expect(result.homeTasks.map((task) => task.path)).toEqual(["/forms", "/lost-and-found", "/complaints", "/borrow", "/welfare", "/eat", "/directory"]);
     expect(result.homeTasks[0]?.label).toEqual({ th: "ค้นหาแบบฟอร์ม", en: "Find a form" });
   });
 
   it("falls back when the field is missing on an older cached row", () => {
-    expect(withRequiredNav(base(undefined)).homeTasks).toHaveLength(6);
+    expect(withRequiredNav(base(undefined)).homeTasks).toHaveLength(7);
   });
 
   it("keeps an editor's own list and order", () => {
