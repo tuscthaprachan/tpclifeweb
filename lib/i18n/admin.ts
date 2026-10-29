@@ -23,6 +23,8 @@ import { LOST_FOUND_CASES_STRINGS } from "./admin-content/lost-found-cases";
 import { MEDIA_STRINGS } from "./admin-content/media";
 import { PAGES_STRINGS } from "./admin-content/pages";
 import { PERFORMANCE_STRINGS } from "./admin-content/performance";
+import { BORROWING_STRINGS } from "./admin-content/borrowing";
+import { BORROWING_CALENDAR_STRINGS } from "./admin-content/borrowing-calendar";
 import { PUBLISHING_STRINGS } from "./admin-content/publishing";
 
 export const A = {
@@ -189,11 +191,13 @@ export const A = {
   roleLfOfficer: { th: "เจ้าหน้าที่ของหายและของเก็บได้", en: "Lost and found officer" },
   roleComplaintsHandler: { th: "ผู้รับเรื่องร้องเรียน", en: "Complaints handler" },
   roleUnitLead: { th: "หัวหน้าหน่วย", en: "Unit lead" },
+  roleEquipmentOfficer: { th: "เจ้าหน้าที่ให้ยืมอุปกรณ์", en: "Equipment officer" },
   roleAdminHint: { th: "เชิญและเอาเจ้าหน้าที่ออก กำหนดบทบาท", en: "Invites and removes staff and sets roles" },
   roleEditorHint: { th: "แก้ไขเนื้อหาบนเว็บไซต์", en: "Edits website content" },
   roleLfOfficerHint: { th: "จัดการรายงานของหายและของเก็บได้", en: "Handles lost and found reports" },
   roleComplaintsHandlerHint: { th: "รับและดำเนินการเรื่องร้องเรียน", en: "Receives and resolves complaints" },
   roleUnitLeadHint: { th: "ดูแลเรื่องที่เลยกำหนดและส่งต่อ", en: "Handles overdue and escalated cases" },
+  roleEquipmentOfficerHint: { th: "พิจารณาคำขอยืม ส่งมอบและรับคืนอุปกรณ์ ดูแลคลังอุปกรณ์", en: "Decides loan requests, hands out and takes back equipment, and keeps the inventory" },
 
   /* No access, signed out */
   noAccessTitle: { th: "คุณไม่มีสิทธิ์เข้าถึง", en: "You do not have access" },
@@ -730,6 +734,8 @@ export const A = {
   ...COMPLAINTS_STRINGS,
   ...LOST_FOUND_CASES_STRINGS,
   ...PERFORMANCE_STRINGS,
+  ...BORROWING_STRINGS,
+  ...BORROWING_CALENDAR_STRINGS,
   ...CONSOLE_STRINGS,
   ...CONSOLE_HOME_STRINGS,
   ...CONSOLE_CONTENT_STRINGS,
@@ -756,6 +762,7 @@ export const ROLE_LABEL = {
   lf_officer: "roleLfOfficer",
   complaints_handler: "roleComplaintsHandler",
   unit_lead: "roleUnitLead",
+  equipment_officer: "roleEquipmentOfficer",
 } as const satisfies Record<string, AdminKey>;
 
 export const ROLE_HINT = {
@@ -764,4 +771,5 @@ export const ROLE_HINT = {
   lf_officer: "roleLfOfficerHint",
   complaints_handler: "roleComplaintsHandlerHint",
   unit_lead: "roleUnitLeadHint",
+  equipment_officer: "roleEquipmentOfficerHint",
 } as const satisfies Record<string, AdminKey>;

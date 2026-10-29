@@ -10,3 +10,4 @@ export * from "./lost-found-staff";
 export * from "./lost-found-cases";
 export * from "./complaints";
 export * from "./journey-metrics";
+export * from "./borrowing";

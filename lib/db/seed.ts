@@ -18,6 +18,7 @@ import type { AuditExecutor } from "./audit";
 import { organisations } from "./schema/organisations";
 import { seedComplaintCategories } from "./seed/complaints";
 import { seedContent } from "./seed/content";
+import { seedEquipment } from "./seed/equipment";
 
 export const ORGANISATION_SEED = [
   {
@@ -59,6 +60,7 @@ async function main() {
     await seedContent(db);
     console.log("Seeded website content.");
     console.log(`Added ${await seedComplaintCategories(db)} missing complaint categories.`);
+    console.log(`Added ${await seedEquipment(db)} missing equipment categories and items.`);
   } finally {
     await pool.end();
   }

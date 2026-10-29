@@ -4,7 +4,7 @@ import { user } from "./auth";
 import { organisations } from "./organisations";
 
 /** The services that run on the shared case engine. */
-export const CASE_SERVICES = ["lost_found", "complaint"] as const;
+export const CASE_SERVICES = ["lost_found", "complaint", "borrowing"] as const;
 export type CaseService = (typeof CASE_SERVICES)[number];
 export const caseServiceEnum = pgEnum("case_service", CASE_SERVICES);
 
@@ -37,11 +37,17 @@ export const CASE_EVENT_TYPES = [
   "details_viewed",
   "evidence_viewed",
   "survey_received",
+  // Borrowing
+  "lines_changed",
+  "handover_recorded",
+  "return_recorded",
+  "compensation_settled",
+  "reminder_sent",
 ] as const;
 export type CaseEventType = (typeof CASE_EVENT_TYPES)[number];
 
 /** Who a contact row describes within a case. */
-export const CASE_CONTACT_ROLES = ["reporter", "owner", "finder", "claimant"] as const;
+export const CASE_CONTACT_ROLES = ["reporter", "owner", "finder", "claimant", "borrower"] as const;
 export type CaseContactRole = (typeof CASE_CONTACT_ROLES)[number];
 
 export const CASE_PREFERRED_CONTACTS = ["email", "phone", "line"] as const;
@@ -84,10 +90,10 @@ export const cases = pgTable(
     piiDeletedAt: timestamp("pii_deleted_at", { withTimezone: true }),
   },
   (t) => [
-    check("cases_reference_format", sql`${t.reference} ~ '^(LF|CP)-[0-9]{4}-[0-9]{4,}$'`),
+    check("cases_reference_format", sql`${t.reference} ~ '^(LF|CP|BR)-[0-9]{4}-[0-9]{4,}$'`),
     check(
       "cases_reference_matches_service",
-      sql`(${t.service} = 'lost_found' and ${t.reference} like 'LF-%') or (${t.service} = 'complaint' and ${t.reference} like 'CP-%')`,
+      sql`(${t.service} = 'lost_found' and ${t.reference} like 'LF-%') or (${t.service} = 'complaint' and ${t.reference} like 'CP-%') or (${t.service} = 'borrowing' and ${t.reference} like 'BR-%')`,
     ),
     index("cases_inbox_idx").on(t.service, t.status, t.updatedAt.desc()),
     index("cases_assigned_idx").on(t.assignedTo),

@@ -52,7 +52,7 @@ export interface KindDef {
 export interface ServiceDef {
   service: CaseService;
   /** Reference prefix: LF-2026-0001. */
-  prefix: "LF" | "CP";
+  prefix: "LF" | "CP" | "BR";
   label: LocaleString;
   /** Roles that may work these cases, in either organisation. `unit_lead` and `admin` see every service. */
   roles: readonly StaffRole[];
@@ -159,6 +159,43 @@ const COMPLAINT: MachineDef = {
   publicActorTo: ["withdrawn", "reopened"],
 };
 
+/**
+ * Equipment loan: requested -> approved -> on_loan -> returned, the paper
+ * form's three signatures (decision, handover, return) as statuses.
+ * `declined` is the decision going the other way, `cancelled` the borrower
+ * (from the tracking link) or staff calling it off before collection, and
+ * `not_collected` nobody coming for an approved loan. A return with anything
+ * damaged or missing goes to `compensation_due`, then `settled` once paid,
+ * replaced or waived. Overdue is computed from `return_due_at`, not a status,
+ * so the borrower's page never changes because a job ran.
+ */
+const LOAN: MachineDef = {
+  initial: "requested",
+  statuses: {
+    requested: { label: s("รอพิจารณา", "Requested"), publicLabel: s("รอเจ้าหน้าที่พิจารณา", "Waiting for a decision"), tone: "info", terminal: false },
+    approved: { label: s("อนุมัติแล้ว รอรับของ", "Approved, to collect"), publicLabel: s("อนุมัติแล้ว มารับได้ตามวันเวลานัด", "Approved, collect at your booked time"), tone: "success", terminal: false },
+    on_loan: { label: s("ยืมออกไปแล้ว", "On loan"), publicLabel: s("รับอุปกรณ์ไปแล้ว", "Collected"), tone: "warning", terminal: false },
+    returned: { label: s("คืนครบ สภาพปกติ", "Returned"), publicLabel: s("คืนอุปกรณ์แล้ว", "Returned"), tone: "success", terminal: true },
+    compensation_due: { label: s("ชำรุดหรือสูญหาย รอชดใช้", "Compensation due"), publicLabel: s("มีอุปกรณ์ชำรุดหรือสูญหาย รอชดใช้", "Damage or loss to put right"), tone: "error", terminal: false },
+    settled: { label: s("ชดใช้เรียบร้อย", "Settled"), publicLabel: s("ชดใช้เรียบร้อยแล้ว", "Settled"), tone: "success", terminal: true },
+    declined: { label: s("ไม่อนุมัติ", "Declined"), publicLabel: s("ไม่อนุมัติ", "Not approved"), tone: "neutral", terminal: true },
+    cancelled: { label: s("ยกเลิก", "Cancelled"), publicLabel: s("ยกเลิกแล้ว", "Cancelled"), tone: "neutral", terminal: true },
+    not_collected: { label: s("ไม่มารับ", "Not collected"), publicLabel: s("ไม่ได้มารับอุปกรณ์", "Not collected"), tone: "neutral", terminal: true },
+  },
+  transitions: {
+    requested: ["approved", "declined", "cancelled"],
+    approved: ["on_loan", "requested", "cancelled", "not_collected"],
+    on_loan: ["returned", "compensation_due"],
+    compensation_due: ["settled"],
+    returned: [],
+    settled: [],
+    declined: ["requested"],
+    cancelled: [],
+    not_collected: [],
+  },
+  publicActorTo: ["cancelled"],
+};
+
 export const SERVICES: Record<CaseService, ServiceDef> = {
   lost_found: {
     service: "lost_found",
@@ -177,6 +214,15 @@ export const SERVICES: Record<CaseService, ServiceDef> = {
     roles: ["complaints_handler", "unit_lead", "admin"],
     kinds: {
       complaint: { label: s("ข้อร้องเรียน", "Complaint"), machine: COMPLAINT },
+    },
+  },
+  borrowing: {
+    service: "borrowing",
+    prefix: "BR",
+    label: s("ยืมอุปกรณ์", "Equipment loans"),
+    roles: ["equipment_officer", "unit_lead", "admin"],
+    kinds: {
+      loan: { label: s("คำขอยืมอุปกรณ์", "Loan request"), machine: LOAN },
     },
   },
 };

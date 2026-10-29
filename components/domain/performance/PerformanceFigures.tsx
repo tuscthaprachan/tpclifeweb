@@ -79,7 +79,7 @@ function categoryName(r: GroupedRow, locale: Locale): string {
   return r.pool === "sensitive" ? UI.perfPoolSensitive[locale] : r.pool === "other" ? UI.perfPoolOther[locale] : UI.perfPoolSensitiveOther[locale];
 }
 
-const JOURNEY_NAME = { lost: "perfJLost", found: "perfJFound", claim: "perfJClaim", complaint: "perfJComplaint" } as const;
+const JOURNEY_NAME = { lost: "perfJLost", found: "perfJFound", claim: "perfJClaim", complaint: "perfJComplaint", borrow: "perfJBorrow" } as const;
 
 /** `headingLevel` is the depth of each service heading: 2 on the public page, 3 where the figures sit under a heading of their own. */
 export function PerformanceFigures({ report, locale, headingLevel = 2 }: { report: PerformanceReport; locale: Locale; headingLevel?: 2 | 3 }) {

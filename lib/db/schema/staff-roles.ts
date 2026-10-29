@@ -4,7 +4,7 @@ import { user } from "./auth";
 import { organisations } from "./organisations";
 
 /** The roles from docs/backend-plan.md. Each is held on behalf of one organisation. */
-export const STAFF_ROLES = ["admin", "editor", "lf_officer", "complaints_handler", "unit_lead"] as const;
+export const STAFF_ROLES = ["admin", "editor", "lf_officer", "complaints_handler", "unit_lead", "equipment_officer"] as const;
 export type StaffRole = (typeof STAFF_ROLES)[number];
 
 export const staffRoleEnum = pgEnum("staff_role", STAFF_ROLES);

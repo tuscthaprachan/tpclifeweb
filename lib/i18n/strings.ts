@@ -1233,6 +1233,7 @@ export const UI = {
   perfJFound: { th: "แจ้งของที่พบ", en: "Report a found item" },
   perfJClaim: { th: "ขอรับของที่พบ", en: "Claim a found item" },
   perfJComplaint: { th: "ส่งข้อร้องเรียน", en: "Make a complaint" },
+  perfJBorrow: { th: "ขอยืมอุปกรณ์", en: "Borrow equipment" },
   perfColForm: { th: "แบบฟอร์ม", en: "Form" },
   perfColStarted: { th: "เริ่มกรอก", en: "Started" },
   perfColSent: { th: "ส่งจนจบ", en: "Sent" },

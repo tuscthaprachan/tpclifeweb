@@ -22,6 +22,7 @@ import { siteSettings } from "./schema/content/site";
 import { seedOrganisations } from "./seed";
 import { seedComplaintCategories } from "./seed/complaints";
 import { seedContent } from "./seed/content";
+import { seedEquipment } from "./seed/equipment";
 
 export async function openPglite({ dataDir }: { dataDir: string | undefined }) {
   const client = new PGlite({ dataDir: dataDir ? path.resolve(dataDir) : undefined, extensions: { pg_trgm } });
@@ -34,5 +35,6 @@ export async function openPglite({ dataDir }: { dataDir: string | undefined }) {
   }
   // Insert-if-missing, so a kept directory database gets categories added after it was first seeded.
   await seedComplaintCategories(db);
+  await seedEquipment(db);
   return db;
 }

@@ -84,9 +84,9 @@ function categoryName(r: GroupedRow, locale: Locale): string {
   return r.pool === "sensitive" ? UI.perfPoolSensitive[locale] : r.pool === "other" ? UI.perfPoolOther[locale] : UI.perfPoolSensitiveOther[locale];
 }
 
-const _x = { lost: "perfJLost", found: "perfJFound", claim: "perfJClaim", complaint: "perfJComplaint" } as const;
+const _x = { lost: "perfJLost", found: "perfJFound", claim: "perfJClaim", complaint: "perfJComplaint", borrow: "perfJBorrow" } as const;
 
-const JOURNEY_NAME = { lost: "perfJLost", found: "perfJFound", claim: "perfJClaim", complaint: "perfJComplaint" } as const;
+const JOURNEY_NAME = { lost: "perfJLost", found: "perfJFound", claim: "perfJClaim", complaint: "perfJComplaint", borrow: "perfJBorrow" } as const;
 
 /** Headline figures as stat cards. */
 export function HeadlineStats({ report, locale }: { report: PerformanceReport; locale: Locale }) {

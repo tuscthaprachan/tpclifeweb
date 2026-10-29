@@ -20,7 +20,7 @@ import { check, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-cor
  * outlives, which is why it exists. Rows are kept for reporting and need no
  * retention job.
  */
-export const JOURNEY_METRIC_KINDS = ["lost", "found", "claim", "complaint"] as const;
+export const JOURNEY_METRIC_KINDS = ["lost", "found", "claim", "complaint", "borrow"] as const;
 export type JourneyMetricKind = (typeof JOURNEY_METRIC_KINDS)[number];
 
 /** Where an issue was signposted to, instead of becoming a complaint case. */
@@ -39,7 +39,7 @@ export const journeyMetrics = pgTable(
   (t) => [
     check(
       "journey_metrics_kind",
-      sql`${t.kind} in ('lost', 'found', 'claim', 'complaint', 'signpost_faculty', 'signpost_course', 'signpost_emergency')`,
+      sql`${t.kind} in ('lost', 'found', 'claim', 'complaint', 'borrow', 'signpost_faculty', 'signpost_course', 'signpost_emergency')`,
     ),
     index("journey_metrics_kind_started_idx").on(t.kind, t.startedAt),
   ],
