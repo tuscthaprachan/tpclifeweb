@@ -18,6 +18,7 @@ import {
   LOCALE_COOKIE_MAX_AGE,
   type Locale,
 } from "@/lib/i18n/config";
+import { FILTERED_HEADER, FILTERED_SEGMENT, hasReaderQuery, isQueryRoute } from "@/lib/query-routes";
 import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, THEME_COOKIE_MAX_AGE } from "@/lib/theme/config";
 
 /**
@@ -46,7 +47,18 @@ export function proxy(request: NextRequest) {
 
   const [, firstSegment] = pathname.split("/");
   if (isLocale(firstSegment)) {
-    // Already locale-prefixed. Nothing to negotiate.
+    const rest = pathname.slice(firstSegment.length + 1) || "/";
+    if (rest === `/${FILTERED_SEGMENT}` || rest.startsWith(`/${FILTERED_SEGMENT}/`)) {
+      return NextResponse.rewrite(new URL(`/${firstSegment}/${FILTERED_SEGMENT}-not-found`, request.url));
+    }
+    const isDocument = request.headers.get("rsc") !== "1";
+    if (isDocument && hasReaderQuery(request.nextUrl.searchParams) && isQueryRoute(rest)) {
+      const target = request.nextUrl.clone();
+      target.pathname = `/${firstSegment}/${FILTERED_SEGMENT}${rest}`;
+      const headers = new Headers(request.headers);
+      headers.set(FILTERED_HEADER, "1");
+      return migrateLegacyCookies(request, NextResponse.rewrite(target, { request: { headers } }));
+    }
     return migrateLegacyCookies(request, NextResponse.next());
   }
 
