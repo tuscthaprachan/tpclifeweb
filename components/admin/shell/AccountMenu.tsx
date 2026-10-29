@@ -9,7 +9,7 @@ export interface AccountMenuProps {
   email: string;
   /** One line per role, already in the staff member's language. */
   roles: string[];
-  labels: { accountMenu: string; signedInAs: string; roles: string; accountSecurity: string; signOut: string };
+  labels: { accountMenu: string; signedInAs: string; roles: string; accountDetails: string; accountSecurity: string; signOut: string };
 }
 
 function initials(name: string, email: string): string {
@@ -36,6 +36,12 @@ export function AccountMenu({ name, email, roles, labels }: AccountMenuProps) {
         </>
       ) : null}
       <ul className="console-menu-list mt-[var(--space-3)] border-t border-line pt-[var(--space-2)]">
+        <li>
+          <a href="/admin/account" className="console-menu-item">
+            <ConsoleIcon name="account" />
+            <span>{labels.accountDetails}</span>
+          </a>
+        </li>
         <li>
           <a href="/admin/security" className="console-menu-item">
             <ConsoleIcon name="security" />

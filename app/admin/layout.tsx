@@ -45,7 +45,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <body className="console">
         <SkipLink locale={locale} />
         {inShell && session ? (
-          <ConsoleShell locale={locale} session={session} theme={theme}>
+          <ConsoleShell locale={locale} session={session} theme={theme} searchEndpoint="/admin/api/search">
             {children}
           </ConsoleShell>
         ) : (

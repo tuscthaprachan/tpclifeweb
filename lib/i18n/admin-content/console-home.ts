@@ -1,4 +1,40 @@
 import type { LocaleString } from "../config";
 
-/** Console dashboard, global search and quick jump strings. Keys start with `ch`. */
-export const CONSOLE_HOME_STRINGS = {} as const satisfies Record<string, LocaleString>;
+/** Console dashboard, account page and global search strings. Keys start with `ch`. */
+export const CONSOLE_HOME_STRINGS = {
+  chGreeting: { th: "สวัสดี {name}", en: "Hello, {name}" },
+  chSummaryNone: { th: "ขณะนี้ไม่มีรายการที่ต้องดำเนินการ", en: "Nothing needs your attention right now." },
+  chSummaryOne: { th: "มี 1 รายการที่ต้องดำเนินการ", en: "1 item needs your attention." },
+  chSummaryMany: { th: "มี {count} รายการที่ต้องดำเนินการ", en: "{count} items need your attention." },
+  chSummaryPlain: { th: "ภาพรวมงานของคุณในวันนี้", en: "Here is your work at a glance." },
+  chNeedsYou: { th: "ต้องดำเนินการ", en: "Needs you" },
+  chStatOpen: { th: "เรื่องที่ยังเปิดอยู่", en: "Open cases" },
+  chStatOverdue: { th: "เรื่องเกินกำหนด", en: "Overdue cases" },
+  chStatEscalated: { th: "เรื่องที่ส่งต่อแล้ว", en: "Escalated cases" },
+  chStatUnassigned: { th: "ยังไม่มีผู้รับผิดชอบ", en: "Unassigned cases" },
+  chStatMine: { th: "มอบหมายให้ฉัน", en: "Assigned to me" },
+  chHintOverdue: { th: "เลยกำหนดที่ตั้งไว้", en: "Past a target date" },
+  chHintEscalated: { th: "แจ้งหัวหน้าหน่วยแล้ว", en: "Flagged to the leads" },
+  chHintUnassigned: { th: "ยังไม่มีใครดูแล", en: "Nobody is handling these" },
+  chHintOpen: { th: "ยังไม่ปิดเรื่อง", en: "Not yet closed" },
+  chHintMine: { th: "ที่ยังไม่ปิดเรื่อง", en: "Not yet closed" },
+  chStatDrafts: { th: "ฉบับร่างที่รอเผยแพร่", en: "Drafts waiting to publish" },
+  chHintDrafts: { th: "ยังไม่แสดงบนเว็บไซต์", en: "Not on the website yet" },
+  chStatAlerts: { th: "ประกาศด่วนที่แสดงอยู่", en: "Live service alerts" },
+  chHintAlerts: { th: "กำลังแสดงบนเว็บไซต์", en: "Showing on the website now" },
+  chQuickActions: { th: "ทางลัด", en: "Quick actions" },
+  chMore: { th: "เพิ่มเติม", en: "More" },
+  chCaseDesk: { th: "งานเคาน์เตอร์ของหาย", en: "Lost and found desk" },
+  chGoTo: { th: "ไปที่", en: "Go to" },
+  chRecent: { th: "แก้ไขล่าสุด", en: "Recently edited" },
+  chRecentEmpty: { th: "ยังไม่มีเนื้อหา", en: "There is no content yet." },
+  chRecentUpdated: { th: "แก้ไข {when}", en: "Edited {when}" },
+  chUntitled: { th: "ไม่มีชื่อ", en: "Untitled" },
+  chSettings: { th: "การตั้งค่า", en: "Settings" },
+  chAccountTitle: { th: "บัญชีของคุณ", en: "Your account" },
+  chAccountIntro: { th: "ข้อมูลที่ใช้ยืนยันตัวตนและสิทธิ์ของคุณในคอนโซล", en: "Who you are signed in as, and what you can do in the console." },
+  chAccountSessionTitle: { th: "เซสชันและความปลอดภัย", en: "Session and security" },
+  chAccountSecurityHint: { th: "จัดการพาสคีย์และการเข้าสู่ระบบของคุณ", en: "Manage your passkeys and sign-in." },
+  chSearchContent: { th: "เนื้อหา: {type}", en: "Content: {type}" },
+  chSearchCases: { th: "เรื่องที่ได้รับ", en: "Cases" },
+} as const satisfies Record<string, LocaleString>;

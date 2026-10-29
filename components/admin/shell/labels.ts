@@ -28,6 +28,7 @@ export interface ShellLabels {
   accountMenu: string;
   signedInAs: string;
   roles: string;
+  accountDetails: string;
   accountSecurity: string;
   signOut: string;
   display: string;
@@ -63,6 +64,7 @@ export function shellLabels(locale: Locale): ShellLabels {
     accountMenu: a("csAccountMenu", locale),
     signedInAs: a("csSignedInAs", locale),
     roles: a("csRolesHeading", locale),
+    accountDetails: a("chAccountTitle", locale),
     accountSecurity: a("csAccountSecurity", locale),
     signOut: a("signOut", locale),
     display: a("csSettingsMenu", locale),
