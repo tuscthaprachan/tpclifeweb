@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/content", () => ({ getSiteSettings: async () => null }));
 
-import { isHighlightedNav, splitPrimaryNav } from "@/components/layout/nav-groups";
+import { splitPrimaryNav } from "@/components/layout/nav-groups";
 import { withRequiredNav } from "@/components/layout/site-settings";
 import type { SiteSettings } from "@/lib/content/types";
 
@@ -13,26 +13,21 @@ function settings(paths: string[]): SiteSettings {
   } as unknown as SiteSettings;
 }
 
-const SERVICES = ["/complaints", "/borrow", "/lost-and-found"];
-
 describe("withRequiredNav", () => {
   it("adds What to eat after Getting around when the CMS nav predates it", () => {
-    const result = withRequiredNav(settings(["/getting-around", "/welfare"]));
-    expect(result.primaryNav.map((item) => item.path)).toEqual([...SERVICES, "/getting-around", "/eat", "/welfare"]);
-    expect(result.primaryNav[4]?.label.en).toBe("What to eat");
+    const result = withRequiredNav(settings(["/forms", "/getting-around", "/welfare"]));
+    expect(result.primaryNav.map((item) => item.path)).toEqual(["/forms", "/getting-around", "/eat", "/welfare"]);
+    expect(result.primaryNav[2]?.label.en).toBe("What to eat");
   });
 
   it("appends it when Getting around is missing", () => {
-    const result = withRequiredNav(settings(["/news"]));
-    expect(result.primaryNav.map((item) => item.path)).toEqual([...SERVICES, "/news", "/eat"]);
+    const result = withRequiredNav(settings(["/forms", "/news"]));
+    expect(result.primaryNav.map((item) => item.path)).toEqual(["/forms", "/news", "/eat"]);
   });
 
-  it("puts the services first, keeps an editor's label for one, and drops Forms", () => {
-    const input = settings(["/forms", "/eat", "/lost-and-found", "/news"]);
-    const result = withRequiredNav(input);
-    expect(result.primaryNav.map((item) => item.path)).toEqual([...SERVICES, "/eat", "/news"]);
-    expect(result.primaryNav[0]?.label.en).toBe("Report an issue");
-    expect(result.primaryNav[2]?.label.en).toBe("/lost-and-found");
+  it("leaves an editor's own entry alone", () => {
+    const input = settings(["/eat", "/forms"]);
+    expect(withRequiredNav(input)).toBe(input);
   });
 });
 
@@ -67,29 +62,24 @@ describe("withRequiredNav footer", () => {
 
   it("leaves a footer that already links to it alone", () => {
     const input = withFooter(["/performance", "/faq"]);
-    expect(withRequiredNav(input).footerNav).toBe(input.footerNav);
+    expect(withRequiredNav(input)).toBe(input);
   });
 });
 
 describe("splitPrimaryNav", () => {
-  const items = settings(["/welfare", "/news", "/eat", "/getting-around", "/directory", "/lost-and-found", "/borrow", "/complaints"]).primaryNav;
+  const items = settings(["/welfare", "/news", "/eat", "/getting-around", "/directory", "/forms"]).primaryNav;
 
-  it("pins the services, Getting around and What to eat regardless of CMS order", () => {
-    expect(splitPrimaryNav(items).pinned.map((item) => item.path)).toEqual([...SERVICES, "/getting-around", "/eat"]);
+  it("pins Forms, Getting around, What to eat then Student welfare regardless of CMS order", () => {
+    expect(splitPrimaryNav(items).pinned.map((item) => item.path)).toEqual(["/forms", "/getting-around", "/eat", "/welfare"]);
   });
 
   it("keeps every other item in CMS order under More", () => {
-    expect(splitPrimaryNav(items).more.map((item) => item.path)).toEqual(["/welfare", "/news", "/directory"]);
+    expect(splitPrimaryNav(items).more.map((item) => item.path)).toEqual(["/news", "/directory"]);
   });
 
   it("skips a pinned path that the CMS does not list", () => {
     const result = splitPrimaryNav(settings(["/news", "/eat"]).primaryNav);
     expect(result.pinned.map((item) => item.path)).toEqual(["/eat"]);
     expect(result.more.map((item) => item.path)).toEqual(["/news"]);
-  });
-
-  it("highlights only reporting an issue", () => {
-    expect(isHighlightedNav("/complaints")).toBe(true);
-    expect(isHighlightedNav("/borrow")).toBe(false);
   });
 });

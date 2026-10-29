@@ -19,7 +19,7 @@ import { cx } from "@/components/ui/cx";
 import { UI } from "@/lib/i18n/strings";
 import { localePath, pick, stripLocale, type Locale } from "@/lib/i18n/config";
 import type { NavItem } from "@/lib/content/types";
-import { isHighlightedNav, splitPrimaryNav } from "./nav-groups";
+import { splitPrimaryNav } from "./nav-groups";
 
 /*
  * How the list of links lays itself out. "responsive" is the original
@@ -90,12 +90,7 @@ export function ServiceNavigation({
               <Link
                 href={localePath(locale, item.path)}
                 aria-current={isCurrent ? "page" : isWithin ? "true" : undefined}
-                className={cx(
-                  "inline-flex min-h-[var(--target-min)] items-center py-1 font-medium no-underline",
-                  isHighlightedNav(item.path)
-                    ? "rounded-full bg-action px-[var(--space-4)] text-action-ink hover:bg-action-hover"
-                    : "text-ink-900 hover:text-action",
-                )}
+                className="inline-flex min-h-[var(--target-min)] items-center py-1 font-medium text-ink-900 no-underline hover:text-action"
               >
                 {pick(item.label, locale)}
               </Link>

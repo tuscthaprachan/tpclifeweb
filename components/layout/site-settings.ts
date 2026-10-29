@@ -22,7 +22,6 @@
 import { getSiteSettings as fetchSiteSettings } from "@/lib/content";
 import { DEFAULT_HOME_TASKS } from "@/lib/content/home-tasks";
 import type { SiteSettings } from "@/lib/content/types";
-import { servicesFirst } from "./nav-groups";
 
 const FALLBACK_SITE_SETTINGS: SiteSettings = {
   _id: "siteSettings-fallback",
@@ -43,14 +42,13 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
   },
 
   primaryNav: [
-    { label: { th: "แจ้งปัญหา", en: "Report an issue" }, path: "/complaints" },
-    { label: { th: "ยืมอุปกรณ์", en: "Borrow equipment" }, path: "/borrow" },
-    { label: { th: "ของหายและของเก็บได้", en: "Lost and found" }, path: "/lost-and-found" },
+    { label: { th: "แบบฟอร์ม", en: "Forms" }, path: "/forms" },
     { label: { th: "การเดินทาง", en: "Getting around" }, path: "/getting-around" },
     { label: { th: "กินอะไรดี", en: "What to eat" }, path: "/eat" },
     { label: { th: "สวัสดิการนักศึกษา", en: "Student welfare" }, path: "/welfare" },
     { label: { th: "ข่าวสาร", en: "News" }, path: "/news" },
     { label: { th: "กิจกรรม", en: "Events" }, path: "/events" },
+    { label: { th: "ของหายและของเก็บได้", en: "Lost and found" }, path: "/lost-and-found" },
     { label: { th: "ความคืบหน้านโยบาย", en: "Policy progress" }, path: "/policy" },
     { label: { th: "ทำเนียบชุมนุมและหน่วยงาน", en: "Directory" }, path: "/directory" },
   ],
@@ -129,7 +127,9 @@ function withRequiredItems(nav: SiteSettings["primaryNav"], required: readonly {
 
 export function withRequiredNav(settings: SiteSettings): SiteSettings {
   const homeTasks = settings.homeTasks?.length ? settings.homeTasks : [...DEFAULT_HOME_TASKS];
-  const primaryNav = servicesFirst(withRequiredItems(settings.primaryNav ?? [], REQUIRED_NAV));
+  const primaryNav = withRequiredItems(settings.primaryNav ?? [], REQUIRED_NAV);
   const footerNav = settings.footerNav ? withRequiredItems(settings.footerNav, REQUIRED_FOOTER_NAV) : settings.footerNav;
-  return { ...settings, primaryNav, footerNav, homeTasks };
+  return primaryNav === settings.primaryNav && footerNav === settings.footerNav && homeTasks === settings.homeTasks
+    ? settings
+    : { ...settings, primaryNav, footerNav, homeTasks };
 }
