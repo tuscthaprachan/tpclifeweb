@@ -1254,6 +1254,10 @@ export const UI = {
 
   homeHeading: { th: "ชีวิตนักศึกษาท่าพระจันทร์", en: "Student life at Tha Prachan" },
   homeSearchLabel: { th: "ค้นหา", en: "Search" },
+  homeOpenDataPreview: {
+    th: "ตัวอย่างหน้าข้อมูลเปิดของสภานักศึกษา (ฉบับร่าง)",
+    en: "Preview the student council open data pages (draft)",
+  },
   homeSearchHint: { th: "ไทยหรืออังกฤษ เช่น รถรับส่ง", en: "Thai or English, for example shuttle" },
   homeToday: { th: "วันนี้", en: "Today" },
   homeFullTimetable: { th: "ตารางรถรับส่งทั้งหมด", en: "Full shuttle timetable" },

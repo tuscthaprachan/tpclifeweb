@@ -118,6 +118,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <WhatsOn locale={locale} events={events} news={newsPage.items} />
           <ActivityFeed locale={locale} news={newsPage.items} policies={policies} excludeNewsIds={shownNewsIds} />
         </div>
+
+        <p className="m-0">
+          <a href={`/mockups/open-data/index.html${locale === "en" ? "?lang=en" : ""}`} className="font-medium text-action underline">
+            {UI.homeOpenDataPreview[locale]}
+          </a>
+        </p>
       </Container>
     </>
   );

@@ -53,10 +53,17 @@ const EM_DASH = /—/;
  */
 const GENERATED = new Set(["AGENTS.md"]);
 
+/*
+ * Published documents transcribed exactly as printed. Open data is served
+ * as-is, so the student bodies' own punctuation stays.
+ */
+const TRANSCRIBED = join("data", "open-data");
+
 for (const file of walk(root)) {
   // This script necessarily contains the character it is looking for.
   if (file.endsWith("check-i18n.mjs")) continue;
   if (GENERATED.has(relative(root, file))) continue;
+  if (relative(root, file).startsWith(TRANSCRIBED)) continue;
 
   const text = readFileSync(file, "utf8");
   const lines = text.split(/\r?\n/);

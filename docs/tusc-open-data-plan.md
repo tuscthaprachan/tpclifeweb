@@ -1,6 +1,6 @@
 # Student body open data: content design
 
-How to publish the Student Council Tha Prachan (TUSC) "OPEN DATA 2025" Drive folder on this site, in a section that will also hold the Student Union's (TUSU) open data. GOV.UK ethos for structure and words; the ONS Design System for anything with numbers in it. Mock-ups: `docs/mockups/open-data/` (static, sample content from the real documents).
+How to publish the Student Council Tha Prachan (TUSC) "OPEN DATA 2025" Drive folder on this site, in a section that will also hold the Student Union's (TUSU) open data. GOV.UK ethos for structure and words; the ONS Design System for anything with numbers in it. Mock-ups: `public/mockups/open-data/` (static, sample content from the real documents), served at `/mockups/open-data/index.html` and linked from the home page.
 
 Decisions taken with the product owner:
 
@@ -12,21 +12,21 @@ Decisions taken with the product owner:
 | Minutes | Published in full as HTML, as the council published them, including debate and names |
 | Documents that are not council business (fund regulations, the welfare guide, the 2555 traffic announcement) | Both: listed in TUSC open data as source documents, and their content worked into the relevant service pages |
 | Scanned and garbled files | Fully transcribed from the page images |
+| Errors or inconsistencies in the source | Not reported. Open data is served as published: values, totals, dates and wording exactly as printed, with no commentary |
 
 ## The source
 
 The folder holds 49 files in 33 folders: 48 PDFs and one Google Sheet. All 49 were read page by page as images (354 pages) and transcribed into clean Thai text with the printed clause and item numbers kept, because the PDFs cannot serve as the published text:
 
-- 15 are scans with no text at all (01, 02, 16, 18, 22, 30 to 38).
-- 13 more have a text layer that drops or swaps Thai characters (ำ prints as า; ศ ษ ส ห ว go missing), so searching for "อำนาจ" finds nothing (03, 04, 06 to 14 headings, 15, 19, 26, 27, 39, 41 to 45, 47, 49).
-- 28 and 29 are unsigned drafts of 41 and 42. The wording is identical; only the signatures differ. The signed versions are published and the drafts listed as superseded.
-- 25 is the official English translation of 26 and is clean.
+- 14 are scans with no text at all (01, 02, 16, 18, 22, 30 to 38).
+- 13 more have a text layer that cannot be searched reliably in Thai (03, 04, 06 to 14 headings, 15, 19, 26, 27, 39, 41 to 45, 47, 49).
+- 28 and 29 are unsigned drafts of 41 and 42. Both are published; the drafts are listed as replaced by the signed versions.
+- 25 is the official English translation of 26.
 
-Transcription conventions, so the build can parse them: YAML front matter (title in both languages, type, issuer, reference, date in both eras, signatory, pages, scan), `<a id="clause-12">` before every clause, `<a id="item-6-1">` before every agenda item, tables as tables, charts as tables with "[อ่านค่าจากกราฟ]", `[อ่านไม่ออก]` for illegible text, `[?]` for doubtful letters, `[sic]` for printed typos, and transcriber's notes at the end. Sub-clause lists carry the printed numbers ("(1)", "ก.") and must be rendered without a second, generated number.
+Transcription conventions, so the build can parse them: YAML front matter (title in both languages, type, issuer, reference, date in both eras, signatory, pages, scan), `<a id="clause-12">` before every clause, `<a id="item-6-1">` before every agenda item, tables as tables, charts as tables with "[อ่านค่าจากกราฟ]", `[อ่านไม่ออก]` for illegible text, `[?]` for doubtful letters. Printed text is kept exactly as printed, with no corrections, markers or notes. Sub-clause lists carry the printed numbers ("(1)", "ก.") and must be rendered without a second, generated number.
 
-Across 354 pages the body text has 6 illegible marks (handwritten notes on the fund list, the day of one fund regulation under a signature, a clipped letter in the canteen report, hand lettering in the welfare guide) and 39 doubtful letters, mostly in names under seals and in handwritten dates. Those go to the council to confirm (see "What to ask the council").
 
-The transcriptions are in `data/open-data/tusc/transcripts/NN.md` (45 files; 17 is the Sheet, 25 is already clean English, 28 and 29 are the drafts), the conventions in `data/open-data/tusc/TRANSCRIPTION.md`, the index of all 49 source files with Drive paths and metadata in `data/open-data/tusc/manifest.json`, and the tables in `data/open-data/tusc/tables/` (funds, budget lines, the members Sheet).
+The transcriptions are in `data/open-data/tusc/transcripts/NN.md` (all 49 files), the conventions in `data/open-data/tusc/TRANSCRIPTION.md`, the index of all 49 source files with Drive paths and metadata in `data/open-data/tusc/manifest.json`, and the tables in `data/open-data/tusc/tables/` (funds, budget lines, the members Sheet).
 
 ## How the section is organised
 
@@ -78,13 +78,13 @@ Modelled on an ONS release page.
 - Each person once, with all their roles in one description list (name in Thai, then in Latin letters; faculty; party; each role with its body and the announcement that made it, linked to the document and clause).
 - Vacancies are rows: "Vacant since 26 May 2025 (minutes, item 6.1)".
 - Below, a table of seats by party (caption, row headers, totals row) and a bar chart is not used: two numbers need no chart.
-- The source is the Rector's announcement of 8 May 2568 plus later appointments and the minutes. The members Sheet is listed as a source document with its differences (5 people missing, 1 extra) shown on the page under "Differences between sources".
+- The source is the Rector's announcement of 8 May 2568 plus later appointments and the minutes. The members Sheet is listed as a source document.
 
 ### Committees
 
 Index: a table of all 11 bodies (joint coordinating committee, 4 standing committees, 3 ad hoc committees, canteen sub-committee, Office of the President, assistant secretaries-general) with type, chair, members, appointed on, status (StatusTag: "Active", "Finished").
 
-One committee: remit in plain bullet points with the legal basis linked to the clause; members table; its reports; the decisions it brought; the appointing announcement as a document link. The politics and democracy committee shows both chairs named in the sources, with dates, until the council confirms.
+One committee: remit in plain bullet points with the legal basis linked to the clause; members table; its reports; the decisions it brought; the appointing announcement as a document link. The politics and democracy committee shows each chair named in the sources, with the dates of the announcements and resolutions.
 
 ### Meetings `/about/open-data/tusc/meetings`
 
@@ -101,7 +101,6 @@ One meeting page, in this order:
 5. Documents: the signed minutes PDF, the agenda PDF, the papers, and the superseded draft where one exists, each with type, size and pages.
 6. Previous and next meeting.
 
-"Things that do not add up in this record" sits at the end of each meeting page, in plain words: for example, 13 May 2025 is printed as a Friday but was a Tuesday; 31 members listed present against 30 seats; meeting 3 records its close (18.27) before its start (18.28).
 
 ### Decisions register `/about/open-data/tusc/decisions`
 
@@ -109,15 +108,14 @@ All 38 resolutions, filterable with a GET form (works without JavaScript; existi
 
 ### Rules `/about/open-data/tusc/rules`
 
-Grouped by what the rule is about: how the council works; elections; money; activities and welfare; university rules the council works under. Each row: title, issuer, date, status tag ("In force", "Status unconfirmed", "Replaced").
+Grouped by what the rule is about: how the council works; elections; money; activities and welfare; university rules the council works under. Each row: title, issuer, date, status tag ("In force", "Replaced").
 
 One rule page:
 
 1. Title (Thai, then English), metadata list: issued by, date, made under (link to the empowering clause), status, replaces.
 2. "What this means for you": 3 to 8 plain points, each ending with a link to its clause.
 3. Full Thai text with an anchor on every clause and a table of contents by chapter. In English the plain points are in English and the full text stays Thai, with a note that the Thai is the legal text. The operation regulation 2569 also has the council's English translation as a second full text.
-4. Conflicts and errors found in the text, listed (for example clause 98 refers to the Prime Minister; clause 110 cites clause 78; the campaigning and Election Commission regulations set different penalties).
-5. Original PDF.
+4. Original PDF.
 
 ### Budget `/about/open-data/tusc/budget/2569`
 
@@ -126,15 +124,14 @@ An ONS statistical bulletin for one year.
 1. Title "Student activity budget, Tha Prachan: fiscal year 2569 (2026)", summary, metadata (published by the budget monitoring committee, release date taken from the minutes of 19 March 2026, next release "To be announced", contact).
 2. Key figures: total 1,988,223.24 baht; change on FY 2568 up 17,623.74 baht (0.9%); Student Union share 58.9%.
 3. Main points: for example "Excluding a new 200,000 baht line for the Student Affairs Division, spending was 182,376.26 baht (9.3%) lower than in FY 2568."
-4. "How to use these figures": what you can and cannot do with them (ONS "cans and cannots"). The report gives one amount per line and does not say whether it is requested, approved or spent, so the figures cannot be used to say what was spent.
+4. "How to use these figures": what the figures can be used for.
 5. Figures, each with a number, a title that states the finding, a subtitle (measure, body, period), the chart, a source line, footnotes in Details, the table, and "Download this data" (CSV with size):
    - Figure 1: budget by organisation, horizontal bar, sorted by value.
    - Figure 2: budget by expense category, horizontal bar, sorted, the 8 largest plus "Other".
    - Figure 3: change from FY 2568 to FY 2569 by organisation, paired bars (2 series), bodies with no FY 2569 line shown as "[not listed]".
    - Figure 4: Student Union budget by project, horizontal bar.
    - Tables only (no chart) for each club and the council, because they have 1 to 4 lines.
-6. "Things that do not add up in this report": TU HOST 72,381.40 against 72,381.24; ASA TPC categories 170,000 against 313,000; whole-campus category table against the organisation tables (99,760 official-hours pay on no organisation page; out-of-hours pay 7,110 against 8,750; materials 274,514.84 against 29,634.84); pie percentages that contradict their tables.
-7. Data sources and quality, glossary (fiscal year, organisation types, expense categories), related links (the audit report, the minutes that approved the budget), cite this.
+6. Data sources and quality, glossary (fiscal year, organisation types, expense categories), related links (the audit report, the minutes that approved the budget), cite this.
 
 Pie charts from the source are not reproduced; ONS limits pies to 3 to 6 parts that sum to 100%, and these break that.
 
@@ -143,7 +140,7 @@ Pie charts from the source are not reproduced; ONS limits pies to 3 to 6 parts t
 ONS article structure: summary, main points, sections, recommendations table (recommendation, addressed to, urgency, status; status "No response recorded" until there is one), data, related links, cite this. Published in full, as the committee wrote them.
 
 - Budget monitoring and audit FY 2569: 7 project sections, cross-project findings, 6 recommendations.
-- Canteen ad hoc committee: findings, recommendations split into urgent and long term, and Figure 1 "Seating was the most reported canteen problem", a horizontal bar of the survey counts (seating 150, pigeons 120, cutlery 40, toilets 35, bins 6, other 2) with the note that the sample size and dates are not stated. Linked from `/eat`.
+- Canteen ad hoc committee: findings, recommendations split into urgent and long term, and Figure 1 "Seating was the most reported canteen problem", a horizontal bar of the survey counts (seating 150, pigeons 120, cutlery 40, toilets 35, bins 6, other 2). Linked from `/eat`.
 
 ### Funds `/about/open-data/tusc/funds`
 
@@ -155,7 +152,7 @@ ONS article structure: summary, main points, sections, recommendations table (re
 
 ### Documents `/about/open-data/tusc/documents`
 
-A document collection of every source file, grouped as in the Drive folder (so people who know the folder can still find things), each row an ONS document list item: title, type, date, "HTML and PDF, 12 pages". One document page holds the transcription as HTML, a metadata list, the original file, the Drive folder it came from, and transcriber's notes in a Details element. The welfare guide and the traffic announcement live here, with a line saying where their content is kept up to date on the site.
+A document collection of every source file, grouped as in the Drive folder (so people who know the folder can still find things), each row an ONS document list item: title, type, date, "HTML and PDF, 12 pages". One document page holds the transcription as HTML, a metadata list, the original file, and the Drive folder it came from. The welfare guide and the traffic announcement live here, with a line saying where their content is kept up to date on the site.
 
 ### Data `/about/open-data/tusc/data`
 
@@ -181,7 +178,7 @@ CSV is UTF-8 with a byte order mark (Thai opens correctly in Excel), one header 
 - Key figures: 2 or 3 tiles, figure up to 14 characters, label with the period.
 - Words and numbers: "up 17,623.74 baht (0.9%) from FY 2568"; "to" for ranges; percentages as "58.9%"; percentage points spelled out; in prose round for the reader ("about 2 million baht") and keep full precision in tables and CSV.
 - Thai and English stay in their own conventions: Thai dates in the Buddhist era ("8 มกราคม 2569") and times as "16.30 น."; English dates Gregorian ("8 January 2026") with the Buddhist year given when the document is known by it ("academic year 2568 (2025 to 2026)"); English times as "4:30pm". Money: "1,988,223.24 บาท" and "1,988,223.24 baht". All through `lib/i18n/format.ts`.
-- Missing and doubtful values: "[not stated]", "[not listed]", "[illegible]", "[as printed]", explained once per table.
+- Blank values: "[not stated]" and "[not listed]", explained once per table. Values are never corrected or recomputed.
 
 ## What has to be built
 
@@ -206,16 +203,9 @@ CSV is UTF-8 with a byte order mark (Thai opens correctly in Excel), one header 
 
 ## What to ask the council
 
-1. Membership today: the Sheet lacks 5 members in the Rector's announcement and has 1 who is not in it.
-2. Which chair of the politics and democracy committee is current, and from when.
-3. Whether the 2569 operation regulation replaces the 2564 council regulation at Tha Prachan (it has no repeal clause; minutes of 19 March 2569 repeal a "2565" text).
-4. Which penalties apply: the campaigning regulation 2567 or the Election Commission regulation.
-5. Whether budget figures are requested, approved or spent; and the differences listed under Budget.
-6. Dates that are handwritten, blank or unreadable: 02 (26 May 2568 read from the stamp), 16 (month), 18 (day), 21 (day), 23 (day and year).
-7. Names under seals marked doubtful (about 40, listed in the transcriber's notes).
-8. Agendas and papers for extraordinary sessions 1 and 2; adoption of the 19 March 2026 minutes.
-9. Status of each recommendation in the audit and canteen reports.
-10. A licence for the data and a team contact for corrections.
+1. Agendas and papers for extraordinary sessions 1 and 2, and the adopted minutes of 19 March 2026, when the council publishes them.
+2. Status of each recommendation in the audit and canteen reports.
+3. A licence for the data and a team contact.
 
 ## Publishing standard for the council
 

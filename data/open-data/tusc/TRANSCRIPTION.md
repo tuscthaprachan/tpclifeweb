@@ -35,11 +35,11 @@ Body in Markdown:
 - Attendance lists, member lists, budget lines and any tabular content as Markdown tables with the printed column headings. Numbers exactly as printed (keep Thai numerals if printed in Thai numerals and add Arabic in brackets the first time in a table heading note: "ตัวเลขไทยในต้นฉบับ").
 - Charts and images: describe in a `> [ภาพ: ...]` block and, for charts, give the data as a table (read the values off the chart; mark [อ่านค่าจากกราฟ]).
 - Page breaks: `<!-- page 3 -->` on its own line.
-- Unreadable: `[อ่านไม่ออก]`; partly readable: `ธีร[?]ภัทร์`; handwriting: `[เขียนด้วยลายมือ: ...]`; stamps/signatures: `[ลายมือชื่อ]`, `[ตราประทับ: ...]`; strike-outs: `~~...~~`; obvious printed typo: keep it and add `[sic]`.
+- Unreadable: `[อ่านไม่ออก]`; partly readable: `ธีร[?]ภัทร์`; handwriting: `[เขียนด้วยลายมือ: ...]`; stamps/signatures: `[ลายมือชื่อ]`, `[ตราประทับ: ...]`; strike-outs: `~~...~~`; printed typos and errors are kept exactly as printed, with no marker.
 - Headers, footers, logos and page numbers that repeat on every page: omit, except record the first occurrence of a letterhead.
 
-After the body, a section `## หมายเหตุผู้ถอดความ (Transcriber's notes)` in English: uncertain readings with page refs, anything the text layer got wrong that matters (names, numbers, dates), discrepancies inside the document (totals not adding up, dates that do not match weekdays, clause numbering gaps or duplicates), and pages that were blank.
+No transcriber's notes or commentary: the text is served as printed.
 
 Accuracy rules: names, numbers, dates and clause numbers matter most; check each one against the image twice. Do not guess silently; mark it.
 
-When done reply in under 10 lines: files written, page count read, number of [อ่านไม่ออก] and [?] marks, and the most important discrepancies.
+When done reply in under 10 lines: files written, page count read, number of [อ่านไม่ออก] and [?] marks, and anything you could not transcribe.
