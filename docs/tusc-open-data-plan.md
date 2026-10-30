@@ -12,6 +12,7 @@ Decisions taken with the product owner:
 | Minutes | Published in full as HTML, as the council published them, including debate and names |
 | Documents that are not council business (fund regulations, the welfare guide, the 2555 traffic announcement) | Both: listed in TUSC open data as source documents, and their content worked into the relevant service pages |
 | Scanned and garbled files | Fully transcribed from the page images |
+| Licence | Creative Commons Attribution-NonCommercial 4.0 (CC BY-NC 4.0) for all published data and documents |
 | Errors or inconsistencies in the source | Not reported. Open data is served as published: values, totals, dates and wording exactly as printed, with no commentary |
 
 ## The source
@@ -205,7 +206,7 @@ CSV is UTF-8 with a byte order mark (Thai opens correctly in Excel), one header 
 
 1. Agendas and papers for extraordinary sessions 1 and 2, and the adopted minutes of 19 March 2026, when the council publishes them.
 2. Status of each recommendation in the audit and canteen reports.
-3. A licence for the data and a team contact.
+3. A team contact (shared address) for each body.
 
 ## Publishing standard for the council
 
