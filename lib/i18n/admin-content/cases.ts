@@ -6,7 +6,7 @@ export const CASES_STRINGS = {
   casesLink: { th: "เรื่องที่ได้รับ", en: "Cases" },
   casesTitle: { th: "เรื่องที่ได้รับ", en: "Cases" },
   casesIntro: {
-    th: "เรื่องของหายและของที่พบที่ TUSU และ TUSC ดูแลร่วมกัน ทุกคนเห็นคิวเดียวกัน และระบบบันทึกว่าฝ่ายใดดำเนินการล่าสุด",
+    th: "เรื่องของหายและของที่พบที่ อมธ. และสภาฯ ดูแลร่วมกัน ทุกคนเห็นคิวเดียวกัน และระบบบันทึกว่าฝ่ายใดดำเนินการล่าสุด",
     en: "Lost and found cases that TUSU and TUSC handle together. Everyone sees the same queue, and each action records which organisation took it",
   },
   casesDashIntro: { th: "เปิดคิวเรื่องที่ต้องดูแล ตอบกลับ และเปลี่ยนสถานะ", en: "Open the queue to look into cases, reply and change their status" },

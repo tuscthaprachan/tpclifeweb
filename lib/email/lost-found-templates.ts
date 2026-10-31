@@ -67,7 +67,7 @@ export interface LostReportEmailParams {
   desk?: LocaleString | null;
 }
 
-const deskTh = (desk?: LocaleString | null) => (desk ? `ที่เคาน์เตอร์${desk.th}` : "ที่เคาน์เตอร์ของ TUSU หรือ TUSC");
+const deskTh = (desk?: LocaleString | null) => (desk ? `ที่เคาน์เตอร์${desk.th}` : "ที่เคาน์เตอร์ของ อมธ. หรือสภาฯ");
 const deskEn = (desk?: LocaleString | null) => (desk ? `at the ${desk.en} desk` : "at the TUSU or TUSC desk");
 
 /** The reporter has a possible match. */
