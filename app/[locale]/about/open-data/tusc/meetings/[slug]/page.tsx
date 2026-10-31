@@ -148,7 +148,7 @@ export default async function TuscMeetingPage({ params }: { params: Promise<{ lo
         summary={summary}
       />
       <div className="grid gap-y-[var(--space-6)] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-x-[var(--space-8)]">
-        <aside className="lg:sticky lg:top-[var(--space-4)] lg:col-start-2 lg:row-start-1 lg:self-start">
+        <aside className="lg:sticky lg:top-[calc(var(--header-height,4rem)+var(--space-4))] lg:col-start-2 lg:row-start-1 lg:self-start">
           <TableOfContents locale={locale} headingLevel={2} id="od-page-toc" title={UI.odMpOnThisPage[locale]} items={tocItems} />
         </aside>
 
