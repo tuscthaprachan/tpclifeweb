@@ -73,6 +73,7 @@ const CONTENT_PLACEMENT: Record<string, { group: ConsoleGroupId; icon: ConsoleIc
   welfarePages: { group: "information", icon: "welfare" },
   policies: { group: "information", icon: "policies" },
   faqs: { group: "information", icon: "faqs" },
+  openDataDocuments: { group: "information", icon: "policies" },
   forms: { group: "information", icon: "forms" },
   organisations: { group: "directory", icon: "organisations" },
   faculties: { group: "directory", icon: "faculties" },

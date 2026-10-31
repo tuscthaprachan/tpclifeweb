@@ -62,12 +62,12 @@ describe("withRequiredNav footer", () => {
 
   it("adds Performance after Cookies when the CMS footer predates it", () => {
     const result = withRequiredNav(withFooter(["/faq", "/cookies", "/about"]));
-    expect(result.footerNav.map((item) => item.path)).toEqual(["/faq", "/cookies", "/performance", "/about"]);
+    expect(result.footerNav.map((item) => item.path)).toEqual(["/faq", "/cookies", "/performance", "/about", "/about/open-data"]);
     expect(result.footerNav[2]?.label.en).toBe("Performance");
   });
 
   it("leaves a footer that already links to it alone", () => {
-    const input = withFooter(["/performance", "/faq"]);
+    const input = withFooter(["/performance", "/faq", "/about/open-data"]);
     expect(withRequiredNav(input).footerNav).toBe(input.footerNav);
   });
 });

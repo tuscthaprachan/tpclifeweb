@@ -26,6 +26,12 @@ export const CACHE_TAGS = {
   searchIndex: "searchIndex",
   image: "image",
   performance: "performance",
+  openDataDocuments: "openDataDocuments",
+  openDataPeople: "openDataPeople",
+  openDataMeetings: "openDataMeetings",
+  openDataBudget: "openDataBudget",
+  openDataFunds: "openDataFunds",
+  openDataReports: "openDataReports",
 } as const;
 
 export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS];

@@ -8,6 +8,7 @@ import { ContentSection } from "./sections/ContentSection";
 import { FormsSection } from "./sections/FormsSection";
 import { InteractiveSection } from "./sections/InteractiveSection";
 import { LayoutSection } from "./sections/LayoutSection";
+import { OpenDataSection } from "./sections/OpenDataSection";
 
 interface DesignPageProps {
   params: Promise<{ locale: string }>;
@@ -19,6 +20,7 @@ const TOC: Array<{ href: string; label: string }> = [
   { href: "#heading", label: "Content: Heading, Prose, SummaryList, DataTable, Tag, StatusTag, banners, no tinted boxes..." },
   { href: "#text-input", label: "Forms: TextInput, Select, Radios, DateInput, ErrorSummary..." },
   { href: "#button", label: "Interactive: Button, Link, Tabs, Accordion, Dialog" },
+  { href: "#data-table-open-data", label: "Open data: Figure, BarChart, ColumnChart, KeyFigures, DocumentList, SectionNav, TableOfContents, RelatedLinks, CiteThis" },
 ];
 
 /**
@@ -67,6 +69,7 @@ export default async function DesignPage({ params }: DesignPageProps) {
         <ContentSection headingLevel={2} locale={locale} />
         <FormsSection headingLevel={2} locale={locale} />
         <InteractiveSection headingLevel={2} locale={locale} />
+        <OpenDataSection headingLevel={2} locale={locale} />
       </Stack>
     </Container>
   );

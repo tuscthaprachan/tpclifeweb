@@ -13,6 +13,9 @@
 import type { MetadataRoute } from "next";
 import { DEFAULT_LOCALE, LOCALES, localePath, type Locale } from "@/lib/i18n/config";
 import { getCanteenData, getLostFoundPage } from "@/lib/content";
+import { REPORT_PAGE_NUMBERS } from "@/components/domain/open-data/reports/reports";
+import { RULE_NUMBERS } from "@/components/domain/open-data/rules/rules";
+import { getOpenDataDocuments } from "@/lib/open-data/read";
 import { SITE_URL } from "@/lib/site-url";
 
 const STATIC_ROUTES = [
@@ -28,6 +31,16 @@ const STATIC_ROUTES = [
   "/directory",
   "/faq",
   "/about",
+  "/about/open-data",
+  "/about/open-data/tusu",
+  "/about/open-data/tusc",
+  "/about/open-data/tusc/documents",
+  "/about/open-data/tusc/rules",
+  "/about/open-data/tusc/reports",
+  "/about/open-data/tusc/budget",
+  "/about/open-data/tusc/budget/2569",
+  "/about/open-data/tusc/funds",
+  "/about/open-data/tusc/data",
   "/accessibility",
   "/cookies",
   "/performance",
@@ -83,5 +96,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...canteen.canonicals.map((canonical) => entry(locale, `/eat/what-is/${canonical.slug.current}`, new Date(canonical._updatedAt))),
   ]);
 
-  return [...staticEntries, ...lostFoundEntries, ...canteenEntries];
+  const openDataDocuments = await getOpenDataDocuments();
+  const openDataEntries = LOCALES.flatMap((locale) => [
+    ...openDataDocuments.map((doc) => entry(locale, `/about/open-data/tusc/documents/${doc.slug}`, new Date(doc.updatedAt))),
+    ...openDataDocuments
+      .filter((doc) => RULE_NUMBERS.includes(doc.number))
+      .map((doc) => entry(locale, `/about/open-data/tusc/rules/${doc.slug}`, new Date(doc.updatedAt))),
+    ...openDataDocuments
+      .filter((doc) => REPORT_PAGE_NUMBERS.includes(doc.number))
+      .map((doc) => entry(locale, `/about/open-data/tusc/reports/${doc.slug}`, new Date(doc.updatedAt))),
+  ]);
+
+  return [...staticEntries, ...lostFoundEntries, ...canteenEntries, ...openDataEntries];
 }

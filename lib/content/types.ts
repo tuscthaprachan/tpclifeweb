@@ -572,7 +572,9 @@ export type SearchableType =
   | "place"
   | "lostFoundItem"
   | "canteenDish"
-  | "canonicalDish";
+  | "canonicalDish"
+  | "openDataPage"
+  | "openDataDocument";
 
 export interface SearchIndex {
   generatedAt: string;

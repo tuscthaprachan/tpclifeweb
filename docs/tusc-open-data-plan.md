@@ -1,6 +1,6 @@
 # Student body open data: content design
 
-How to publish the Student Council Tha Prachan (TUSC) "OPEN DATA 2025" Drive folder on this site, in a section that will also hold the Student Union's (TUSU) open data. GOV.UK ethos for structure and words; the ONS Design System for anything with numbers in it. Mock-ups: `public/mockups/open-data/` (static, sample content from the real documents), served at `/mockups/open-data/index.html` and linked from the home page.
+How to publish the Student Council Tha Prachan (TUSC) "OPEN DATA 2025" Drive folder on this site, in a section that will also hold the Student Union's (TUSU) open data. GOV.UK ethos for structure and words; the ONS Design System for anything with numbers in it. Mock-ups: `docs/mockups/open-data/` (static, sample content from the real documents; open `index.html` directly).
 
 Decisions taken with the product owner:
 
@@ -17,7 +17,7 @@ Decisions taken with the product owner:
 
 ## The source
 
-The folder holds 49 files in 33 folders: 48 PDFs and one Google Sheet. All 49 were read page by page as images (354 pages) and transcribed into clean Thai text with the printed clause and item numbers kept, because the PDFs cannot serve as the published text:
+The folder holds 49 files in 33 folders: 48 PDFs and one Google Sheet. All 49 were read page by page as images (411 pages) and transcribed into clean Thai text with the printed clause and item numbers kept, because the PDFs cannot serve as the published text:
 
 - 14 are scans with no text at all (01, 02, 16, 18, 22, 30 to 38).
 - 13 more have a text layer that cannot be searched reliably in Thai (03, 04, 06 to 14 headings, 15, 19, 26, 27, 39, 41 to 45, 47, 49).

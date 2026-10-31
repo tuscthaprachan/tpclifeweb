@@ -36,6 +36,7 @@ export async function seedSiteSettings(db: SeedDb): Promise<void> {
     footerNav: [
       nav("คำถามที่พบบ่อย", "Common questions", "/faq"),
       nav("เกี่ยวกับ", "About", "/about"),
+      nav("ข้อมูลเปิด", "Open data", "/about/open-data"),
       nav("การเข้าถึง", "Accessibility", "/accessibility"),
       nav("คุกกี้", "Cookies", "/cookies"),
       nav("ผลการดำเนินงาน", "Performance", "/performance"),

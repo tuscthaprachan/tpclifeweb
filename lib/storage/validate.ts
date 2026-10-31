@@ -11,7 +11,9 @@
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 export const MAX_PDF_BYTES = 10 * 1024 * 1024;
 
-export type SniffedType = "image/jpeg" | "image/png" | "image/webp" | "image/heic" | "application/pdf";
+export const MAX_DOCUMENT_BYTES = 30 * 1024 * 1024;
+
+export type SniffedType = "image/jpeg" | "image/png" | "image/webp" | "image/heic" | "application/pdf" | "text/csv";
 
 export const EXTENSION: Record<SniffedType, string> = {
   "image/jpeg": "jpg",
@@ -19,6 +21,7 @@ export const EXTENSION: Record<SniffedType, string> = {
   "image/webp": "webp",
   "image/heic": "heic",
   "application/pdf": "pdf",
+  "text/csv": "csv",
 };
 
 const IMAGE_TYPES: readonly SniffedType[] = ["image/jpeg", "image/png", "image/webp", "image/heic"];
@@ -27,6 +30,8 @@ const IMAGE_TYPES: readonly SniffedType[] = ["image/jpeg", "image/png", "image/w
 export const UPLOAD_PROFILES = {
   /** Content images and found-item photos. */
   image: { types: IMAGE_TYPES, maxBytes: MAX_IMAGE_BYTES },
+  /** Public open data originals: PDFs and CSVs. */
+  document: { types: ["application/pdf", "text/csv"] as readonly SniffedType[], maxBytes: MAX_DOCUMENT_BYTES },
   /** Complaint evidence: photos or a PDF. */
   evidence: { types: [...IMAGE_TYPES, "application/pdf"] as readonly SniffedType[], maxBytes: MAX_PDF_BYTES },
 } as const;
@@ -50,6 +55,23 @@ function ascii(bytes: Uint8Array, offset: number, length: number): string {
 // ISO base media brands used by HEIC/HEIF stills from iPhones and Android.
 const HEIC_BRANDS = new Set(["heic", "heix", "heim", "heis", "hevc", "hevx", "mif1", "msf1"]);
 
+/** Plain UTF-8 text with a delimiter and no markup or control characters. */
+function looksLikeCsv(bytes: Uint8Array): boolean {
+  let text: string;
+  try {
+    text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    return false;
+  }
+  text = text.replace(/^\uFEFF/, "");
+  if (text.length === 0 || text.trimStart().startsWith("<")) return false;
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    if (code < 32 && code !== 9 && code !== 10 && code !== 13) return false;
+  }
+  return /[,\t]/.test(text);
+}
+
 /** Identifies a file by its first bytes. Null when it is none of the types we know. */
 export function sniffType(bytes: Uint8Array): SniffedType | null {
   if (startsWith(bytes, [0xff, 0xd8, 0xff])) return "image/jpeg";
@@ -57,6 +79,7 @@ export function sniffType(bytes: Uint8Array): SniffedType | null {
   if (bytes.length >= 12 && ascii(bytes, 0, 4) === "RIFF" && ascii(bytes, 8, 4) === "WEBP") return "image/webp";
   if (bytes.length >= 12 && ascii(bytes, 4, 4) === "ftyp" && HEIC_BRANDS.has(ascii(bytes, 8, 4))) return "image/heic";
   if (startsWith(bytes, [0x25, 0x50, 0x44, 0x46, 0x2d])) return "application/pdf"; // "%PDF-"
+  if (looksLikeCsv(bytes)) return "text/csv";
   return null;
 }
 
@@ -65,6 +88,7 @@ function normaliseDeclared(declared: string): string {
   const base = declared.split(";")[0]?.trim().toLowerCase() ?? "";
   if (base === "image/jpg" || base === "image/pjpeg") return "image/jpeg";
   if (base === "image/heif") return "image/heic";
+  if (base === "application/csv" || base === "text/x-csv") return "text/csv";
   return base;
 }
 

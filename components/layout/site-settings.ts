@@ -56,6 +56,7 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
   footerNav: [
     { label: { th: "คำถามที่พบบ่อย", en: "Common questions" }, path: "/faq" },
     { label: { th: "เกี่ยวกับ", en: "About" }, path: "/about" },
+    { label: { th: "ข้อมูลเปิด", en: "Open data" }, path: "/about/open-data" },
     { label: { th: "การเข้าถึง", en: "Accessibility" }, path: "/accessibility" },
     { label: { th: "คุกกี้", en: "Cookies" }, path: "/cookies" },
     { label: { th: "ผลการดำเนินงาน", en: "Performance" }, path: "/performance" },
@@ -113,6 +114,7 @@ const REQUIRED_NAV: readonly { item: SiteSettings["primaryNav"][number]; after: 
  */
 const REQUIRED_FOOTER_NAV: readonly { item: SiteSettings["footerNav"][number]; after: string }[] = [
   { item: { label: { th: "ผลการดำเนินงาน", en: "Performance" }, path: "/performance" }, after: "/cookies" },
+  { item: { label: { th: "ข้อมูลเปิด", en: "Open data" }, path: "/about/open-data" }, after: "/about" },
 ];
 
 function withRequiredItems(nav: SiteSettings["primaryNav"], required: readonly { item: SiteSettings["primaryNav"][number]; after: string }[]) {

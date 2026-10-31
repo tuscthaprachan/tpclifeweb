@@ -20,6 +20,7 @@
     "db:seed": "tsx lib/db/seed.ts",
     "db:studio": "drizzle-kit studio",
     "auth:bootstrap": "tsx scripts/auth-bootstrap.ts",
+    "open-data:mirror": "tsx scripts/open-data-mirror.ts",
     "check:accent-boxes": "node scripts/check-no-accent-boxes.mjs",
     "check": "npm run check:contrast && npm run check:accent-boxes && npm run check:i18n && npm run typecheck && npm run lint"
   },

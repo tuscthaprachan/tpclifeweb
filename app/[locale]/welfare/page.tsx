@@ -6,7 +6,9 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, EmptyState, Heading, Stack, StatusTag, Tag, Timestamp } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
+import { SourceDocumentLink } from "@/components/domain/open-data/SourceDocumentLink";
 import { getContentPages } from "@/lib/content";
+import { getOpenDataDocuments } from "@/lib/open-data/read";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 const CATEGORY_LABEL = {
@@ -42,7 +44,8 @@ export default async function WelfareIndexPage({ params }: { params: Promise<{ l
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const pages = await getContentPages("welfarePage");
+  const [pages, documents] = await Promise.all([getContentPages("welfarePage"), getOpenDataDocuments()]);
+  const welfareGuide = documents.find((doc) => doc.number === "49");
   const now = new Date();
 
   return (
@@ -82,6 +85,13 @@ export default async function WelfareIndexPage({ params }: { params: Promise<{ l
             })}
           </ul>
         )}
+
+        {welfareGuide ? (
+          <Stack space={2}>
+            <SourceDocumentLink locale={locale} document={welfareGuide} />
+            <SourceDocumentLink locale={locale} funds />
+          </Stack>
+        ) : null}
       </Stack>
     </Container>
   );

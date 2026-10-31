@@ -24,6 +24,16 @@ export * from "./Details";
 export * from "./NotificationBanner";
 export * from "./Panel";
 export * from "./Pagination";
+export * from "./Figure";
+export * from "./BarChart";
+export * from "./ColumnChart";
+export * from "./KeyFigures";
+export * from "./DocumentList";
+export * from "./DownloadList";
+export * from "./SectionNav";
+export * from "./TableOfContents";
+export * from "./RelatedLinks";
+export * from "./CiteThis";
 export * from "./EmptyState";
 export * from "./Timestamp";
 

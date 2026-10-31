@@ -37,4 +37,6 @@ export const SEARCH_TYPE_LABEL: Record<SearchableType, LocaleString> = {
   lostFoundItem: UI.lostAndFound,
   canteenDish: { th: "เมนูโรงอาหาร", en: "Canteen dish" },
   canonicalDish: { th: "เมนูนี้คืออะไร", en: "What is this dish" },
+  openDataPage: UI.odOpenData,
+  openDataDocument: { th: "เอกสารข้อมูลเปิด", en: "Open data document" },
 };

@@ -25,6 +25,7 @@ import { PAGES_STRINGS } from "./admin-content/pages";
 import { PERFORMANCE_STRINGS } from "./admin-content/performance";
 import { BORROWING_STRINGS } from "./admin-content/borrowing";
 import { BORROWING_CALENDAR_STRINGS } from "./admin-content/borrowing-calendar";
+import { OPEN_DATA_ADMIN_STRINGS } from "./admin-content/open-data";
 import { PUBLISHING_STRINGS } from "./admin-content/publishing";
 
 export const A = {
@@ -734,6 +735,7 @@ export const A = {
   ...COMPLAINTS_STRINGS,
   ...LOST_FOUND_CASES_STRINGS,
   ...PERFORMANCE_STRINGS,
+  ...OPEN_DATA_ADMIN_STRINGS,
   ...BORROWING_STRINGS,
   ...BORROWING_CALENDAR_STRINGS,
   ...CONSOLE_STRINGS,

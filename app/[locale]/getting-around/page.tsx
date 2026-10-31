@@ -7,6 +7,8 @@ import { Container, EmptyState, Heading, Link, Stack, Tag } from "@/components/u
 import { SOURCE_DOCUMENTS, TRANSPORT } from "@/data/harvested-inventory";
 import { isLocale, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
+import { SourceDocumentLink } from "@/components/domain/open-data/SourceDocumentLink";
+import { getOpenDataDocuments } from "@/lib/open-data/read";
 import { getActiveServiceAlerts, getActiveShuttleRoutes } from "@/lib/content";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
@@ -61,7 +63,8 @@ export default async function GettingAroundPage({ params }: GettingAroundPagePro
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const [routes, alerts] = await Promise.all([getActiveShuttleRoutes(), getActiveServiceAlerts()]);
+  const [routes, alerts, documents] = await Promise.all([getActiveShuttleRoutes(), getActiveServiceAlerts(), getOpenDataDocuments()]);
+  const trafficAnnouncement = documents.find((doc) => doc.number === "16");
 
   const relevantAlerts = alerts.filter(
     (alert) => !alert.affects || alert.affects.length === 0 || alert.affects.some((surface) => surface === "shuttle" || surface === "campus" || surface === "sitewide"),
@@ -130,6 +133,7 @@ export default async function GettingAroundPage({ params }: GettingAroundPagePro
                 {pick(vehicleAccessDoc.title, locale)}
               </Link>
             </p>
+            {trafficAnnouncement ? <SourceDocumentLink locale={locale} document={trafficAnnouncement} /> : null}
           </Stack>
         ) : null}
       </Stack>

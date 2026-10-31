@@ -13,3 +13,4 @@ export * from "./pages";
 export * from "./lost-found";
 export * from "./canteen";
 export * from "./revisions";
+export * from "./open-data";

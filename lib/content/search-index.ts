@@ -17,6 +17,8 @@ import {
   shuttleRoutes,
 } from "@/lib/db/schema";
 import { richTextToPlainText } from "@/lib/rich-text/text";
+import { readDocuments, readFunds, readMeetings } from "@/lib/open-data/read";
+import { openDataDocumentRecords, openDataSectionRecords } from "@/lib/open-data/search";
 import { canteenSearchRecords } from "@/lib/search/canteen";
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { readCanteenData } from "./canteen";
@@ -242,6 +244,18 @@ export async function readSearchIndex(db: AuditExecutor): Promise<SearchIndex> {
     records.push(...canteenSearchRecords(normaliseCanteenData(await readCanteenData(db))));
   } catch (error) {
     console.error("[content] getSearchIndex could not read the canteen, indexing without it.", error instanceof Error ? error.message : error);
+  }
+
+  try {
+    const [documents, meetings, funds] = await Promise.all([readDocuments(db, "tusc"), readMeetings(db, "tusc"), readFunds(db, "tusc")]);
+    if (documents.length > 0) {
+      records.push(
+        ...openDataSectionRecords({ documents: documents.length, meetings: meetings.length, funds: funds.length }),
+        ...openDataDocumentRecords(documents),
+      );
+    }
+  } catch (error) {
+    console.error("[content] getSearchIndex could not read open data, indexing without it.", error instanceof Error ? error.message : error);
   }
 
   return { generatedAt: new Date().toISOString(), records };

@@ -8,7 +8,7 @@ Session handoff for the backend migration described in `docs/backend-plan.md`. R
 - British English, no em dashes anywhere (`npm run check:i18n` fails on them), no code comments beyond the surrounding style.
 - Read `node_modules/next/dist/docs/` before Next-specific code (Next 16.4: `proxy.ts` not `middleware.ts`, different caching APIs).
 - `next dev` rewrites `AGENTS.md`; restore it with `git checkout AGENTS.md` before committing. Do not run `next dev` in a session; use `next start`.
-- Push only to the development branch (`ccr-c7c55779-2hzk84`). Push to `main` only when the user asks.
+- Push only to the development branch (`ccr-14abe155-5xn8pq` in the open data session). Push to `main` only when the user asks.
 - Never ask the user to paste secrets into chat. Secrets go in the environment settings and are picked up by a new session.
 - `DATABASE_URL` in a session is production. Unset it in every shell (`unset DATABASE_URL`) unless the user has asked for a migration; tests and builds use PGlite.
 - Public strings go in `lib/i18n/strings.ts` (a commented block per feature, keys with a prefix); staff strings in `lib/i18n/admin-content/<group>.ts`, spread into `A` in `lib/i18n/admin.ts`.
@@ -54,6 +54,17 @@ Design and questionnaire architecture: `docs/borrowing-plan.md`. Replaces the eq
 - Jobs: `/api/cron/borrowing` daily 01:41 UTC (return reminders, one overdue notice, abandoned journey sweep). Retention clears the student number and affiliation with the contacts.
 
 Before deploying to production: `npm run db:migrate` (0014) and `npm run db:seed` (adds the equipment), then grant `equipment_officer` (for TUSU) at `/admin/staff`. Without 0014 the case inbox fails for admins and unit leads, because it queries the new service.
+
+## Student body open data (phase 8)
+
+Design: `docs/tusc-open-data-plan.md`. Approved mock-ups: `docs/mockups/open-data/`. Source: the TUSC "OPEN DATA 2025" Drive folder, all 49 files transcribed (411 pages) into `data/open-data/tusc/transcripts/NN.md` with `manifest.json`, conventions in `TRANSCRIPTION.md` and tables in `tables/`. Open data is served exactly as published: no commentary on errors, differences, recomputed values or transcription. Licence CC BY-NC 4.0. Transcribed documents are exempt from the em dash check (`scripts/check-i18n.mjs`).
+
+- Data: `lib/db/schema/content/open-data.ts`, migration 0015 (10 tables, each with `owner` `tusc` or `tusu`), importer `lib/open-data/import.ts` (idempotent, run by `npm run db:seed` and by PGlite builds), reads `lib/open-data/read.ts` (cache tags in `lib/content/cache.ts`), search records `lib/open-data/search.ts`.
+- Pages: `app/[locale]/about/open-data/**` (landing, TUSU placeholder, TUSC overview, people, committees, meetings, decisions, rules, budget, reports, funds, documents, data). CSV downloads outside the locale tree at `app/about/open-data/tusc/data/[file]` and `budget/[fiscalYear]/[file]`. Filtered decisions and funds via `QUERY_ROUTES`. Components: `components/ui` (Figure, BarChart, ColumnChart, KeyFigures, DocumentList, DownloadList, SectionNav, TableOfContents, RelatedLinks, CiteThis; DataTable row headers, totals, notes; numbered Pagination) and `components/domain/open-data/**` (shell, transcript renderer, money and year formatters).
+- Staff: `/admin/content/open-data` (documents with transcript and file upload up to 4 MB, meetings and decisions, budget lines and funds with CSV import). Editors act for the body whose organisation slug (`tusc` or `tusu`) their grant is on.
+- Originals: `npm run open-data:mirror` copies the 49 files from Drive to public storage (`--dry-run`, `--only 01,02`); until run, pages link to Drive.
+
+Before production shows content: `npm run db:migrate` (0015) and `npm run db:seed` (imports the open data). Without them the pages render their empty states; nothing fails. Then optionally run `npm run open-data:mirror` with the storage credentials, and grant editors on the `tusc` organisation.
 
 ## Branch state
 
@@ -110,6 +121,8 @@ Use `next start`, not `next dev`, for Playwright. Never run `playwright install`
 - Cleanup after the merge: the eight `SANITY_*` env vars and the Sanity integration, the unused `CANTEEN_DEMO` preview var, Neon Auth (`NEON_AUTH_BASE_URL`, `VITE_NEON_AUTH_URL`), `AUTH_ALLOWED_EMAIL_DOMAINS` (no longer read), and the stray `tmp-skip` branch on GitHub (the proxy refuses branch deletion from the session).
 
 - Borrowing: the desk must confirm every stock count at `/admin/borrowing/items` (seeded placeholders), desk days and hours (Monday to Friday, 09:00 to 17:00, `lib/borrowing/constants.ts`), the 14 day longest loan and 90 days ahead, and whether non-radio loans need one card per item rather than one per request. Thai review of the borrowing pages and emails. Borrowing is not on the staff dashboard's needs-attention counts or the performance page yet.
+
+- Open data: a shared TUSC contact address (shown as a placeholder), run 0015 and the seed in production, run the file mirror, and grant TUSC editors.
 
 ## Known gaps
 

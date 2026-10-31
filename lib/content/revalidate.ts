@@ -29,7 +29,13 @@ export type ContentEntityType =
   | "canteenDish"
   | "canonicalDish"
   | "image"
-  | "performance";
+  | "performance"
+  | "openDataDocument"
+  | "openDataPerson"
+  | "openDataMeeting"
+  | "openDataBudget"
+  | "openDataFund"
+  | "openDataReport";
 
 /** Which cache tags each kind of content invalidates when it changes. */
 export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
@@ -62,6 +68,19 @@ export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
   image: [CACHE_TAGS.image],
   // The public performance figures (lib/performance/read.ts). Nothing edits them; this lets a script or a future admin action refresh them early.
   performance: [CACHE_TAGS.performance],
+  // Meetings, budget lines and reports link to documents by id, so a document change refreshes every open data group.
+  openDataDocument: [
+    CACHE_TAGS.openDataDocuments,
+    CACHE_TAGS.openDataPeople,
+    CACHE_TAGS.openDataMeetings,
+    CACHE_TAGS.openDataBudget,
+    CACHE_TAGS.openDataReports,
+  ],
+  openDataPerson: [CACHE_TAGS.openDataPeople],
+  openDataMeeting: [CACHE_TAGS.openDataMeetings],
+  openDataBudget: [CACHE_TAGS.openDataBudget],
+  openDataFund: [CACHE_TAGS.openDataFunds],
+  openDataReport: [CACHE_TAGS.openDataReports],
 };
 
 /** The route segment of the detail page for kinds that have one, so a changed slug's own page is refreshed. */

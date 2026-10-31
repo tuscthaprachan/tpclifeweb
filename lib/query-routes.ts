@@ -7,12 +7,14 @@ const QUERY_ROUTES: readonly RegExp[] = [
   /^\/policy$/,
   /^\/directory$/,
   /^\/performance$/,
+  /^\/about\/open-data\/tusc\/decisions$/,
   /^\/lost-and-found$/,
   /^\/search$/,
   /^\/eat$/,
   /^\/eat\/(dishes|what-is|stalls)$/,
   /^\/eat\/(dishes|what-is|stalls)\/[^/]+$/,
   /^\/eat\/(plan|map|mine|pick)$/,
+  /^\/about\/open-data\/tusc\/funds$/,
 ];
 
 export function isQueryRoute(path: string): boolean {

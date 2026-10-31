@@ -6,6 +6,7 @@
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { SiteLogo } from "@/components/layout/SiteLogo";
@@ -112,6 +113,12 @@ export default async function AboutTuscPage({
           <Heading level={2}>{CAMPUS_REFORM_LABEL[locale]}</Heading>
           <p className="m-0 text-ink-900">{CAMPUS_REFORM_TEXT[locale]}</p>
         </Stack>
+
+        <p className="m-0">
+          <Link href={localePath(locale, "/about/open-data/tusc")} className="font-medium text-action underline">
+            {UI.odTuscAboutLink[locale]}
+          </Link>
+        </p>
 
         <div>
           <Button href={localePath(locale, "/policy?owner=tusc")}>{VIEW_TUSC_POLICIES_LABEL[locale]}</Button>

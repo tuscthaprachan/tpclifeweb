@@ -54,6 +54,12 @@ describe("revalidateFor", () => {
       canonicalDish: ["canteen", "searchIndex"],
       image: ["image"],
       performance: ["performance"],
+      openDataDocument: ["openDataDocuments", "openDataPeople", "openDataMeetings", "openDataBudget", "openDataReports"],
+      openDataPerson: ["openDataPeople"],
+      openDataMeeting: ["openDataMeetings"],
+      openDataBudget: ["openDataBudget"],
+      openDataFund: ["openDataFunds"],
+      openDataReport: ["openDataReports"],
     };
     expect(TAGS_BY_TYPE).toEqual(expected);
   });

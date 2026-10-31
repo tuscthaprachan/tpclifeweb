@@ -62,6 +62,11 @@ export default async function AboutIndexPage({
             </Link>
           </li>
         </ul>
+        <p className="m-0">
+          <Link href={localePath(locale, "/about/open-data")} className="font-medium text-action underline">
+            {UI.odAboutLink[locale]}
+          </Link>
+        </p>
       </Stack>
     </Container>
   );
