@@ -77,7 +77,7 @@ export const REGULATED_FUNDS: readonly RegulatedFund[] = [
     file: "38",
     code: "43145",
     name: { th: "กองทุนเงินอุดหนุนกิจกรรมนักศึกษา", en: "Student Activities Subsidy Fund" },
-    forWhom: { th: "โครงการขององค์การนักศึกษา (TUSU)", en: "Projects of the Student Union (TUSU)" },
+    forWhom: { th: "โครงการขององค์การนักศึกษา (อมธ.)", en: "Projects of the Student Union (TUSU)" },
     students: {
       th: "มี: ผู้แทนองค์การนักศึกษา 2 คน และผู้แทนสภานักศึกษา 1 คน",
       en: "Yes: 2 Student Union representatives and 1 Student Council representative",
