@@ -26,6 +26,7 @@ import { DataTable, type DataTableColumn } from "@/components/ui/DataTable";
 import { Details } from "@/components/ui/Details";
 import { DocumentList } from "@/components/ui/DocumentList";
 import { Heading } from "@/components/ui/Heading";
+import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/icons";
 import { InsetText } from "@/components/ui/InsetText";
 import { Stack } from "@/components/ui/Stack";
 import { StatusTag } from "@/components/ui/StatusTag";
@@ -146,162 +147,181 @@ export default async function TuscMeetingPage({ params }: { params: Promise<{ lo
         title={fillText(UI.odMtMeetingTitle[locale], { session: title, date })}
         summary={summary}
       />
-      <TableOfContents locale={locale} headingLevel={2} id="od-page-toc" items={tocItems} className="mb-[var(--space-6)]" />
+      <div className="grid gap-y-[var(--space-6)] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-x-[var(--space-8)]">
+        <aside className="lg:sticky lg:top-[var(--space-4)] lg:col-start-2 lg:row-start-1 lg:self-start">
+          <TableOfContents locale={locale} headingLevel={2} id="od-page-toc" title={UI.odMpOnThisPage[locale]} items={tocItems} />
+        </aside>
 
-      <Stack space={8}>
-        <section aria-labelledby="details">
-          <Heading level={2} id="details" className="m-0 mb-[var(--space-3)]">
-            {UI.odMtDetails[locale]}
-          </Heading>
-          <MetadataList
-            className="mb-[var(--space-4)]"
-            items={[
-              { term: UI.odMtMetaDateTime[locale], value: <span lang={locale === "th" && header.dateLine ? "th" : undefined}>{dateTime}</span> },
-              ...(place ? [{ term: UI.odMtMetaPlace[locale], value: <span lang={placeLang}>{place}</span> }] : []),
-              ...(meeting.chair ? [{ term: UI.odMtMetaChair[locale], value: <span lang="th">{meeting.chair}</span> }] : []),
-              {
-                term: UI.odMtMetaSession[locale],
-                value: fillText(UI.odMtSessionYear[locale], { session: title, year: academicYearLabel(meeting.academicYear, locale) }),
-              },
-              ...(meeting.present !== null && meeting.onLeave !== null && meeting.absent !== null && meeting.seats !== null
-                ? [
-                    {
-                      term: UI.odMtMetaAttendance[locale],
-                      value: fillText(UI.odMtAttendanceValue[locale], {
-                        present: n(meeting.present),
-                        leave: n(meeting.onLeave),
-                        absent: n(meeting.absent),
-                        seats: n(meeting.seats),
-                      }),
-                    },
-                  ]
-                : []),
-              {
-                term: UI.odMtMetaStatus[locale],
-                value: meeting.minutesAdoptedOn ? (
-                  <>
-                    <StatusTag tone="success" label={fillText(UI.odMtAdopted[locale], { date: formatDate(meeting.minutesAdoptedOn, locale) })} />
-                    {adoptedAt ? (
+        <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+          <Stack space={8}>
+            <section aria-labelledby="details">
+              <Heading level={2} id="details" className="m-0 mb-[var(--space-3)]">
+                {UI.odMtDetails[locale]}
+              </Heading>
+              <MetadataList
+                emphasis
+                className="mb-[var(--space-4)]"
+                items={[
+                  { term: UI.odMtMetaDateTime[locale], value: <span lang={locale === "th" && header.dateLine ? "th" : undefined}>{dateTime}</span> },
+                  ...(place ? [{ term: UI.odMtMetaPlace[locale], value: <span lang={placeLang}>{place}</span> }] : []),
+                  ...(meeting.chair ? [{ term: UI.odMtMetaChair[locale], value: <span lang="th">{meeting.chair}</span> }] : []),
+                  {
+                    term: UI.odMtMetaSession[locale],
+                    value: fillText(UI.odMtSessionYear[locale], { session: title, year: academicYearLabel(meeting.academicYear, locale) }),
+                  },
+                  ...(meeting.present !== null && meeting.onLeave !== null && meeting.absent !== null && meeting.seats !== null
+                    ? [
+                        {
+                          term: UI.odMtMetaAttendance[locale],
+                          value: fillText(UI.odMtAttendanceValue[locale], {
+                            present: n(meeting.present),
+                            leave: n(meeting.onLeave),
+                            absent: n(meeting.absent),
+                            seats: n(meeting.seats),
+                          }),
+                        },
+                      ]
+                    : []),
+                  {
+                    term: UI.odMtMetaStatus[locale],
+                    value: meeting.minutesAdoptedOn ? (
                       <>
-                        {" "}
-                        {UI.odMtAdoptedAt[locale]}{" "}
-                        <Link href={localePath(locale, meetingPath(adoptedAt.slug))} className="text-action underline">
-                          {meetingLabel(adoptedAt, locale)}
-                        </Link>
+                        <StatusTag tone="success" label={fillText(UI.odMtAdopted[locale], { date: formatDate(meeting.minutesAdoptedOn, locale) })} />
+                        {adoptedAt ? (
+                          <>
+                            {" "}
+                            {UI.odMtAdoptedAt[locale]}{" "}
+                            <Link href={localePath(locale, meetingPath(adoptedAt.slug))} className="text-action underline">
+                              {meetingLabel(adoptedAt, locale)}
+                            </Link>
+                          </>
+                        ) : null}
                       </>
-                    ) : null}
-                  </>
-                ) : (
-                  <StatusTag tone="neutral" label={UI.odMtNotAdopted[locale]} />
-                ),
-              },
-            ]}
-          />
-          {meeting.sessionType === "extraordinary" ? (
-            <Details summary={UI.odMtExtraSummary[locale]}>
-              <p className="m-0">{UI.odMtExtraBody[locale]}</p>
-            </Details>
-          ) : null}
-        </section>
-
-        {decisions.length > 0 ? (
-          <section aria-labelledby="decisions">
-            <Heading level={2} id="decisions" className="m-0 mb-[var(--space-3)]">
-              {UI.odMtDecisions[locale]}
-            </Heading>
-            <Stack space={4}>
-              <DataTable
-                id="od-meeting-decisions"
-                columns={decisionColumns}
-                rows={decisions}
-                getRowKey={(row) => row.id}
-                caption={`${UI.odTable[locale]} ${n(1)}: ${fillText(UI.odMtDecisionsCaption[locale], { meeting: title })}`}
-                locale={locale}
+                    ) : (
+                      <StatusTag tone="neutral" label={UI.odMtNotAdopted[locale]} />
+                    ),
+                  },
+                ]}
               />
-              <p className="m-0 max-w-[var(--measure-en)] text-ink-600">{UI.odDcTotalsNote[locale]}</p>
-            </Stack>
-          </section>
-        ) : null}
-
-        {agenda.length > 0 ? (
-          <section aria-labelledby="agenda">
-            <Heading level={2} id="agenda" className="m-0 mb-[var(--space-3)]">
-              {UI.odMtAgenda[locale]}
-            </Heading>
-            <p className="m-0 mb-[var(--space-3)] max-w-[var(--measure-en)]">{UI.odMtAgendaIntro[locale]}</p>
-            <ol className="m-0 flex list-none flex-col gap-[var(--space-1)] p-0">
-              {agenda.map((item) => (
-                <li key={item.id}>
-                  {itemLink(item.id, item.label)}
-                  {item.children.length > 0 ? (
-                    <ul className="m-0 mt-[var(--space-1)] flex list-none flex-col gap-[var(--space-1)] pl-[var(--space-6)]">
-                      {item.children.map((child) => (
-                        <li key={child.id}>{itemLink(child.id, child.label)}</li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </li>
-              ))}
-            </ol>
-          </section>
-        ) : null}
-
-        {markdown.trim() ? (
-          <section aria-labelledby="minutes">
-            <Heading level={2} id="minutes" className="m-0 mb-[var(--space-3)]">
-              {UI.odMtMinutes[locale]}
-            </Heading>
-            <Stack space={4}>
-              <InsetText>
-                <p className="m-0">{UI.odMtThaiNote[locale]}</p>
-              </InsetText>
-              {agenda.length > 0 ? (
-                <TableOfContents
-                  locale={locale}
-                  headingLevel={3}
-                  id="od-minutes-toc"
-                  title={UI.odMtMinutesToc[locale]}
-                  items={agenda.map((item) => ({ label: item.label, href: `#${item.id}` }))}
-                />
+              {meeting.sessionType === "extraordinary" ? (
+                <Details summary={UI.odMtExtraSummary[locale]}>
+                  <p className="m-0">{UI.odMtExtraBody[locale]}</p>
+                </Details>
               ) : null}
-              <Transcript markdown={markdown} locale={locale} headingLevel={3} />
-            </Stack>
-          </section>
-        ) : null}
+            </section>
 
-        {related.length > 0 ? (
-          <section aria-labelledby="documents">
-            <Heading level={2} id="documents" className="m-0 mb-[var(--space-3)]">
-              {UI.odMtDocuments[locale]}
-            </Heading>
-            <DocumentList locale={locale} headingLevel={3} items={related.map((doc) => documentListItem(doc, locale, byId))} />
-          </section>
-        ) : null}
+            {decisions.length > 0 ? (
+              <section aria-labelledby="decisions">
+                <Heading level={2} id="decisions" className="m-0 mb-[var(--space-3)]">
+                  {UI.odMtDecisions[locale]}
+                </Heading>
+                <Stack space={4}>
+                  <DataTable
+                    id="od-meeting-decisions"
+                    columns={decisionColumns}
+                    rows={decisions}
+                    getRowKey={(row) => row.id}
+                    caption={`${UI.odTable[locale]} ${n(1)}: ${fillText(UI.odMtDecisionsCaption[locale], { meeting: title })}`}
+                    locale={locale}
+                  />
+                  <p className="m-0 max-w-[var(--measure-en)] text-ink-600">{UI.odDcTotalsNote[locale]}</p>
+                </Stack>
+              </section>
+            ) : null}
 
-        <nav aria-labelledby="neighbours">
-          <Heading level={2} id="neighbours" className="m-0 mb-[var(--space-3)]">
-            {UI.odMtNeighbours[locale]}
-          </Heading>
-          <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
-            {previous ? (
-              <li>
-                {UI.odMtPrevious[locale]}:{" "}
-                <Link href={localePath(locale, meetingPath(previous.slug))} rel="prev" className="text-action underline">
-                  {meetingLabel(previous, locale)} ({formatDate(previous.meetingDate, locale)})
-                </Link>
-              </li>
+            {agenda.length > 0 ? (
+              <section aria-labelledby="agenda">
+                <Heading level={2} id="agenda" className="m-0 mb-[var(--space-3)]">
+                  {UI.odMtAgenda[locale]}
+                </Heading>
+                <p className="m-0 mb-[var(--space-3)] max-w-[var(--measure-en)]">{UI.odMtAgendaIntro[locale]}</p>
+                <ol className="m-0 list-none border-b border-line p-0">
+                  {agenda.map((item) => (
+                    <li key={item.id} className="border-t border-line py-[var(--space-1)]">
+                      {itemLink(item.id, item.label)}
+                      {item.children.length > 0 ? (
+                        <ul className="m-0 list-none p-0 pl-[var(--space-6)]">
+                          {item.children.map((child) => (
+                            <li key={child.id}>{itemLink(child.id, child.label)}</li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </li>
+                  ))}
+                </ol>
+              </section>
             ) : null}
-            {next ? (
-              <li>
-                {UI.odMtNext[locale]}:{" "}
-                <Link href={localePath(locale, meetingPath(next.slug))} rel="next" className="text-action underline">
-                  {meetingLabel(next, locale)} ({formatDate(next.meetingDate, locale)})
-                </Link>
-              </li>
+
+            {markdown.trim() ? (
+              <section aria-labelledby="minutes">
+                <Heading level={2} id="minutes" className="m-0 mb-[var(--space-3)]">
+                  {UI.odMtMinutes[locale]}
+                </Heading>
+                <Stack space={4}>
+                  <InsetText>
+                    <p className="m-0">{UI.odMtThaiNote[locale]}</p>
+                  </InsetText>
+                  {agenda.length > 0 ? (
+                    <TableOfContents
+                      locale={locale}
+                      headingLevel={3}
+                      id="od-minutes-toc"
+                      title={UI.odMtMinutesToc[locale]}
+                      items={agenda.map((item) => ({ label: item.label, href: `#${item.id}` }))}
+                    />
+                  ) : null}
+                  <Transcript markdown={markdown} locale={locale} headingLevel={3} variant="minutes" />
+                </Stack>
+              </section>
             ) : null}
-          </ul>
-        </nav>
-      </Stack>
+
+            {related.length > 0 ? (
+              <section aria-labelledby="documents">
+                <Heading level={2} id="documents" className="m-0 mb-[var(--space-3)]">
+                  {UI.odMtDocuments[locale]}
+                </Heading>
+                <DocumentList variant="cards" locale={locale} headingLevel={3} items={related.map((doc) => documentListItem(doc, locale, byId))} />
+              </section>
+            ) : null}
+
+            <nav aria-labelledby="neighbours">
+              <Heading level={2} id="neighbours" className="m-0 mb-[var(--space-3)]">
+                {UI.odMtNeighbours[locale]}
+              </Heading>
+              <ul className="m-0 grid list-none gap-[var(--space-4)] p-0 sm:grid-cols-2">
+                {previous ? (
+                  <li className="relative flex flex-col gap-[var(--space-1)] border border-line-strong bg-surface p-[var(--space-4)] sm:col-start-1">
+                    <span className="text-sm text-ink-600">{UI.odMtPrevious[locale]}</span>
+                    <Link
+                      href={localePath(locale, meetingPath(previous.slug))}
+                      rel="prev"
+                      className="inline-flex items-center gap-[var(--space-1)] text-lg font-bold text-action underline hover:text-action-hover after:absolute after:inset-0 after:content-['']"
+                    >
+                      <ArrowLeftIcon />
+                      {meetingLabel(previous, locale)}
+                    </Link>
+                    <span className="text-sm text-ink-600">{formatDate(previous.meetingDate, locale)}</span>
+                  </li>
+                ) : null}
+                {next ? (
+                  <li className="relative flex flex-col gap-[var(--space-1)] border border-line-strong bg-surface p-[var(--space-4)] sm:col-start-2 sm:text-end">
+                    <span className="text-sm text-ink-600">{UI.odMtNext[locale]}</span>
+                    <Link
+                      href={localePath(locale, meetingPath(next.slug))}
+                      rel="next"
+                      className="inline-flex items-center gap-[var(--space-1)] text-lg font-bold text-action underline hover:text-action-hover after:absolute after:inset-0 after:content-[''] sm:flex-row-reverse sm:self-end"
+                    >
+                      <ArrowRightIcon />
+                      {meetingLabel(next, locale)}
+                    </Link>
+                    <span className="text-sm text-ink-600">{formatDate(next.meetingDate, locale)}</span>
+                  </li>
+                ) : null}
+              </ul>
+            </nav>
+          </Stack>
+        </div>
+      </div>
     </TuscShell>
   );
 }

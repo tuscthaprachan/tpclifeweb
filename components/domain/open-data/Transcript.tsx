@@ -6,6 +6,7 @@ import { externalLinkProps, externalLinkSuffix, isExternalUrl, type HeadingLevel
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { detectLanguage, inlineText, parseMarkdown, type Block, type Inline, type ListItem, type TableCell } from "@/lib/open-data/markdown";
+import { classifyMinutes, type Division, type MinutesKind } from "@/lib/open-data/minutes";
 import { fillText } from "./fill";
 
 interface TranscriptProps {
@@ -15,6 +16,8 @@ interface TranscriptProps {
   locale: Locale;
   /** The depth a `#` heading in the transcription takes in the page outline. */
   headingLevel: HeadingLevel;
+  /** "minutes" sets a record of proceedings out Hansard style; every other document renders plainly. */
+  variant?: "minutes";
   className?: string;
 }
 
@@ -137,17 +140,113 @@ function renderBlock(block: Block, key: number, ctx: Context): ReactNode {
   }
 }
 
+function renderDivision(division: Division, key: number, ctx: Context): ReactNode {
+  ctx.tables.count += 1;
+  return (
+    <table key={key} className="w-full max-w-[24rem] border-collapse border border-line-strong text-left">
+      <caption className="visually-hidden">{fillText(UI.odMdTableLabel[ctx.locale], { n: ctx.tables.count })}</caption>
+      {division.head ? (
+        <thead>
+          <tr className="border-b border-line-strong">
+            {division.head.map((cell, index) => (
+              <th key={index} scope="col" className={cx("p-[var(--space-3)] text-sm font-bold", index === 1 ? "text-right" : "text-left")}>
+                {renderInline(cell.c, ctx.locale)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+      ) : null}
+      <tbody>
+        {division.rows.map((row, index) => (
+          <tr key={index} className={cx(index > 0 && "border-t border-line")}>
+            <th scope="row" className="p-[var(--space-3)] text-left font-normal">
+              {renderInline(row.label.c, ctx.locale)}
+            </th>
+            <td className="p-[var(--space-3)] text-right text-xl font-bold">{renderInline(row.figure.c, ctx.locale)}</td>
+            <td className="p-[var(--space-3)] text-sm text-ink-600">{row.unit ? renderInline(row.unit.c, ctx.locale) : null}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function renderMinutesBlock(block: Block, kind: MinutesKind, key: number, ctx: Context): ReactNode {
+  if (kind.k === "division") return renderDivision(kind.division, key, ctx);
+  if (block.t === "heading" && kind.k === "agenda") {
+    const level = Math.min(6, ctx.headingLevel + block.level - 1) as HeadingLevel;
+    const top = kind.level === "item";
+    return (
+      <Heading
+        key={key}
+        level={level}
+        id={block.ids[0]}
+        className={cx("m-0", top ? "mt-[var(--space-8)] border-t border-line-strong pt-[var(--space-4)]" : "mt-[var(--space-6)] border-t border-line pt-[var(--space-3)]")}
+      >
+        <Ids ids={block.ids} />
+        {renderInline(block.c, ctx.locale)}
+      </Heading>
+    );
+  }
+  if (block.t !== "paragraph") return renderBlock(block, key, ctx);
+  switch (kind.k) {
+    case "contribution":
+      return (
+        <div key={key} id={block.ids[0]} className="flex max-w-[var(--measure-th)] flex-col gap-[var(--space-1)] border-t border-line pt-[var(--space-3)]">
+          <Ids ids={block.ids} />
+          <p className="m-0">
+            <strong>{kind.contribution.prefix}</strong>
+          </p>
+          <p className="m-0 whitespace-pre-line">{renderInline(kind.contribution.rest, ctx.locale)}</p>
+        </div>
+      );
+    case "resolution":
+      return (
+        <p key={key} id={block.ids[0]} className="m-0 max-w-[var(--measure-th)] whitespace-pre-line border border-line-strong p-[var(--space-4)]">
+          <Ids ids={block.ids} />
+          {renderInline(block.c, ctx.locale)}
+        </p>
+      );
+    case "time":
+      return (
+        <p key={key} id={block.ids[0]} className="m-0 max-w-[var(--measure-th)] whitespace-pre-line text-sm text-ink-600">
+          <Ids ids={block.ids} />
+          {renderInline(block.c, ctx.locale)}
+        </p>
+      );
+    case "signature":
+      return (
+        <p
+          key={key}
+          id={block.ids[0]}
+          className={cx("m-0 w-full max-w-[24rem] self-end whitespace-pre-line text-center text-sm text-ink-600", kind.first && "mt-[var(--space-6)]")}
+        >
+          <Ids ids={block.ids} />
+          {renderInline(block.c, ctx.locale)}
+        </p>
+      );
+    default:
+      return renderBlock(block, key, ctx);
+  }
+}
+
 /**
  * A transcription rendered from its Markdown, exactly as written: printed clause and sub-clause
  * numbers stay text (a list never generates its own number), `<a id>` anchors keep their ids,
- * tables use the site table, and page breaks become a small marker.
+ * tables use the site table, and page breaks become a small marker. The "minutes" variant only
+ * changes presentation: contributions under the speaker's name, agenda items as ruled sections,
+ * resolutions boxed, vote tables as a division result; the text itself is never altered.
  */
-export function Transcript({ markdown, locale, headingLevel, className }: TranscriptProps) {
+export function Transcript({ markdown, locale, headingLevel, variant, className }: TranscriptProps) {
   const ctx: Context = { locale, headingLevel, tables: { count: 0 } };
   const blocks = parseMarkdown(markdown);
+  const kinds = variant === "minutes" ? classifyMinutes(blocks) : null;
   return (
     <div lang={detectLanguage(markdown)} className={cx("flex flex-col gap-[var(--space-4)]", className)}>
-      {blocks.map((block, index) => renderBlock(block, index, ctx))}
+      {blocks.map((block, index) => {
+        const kind = kinds?.[index];
+        return kind ? renderMinutesBlock(block, kind, index, ctx) : renderBlock(block, index, ctx);
+      })}
     </div>
   );
 }

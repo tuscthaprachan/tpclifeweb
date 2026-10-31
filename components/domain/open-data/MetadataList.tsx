@@ -11,12 +11,14 @@ interface MetadataListProps {
   className?: string;
   /** Term over value at every width, for a narrow place such as a card. */
   compact?: boolean;
+  /** Key facts: a stronger outer rule and larger text, as Parliament sets out a sitting's facts. */
+  emphasis?: boolean;
 }
 
 /** Facts about a page or a document: term in bold, value beside it from `sm`, stacked below. */
-export function MetadataList({ items, className, compact = false }: MetadataListProps) {
+export function MetadataList({ items, className, compact = false, emphasis = false }: MetadataListProps) {
   return (
-    <dl className={cx("m-0 mb-[var(--space-6)] border-y border-line py-[var(--space-2)]", className)}>
+    <dl className={cx("m-0 mb-[var(--space-6)] border-y py-[var(--space-2)]", emphasis ? "border-line-strong text-lg" : "border-line", className)}>
       {items.map((item, index) => (
         <div
           key={index}

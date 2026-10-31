@@ -27,19 +27,22 @@ interface DocumentListProps {
   locale: Locale;
   headingLevel: HeadingLevel;
   className?: string;
+  /** "cards" sets each document in a thin bordered card, as the Parliament card list does. */
+  variant?: "list" | "cards";
 }
 
 /** The ONS document list: title link, then type, date and file details, then a line of description. */
-export function DocumentList({ items, locale, headingLevel, className }: DocumentListProps) {
+export function DocumentList({ items, locale, headingLevel, className, variant = "list" }: DocumentListProps) {
+  const cards = variant === "cards";
   return (
-    <ul className={cx("m-0 list-none p-0", className)}>
+    <ul className={cx("m-0 list-none p-0", cards && "grid gap-[var(--space-4)] sm:grid-cols-2", className)}>
       {items.map((item) => {
         const file = [item.format, item.size, item.pages].filter(Boolean).join(", ");
         const suffix = UI.odFileDownload[locale].replace("{format}", item.format).replace("{size}", item.size);
         return (
-          <li key={item.href} className="border-t border-line py-[var(--space-4)] last:border-b">
+          <li key={item.href} className={cards ? "relative border border-line-strong bg-surface p-[var(--space-4)]" : "border-t border-line py-[var(--space-4)] last:border-b"}>
             <Heading level={headingLevel} className="m-0 mb-[var(--space-1)] text-lg">
-              <a href={item.href} className="text-action underline hover:text-action-hover">
+              <a href={item.href} className={cx("text-action underline hover:text-action-hover", cards && "after:absolute after:inset-0 after:content-['']")}>
                 {item.title}
                 <span className="visually-hidden">, {suffix}</span>
               </a>

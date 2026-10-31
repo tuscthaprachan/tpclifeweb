@@ -1561,6 +1561,8 @@ export const UI = {
   odMtMinutesToc: { th: "สารบัญรายงานตามระเบียบวาระ", en: "Minutes by agenda item" },
   odMtPrevious: { th: "การประชุมก่อนหน้า", en: "Previous meeting" },
   odMtNext: { th: "การประชุมถัดไป", en: "Next meeting" },
+  // Meeting minutes page layout (Parliament design system alignment)
+  odMpOnThisPage: { th: "ในหน้านี้", en: "On this page" },
   odDcSummary: {
     th: "มติทั้ง {n} เรื่องของสภานักศึกษา ท่าพระจันทร์ จาก {meetings} การประชุม ตามที่พิมพ์ในรายงานการประชุม",
     en: "All {n} resolutions of the Student Council, Tha Prachan, from {meetings} meetings, as printed in the minutes.",
