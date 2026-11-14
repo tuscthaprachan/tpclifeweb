@@ -104,6 +104,7 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
       id: "select",
       header: a("ckBulkLabel", locale),
       headerHidden: true,
+      mobile: "select",
       cell: (row) => (
         <label className="inline-flex min-h-[var(--target-min)] items-center">
           <input type="checkbox" name="id" value={row.id} className="h-[1.25rem] w-[1.25rem] accent-[var(--colour-action)]" />
@@ -115,6 +116,7 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
       id: "reference",
       header: a("casesColReference", locale),
       sort: { key: "reference", href: sortHref("reference") },
+      mobile: "head",
       cell: (row) => (
         <Link href={`/admin/cases/${row.id}`} className="font-medium">
           {row.reference}
@@ -125,6 +127,7 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
     {
       id: "type",
       header: a("casesColType", locale),
+      mobile: "hidden",
       cell: (row) => (
         <span className="inline-flex items-center gap-[var(--space-2)]">
           <Glyph icon={serviceIcon(row.service, row.kind)} className="text-ink-600" />
@@ -132,11 +135,26 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
         </span>
       ),
     },
-    { id: "summary", header: a("casesColSummary", locale), cell: (row) => row.summary ?? "" },
+    {
+      id: "summary",
+      header: a("casesColSummary", locale),
+      mobile: "text",
+      cell: (row) => (
+        <>
+          <span className="hidden max-sm:flex max-sm:items-start max-sm:gap-[var(--space-2)]">
+            <Glyph icon={serviceIcon(row.service, row.kind)} className="mt-[0.25em] shrink-0 text-ink-600" />
+            <span className="visually-hidden">{`${pick(getServiceDef(row.service).label, locale)}, ${pick(SERVICES[row.service].kinds[row.kind]?.label, locale)}: `}</span>
+            <span className="line-clamp-2">{row.summary ?? ""}</span>
+          </span>
+          <span className="max-sm:hidden">{row.summary ?? ""}</span>
+        </>
+      ),
+    },
     {
       id: "status",
       header: a("casesColStatus", locale),
       sort: { key: "status", href: sortHref("status") },
+      mobile: "tag",
       cell: (row) => {
         const def = getStatusDef(row.service, row.kind, row.status);
         return (
@@ -151,11 +169,12 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
       id: "due",
       header: a("ckColDue", locale),
       sort: { key: "due", href: sortHref("due") },
+      mobile: "start",
       cell: (row) => <DueCell state={row.dueState} dueAt={row.dueAt} locale={locale} />,
     },
-    { id: "assigned", header: a("casesColAssigned", locale), cell: (row) => row.assigneeName ?? <span className="text-ink-600">{a("casesUnassigned", locale)}</span> },
-    { id: "received", header: a("ckColReceived", locale), sort: { key: "received", href: sortHref("received") }, cell: (row) => <Timestamp value={row.createdAt} locale={locale} format="date" /> },
-    { id: "updated", header: a("casesColUpdated", locale), sort: { key: "updated", href: sortHref("updated") }, cell: (row) => <Timestamp value={row.updatedAt} locale={locale} format="datetime" /> },
+    { id: "assigned", header: a("casesColAssigned", locale), mobile: "end", cell: (row) => <span className="block truncate sm:overflow-visible sm:whitespace-normal">{row.assigneeName ?? <span className="text-ink-600">{a("casesUnassigned", locale)}</span>}</span> },
+    { id: "received", header: a("ckColReceived", locale), mobile: "hidden", sort: { key: "received", href: sortHref("received") }, cell: (row) => <Timestamp value={row.createdAt} locale={locale} format="date" /> },
+    { id: "updated", header: a("casesColUpdated", locale), mobile: "hidden", sort: { key: "updated", href: sortHref("updated") }, cell: (row) => <Timestamp value={row.updatedAt} locale={locale} format="datetime" /> },
   ];
 
   const viewHref = (extra: Record<string, string>) => {
@@ -458,7 +477,7 @@ function DueCell({ state, dueAt, locale }: { state: DueState | null; dueAt: Date
   const icon = state === "overdue" ? "overdue" : state === "soon" ? "dueSoon" : "check";
   const label = a(state === "overdue" ? "ckDueOverdue" : state === "soon" ? "ckDueSoon" : "ckDueOnTime", locale);
   return (
-    <span className="flex flex-col gap-[var(--space-1)]">
+    <span className="flex flex-wrap items-baseline gap-x-[var(--space-2)] gap-y-[var(--space-1)] sm:flex-col">
       <span className="inline-flex items-center gap-[var(--space-1)] font-medium text-ink-900">
         <ConsoleIcon name={icon} size={14} />
         <span>{label}</span>

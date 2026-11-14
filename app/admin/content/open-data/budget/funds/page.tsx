@@ -49,7 +49,7 @@ export default async function OpenDataFundsPage({ searchParams }: { searchParams
   );
   const columns: DataTableColumn<Row>[] = [
     { id: "number", header: a("odmFieldFundNumber", locale), cell: (row) => row.number },
-    { id: "code", header: a("odmFieldFundCode", locale), cell: (row) => row.code },
+    { id: "code", header: a("odmFieldFundCode", locale), mobileHidden: true, cell: (row) => row.code },
     { id: "name", header: a("odmFieldFundName", locale), cell: (row) => <a href={`${OPEN_DATA_PATHS.funds}/${row.id}`} className="font-medium">{row.name}</a> },
     { id: "type", header: a("odmFieldFundType", locale), cell: (row) => row.type },
     ...(owners.length > 1 ? [{ id: "owner", header: a("fieldOwner", locale), cell: (row: Row) => ownerLabel(row.owner, locale) }] : []),

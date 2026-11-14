@@ -2,7 +2,7 @@ import Form from "next/form";
 import Link from "next/link";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { ConsolePage, EmptyPanel, FilterChips, PageHeader, Toolbar } from "@/components/admin/ui";
+import { ConsolePage, EmptyPanel, FilterChips, FilterDisclosure, PageHeader, Toolbar } from "@/components/admin/ui";
 import { Button, NotificationBanner, Pagination, Timestamp } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { adminTitle } from "@/lib/admin/metadata";
@@ -80,6 +80,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
           />
         }
       />
+      <FilterDisclosure label={a("clFilters", locale)} defaultOpen={Boolean(query.kind)}>
       <Form action="" className="flex flex-wrap items-end gap-[var(--space-3)]">
         <input type="hidden" name="view" value={query.view} />
         <div className="flex flex-col gap-[var(--space-1)]">
@@ -104,6 +105,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
           </Button>
         ) : null}
       </Form>
+      </FilterDisclosure>
 
       <p className="m-0 text-ink-600" role="status">
         {list.total === 1 ? a("ntCountOne", locale) : a("ntCount", locale, { count: formatNumber(list.total, locale) })}

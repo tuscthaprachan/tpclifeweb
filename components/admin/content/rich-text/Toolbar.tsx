@@ -15,6 +15,8 @@ export interface ToolbarAction {
   disabled?: boolean;
   /** A rule above this action when it is listed in a menu. */
   separator?: boolean;
+  /** When the bar is too narrow for everything, lower ranks stay visible first. */
+  rank?: number;
   run: () => void;
 }
 
@@ -30,6 +32,8 @@ export type ToolbarGroup =
       radio?: boolean;
       /** Approximate width in px, for deciding what fits. */
       width: number;
+      /** Like `ToolbarAction.rank`, for the whole menu. */
+      rank?: number;
       actions: ToolbarAction[];
     };
 
@@ -82,23 +86,34 @@ export function Toolbar({ groups, label: toolbarLabel, controls, moreLabel, onAf
     return () => observer.disconnect();
   }, []);
 
-  let shown = groups.length;
-  if (width !== null) {
-    const total = groups.reduce((sum, g) => sum + widthOf(g), 0);
-    if (total > width) {
-      let used = BUTTON + GROUP;
-      shown = 0;
-      for (const g of groups) {
-        if (used + widthOf(g) > width) break;
-        used += widthOf(g);
-        shown++;
-      }
+  type Unit = { group: ToolbarGroup; action?: ToolbarAction; rank: number; order: number; width: number };
+  const units: Unit[] = groups.flatMap((g, gi): Unit[] =>
+    g.kind === "menu" ? [{ group: g, rank: g.rank ?? 99, order: gi * 100, width: g.width }] : g.actions.map((action, ai) => ({ group: g, action, rank: action.rank ?? 99, order: gi * 100 + ai, width: BUTTON })),
+  );
+  const fullWidth = groups.reduce((sum, g) => sum + widthOf(g), 0);
+  const compact = width !== null && fullWidth > width;
+  const keep = new Set<Unit>();
+  if (compact) {
+    let used = BUTTON + 26 + GAP;
+    for (const unit of [...units].sort((x, y) => x.rank - y.rank || x.order - y.order)) {
+      if (used + unit.width + GAP > width) break;
+      used += unit.width + GAP;
+      keep.add(unit);
     }
   }
-  const visible = groups.slice(0, shown);
-  const hidden = groups.slice(shown);
-  const overflow: MenuItem[] = hidden.flatMap((g, gi) =>
-    toItems(g.actions, g.kind === "menu" && Boolean(g.radio)).map((item, i) => ({ ...item, separator: i === 0 && gi > 0 ? true : item.separator })),
+  const isShown = (unit: Unit) => !compact || keep.has(unit);
+  const visible: { group: ToolbarGroup; actions: ToolbarAction[]; menu: boolean }[] = [];
+  const hiddenByGroup: { group: ToolbarGroup; actions: ToolbarAction[] }[] = [];
+  for (const g of groups) {
+    const mine = units.filter((u) => u.group === g);
+    const shownUnits = mine.filter(isShown);
+    const shownActions = g.kind === "menu" ? g.actions : shownUnits.map((u) => u.action!);
+    if (g.kind === "menu" ? shownUnits.length > 0 : shownActions.length > 0) visible.push({ group: g, actions: shownActions, menu: g.kind === "menu" });
+    const hiddenActions = g.kind === "menu" ? (shownUnits.length > 0 ? [] : g.actions) : mine.filter((u) => !isShown(u)).map((u) => u.action!);
+    if (hiddenActions.length > 0) hiddenByGroup.push({ group: g, actions: hiddenActions });
+  }
+  const overflow: MenuItem[] = hiddenByGroup.flatMap((h, gi) =>
+    toItems(h.actions, h.group.kind === "menu" && Boolean(h.group.radio)).map((item, i) => ({ ...item, separator: i === 0 && gi > 0 ? true : item.separator })),
   );
 
   useLayoutEffect(() => {
@@ -131,10 +146,15 @@ export function Toolbar({ groups, label: toolbarLabel, controls, moreLabel, onAf
       onKeyDown={onKeyDown}
       className="flex items-center gap-[var(--space-1)] border-b border-line bg-surface-alt p-[var(--space-2)]"
     >
-      {visible.map((group, i) => (
-        <div key={group.id} role="group" aria-label={group.label} className={`flex items-center gap-[2px] ${i > 0 ? "ml-[var(--space-1)] border-l border-line-strong pl-[var(--space-2)]" : ""}`}>
+      {visible.map(({ group, actions }, i) => (
+        <div
+          key={group.id}
+          role="group"
+          aria-label={group.label}
+          className={`flex items-center gap-[2px] ${i > 0 && !compact ? "ml-[var(--space-1)] border-l border-line-strong pl-[var(--space-2)]" : ""}`}
+        >
           {group.kind === "buttons" ? (
-            group.actions.map((action) => (
+            actions.map((action) => (
               <IconButton key={action.id} tb icon={action.icon} label={label(action)} pressed={action.pressed} disabled={action.disabled} onClick={action.run} />
             ))
           ) : (

@@ -39,6 +39,7 @@ import { FindReplace } from "./rich-text/find-replace";
 import { IconButton } from "./rich-text/IconButton";
 import { ImageUploadDialog } from "./rich-text/ImageUploadDialog";
 import { LinkDialog, linkTargetFor, type LinkTarget } from "./rich-text/LinkDialog";
+import { Menu } from "./rich-text/Menu";
 import { MarkdownPane } from "./rich-text/MarkdownPane";
 import { shortcutLabel, SHORTCUTS, ShortcutsDialog, type ShortcutId } from "./rich-text/ShortcutsDialog";
 import { slashExtension, type SlashItem } from "./rich-text/slash";
@@ -459,6 +460,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           triggerIcon: state.h2 ? "rteHeading2" : state.h3 ? "rteHeading3" : state.h4 ? "rteHeading4" : "rteParagraph",
           radio: true,
           width: 64,
+          rank: 6,
           actions: [
             act("p", T("rteParagraph"), "rteParagraph", { pressed: state.p, shortcut: keyLabel("paragraph"), run: () => chain().setParagraph().run() }),
             act("h2", T("rteHeading"), "rteHeading2", { pressed: state.h2, shortcut: keyLabel("heading2"), run: () => chain().setHeading({ level: 2 }).run() }),
@@ -471,11 +473,11 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           kind: "buttons",
           label: T("edGroupMarks"),
           actions: [
-            act("bold", T("rteBold"), "rteBold", { pressed: state.bold, shortcut: keyLabel("bold"), run: () => chain().toggleBold().run() }),
-            act("italic", T("rteItalic"), "rteItalic", { pressed: state.italic, shortcut: keyLabel("italic"), run: () => chain().toggleItalic().run() }),
-            act("underline", T("edUnderline"), "rteUnderline", { pressed: state.underline, shortcut: keyLabel("underline"), run: () => chain().toggleUnderline().run() }),
-            act("strike", T("edStrike"), "rteStrike", { pressed: state.strike, shortcut: keyLabel("strike"), run: () => chain().toggleStrike().run() }),
-            act("code", T("edCode"), "rteCode", { pressed: state.code, shortcut: keyLabel("code"), run: () => chain().toggleCode().run() }),
+            act("bold", T("rteBold"), "rteBold", { rank: 1, pressed: state.bold, shortcut: keyLabel("bold"), run: () => chain().toggleBold().run() }),
+            act("italic", T("rteItalic"), "rteItalic", { rank: 2, pressed: state.italic, shortcut: keyLabel("italic"), run: () => chain().toggleItalic().run() }),
+            act("underline", T("edUnderline"), "rteUnderline", { rank: 10, pressed: state.underline, shortcut: keyLabel("underline"), run: () => chain().toggleUnderline().run() }),
+            act("strike", T("edStrike"), "rteStrike", { rank: 11, pressed: state.strike, shortcut: keyLabel("strike"), run: () => chain().toggleStrike().run() }),
+            act("code", T("edCode"), "rteCode", { rank: 12, pressed: state.code, shortcut: keyLabel("code"), run: () => chain().toggleCode().run() }),
           ],
         },
         {
@@ -483,9 +485,9 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           kind: "buttons",
           label: T("edGroupLists"),
           actions: [
-            act("bullets", T("rteBullets"), "rteBullets", { pressed: state.bullet, shortcut: keyLabel("bullets"), run: () => chain().toggleBulletList().run() }),
-            act("numbers", T("rteNumbers"), "rteNumbers", { pressed: state.ordered, shortcut: keyLabel("numbers"), run: () => chain().toggleOrderedList().run() }),
-            act("quote", T("rteQuote"), "rteQuote", { pressed: state.quote, shortcut: keyLabel("quote"), run: () => chain().toggleBlockquote().run() }),
+            act("bullets", T("rteBullets"), "rteBullets", { rank: 4, pressed: state.bullet, shortcut: keyLabel("bullets"), run: () => chain().toggleBulletList().run() }),
+            act("numbers", T("rteNumbers"), "rteNumbers", { rank: 5, pressed: state.ordered, shortcut: keyLabel("numbers"), run: () => chain().toggleOrderedList().run() }),
+            act("quote", T("rteQuote"), "rteQuote", { rank: 13, pressed: state.quote, shortcut: keyLabel("quote"), run: () => chain().toggleBlockquote().run() }),
           ],
         },
         {
@@ -493,8 +495,8 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           kind: "buttons",
           label: T("edGroupLink"),
           actions: [
-            act("link", T("rteLink"), "rteLink", { pressed: state.link, shortcut: keyLabel("link"), run: openLink }),
-            act("unlink", T("edUnlink"), "rteUnlink", { disabled: !state.link, run: () => chain().extendMarkRange("link").unsetLink().run() }),
+            act("link", T("rteLink"), "rteLink", { rank: 3, pressed: state.link, shortcut: keyLabel("link"), run: openLink }),
+            act("unlink", T("edUnlink"), "rteUnlink", { rank: 14, disabled: !state.link, run: () => chain().extendMarkRange("link").unsetLink().run() }),
           ],
         },
         {
@@ -504,6 +506,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           triggerIcon: "add",
           triggerText: T("edInsert"),
           width: 96,
+          rank: 9,
           actions: insertDefs.map((d, i) => act(d.id, d.label, d.icon, { shortcut: d.shortcut, separator: i === 4, run: () => d.run() })),
         },
         {
@@ -511,8 +514,8 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           kind: "buttons",
           label: T("edGroupHistory"),
           actions: [
-            act("undo", T("rteUndo"), "rteUndo", { disabled: !state.canUndo, shortcut: keyLabel("undo"), run: () => chain().undo().run() }),
-            act("redo", T("rteRedo"), "rteRedo", { disabled: !state.canRedo, shortcut: keyLabel("redo"), run: () => chain().redo().run() }),
+            act("undo", T("rteUndo"), "rteUndo", { rank: 7, disabled: !state.canUndo, shortcut: keyLabel("undo"), run: () => chain().undo().run() }),
+            act("redo", T("rteRedo"), "rteRedo", { rank: 8, disabled: !state.canRedo, shortcut: keyLabel("redo"), run: () => chain().redo().run() }),
           ],
         },
         {
@@ -625,14 +628,36 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
             {editor && findOpen ? <FindPanel editor={editor} locale={locale} onClose={() => setFindOpen(false)} /> : null}
             {editor && state.inTable ? (
               <div role="toolbar" aria-label={T("edTableBar")} className="flex flex-wrap items-center gap-[2px] border-b border-line bg-surface-alt p-[var(--space-1)]">
-                <IconButton icon="rteRowBefore" label={T("edRowBefore")} onClick={() => chain().addRowBefore().run()} />
-                <IconButton icon="rteRowAfter" label={T("edRowAfter")} onClick={() => chain().addRowAfter().run()} />
-                <IconButton icon="delete" label={T("edRowDelete")} onClick={() => chain().deleteRow().run()} />
-                <IconButton icon="rteColumnBefore" label={T("edColumnBefore")} onClick={() => chain().addColumnBefore().run()} />
-                <IconButton icon="rteColumnAfter" label={T("edColumnAfter")} onClick={() => chain().addColumnAfter().run()} />
-                <IconButton icon="delete" label={T("edColumnDelete")} onClick={() => chain().deleteColumn().run()} />
-                <IconButton icon="rteHeaderRow" label={T("edHeaderRow")} pressed={state.headerRow} onClick={() => chain().toggleHeaderRow().run()} />
-                <IconButton icon="delete" label={T("edTableDelete")} onClick={() => chain().deleteTable().run()} />
+                <div className="sm:hidden">
+                  <Menu
+                    label={T("edTableBar")}
+                    triggerLabel={T("edTableBar")}
+                    icon="rteTable"
+                    items={[
+                      { id: "rowBefore", label: T("edRowBefore"), icon: "rteRowBefore", run: () => chain().addRowBefore().run() },
+                      { id: "rowAfter", label: T("edRowAfter"), icon: "rteRowAfter", run: () => chain().addRowAfter().run() },
+                      { id: "rowDelete", label: T("edRowDelete"), icon: "delete", run: () => chain().deleteRow().run() },
+                      { id: "colBefore", label: T("edColumnBefore"), icon: "rteColumnBefore", separator: true, run: () => chain().addColumnBefore().run() },
+                      { id: "colAfter", label: T("edColumnAfter"), icon: "rteColumnAfter", run: () => chain().addColumnAfter().run() },
+                      { id: "colDelete", label: T("edColumnDelete"), icon: "delete", run: () => chain().deleteColumn().run() },
+                      { id: "header", label: T("edHeaderRow"), icon: "rteHeaderRow", checked: state.headerRow, separator: true, run: () => chain().toggleHeaderRow().run() },
+                      { id: "tableDelete", label: T("edTableDelete"), icon: "delete", run: () => chain().deleteTable().run() },
+                    ]}
+                    onAfterRun={() => editor.commands.focus()}
+                  >
+                    <span className="text-sm">{T("edTableBar")}</span>
+                  </Menu>
+                </div>
+                <div className="hidden flex-wrap items-center gap-[2px] sm:flex">
+                  <IconButton icon="rteRowBefore" label={T("edRowBefore")} onClick={() => chain().addRowBefore().run()} />
+                  <IconButton icon="rteRowAfter" label={T("edRowAfter")} onClick={() => chain().addRowAfter().run()} />
+                  <IconButton icon="delete" label={T("edRowDelete")} onClick={() => chain().deleteRow().run()} />
+                  <IconButton icon="rteColumnBefore" label={T("edColumnBefore")} onClick={() => chain().addColumnBefore().run()} />
+                  <IconButton icon="rteColumnAfter" label={T("edColumnAfter")} onClick={() => chain().addColumnAfter().run()} />
+                  <IconButton icon="delete" label={T("edColumnDelete")} onClick={() => chain().deleteColumn().run()} />
+                  <IconButton icon="rteHeaderRow" label={T("edHeaderRow")} pressed={state.headerRow} onClick={() => chain().toggleHeaderRow().run()} />
+                  <IconButton icon="delete" label={T("edTableDelete")} onClick={() => chain().deleteTable().run()} />
+                </div>
               </div>
             ) : null}
             {editor && state.codeBlock ? (
@@ -645,7 +670,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
                   onChange={(e) => editor.chain().updateAttributes("codeBlock", { language: e.target.value.replace(/[^A-Za-z0-9_+#.-]/g, "").slice(0, 32) || null }).run()}
                   autoComplete="off"
                   spellCheck={false}
-                  className="max-w-[16rem]"
+                  className="w-full max-w-[16rem]"
                 />
               </div>
             ) : null}

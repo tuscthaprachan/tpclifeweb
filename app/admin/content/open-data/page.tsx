@@ -97,7 +97,7 @@ export default async function OpenDataDocumentsPage({ searchParams }: { searchPa
     { id: "title", header: a("listTitle", locale), cell: (row) => <a href={`${OPEN_DATA_PATHS.documents}/${row.id}`} className="font-medium">{title(row)}</a> },
     ...(owners.length > 1 ? [{ id: "owner", header: a("fieldOwner", locale), cell: (row: Row) => ownerLabel(row.owner, locale) }] : []),
     { id: "type", header: a("odmFieldType", locale), cell: (row) => documentTypeLabel(row.type, locale) },
-    { id: "file", header: a("odmColFile", locale), cell: (row) => a(row.hasFile ? "odmFileStored" : "odmFileNone", locale) },
+    { id: "file", header: a("odmColFile", locale), mobileHidden: true, cell: (row) => a(row.hasFile ? "odmFileStored" : "odmFileNone", locale) },
     { id: "status", header: a("listStatus", locale), cell: (row) => <PublishState published={row.status === "published"} locale={locale} /> },
     {
       id: "edit",

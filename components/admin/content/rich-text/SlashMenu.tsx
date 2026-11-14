@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import { freeSpace } from "./viewport";
 import { createPortal } from "react-dom";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { a } from "@/lib/i18n/admin";
@@ -55,8 +56,9 @@ export function SlashMenu({ locale, bridge, onActiveChange, listId }: { locale: 
   if (!open || typeof document === "undefined") return null;
   const top = (open.rect?.bottom ?? 0) + 4;
   const left = Math.max(8, Math.min(open.rect?.left ?? 0, window.innerWidth - 280));
-  const below = window.innerHeight - top - 8;
-  const above = (open.rect?.top ?? 0) - 12;
+  const space = freeSpace({ top: open.rect?.top ?? 0, bottom: open.rect?.bottom ?? 0 });
+  const below = space.below - 4;
+  const above = space.above - 4;
   const flip = below < 200 && above > below;
   const listMax = Math.max(96, Math.min(256, flip ? above : below));
   return createPortal(

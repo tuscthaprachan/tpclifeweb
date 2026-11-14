@@ -68,9 +68,9 @@ export default async function OpenDataBudgetPage({ searchParams }: { searchParam
   const columns: DataTableColumn<Row>[] = [
     { id: "year", header: a("odmFieldFiscalYear", locale), cell: (row) => row.fiscalYear },
     ...(owners.length > 1 ? [{ id: "owner", header: a("fieldOwner", locale), cell: (row: Row) => ownerLabel(row.owner, locale) }] : []),
-    { id: "view", header: a("odmFieldView", locale), cell: (row) => a(row.view === "organisation" ? "odmViewOrganisation" : row.view === "project" ? "odmViewProject" : "odmViewCategory", locale) },
+    { id: "view", header: a("odmFieldView", locale), mobileHidden: true, cell: (row) => a(row.view === "organisation" ? "odmViewOrganisation" : row.view === "project" ? "odmViewProject" : "odmViewCategory", locale) },
     { id: "organisation", header: a("odmFieldOrganisation", locale), cell: (row) => <a href={`${OPEN_DATA_PATHS.budget}/${row.id}`} className="font-medium">{row.organisation}</a> },
-    { id: "project", header: a("odmFieldProject", locale), cell: (row) => row.project },
+    { id: "project", header: a("odmFieldProject", locale), mobileHidden: true, cell: (row) => row.project },
     { id: "category", header: a("odmFieldCategory", locale), cell: (row) => row.category },
     { id: "amount", header: a("odmFieldAmount", locale), align: "end", cell: (row) => formatMoney(row.amount, locale) },
     {

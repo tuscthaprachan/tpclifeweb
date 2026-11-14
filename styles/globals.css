@@ -413,6 +413,20 @@
   background: var(--surface-sunk);
   font-weight: 600;
 }
+@media (max-width: 39.99rem) {
+  .prose-editor .tableWrapper {
+    overflow-x: auto;
+  }
+  .prose-editor table {
+    table-layout: auto;
+    width: max-content;
+    min-width: 100%;
+  }
+  .prose-editor td,
+  .prose-editor th {
+    min-width: 5rem;
+  }
+}
 .prose-editor .selectedCell {
   outline: var(--border-width-thick) solid var(--colour-action);
   outline-offset: -2px;

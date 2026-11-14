@@ -12,6 +12,8 @@ export interface DataTableColumn<T> {
   align?: "start" | "end";
   /** Renders this column as `<th scope="row">` in every body and footer row. Use it on the first column only. */
   rowHeader?: boolean;
+  /** Leave this column out of the stacked phone card. Use it for detail that is also on the item's own page. */
+  mobileHidden?: boolean;
 }
 
 export interface DataTableFooterRow {
@@ -103,6 +105,7 @@ export function DataTable<T>({ columns, rows, getRowKey, caption, className, id,
                   data-label={column.header}
                   className={cx(
                     "flex items-baseline justify-between gap-[var(--space-4)] px-[var(--space-3)] py-[var(--space-1)] text-ink-900",
+                    column.mobileHidden && "max-sm:hidden",
                     "before:max-w-[45%] before:shrink-0 before:font-semibold before:text-ink-600 before:content-[attr(data-label)]",
                     "sm:table-cell sm:border-t sm:border-line sm:px-[var(--space-3)] sm:py-[var(--space-2)] sm:before:content-none",
                     column.align === "end" && cx("sm:text-right", NUMERIC),

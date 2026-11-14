@@ -104,6 +104,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
             id: "select",
             header: a("clBulkActions", locale),
             headerHidden: true,
+            mobile: "select",
             cell: (row: ContentListRow) => (
               <label className="inline-flex min-h-[var(--target-min)] items-center">
                 <input type="checkbox" name="id" value={row.id} className="h-[1.25rem] w-[1.25rem] accent-[var(--colour-action)]" />
@@ -117,6 +118,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
       id: "title",
       header: a("listTitle", locale),
       rowHeader: true,
+      mobile: "wide",
       sort: def.columns.title ? { key: "title", href: sortHref("title") } : undefined,
       cell: (row) => (
         <Link href={contentPath(def, row.id)} className="inline-flex min-h-[var(--target-min)] items-center font-medium sm:min-h-0">
@@ -129,6 +131,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
           {
             id: "status",
             header: a("listStatus", locale),
+            mobile: "sub",
             sort: { key: "status", href: sortHref("status") },
             cell: (row: ContentListRow) => <StatusBadge status={listStatus(row)} locale={locale} />,
           } satisfies ContentTableColumn<ContentListRow>,
@@ -137,9 +140,10 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
     {
       id: "updated",
       header: a("listUpdated", locale),
+      mobile: extras.date ? "hidden" : "note",
       sort: { key: "updated", href: sortHref("updated") },
       cell: (row) => (
-        <span className="flex flex-col">
+        <span className="flex flex-wrap gap-x-[var(--space-2)] sm:flex-col">
           <Timestamp value={row.updatedAt} locale={locale} format="datetime" />
           {row.updatedByName ? <span className="text-sm text-ink-600">{a("ccBy", locale, { name: row.updatedByName })}</span> : null}
         </span>
@@ -149,6 +153,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
       id: "actions",
       header: a("listActions", locale),
       align: "end",
+      mobile: "action",
       cell: (row) => {
         const name = rowTitle(row.title, locale);
         const live = liveHref(row);
@@ -177,6 +182,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
     const dateColumn: ContentTableColumn<ContentListRow> = {
       id: "date",
       header: a(extras.date.labelKey, locale),
+      mobile: "note",
       sort: { key: "date", href: sortHref("date") },
       cell: (row) => (row.date ? <Timestamp value={row.date} locale={locale} format="date" /> : <span className="text-ink-600">-</span>),
     };

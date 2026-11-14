@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { ConsoleIcon, type ConsoleIconName } from "@/components/admin/icons";
 import { ICON_BUTTON } from "./IconButton";
+import { freeSpace } from "./viewport";
 
 export interface MenuItem {
   id: string;
@@ -48,6 +49,29 @@ export function Menu({ label, items, children, icon, triggerLabel, align = "star
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const focusOnOpen = useRef<"first" | "last" | "checked">("first");
+  const [fit, setFit] = useState<{ max: number; up: boolean } | null>(null);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    const viewport = window.visualViewport;
+    const place = () => {
+      const trigger = triggerRef.current;
+      if (!trigger) return;
+      const box = trigger.getBoundingClientRect();
+      const { above, below } = freeSpace(box);
+      const up = below < 200 && above > below;
+      setFit({ max: Math.max(120, Math.min(384, up ? above : below)), up });
+    };
+    place();
+    viewport?.addEventListener("resize", place);
+    viewport?.addEventListener("scroll", place);
+    window.addEventListener("resize", place);
+    return () => {
+      viewport?.removeEventListener("resize", place);
+      viewport?.removeEventListener("scroll", place);
+      window.removeEventListener("resize", place);
+    };
+  }, [open]);
 
   const rows = () => [...(listRef.current?.querySelectorAll<HTMLButtonElement>('[role^="menuitem"]:not(:disabled)') ?? [])];
 
@@ -143,9 +167,10 @@ export function Menu({ label, items, children, icon, triggerLabel, align = "star
           role="menu"
           aria-label={label}
           onKeyDown={onListKey}
-          className={`absolute top-full z-[var(--z-overlay)] mt-[var(--space-1)] flex max-h-[min(24rem,60vh)] min-w-[14rem] flex-col overflow-y-auto rounded-control border border-line-strong bg-surface-overlay p-[var(--space-1)] shadow-[var(--shadow-elevation)] ${
-            align === "end" ? "right-0" : "left-0"
-          }`}
+          style={{ maxHeight: fit?.max ?? 240 }}
+          className={`absolute z-[var(--z-overlay)] flex min-w-[14rem] max-w-[calc(100vw-1.5rem)] flex-col overflow-y-auto overscroll-contain rounded-control border border-line-strong bg-surface-overlay p-[var(--space-1)] shadow-[var(--shadow-elevation)] ${
+            fit?.up ? "bottom-full mb-[var(--space-1)]" : "top-full mt-[var(--space-1)]"
+          } ${align === "end" ? "right-0" : "left-0"}`}
         >
           {items.map((item) => (
             <div key={item.id} role="none" className={item.separator ? "mt-[var(--space-1)] border-t border-line pt-[var(--space-1)]" : undefined}>
