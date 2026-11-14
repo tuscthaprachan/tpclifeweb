@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useState, useTransition } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
 import { uploadImageAction } from "@/app/admin/content/actions";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Button, ErrorMessage, NotificationBanner } from "@/components/ui";
@@ -15,8 +14,6 @@ import { useContentForm } from "./context";
 import { compressInBrowser } from "./compress-image-browser";
 import { formatMegabytes } from "./compress-image";
 import { PortalDialog } from "./PortalDialog";
-
-const ARROW = { size: 18, strokeWidth: 1.75, absoluteStrokeWidth: true, "aria-hidden": true, focusable: false } as const;
 
 interface ImagePickerProps {
   /** Form name. Posts one value per chosen picture (an image id), in order. */
@@ -33,6 +30,8 @@ interface ImagePickerProps {
   onChange?: (ids: string[]) => void;
   /** Do not post hidden inputs; the caller reads `onChange`. */
   unnamed?: boolean;
+  /** Called with each picture uploaded here, so the caller can show it without reloading the library. */
+  onUploaded?: (image: ImageChoice) => void;
 }
 
 function Thumb({ image, size = 64 }: { image: ImageChoice | undefined; size?: number }) {
@@ -54,7 +53,7 @@ function Thumb({ image, size = 64 }: { image: ImageChoice | undefined; size?: nu
  * Choose pictures from the library, or upload a new one (with its alt text).
  * Posts the chosen image ids under `name`.
  */
-export function ImagePicker({ name, label, hint, images: initial, storageConfigured, defaultValue = [], multiple = false, onChange, unnamed }: ImagePickerProps) {
+export function ImagePicker({ name, label, hint, images: initial, storageConfigured, defaultValue = [], multiple = false, onChange, unnamed, onUploaded }: ImagePickerProps) {
   const { errors, locale, markDirty } = useContentForm();
   const [library, setLibrary] = useState(initial);
   const [chosen, setChosen] = useState<string[]>(defaultValue);
@@ -107,6 +106,7 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
       const result = await uploadImageAction(data);
       if (!result.ok) return setUploadError(result.error);
       setLibrary((current) => [result.image, ...current]);
+      onUploaded?.(result.image);
       if (multiple) update([...chosen, result.image.id]);
       else {
         update([result.image.id]);
@@ -129,13 +129,13 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
               <span className="min-w-0 flex-1 text-sm">{altOf(byId.get(imageId))}</span>
               <span className="flex flex-wrap gap-[var(--space-1)]">
                 {multiple && index > 0 ? (
-                  <Button type="button" variant="quiet" size="sm" icon={<ArrowUp {...ARROW} />} onClick={() => move(index, -1)}>
+                  <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="moveUp" />} onClick={() => move(index, -1)}>
                     {a("moveUp", locale)}
                     <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
                   </Button>
                 ) : null}
                 {multiple && index < chosen.length - 1 ? (
-                  <Button type="button" variant="quiet" size="sm" icon={<ArrowDown {...ARROW} />} onClick={() => move(index, 1)}>
+                  <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="moveDown" />} onClick={() => move(index, 1)}>
                     {a("moveDown", locale)}
                     <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
                   </Button>

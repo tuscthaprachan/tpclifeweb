@@ -1,3 +1,4 @@
+import type { ConsoleIconName } from "@/components/admin/icons";
 import type { ImageChoice } from "@/lib/admin/content/images";
 import type { AdminKey } from "@/lib/i18n/admin";
 import { a } from "@/lib/i18n/admin";
@@ -16,6 +17,15 @@ export const BLOCK_LABEL: Record<BlockType, AdminKey> = {
   contactBlock: "blockContact",
   formCallout: "blockForm",
   image: "blockImage",
+  linkOut: "blockLinkOut",
+  calloutBox: "blockCallout",
+  stepList: "blockSteps",
+};
+
+export const BLOCK_ICON: Record<BlockType, ConsoleIconName> = {
+  contactBlock: "blockContact",
+  formCallout: "forms",
+  image: "images",
   linkOut: "blockLinkOut",
   calloutBox: "blockCallout",
   stepList: "blockSteps",

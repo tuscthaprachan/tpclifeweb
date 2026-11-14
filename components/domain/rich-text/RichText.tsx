@@ -43,6 +43,11 @@ function renderMarks(node: RichTextNode, ctx: Ctx): ReactNode {
   for (const mark of [...(node.marks ?? [])].reverse()) {
     if (mark.type === "bold") out = <strong>{out}</strong>;
     else if (mark.type === "italic") out = <em>{out}</em>;
+    else if (mark.type === "underline") out = <u>{out}</u>;
+    else if (mark.type === "strike") out = <s>{out}</s>;
+    else if (mark.type === "code") {
+      out = <code className="rounded-control bg-surface-sunk px-[var(--space-1)] py-px font-mono text-[0.9em] text-ink-900 [overflow-wrap:anywhere]">{out}</code>;
+    }
     else if (mark.type === "link" && typeof mark.attrs?.href === "string") {
       out = (
         <Link href={mark.attrs.href} locale={ctx.locale}>
@@ -75,6 +80,66 @@ function renderBlocks(nodes: readonly RichTextNode[] | undefined, ctx: Ctx, unwr
     }
     return renderNode(node, ctx, i);
   });
+}
+
+function cellText(cell: RichTextNode): string {
+  const parts: string[] = [];
+  const walk = (nodes: readonly RichTextNode[] | undefined) => {
+    for (const n of nodes ?? []) {
+      if (n.type === "text" && n.text) parts.push(n.text);
+      else if (n.type === "hardBreak") parts.push(" ");
+      walk(n.content);
+    }
+  };
+  walk(cell.content);
+  return parts.join("").replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Written tables get the same stacked mobile layout as DataTable: below `sm`
+ * each cell becomes a row labelled by its column header (from `data-label`),
+ * so nothing scrolls sideways at 320px. A table with no header row stacks
+ * without labels.
+ */
+function renderTable(node: RichTextNode, ctx: Ctx, key: number): ReactNode {
+  const rows = node.content ?? [];
+  const head = rows[0]?.content?.[0]?.type === "tableHeader" ? rows[0] : undefined;
+  const body = head ? rows.slice(1) : rows;
+  const labels = head?.content?.map(cellText) ?? [];
+  return (
+    <table key={key} className="block w-full border-collapse text-left sm:table">
+      {head ? (
+        <thead className="hidden sm:table-header-group">
+          <tr>
+            {head.content?.map((cell, c) => (
+              <th key={c} scope="col" className="border-b border-line-strong px-[var(--space-3)] py-[var(--space-2)] font-semibold text-ink-900">
+                {renderInline(cell.content?.[0]?.content, ctx)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+      ) : null}
+      <tbody className="block sm:table-row-group">
+        {body.map((row, r) => (
+          <tr key={r} className="block border-b border-line py-[var(--space-2)] sm:table-row sm:border-b-0 sm:py-0">
+            {row.content?.map((cell, c) => (
+              <td
+                key={c}
+                data-label={labels[c] || undefined}
+                className={
+                  labels[c]
+                    ? "flex items-baseline justify-between gap-[var(--space-4)] px-[var(--space-3)] py-[var(--space-1)] text-ink-900 before:font-semibold before:text-ink-600 before:content-[attr(data-label)] sm:table-cell sm:border-t sm:border-line sm:py-[var(--space-2)] sm:before:content-none"
+                    : "block px-[var(--space-3)] py-[var(--space-1)] text-ink-900 sm:table-cell sm:border-t sm:border-line sm:py-[var(--space-2)]"
+                }
+              >
+                <span className="min-w-0 [overflow-wrap:anywhere] sm:contents">{renderInline(cell.content?.[0]?.content, ctx)}</span>
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 function renderNode(node: RichTextNode, ctx: Ctx, key: number): ReactNode {
@@ -113,6 +178,16 @@ function renderNode(node: RichTextNode, ctx: Ctx, key: number): ReactNode {
       );
     case "listItem":
       return <li key={key}>{renderBlocks(node.content, ctx, true)}</li>;
+    case "codeBlock":
+      return (
+        <pre key={key} className="m-0 whitespace-pre-wrap rounded-control bg-surface-sunk p-[var(--space-3)] font-mono text-sm text-ink-900 [overflow-wrap:anywhere]">
+          <code>{node.content?.map((c) => c.text).join("")}</code>
+        </pre>
+      );
+    case "horizontalRule":
+      return <hr key={key} className="m-0 border-0 border-t border-line-strong" />;
+    case "table":
+      return renderTable(node, ctx, key);
     case "image": {
       const a = attrs as unknown as ImageAttrs;
       return <ImageBlock key={key} attrs={a} image={ctx.resolved.images?.get(a.imageId)} locale={ctx.locale} />;

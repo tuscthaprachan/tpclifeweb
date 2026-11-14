@@ -38,12 +38,21 @@ export const PLAIN_NODES = [
   "blockquote",
   "hardBreak",
   "text",
+  "codeBlock",
+  "horizontalRule",
+  "table",
+  "tableRow",
+  "tableHeader",
+  "tableCell",
 ] as const;
 
 /** The six custom block nodes (leaf nodes, no children). */
 export const CUSTOM_NODES = ["image", "formCallout", "linkOut", "calloutBox", "stepList", "contactBlock"] as const;
 
-export const MARKS = ["bold", "italic", "link"] as const;
+export const MARKS = ["bold", "italic", "underline", "strike", "code", "link"] as const;
+
+/** The order marks are written in, so equal documents compare equal. */
+export const MARK_ORDER = ["bold", "italic", "underline", "strike", "link", "code"] as const;
 
 /** Heading levels body copy may use. There is no h1: the page owns it. */
 export const HEADING_LEVELS = [2, 3, 4] as const;
@@ -176,8 +185,14 @@ const linkMarkAttrs = z
   })
   .strict();
 
+const codeBlockAttrs = z
+  .object({ language: z.string().regex(/^[A-Za-z0-9_+#.-]{1,32}$/, "Code language is not valid").optional() })
+  .strict()
+  .default({});
+
 const NODE_ATTRS: Record<string, z.ZodType | undefined> = {
   heading: headingAttrs,
+  codeBlock: codeBlockAttrs,
   image: imageAttrs,
   formCallout: formCalloutAttrs,
   linkOut: linkOutAttrs,
@@ -196,17 +211,23 @@ const CUSTOM = new Set<string>(CUSTOM_NODES);
 
 /** Which child node types each parent may hold. Leaf nodes hold none. */
 const CHILDREN: Record<string, (type: string) => boolean> = {
-  doc: (t) => t === "paragraph" || t === "heading" || t === "blockquote" || LISTS.has(t) || CUSTOM.has(t),
+  doc: (t) =>
+    t === "paragraph" || t === "heading" || t === "blockquote" || t === "codeBlock" || t === "horizontalRule" || t === "table" || LISTS.has(t) || CUSTOM.has(t),
   paragraph: (t) => INLINE.has(t),
   heading: (t) => INLINE.has(t),
   blockquote: (t) => t === "paragraph" || LISTS.has(t),
   bulletList: (t) => t === "listItem",
   orderedList: (t) => t === "listItem",
   listItem: (t) => t === "paragraph" || LISTS.has(t),
+  codeBlock: (t) => t === "text",
+  table: (t) => t === "tableRow",
+  tableRow: (t) => t === "tableHeader" || t === "tableCell",
+  tableHeader: (t) => t === "paragraph",
+  tableCell: (t) => t === "paragraph",
 };
 
 const KNOWN = new Set<string>([...PLAIN_NODES, "heading", ...CUSTOM_NODES]);
-const MAX_DEPTH = 12;
+const MAX_DEPTH = 14;
 const MAX_NODES = 5000;
 
 export class RichTextError extends Error {
@@ -219,12 +240,19 @@ export class RichTextError extends Error {
 function parseMarks(marks: unknown, path: string): RichTextMark[] | undefined {
   if (marks === undefined) return undefined;
   if (!Array.isArray(marks)) throw new RichTextError("marks must be an array", path);
+  const parsed = parseMarkList(marks, path);
+  if (parsed.some((m) => m.type === "code") && parsed.length > 1) throw new RichTextError("code cannot be combined with other marks", path);
+  if (new Set(parsed.map((m) => m.type)).size !== parsed.length) throw new RichTextError("a mark is used twice", path);
+  return parsed;
+}
+
+function parseMarkList(marks: unknown[], path: string): RichTextMark[] {
   return marks.map((raw: unknown, i) => {
     const here = `${path}.marks[${i}]`;
     if (typeof raw !== "object" || raw === null) throw new RichTextError("mark must be an object", here);
     const { type, attrs, ...rest } = raw as Record<string, unknown>;
     if (Object.keys(rest).length > 0) throw new RichTextError(`unexpected field "${Object.keys(rest)[0]}"`, here);
-    if (type === "bold" || type === "italic") {
+    if (type === "bold" || type === "italic" || type === "underline" || type === "strike" || type === "code") {
       if (attrs !== undefined && !(typeof attrs === "object" && attrs !== null && Object.keys(attrs).length === 0)) {
         throw new RichTextError(`${type} takes no attrs`, here);
       }
@@ -236,6 +264,21 @@ function parseMarks(marks: unknown, path: string): RichTextMark[] | undefined {
       return { type, attrs: { href: parsed.data.href } };
     }
     throw new RichTextError(`unknown mark "${String(type)}"`, here);
+  });
+}
+
+/** A table is rectangular; only its first row may be headers, and then all of it is. */
+function checkTable(node: RichTextNode, path: string) {
+  const rows = node.content;
+  if (!rows?.length) throw new RichTextError("table needs at least one row", path);
+  const width = rows[0]!.content?.length ?? 0;
+  rows.forEach((row, r) => {
+    const cells = row.content ?? [];
+    if (cells.length !== width) throw new RichTextError("every table row needs the same number of cells", `${path}.content[${r}]`);
+    const headers = cells.filter((c) => c.type === "tableHeader").length;
+    if (r === 0 ? headers !== 0 && headers !== cells.length : headers !== 0) {
+      throw new RichTextError("only the first row may hold headers, and then every cell in it", `${path}.content[${r}]`);
+    }
   });
 }
 
@@ -259,7 +302,7 @@ function parseNode(raw: unknown, parent: string, path: string, depth: number, co
     if (!parsed.success) {
       throw new RichTextError(parsed.error.issues.map((x) => `${x.path.join(".") || "attrs"}: ${x.message}`).join("; "), `${path}.attrs`);
     }
-    node.attrs = parsed.data as Record<string, unknown>;
+    if (type !== "codeBlock" || Object.keys(parsed.data as object).length > 0) node.attrs = parsed.data as Record<string, unknown>;
   } else if (attrs !== undefined && !(typeof attrs === "object" && attrs !== null && Object.keys(attrs).length === 0)) {
     throw new RichTextError(`${type} takes no attrs`, path);
   }
@@ -280,6 +323,12 @@ function parseNode(raw: unknown, parent: string, path: string, depth: number, co
     if (content.length > 0) {
       node.content = content.map((child, i) => parseNode(child, type, `${path}.content[${i}]`, depth + 1, count));
     }
+  }
+  if (type === "codeBlock" && node.content?.some((c) => c.marks?.length)) throw new RichTextError("code block text cannot carry marks", path);
+  if (type === "table") checkTable(node, path);
+  if (type === "tableRow" && !node.content) throw new RichTextError("table row needs at least one cell", path);
+  if ((type === "tableCell" || type === "tableHeader") && node.content?.length !== 1) {
+    throw new RichTextError("table cell holds exactly one paragraph", path);
   }
   if ((type === "bulletList" || type === "orderedList") && !node.content) throw new RichTextError("list needs at least one item", path);
   if (type === "listItem" && node.content?.[0]?.type !== "paragraph") {

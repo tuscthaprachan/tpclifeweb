@@ -366,6 +366,65 @@
   color: var(--colour-action);
   text-decoration: underline;
 }
+.prose-editor code {
+  background: var(--surface-sunk);
+  border-radius: var(--radius-control);
+  padding: 0 var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+.prose-editor pre {
+  background: var(--surface-sunk);
+  border-radius: var(--radius-control);
+  padding: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.prose-editor pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+.prose-editor hr {
+  border: 0;
+  border-top: var(--border-width) solid var(--line-strong);
+  margin-block: var(--space-4);
+}
+.prose-editor hr.ProseMirror-selectednode {
+  outline: var(--border-width-thick) solid var(--colour-action);
+}
+.prose-editor table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+.prose-editor th,
+.prose-editor td {
+  border: var(--border-width) solid var(--line-strong);
+  padding: var(--space-1) var(--space-2);
+  vertical-align: top;
+  text-align: left;
+  min-width: 3rem;
+  overflow-wrap: anywhere;
+}
+.prose-editor th {
+  background: var(--surface-sunk);
+  font-weight: 600;
+}
+.prose-editor .selectedCell {
+  outline: var(--border-width-thick) solid var(--colour-action);
+  outline-offset: -2px;
+}
+.prose-editor .rt-find-match {
+  background: var(--surface-sunk);
+  outline: 1px dashed var(--line-strong);
+}
+.prose-editor .rt-find-current {
+  background: var(--fill-activity-soft);
+  outline: var(--border-width-thick) solid var(--colour-action);
+}
 
 .nav-progress {
   position: fixed;

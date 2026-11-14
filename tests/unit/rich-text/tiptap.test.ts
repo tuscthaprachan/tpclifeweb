@@ -97,10 +97,10 @@ describe("TipTap vocabulary", () => {
     expect(() => throughEditor({ type: "doc", content: [{ type: "heading", attrs: { level: 1 }, content: [{ type: "text", text: "h" }] }] })).not.toThrow();
   });
 
-  it("has no strike, code, underline or rule in the schema", () => {
-    for (const name of ["strike", "code", "underline", "codeBlock", "horizontalRule"]) {
-      expect(schema.nodes[name] ?? schema.marks[name]).toBeUndefined();
-    }
+  it("has strike, code, underline, code blocks, rules and tables, and nothing outside the stored vocabulary", () => {
+    for (const name of ["strike", "code", "underline"]) expect(schema.marks[name]).toBeDefined();
+    for (const name of ["codeBlock", "horizontalRule", "table", "tableRow", "tableCell", "tableHeader"]) expect(schema.nodes[name]).toBeDefined();
+    expect(Object.keys(schema.marks).sort()).toEqual(["bold", "code", "italic", "link", "strike", "underline"]);
   });
 
   it("defines all six custom blocks as atoms", () => {

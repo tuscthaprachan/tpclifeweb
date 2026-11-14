@@ -6,6 +6,7 @@ import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { isSafeHref } from "@/lib/rich-text/schema";
 import { validateBlockAttrs, type BlockType } from "@/lib/rich-text/editor";
+import type { ImageChoice } from "@/lib/admin/content/images";
 import { ImagePicker } from "../ImagePicker";
 import { PortalDialog } from "../PortalDialog";
 import { ReferencePicker } from "../ReferencePicker";
@@ -72,10 +73,12 @@ interface BlockDialogProps {
   refs: RichTextRefs;
   onSubmit: (attrs: Raw) => void;
   onClose: () => void;
+  /** A picture uploaded from the image picker in this dialog, so the editor's block cards can show it. */
+  onImageUploaded?: (image: ImageChoice) => void;
 }
 
 /** The form for one custom block's attrs, opened by the toolbar (insert) or the block's Edit button. */
-export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClose }: BlockDialogProps) {
+export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClose, onImageUploaded }: BlockDialogProps) {
   const uid = useId();
   const [attrs, setAttrs] = useState<Raw>(() => structuredClone(initial));
   const [error, setError] = useState<string | null>(null);
@@ -127,6 +130,7 @@ export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClo
           label={a("blockImagePicture", locale)}
           images={refs.images}
           storageConfigured={refs.storageConfigured}
+          onUploaded={onImageUploaded}
           defaultValue={attrs.imageId ? [String(attrs.imageId)] : []}
           onChange={(ids) => {
             const chosen = refs.images.find((i) => i.id === ids[0]);

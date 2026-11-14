@@ -2,6 +2,7 @@ import { Node, mergeAttributes, type AnyExtension, type Extensions } from "@tipt
 import { Blockquote } from "@tiptap/extension-blockquote";
 import { ListItem } from "@tiptap/extension-list";
 import { StarterKit } from "@tiptap/starter-kit";
+import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { BLOCK_DEFAULTS, type BlockType } from "./editor";
 import { CUSTOM_NODES, HEADING_LEVELS, isSafeHref } from "./schema";
 
@@ -18,6 +19,10 @@ const RestrictedBlockquote = Blockquote.extend({ content: "(paragraph | bulletLi
 
 /** A list item is a paragraph then optional nested lists; no headings or custom blocks inside lists. */
 const RestrictedListItem = ListItem.extend({ content: "paragraph (bulletList | orderedList)*" });
+
+/** A cell is exactly one paragraph, as the stored schema requires; Shift+Enter makes a line break inside it. */
+const SingleParagraphCell = TableCell.extend({ content: "paragraph" });
+const SingleParagraphHeader = TableHeader.extend({ content: "paragraph" });
 
 /**
  * A custom block is a leaf node whose attrs are the schema's attrs, kept
@@ -67,12 +72,8 @@ export function richTextExtensions(blocks: readonly AnyExtension[] = customBlock
       heading: { levels: [...HEADING_LEVELS] },
       blockquote: false,
       listItem: false,
-      strike: false,
-      code: false,
-      codeBlock: false,
-      horizontalRule: false,
-      underline: false,
       trailingNode: false,
+      codeBlock: { defaultLanguage: null },
       link: {
         openOnClick: false,
         autolink: false,
@@ -83,6 +84,10 @@ export function richTextExtensions(blocks: readonly AnyExtension[] = customBlock
     }),
     RestrictedBlockquote,
     RestrictedListItem,
+    Table.configure({ resizable: false }),
+    TableRow,
+    SingleParagraphHeader,
+    SingleParagraphCell,
     ...blocks,
   ];
 }

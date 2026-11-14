@@ -58,8 +58,8 @@ describe("parseRichTextDoc", () => {
 
   it("rejects unknown nodes and marks", () => {
     expect(() => parseRichTextDoc(doc({ type: "script", content: [] }))).toThrow(/unknown node "script"/);
-    expect(() => parseRichTextDoc(doc({ type: "codeBlock", content: [] }))).toThrow(/unknown node/);
-    expect(() => parseRichTextDoc(doc(para("x", [{ type: "underline" }])))).toThrow(/unknown mark "underline"/);
+    expect(() => parseRichTextDoc(doc({ type: "pre", content: [] }))).toThrow(/unknown node/);
+    expect(() => parseRichTextDoc(doc(para("x", [{ type: "highlight" }])))).toThrow(/unknown mark "highlight"/);
   });
 
   it("rejects bad structure", () => {
