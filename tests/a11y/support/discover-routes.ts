@@ -20,12 +20,17 @@
  *     linked from either nav in components/layout/site-settings.ts, and was
  *     never meant to pass a bilingual accessibility audit built for the
  *     public site.
+ *   - `filtered`. The rewrite target of `proxy.ts` for the query routes
+ *     (`lib/query-routes.ts`): it is only reachable through a rewrite from the
+ *     public path with a reader query, and a direct request to `/filtered/*`
+ *     is a deliberate 404. The public paths it serves are discovered as
+ *     themselves, and `axe-states.spec.ts` audits the filtered renders.
  */
 
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
-const EXCLUDED_DIR_NAMES = new Set(["design"]);
+const EXCLUDED_DIR_NAMES = new Set(["design", "filtered"]);
 
 function isDynamicSegment(name: string): boolean {
   return name.startsWith("[") && name.endsWith("]");

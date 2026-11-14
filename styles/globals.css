@@ -150,6 +150,19 @@
     min-block-size: var(--target-min);
   }
 
+  /*
+   * The same for a link that is the whole content of a table cell (a meeting,
+   * a date, a footnote number). DataTable wraps cell content in a span, so
+   * that span counts as the cell.
+   */
+  :where(td, th) > a:only-child,
+  :where(td, th) > span:only-child > a:only-child {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--target-min);
+    min-inline-size: var(--target-min);
+  }
+
   a:hover {
     color: var(--colour-action-hover);
     text-decoration-thickness: max(2px, 0.125em);

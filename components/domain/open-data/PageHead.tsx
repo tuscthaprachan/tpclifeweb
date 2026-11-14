@@ -14,12 +14,12 @@ interface PageHeadProps {
 /** Label, h1 and one-line summary at the top of an open data page. */
 export function PageHead({ label, title, summary, className }: PageHeadProps) {
   return (
-    <header className={cx("mb-[var(--space-6)]", className)}>
+    <div className={cx("mb-[var(--space-6)]", className)}>
       <p className="m-0 mb-[var(--space-1)] text-sm font-semibold text-ink-600">{label}</p>
       <Heading level={1} className="m-0">
         {title}
       </Heading>
       {summary ? <p className="m-0 mt-[var(--space-3)] max-w-[var(--measure-en)] text-lg text-ink-900">{summary}</p> : null}
-    </header>
+    </div>
   );
 }

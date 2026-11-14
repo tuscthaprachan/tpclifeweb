@@ -130,7 +130,7 @@ export default async function TuscDataPage({ params }: { params: Promise<{ local
                       {info.usedIn.map((section, index) => (
                         <span key={section.href}>
                           {index > 0 ? ", " : ""}
-                          <Link href={localePath(locale, section.href)} locale={locale} className="text-action underline">
+                          <Link href={localePath(locale, section.href)} locale={locale} className="inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center text-action underline">
                             {section.label[locale]}
                           </Link>
                         </span>
