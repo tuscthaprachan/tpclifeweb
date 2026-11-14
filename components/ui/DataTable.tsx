@@ -73,7 +73,7 @@ export function DataTable<T>({ columns, rows, getRowKey, caption, className, id,
   const rowHeaderClass = "px-[var(--space-3)] py-[var(--space-1)] text-left font-semibold text-ink-900 sm:table-cell sm:border-t sm:border-line sm:py-[var(--space-2)]";
 
   const table = (
-    <table id={id} className={cx("block w-full border-collapse text-left [overflow-wrap:anywhere] sm:table", className)}>
+    <table id={id} className={cx("block w-full border-collapse text-left sm:table", className)}>
       <caption className="mb-[var(--space-2)] text-left text-sm text-ink-600">{caption}</caption>
       <thead className="hidden sm:table-header-group">
         <tr>

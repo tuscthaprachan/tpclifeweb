@@ -96,7 +96,7 @@ export function BudgetDictionary({ locale, lines, fileSize, sourceTitle, sourceH
   ];
 
   const columnColumns: DataTableColumn<ColumnRow>[] = [
-    { id: "column", header: UI.odDataDictColColumn[locale], rowHeader: true, cell: (row) => <code>{row.column}</code> },
+    { id: "column", header: UI.odDataDictColColumn[locale], rowHeader: true, cell: (row) => <code className="[overflow-wrap:anywhere]!">{row.column}</code> },
     { id: "meaning", header: UI.odDataDictColMeaning[locale], cell: (row) => row.meaning },
     { id: "type", header: UI.odDataDictColType[locale], cell: (row) => row.type },
     { id: "example", header: UI.odDataDictColExample[locale], cell: (row) => (/[฀-๿]/.test(row.example) ? <span lang="th">{row.example}</span> : row.example) },
@@ -123,7 +123,7 @@ export function BudgetDictionary({ locale, lines, fileSize, sourceTitle, sourceH
     rows: view.year === null ? n(view.rows) : `${format.year(view.year)}: ${n(view.rows)}`,
   }));
   const viewColumns: DataTableColumn<(typeof viewRows)[number]>[] = [
-    { id: "view", header: UI.odDataDictColView[locale], rowHeader: true, cell: (row) => <code>{row.name}</code> },
+    { id: "view", header: UI.odDataDictColView[locale], rowHeader: true, cell: (row) => <code className="[overflow-wrap:anywhere]!">{row.name}</code> },
     { id: "meaning", header: UI.odDataDictColMeaning[locale], cell: (row) => row.meaning },
     { id: "rows", header: UI.odDataDictColRows[locale], align: "end", cell: (row) => row.rows },
   ];
