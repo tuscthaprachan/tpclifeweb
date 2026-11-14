@@ -52,6 +52,8 @@ for (const locale of LOCALES as readonly Locale[]) {
     const summaryPanel = page.locator("div", { has: summary }).last();
     expect(await summaryPanel.getByRole("link").count()).toBeGreaterThan(0);
 
+    // After the post the title is briefly empty while the page's metadata streams in.
+    await expect(page).toHaveTitle(/.+/);
     await auditCurrentState(page, `${locale} /lost-and-found/report/category (error state)`);
   });
 

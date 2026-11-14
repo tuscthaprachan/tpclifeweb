@@ -25,7 +25,7 @@ const subscribeNever = () => () => {};
 export function ShareButton({ locale, href, id }: ShareButtonProps) {
   const hydrated = useSyncExternalStore(subscribeNever, () => true, () => false);
   const [state, setState] = useState<"idle" | "copied" | "manual">("idle");
-  const input = useRef<HTMLInputElement>(null);
+  const input = useRef<HTMLTextAreaElement>(null);
 
   const url = hydrated ? new URL(href, window.location.origin).toString() : href;
 
@@ -43,14 +43,14 @@ export function ShareButton({ locale, href, id }: ShareButtonProps) {
       <label htmlFor={`${id}-url`} className="text-base font-medium text-ink-900">
         {PICK.shareManual[locale]}
       </label>
-      <input
+      <textarea
         ref={input}
         id={`${id}-url`}
-        type="text"
         readOnly
+        rows={3}
         value={url}
         onFocus={(event) => event.currentTarget.select()}
-        className="min-h-[var(--target-min)] w-full rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
+        className="min-h-[var(--target-min)] w-full resize-none break-all rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
       />
     </div>
   );

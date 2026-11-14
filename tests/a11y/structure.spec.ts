@@ -69,6 +69,8 @@ test.describe("document structure", () => {
   }
 
   test(`unique titles across every route, per locale`, async ({ page }) => {
+    // One navigation per route in both locales, in a single test: it outgrew the 30 second default as routes were added.
+    test.setTimeout(240_000);
     for (const locale of LOCALES as readonly Locale[]) {
       const seen = new Map<string, string>();
       for (const route of routes) {

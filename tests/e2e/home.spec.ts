@@ -3,7 +3,8 @@ import { LOCALES, localePath, type Locale } from "../../lib/i18n/config";
 import { UI } from "../../lib/i18n/strings";
 
 const FIRST_SCREEN = { width: 360, height: 640 };
-const MAX_PAGE_HEIGHT = 3300;
+// Raised from 3300 for the open data section added to the home page (Thai, the taller language, measures 3413).
+const MAX_PAGE_HEIGHT = 3450;
 const MAX_TABS_TO_TODAY = 6;
 
 function today(page: Page, locale: Locale) {

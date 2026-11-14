@@ -365,13 +365,13 @@ function ShareBox({ locale, value, hydrated }: { locale: Locale; value: string; 
           <label htmlFor="group-share-url" className="text-base font-medium text-ink-900">
             {GROUP.shareLabel[locale]}
           </label>
-          <input
+          <textarea
             id="group-share-url"
-            type="text"
             readOnly
+            rows={3}
             value={value}
             onFocus={(event) => event.currentTarget.select()}
-            className="min-h-[var(--target-min)] w-full rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
+            className="min-h-[var(--target-min)] w-full resize-none break-all rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
           />
         </div>
         {hydrated ? (
