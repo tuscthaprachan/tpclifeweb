@@ -1,6 +1,10 @@
 import {
+  FileClock as OpsFileClock,
+  HeartPulse as OpsHeartPulse,
   CalendarClock as LucideCalendarClock,
   Copy as LucideCopyDoc,
+  LayoutGrid as LucideLayoutGrid,
+  Rows3 as LucideRows3,
   Eye as LucideEye,
   History as LucideHistory,
   Minus as LucideMinusSign,
@@ -147,6 +151,9 @@ export const CONSOLE_ICONS = {
   borrowInventory: Boxes,
   staff: Users,
   security: ShieldCheck,
+  audit: OpsFileClock,
+  health: OpsHeartPulse,
+  keyboard: LucideKeyboard,
 
   /* Navigation groups */
   groupWork: Briefcase,
@@ -242,6 +249,10 @@ export const CONSOLE_ICONS = {
   scheduled: LucideCalendarClock,
   redirects: LucideSignpost,
   diffRemoved: LucideMinusSign,
+  viewGrid: LucideLayoutGrid,
+  viewTable: LucideRows3,
+  copy: LucideCopy,
+  replaceFile: LucideReplace,
 } as const satisfies Record<string, LucideIcon>;
 
 export type ConsoleIconName = keyof typeof CONSOLE_ICONS;

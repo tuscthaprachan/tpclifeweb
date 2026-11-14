@@ -1,19 +1,23 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import { AdminLanguageSwitch } from "@/components/admin/AdminLanguageSwitch";
 import { ConsoleIcon } from "@/components/admin/icons";
+import type { GoShortcut } from "@/lib/admin/shortcuts";
 import type { Locale } from "@/lib/i18n/config";
 import type { ThemeChoice } from "@/lib/theme/config";
 import { AccountMenu } from "./AccountMenu";
 import { CommandPalette } from "./CommandPalette";
 import { useConsoleNav, useShell } from "./ShellContext";
+import { ShortcutKeys, ShortcutsDialog } from "./Shortcuts";
 import { ThemeMenu } from "./ThemeMenu";
 
 export interface TopbarProps {
   locale: Locale;
   theme: ThemeChoice;
   user: { name: string; email: string; roles: string[] };
+  /** The g-prefix pages this person can reach. */
+  shortcuts: GoShortcut[];
   /** Passed to the command palette for live results. */
   searchEndpoint?: string;
 }
@@ -27,10 +31,13 @@ function useIsApple(): boolean {
   );
 }
 
-export function Topbar({ locale, theme, user, searchEndpoint }: TopbarProps) {
+export function Topbar({ locale, theme, user, shortcuts, searchEndpoint }: TopbarProps) {
   const { nav, labels } = useConsoleNav();
   const { openDrawer, menuButtonRef } = useShell();
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const openHelp = useCallback(() => setHelpOpen(true), []);
+  const closeHelp = useCallback(() => setHelpOpen(false), []);
   const apple = useIsApple();
 
   return (
@@ -50,10 +57,12 @@ export function Topbar({ locale, theme, user, searchEndpoint }: TopbarProps) {
       <div className="console-topbar-tools">
         <AdminLanguageSwitch locale={locale} />
         <ThemeMenu current={theme} labels={labels} />
-        <AccountMenu name={user.name} email={user.email} roles={user.roles} labels={labels} />
+        <AccountMenu name={user.name} email={user.email} roles={user.roles} labels={labels} shortcuts={shortcuts} onShowShortcuts={openHelp} />
       </div>
 
-      <CommandPalette nav={nav} labels={labels} open={paletteOpen} onOpenChange={setPaletteOpen} searchEndpoint={searchEndpoint} />
+      <CommandPalette nav={nav} labels={labels} locale={locale} shortcuts={shortcuts} onShowShortcuts={openHelp} open={paletteOpen} onOpenChange={setPaletteOpen} searchEndpoint={searchEndpoint} />
+      <ShortcutKeys shortcuts={shortcuts} labels={labels} onHelp={openHelp} helpOpen={helpOpen} />
+      <ShortcutsDialog open={helpOpen} onClose={closeHelp} shortcuts={shortcuts} labels={labels} apple={apple} />
     </header>
   );
 }

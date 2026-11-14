@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { buildConsoleNav, resolveNav } from "@/lib/admin/nav";
+import { deriveShortcuts } from "@/lib/admin/shortcuts";
 import type { AccessContext } from "@/lib/auth/session";
 import { a, ROLE_LABEL } from "@/lib/i18n/admin";
 import { pick, type Locale } from "@/lib/i18n/config";
@@ -25,13 +26,14 @@ export interface ConsoleShellProps {
 export function ConsoleShell({ locale, session, theme, searchEndpoint, children }: ConsoleShellProps) {
   const nav = resolveNav(buildConsoleNav(session.roles), locale);
   const labels = shellLabels(locale);
+  const shortcuts = deriveShortcuts(nav, { content: labels.shortcutsContent });
   const orgNames = session.organisations.map((o) => pick({ th: o.nameTh, en: o.nameEn }, locale)).join(", ");
   const roles = session.roles.map((r) => `${a(ROLE_LABEL[r.role], locale)} (${orgNames})`);
 
   return (
     <ShellFrame nav={nav} labels={labels}>
       <Sidebar />
-      <Topbar locale={locale} theme={theme} user={{ name: session.user.name, email: session.user.email, roles }} searchEndpoint={searchEndpoint} />
+      <Topbar locale={locale} theme={theme} user={{ name: session.user.name, email: session.user.email, roles }} shortcuts={shortcuts} searchEndpoint={searchEndpoint} />
       <main id="main-content" tabIndex={-1} className="console-main">
         {children}
       </main>

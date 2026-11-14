@@ -33,6 +33,8 @@ export async function EventForm({ locale, id, saved }: { locale: Locale; id?: st
         id: event.id,
         status: event.status,
         updatedAt: event.updatedAt.toISOString(),
+        publishAt: event.publishAt?.toISOString() ?? null,
+        unpublishAt: event.unpublishAt?.toISOString() ?? null,
         updatedByName: event.updatedBy ? names.get(event.updatedBy) : null,
         viewHref: localePath(locale, `/events/${event.slug}`),
       }

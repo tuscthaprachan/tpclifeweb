@@ -1,0 +1,136 @@
+import type { LocaleString } from "../config";
+
+/** Picture library: views, filters, usage, bulk actions, replace and drag-and-drop upload. Keys start with `ml`. */
+export const MEDIA_LIBRARY_STRINGS = {
+  /* View, filters, sort */
+  mlViewLabel: { th: "รูปแบบการแสดงผล", en: "View" },
+  mlViewGrid: { th: "ตาราง", en: "Grid" },
+  mlViewTable: { th: "รายการ", en: "Table" },
+  mlSearchLabel: { th: "ค้นหาชื่อไฟล์หรือคำอธิบายภาพ", en: "Search file name or description" },
+  mlFilterAlt: { th: "คำอธิบายภาพ", en: "Description" },
+  mlAltAny: { th: "ทั้งหมด", en: "Any" },
+  mlAltMissing: { th: "ยังไม่มี (ไทยหรืออังกฤษ)", en: "Missing (Thai or English)" },
+  mlFilterUse: { th: "การใช้งาน", en: "Use" },
+  mlUseAny: { th: "ทั้งหมด", en: "Any" },
+  mlUseUnused: { th: "ยังไม่ได้ใช้ที่ใด", en: "Not used anywhere" },
+  mlFilterBy: { th: "อัปโหลดโดย", en: "Uploaded by" },
+  mlByAny: { th: "ทุกคน", en: "Anyone" },
+  mlFilterWithin: { th: "อัปโหลดภายใน", en: "Uploaded within" },
+  mlWithinAny: { th: "ทุกช่วงเวลา", en: "Any time" },
+  mlWithin7: { th: "7 วันที่ผ่านมา", en: "Last 7 days" },
+  mlWithin30: { th: "30 วันที่ผ่านมา", en: "Last 30 days" },
+  mlWithin90: { th: "90 วันที่ผ่านมา", en: "Last 90 days" },
+  mlSortLabel: { th: "เรียงตาม", en: "Sort by" },
+  mlSortNewest: { th: "ใหม่สุดก่อน", en: "Newest first" },
+  mlSortOldest: { th: "เก่าสุดก่อน", en: "Oldest first" },
+  mlSortName: { th: "ชื่อ (ก-ฮ, A-Z)", en: "Name (A to Z)" },
+  mlSortSize: { th: "ขนาดภาพ (ใหญ่สุดก่อน)", en: "Image size (largest first)" },
+  mlApply: { th: "ใช้ตัวกรอง", en: "Apply" },
+  mlClear: { th: "ล้างตัวกรอง", en: "Clear filters" },
+  mlSummary: {
+    th: "พบ {total} รูป ในคลังนี้มี {missing} รูปที่ยังไม่มีคำอธิบายภาพ และ {unused} รูปที่ยังไม่ได้ใช้",
+    en: "{total} pictures found. In this selection {missing} need a description and {unused} are not used",
+  },
+  mlGridCaption: { th: "รูปภาพ แสดง {shown} จาก {total} รูป", en: "Pictures, showing {shown} of {total}" },
+
+  /* Columns and cards */
+  mlColPicture: { th: "รูปภาพ", en: "Picture" },
+  mlColName: { th: "ชื่อและคำอธิบาย", en: "Name and description" },
+  mlColSize: { th: "ขนาดภาพ", en: "Dimensions" },
+  mlColUsed: { th: "การใช้งาน", en: "Use" },
+  mlColBy: { th: "อัปโหลดโดย", en: "Uploaded by" },
+  mlColAdded: { th: "อัปโหลดเมื่อ", en: "Uploaded" },
+  mlSelectPicture: { th: "เลือก {name}", en: "Select {name}" },
+  mlUsedIn: { th: "ใช้ใน {count} รายการ", en: "Used in {count}" },
+  mlNotUsed: { th: "ยังไม่ได้ใช้", en: "Not used" },
+  mlUnknownSize: { th: "ไม่ทราบ", en: "Unknown" },
+  mlUnknownPerson: { th: "ไม่ทราบ", en: "Unknown" },
+  mlPixels: { th: "{width} x {height} พิกเซล", en: "{width} x {height} px" },
+
+  /* Selection and bulk actions */
+  mlBulkLabel: { th: "การดำเนินการกับรูปที่เลือก", en: "Actions for selected pictures" },
+  mlBulkHint: { th: "เลือกรูปที่ต้องการ แล้วเลือกการดำเนินการ", en: "Tick the pictures you want, then choose an action" },
+  mlBulkEdit: { th: "แก้คำอธิบายภาพ", en: "Edit descriptions" },
+  mlBulkDelete: { th: "ลบ", en: "Delete" },
+  mlBulkNone: { th: "เลือกรูปอย่างน้อยหนึ่งรูปก่อนดำเนินการ", en: "Select at least one picture first." },
+  mlBulkEditDone: { th: "บันทึกคำอธิบายภาพแล้ว {ok} รูป", en: "Saved the description of {ok} pictures" },
+  mlBulkDeleteDone: { th: "ลบแล้ว {ok} รูป ลบไม่ได้ {refused} รูป", en: "Deleted {ok}. Could not delete {refused}" },
+  mlBulkRefusedTitle: { th: "ลบไม่ได้ เพราะยังมีการใช้งาน", en: "Not deleted, because they are still used" },
+
+  /* Bulk edit page */
+  mlEditTitle: { th: "แก้คำอธิบายภาพ {count} รูป", en: "Edit the description of {count} pictures" },
+  mlEditIntro: {
+    th: "กรอกคำอธิบายทั้งสองภาษาของแต่ละรูป หรือเลือกว่าเป็นรูปตกแต่ง",
+    en: "Describe each picture in both languages, or mark it as decorative.",
+  },
+  mlEditSave: { th: "บันทึกคำอธิบายภาพ", en: "Save descriptions" },
+  mlEditIncompleteTitle: { th: "บางรูปยังไม่ได้บันทึก", en: "Some pictures were not saved" },
+  mlEditIncomplete: {
+    th: "บันทึกแล้ว {ok} รูป รูปด้านล่างยังขาดคำอธิบายภาพ กรอกทั้งสองภาษาหรือเลือกว่าเป็นรูปตกแต่ง",
+    en: "Saved {ok}. The pictures below still need a description in both languages, or to be marked decorative",
+  },
+  mlEditRowIncomplete: { th: "กรอกคำอธิบายภาพทั้งสองภาษา หรือเลือกว่าเป็นรูปตกแต่ง", en: "Enter the description in both languages, or mark the picture as decorative" },
+  mlEditEmpty: { th: "ไม่มีรูปที่เลือก", en: "No pictures were selected." },
+  mlBackToLibrary: { th: "กลับไปที่คลังรูปภาพ", en: "Back to the picture library" },
+
+  /* Bulk delete page */
+  mlDeleteTitle: { th: "ลบรูปภาพ", en: "Delete pictures" },
+  mlDeleteBody: { th: "รูปต่อไปนี้ไม่มีการใช้งานและจะถูกลบถาวร ย้อนกลับไม่ได้", en: "These pictures are not used anywhere and will be deleted for good. This cannot be undone." },
+  mlDeleteButton: { th: "ลบ {count} รูป", en: "Delete {count} pictures" },
+  mlDeleteRefusedIntro: { th: "รูปต่อไปนี้ลบไม่ได้ เพราะยังถูกใช้อยู่ ให้เอารูปออกจากรายการเหล่านั้นก่อน", en: "These pictures cannot be deleted because they are still used. Take them out of those items first" },
+  mlDeleteNothing: { th: "ไม่มีรูปที่ลบได้ในรายการที่เลือก", en: "None of the selected pictures can be deleted." },
+  mlReasonInUse: { th: "ยังถูกใช้ใน {where}", en: "Still used in {where}" },
+  mlReasonNotFound: { th: "ไม่พบรูปนี้ อาจถูกลบไปแล้ว", en: "Not found. It may already have been deleted" },
+
+  /* Usage */
+  mlUsageTitle: { th: "รูปนี้ถูกใช้ที่ไหนบ้าง", en: "Where this picture is used" },
+  mlUsageCount: { th: "ใช้ใน {count} รายการ", en: "Used in {count} items" },
+  mlUsageEdit: { th: "แก้ไข {title}", en: "Edit {title}" },
+  mlRoleSettings: { th: "ในการตั้งค่าเว็บไซต์", en: "In the site settings" },
+  mlUsageUntitled: { th: "(ไม่มีชื่อ)", en: "(untitled)" },
+
+  /* Detail page */
+  mlDetailFile: { th: "ไฟล์", en: "File" },
+  mlFileName: { th: "ชื่อไฟล์", en: "File name" },
+  mlFileType: { th: "ประเภทไฟล์", en: "File type" },
+  mlFileSize: { th: "ขนาดไฟล์", en: "File size" },
+  mlFileDimensions: { th: "ขนาดภาพ", en: "Dimensions" },
+  mlFileUploadedBy: { th: "อัปโหลดโดย", en: "Uploaded by" },
+  mlFileUploadedAt: { th: "อัปโหลดเมื่อ", en: "Uploaded" },
+  mlFileUrl: { th: "ลิงก์ของรูป", en: "Picture link" },
+  mlCopyUrl: { th: "คัดลอกลิงก์", en: "Copy link" },
+  mlCopied: { th: "คัดลอกลิงก์แล้ว", en: "Link copied" },
+  mlCopyFailed: { th: "คัดลอกไม่สำเร็จ เลือกลิงก์แล้วคัดลอกด้วยตนเอง", en: "Could not copy. Select the link and copy it yourself" },
+  mlDeleteBlockedList: { th: "ลบรูปนี้ไม่ได้ เพราะยังใช้อยู่ใน {count} รายการ ตามรายการด้านล่าง", en: "This picture cannot be deleted because it is used in {count} items, listed below" },
+
+  /* Replace file */
+  mlReplaceTitle: { th: "เปลี่ยนไฟล์รูป", en: "Replace the file" },
+  mlReplaceIntro: {
+    th: "อัปโหลดไฟล์ใหม่แทนไฟล์เดิม รูปนี้ยังเป็นรูปเดิม ทุกหน้าที่ใช้รูปนี้จะแสดงไฟล์ใหม่ และคำอธิบายภาพไม่เปลี่ยน",
+    en: "Upload a new file in place of the current one. It stays the same picture, so every page that uses it shows the new file, and the description is kept",
+  },
+  mlReplaceFile: { th: "ไฟล์ใหม่", en: "New file" },
+  mlReplaceButton: { th: "เปลี่ยนไฟล์", en: "Replace file" },
+  mlReplacing: { th: "กำลังเปลี่ยนไฟล์", en: "Replacing the file" },
+  mlReplaced: { th: "เปลี่ยนไฟล์แล้ว", en: "File replaced" },
+  mlReplacedNote: { th: "ทุกที่ที่ใช้รูปนี้จะแสดงไฟล์ใหม่ ไฟล์เดิมถูกลบแล้ว", en: "Everywhere this picture is used now shows the new file. The old file was deleted" },
+
+  /* Drag and drop upload */
+  mlDropTitle: { th: "อัปโหลดหลายรูปพร้อมกัน", en: "Upload several pictures" },
+  mlDropHint: { th: "ลากรูปมาวางที่นี่ หรือเลือกไฟล์ แล้วอธิบายแต่ละรูปทั้งสองภาษา", en: "Drag pictures here, or choose files, then describe each one in both languages" },
+  mlDropChoose: { th: "เลือกไฟล์", en: "Choose files" },
+  mlDropActive: { th: "ปล่อยไฟล์เพื่อเพิ่มในรายการ", en: "Drop the files to add them" },
+  mlQueueTitle: { th: "รูปที่รออัปโหลด", en: "Pictures to upload" },
+  mlQueueUpload: { th: "อัปโหลด {count} รูป", en: "Upload {count} pictures" },
+  mlQueueRemove: { th: "เอา {name} ออก", en: "Remove {name}" },
+  mlQueueSkipped: { th: "ข้าม {name}: ไฟล์ต้องเป็นรูปภาพ", en: "Skipped {name}: it is not a picture file" },
+  mlStatusQueued: { th: "รออัปโหลด", en: "Waiting" },
+  mlStatusCompressing: { th: "กำลังลดขนาดไฟล์", en: "Making the file smaller" },
+  mlStatusUploading: { th: "กำลังอัปโหลด", en: "Uploading" },
+  mlStatusDone: { th: "อัปโหลดแล้ว", en: "Uploaded" },
+  mlStatusFailed: { th: "ไม่สำเร็จ", en: "Failed" },
+  mlProgressLabel: { th: "ความคืบหน้าของ {name}", en: "Progress of {name}" },
+  mlQueueAllDone: { th: "อัปโหลดเสร็จแล้ว {ok} รูป", en: "Uploaded {ok} pictures" },
+  mlQueueSomeFailed: { th: "อัปโหลดไม่สำเร็จ {failed} รูป แก้ไขแล้วลองอีกครั้ง", en: "{failed} pictures were not uploaded. Fix them and try again" },
+  mlQueueAltNeeded: { th: "กรอกคำอธิบายภาพทั้งสองภาษา หรือเลือกว่าเป็นรูปตกแต่ง", en: "Enter the description in both languages, or mark the picture as decorative" },
+} as const satisfies Record<string, LocaleString>;

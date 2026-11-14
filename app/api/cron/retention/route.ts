@@ -7,6 +7,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { purgeExpiredPii } from "@/lib/cases/retention";
+import { recordCronRun } from "@/lib/admin/health/cron-run";
 import { getDb } from "@/lib/db";
 import { getStorage } from "@/lib/storage";
 
@@ -23,5 +24,6 @@ export async function GET(request: Request) {
   if (!secret) return NextResponse.json({ error: "not_configured" }, { status: 503 });
   if (!authorised(request, secret)) return NextResponse.json({ error: "unauthorised" }, { status: 401 });
   const result = await purgeExpiredPii(getDb(), new Date(), getStorage);
+  await recordCronRun(getDb(), "retention", result);
   return NextResponse.json(result);
 }

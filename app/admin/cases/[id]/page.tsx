@@ -25,6 +25,7 @@ import { a, fmt, type AdminKey } from "@/lib/i18n/admin";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { CASE_PANELS } from "../panels";
 import { AssignForm, NoteForm, StatusForm, UpdateForm } from "../CaseForms";
+import { RecordHistory } from "@/components/admin/audit/RecordHistory";
 import { ContactDetails } from "../ContactDetails";
 import { ComplaintTargets } from "../complaints/Targets";
 import { CopyReference } from "../CopyReference";
@@ -176,6 +177,8 @@ export default async function CasePage({ params, searchParams }: { params: Promi
           ]}
         />
       </SectionCard>
+
+      <RecordHistory entityType="case" entityId={id} />
     </>
   );
 

@@ -5,14 +5,30 @@ import { Card, ConsolePage, EmptyPanel, PageHeader, StatCard } from "@/component
 import { Button, StatusTag, Timestamp } from "@/components/ui";
 import { canEditContent } from "@/lib/admin/content/access";
 import { CONTENT_TYPES, contentPath } from "@/lib/admin/content/types";
-import { loadCaseCounts, loadEditorCounts, loadRecentContent, type CaseCounts, type EditorCounts, type RecentItem } from "@/lib/admin/dashboard/summary";
+import { describeAction, entityHref } from "@/lib/admin/audit/describe";
+import { loadRecentActivity, type ActivityItem } from "@/lib/admin/dashboard/activity";
+import {
+  loadBorrowingCounts,
+  loadCaseCounts,
+  loadEditorCounts,
+  loadMyCases,
+  loadMyDrafts,
+  loadRecentContent,
+  type BorrowingCounts,
+  type CaseCounts,
+  type EditorCounts,
+  type MyCases,
+  type MyDraft,
+  type RecentItem,
+} from "@/lib/admin/dashboard/summary";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { adminTitle } from "@/lib/admin/metadata";
 import { buildConsoleNav } from "@/lib/admin/nav";
 import { isAuthConfigured } from "@/lib/auth";
 import { hasRole } from "@/lib/auth/roles";
 import { requireStaff } from "@/lib/auth/session";
-import { accessibleServices, canUseCaseInbox } from "@/lib/cases/access";
+import { accessibleServices, canAccessService, canUseCaseInbox } from "@/lib/cases/access";
+import { getServiceDef } from "@/lib/cases/services";
 import { staffActorFor } from "@/lib/cases/staff";
 import { getDb } from "@/lib/db";
 import { a } from "@/lib/i18n/admin";
@@ -38,18 +54,24 @@ export default async function AdminDashboardPage() {
   const editor = canEditContent(staff.roles);
   const cases = canUseCaseInbox(staff.roles);
   const services = accessibleServices(staff.roles);
-  const [caseCounts, editorCounts, recent] = await Promise.all([
+  const borrowing = canAccessService(staff.roles, "borrowing");
+  const [caseCounts, editorCounts, recent, borrowingCounts, activity, myCases, myDrafts] = await Promise.all([
     cases && services[0] ? staffActorFor(staff, services[0]).then((actor) => loadCaseCounts(db, actor)) : null,
     editor ? loadEditorCounts(db) : null,
     editor ? loadRecentContent(db) : [],
+    borrowing ? loadBorrowingCounts(db) : null,
+    loadRecentActivity(db, { userId: staff.user.id, roles: staff.roles }),
+    cases ? loadMyCases(db, staff.user.id, staff.roles) : [],
+    editor ? loadMyDrafts(db, staff.user.id) : [],
   ]);
 
   const nav = buildConsoleNav(staff.roles);
   const iconOf = new Map(nav.groups.flatMap((g) => g.items.map((i) => [i.id, i.icon] as const)));
-  const attention = (caseCounts ? caseCounts.overdue + caseCounts.escalated + caseCounts.unassigned : 0) + (editorCounts?.drafts ?? 0);
+  const attention =
+    (caseCounts ? caseCounts.overdue + caseCounts.escalated + caseCounts.unassigned : 0) + (editorCounts?.drafts ?? 0) + (borrowingCounts ? borrowingCounts.pending + borrowingCounts.overdue : 0);
   const name = staff.user.name || staff.user.email;
   const summary =
-    !caseCounts && !editorCounts
+    !caseCounts && !editorCounts && !borrowingCounts
       ? a("chSummaryPlain", locale)
       : attention === 0
         ? a("chSummaryNone", locale)
@@ -68,19 +90,48 @@ export default async function AdminDashboardPage() {
     <ConsolePage width="wide">
       <PageHeader title={a("chGreeting", locale, { name })} description={summary} icon="dashboard" breadcrumbs={false} />
 
-      {caseCounts || editorCounts ? (
+      {caseCounts || editorCounts || borrowingCounts ? (
         <section aria-labelledby="needs-you">
           <h2 id="needs-you" className="mb-[var(--space-3)] text-lg font-semibold">
             {a("chNeedsYou", locale)}
           </h2>
           <div className="grid grid-cols-2 gap-[var(--space-3)] lg:grid-cols-3">
             {caseCounts ? <CaseStats counts={caseCounts} locale={locale} /> : null}
+            {borrowingCounts ? <BorrowingStats counts={borrowingCounts} locale={locale} /> : null}
             {editorCounts ? <EditorStats counts={editorCounts} locale={locale} /> : null}
           </div>
         </section>
       ) : null}
 
       <div className="grid gap-[var(--space-4)] lg:grid-cols-3">
+        {cases || myDrafts.length > 0 || editor ? (
+          <Card title={a("opMyWork", locale)} icon="account" className="lg:col-span-1">
+            <MyWork cases={myCases} drafts={myDrafts} locale={locale} showDrafts={editor} showCases={cases} />
+          </Card>
+        ) : null}
+
+        <Card title={a("opActivityTitle", locale)} icon="audit" padded={false} className="lg:col-span-2">
+          {activity.length === 0 ? (
+            <div className="p-[var(--space-4)]">
+              <EmptyPanel icon="info" title={a("opActivityEmpty", locale)} />
+            </div>
+          ) : (
+            <ul className="m-0 list-none p-0">
+              {activity.map((item) => (
+                <ActivityRow key={item.id} item={item} locale={locale} />
+              ))}
+            </ul>
+          )}
+          {admin ? (
+            <p className="m-0 border-t border-line px-[var(--space-4)] py-[var(--space-2)]">
+              <Link href="/admin/audit" className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+                <ConsoleIcon name="audit" />
+                {a("opActivityAll", locale)}
+              </Link>
+            </p>
+          ) : null}
+        </Card>
+
         {editor ? (
           <Card title={a("chRecent", locale)} icon="edit" padded={false} className="lg:col-span-2 lg:row-span-2">
             {recent.length === 0 ? (
@@ -240,6 +291,96 @@ function RecentRow({ item, locale, icon }: { item: RecentItem; locale: "th" | "e
         </p>
       </div>
       {item.status ? <StatusTag tone={item.status === "published" ? "success" : "neutral"} label={a(item.status === "published" ? "statusPublished" : "statusDraft", locale)} /> : null}
+    </li>
+  );
+}
+
+function BorrowingStats({ counts, locale }: { counts: BorrowingCounts; locale: "th" | "en" }) {
+  const n = (v: number) => formatNumber(v, locale);
+  return (
+    <>
+      <StatCard
+        icon="borrowSchedule"
+        label={a("opStatBorrowPending", locale)}
+        value={n(counts.pending)}
+        hint={counts.pending > 0 ? a("opHintBorrowPending", locale) : undefined}
+        tone={counts.pending > 0 ? "attention" : "neutral"}
+        href="/admin/borrowing"
+      />
+      <StatCard icon="borrowCalendar" label={a("opStatBorrowDue", locale)} value={n(counts.dueToday)} hint={a("opHintBorrowDue", locale)} href="/admin/borrowing" />
+      <StatCard
+        icon="overdue"
+        label={a("opStatBorrowOverdue", locale)}
+        value={n(counts.overdue)}
+        hint={counts.overdue > 0 ? a("opHintBorrowOverdue", locale) : undefined}
+        tone={counts.overdue > 0 ? "attention" : "neutral"}
+        href="/admin/borrowing"
+      />
+    </>
+  );
+}
+
+function MyWork({ cases, drafts, locale, showCases, showDrafts }: { cases: MyCases[]; drafts: MyDraft[]; locale: "th" | "en"; showCases: boolean; showDrafts: boolean }) {
+  return (
+    <div className="flex flex-col gap-[var(--space-4)]">
+      {showCases ? (
+        <div>
+          <h3 className="m-0 mb-[var(--space-2)] text-base font-semibold">{a("opMyCases", locale)}</h3>
+          <ul className="m-0 grid list-none gap-[var(--space-1)] p-0">
+            {cases.map((c) => (
+              <li key={c.service}>
+                <Link href={`/admin/cases?assignee=me&open=1&service=${c.service}`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+                  <ConsoleIcon name="cases" />
+                  <span>{a("opMyCasesRow", locale, { service: pick(getServiceDef(c.service).label, locale), count: formatNumber(c.open, locale) })}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {showDrafts ? (
+        <div>
+          <h3 className="m-0 mb-[var(--space-2)] text-base font-semibold">{a("opMyDrafts", locale)}</h3>
+          {drafts.length === 0 ? (
+            <p className="m-0 text-sm text-ink-600">{a("opMyDraftsEmpty", locale)}</p>
+          ) : (
+            <ul className="m-0 grid list-none gap-[var(--space-1)] p-0">
+              {drafts.map((d) => {
+                const def = CONTENT_TYPES.find((t) => t.key === d.typeKey)!;
+                const title = pick(d.title, locale) || pick({ th: d.title.en, en: d.title.th }, locale) || a("chUntitled", locale);
+                return (
+                  <li key={d.key}>
+                    <Link href={contentPath(def, d.id)} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+                      <ConsoleIcon name="draft" />
+                      <span>
+                        {title}
+                        <span className="text-sm text-ink-600"> ({a(def.oneKey, locale)})</span>
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function ActivityRow({ item, locale }: { item: ActivityItem; locale: "th" | "en" }) {
+  const actor = item.actorUserId ? item.actorName || a("opActorUnknown", locale) : a("opActorSystem", locale);
+  const described = describeAction(item, locale, { actor, entity: item.entityLabel ?? item.entityId });
+  const href = entityHref(item.entityType, item.entityId);
+  return (
+    <li className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)] border-t border-line px-[var(--space-4)] py-[var(--space-2)] first:border-t-0">
+      <ConsoleIcon name={described.icon} className="text-ink-600" />
+      <div className="min-w-0 flex-1">
+        <p className="m-0 break-words">{href ? <Link href={href}>{described.text}</Link> : described.text}</p>
+        <p className="m-0 text-sm text-ink-600">
+          <Timestamp value={item.occurredAt} locale={locale} format="relative" />
+        </p>
+      </div>
     </li>
   );
 }

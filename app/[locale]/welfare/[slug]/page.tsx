@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { PreviewBanner } from "@/components/preview/PreviewBanner";
+import { PREVIEW_METADATA, isPreview } from "@/lib/preview/state";
 import NextLink from "next/link";
 import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
@@ -12,7 +14,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, Link, NotificationBanner, Stack, Tag, Timestamp } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getContentPageBySlug, getContentPages, resolveRichTextRefs } from "@/lib/content";
+import { getContentPageBySlug, getContentPagePreview, getContentPages, resolveRichTextRefs } from "@/lib/content";
 import type { ContentPage } from "@/lib/content/types";
 
 const CATEGORY_LABEL = {
@@ -45,7 +47,7 @@ export async function generateStaticParams() {
   return slugParams(pages.map((page) => page.slug.current));
 }
 
-export async function generateMetadata({
+async function baseMetadata({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
@@ -58,6 +60,11 @@ export async function generateMetadata({
   return { title: pick(page.title, locale), description: pick(page.summary, locale) };
 }
 
+export async function generateMetadata(props: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const metadata = await baseMetadata(props);
+  return (await isPreview()) ? { ...metadata, ...PREVIEW_METADATA } : metadata;
+}
+
 export default async function WelfareDetailPage({
   params,
 }: {
@@ -67,7 +74,8 @@ export default async function WelfareDetailPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const page = await getContentPageBySlug("welfarePage", slug);
+  const preview = await isPreview();
+  const page = preview ? await getContentPagePreview("welfarePage", slug) : await getContentPageBySlug("welfarePage", slug);
   if (!page) notFound();
 
   const title = pick(page.title, locale);
@@ -78,6 +86,7 @@ export default async function WelfareDetailPage({
 
   return (
     <Container width="narrow">
+      {preview ? <PreviewBanner locale={locale} segment="welfare" id={page._id} /> : null}
       <Breadcrumbs
         locale={locale}
         items={[

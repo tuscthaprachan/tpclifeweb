@@ -137,6 +137,10 @@ export function buildConsoleNav(roles: readonly ActiveRole[]): ConsoleNav {
     }
   }
 
+  if (editor) {
+    add("settings", { id: "redirects", href: "/admin/settings/redirects", labelKey: "rdLink", icon: "redirects", matchPrefix: "/admin/settings/redirects" });
+  }
+
   if (isAdmin) {
     add("settings", {
       id: "complaint-categories",
@@ -146,6 +150,8 @@ export function buildConsoleNav(roles: readonly ActiveRole[]): ConsoleNav {
       matchPrefix: "/admin/complaints/categories",
     });
     add("settings", { id: "staff", href: "/admin/staff", labelKey: "csNavStaff", icon: "staff", matchPrefix: "/admin/staff" });
+    add("settings", { id: "audit", href: "/admin/audit", labelKey: "opNavAudit", icon: "audit", matchPrefix: "/admin/audit" });
+    add("settings", { id: "health", href: "/admin/health", labelKey: "opNavHealth", icon: "health", matchPrefix: "/admin/health" });
   }
   add("settings", { id: "security", href: "/admin/security", labelKey: "csNavSecurity", icon: "security", matchPrefix: "/admin/security" });
 

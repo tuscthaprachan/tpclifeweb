@@ -47,6 +47,8 @@ export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: s
         id: policy.id,
         status: policy.status,
         updatedAt: policy.updatedAt.toISOString(),
+        publishAt: policy.publishAt?.toISOString() ?? null,
+        unpublishAt: policy.unpublishAt?.toISOString() ?? null,
         updatedByName: policy.updatedBy ? names.get(policy.updatedBy) : null,
         viewHref: localePath(locale, `/policy/${policy.slug}`),
       }

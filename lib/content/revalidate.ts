@@ -3,6 +3,7 @@ import "server-only";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { LOCALES, localePath } from "@/lib/i18n/config";
 import { CACHE_TAGS, type CacheTag } from "./cache";
+import { DETAIL_ROUTE } from "./detail-routes";
 
 /**
  * The kinds of content a write can change. Phase 3's admin Server Actions call
@@ -35,7 +36,8 @@ export type ContentEntityType =
   | "openDataMeeting"
   | "openDataBudget"
   | "openDataFund"
-  | "openDataReport";
+  | "openDataReport"
+  | "redirect";
 
 /** Which cache tags each kind of content invalidates when it changes. */
 export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
@@ -81,17 +83,7 @@ export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
   openDataBudget: [CACHE_TAGS.openDataBudget],
   openDataFund: [CACHE_TAGS.openDataFunds],
   openDataReport: [CACHE_TAGS.openDataReports],
-};
-
-/** The route segment of the detail page for kinds that have one, so a changed slug's own page is refreshed. */
-const DETAIL_ROUTE: Partial<Record<ContentEntityType, string>> = {
-  form: "/forms",
-  newsPost: "/news",
-  event: "/events",
-  policy: "/policy",
-  welfarePage: "/welfare",
-  guidePage: "/guide",
-  lostFoundItem: "/lost-and-found",
+  redirect: [CACHE_TAGS.redirects],
 };
 
 /**

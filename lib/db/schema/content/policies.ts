@@ -11,7 +11,7 @@ import {
   uuid,
   type AnyPgColumn,
 } from "drizzle-orm/pg-core";
-import { contentColumns, richDoc, type ExternalLinkJson } from "./common";
+import { contentColumns, scheduleColumns, richDoc, type ExternalLinkJson } from "./common";
 import { ownerEnum, policyStatusEnum } from "./enums";
 
 /**
@@ -24,6 +24,7 @@ export const policies = pgTable(
   "policies",
   {
     ...contentColumns(),
+    ...scheduleColumns(),
     slug: text("slug").notNull().unique(),
     titleTh: text("title_th").notNull().default(""),
     titleEn: text("title_en").notNull().default(""),

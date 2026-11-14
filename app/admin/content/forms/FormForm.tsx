@@ -51,6 +51,8 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
         id: form.id,
         status: form.status,
         updatedAt: form.updatedAt.toISOString(),
+        publishAt: form.publishAt?.toISOString() ?? null,
+        unpublishAt: form.unpublishAt?.toISOString() ?? null,
         updatedByName: form.updatedBy ? names.get(form.updatedBy) : null,
         viewHref: localePath(locale, `${def.viewPath}/${form.slug}`),
       }

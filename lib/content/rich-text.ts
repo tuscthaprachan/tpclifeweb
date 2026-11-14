@@ -62,5 +62,5 @@ export async function readImageInfos(ids: readonly string[]): Promise<Record<str
 }
 
 // Plain objects, not Maps: the data cache stores JSON. Ids are sorted so the same set always hits the same entry.
-const cachedForms = cachedRead(["rich-text-forms"], [CACHE_TAGS.form], REVALIDATE.content, readFormSummaries);
+const cachedForms = cachedRead(["rich-text-forms"], [CACHE_TAGS.form], REVALIDATE.windowed, readFormSummaries);
 const cachedImages = cachedRead(["rich-text-images"], [CACHE_TAGS.image], REVALIDATE.content, readImageInfos);

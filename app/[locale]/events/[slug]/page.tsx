@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { PreviewBanner } from "@/components/preview/PreviewBanner";
+import { PREVIEW_METADATA, isPreview } from "@/lib/preview/state";
 import { notFound } from "next/navigation";
 import { slugParams } from "@/lib/static-params";
 
@@ -12,7 +14,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, Link, NotificationBanner, Stack, StatusTag, Tag } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getEventBySlug, getUpcomingEvents, resolveRichTextRefs } from "@/lib/content";
+import { getEventBySlug, getEventPreview, getUpcomingEvents, resolveRichTextRefs } from "@/lib/content";
 
 // getUpcomingEvents only covers events that have not yet ended, so a past
 // event's slug will not be pre-rendered here. It still resolves fine on
@@ -23,7 +25,7 @@ export async function generateStaticParams() {
   return slugParams(events.map((event) => event.slug.current));
 }
 
-export async function generateMetadata({
+async function baseMetadata({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
@@ -39,6 +41,11 @@ export async function generateMetadata({
   };
 }
 
+export async function generateMetadata(props: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const metadata = await baseMetadata(props);
+  return (await isPreview()) ? { ...metadata, ...PREVIEW_METADATA } : metadata;
+}
+
 export default async function EventDetailPage({
   params,
 }: {
@@ -48,7 +55,8 @@ export default async function EventDetailPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const event = await getEventBySlug(slug);
+  const preview = await isPreview();
+  const event = preview ? await getEventPreview(slug) : await getEventBySlug(slug);
   if (!event) notFound();
 
   const title = pick(event.title, locale);
@@ -59,6 +67,7 @@ export default async function EventDetailPage({
 
   return (
     <Container width="narrow">
+      {preview ? <PreviewBanner locale={locale} segment="events" id={event._id} /> : null}
       <Breadcrumbs
         locale={locale}
         items={[

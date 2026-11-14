@@ -41,6 +41,8 @@ export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: str
         id: post.id,
         status: post.status,
         updatedAt: post.updatedAt.toISOString(),
+        publishAt: post.publishAt?.toISOString() ?? null,
+        unpublishAt: post.unpublishAt?.toISOString() ?? null,
         updatedByName: post.updatedBy ? names.get(post.updatedBy) : null,
         viewHref: localePath(locale, `/news/${post.slug}`),
       }

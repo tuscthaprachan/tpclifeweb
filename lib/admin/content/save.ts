@@ -5,6 +5,8 @@ import type { AnyPgColumn, AnyPgTable } from "drizzle-orm/pg-core";
 import { getDb } from "@/lib/db";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { recordRevision } from "@/lib/db/revisions";
+import { DETAIL_ROUTE } from "@/lib/content/detail-routes";
+import { addSlugRedirects } from "@/lib/redirects/store";
 import type { ContentStatus } from "@/lib/db/schema/content/enums";
 import { revalidateFor, type ContentEntityType } from "@/lib/content/revalidate";
 import type { ContentActor } from "./access";
@@ -118,7 +120,7 @@ export async function saveContent(input: SaveContentInput): Promise<SaveContentR
   const now = input.now ?? new Date();
   const name = getTableName(table);
 
-  let result: { saved: SaveContentResult; before?: Record<string, unknown> };
+  let result: { saved: SaveContentResult; before?: Record<string, unknown>; redirected: boolean };
   try {
     result = await withAudit(db, actor.context, async (tx, audit) => {
       const before = input.id ? await loadRow(tx, table, input.id) : undefined;
@@ -146,13 +148,22 @@ export async function saveContent(input: SaveContentInput): Promise<SaveContentR
         after: snapshot,
       });
       await recordRevision(tx, { entityType: name, entityId: id, revision: snapshot, createdBy: actor.userId });
-      return { saved: { id, created: !before, row }, before };
+
+      let redirected = false;
+      const base = DETAIL_ROUTE[entityType];
+      if (base && before?.status === "published" && typeof before.slug === "string" && typeof row.slug === "string" && before.slug !== row.slug) {
+        const written = await addSlugRedirects(tx, { base, oldSlug: before.slug, newSlug: row.slug, createdBy: actor.userId });
+        await audit({ action: `${name}.slug_redirect`, entityType: name, entityId: id, before: { slug: before.slug }, after: { slug: row.slug, redirects: written.map((r) => ({ from: r.fromPath, to: r.toPath })) } });
+        redirected = written.length > 0;
+      }
+      return { saved: { id, created: !before, row }, before, redirected };
     });
   } catch (error) {
     throw translate(error);
   }
 
   expire(entityType, slugsOf(result.saved.row, result.before));
+  if (result.redirected) revalidateFor("redirect");
   return result.saved;
 }
 

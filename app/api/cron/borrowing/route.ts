@@ -8,6 +8,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { runBorrowingDaily } from "@/lib/borrowing/cron";
+import { recordCronRun } from "@/lib/admin/health/cron-run";
 import { getDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -23,5 +24,6 @@ export async function GET(request: Request) {
   if (!secret) return NextResponse.json({ error: "not_configured" }, { status: 503 });
   if (!authorised(request, secret)) return NextResponse.json({ error: "unauthorised" }, { status: 401 });
   const result = await runBorrowingDaily(getDb(), new Date());
+  await recordCronRun(getDb(), "borrowing", result);
   return NextResponse.json(result);
 }

@@ -60,6 +60,7 @@ describe("revalidateFor", () => {
       openDataBudget: ["openDataBudget"],
       openDataFund: ["openDataFunds"],
       openDataReport: ["openDataReports"],
+      redirect: ["redirects"],
     };
     expect(TAGS_BY_TYPE).toEqual(expected);
   });

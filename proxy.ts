@@ -1,8 +1,9 @@
 /**
- * Locale negotiation only. On a bare path with no locale prefix, works out
- * which language to send the reader to and redirects to the prefixed path:
- * the reader's remembered choice (`LOCALE_COOKIE`) first, then their
- * browser's `Accept-Language`, falling back to `DEFAULT_LOCALE`.
+ * Redirects, then locale negotiation. A path the console redirects (an old
+ * slug) is sent to its new address first. On a bare path with no locale
+ * prefix, works out which language to send the reader to and redirects to the
+ * prefixed path: the reader's remembered choice (`LOCALE_COOKIE`) first, then
+ * their browser's `Accept-Language`, falling back to `DEFAULT_LOCALE`.
  *
  * Deliberately does nothing else: no auth, no A/B assignment, no other
  * personalisation. Adding those here would make every request pay for logic
@@ -19,6 +20,7 @@ import {
   type Locale,
 } from "@/lib/i18n/config";
 import { FILTERED_HEADER, FILTERED_SEGMENT, hasReaderQuery, isQueryRoute } from "@/lib/query-routes";
+import { findRedirect } from "@/lib/redirects/proxy-cache";
 import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, THEME_COOKIE_MAX_AGE } from "@/lib/theme/config";
 
 /**
@@ -42,7 +44,26 @@ function migrateLegacyCookies(request: NextRequest, response: NextResponse) {
   return response;
 }
 
-export function proxy(request: NextRequest) {
+/**
+ * A redirect from the console's table, if one starts at this path. The table
+ * is held in memory (`lib/redirects/proxy-cache.ts`), so this is a lookup and
+ * not a query. Chains are flattened when the table is built, so a reader is
+ * redirected once; a target that is the request's own path is ignored.
+ */
+async function redirectResponse(request: NextRequest): Promise<NextResponse | null> {
+  const { pathname } = request.nextUrl;
+  const hit = await findRedirect(request.nextUrl.origin, pathname);
+  if (!hit) return null;
+  const target = new URL(hit.to, request.url);
+  if (target.origin === request.nextUrl.origin && target.pathname === pathname) return null;
+  if (!hit.to.includes("?") && target.origin === request.nextUrl.origin) target.search = request.nextUrl.search;
+  return NextResponse.redirect(target, hit.status === 308 ? 308 : 301);
+}
+
+export async function proxy(request: NextRequest) {
+  const redirected = await redirectResponse(request);
+  if (redirected) return redirected;
+
   const { pathname } = request.nextUrl;
 
   const [, firstSegment] = pathname.split("/");

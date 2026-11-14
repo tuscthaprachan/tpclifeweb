@@ -9,6 +9,7 @@ import { readPlacesByIds } from "./directory";
 import { readFormsByIds } from "./forms";
 import { loadImages } from "./images";
 import { iso, isoOrUndefined, ls, lsOpt, opt, richPairOpt } from "./map";
+import { liveWindow } from "./window";
 import { safeFetch } from "./safe-fetch";
 import type { CampusEvent } from "./types";
 
@@ -48,16 +49,17 @@ export async function readUpcomingEvents(db: AuditExecutor, now: string): Promis
   const rows = await db
     .select()
     .from(events)
-    .where(and(eq(events.status, "published"), sql`coalesce(${events.endsAt}, ${events.startsAt}) >= ${now}::timestamptz`))
+    .where(and(liveWindow(events, new Date(now)), sql`coalesce(${events.endsAt}, ${events.startsAt}) >= ${now}::timestamptz`))
     .orderBy(asc(events.startsAt), events.id);
   return toEvents(db, rows);
 }
 
-export async function readEventBySlug(db: AuditExecutor, slug: string): Promise<CampusEvent | null> {
+/** `includeUnpublished` is for editor previews only. */
+export async function readEventBySlug(db: AuditExecutor, slug: string, includeUnpublished = false, now: Date = new Date()): Promise<CampusEvent | null> {
   const [row] = await db
     .select()
     .from(events)
-    .where(and(eq(events.status, "published"), eq(events.slug, slug)))
+    .where(and(includeUnpublished ? undefined : liveWindow(events, now), eq(events.slug, slug)))
     .limit(1);
   return row ? ((await toEvents(db, [row]))[0] ?? null) : null;
 }
@@ -65,10 +67,10 @@ export async function readEventBySlug(db: AuditExecutor, slug: string): Promise<
 const TAGS = [CACHE_TAGS.event, CACHE_TAGS.place, CACHE_TAGS.form, CACHE_TAGS.image] as const;
 
 /** Evaluated when the entry is filled; the window keeps "upcoming" honest as events end. */
-const cachedUpcomingEvents = cachedRead(["events-upcoming"], TAGS, REVALIDATE.events, () =>
+const cachedUpcomingEvents = cachedRead(["events-upcoming"], TAGS, REVALIDATE.windowed, () =>
   readUpcomingEvents(getDb(), new Date().toISOString()),
 );
-const cachedEventBySlug = cachedRead(["event-by-slug"], TAGS, REVALIDATE.events, (slug: string) =>
+const cachedEventBySlug = cachedRead(["event-by-slug"], TAGS, REVALIDATE.windowed, (slug: string) =>
   readEventBySlug(getDb(), slug),
 );
 
@@ -83,4 +85,9 @@ export async function getUpcomingEvents(now?: string): Promise<CampusEvent[]> {
 
 export async function getEventBySlug(slug: string): Promise<CampusEvent | null> {
   return safeFetch<CampusEvent | null>("getEventBySlug", () => cachedEventBySlug(slug), null);
+}
+
+/** Uncached and unfiltered: the event as saved, draft or scheduled. Call only behind `isPreview()`. */
+export async function getEventPreview(slug: string): Promise<CampusEvent | null> {
+  return safeFetch<CampusEvent | null>("getEventPreview", () => readEventBySlug(getDb(), slug, true), null);
 }

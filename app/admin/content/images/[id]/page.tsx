@@ -10,6 +10,8 @@ import { isAuthConfigured } from "@/lib/auth";
 import { a } from "@/lib/i18n/admin";
 import { ImageForm } from "../ImageForm";
 
+const REPLACE_ERRORS = ["errUploadChoose", "errUploadTooLarge", "errUploadType", "errStorageNotConfigured", "errUploadFailed", "errNotFound"] as const;
+
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
@@ -22,19 +24,20 @@ export default async function EditImagePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ saved?: string; uploaded?: string; blocked?: string }>;
+  searchParams: Promise<{ saved?: string; uploaded?: string; blocked?: string; replaced?: string; rerr?: string }>;
 }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
   await requireEditor();
   const { id } = await params;
   if (!isUuid(id)) notFound();
-  const { saved, uploaded, blocked } = await searchParams;
+  const { saved, uploaded, blocked, replaced, rerr } = await searchParams;
+  const replaceError = REPLACE_ERRORS.find((key) => key === rerr);
 
   return (
     <ConsolePage width="wide">
       <FormPageHeader def={contentTypeBySegment("images")} locale={locale} mode="edit" />
-      <ImageForm locale={locale} id={id} notice={uploaded ? "uploaded" : saved ? "saved" : undefined} blocked={Boolean(blocked)} />
+      <ImageForm locale={locale} id={id} notice={uploaded ? "uploaded" : replaced ? "replaced" : saved ? "saved" : undefined} blocked={Boolean(blocked)} replaceError={replaceError} />
     </ConsolePage>
   );
 }

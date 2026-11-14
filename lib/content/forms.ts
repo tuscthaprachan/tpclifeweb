@@ -6,6 +6,7 @@ import type { AuditExecutor } from "@/lib/db/audit";
 import { forms, type FormRow } from "@/lib/db/schema";
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { ci, iso, ls, lsOpt, ltOpt, opt, richPairOpt, withKeys } from "./map";
+import { liveWindow } from "./window";
 import { safeFetch } from "./safe-fetch";
 import type { FormRecord } from "./types";
 
@@ -45,7 +46,7 @@ export async function readFormsByIds(db: AuditExecutor, ids: readonly string[]):
   const rows = await db
     .select()
     .from(forms)
-    .where(and(eq(forms.status, "published"), inArray(forms.id, [...new Set(ids)])));
+    .where(and(liveWindow(forms), inArray(forms.id, [...new Set(ids)])));
   for (const row of rows) out.set(row.id, toFormRecord(row));
   return out;
 }
@@ -57,7 +58,7 @@ export async function readForms(db: AuditExecutor, priorityOnly = false): Promis
     .from(forms)
     .where(
       and(
-        eq(forms.status, "published"),
+        liveWindow(forms),
         eq(forms.isActive, true),
         priorityOnly ? eq(forms.isPriority, true) : undefined,
       ),
@@ -67,20 +68,20 @@ export async function readForms(db: AuditExecutor, priorityOnly = false): Promis
 }
 
 /** One form by slug. Like the CMS query this does not filter on `isActive`: a retired form still has a page that says so. */
-export async function readFormBySlug(db: AuditExecutor, slug: string): Promise<FormRecord | null> {
+export async function readFormBySlug(db: AuditExecutor, slug: string, includeUnpublished = false, now: Date = new Date()): Promise<FormRecord | null> {
   const [row] = await db
     .select()
     .from(forms)
-    .where(and(eq(forms.status, "published"), eq(forms.slug, slug)))
+    .where(and(includeUnpublished ? undefined : liveWindow(forms, now), eq(forms.slug, slug)))
     .limit(1);
   return row ? toFormRecord(row) : null;
 }
 
-const cachedForms = cachedRead(["forms"], [CACHE_TAGS.form], REVALIDATE.content, () => readForms(getDb()));
-const cachedPriorityForms = cachedRead(["forms-priority"], [CACHE_TAGS.form], REVALIDATE.content, () =>
+const cachedForms = cachedRead(["forms"], [CACHE_TAGS.form], REVALIDATE.windowed, () => readForms(getDb()));
+const cachedPriorityForms = cachedRead(["forms-priority"], [CACHE_TAGS.form], REVALIDATE.windowed, () =>
   readForms(getDb(), true),
 );
-const cachedFormBySlug = cachedRead(["form-by-slug"], [CACHE_TAGS.form], REVALIDATE.content, (slug: string) =>
+const cachedFormBySlug = cachedRead(["form-by-slug"], [CACHE_TAGS.form], REVALIDATE.windowed, (slug: string) =>
   readFormBySlug(getDb(), slug),
 );
 
@@ -94,4 +95,9 @@ export async function getPriorityForms(): Promise<FormRecord[]> {
 
 export async function getFormBySlug(slug: string): Promise<FormRecord | null> {
   return safeFetch<FormRecord | null>("getFormBySlug", () => cachedFormBySlug(slug), null);
+}
+
+/** Uncached and unfiltered: the form as saved, draft or scheduled. Call only behind `isPreview()`. */
+export async function getFormPreview(slug: string): Promise<FormRecord | null> {
+  return safeFetch<FormRecord | null>("getFormPreview", () => readFormBySlug(getDb(), slug, true), null);
 }

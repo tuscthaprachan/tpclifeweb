@@ -32,6 +32,7 @@ export const CACHE_TAGS = {
   openDataBudget: "openDataBudget",
   openDataFunds: "openDataFunds",
   openDataReports: "openDataReports",
+  redirects: "redirects",
 } as const;
 
 export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS];
@@ -49,6 +50,12 @@ export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS];
  */
 export const REVALIDATE = {
   live: 60,
+  /**
+   * Content with a publish and unpublish time. A fill applies the window in
+   * SQL, so a scheduled item is never served early; this bounds how long one
+   * that has just gone live (or come down) can lag behind the clock.
+   */
+  windowed: 300,
   events: 900,
   content: 3600,
 } as const;

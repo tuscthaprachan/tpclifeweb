@@ -10,6 +10,8 @@
  */
 
 import type { Metadata } from "next";
+import { PreviewBanner } from "@/components/preview/PreviewBanner";
+import { PREVIEW_METADATA, isPreview } from "@/lib/preview/state";
 import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -27,7 +29,7 @@ import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { formatDuration } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
-import { getFormBySlug, getForms } from "@/lib/content";
+import { getFormBySlug, getFormPreview, getForms } from "@/lib/content";
 import type { FormRecord, HelpContact } from "@/lib/content/types";
 
 /*
@@ -73,7 +75,7 @@ export async function generateStaticParams() {
   return slugParams(forms.map((form) => form.slug.current));
 }
 
-export async function generateMetadata({
+async function baseMetadata({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
@@ -101,6 +103,11 @@ export async function generateMetadata({
       },
     },
   };
+}
+
+export async function generateMetadata(props: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const metadata = await baseMetadata(props);
+  return (await isPreview()) ? { ...metadata, ...PREVIEW_METADATA } : metadata;
 }
 
 /** Mirrors HelpBlock's own channel-to-href mapping (components/layout/HelpBlock.tsx). Kept local rather than imported: that component owns the site-wide "Need help" section built from SiteSettings.helpContacts, a different thing from one form's own `contact`. */
@@ -168,7 +175,8 @@ export default async function FormDetailPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const form = await getFormBySlug(slug);
+  const preview = await isPreview();
+  const form = preview ? await getFormPreview(slug) : await getFormBySlug(slug);
   if (!form) notFound();
 
   const title = pick(form.title, locale);
@@ -195,6 +203,7 @@ export default async function FormDetailPage({
 
   return (
     <ShellContainer className="pb-8 pt-2">
+      {preview ? <PreviewBanner locale={locale} segment="forms" id={form._id} /> : null}
       <Breadcrumbs
         locale={locale}
         items={[

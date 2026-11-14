@@ -72,6 +72,8 @@ export async function PageForm({ kind, locale, id, saved }: { kind: ContentPageK
         id: page.id,
         status: page.status,
         updatedAt: page.updatedAt.toISOString(),
+        publishAt: page.publishAt?.toISOString() ?? null,
+        unpublishAt: page.unpublishAt?.toISOString() ?? null,
         updatedByName: page.updatedBy ? names.get(page.updatedBy) : null,
         viewHref: localePath(locale, `${def.viewPath}/${page.slug}`),
       }

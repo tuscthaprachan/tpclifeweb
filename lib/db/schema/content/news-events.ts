@@ -10,7 +10,7 @@ import {
   unique,
   uuid,
 } from "drizzle-orm/pg-core";
-import { contentColumns, requiredRichDoc, richDoc } from "./common";
+import { contentColumns, scheduleColumns, requiredRichDoc, richDoc } from "./common";
 import { categoryEnum, ownerEnum } from "./enums";
 import { forms } from "./forms";
 import { images } from "./images";
@@ -21,6 +21,7 @@ export const newsPosts = pgTable(
   "news_posts",
   {
     ...contentColumns(),
+    ...scheduleColumns(),
     slug: text("slug").notNull().unique(),
     titleTh: text("title_th").notNull().default(""),
     titleEn: text("title_en").notNull().default(""),
@@ -73,6 +74,7 @@ export const events = pgTable(
   "events",
   {
     ...contentColumns(),
+    ...scheduleColumns(),
     slug: text("slug").notNull().unique(),
     titleTh: text("title_th").notNull().default(""),
     titleEn: text("title_en").notNull().default(""),

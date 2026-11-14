@@ -4,11 +4,13 @@ import { useActionState, useEffect, useId, useMemo, useRef, useState, startTrans
 import { ConsoleIcon } from "@/components/admin/icons";
 import { ActionBar, Card, FormLayout, KeyValue } from "@/components/admin/ui";
 import { Button, ErrorSummary, NotificationBanner, Stack, StatusTag, Timestamp, type ErrorSummaryItem } from "@/components/ui";
+import { scheduleState } from "@/lib/admin/content/schedule";
 import { EMPTY_FORM_STATE, fieldId, type ContentFormState, type SaveIntent } from "@/lib/admin/content/form-state";
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { ContentFormProvider } from "./context";
+import { LifecycleTools } from "./LifecycleTools";
 import { PortalDialog } from "./PortalDialog";
 import { UnsavedChangesGuard } from "./UnsavedChangesGuard";
 
@@ -20,6 +22,9 @@ export interface ContentRecordInfo {
   updatedByName?: string | null;
   /** Public page, shown as "View on site" once published. */
   viewHref?: string;
+  /** ISO strings, for types with a publication window. */
+  publishAt?: string | null;
+  unpublishAt?: string | null;
 }
 
 interface ContentFormProps {
@@ -39,7 +44,7 @@ interface ContentFormProps {
   children: ReactNode;
 }
 
-const SAVED_KEY = { saved: "formSavedDraft", published: "formSavedPublished", unpublished: "formSavedUnpublished", updated: "formSavedUpdated" } as const;
+const SAVED_KEY = { saved: "formSavedDraft", published: "formSavedPublished", unpublished: "formSavedUnpublished", updated: "formSavedUpdated", duplicated: "clcSavedDuplicated", restored: "clcSavedRestored", scheduled: "clcSavedScheduled" } as const;
 
 /**
  * The shell around every content form: error summary, the fields in the main
@@ -77,7 +82,10 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
   const items: ErrorSummaryItem[] = Object.entries(state.errors).map(([path, message]) => ({ href: `#${fieldId(path)}`, message }));
   const status = record?.status ?? null;
   const savedKey = saved && saved in SAVED_KEY ? SAVED_KEY[saved as keyof typeof SAVED_KEY] : null;
-  const live = status === "published" && record?.viewHref;
+  const segment = listHref.split("/").filter(Boolean).pop() ?? "";
+  const phase = record ? scheduleState({ status, publishAt: record.publishAt, unpublishAt: record.unpublishAt }) : "draft";
+  const live = phase === "live" && record?.viewHref;
+  const whenText = (iso: string | null | undefined) => (iso ? new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Bangkok" }).format(new Date(iso)) : "");
 
   const busy = (which: SaveIntent) => pending && intent === which;
   const submit = { type: "submit" as const, form: formId, name: "intent", loadingLabel: a("formSaving", locale), disabled: pending };
@@ -88,11 +96,17 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
         <Stack space={3}>
           {hasStatus ? (
             status ? (
-              <StatusTag tone={status === "published" ? "success" : "neutral"} label={a(status === "published" ? "statusPublished" : "statusDraft", locale)} />
+              <StatusTag
+                tone={phase === "scheduled" ? "info" : phase === "expired" ? "warning" : status === "published" ? "success" : "neutral"}
+                label={phase === "scheduled" ? a("clcStatusScheduled", locale) : phase === "expired" ? a("clcStatusExpired", locale) : a(status === "published" ? "statusPublished" : "statusDraft", locale)}
+              />
             ) : (
               <StatusTag tone="info" label={a("cfNew", locale)} />
             )
           ) : null}
+          {phase === "scheduled" ? <p className="m-0 text-sm text-ink-600">{a("clcScheduledNote", locale, { when: whenText(record?.publishAt) })}</p> : null}
+          {phase === "expired" ? <p className="m-0 text-sm text-ink-600">{a("clcExpiredNote", locale, { when: whenText(record?.unpublishAt) })}</p> : null}
+          {phase === "live" && record?.unpublishAt ? <p className="m-0 text-sm text-ink-600">{a("clcEndsNote", locale, { when: whenText(record.unpublishAt) })}</p> : null}
           {record ? (
             <KeyValue
               items={[
@@ -112,6 +126,7 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
           ) : null}
         </Stack>
       </Card>
+      {record && hasStatus && segment ? <LifecycleTools locale={locale} segment={segment} id={record.id} publishAt={record.publishAt} unpublishAt={record.unpublishAt} /> : null}
       {record && deleteAction ? (
         <Card title={a("cfDanger", locale)} icon="warning" level={2}>
           <Stack space={3}>

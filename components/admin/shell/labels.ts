@@ -36,6 +36,23 @@ export interface ShellLabels {
   themeLight: string;
   themeDark: string;
   themeSystem: string;
+  paletteActions: string;
+  paletteMyCases: string;
+  paletteToggleTheme: string;
+  paletteSwitchLanguage: string;
+  paletteSignOut: string;
+  paletteShortcuts: string;
+  shortcutsTitle: string;
+  shortcutsIntro: string;
+  shortcutsGeneral: string;
+  shortcutsGoTo: string;
+  shortcutsThen: string;
+  shortcutsOpenPalette: string;
+  shortcutsOpenHelp: string;
+  shortcutsClose: string;
+  shortcutsPending: string;
+  shortcutsContent: string;
+  shortcutsMenu: string;
 }
 
 export function shellLabels(locale: Locale): ShellLabels {
@@ -72,5 +89,22 @@ export function shellLabels(locale: Locale): ShellLabels {
     themeLight: UI.themeLight[locale],
     themeDark: UI.themeDark[locale],
     themeSystem: UI.themeSystem[locale],
+    paletteActions: a("opPaletteActions", locale),
+    paletteMyCases: a("opPaletteMyCases", locale),
+    paletteToggleTheme: a("opPaletteToggleTheme", locale),
+    paletteSwitchLanguage: a("opPaletteSwitchLanguage", locale),
+    paletteSignOut: a("signOut", locale),
+    paletteShortcuts: a("opPaletteShortcuts", locale),
+    shortcutsTitle: a("opShortcutsTitle", locale),
+    shortcutsIntro: a("opShortcutsIntro", locale),
+    shortcutsGeneral: a("opShortcutsGeneral", locale),
+    shortcutsGoTo: a("opShortcutsGoTo", locale),
+    shortcutsThen: a("opShortcutsThen", locale),
+    shortcutsOpenPalette: a("opShortcutsOpenPalette", locale),
+    shortcutsOpenHelp: a("opShortcutsOpenHelp", locale),
+    shortcutsClose: a("opShortcutsClose", locale),
+    shortcutsPending: a("opShortcutsPending", locale),
+    shortcutsContent: a("opShortcutsContent", locale),
+    shortcutsMenu: a("opShortcutsMenu", locale),
   };
 }

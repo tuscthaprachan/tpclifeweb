@@ -13,6 +13,8 @@
  */
 
 import type { Metadata } from "next";
+import { PreviewBanner } from "@/components/preview/PreviewBanner";
+import { PREVIEW_METADATA, isPreview } from "@/lib/preview/state";
 import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
 import { PolicyLastUpdated, PolicyProgress, PolicyRelationLink, PolicyUpdateList, STATUS_LABEL_KEY, STATUS_TONE, isResolvedPolicy } from "@/components/domain/policy";
@@ -29,7 +31,7 @@ import { Timestamp } from "@/components/ui/Timestamp";
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getPolicies, getPolicyBySlug, resolveRichTextRefs } from "@/lib/content";
+import { getPolicies, getPolicyBySlug, getPolicyPreview, resolveRichTextRefs } from "@/lib/content";
 
 /*
  * Copy that lib/i18n/strings.ts does not carry, per CONTRIBUTING.md's
@@ -50,7 +52,7 @@ export async function generateStaticParams() {
   return slugParams(policies.map((policy) => policy.slug.current));
 }
 
-export async function generateMetadata({
+async function baseMetadata({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
@@ -77,6 +79,11 @@ export async function generateMetadata({
   };
 }
 
+export async function generateMetadata(props: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const metadata = await baseMetadata(props);
+  return (await isPreview()) ? { ...metadata, ...PREVIEW_METADATA } : metadata;
+}
+
 export default async function PolicyDetailPage({
   params,
 }: {
@@ -86,7 +93,8 @@ export default async function PolicyDetailPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const policy = await getPolicyBySlug(slug);
+  const preview = await isPreview();
+  const policy = preview ? await getPolicyPreview(slug) : await getPolicyBySlug(slug);
   if (!policy) notFound();
 
   const title = pick(policy.title, locale);
@@ -119,6 +127,7 @@ export default async function PolicyDetailPage({
 
   return (
     <ShellContainer className="pb-8 pt-2">
+      {preview ? <PreviewBanner locale={locale} segment="policies" id={policy._id} /> : null}
       <Breadcrumbs
         locale={locale}
         items={[

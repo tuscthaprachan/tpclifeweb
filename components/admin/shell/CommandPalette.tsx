@@ -2,8 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { signOutAction, setAdminLocale } from "@/app/admin/actions";
 import { ConsoleIcon, type ConsoleIconName } from "@/components/admin/icons";
+import { applyThemeOnClient } from "@/components/layout/ThemeToggle";
 import type { ResolvedNav } from "@/lib/admin/nav-match";
+import type { GoShortcut } from "@/lib/admin/shortcuts";
+import { LOCALE_LABEL, OTHER_LOCALE, type Locale } from "@/lib/i18n/config";
 import { fill } from "./fill";
 import type { ShellLabels } from "./labels";
 
@@ -12,7 +16,11 @@ interface Entry {
   id: string;
   title: string;
   subtitle?: string;
-  href: string;
+  href?: string;
+  /** Runs instead of navigating. */
+  run?: () => void;
+  /** The keys that do the same thing, shown at the end of the row. */
+  hint?: string;
   icon: ConsoleIconName;
   /** Extra words the filter also searches. */
   keywords?: string;
@@ -39,8 +47,11 @@ export interface CommandPaletteProps {
   nav: ResolvedNav;
   labels: Pick<
     ShellLabels,
-    "paletteTitle" | "palettePlaceholder" | "paletteGoTo" | "paletteCreate" | "paletteResults" | "paletteEmpty" | "paletteLoading" | "paletteCount" | "paletteKeys" | "paletteClose"
+    "paletteTitle" | "palettePlaceholder" | "paletteGoTo" | "paletteCreate" | "paletteResults" | "paletteEmpty" | "paletteLoading" | "paletteCount" | "paletteKeys" | "paletteClose" | "paletteActions" | "paletteMyCases" | "paletteToggleTheme" | "paletteSwitchLanguage" | "paletteSignOut" | "paletteShortcuts"
   >;
+  locale: Locale;
+  shortcuts: GoShortcut[];
+  onShowShortcuts: () => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /**
@@ -103,7 +114,7 @@ function isTypingTarget(target: EventTarget | null): boolean {
  * and "Add ..." actions as you type, and optionally lists live results from
  * `searchEndpoint`. Dialog with a combobox and listbox, driven from the keyboard.
  */
-export function CommandPalette({ nav, labels, open, onOpenChange, searchEndpoint }: CommandPaletteProps) {
+export function CommandPalette({ nav, labels, locale, shortcuts, onShowShortcuts, open, onOpenChange, searchEndpoint }: CommandPaletteProps) {
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       const combo = (event.key === "k" || event.key === "K") && (event.metaKey || event.ctrlKey);
@@ -118,10 +129,10 @@ export function CommandPalette({ nav, labels, open, onOpenChange, searchEndpoint
   }, [onOpenChange]);
 
   if (!open) return null;
-  return <PaletteDialog nav={nav} labels={labels} onClose={() => onOpenChange(false)} searchEndpoint={searchEndpoint} />;
+  return <PaletteDialog nav={nav} labels={labels} locale={locale} shortcuts={shortcuts} onShowShortcuts={onShowShortcuts} onClose={() => onOpenChange(false)} searchEndpoint={searchEndpoint} />;
 }
 
-function PaletteDialog({ nav, labels, onClose, searchEndpoint }: Omit<CommandPaletteProps, "open" | "onOpenChange"> & { onClose: () => void }) {
+function PaletteDialog({ nav, labels, locale, shortcuts, onShowShortcuts, onClose, searchEndpoint }: Omit<CommandPaletteProps, "open" | "onOpenChange"> & { onClose: () => void }) {
   const router = useRouter();
   const uid = useId();
   const listId = `${uid}-list`;
@@ -132,10 +143,42 @@ function PaletteDialog({ nav, labels, onClose, searchEndpoint }: Omit<CommandPal
   const [cursor, setCursor] = useState(0);
   const [remote, setRemote] = useState<{ query: string; results: PaletteSearchResult[] } | null>(null);
 
-  const pages = useMemo<Entry[]>(
-    () => nav.groups.flatMap((g) => g.items.map((i) => ({ id: i.id, title: i.label, subtitle: g.label, href: i.href, icon: i.icon }))),
-    [nav],
-  );
+  const pages = useMemo<Entry[]>(() => {
+    const hintFor = new Map(shortcuts.map((s) => [s.href, `g ${s.key}`]));
+    return nav.groups.flatMap((g) => g.items.map((i) => ({ id: i.id, title: i.label, subtitle: g.label, href: i.href, icon: i.icon, hint: hintFor.get(i.href) })));
+  }, [nav, shortcuts]);
+  const actions = useMemo<Entry[]>(() => {
+    const target = OTHER_LOCALE[locale];
+    const out: Entry[] = [];
+    if (nav.groups.some((g) => g.items.some((i) => i.id === "cases"))) out.push({ id: "action-my-cases", title: labels.paletteMyCases, href: "/admin/cases?assignee=me&open=1", icon: "cases" });
+    out.push(
+      {
+        id: "action-theme",
+        title: labels.paletteToggleTheme,
+        icon: "theme",
+        run: () => {
+          const root = document.documentElement;
+          const explicit = root.getAttribute("data-theme");
+          const dark = explicit ? explicit === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          applyThemeOnClient(dark ? "light" : "dark");
+        },
+      },
+      {
+        id: "action-language",
+        title: fill(labels.paletteSwitchLanguage, { language: LOCALE_LABEL[target] }),
+        icon: "language",
+        run: () => {
+          const data = new FormData();
+          data.set("locale", target);
+          data.set("returnTo", window.location.pathname + window.location.search);
+          void setAdminLocale(data);
+        },
+      },
+      { id: "action-shortcuts", title: labels.paletteShortcuts, icon: "keyboard", hint: "?", run: onShowShortcuts },
+      { id: "action-sign-out", title: labels.paletteSignOut, icon: "signOut", run: () => void signOutAction() },
+    );
+    return out;
+  }, [nav, labels, locale, onShowShortcuts]);
   const creates = useMemo<Entry[]>(
     () => nav.quickCreate.map((q) => ({ id: q.id, title: q.label, subtitle: q.groupLabel, href: q.href, icon: q.icon })),
     [nav],
@@ -149,6 +192,7 @@ function PaletteDialog({ nav, labels, onClose, searchEndpoint }: Omit<CommandPal
     const out: Section[] = [
       { id: "pages", label: labels.paletteGoTo, entries: filterEntries(pages, query) },
       { id: "create", label: labels.paletteCreate, entries: filterEntries(creates, query) },
+      { id: "actions", label: labels.paletteActions, entries: filterEntries(actions, query) },
     ];
     if (wantsRemote && remote?.query === trimmed) {
       const byGroup = new Map<string, Entry[]>();
@@ -159,7 +203,7 @@ function PaletteDialog({ nav, labels, onClose, searchEndpoint }: Omit<CommandPal
       for (const [group, entries] of byGroup) out.push({ id: `remote-${group}`, label: group || labels.paletteResults, entries });
     }
     return out.filter((s) => s.entries.length > 0);
-  }, [pages, creates, query, labels, remote, trimmed, wantsRemote]);
+  }, [pages, creates, actions, query, labels, remote, trimmed, wantsRemote]);
 
   const flat = useMemo(() => sections.flatMap((s) => s.entries), [sections]);
   const active = flat.length === 0 ? -1 : Math.min(cursor, flat.length - 1);
@@ -202,7 +246,8 @@ function PaletteDialog({ nav, labels, onClose, searchEndpoint }: Omit<CommandPal
 
   function go(entry: Entry) {
     onClose();
-    router.push(entry.href);
+    if (entry.run) entry.run();
+    else if (entry.href) router.push(entry.href);
   }
 
   function onKeyDown(event: React.KeyboardEvent) {
@@ -302,6 +347,11 @@ function PaletteDialog({ nav, labels, onClose, searchEndpoint }: Omit<CommandPal
                       <ConsoleIcon name={entry.icon} />
                       <span className="min-w-0 flex-1 truncate">{entry.title}</span>
                       {entry.subtitle ? <span className="console-palette-sub">{entry.subtitle}</span> : null}
+                      {entry.hint ? (
+                        <kbd className="console-kbd !m-0 !inline" aria-hidden="true">
+                          {entry.hint}
+                        </kbd>
+                      ) : null}
                     </li>
                   );
                 })}

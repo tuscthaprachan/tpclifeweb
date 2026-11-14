@@ -11,7 +11,7 @@ import {
   unique,
   uuid,
 } from "drizzle-orm/pg-core";
-import { contentColumns, requiredRichDoc, type ExternalLinkJson } from "./common";
+import { contentColumns, scheduleColumns, requiredRichDoc, type ExternalLinkJson } from "./common";
 import { categoryEnum, contentPageKindEnum } from "./enums";
 import { forms } from "./forms";
 
@@ -26,6 +26,7 @@ export const contentPages = pgTable(
   "content_pages",
   {
     ...contentColumns(),
+    ...scheduleColumns(),
     kind: contentPageKindEnum("kind").notNull(),
     slug: text("slug").notNull(),
     titleTh: text("title_th").notNull().default(""),
@@ -84,6 +85,7 @@ export const faqs = pgTable(
   "faqs",
   {
     ...contentColumns(),
+    ...scheduleColumns(),
     slug: text("slug").unique(),
     questionTh: text("question_th").notNull().default(""),
     questionEn: text("question_en").notNull().default(""),

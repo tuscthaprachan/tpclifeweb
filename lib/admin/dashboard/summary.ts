@@ -1,15 +1,19 @@
 import "server-only";
 
-import { and, count, desc, eq, gte, isNull, lte, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, gte, inArray, isNull, lte, or, sql } from "drizzle-orm";
+import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { countContentTypes } from "@/lib/admin/content/list";
 import { CONTENT_TYPES, type ContentTypeDef } from "@/lib/admin/content/types";
 import { accessibleServices } from "@/lib/cases/access";
+import { addDays, dayKeyOf, dayStart } from "@/lib/borrowing/time";
 import { listCases } from "@/lib/cases/engine";
 import { caseVisibleTo } from "@/lib/cases/restrictions";
+import type { ActiveRole } from "@/lib/auth/roles";
 import type { StaffActor } from "@/lib/cases/types";
 import { complaintEscalated } from "@/lib/complaints/overdue";
 import type { AuditExecutor } from "@/lib/db/audit";
-import { cases } from "@/lib/db/schema/cases";
+import { borrowingRequests } from "@/lib/db/schema/borrowing";
+import { cases, type CaseService } from "@/lib/db/schema/cases";
 import { complaintCases } from "@/lib/db/schema/complaints";
 import type { ContentStatus } from "@/lib/db/schema/content/enums";
 import { serviceAlerts } from "@/lib/db/schema";
@@ -100,3 +104,71 @@ export async function loadRecentContent(db: AuditExecutor, limit = 8): Promise<R
   return perType.flat().sort((x, y) => y.updatedAt.getTime() - x.updatedAt.getTime()).slice(0, limit);
 }
 
+
+export interface BorrowingCounts {
+  /** Requests waiting for a decision. */
+  pending: number;
+  /** On loan and due back later today (Bangkok time). */
+  dueToday: number;
+  /** On loan and past the return time. */
+  overdue: number;
+}
+
+export async function loadBorrowingCounts(db: AuditExecutor, now = new Date()): Promise<BorrowingCounts> {
+  const tomorrow = dayStart(addDays(dayKeyOf(now), 1));
+  const [row] = await db
+    .select({
+      pending: sql<number>`count(*) filter (where ${cases.status} = 'requested')::int`,
+      dueToday: sql<number>`count(*) filter (where ${cases.status} = 'on_loan' and ${borrowingRequests.returnDueAt} >= ${now} and ${borrowingRequests.returnDueAt} < ${tomorrow})::int`,
+      overdue: sql<number>`count(*) filter (where ${cases.status} = 'on_loan' and ${borrowingRequests.returnDueAt} < ${now})::int`,
+    })
+    .from(cases)
+    .innerJoin(borrowingRequests, eq(borrowingRequests.caseId, cases.id))
+    .where(eq(cases.service, "borrowing"));
+  return { pending: row?.pending ?? 0, dueToday: row?.dueToday ?? 0, overdue: row?.overdue ?? 0 };
+}
+
+export interface MyCases {
+  service: CaseService;
+  open: number;
+}
+
+/** Open cases assigned to the person, by service, limited to services their roles cover and cases they may see. */
+export async function loadMyCases(db: AuditExecutor, userId: string, roles: readonly ActiveRole[]): Promise<MyCases[]> {
+  const services = accessibleServices(roles);
+  if (services.length === 0) return [];
+  const rows = await db
+    .select({ service: cases.service, open: count() })
+    .from(cases)
+    .where(and(eq(cases.assignedTo, userId), isNull(cases.closedAt), inArray(cases.service, services), caseVisibleTo(userId)))
+    .groupBy(cases.service);
+  return services.map((service) => ({ service, open: rows.find((r) => r.service === service)?.open ?? 0 }));
+}
+
+export interface MyDraft {
+  key: string;
+  typeKey: string;
+  id: string;
+  title: { th: string; en: string };
+  updatedAt: Date;
+}
+
+/** Unpublished content whose last edit was by this person, newest first. */
+export async function loadMyDrafts(db: AuditExecutor, userId: string, limit = 5): Promise<MyDraft[]> {
+  const defs = CONTENT_TYPES.filter((d) => d.available && d.kind === "collection" && d.columns.title !== null && d.columns.status !== null);
+  const perType = await Promise.all(
+    defs.map(async (def) => {
+      const updatedBy = (getTableColumns(def.table) as Record<string, AnyPgColumn>).updatedBy;
+      if (!updatedBy) return [];
+      const { id, title, status, updatedAt } = def.columns;
+      const rows = await db
+        .select({ id, titleTh: title![0], titleEn: title![1], updatedAt })
+        .from(def.table)
+        .where(and(def.where, eq(updatedBy, userId), sql`${status!} <> 'published'`))
+        .orderBy(desc(updatedAt))
+        .limit(limit);
+      return rows.map((r): MyDraft => ({ key: `${def.key}:${r.id as string}`, typeKey: def.key, id: r.id as string, title: { th: String(r.titleTh ?? ""), en: String(r.titleEn ?? "") }, updatedAt: new Date(r.updatedAt as Date) }));
+    }),
+  );
+  return perType.flat().sort((x, y) => y.updatedAt.getTime() - x.updatedAt.getTime()).slice(0, limit);
+}

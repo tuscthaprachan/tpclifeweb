@@ -14,6 +14,7 @@ import {
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { readFormsByIds } from "./forms";
 import { ci, groupBy, iso, ls, opt, richPair, withKeys } from "./map";
+import { liveWindow } from "./window";
 import { safeFetch } from "./safe-fetch";
 import type { ContentPage, Faq, FormRecord } from "./types";
 
@@ -56,7 +57,7 @@ async function toPages(db: AuditExecutor, rows: ContentPageRow[]): Promise<Conte
           .from(contentPages)
           .where(
             and(
-              eq(contentPages.status, "published"),
+              liveWindow(contentPages),
               inArray(contentPages.id, [...new Set(relatedLinks.map((l) => l.relatedPageId))]),
             ),
           )
@@ -80,11 +81,12 @@ async function toPages(db: AuditExecutor, rows: ContentPageRow[]): Promise<Conte
   });
 }
 
-export async function readContentPageBySlug(db: AuditExecutor, type: ContentPageType, slug: string): Promise<ContentPage | null> {
+/** `includeUnpublished` is for editor previews only. */
+export async function readContentPageBySlug(db: AuditExecutor, type: ContentPageType, slug: string, includeUnpublished = false, now: Date = new Date()): Promise<ContentPage | null> {
   const [row] = await db
     .select()
     .from(contentPages)
-    .where(and(eq(contentPages.status, "published"), eq(contentPages.kind, KIND[type]), eq(contentPages.slug, slug)))
+    .where(and(includeUnpublished ? undefined : liveWindow(contentPages, now), eq(contentPages.kind, KIND[type]), eq(contentPages.slug, slug)))
     .limit(1);
   return row ? ((await toPages(db, [row]))[0] ?? null) : null;
 }
@@ -94,17 +96,17 @@ export async function readContentPages(db: AuditExecutor, type: ContentPageType)
   const rows = await db
     .select()
     .from(contentPages)
-    .where(and(eq(contentPages.status, "published"), eq(contentPages.kind, KIND[type])))
+    .where(and(liveWindow(contentPages), eq(contentPages.kind, KIND[type])))
     .orderBy(sql`${contentPages.sortOrder} asc nulls last`, ci(contentPages.titleEn), contentPages.slug);
   return toPages(db, rows);
 }
 
 /** In handbook order (`order`), with the forms each answer points to. */
-export async function readFaqs(db: AuditExecutor): Promise<Faq[]> {
+export async function readFaqs(db: AuditExecutor, now: Date = new Date()): Promise<Faq[]> {
   const rows = await db
     .select()
     .from(faqs)
-    .where(eq(faqs.status, "published"))
+    .where(liveWindow(faqs, now))
     .orderBy(sql`${faqs.sortOrder} asc nulls last`, faqs.createdAt, faqs.id);
   if (rows.length === 0) return [];
   const links = await db
@@ -142,13 +144,13 @@ const PAGE_TAGS = [CACHE_TAGS.content, CACHE_TAGS.form] as const;
 const cachedPageBySlug = cachedRead(
   ["content-page-by-slug"],
   PAGE_TAGS,
-  REVALIDATE.content,
+  REVALIDATE.windowed,
   (type: ContentPageType, slug: string) => readContentPageBySlug(getDb(), type, slug),
 );
-const cachedPages = cachedRead(["content-pages"], PAGE_TAGS, REVALIDATE.content, (type: ContentPageType) =>
+const cachedPages = cachedRead(["content-pages"], PAGE_TAGS, REVALIDATE.windowed, (type: ContentPageType) =>
   readContentPages(getDb(), type),
 );
-const cachedFaqs = cachedRead(["faqs"], [CACHE_TAGS.faq, CACHE_TAGS.form], REVALIDATE.content, () => readFaqs(getDb()));
+const cachedFaqs = cachedRead(["faqs"], [CACHE_TAGS.faq, CACHE_TAGS.form], REVALIDATE.windowed, () => readFaqs(getDb()));
 
 export async function getContentPageBySlug(type: ContentPageType, slug: string): Promise<ContentPage | null> {
   return safeFetch<ContentPage | null>("getContentPageBySlug", () => cachedPageBySlug(type, slug), null);
@@ -160,4 +162,9 @@ export async function getContentPages(type: ContentPageType): Promise<ContentPag
 
 export async function getFaqs(): Promise<Faq[]> {
   return safeFetch<Faq[]>("getFaqs", () => cachedFaqs(), []);
+}
+
+/** Uncached and unfiltered: the page as saved, draft or scheduled. Call only behind `isPreview()`. */
+export async function getContentPagePreview(type: ContentPageType, slug: string): Promise<ContentPage | null> {
+  return safeFetch<ContentPage | null>("getContentPagePreview", () => readContentPageBySlug(getDb(), type, slug, true), null);
 }

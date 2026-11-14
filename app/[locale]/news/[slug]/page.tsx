@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { PreviewBanner } from "@/components/preview/PreviewBanner";
+import { PREVIEW_METADATA, isPreview } from "@/lib/preview/state";
 import Image from "next/image";
 import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
@@ -9,7 +11,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Grid, Heading, Stack, Tag, Timestamp } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getNewsPage, getNewsPostBySlug, resolveRichTextRefs } from "@/lib/content";
+import { getNewsPage, getNewsPostBySlug, getNewsPostPreview, resolveRichTextRefs } from "@/lib/content";
 import type { ContentImage } from "@/lib/content/types";
 
 // Cover and gallery images are cropped to a fixed ratio with `fill` and
@@ -28,7 +30,7 @@ export async function generateStaticParams() {
   return slugParams(items.map((post) => post.slug.current));
 }
 
-export async function generateMetadata({
+async function baseMetadata({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
@@ -44,6 +46,11 @@ export async function generateMetadata({
   };
 }
 
+export async function generateMetadata(props: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const metadata = await baseMetadata(props);
+  return (await isPreview()) ? { ...metadata, ...PREVIEW_METADATA } : metadata;
+}
+
 export default async function NewsDetailPage({
   params,
 }: {
@@ -53,7 +60,8 @@ export default async function NewsDetailPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const post = await getNewsPostBySlug(slug);
+  const preview = await isPreview();
+  const post = preview ? await getNewsPostPreview(slug) : await getNewsPostBySlug(slug);
   if (!post) notFound();
 
   const title = pick(post.title, locale);
@@ -61,6 +69,7 @@ export default async function NewsDetailPage({
 
   return (
     <Container width="narrow">
+      {preview ? <PreviewBanner locale={locale} segment="news" id={post._id} /> : null}
       <Breadcrumbs
         locale={locale}
         items={[

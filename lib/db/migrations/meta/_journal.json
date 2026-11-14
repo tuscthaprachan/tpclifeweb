@@ -120,6 +120,13 @@
       "when": 1794645773347,
       "tag": "0016_staff_roles_memberships",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794647113173,
+      "tag": "0017_content_lifecycle",
+      "breakpoints": true
     }
   ]
 }

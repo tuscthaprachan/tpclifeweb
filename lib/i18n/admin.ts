@@ -15,13 +15,17 @@ import { CASES_STRINGS } from "./admin-content/cases";
 import { CONSOLE_STRINGS } from "./admin-content/console";
 import { CONSOLE_HOME_STRINGS } from "./admin-content/console-home";
 import { CONSOLE_CONTENT_STRINGS } from "./admin-content/console-content";
+import { CONTENT_LIST_STRINGS } from "./admin-content/content-lists";
+import { CONTENT_LIFECYCLE_STRINGS } from "./admin-content/content-lifecycle";
 import { CONSOLE_CASES_STRINGS } from "./admin-content/console-cases";
+import { CONSOLE_OPS_STRINGS } from "./admin-content/console-ops";
 import { CONSOLE_PEOPLE_STRINGS } from "./admin-content/console-people";
 import { COMPLAINTS_STRINGS } from "./admin-content/complaints";
 import { DIRECTORY_STRINGS } from "./admin-content/directory";
 import { EDITOR_STRINGS } from "./admin-content/editor";
 import { LOST_FOUND_CASES_STRINGS } from "./admin-content/lost-found-cases";
 import { MEDIA_STRINGS } from "./admin-content/media";
+import { MEDIA_LIBRARY_STRINGS } from "./admin-content/media-library";
 import { PAGES_STRINGS } from "./admin-content/pages";
 import { PERFORMANCE_STRINGS } from "./admin-content/performance";
 import { BORROWING_STRINGS } from "./admin-content/borrowing";
@@ -713,6 +717,7 @@ export const A = {
   ...EDITOR_STRINGS,
   ...CANTEEN_STRINGS,
   ...MEDIA_STRINGS,
+  ...MEDIA_LIBRARY_STRINGS,
   ...CASES_STRINGS,
   ...COMPLAINTS_STRINGS,
   ...LOST_FOUND_CASES_STRINGS,
@@ -723,8 +728,11 @@ export const A = {
   ...CONSOLE_STRINGS,
   ...CONSOLE_HOME_STRINGS,
   ...CONSOLE_CONTENT_STRINGS,
+  ...CONTENT_LIST_STRINGS,
+  ...CONTENT_LIFECYCLE_STRINGS,
   ...CONSOLE_CASES_STRINGS,
   ...CONSOLE_PEOPLE_STRINGS,
+  ...CONSOLE_OPS_STRINGS,
   ...STAFF_MEMBER_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 

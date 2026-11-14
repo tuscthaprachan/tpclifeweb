@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { images } from "@/lib/db/schema";
 import { a } from "@/lib/i18n/admin";
+import { readImageDimensions } from "@/lib/admin/media/dimensions";
 import type { Locale } from "@/lib/i18n/config";
 import { getStorage, newObjectKey, StorageError, validateUpload } from "@/lib/storage";
 import type { ContentActor } from "./access";
@@ -89,6 +90,7 @@ export async function uploadContentImage(input: {
     return fail("errUploadFailed");
   }
 
+  const size = readImageDimensions(bytes, check.contentType);
   const db = input.db ?? getDb();
   const row = await withAudit(db, actor.context, async (tx, audit) => {
     const [created] = await tx
@@ -96,6 +98,8 @@ export async function uploadContentImage(input: {
       .values({
         storageKey: key,
         mimeType: check.contentType,
+        width: size?.width ?? null,
+        height: size?.height ?? null,
         altTh: input.isDecorative ? "" : input.altTh.trim(),
         altEn: input.isDecorative ? "" : input.altEn.trim(),
         isDecorative: input.isDecorative,

@@ -5,7 +5,10 @@ import { ConsoleIcon } from "@/components/admin/icons";
 import { ConsolePage, PageHeader } from "@/components/admin/ui";
 import { Heading } from "@/components/ui";
 import { requireEditor } from "@/lib/admin/content/access";
-import { countContentTypes } from "@/lib/admin/content/list";
+import { rowTitle } from "@/components/admin/content/ContentList";
+import { StatusBadge } from "@/components/admin/content/StatusBadge";
+import { Timestamp } from "@/components/ui";
+import { countContentTypes, recentEditsBy } from "@/lib/admin/content/list";
 import { CONTENT_TYPES, contentPath, type ContentTypeDef } from "@/lib/admin/content/types";
 import { getAdminLocale } from "@/lib/admin/locale";
 import type { ConsoleGroupId } from "@/lib/admin/nav";
@@ -25,8 +28,14 @@ const GROUP_ORDER: ConsoleGroupId[] = ["announcements", "information", "director
 export default async function ContentHubPage() {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
-  await requireEditor();
-  const counts = await countContentTypes(getDb(), CONTENT_TYPES);
+  const staff = await requireEditor();
+  const db = getDb();
+  const [counts, mine] = await Promise.all([countContentTypes(db, CONTENT_TYPES), recentEditsBy(db, CONTENT_TYPES, staff.user.id)]);
+  let drafts = 0;
+  for (const def of CONTENT_TYPES) {
+    const c = counts.get(def.key);
+    if (c && def.columns.status) drafts += c.total - c.published;
+  }
 
   const sections = GROUP_ORDER.map((id) => {
     const defs = CONTENT_TYPES.filter((def) => def.available && contentPlacement(def).group === id);
@@ -99,6 +108,42 @@ export default async function ContentHubPage() {
   return (
     <ConsolePage width="wide">
       <PageHeader title={a("contentHubTitle", locale)} icon="groupAnnouncements" description={a("contentHubIntro", locale)} />
+      <section aria-labelledby="hub-summary" className="flex flex-col gap-[var(--space-3)]">
+        <Heading level={2} visualLevel={4} id="hub-summary" className="m-0 flex items-center gap-[var(--space-2)] font-semibold">
+          <ConsoleIcon name="draft" className="text-ink-600" />
+          {a("clHubDraftsTotal", locale)}
+        </Heading>
+        <p className="m-0 flex flex-wrap items-baseline gap-x-[var(--space-3)]">
+          <span className="text-3xl font-bold tabular-nums">{drafts}</span>
+          <span className="text-ink-600">{a("clHubDraftsHint", locale)}</span>
+        </p>
+        <Heading level={3} visualLevel={5} className="m-0 flex items-center gap-[var(--space-2)] font-semibold">
+          <ConsoleIcon name="edit" className="text-ink-600" />
+          {a("clHubMine", locale)}
+        </Heading>
+        {mine.length === 0 ? (
+          <p className="m-0 text-ink-600">{a("clHubMineEmpty", locale)}</p>
+        ) : (
+          <ul className="m-0 flex list-none flex-col p-0">
+            {mine.map(({ def, row }) => {
+              const place = contentPlacement(def);
+              return (
+                <li key={`${def.key}-${row.id}`} className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)] border-b border-line py-[var(--space-2)]">
+                  <ConsoleIcon name={place.icon} size={16} className="text-ink-600" />
+                  <Link href={contentPath(def, row.id)} className="min-w-0 font-medium [overflow-wrap:anywhere]">
+                    {rowTitle(row.title, locale)}
+                  </Link>
+                  <span className="text-sm text-ink-600">{a(def.labelKey, locale)}</span>
+                  {row.status ? <StatusBadge status={row.status} locale={locale} /> : null}
+                  <span className="text-sm text-ink-600">
+                    <Timestamp value={row.updatedAt} locale={locale} format="relative" />
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
       {sections.map((section) => (
         <section key={section.id} aria-labelledby={`hub-${section.id}`} className="flex flex-col gap-[var(--space-3)]">
           <Heading level={2} visualLevel={4} id={`hub-${section.id}`} className="m-0 flex items-center gap-[var(--space-2)] font-semibold">

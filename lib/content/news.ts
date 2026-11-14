@@ -7,6 +7,7 @@ import { newsPostImages, newsPosts, newsPostTags, type NewsPostRow } from "@/lib
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { loadImages } from "./images";
 import { groupBy, iso, ls, opt, optList, richPair } from "./map";
+import { liveWindow } from "./window";
 import { safeFetch } from "./safe-fetch";
 import type { ContentImage, NewsPost } from "./types";
 
@@ -50,8 +51,8 @@ async function toNewsPosts(db: AuditExecutor, rows: NewsPostRow[]): Promise<News
 }
 
 /** Newest first. `page` is 1-based. */
-export async function readNewsPage(db: AuditExecutor, page: number, pageSize: number): Promise<PagedNews> {
-  const published = eq(newsPosts.status, "published");
+export async function readNewsPage(db: AuditExecutor, page: number, pageSize: number, now: Date = new Date()): Promise<PagedNews> {
+  const published = liveWindow(newsPosts, now);
   const rows = await db
     .select()
     .from(newsPosts)
@@ -63,19 +64,20 @@ export async function readNewsPage(db: AuditExecutor, page: number, pageSize: nu
   return { items: await toNewsPosts(db, rows), total };
 }
 
-export async function readNewsPostBySlug(db: AuditExecutor, slug: string): Promise<NewsPost | null> {
+/** `includeUnpublished` is for editor previews only. */
+export async function readNewsPostBySlug(db: AuditExecutor, slug: string, includeUnpublished = false, now: Date = new Date()): Promise<NewsPost | null> {
   const [row] = await db
     .select()
     .from(newsPosts)
-    .where(and(eq(newsPosts.status, "published"), eq(newsPosts.slug, slug)))
+    .where(and(includeUnpublished ? undefined : liveWindow(newsPosts, now), eq(newsPosts.slug, slug)))
     .limit(1);
   return row ? ((await toNewsPosts(db, [row]))[0] ?? null) : null;
 }
 
-const cachedNewsPage = cachedRead(["news-page"], [CACHE_TAGS.news, CACHE_TAGS.image], REVALIDATE.content, (page: number, pageSize: number) =>
+const cachedNewsPage = cachedRead(["news-page"], [CACHE_TAGS.news, CACHE_TAGS.image], REVALIDATE.windowed, (page: number, pageSize: number) =>
   readNewsPage(getDb(), page, pageSize),
 );
-const cachedNewsPostBySlug = cachedRead(["news-by-slug"], [CACHE_TAGS.news, CACHE_TAGS.image], REVALIDATE.content, (slug: string) =>
+const cachedNewsPostBySlug = cachedRead(["news-by-slug"], [CACHE_TAGS.news, CACHE_TAGS.image], REVALIDATE.windowed, (slug: string) =>
   readNewsPostBySlug(getDb(), slug),
 );
 
@@ -93,4 +95,9 @@ export async function getNewsPage(page = 1, pageSize = 10): Promise<PagedNews> {
 
 export async function getNewsPostBySlug(slug: string): Promise<NewsPost | null> {
   return safeFetch<NewsPost | null>("getNewsPostBySlug", () => cachedNewsPostBySlug(slug), null);
+}
+
+/** Uncached and unfiltered: the post as saved, draft or scheduled. Call only behind `isPreview()`. */
+export async function getNewsPostPreview(slug: string): Promise<NewsPost | null> {
+  return safeFetch<NewsPost | null>("getNewsPostPreview", () => readNewsPostBySlug(getDb(), slug, true), null);
 }

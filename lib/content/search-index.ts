@@ -24,6 +24,7 @@ import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { readCanteenData } from "./canteen";
 import { readPlacesByIds } from "./directory";
 import { ls } from "./map";
+import { liveWindow } from "./window";
 import { safeFetch } from "./safe-fetch";
 import type { Category, Owner, SearchIndex, SearchRecord, SearchableType } from "./types";
 
@@ -83,13 +84,13 @@ export async function readSearchIndex(db: AuditExecutor): Promise<SearchIndex> {
     placeRows,
     lostFoundRows,
   ] = await Promise.all([
-    db.select().from(forms).where(and(eq(forms.status, "published"), eq(forms.isActive, true))),
+    db.select().from(forms).where(and(liveWindow(forms), eq(forms.isActive, true))),
     db.select().from(shuttleRoutes).where(and(eq(shuttleRoutes.status, "published"), eq(shuttleRoutes.isActive, true))),
-    db.select().from(contentPages).where(eq(contentPages.status, "published")),
-    db.select().from(faqs).where(eq(faqs.status, "published")),
-    db.select().from(events).where(and(eq(events.status, "published"), eq(events.isCancelled, false))),
-    db.select().from(newsPosts).where(eq(newsPosts.status, "published")),
-    db.select().from(policies).where(eq(policies.status, "published")),
+    db.select().from(contentPages).where(liveWindow(contentPages)),
+    db.select().from(faqs).where(liveWindow(faqs)),
+    db.select().from(events).where(and(liveWindow(events), eq(events.isCancelled, false))),
+    db.select().from(newsPosts).where(liveWindow(newsPosts)),
+    db.select().from(policies).where(liveWindow(policies)),
     db
       .select()
       .from(directoryOrganisations)
@@ -264,7 +265,7 @@ export async function readSearchIndex(db: AuditExecutor): Promise<SearchIndex> {
 const cachedSearchIndex = cachedRead(
   ["search-index"],
   [CACHE_TAGS.searchIndex],
-  REVALIDATE.content,
+  REVALIDATE.windowed,
   () => readSearchIndex(getDb()),
 );
 

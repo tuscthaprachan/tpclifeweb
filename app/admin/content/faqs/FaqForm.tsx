@@ -35,6 +35,8 @@ export async function FaqForm({ locale, id, saved }: { locale: Locale; id?: stri
         id: faq.id,
         status: faq.status,
         updatedAt: faq.updatedAt.toISOString(),
+        publishAt: faq.publishAt?.toISOString() ?? null,
+        unpublishAt: faq.unpublishAt?.toISOString() ?? null,
         updatedByName: faq.updatedBy ? names.get(faq.updatedBy) : null,
         viewHref: localePath(locale, "/faq"),
       }

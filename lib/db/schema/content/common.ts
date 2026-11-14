@@ -30,6 +30,17 @@ export function contentColumns() {
   };
 }
 
+/**
+ * Publication window for content with a public page. A published row is live
+ * when `publish_at` is null or past and `unpublish_at` is null or in the future.
+ */
+export function scheduleColumns() {
+  return {
+    publishAt: timestamp("publish_at", { withTimezone: true }),
+    unpublishAt: timestamp("unpublish_at", { withTimezone: true }),
+  };
+}
+
 /** An optional rich text document (one column per language). */
 export const richDoc = (name: string) => jsonb(name).$type<RichTextDoc>();
 

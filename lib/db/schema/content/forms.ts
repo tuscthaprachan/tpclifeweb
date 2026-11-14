@@ -1,6 +1,6 @@
 import { boolean, date, index, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { contentColumns, richDoc, type HelpContactJson, type LocaleStringJson } from "./common";
+import { contentColumns, scheduleColumns, richDoc, type HelpContactJson, type LocaleStringJson } from "./common";
 import { categoryEnum, formDestinationEnum, ownerEnum, signInTypeEnum } from "./enums";
 
 export interface FormPrerequisiteJson {
@@ -16,6 +16,7 @@ export const forms = pgTable(
   "forms",
   {
     ...contentColumns(),
+    ...scheduleColumns(),
     slug: text("slug").notNull().unique(),
     titleTh: text("title_th").notNull().default(""),
     titleEn: text("title_en").notNull().default(""),
