@@ -16,7 +16,7 @@ export function ActionBar({ children, state = "idle", dirtyText, savedText, clas
   const text = state === "dirty" ? dirtyText : state === "saved" ? savedText : undefined;
   return (
     <div className={`console-actionbar ${className}`}>
-      <p role="status" aria-live="polite" className="m-0 flex min-w-0 flex-1 items-center gap-[var(--space-2)] text-sm text-ink-600">
+      <p role="status" aria-live="polite" className="m-0 flex min-w-0 flex-1 items-center gap-[var(--space-2)] text-sm text-ink-600 max-sm:basis-full max-sm:empty:-mb-[var(--space-2)]">
         {text ? (
           <>
             <ConsoleIcon name={state === "saved" ? "check" : "edit"} size={16} />

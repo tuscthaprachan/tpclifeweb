@@ -17,3 +17,4 @@ export * from "./KeyValue";
 export * from "./PageHeader";
 export * from "./StatCard";
 export * from "./Toolbar";
+export * from "./FilterDisclosure";

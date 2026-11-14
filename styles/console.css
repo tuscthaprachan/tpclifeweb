@@ -415,6 +415,8 @@
   border: var(--border-width) solid var(--line-strong);
   border-radius: var(--radius-panel);
   box-shadow: var(--elevation);
+  max-block-size: calc(100dvh - var(--console-topbar-h) - var(--space-4));
+  overflow-y: auto;
 }
 
 .console-popover[hidden] {
@@ -688,6 +690,57 @@
   margin-inline-start: auto;
 }
 
+.console-filters > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--target-min);
+  padding-inline: var(--space-3);
+  background: var(--surface);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-control);
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+
+.console-filters > summary::-webkit-details-marker {
+  display: none;
+}
+
+.console-filters[open] > summary {
+  margin-block-end: var(--space-3);
+}
+
+.console-filters[open] .console-filters-chevron {
+  transform: rotate(180deg);
+}
+
+@media (min-width: 48rem) {
+  @supports selector(::details-content) {
+    .console-filters > summary {
+      display: none;
+    }
+
+    .console-filters::details-content {
+      content-visibility: visible;
+      display: contents;
+    }
+  }
+}
+
+@media (max-width: 39.99rem) {
+  .console-filters form:not(.grid) > * {
+    flex: 1 1 100%;
+    min-inline-size: 0;
+  }
+
+  .console-filters select,
+  .console-filters input:not([type="checkbox"], [type="radio"]) {
+    inline-size: 100%;
+  }
+}
+
 .console-search-field {
   display: flex;
   align-items: center;
@@ -804,6 +857,7 @@
   gap: var(--space-2) var(--space-4);
   margin-inline: calc(var(--gutter) * -1);
   padding: var(--space-2) var(--gutter);
+  padding-block-end: max(var(--space-2), env(safe-area-inset-bottom));
   background: var(--surface);
   border-block-start: var(--border-width) solid var(--line-strong);
 }
@@ -816,7 +870,13 @@
 }
 
 html:has(.console-actionbar) {
-  scroll-padding-block-end: 5rem;
+  scroll-padding-block-end: 10rem;
+}
+
+@media (min-width: 40rem) {
+  html:has(.console-actionbar) {
+    scroll-padding-block-end: 5rem;
+  }
 }
 
 .console-empty {

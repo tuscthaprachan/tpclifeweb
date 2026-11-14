@@ -24,7 +24,7 @@ export function Card({ title, icon, description, actions, level = 2, padded = tr
     <section className={`console-card ${className}`}>
       {hasHeader ? (
         <div className="console-card-header">
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-[1_1_12rem]">
             {title ? (
               <Heading level={level} visualLevel={4} className="m-0 flex items-center gap-[var(--space-2)] font-semibold">
                 {icon ? <ConsoleIcon name={icon} className="text-ink-600" /> : null}

@@ -143,7 +143,7 @@ export function Menu({ label, items, children, icon, triggerLabel, align = "star
           role="menu"
           aria-label={label}
           onKeyDown={onListKey}
-          className={`absolute top-full z-30 mt-[var(--space-1)] flex max-h-[min(24rem,60vh)] min-w-[14rem] flex-col overflow-y-auto rounded-control border border-line-strong bg-surface-overlay p-[var(--space-1)] shadow-[var(--shadow-elevation)] ${
+          className={`absolute top-full z-[var(--z-overlay)] mt-[var(--space-1)] flex max-h-[min(24rem,60vh)] min-w-[14rem] flex-col overflow-y-auto rounded-control border border-line-strong bg-surface-overlay p-[var(--space-1)] shadow-[var(--shadow-elevation)] ${
             align === "end" ? "right-0" : "left-0"
           }`}
         >

@@ -34,7 +34,7 @@ export function PageHeader({ title, description, icon, breadcrumbs, breadcrumbsL
         <AutoBreadcrumbs title={typeof title === "string" ? title : undefined} />
       )}
       <div className="console-page-header-row">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-[1_1_16rem]">
           <div className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
             {icon ? <ConsoleIcon name={icon} size={24} className="text-ink-600" /> : null}
             <Heading level={1} className="m-0">

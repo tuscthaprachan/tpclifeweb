@@ -198,9 +198,11 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
             {a("formSave", locale)}
           </Button>
         )}
-        <Button href={listHref} variant="quiet" icon={<ConsoleIcon name="back" />}>
-          {a("formBackToList", locale)}
-        </Button>
+        <span className="max-sm:hidden">
+          <Button href={listHref} variant="quiet" icon={<ConsoleIcon name="back" />}>
+            {a("formBackToList", locale)}
+          </Button>
+        </span>
       </ActionBar>
 
       {record && deleteAction ? (

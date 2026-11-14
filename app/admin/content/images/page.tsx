@@ -6,7 +6,7 @@ import { queryString, ResultCount } from "@/app/admin/content/_list/parts";
 import { SelectAllCheckbox } from "@/components/admin/content/BulkControls";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Badge, ConsolePage, EmptyPanel, PageHeader } from "@/components/admin/ui";
+import { Badge, ConsolePage, EmptyPanel, FilterDisclosure, PageHeader } from "@/components/admin/ui";
 import { Button, NotificationBanner, Pagination, StatusTag, Timestamp } from "@/components/ui";
 import { requireEditor } from "@/lib/admin/content/access";
 import { isStorageConfigured } from "@/lib/admin/content/images";
@@ -38,7 +38,7 @@ const WITHIN_KEYS = { "7d": "mlWithin7", "30d": "mlWithin30", "90d": "mlWithin90
 const SELECT = "min-h-[var(--target-min)] rounded-control border border-line-strong bg-surface px-[var(--space-2)]";
 const CELL =
   "flex items-baseline justify-between gap-[var(--space-4)] px-[var(--space-3)] py-[var(--space-1)] text-ink-900 " +
-  "before:font-semibold before:text-ink-600 before:content-[attr(data-label)] " +
+  "before:max-w-[45%] before:shrink-0 before:font-semibold before:text-ink-600 before:content-[attr(data-label)] " +
   "sm:table-cell sm:border-t sm:border-line sm:py-[var(--space-2)] sm:before:content-none";
 const CHECKBOX = "h-[1.25rem] w-[1.25rem] shrink-0 accent-[var(--colour-action)]";
 
@@ -130,6 +130,7 @@ export default async function ImagesLibraryPage({ searchParams }: { searchParams
         <LibraryUpload locale={locale} />
       )}
 
+      <FilterDisclosure label={a("clFilters", locale)} defaultOpen={filtered}>
       <form method="get" action={base} role="search" aria-label={a("mlSearchLabel", locale)} className="flex flex-wrap items-end gap-[var(--space-3)]">
         {query.view === "table" ? <input type="hidden" name="view" value="table" /> : null}
         <div className="flex min-w-[14rem] flex-1 flex-col gap-[var(--space-1)]">
@@ -203,6 +204,7 @@ export default async function ImagesLibraryPage({ searchParams }: { searchParams
           </Button>
         ) : null}
       </form>
+      </FilterDisclosure>
 
       <nav aria-label={a("mlViewLabel", locale)} className="flex flex-wrap items-center gap-[var(--space-2)]">
         <ul className="m-0 flex list-none gap-[var(--space-2)] p-0">

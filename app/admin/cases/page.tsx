@@ -4,7 +4,7 @@ import { ConsoleIcon } from "@/components/admin/icons";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { SelectAllCheckbox } from "@/components/admin/content/BulkControls";
 import { ContentTable, type ContentTableColumn } from "@/components/admin/content/ContentTable";
-import { ConsolePage, EmptyPanel, FilterChips, PageHeader, SearchField, Toolbar } from "@/components/admin/ui";
+import { ConsolePage, EmptyPanel, FilterChips, FilterDisclosure, PageHeader, SearchField, Toolbar } from "@/components/admin/ui";
 import { Button, Details, NotificationBanner, Pagination, Select, StatusTag, TextInput, Timestamp } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { adminTitle } from "@/lib/admin/metadata";
@@ -255,6 +255,7 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
         }
       />
 
+      <FilterDisclosure label={a("clFilters", locale)} defaultOpen={hasFilters}>
       <Form action="" role="search" aria-label={a("ckFiltersLabel", locale)} className="console-filter-row flex flex-wrap items-end gap-[var(--space-3)]">
         {query.q ? <input type="hidden" name="q" value={query.q} /> : null}
         {hiddenKeep.sort ? (
@@ -326,6 +327,7 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
           </Button>
         ) : null}
       </Form>
+      </FilterDisclosure>
 
       <p className="m-0 text-ink-600" role="status">
         {list.total === 1 ? a("casesTotalOne", locale) : a("casesTotal", locale, { count: formatNumber(list.total, locale) })}

@@ -55,9 +55,13 @@ export function SlashMenu({ locale, bridge, onActiveChange, listId }: { locale: 
   if (!open || typeof document === "undefined") return null;
   const top = (open.rect?.bottom ?? 0) + 4;
   const left = Math.max(8, Math.min(open.rect?.left ?? 0, window.innerWidth - 280));
+  const below = window.innerHeight - top - 8;
+  const above = (open.rect?.top ?? 0) - 12;
+  const flip = below < 200 && above > below;
+  const listMax = Math.max(96, Math.min(256, flip ? above : below));
   return createPortal(
-    <div style={{ position: "fixed", top, left, zIndex: 60 }} className="w-[17rem] max-w-[calc(100vw-1rem)] rounded-control border border-line-strong bg-surface-overlay p-[var(--space-1)] shadow-[var(--shadow-elevation)]">
-      <div id={listId} role="listbox" aria-label={a("edSlashLabel", locale)} className="max-h-[16rem] overflow-y-auto">
+    <div style={{ position: "fixed", ...(flip ? { bottom: window.innerHeight - (open.rect?.top ?? 0) + 4 } : { top }), left, zIndex: "var(--z-overlay)" }} className="w-[17rem] max-w-[calc(100vw-1rem)] rounded-control border border-line-strong bg-surface-overlay p-[var(--space-1)] shadow-[var(--shadow-elevation)]">
+      <div id={listId} role="listbox" aria-label={a("edSlashLabel", locale)} style={{ maxHeight: listMax }} className="overflow-y-auto">
         {open.items.map((item, i) => (
           <div
             key={item.id}

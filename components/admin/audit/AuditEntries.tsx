@@ -62,7 +62,7 @@ export function AuditEntries({ entries, locale, showChanges, showEntity = true }
             <details className="group">
               <summary className="flex min-h-[var(--target-min)] cursor-pointer list-none flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)] px-[var(--space-4)] py-[var(--space-2)] [&::-webkit-details-marker]:hidden">
                 <ConsoleIcon name={described.icon} className="text-ink-600" />
-                <span className="min-w-0 flex-1">
+                <span className="min-w-0 flex-[1_1_12rem]">
                   <span className="block break-words font-medium">{described.text}</span>
                   <span className="block text-sm text-ink-600">
                     <Timestamp value={entry.occurredAt} locale={locale} format="datetime" />

@@ -42,7 +42,7 @@ export function TaskList({ items, locale }: { items: TaskItem[]; locale: Locale 
       <ol className="m-0 flex list-none flex-col p-0">
         {items.map((item, index) => (
           <li key={item.id} className="flex flex-wrap items-start justify-between gap-x-[var(--space-4)] gap-y-[var(--space-1)] border-b border-line py-[var(--space-3)] first:border-t">
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-[1_1_14rem]">
               <p className="m-0 flex items-baseline gap-[var(--space-2)] text-base">
                 <Glyph icon={ICON[item.state]} className="translate-y-[0.2em] text-ink-600" />
                 <span className="text-ink-600">{index + 1}.</span>

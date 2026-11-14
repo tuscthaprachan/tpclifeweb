@@ -23,7 +23,7 @@ export function SectionCard({ title, icon, id, description, actions, level = 2, 
   return (
     <section className="console-card" aria-labelledby={id}>
       <div className="console-card-header">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-[1_1_12rem]">
           <Heading level={level} visualLevel={4} id={id} className="m-0 flex items-center gap-[var(--space-2)] font-semibold">
             <Glyph icon={icon} className="text-ink-600" />
             <span>{title}</span>

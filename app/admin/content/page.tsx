@@ -78,7 +78,7 @@ export default async function ContentHubPage() {
                 <ConsoleIcon name="info" size={14} />
                 {a("ccHubSingle", locale)}
               </span>
-              <Link href={href} className="inline-flex items-center gap-[var(--space-1)] text-sm">
+              <Link href={href} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)] text-sm">
                 <ConsoleIcon name="edit" size={14} />
                 {a("ccHubEditPage", locale)}
               </Link>

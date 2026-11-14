@@ -19,7 +19,7 @@ export function FormSection({ id, legend, hint, icon, children }: FormSectionPro
   return (
     <section className="console-card" aria-labelledby={`${id}-title`} aria-describedby={hint ? `${id}-hint` : undefined}>
       <div className="console-card-header">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-[1_1_12rem]">
           <Heading level={2} visualLevel={4} id={`${id}-title`} className="m-0 flex items-center gap-[var(--space-2)] font-semibold">
             {typeof icon === "string" ? (
               <ConsoleIcon name={icon} className="text-ink-600" />

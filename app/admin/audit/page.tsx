@@ -2,7 +2,7 @@ import Form from "next/form";
 import { AuditEntries } from "@/components/admin/audit/AuditEntries";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { NotConfigured } from "@/components/admin/NotConfigured";
-import { Card, ConsolePage, EmptyPanel, PageHeader } from "@/components/admin/ui";
+import { Card, ConsolePage, EmptyPanel, FilterDisclosure, PageHeader } from "@/components/admin/ui";
 import { Button, Pagination } from "@/components/ui";
 import { AUDIT_SYSTEM_ACTOR, auditFilterParams, hasAuditFilters, listAuditActors, listAuditEntityTypes, listAuditEntries, parseAuditFilters } from "@/lib/admin/audit/query";
 import { getAdminLocale } from "@/lib/admin/locale";
@@ -68,6 +68,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
         }
       />
 
+      <FilterDisclosure label={a("clFilters", locale)} defaultOpen={filtered}>
       <Form action="" role="search" aria-label={a("opFiltersLabel", locale)} className="grid gap-[var(--space-3)] sm:grid-cols-2 lg:grid-cols-4">
         <Field id="audit-actor" label={a("opFilterActor", locale)}>
           <select id="audit-actor" name="actor" defaultValue={filters.actor ?? ""} className={FIELD}>
@@ -116,6 +117,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
           ) : null}
         </div>
       </Form>
+      </FilterDisclosure>
 
       <p className="m-0 text-ink-600" role="status">
         {result.total === 1 ? a("opResultsOne", locale) : a("opResultsMany", locale, { count: formatNumber(result.total, locale) })}

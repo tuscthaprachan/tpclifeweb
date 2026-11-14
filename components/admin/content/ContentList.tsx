@@ -2,7 +2,7 @@ import Form from "next/form";
 import Link from "next/link";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Button, NotificationBanner, Pagination, Timestamp } from "@/components/ui";
-import { ConsolePage, EmptyPanel, FilterChips, PageHeader, SearchField, Toolbar } from "@/components/admin/ui";
+import { ConsolePage, EmptyPanel, FilterChips, FilterDisclosure, PageHeader, SearchField, Toolbar } from "@/components/admin/ui";
 import { BulkBar, SelectAllCheckbox } from "@/components/admin/content/BulkControls";
 import { ContentTable, type ContentTableColumn } from "@/components/admin/content/ContentTable";
 import { RowMenu } from "@/components/admin/content/RowMenu";
@@ -119,7 +119,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
       rowHeader: true,
       sort: def.columns.title ? { key: "title", href: sortHref("title") } : undefined,
       cell: (row) => (
-        <Link href={contentPath(def, row.id)} className="font-medium">
+        <Link href={contentPath(def, row.id)} className="inline-flex min-h-[var(--target-min)] items-center font-medium sm:min-h-0">
           {rowTitle(row.title, locale)}
         </Link>
       ),
@@ -258,6 +258,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
         }
       />
       {showFilters ? (
+        <FilterDisclosure label={a("clFilters", locale)} defaultOpen={Boolean(query.by || query.within || query.facet)}>
         <Form action="" className="flex flex-wrap items-end gap-[var(--space-3)]">
           {Object.entries(hiddenKeep(["by", "within", "facet"])).map(([key, value]) => (
             <input key={key} type="hidden" name={key} value={value} />
@@ -306,6 +307,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
             {a("clApplyFilters", locale)}
           </Button>
         </Form>
+        </FilterDisclosure>
       ) : null}
       {filtered ? (
         <nav aria-label={a("clActiveFilters", locale)}>

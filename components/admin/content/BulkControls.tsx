@@ -84,7 +84,7 @@ export function BulkBar({ locale, canChangeStatus }: { locale: Locale; canChange
   const disabled = count === 0;
   return (
     <div ref={setNode} role="group" aria-label={a("clBulkActions", locale)} className="console-actionbar">
-      <p role="status" aria-live="polite" className="m-0 min-w-0 flex-1 text-sm text-ink-600">
+      <p role="status" aria-live="polite" className="m-0 min-w-0 flex-1 text-sm text-ink-600 max-sm:basis-full">
         {count === null ? a("clBulkActions", locale) : a("clSelectedCount", locale, { count })}
       </p>
       <div className="flex flex-wrap items-center gap-[var(--space-2)]">

@@ -280,7 +280,7 @@ function RecentRow({ item, locale, icon }: { item: RecentItem; locale: "th" | "e
   return (
     <li className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)] border-t border-line px-[var(--space-4)] py-[var(--space-2)] first:border-t-0">
       <ConsoleIcon name={icon} className="text-ink-600" />
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-[1_1_12rem]">
         <Link href={contentPath(def, item.id)} className="font-medium">
           {title}
         </Link>
@@ -375,7 +375,7 @@ function ActivityRow({ item, locale }: { item: ActivityItem; locale: "th" | "en"
   return (
     <li className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)] border-t border-line px-[var(--space-4)] py-[var(--space-2)] first:border-t-0">
       <ConsoleIcon name={described.icon} className="text-ink-600" />
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-[1_1_12rem]">
         <p className="m-0 break-words">{href ? <Link href={href}>{described.text}</Link> : described.text}</p>
         <p className="m-0 text-sm text-ink-600">
           <Timestamp value={item.occurredAt} locale={locale} format="relative" />

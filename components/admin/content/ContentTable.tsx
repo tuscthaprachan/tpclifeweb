@@ -19,7 +19,7 @@ export interface ContentTableColumn<T, K extends string = SortKey> {
 
 const CELL =
   "flex items-baseline justify-between gap-[var(--space-4)] px-[var(--space-3)] py-[var(--space-1)] text-ink-900 " +
-  "before:font-semibold before:text-ink-600 before:content-[attr(data-label)] " +
+  "before:max-w-[45%] before:shrink-0 before:font-semibold before:text-ink-600 before:content-[attr(data-label)] " +
   "sm:table-cell sm:border-t sm:border-line sm:py-[var(--space-2)] sm:before:content-none";
 
 /**

@@ -125,7 +125,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
             const unread = row.readAt === null;
             return (
               <li key={row.id} className="flex flex-wrap items-start justify-between gap-[var(--space-3)] border-b border-line py-[var(--space-3)] first:border-t">
-                <div className="flex min-w-0 flex-1 flex-col gap-[var(--space-1)]">
+                <div className="flex min-w-0 flex-[1_1_14rem] flex-col gap-[var(--space-1)]">
                   <div className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
                     <a href={`/admin/notifications/open/${row.id}`} className={unread ? "font-semibold" : "font-medium"}>
                       {title}
