@@ -127,6 +127,13 @@
       "when": 1794647113173,
       "tag": "0017_content_lifecycle",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794664805645,
+      "tag": "0018_notifications_case_views",
+      "breakpoints": true
     }
   ]
 }

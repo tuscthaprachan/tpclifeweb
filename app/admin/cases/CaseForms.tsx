@@ -5,6 +5,7 @@ import { Button, ErrorSummary, NotificationBanner, Select, Textarea, Stack } fro
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
+import { MentionTextarea, type MentionPerson } from "./MentionTextarea";
 import { addNoteAction, addUpdateAction, assignAction, changeStatusAction, type CaseFormState } from "./actions";
 
 interface Common {
@@ -63,22 +64,24 @@ export function StatusForm({ locale, caseId, organisationId, from, options }: Co
   );
 }
 
-export function NoteForm({ locale, caseId, organisationId }: Common) {
+export function NoteForm({ locale, caseId, organisationId, people }: Common & { people: MentionPerson[] }) {
   const [state, action, pending] = useActionState<CaseFormState, FormData>(addNoteAction, {});
   return (
     <form action={action} noValidate>
       <Stack space={3}>
         <Feedback state={state} locale={locale} anchor="case-note" />
         <Hidden caseId={caseId} organisationId={organisationId} />
-        <Textarea
+        <MentionTextarea
           id="case-note"
           name="note"
           label={a("caseNoteLabel", locale)}
-          hint={a("caseNoteHint", locale)}
+          hint={`${a("caseNoteHint", locale)} ${a("ckMentionHint", locale)}`}
           defaultValue={state.values?.note ?? ""}
           key={state.saved ? "saved" : "typing"}
           rows={4}
           maxLength={4000}
+          people={people}
+          labels={{ list: a("ckMentionList", locale), count: (count) => a("ckMentionCount", locale, { count }), none: a("ckMentionNone", locale) }}
         />
         <div>
           <Button type="submit" variant="secondary" loading={pending} loadingLabel={a("caseSaving", locale)}>

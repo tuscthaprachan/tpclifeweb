@@ -5,12 +5,12 @@ import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import type { SortDir, SortKey } from "@/lib/admin/content/list-query";
 
-export interface ContentTableColumn<T> {
+export interface ContentTableColumn<T, K extends string = SortKey> {
   id: string;
   header: string;
   cell: (row: T) => ReactNode;
   /** Makes the header a sort link; `href` is where a click leads. */
-  sort?: { key: SortKey; href: string };
+  sort?: { key: K; href: string };
   rowHeader?: boolean;
   align?: "start" | "end";
   /** The column only holds a control, so its header is read out but not shown. */
@@ -28,7 +28,7 @@ const CELL =
  * leading control column. The header row is hidden below `sm`, so the list
  * page repeats the sort links above the table at that width.
  */
-export function ContentTable<T>({
+export function ContentTable<T, K extends string = SortKey>({
   columns,
   rows,
   getRowKey,
@@ -36,11 +36,11 @@ export function ContentTable<T>({
   sort,
   locale,
 }: {
-  columns: ContentTableColumn<T>[];
+  columns: ContentTableColumn<T, K>[];
   rows: T[];
   getRowKey: (row: T) => string;
   caption: string;
-  sort: { key: SortKey; dir: SortDir };
+  sort: { key: K; dir: SortDir };
   locale: Locale;
 }) {
   return (

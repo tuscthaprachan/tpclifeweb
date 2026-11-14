@@ -20,6 +20,35 @@ Session handoff for the backend migration described in `docs/backend-plan.md`. R
 - Body membership (TUSU, TUSC or both) lives in `staff_memberships`; invites carry `organisation_ids`. The acting organisation of a case action comes from membership (the one they belong to, or the `?as=` choice when in both).
 - `/admin/staff` lists everyone and every pending invite for any admin. `/admin/staff/[userId]` edits roles and bodies as one diff (`staff_member.update`), suspends (`staff_member.suspend`, ends sessions; reactivate with the same form) and links to recovery. Inviting an address that is already staff grants directly. Every path that could remove an admin locks all active admin grants first.
 
+## Console phases A to E
+
+Built on top of phases 1 to 8 after the staff roles consolidation. Each phase is additive; migrations 0016 to 0018 are the only schema changes.
+
+| Phase | Where | State |
+|---|---|---|
+| A Roles and members | `lib/auth/roles.ts`, `staff_memberships`, `/admin/staff` | Three roles held by the person, bodies via memberships (see Staff and roles). Migration 0016. |
+| B Editor | `components/admin/content/rich-text`, `lib/rich-text` | Icon toolbar, Visual/Markdown toggle (`lib/rich-text/markdown.ts`, markdown-it), strikethrough, underline, inline code, code blocks, rules and tables end to end, bubble and slash menus, find and replace, full screen, word count, image paste or drop, link page picker. |
+| C Content lifecycle | `lib/admin/content/{lifecycle,save,restore,schedule,duplicate}.ts`, `lib/redirects`, `lib/publishing`, `lib/preview`, `/admin/settings/redirects`, `/api/cron/publishing` | Revision history and restore, preview, scheduled publish and unpublish (`publish_at`, `unpublish_at`), duplicate, redirects. Migration 0017. |
+| C Lists and media | `lib/admin/content/{list,list-query,bulk,export}.ts`, `components/admin/content/ContentList.tsx`, `lib/admin/media`, `/admin/content/images` | Sortable, filterable, paged lists with bulk actions and CSV export (`content.export`); media library with usage, replace and bulk delete. All driven by query parameters, so they work without JavaScript. |
+| D Audit and ops | `/admin/audit`, `/admin/health`, `lib/admin/audit`, `lib/admin/health`, dashboard activity, `/admin/account` sessions, keyboard shortcuts | Audit viewer with CSV export, per-record history (`RecordHistory`), health page fed by `recordCronRun` (every cron route must call it). |
+| E Notifications and cases | `lib/notifications`, `lib/cases/{bulk,views,export,due,inbox-query,mentions}.ts`, `/admin/notifications`, `/admin/cases` | See below. Migration 0018. |
+
+### Notifications
+
+- `notifications` (migration 0018): one row per person per event, with `kind`, `params` (jsonb; only a reference, a name or a date, never personal data from a case), `href`, entity, `dedupe_key` (unique with the user, so jobs can run twice) and `read_at`. Title and body are rendered in the reader's language at read time (`lib/notifications/render.ts`, strings in `lib/i18n/admin-content/notifications.ts`).
+- Created inside the transaction that causes them through `lib/notifications/create.ts`: case assigned to you by someone else (`engine.assign`), `@mention` in an internal note (`engine.addNote`), complaint escalated (`escalateOverdue`, to officers and admins who can see it; a restricted category reaches only the staff named on it), loan on loan past its return time (`notifyOverdueToOfficers`, run by the borrowing cron whether or not email is set up), invite accepted (`acceptInvite`, to whoever invited). A scheduled content item going live is not notified: the publishing sweep records audit rows but knows no author.
+- Bell in the top bar with the unread count (server-rendered in `ConsoleShell`; it refreshes on a full load and after any notification action). `/admin/notifications` filters unread or all and by kind with query parameters, marks read on open (`/admin/notifications/open/[id]` is a plain link that marks read and redirects to a console path only), mark one or all as read with plain posts. Email digests are not built.
+
+### Case inbox
+
+- Sorting by received, updated, due, reference and status (`?sort=&dir=`, `aria-sort` on the headers, chips on a narrow screen). Due is a complaint's acknowledge or resolve target, or a loan's return time while on loan; the indicator is on time, due soon (by the end of the next working day) or overdue, always icon plus word.
+- Bulk assign and bulk status from the table's checkboxes (`app/admin/cases/inbox-actions.ts`, `lib/cases/bulk.ts`). Each case goes through `engine.assign` or `engine.transition` on its own, so rules and audit hold, and a refused case is reported by reference and reason while the rest go through. Complaints and loans are never moved here (`use_actions`). Up to 100 at a time.
+- Saved views (`saved_case_views`): name, query string reduced to filters and sort, optional sharing with all staff, rename and delete by the owner only, 30 per person, audited (`case_view.*`). They sit in the chip row; the save and manage forms are under the table.
+- CSV export (`/admin/cases/export`, `lib/cases/export.ts`): officers and admins only; reference, service, type, category, status, assignee, received, due, closed, escalated. No names, contacts or free text; restricted complaints are left out unless the person is named; UTF-8 BOM, formula guard, up to 5000 rows, audited as `case.export`.
+- Mentions: typing `@` in the note form offers staff who can see the case (an enhancement over the textarea; typing `@Name` works without it). The server stores `@[userId]` in the note and the ids in the event's `metadata.mentions`, shows current names, and ignores anyone who cannot see the case. Two people with the same name need the autocomplete's choice.
+
+Before production: `npm run db:migrate` (0017 and 0018). Without 0018 the bell shows no count (it fails quietly) and the inbox fails on the new tables only when saved views are read.
+
 ## What exists (phases 1 to 6)
 
 | Phase | Where | State |

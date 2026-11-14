@@ -12,3 +12,5 @@ export * from "./lost-found-cases";
 export * from "./complaints";
 export * from "./journey-metrics";
 export * from "./borrowing";
+export * from "./notifications";
+export * from "./saved-case-views";

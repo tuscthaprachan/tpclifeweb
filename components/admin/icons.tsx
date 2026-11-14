@@ -11,6 +11,12 @@ import {
   Signpost as LucideSignpost,
   Undo2 as LucideRestore,
   ArrowLeft,
+  AtSign as LucideAtSign,
+  Bell as LucideBell,
+  Bookmark as LucideBookmark,
+  CheckCheck as LucideCheckCheck,
+  Hourglass as LucideHourglass,
+  UserCheck as LucideUserCheck,
   BookMarked,
   BookOpen,
   BookUser,
@@ -253,6 +259,12 @@ export const CONSOLE_ICONS = {
   viewTable: LucideRows3,
   copy: LucideCopy,
   replaceFile: LucideReplace,
+  notifications: LucideBell,
+  mention: LucideAtSign,
+  markAllRead: LucideCheckCheck,
+  savedView: LucideBookmark,
+  dueSoon: LucideHourglass,
+  assign: LucideUserCheck,
 } as const satisfies Record<string, LucideIcon>;
 
 export type ConsoleIconName = keyof typeof CONSOLE_ICONS;

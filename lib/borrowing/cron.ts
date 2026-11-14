@@ -18,6 +18,7 @@ import type { PiiEnv } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { borrowingJourneys, borrowingRequests } from "@/lib/db/schema/borrowing";
 import { caseContacts, cases } from "@/lib/db/schema/cases";
+import { createNotifications, serviceStaffIds } from "@/lib/notifications/create";
 import { isEmailConfigured, type EmailSender } from "@/lib/email";
 import { notifyBorrower } from "./notify";
 import { addDays, dayKeyOf, isDeskDay } from "./time";
@@ -25,6 +26,8 @@ import { addDays, dayKeyOf, isDeskDay } from "./time";
 export interface BorrowingDailyResult {
   reminded: number;
   overdue: number;
+  /** Notifications to officers about loans past their return time (separate from the borrower's email). */
+  notified: number;
   journeysSwept: number;
 }
 
@@ -69,7 +72,7 @@ async function claimAndSend(
 }
 
 export async function runBorrowingDaily(db: AuditExecutor, now: Date, opts: Opts = {}): Promise<BorrowingDailyResult> {
-  const result: BorrowingDailyResult = { reminded: 0, overdue: 0, journeysSwept: 0 };
+  const result: BorrowingDailyResult = { reminded: 0, overdue: 0, notified: 0, journeysSwept: 0 };
   if (opts.emailConfigured ?? isEmailConfigured()) {
     const settings = { ...opts, emailConfigured: true };
     const today = dayKeyOf(now);
@@ -110,7 +113,37 @@ export async function runBorrowingDaily(db: AuditExecutor, now: Date, opts: Opts
       );
     result.overdue = await claimAndSend(db, now, settings, "overdue", late.map((l) => l.id), borrowingRequests.overdueNotifiedAt);
   }
+  result.notified = await notifyOverdueToOfficers(db, now);
   const swept = await db.delete(borrowingJourneys).where(lte(borrowingJourneys.expiresAt, now)).returning({ id: borrowingJourneys.id });
   result.journeysSwept = swept.length;
   return result;
+}
+
+/** Tells every officer about each loan still out past its return time, once per loan, whether or not the borrower can be emailed. */
+export async function notifyOverdueToOfficers(db: AuditExecutor, now: Date): Promise<number> {
+  const late = await db
+    .select({ id: cases.id, reference: cases.reference, returnDueAt: borrowingRequests.returnDueAt })
+    .from(cases)
+    .innerJoin(borrowingRequests, eq(borrowingRequests.caseId, cases.id))
+    .where(and(eq(cases.service, "borrowing"), eq(cases.status, "on_loan"), isNull(cases.piiDeletedAt), lt(borrowingRequests.returnDueAt, now)))
+    .limit(500);
+  if (late.length === 0) return 0;
+  const officers = await serviceStaffIds(db, "borrowing");
+  let added = 0;
+  for (const loan of late) {
+    added += await createNotifications(
+      db,
+      officers.map((userId) => ({
+        userId,
+        kind: "borrowing_overdue" as const,
+        params: { reference: loan.reference, dueAt: loan.returnDueAt.toISOString() },
+        href: `/admin/cases/${loan.id}`,
+        entityType: "case",
+        entityId: loan.id,
+        dedupeKey: `overdue:${loan.id}`,
+      })),
+      now,
+    );
+  }
+  return added;
 }

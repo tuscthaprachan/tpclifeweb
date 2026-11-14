@@ -18,6 +18,7 @@ import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
 import { addOneYear, appendEvent, lockCase } from "@/lib/cases/internal";
 import { publicStatusLabel } from "@/lib/cases/services";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
+import { caseAudience, createNotifications } from "@/lib/notifications/create";
 import { cases } from "@/lib/db/schema/cases";
 import { complaintCases, complaintCategories } from "@/lib/db/schema/complaints";
 import { REOPEN_WINDOW_DAYS } from "./constants";
@@ -96,6 +97,19 @@ export async function escalateOverdue(db: AuditExecutor, now: Date): Promise<Esc
           metadata: { reason, dueAt: (reason === "resolve" ? cc.resolveDueAt : cc.acknowledgeDueAt).toISOString() },
         });
         await audit({ action: "complaint.escalate", entityType: "case", entityId: c.caseId, after: { reason, reference: row.reference } });
+        await createNotifications(
+          tx,
+          (await caseAudience(tx, c.caseId, "complaint")).map((userId) => ({
+            userId,
+            kind: "complaint_escalated" as const,
+            params: { reference: row.reference, reason },
+            href: `/admin/cases/${c.caseId}`,
+            entityType: "case",
+            entityId: c.caseId,
+            dedupeKey: `escalated:${c.caseId}:${reason}`,
+          })),
+          now,
+        );
         return true;
       });
       if (done) escalated.push({ caseId: c.caseId, reference: c.reference, categoryId: c.categoryId, restricted: c.restricted, reason });

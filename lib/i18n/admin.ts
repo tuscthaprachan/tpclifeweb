@@ -31,6 +31,7 @@ import { PERFORMANCE_STRINGS } from "./admin-content/performance";
 import { BORROWING_STRINGS } from "./admin-content/borrowing";
 import { BORROWING_CALENDAR_STRINGS } from "./admin-content/borrowing-calendar";
 import { OPEN_DATA_ADMIN_STRINGS } from "./admin-content/open-data";
+import { NOTIFICATION_STRINGS } from "./admin-content/notifications";
 import { PUBLISHING_STRINGS } from "./admin-content/publishing";
 import { STAFF_MEMBER_STRINGS } from "./admin-content/staff-members";
 
@@ -734,6 +735,7 @@ export const A = {
   ...CONSOLE_PEOPLE_STRINGS,
   ...CONSOLE_OPS_STRINGS,
   ...STAFF_MEMBER_STRINGS,
+  ...NOTIFICATION_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 
 export type AdminKey = keyof typeof A;

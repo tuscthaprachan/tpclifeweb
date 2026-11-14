@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useState, useSyncExternalStore } from "react";
 import { AdminLanguageSwitch } from "@/components/admin/AdminLanguageSwitch";
 import { ConsoleIcon } from "@/components/admin/icons";
@@ -20,6 +21,8 @@ export interface TopbarProps {
   shortcuts: GoShortcut[];
   /** Passed to the command palette for live results. */
   searchEndpoint?: string;
+  /** Unread notifications, counted on the server, and the bell's accessible name for that count. */
+  notifications?: { unread: number; label: string };
 }
 
 const noSubscribe = () => () => {};
@@ -31,7 +34,7 @@ function useIsApple(): boolean {
   );
 }
 
-export function Topbar({ locale, theme, user, shortcuts, searchEndpoint }: TopbarProps) {
+export function Topbar({ locale, theme, user, shortcuts, searchEndpoint, notifications }: TopbarProps) {
   const { nav, labels } = useConsoleNav();
   const { openDrawer, menuButtonRef } = useShell();
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -55,6 +58,12 @@ export function Topbar({ locale, theme, user, shortcuts, searchEndpoint }: Topba
       </button>
 
       <div className="console-topbar-tools">
+        {notifications ? (
+          <Link href="/admin/notifications" className="console-icon-button gap-[var(--space-1)]" aria-label={notifications.label} title={notifications.label}>
+            <ConsoleIcon name="notifications" />
+            {notifications.unread > 0 ? <span className="text-sm font-semibold">{notifications.unread > 99 ? "99+" : notifications.unread}</span> : null}
+          </Link>
+        ) : null}
         <AdminLanguageSwitch locale={locale} />
         <ThemeMenu current={theme} labels={labels} />
         <AccountMenu name={user.name} email={user.email} roles={user.roles} labels={labels} shortcuts={shortcuts} onShowShortcuts={openHelp} />

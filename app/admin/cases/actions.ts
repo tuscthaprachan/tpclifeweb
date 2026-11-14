@@ -94,7 +94,7 @@ export async function addNoteAction(_prev: CaseFormState, formData: FormData): P
   return run(formData, ["note"], async ({ locale, caseId, actor }) => {
     const note = text(formData, "note");
     if (!note.trim()) return { error: a("errCaseNoteRequired", locale) };
-    await addNote(getDb(), caseId, note, actor);
+    await addNote(getDb(), caseId, note, actor, { mentionIds: formData.getAll("mention").filter((v): v is string => typeof v === "string") });
     return "caseSavedNote";
   });
 }

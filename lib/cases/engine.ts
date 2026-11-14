@@ -8,16 +8,21 @@
  * Pass `{ now }` in tests.
  */
 
-import { and, asc, desc, eq, ilike, inArray, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, inArray, isNull, or, sql, type SQL } from "drizzle-orm";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { nextReference } from "@/lib/db/references";
 import { user } from "@/lib/db/schema/auth";
 import { caseEvents, cases, type CaseEventRow, type CaseRow, type CaseService } from "@/lib/db/schema/cases";
-import { complaintCases } from "@/lib/db/schema/complaints";
+import { borrowingRequests } from "@/lib/db/schema/borrowing";
+import { complaintCases, complaintCategories } from "@/lib/db/schema/complaints";
+import { createNotification, createNotifications } from "@/lib/notifications/create";
 import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { complaintEscalated, complaintOverdue } from "@/lib/complaints/overdue";
 import { accessibleServices } from "./access";
+import { caseDueAt, dueState, type DueState } from "./due";
+import { DEFAULT_CASE_SORT, defaultCaseDir, type CaseSortDir, type CaseSortKey } from "./inbox-query";
+import { listMentionable, parseMentions } from "./mentions";
 import { assertCaseAccess, canSeeCase, caseVisibleTo } from "./restrictions";
 import { insertContact, type ContactInput } from "./contacts";
 import { addOneYear, appendEvent, assertStaff, auditContextOf, cleanText, lockCase, NOTE_MAX, touchCase } from "./internal";
@@ -164,18 +169,36 @@ export async function transition(db: AuditExecutor, caseId: string, to: string, 
   });
 }
 
-/** Adds a staff-only note (one language). Notes are never deleted by retention, so keep personal details out of them. */
-export async function addNote(db: AuditExecutor, caseId: string, body: string, actor: CaseActor, opts: { now?: Date } = {}): Promise<string> {
+/**
+ * Adds a staff-only note (one language). Notes are never deleted by retention, so keep personal details out of them.
+ * `@Name` for a member of staff who can see the case is stored as a mention and notifies them; `mentionIds` are
+ * the people the autocomplete picked, which settles two people with the same name.
+ */
+export async function addNote(db: AuditExecutor, caseId: string, body: string, actor: CaseActor, opts: { now?: Date; mentionIds?: readonly string[] } = {}): Promise<string> {
   const now = opts.now ?? new Date();
   const text = cleanText(body, NOTE_MAX, "Note");
   return withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
     await assertCaseAccess(tx, row, actor);
-    const id = await appendEvent(tx, caseId, actor, now, { type: "internal_note", body: text });
+    const mentions = text.includes("@") ? parseMentions(text, await listMentionable(tx, caseId, row.service), opts.mentionIds ?? []) : { text, ids: [] };
+    const id = await appendEvent(tx, caseId, actor, now, { type: "internal_note", body: mentions.text, metadata: mentions.ids.length > 0 ? { mentions: mentions.ids } : null });
     await touchCase(tx, caseId, actor, now);
-    await audit({ action: "case.note", entityType: "case", entityId: caseId, after: { eventId: id } });
+    await audit({ action: "case.note", entityType: "case", entityId: caseId, after: { eventId: id, ...(mentions.ids.length > 0 ? { mentions: mentions.ids } : {}) } });
+    const actorName = actor.kind === "staff" ? await staffName(tx, actor.userId) : "";
+    await createNotifications(
+      tx,
+      mentions.ids
+        .filter((userId) => actor.kind !== "staff" || userId !== actor.userId)
+        .map((userId) => ({ userId, kind: "case_mention" as const, params: { actor: actorName, reference: row.reference }, href: `/admin/cases/${caseId}#case-timeline`, entityType: "case", entityId: caseId, dedupeKey: `mention:${id}` })),
+      now,
+    );
     return id;
   });
+}
+
+async function staffName(tx: AuditExecutor, userId: string): Promise<string> {
+  const [row] = await tx.select({ name: user.name }).from(user).where(eq(user.id, userId));
+  return row?.name ?? "";
 }
 
 /**
@@ -216,6 +239,13 @@ export async function assign(db: AuditExecutor, caseId: string, assigneeUserId: 
     await touchCase(tx, caseId, actor, now, { assignedTo: assigneeUserId });
     await appendEvent(tx, caseId, actor, now, { type: "assigned", metadata: { from: row.assignedTo, to: assigneeUserId } });
     await audit({ action: "case.assign", entityType: "case", entityId: caseId, before: { assignedTo: row.assignedTo }, after: { assignedTo: assigneeUserId } });
+    if (assigneeUserId !== null && actor.kind === "staff" && assigneeUserId !== actor.userId) {
+      await createNotification(
+        tx,
+        { userId: assigneeUserId, kind: "case_assigned", params: { actor: await staffName(tx, actor.userId), reference: row.reference }, href: `/admin/cases/${caseId}`, entityType: "case", entityId: caseId, dedupeKey: `assigned:${caseId}:${now.getTime()}` },
+        now,
+      );
+    }
   });
 }
 
@@ -277,10 +307,15 @@ export interface CaseListFilters {
   overdue?: boolean;
   /** Only complaints the daily job has flagged as escalated and that are still open. */
   escalated?: boolean;
+  /** Received (opened), updated, due (a complaint's target or a loan's return, none last), reference or status. Default: updated, newest first. */
+  sort?: CaseSortKey;
+  dir?: CaseSortDir;
   /** The moment "overdue" is judged at. Tests pass it. */
   now?: Date;
   page?: number;
   pageSize?: number;
+  /** Return up to `INBOX_EXPORT_LIMIT` rows in one go, for the export. */
+  unpaged?: boolean;
 }
 
 export interface CaseListRow extends Pick<CaseRow, "id" | "service" | "reference" | "kind" | "status" | "summary" | "assignedTo" | "actingOrganisationId" | "createdAt" | "updatedAt" | "closedAt"> {
@@ -289,6 +324,11 @@ export interface CaseListRow extends Pick<CaseRow, "id" | "service" | "reference
   overdue: boolean;
   /** A complaint the daily job has flagged as escalated and that is still open. */
   escalated: boolean;
+  /** The complaint's category (English name), for the export. Null for other services. */
+  categoryName: string | null;
+  /** When the case is next due, if it has a date. */
+  dueAt: Date | null;
+  dueState: DueState | null;
 }
 
 export interface CaseList {
@@ -299,17 +339,36 @@ export interface CaseList {
 }
 
 export const INBOX_PAGE_SIZE = 25;
+export const INBOX_EXPORT_LIMIT = 5000;
 
-/** The inbox query: only services the staff member may work, newest activity first. */
+function orderFor(sort: CaseSortKey, dir: CaseSortDir): SQL[] {
+  const by = dir === "asc" ? asc : desc;
+  switch (sort) {
+    case "received":
+      return [by(cases.createdAt), desc(cases.id)];
+    case "reference":
+      return [by(cases.reference)];
+    case "status":
+      return [by(cases.status), desc(cases.updatedAt)];
+    case "due":
+      return [sql`${caseDueAt()} ${dir === "asc" ? sql`asc` : sql`desc`} nulls last`, desc(cases.updatedAt)];
+    default:
+      return [by(cases.updatedAt), by(cases.createdAt)];
+  }
+}
+
+/** The inbox query: only services the staff member may work and cases they may see, newest activity first unless sorted. */
 export async function listCases(db: AuditExecutor, actor: StaffActor, filters: CaseListFilters = {}): Promise<CaseList> {
-  const pageSize = Math.min(Math.max(filters.pageSize ?? INBOX_PAGE_SIZE, 1), 100);
-  const page = Math.max(Math.floor(filters.page ?? 1), 1);
+  const pageSize = filters.unpaged ? INBOX_EXPORT_LIMIT : Math.min(Math.max(filters.pageSize ?? INBOX_PAGE_SIZE, 1), 100);
+  const page = filters.unpaged ? 1 : Math.max(Math.floor(filters.page ?? 1), 1);
   const allowed = accessibleServices(actor.roles).filter((s) => !filters.service || s === filters.service);
   if (allowed.length === 0) return { rows: [], total: 0, page, pageSize };
 
   const q = filters.q?.trim().replace(/[\\%_]/g, (c) => `\\${c}`);
   const assignee = filters.assignee === "me" ? actor.userId : filters.assignee;
   const now = filters.now ?? new Date();
+  const sort = filters.sort ?? DEFAULT_CASE_SORT.sort;
+  const dir = filters.dir ?? (filters.sort ? defaultCaseDir(sort) : DEFAULT_CASE_SORT.dir);
   const where = and(
     inArray(cases.service, allowed),
     caseVisibleTo(actor.userId),
@@ -335,15 +394,27 @@ export async function listCases(db: AuditExecutor, actor: StaffActor, filters: C
       updatedAt: cases.updatedAt,
       closedAt: cases.closedAt,
       assigneeName: user.name,
+      categoryName: complaintCategories.nameEn,
       overdue: sql<boolean>`coalesce(${complaintOverdue(now)}, false)`,
       escalated: sql<boolean>`coalesce(${complaintEscalated()}, false)`,
+      dueAt: sql<string | null>`${caseDueAt()}`,
     })
     .from(cases)
     .leftJoin(user, eq(user.id, cases.assignedTo))
     .leftJoin(complaintCases, eq(complaintCases.caseId, cases.id))
+    .leftJoin(complaintCategories, eq(complaintCategories.id, complaintCases.categoryId))
+    .leftJoin(borrowingRequests, eq(borrowingRequests.caseId, cases.id))
     .where(where)
-    .orderBy(desc(cases.updatedAt), desc(cases.createdAt))
+    .orderBy(...orderFor(sort, dir))
     .limit(pageSize)
     .offset((page - 1) * pageSize);
-  return { rows, total, page, pageSize };
+  return {
+    rows: rows.map(({ dueAt, ...row }) => {
+      const due = dueAt ? new Date(dueAt) : null;
+      return { ...row, dueAt: due, dueState: dueState(due, now) };
+    }),
+    total,
+    page,
+    pageSize,
+  };
 }

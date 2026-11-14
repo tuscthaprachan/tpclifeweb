@@ -14,6 +14,7 @@ import { assertCaseAccess } from "@/lib/cases/restrictions";
 import { getComplaintFacts } from "@/lib/complaints/details";
 import { listContactSummaries } from "@/lib/cases/contacts";
 import { listAssignees, staffTimeline, type StaffTimelineEntry } from "@/lib/cases/engine";
+import { listMentionable, mentionNames, mentionedIds, splitMentions } from "@/lib/cases/mentions";
 import { allowedTransitions, getServiceDef, getStatusDef, SERVICES, statusLabel } from "@/lib/cases/services";
 import { staffActorFor } from "@/lib/cases/staff";
 import { CaseError } from "@/lib/cases/types";
@@ -67,12 +68,14 @@ export default async function CasePage({ params, searchParams }: { params: Promi
     throw error;
   }
 
-  const [orgs, events, contacts, assignees] = await Promise.all([
+  const [orgs, events, contacts, assignees, mentionable] = await Promise.all([
     db.select().from(organisations),
     staffTimeline(db, id, actor),
     listContactSummaries(db, id, actor),
     listAssignees(db, row.service),
+    listMentionable(db, id, row.service),
   ]);
+  const mentionLabels = await mentionNames(db, events.flatMap((e) => (e.type === "internal_note" && e.body ? mentionedIds(e.body) : [])));
   const orgName = new Map(orgs.map((o) => [o.id, pick({ th: o.nameTh, en: o.nameEn }, locale)]));
   const service = getServiceDef(row.service);
   const status = getStatusDef(row.service, row.kind, row.status);
@@ -95,14 +98,14 @@ export default async function CasePage({ params, searchParams }: { params: Promi
         </div>
         <div className="flex flex-col gap-[var(--space-3)] border-t border-line pt-[var(--space-4)]">
           <Heading level={3}>{a("caseNoteHeading", locale)}</Heading>
-          <NoteForm locale={locale} caseId={id} organisationId={actor.organisationId} />
+          <NoteForm locale={locale} caseId={id} organisationId={actor.organisationId} people={mentionable.filter((p) => p.id !== actor.userId)} />
         </div>
       </SectionCard>
 
       <SectionCard id="case-timeline" icon={History} title={a("caseTimelineTitle", locale)} description={a("caseTimelineNote", locale)}>
         <ol className="m-0 flex list-none flex-col gap-0 p-0">
           {[...events].reverse().map((event) => (
-            <TimelineItem key={event.id} event={event} locale={locale} orgName={orgName} people={people} service={row.service} kind={row.kind} />
+            <TimelineItem key={event.id} event={event} locale={locale} orgName={orgName} people={people} mentionLabels={mentionLabels} service={row.service} kind={row.kind} />
           ))}
         </ol>
       </SectionCard>
@@ -230,6 +233,7 @@ function TimelineItem({
   locale,
   orgName,
   people,
+  mentionLabels,
   service,
   kind,
 }: {
@@ -237,6 +241,7 @@ function TimelineItem({
   locale: Locale;
   orgName: Map<number, string>;
   people: Map<string, string>;
+  mentionLabels: Map<string, string>;
   service: Parameters<typeof statusLabel>[0];
   kind: string;
 }) {
@@ -254,6 +259,7 @@ function TimelineItem({
         : a(`caseEvent_${event.type}` as AdminKey, locale);
   const who = event.actorUserId ? a("caseBy", locale, { name: event.actorName ?? "" }) : event.type === "created" ? a("caseByPerson", locale) : a("caseBySystem", locale);
   const org = event.actingOrganisationId ? orgName.get(event.actingOrganisationId) : null;
+  const note = event.type === "internal_note" && event.body ? splitMentions(event.body) : null;
   const message = event.body ?? (event.bodyTh || event.bodyEn ? [event.bodyTh, event.bodyEn].filter(Boolean).join("\n") : null);
 
   return (
@@ -266,7 +272,21 @@ function TimelineItem({
         <Timestamp value={event.createdAt} locale={locale} format="datetime" /> {who}
         {org ? `, ${org}` : ""}
       </p>
-      {message ? <p className="m-0 mt-[var(--space-1)] whitespace-pre-line">{message}</p> : null}
+      {note ? (
+        <p className="m-0 mt-[var(--space-1)] whitespace-pre-line">
+          {note.map((part, i) =>
+            "mention" in part ? (
+              <strong key={i} className="font-semibold">
+                @{mentionLabels.get(part.mention) ?? a("ckMentionUnknown", locale)}
+              </strong>
+            ) : (
+              <span key={i}>{part.text}</span>
+            ),
+          )}
+        </p>
+      ) : message ? (
+        <p className="m-0 mt-[var(--space-1)] whitespace-pre-line">{message}</p>
+      ) : null}
     </li>
   );
 }
