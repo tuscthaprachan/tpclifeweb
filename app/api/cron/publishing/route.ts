@@ -8,6 +8,7 @@
 
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
+import { recordCronRun } from "@/lib/admin/health/cron-run";
 import { getDb } from "@/lib/db";
 import { runPublishingSweep } from "@/lib/publishing/sweep";
 
@@ -24,5 +25,6 @@ export async function GET(request: Request) {
   if (!secret) return NextResponse.json({ error: "not_configured" }, { status: 503 });
   if (!authorised(request, secret)) return NextResponse.json({ error: "unauthorised" }, { status: 401 });
   const result = await runPublishingSweep(getDb(), new Date());
+  await recordCronRun(getDb(), "publishing", result);
   return NextResponse.json(result);
 }
