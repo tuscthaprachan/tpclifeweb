@@ -9,7 +9,7 @@ import { Button, Heading, StatusTag, SummaryList, Tag, Timestamp } from "@/compo
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
 import { requireStaff } from "@/lib/auth/session";
-import { actingOrganisations, canAccessService, CASE_INBOX_ROLES } from "@/lib/cases/access";
+import { canAccessService, CASE_INBOX_ROLES } from "@/lib/cases/access";
 import { assertCaseAccess } from "@/lib/cases/restrictions";
 import { getComplaintFacts } from "@/lib/complaints/details";
 import { listContactSummaries } from "@/lib/cases/contacts";
@@ -49,7 +49,7 @@ export default async function CasePage({ params, searchParams }: { params: Promi
   const [row] = await db.select().from(cases).where(eq(cases.id, id));
   if (!row || !canAccessService(staff.roles, row.service)) notFound();
 
-  const orgIds = actingOrganisations(staff.roles, row.service);
+  const orgIds = staff.organisations.map((o) => o.id);
   const preferred = Number(as) || null;
   let actor;
   try {

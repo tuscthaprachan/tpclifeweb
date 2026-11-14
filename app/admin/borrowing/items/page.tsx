@@ -24,7 +24,7 @@ export async function generateMetadata() {
 export default async function InventoryPage({ searchParams }: { searchParams: Promise<{ added?: string }> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
-  await requireStaff(["equipment_officer", "admin"]);
+  await requireStaff(["officer", "admin"]);
   const { added } = await searchParams;
   const inventory = await listInventory(getDb());
 

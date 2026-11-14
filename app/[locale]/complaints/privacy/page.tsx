@@ -47,8 +47,8 @@ const WHAT: Array<{ what: LocaleString; why: LocaleString }> = [
   {
     what: s("ชื่อ อีเมล เบอร์โทรศัพท์ หรือไอดีไลน์ (เฉพาะเมื่อคุณเลือกให้ข้อมูล)", "Your name, email address, phone number or LINE ID (only if you choose to give them)"),
     why: s(
-      "เพื่อแจ้งความคืบหน้าและถามข้อมูลเพิ่ม เข้ารหัสไว้ หากคุณไม่ระบุตัวตน เราไม่เก็บข้อมูลเหล่านี้เลย หากคุณเลือกไม่เปิดเผยชื่อ เจ้าหน้าที่ทั่วไปจะไม่เห็นชื่อของคุณ มีเพียงหัวหน้าหน่วยงานที่เห็นได้เมื่อจำเป็น",
-      "So we can tell you how it is going and ask for more. Encrypted. If you stay anonymous we hold none of these. If you keep your name back, ordinary handlers do not see it; only a service lead can, if it is needed",
+      "เพื่อแจ้งความคืบหน้าและถามข้อมูลเพิ่ม เข้ารหัสไว้ หากคุณไม่ระบุตัวตน เราไม่เก็บข้อมูลเหล่านี้เลย หากคุณเลือกไม่เปิดเผยชื่อ ชื่อของคุณจะเห็นเฉพาะเจ้าหน้าที่ดำเนินการเรื่องร้องเรียนและผู้ดูแลระบบเมื่อจำเป็น",
+      "So we can tell you how it is going and ask for more. Encrypted. If you stay anonymous we hold none of these. If you keep your name back, only complaints officers and administrators can see it, if it is needed",
     ),
   },
   {

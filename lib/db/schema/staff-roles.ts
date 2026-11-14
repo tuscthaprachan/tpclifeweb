@@ -1,17 +1,21 @@
+import { pgEnum, integer, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { integer, pgEnum, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { user } from "./auth";
-import { organisations } from "./organisations";
 
-/** The roles from docs/backend-plan.md. Each is held on behalf of one organisation. */
-export const STAFF_ROLES = ["admin", "editor", "lf_officer", "complaints_handler", "unit_lead", "equipment_officer"] as const;
+/**
+ * The three staff roles. `admin` does everything, `editor` manages all website
+ * content and open data for both bodies, `officer` works the case services
+ * (lost and found, complaints, borrowing) and sees performance.
+ */
+export const STAFF_ROLES = ["admin", "editor", "officer"] as const;
 export type StaffRole = (typeof STAFF_ROLES)[number];
 
 export const staffRoleEnum = pgEnum("staff_role", STAFF_ROLES);
 
 /**
  * Role grants. A revoked grant keeps its row (history); only one active grant
- * per user, role and organisation may exist, enforced by a partial unique index.
+ * per user and role may exist, enforced by a partial unique index. Which body
+ * a person belongs to is `staff_memberships`, not part of the role.
  */
 export const staffRoles = pgTable(
   "staff_roles",
@@ -21,9 +25,6 @@ export const staffRoles = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     role: staffRoleEnum("role").notNull(),
-    organisationId: integer("organisation_id")
-      .notNull()
-      .references(() => organisations.id),
     grantedBy: text("granted_by")
       .notNull()
       .references(() => user.id),
@@ -32,7 +33,7 @@ export const staffRoles = pgTable(
   },
   (t) => [
     uniqueIndex("staff_roles_active_unique")
-      .on(t.userId, t.role, t.organisationId)
+      .on(t.userId, t.role)
       .where(sql`${t.revokedAt} is null`),
   ],
 );

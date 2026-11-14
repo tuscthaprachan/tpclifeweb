@@ -72,7 +72,7 @@ describe("markPossibleMatch", () => {
 
   it("is refused for staff outside the service", async () => {
     const { lost, found } = await pair();
-    await expect(markPossibleMatch(t.db, { lostCaseId: lost.caseId, foundCaseId: found.caseId }, t.complaints)).rejects.toMatchObject({ code: "forbidden" });
+    await expect(markPossibleMatch(t.db, { lostCaseId: lost.caseId, foundCaseId: found.caseId }, t.outsider)).rejects.toMatchObject({ code: "forbidden" });
   });
 });
 
@@ -98,7 +98,7 @@ describe("claims", () => {
     const audited = await t.audits("lost_found.claim_view");
     expect(audited.at(-1)).toMatchObject({ entityId: found.caseId, actorUserId: t.officer.userId });
     expect(JSON.stringify(audited)).not.toContain("SECRET-ANSWER");
-    await expect(readClaimAnswer(t.db, claimId, t.complaints)).rejects.toMatchObject({ code: "forbidden" });
+    await expect(readClaimAnswer(t.db, claimId, t.outsider)).rejects.toMatchObject({ code: "forbidden" });
   });
 
   it("accepts a public claim, which leaves the status alone until an officer reviews it", async () => {

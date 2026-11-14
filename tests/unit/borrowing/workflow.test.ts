@@ -211,8 +211,8 @@ describe("refusals", () => {
     expect((await row(c.caseId)).status).toBe("on_loan");
   });
 
-  it("refuses staff without the equipment roles, and lets a unit lead work", async () => {
-    const handler = await t.staff("Handler", "complaints_handler", "tusu");
+  it("refuses staff without the officer role, and lets another officer work", async () => {
+    const handler = await t.staff("Editor", "editor", "tusu");
     const c = await made("red-flag", 1);
     await expect(approveLoan(t.db, c.caseId, handler)).rejects.toMatchObject({ code: "forbidden" });
     await expect(declineLoan(t.db, c.caseId, { reason: { en: "No" } }, handler)).rejects.toMatchObject({ code: "forbidden" });

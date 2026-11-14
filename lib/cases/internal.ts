@@ -15,9 +15,9 @@ export function auditContextOf(actor: CaseActor): AuditContext {
     : { ...base, actorUserId: null, actorOrganisationId: null };
 }
 
-/** Throws unless `actor` is staff who may work `service`, acting for an organisation they hold a role in. */
+/** Throws unless `actor` is staff who may work `service`, acting for an organisation they belong to. */
 export function assertStaff(actor: CaseActor, service: CaseRow["service"]): asserts actor is StaffActor {
-  if (actor.kind !== "staff" || !canAccessService(actor.roles, service) || resolveActingOrganisation(actor.roles, service, actor.organisationId) !== actor.organisationId) {
+  if (actor.kind !== "staff" || !canAccessService(actor.roles, service) || resolveActingOrganisation(actor.organisationIds, actor.organisationId) !== actor.organisationId) {
     throw new CaseError("forbidden", "You do not have access to this service.");
   }
 }

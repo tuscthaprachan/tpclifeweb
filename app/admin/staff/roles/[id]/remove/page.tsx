@@ -1,74 +1,16 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { ConfirmPanel } from "@/components/admin/ConfirmPanel";
-import { PeopleIcon } from "@/components/admin/PeopleIcon";
-import { Button, ErrorSummary } from "@/components/ui";
-import { adminTitle } from "@/lib/admin/metadata";
-import { getAdminLocale } from "@/lib/admin/locale";
-import { organisationsWithRole } from "@/lib/auth/roles";
 import { requireStaff } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
-import { user } from "@/lib/db/schema/auth";
-import { organisations } from "@/lib/db/schema/organisations";
 import { staffRoles } from "@/lib/db/schema/staff-roles";
-import { a, ROLE_LABEL } from "@/lib/i18n/admin";
-import { pick } from "@/lib/i18n/config";
-import { UI } from "@/lib/i18n/strings";
-import { removeRole } from "../../../actions";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata() {
-  return adminTitle("removeRoleTitle");
-}
-
-export default async function RemoveRolePage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
-}) {
-  const locale = await getAdminLocale();
-  const staff = await requireStaff("admin");
-  const { id } = await params;
-  const roleId = Number(id);
+/** Roles are managed from the member page now; old links to this route land there. */
+export default async function RemoveRolePage({ params }: { params: Promise<{ id: string }> }) {
+  await requireStaff("admin");
+  const roleId = Number((await params).id);
   if (!Number.isInteger(roleId)) redirect("/admin/staff?notice=gone");
-
-  const [row] = await getDb()
-    .select({ role: staffRoles.role, organisationId: staffRoles.organisationId, name: user.name, email: user.email, nameTh: organisations.nameTh, nameEn: organisations.nameEn })
-    .from(staffRoles)
-    .innerJoin(user, eq(user.id, staffRoles.userId))
-    .innerJoin(organisations, eq(organisations.id, staffRoles.organisationId))
-    .where(and(eq(staffRoles.id, roleId), isNull(staffRoles.revokedAt)));
-  if (!row || !organisationsWithRole(staff.roles, "admin").includes(row.organisationId)) redirect("/admin/staff?notice=gone");
-
-  const { error } = await searchParams;
-  return (
-    <ConfirmPanel
-      locale={locale}
-      title={a("removeRoleTitle", locale)}
-      icon="staff"
-      errors={
-        error === "last-admin" ? (
-          <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={[{ href: "#remove-role", message: a("errLastAdmin", locale) }]} />
-        ) : null
-      }
-      warning={a("removeRoleBody", locale, {
-        person: row.name || row.email,
-        role: a(ROLE_LABEL[row.role], locale),
-        organisation: pick({ th: row.nameTh, en: row.nameEn }, locale),
-      })}
-    >
-      <form action={removeRole} className="flex flex-wrap items-center gap-[var(--space-3)]">
-        <input type="hidden" name="roleId" value={roleId} />
-        <Button id="remove-role" type="submit" variant="destructive" icon={<PeopleIcon name="cancel" />}>
-          {a("removeRoleButton", locale)}
-        </Button>
-        <Button href="/admin/staff" variant="secondary">
-          {a("keepIt", locale)}
-        </Button>
-      </form>
-    </ConfirmPanel>
-  );
+  const [grant] = await getDb().select({ userId: staffRoles.userId }).from(staffRoles).where(eq(staffRoles.id, roleId));
+  redirect(grant ? `/admin/staff/${encodeURIComponent(grant.userId)}` : "/admin/staff?notice=gone");
 }

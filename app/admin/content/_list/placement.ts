@@ -17,7 +17,7 @@ let cache: Map<string, ContentPlacement> | undefined;
 /** Where each content type sits in the sidebar (group and icon), read from the nav so the hub, lists and edit pages always agree with it. */
 function placements(): Map<string, ContentPlacement> {
   if (cache) return cache;
-  const nav = buildConsoleNav([{ role: "admin", organisationId: 0 }]);
+  const nav = buildConsoleNav([{ role: "admin" }]);
   const map = new Map<string, ContentPlacement>();
   for (const group of nav.groups) {
     for (const item of group.items) {

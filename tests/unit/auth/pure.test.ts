@@ -69,8 +69,8 @@ describe("requireStaff decision", () => {
     expiresAt: new Date(now.getTime() + 3_600_000),
     secondFactorAt: new Date(now.getTime() - 30_000),
   };
-  const editor: ActiveRole[] = [{ role: "editor", organisationId: 1 }];
-  const admin: ActiveRole[] = [{ role: "admin", organisationId: 2 }];
+  const editor: ActiveRole[] = [{ role: "editor" }];
+  const admin: ActiveRole[] = [{ role: "admin" }];
   const base = { now, roles: editor };
 
   it("sends the signed out to sign in", () => {
@@ -98,16 +98,6 @@ describe("requireStaff decision", () => {
   it("requires the named role", () => {
     expect(decideAccess({ ...base, session: live, required: { role: "admin" } }).kind).toBe("forbidden");
     expect(decideAccess({ ...base, session: live, roles: admin, required: { role: "admin" } }).kind).toBe("ok");
-  });
-
-  it("requires the role on behalf of the named organisation", () => {
-    expect(decideAccess({ ...base, session: live, roles: admin, required: { role: "admin", organisationId: 1 } }).kind).toBe("forbidden");
-    expect(decideAccess({ ...base, session: live, roles: admin, required: { role: "admin", organisationId: 2 } }).kind).toBe("ok");
-  });
-
-  it("requires any role in the organisation when no role is named", () => {
-    expect(decideAccess({ ...base, session: live, required: { organisationId: 2 } }).kind).toBe("forbidden");
-    expect(decideAccess({ ...base, session: live, required: { organisationId: 1 } }).kind).toBe("ok");
   });
 
   it("checks the passkey marker before the role, so a role never hides a missing one", () => {

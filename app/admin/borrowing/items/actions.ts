@@ -101,7 +101,7 @@ const KEEP = ["nameTh", "nameEn", "hintTh", "hintEn", "noticeWorkingDays", "maxP
 
 async function run(fd: FormData, work: (ctx: { actor: Awaited<ReturnType<typeof staffActorFor>>; locale: Locale }) => Promise<InvState>): Promise<InvState> {
   const locale = await getAdminLocale();
-  const staff = await requireStaff(["equipment_officer", "admin"]);
+  const staff = await requireStaff(["officer", "admin"]);
   const values = Object.fromEntries(KEEP.map((k) => [k, text(fd, k)]));
   try {
     const actor = await staffActorFor(staff, "borrowing");

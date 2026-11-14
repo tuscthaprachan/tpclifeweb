@@ -14,11 +14,17 @@ Session handoff for the backend migration described in `docs/backend-plan.md`. R
 - Public strings go in `lib/i18n/strings.ts` (a commented block per feature, keys with a prefix); staff strings in `lib/i18n/admin-content/<group>.ts`, spread into `A` in `lib/i18n/admin.ts`.
 - No coloured accent boxes (`npm run check:accent-boxes`): use inset text, warning text, notification banner, summary list.
 
+## Staff and roles
+
+- Three roles, held by the person and not scoped to a body: `admin` (everything), `editor` (all content and open data for both bodies), `officer` (lost and found, complaints, borrowing including the inventory and calendar, performance, withheld complainant names). Migration 0016 mapped `lf_officer`, `complaints_handler`, `unit_lead` and `equipment_officer` to `officer`, collapsing duplicate active grants.
+- Body membership (TUSU, TUSC or both) lives in `staff_memberships`; invites carry `organisation_ids`. The acting organisation of a case action comes from membership (the one they belong to, or the `?as=` choice when in both).
+- `/admin/staff` lists everyone and every pending invite for any admin. `/admin/staff/[userId]` edits roles and bodies as one diff (`staff_member.update`), suspends (`staff_member.suspend`, ends sessions; reactivate with the same form) and links to recovery. Inviting an address that is already staff grants directly. Every path that could remove an admin locks all active admin grants first.
+
 ## What exists (phases 1 to 6)
 
 | Phase | Where | State |
 |---|---|---|
-| 1 Foundations | `lib/db`, `lib/auth`, `lib/storage`, `lib/email`, `/admin` shell | Passkey-only staff sign-in, invites, recovery links, roles (`admin`, `editor`, `lf_officer`, `complaints_handler`, `unit_lead`), append-only audit log. |
+| 1 Foundations | `lib/db`, `lib/auth`, `lib/storage`, `lib/email`, `/admin` shell | Passkey-only staff sign-in, invites, recovery links, three roles (`admin`, `editor`, `officer`) held by the person, bodies via `staff_memberships` (migration 0016; see Staff and roles below), append-only audit log. |
 | 2 Content swap | `lib/content`, `lib/db/schema/content`, `lib/db/seed`, `lib/rich-text` | Every page reads Postgres; Sanity removed. PGlite for local and CI. |
 | 3 Content editing | `/admin/content/*`, `lib/admin/content` | Editors manage every content type. On `main`. |
 | 4 Case engine and lost and found | `lib/cases`, `lib/lost-found/**`, `/admin/cases`, `app/[locale]/lost-and-found/**` | Shared state machines, encrypted contacts, private tracking links, retention, desk intake, matching, claims, handover, public report/found/claim journeys. |
@@ -27,7 +33,7 @@ Session handoff for the backend migration described in `docs/backend-plan.md`. R
 
 ### Emails (`lib/email`)
 
-Resend behind an interface (`RESEND_API_KEY` and `EMAIL_FROM`; `EMAIL_LOG_ONLY=1` prints instead of sending). Templates are bilingual and live in code: staff invite and recovery (`templates.ts`), lost and found status mails (`lost-found-templates.ts`), complaint acknowledged, resolved and the escalation digest to leads (`complaint-templates.ts`). A failed email never blocks a case action or an invitation. LINE is not built.
+Resend behind an interface (`RESEND_API_KEY` and `EMAIL_FROM`; `EMAIL_LOG_ONLY=1` prints instead of sending). Templates are bilingual and live in code: staff invite and recovery (`templates.ts`), lost and found status mails (`lost-found-templates.ts`), complaint acknowledged, resolved and the escalation digest to officers (`complaint-templates.ts`). A failed email never blocks a case action or an invitation. LINE is not built.
 
 ### Crons (`vercel.json`)
 
@@ -42,18 +48,18 @@ Both need `CRON_SECRET` (Vercel sends it as a bearer token); without it the rout
 - Measures: lost and found (reports received by kind, items returned, return rate, median days found to returned, share reported online); complaints (received, by month and category, acknowledged and resolved on time, median days to resolution, satisfaction mean and share scoring 4 or 5, reopen rate, share made online); completion rate of the four public journeys. Exact definitions are in the file headers and on the public page.
 - Completion rate needs `journey_metrics` (migration 0011): kind, `started_at`, `finished_at`, nothing personal. The encrypted draft tables expire and are deleted, so they cannot be counted afterwards. Journeys started before 0011 is applied are not counted.
 - Public page `/[locale]/performance`: period by `?period=30d|12m|all` links (works without JavaScript), tables with captions, no charts. Cached for an hour (`lib/performance/read.ts`, tag `performance`). In the sitemap and the footer (added in code by `withRequiredNav` if the CMS footer lacks it, and in the seed).
-- Staff page `/admin/performance` (`admin` and `unit_lead`): the same figures plus live open cases by status, overdue and escalated complaints, and cases by desk. Counts respect restricted categories (`caseVisibleTo`), so an administrator not named on a category does not see those complaints counted.
+- Staff page `/admin/performance` (`admin` and `officer`): the same figures plus live open cases by status, overdue and escalated complaints, and cases by desk. Counts respect restricted categories (`caseVisibleTo`), so an administrator not named on a category does not see those complaints counted.
 
 ## Equipment borrowing (phase 7)
 
 Design and questionnaire architecture: `docs/borrowing-plan.md`. Replaces the equipment Google Form and its four PDF forms.
 
-- Foundation: `lib/db/schema/borrowing.ts`, migration 0014 (adds `equipment_officer` to `staff_role`, `borrowing` to `case_service`, BR references, `borrow` journey metric), `lib/cases/services.ts` (kind `loan`), `lib/borrowing/{availability,rules,time,terms,create}.ts`, inventory seed `lib/db/seed/equipment.ts` (insert if missing).
+- Foundation: `lib/db/schema/borrowing.ts`, migration 0014 (added `equipment_officer` to `staff_role`, since folded into `officer`, `borrowing` to `case_service`, BR references, `borrow` journey metric), `lib/cases/services.ts` (kind `loan`), `lib/borrowing/{availability,rules,time,terms,create}.ts`, inventory seed `lib/db/seed/equipment.ts` (insert if missing).
 - Borrower: `/[locale]/borrow` journey (dates, items, quantities, event, group, student, details, contact, terms, check), tracking and cancellation at `/borrow/track`, privacy notice, availability calendar `/borrow/availability`. The forms index entry for the old Google Form now starts `/borrow`; a home task points there too.
 - Staff: case panel (approve, decline, handover with deposit, return per line with damage and loss, compensation, settle), `/admin/borrowing` schedule, `/admin/borrowing/calendar`, `/admin/borrowing/items` inventory. The generic status form and action refuse loans.
 - Jobs: `/api/cron/borrowing` daily 01:41 UTC (return reminders, one overdue notice, abandoned journey sweep). Retention clears the student number and affiliation with the contacts.
 
-Before deploying to production: `npm run db:migrate` (0014) and `npm run db:seed` (adds the equipment), then grant `equipment_officer` (for TUSU) at `/admin/staff`. Without 0014 the case inbox fails for admins and unit leads, because it queries the new service.
+Before deploying to production: `npm run db:migrate` (0014) and `npm run db:seed` (adds the equipment), then grant `officer` at `/admin/staff`. Without 0014 the case inbox fails for admins and officers, because it queries the new service.
 
 ## Student body open data (phase 8)
 
@@ -61,7 +67,7 @@ Design: `docs/tusc-open-data-plan.md`. Approved mock-ups: `docs/mockups/open-dat
 
 - Data: `lib/db/schema/content/open-data.ts`, migration 0015 (10 tables, each with `owner` `tusc` or `tusu`), importer `lib/open-data/import.ts` (idempotent, run by `npm run db:seed` and by PGlite builds), reads `lib/open-data/read.ts` (cache tags in `lib/content/cache.ts`), search records `lib/open-data/search.ts`.
 - Pages: `app/[locale]/about/open-data/**` (landing, TUSU placeholder, TUSC overview, people, committees, meetings, decisions, rules, budget, reports, funds, documents, data). CSV downloads outside the locale tree at `app/about/open-data/tusc/data/[file]` and `budget/[fiscalYear]/[file]`. Filtered decisions and funds via `QUERY_ROUTES`. Components: `components/ui` (Figure, BarChart, ColumnChart, KeyFigures, DocumentList, DownloadList, SectionNav, TableOfContents, RelatedLinks, CiteThis; DataTable row headers, totals, notes; numbered Pagination) and `components/domain/open-data/**` (shell, transcript renderer, money and year formatters).
-- Staff: `/admin/content/open-data` (documents with transcript and file upload up to 4 MB, meetings and decisions, budget lines and funds with CSV import). Editors act for the body whose organisation slug (`tusc` or `tusu`) their grant is on.
+- Staff: `/admin/content/open-data` (documents with transcript and file upload up to 4 MB, meetings and decisions, budget lines and funds with CSV import). Editors and administrators may edit the open data of both bodies.
 - Originals: `npm run open-data:mirror` copies the 49 files from Drive to public storage (`--dry-run`, `--only 01,02`); until run, pages link to Drive.
 
 Before production shows content: `npm run db:migrate` (0015) and `npm run db:seed` (imports the open data). Without them the pages render their empty states; nothing fails. Then optionally run `npm run open-data:mirror` with the storage credentials, and grant editors on the `tusc` organisation.
@@ -79,7 +85,7 @@ Before production shows content: `npm run db:migrate` (0015) and `npm run db:see
 3. `npm run db:seed` (idempotent) adds the complaint categories and their targets. Without them no complaint can be made.
 4. Set the environment variables below in Vercel Production (and Preview where useful).
 5. Merge with a merge commit; Vercel deploys.
-6. First admin on a fresh database: `npm run auth:bootstrap -- <email> tusu` prints a one-time invite link. The existing production admin keeps signing in with their existing passkey. Break-glass recovery: `npm run auth:bootstrap -- --recover <email>`.
+6. First admin on a fresh database: `npm run auth:bootstrap -- <email> tusu` (or `tusc`, or `tusu,tusc` for both bodies) prints a one-time invite link. The existing production admin keeps signing in with their existing passkey. Break-glass recovery: `npm run auth:bootstrap -- --recover <email>`.
 7. Name the staff on each restricted complaint category at `/admin/complaints/categories`; a restricted category with nobody named is visible to no one.
 
 ## Environment variables

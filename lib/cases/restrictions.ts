@@ -1,7 +1,7 @@
 /**
  * Restricted complaint categories. A complaint in a restricted category (for
  * example harassment or safety) is visible only to the staff named on that
- * category's access list, whatever their role: being an admin or a unit lead
+ * category's access list, whatever their role: being an admin or an officer
  * grants nothing here. This is the data-layer rule behind every staff read
  * and write of a case, in addition to the service roles in ./access.ts:
  *

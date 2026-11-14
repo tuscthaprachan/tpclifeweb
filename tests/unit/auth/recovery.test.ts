@@ -12,7 +12,7 @@ import {
 } from "@/lib/auth/recovery";
 import { consumeTokenAttempt, TOKEN_ATTEMPT_RULE } from "@/lib/auth/rate-limit";
 import { hashToken } from "@/lib/auth/tokens";
-import { auditLog, organisations, session, staffRecoveryLinks, staffRoles, user } from "@/lib/db/schema";
+import { auditLog, organisations, session, staffMemberships, staffRecoveryLinks, staffRoles, user } from "@/lib/db/schema";
 import { createTestDb, makeUser } from "../db/harness";
 
 vi.setConfig({ testTimeout: 60_000, hookTimeout: 60_000 });
@@ -27,7 +27,8 @@ let editor: string;
 let otherOrgEditor: string;
 
 async function grant(userId: string, role: "admin" | "editor", organisationId: number) {
-  await db.insert(staffRoles).values({ userId, role, organisationId, grantedBy: userId });
+  await db.insert(staffRoles).values({ userId, role, grantedBy: userId });
+  await db.insert(staffMemberships).values({ userId, organisationId, addedBy: userId }).onConflictDoNothing();
 }
 
 async function code(promise: Promise<unknown>): Promise<string | undefined> {
@@ -55,7 +56,7 @@ beforeEach(async () => {
 describe("issuing a recovery link", () => {
   it("expires in 24 hours and stores only the hash", async () => {
     const now = new Date("2026-03-01T00:00:00Z");
-    const { link, token } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin, allowedOrganisationIds: [tusu], now });
+    const { link, token } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin, now });
     expect(RECOVERY_TTL_HOURS).toBe(24);
     expect(link.expiresAt).toEqual(new Date("2026-03-02T00:00:00Z"));
     expect(link.tokenHash).toBe(hashToken(token));
@@ -66,7 +67,7 @@ describe("issuing a recovery link", () => {
   });
 
   it("audits the issue without the token", async () => {
-    const { token, link } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin, allowedOrganisationIds: [tusu] });
+    const { token, link } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin });
     const rows = (await db.select().from(auditLog)).filter((r) => r.action === "staff_recovery.issue");
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ actorUserId: admin, entityId: String(link.id) });
@@ -74,22 +75,22 @@ describe("issuing a recovery link", () => {
     expect(JSON.stringify(rows)).not.toContain(link.tokenHash);
   });
 
-  it("only reaches staff in an organisation the admin administers", async () => {
-    expect(await code(issueRecoveryLink(db, { userId: otherOrgEditor, issuedBy: admin, allowedOrganisationIds: [tusu] }))).toBe("out_of_scope");
-    await expect(issueRecoveryLink(db, { userId: otherOrgEditor, issuedBy: admin, allowedOrganisationIds: [tusu, tusc] })).resolves.toBeTruthy();
+  it("reaches staff of either organisation", async () => {
+    await expect(issueRecoveryLink(db, { userId: otherOrgEditor, issuedBy: admin })).resolves.toBeTruthy();
+    await expect(issueRecoveryLink(db, { userId: editor, issuedBy: admin })).resolves.toBeTruthy();
   });
 
   it("refuses people who are not staff, and people who do not exist", async () => {
     const student = await makeUser(db, "Student");
-    expect(await code(issueRecoveryLink(db, { userId: student, issuedBy: admin, allowedOrganisationIds: [tusu] }))).toBe("not_staff");
-    expect(await code(issueRecoveryLink(db, { userId: "nobody", issuedBy: admin, allowedOrganisationIds: [tusu] }))).toBe("unknown_user");
+    expect(await code(issueRecoveryLink(db, { userId: student, issuedBy: admin }))).toBe("not_staff");
+    expect(await code(issueRecoveryLink(db, { userId: "nobody", issuedBy: admin }))).toBe("unknown_user");
     await db.update(staffRoles).set({ revokedAt: new Date() }).where(eq(staffRoles.userId, editor));
-    expect(await code(issueRecoveryLink(db, { userId: editor, issuedBy: admin, allowedOrganisationIds: [tusu] }))).toBe("not_staff");
+    expect(await code(issueRecoveryLink(db, { userId: editor, issuedBy: admin }))).toBe("not_staff");
   });
 
   it("supersedes an earlier pending link", async () => {
-    const first = await issueRecoveryLink(db, { userId: editor, issuedBy: admin, allowedOrganisationIds: [tusu] });
-    await issueRecoveryLink(db, { userId: editor, issuedBy: admin, allowedOrganisationIds: [tusu] });
+    const first = await issueRecoveryLink(db, { userId: editor, issuedBy: admin });
+    await issueRecoveryLink(db, { userId: editor, issuedBy: admin });
     const old = await findRecoveryByToken(db, first.token);
     expect(recoveryStatus(old!.link, new Date())).toBe("revoked");
     expect(await code(claimRecoveryLink(db, { token: first.token }))).toBe("revoked");
@@ -99,14 +100,14 @@ describe("issuing a recovery link", () => {
   describe("the lockout rule", () => {
     it("stops the only admin recovering themselves", async () => {
       expect(await hasOtherActiveAdmin(db, admin)).toBe(false);
-      expect(await code(issueRecoveryLink(db, { userId: admin, issuedBy: admin, allowedOrganisationIds: [tusu] }))).toBe("last_admin");
+      expect(await code(issueRecoveryLink(db, { userId: admin, issuedBy: admin }))).toBe("last_admin");
       expect(await db.select().from(staffRecoveryLinks)).toHaveLength(0);
     });
 
     it("allows it once another admin exists, in any organisation", async () => {
       await grant(otherOrgEditor, "admin", tusc);
       expect(await hasOtherActiveAdmin(db, admin)).toBe(true);
-      await expect(issueRecoveryLink(db, { userId: admin, issuedBy: admin, allowedOrganisationIds: [tusu] })).resolves.toBeTruthy();
+      await expect(issueRecoveryLink(db, { userId: admin, issuedBy: admin })).resolves.toBeTruthy();
     });
 
     it("ignores a revoked admin when counting", async () => {
@@ -118,14 +119,14 @@ describe("issuing a recovery link", () => {
     it("lets one admin recover another", async () => {
       const second = await makeUser(db, "Second");
       await grant(second, "admin", tusu);
-      await expect(issueRecoveryLink(db, { userId: second, issuedBy: admin, allowedOrganisationIds: [tusu] })).resolves.toBeTruthy();
+      await expect(issueRecoveryLink(db, { userId: second, issuedBy: admin })).resolves.toBeTruthy();
     });
   });
 });
 
 describe("using a recovery link", () => {
   it("is single use, even when claimed twice at once", async () => {
-    const { token } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin, allowedOrganisationIds: [tusu] });
+    const { token } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin });
     const results = await Promise.allSettled([claimRecoveryLink(db, { token }), claimRecoveryLink(db, { token })]);
     expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
     expect(await code(claimRecoveryLink(db, { token }))).toBe("already_used");
@@ -133,7 +134,7 @@ describe("using a recovery link", () => {
 
   it("expires", async () => {
     const now = new Date("2026-03-01T00:00:00Z");
-    const { token } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin, allowedOrganisationIds: [tusu], now });
+    const { token } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin, now });
     expect(await code(claimRecoveryLink(db, { token, now: new Date(now.getTime() + RECOVERY_TTL_HOURS * 3_600_000) }))).toBe("expired");
     await expect(claimRecoveryLink(db, { token, now: new Date(now.getTime() + RECOVERY_TTL_HOURS * 3_600_000 - 1) })).resolves.toMatchObject({ userId: editor });
   });
@@ -148,7 +149,7 @@ describe("using a recovery link", () => {
     await make(editor, "s1");
     await make(editor, "s2");
     await make(admin, "s3");
-    const { token, link } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin, allowedOrganisationIds: [tusu] });
+    const { token, link } = await issueRecoveryLink(db, { userId: editor, issuedBy: admin });
     expect(await claimRecoveryLink(db, { token })).toEqual({ userId: editor, endedSessions: 2 });
     expect((await db.select().from(session)).map((s) => s.id)).toEqual(["s3"]);
     const used = (await db.select().from(auditLog)).filter((r) => r.action === "staff_recovery.use");

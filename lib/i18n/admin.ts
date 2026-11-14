@@ -19,6 +19,7 @@ import { CONSOLE_CASES_STRINGS } from "./admin-content/console-cases";
 import { CONSOLE_PEOPLE_STRINGS } from "./admin-content/console-people";
 import { COMPLAINTS_STRINGS } from "./admin-content/complaints";
 import { DIRECTORY_STRINGS } from "./admin-content/directory";
+import { EDITOR_STRINGS } from "./admin-content/editor";
 import { LOST_FOUND_CASES_STRINGS } from "./admin-content/lost-found-cases";
 import { MEDIA_STRINGS } from "./admin-content/media";
 import { PAGES_STRINGS } from "./admin-content/pages";
@@ -27,6 +28,7 @@ import { BORROWING_STRINGS } from "./admin-content/borrowing";
 import { BORROWING_CALENDAR_STRINGS } from "./admin-content/borrowing-calendar";
 import { OPEN_DATA_ADMIN_STRINGS } from "./admin-content/open-data";
 import { PUBLISHING_STRINGS } from "./admin-content/publishing";
+import { STAFF_MEMBER_STRINGS } from "./admin-content/staff-members";
 
 export const A = {
   /* Shell */
@@ -184,21 +186,14 @@ export const A = {
   rowRoles: { th: "บทบาท", en: "Roles" },
   rowSessionEnds: { th: "เซสชันสิ้นสุดอย่างช้าที่สุด", en: "Session ends no later than" },
   nameNotGiven: { th: "ยังไม่ได้ระบุ", en: "Not given" },
-  roleAtOrganisation: { th: "{role} ({organisation})", en: "{role} ({organisation})" },
 
   /* Roles */
   roleAdmin: { th: "ผู้ดูแลระบบ", en: "Administrator" },
   roleEditor: { th: "บรรณาธิการเนื้อหา", en: "Content editor" },
-  roleLfOfficer: { th: "เจ้าหน้าที่ของหายและของเก็บได้", en: "Lost and found officer" },
-  roleComplaintsHandler: { th: "ผู้รับเรื่องร้องเรียน", en: "Complaints handler" },
-  roleUnitLead: { th: "หัวหน้าหน่วย", en: "Unit lead" },
-  roleEquipmentOfficer: { th: "เจ้าหน้าที่ให้ยืมอุปกรณ์", en: "Equipment officer" },
-  roleAdminHint: { th: "เชิญและเอาเจ้าหน้าที่ออก กำหนดบทบาท", en: "Invites and removes staff and sets roles" },
-  roleEditorHint: { th: "แก้ไขเนื้อหาบนเว็บไซต์", en: "Edits website content" },
-  roleLfOfficerHint: { th: "จัดการรายงานของหายและของเก็บได้", en: "Handles lost and found reports" },
-  roleComplaintsHandlerHint: { th: "รับและดำเนินการเรื่องร้องเรียน", en: "Receives and resolves complaints" },
-  roleUnitLeadHint: { th: "ดูแลเรื่องที่เลยกำหนดและส่งต่อ", en: "Handles overdue and escalated cases" },
-  roleEquipmentOfficerHint: { th: "พิจารณาคำขอยืม ส่งมอบและรับคืนอุปกรณ์ ดูแลคลังอุปกรณ์", en: "Decides loan requests, hands out and takes back equipment, and keeps the inventory" },
+  roleOfficer: { th: "เจ้าหน้าที่ดำเนินการ", en: "Officer" },
+  roleAdminHint: { th: "ทำได้ทุกอย่าง รวมถึงเชิญและจัดการเจ้าหน้าที่ บทบาท และหมวดข้อร้องเรียน", en: "Can do everything, including inviting and managing staff, roles and complaint categories" },
+  roleEditorHint: { th: "แก้ไขเนื้อหาเว็บไซต์ทั้งหมดและข้อมูลเปิดของทั้ง อมธ. และสภานักศึกษา", en: "Edits all website content and the open data of both TUSU and TUSC" },
+  roleOfficerHint: { th: "ดำเนินการเรื่องของหายและของที่พบ ข้อร้องเรียน และการยืมอุปกรณ์ จัดการคลังอุปกรณ์ และดูผลการดำเนินงาน", en: "Works lost and found, complaints and equipment loans, keeps the inventory, and sees the performance figures" },
 
   /* No access, signed out */
   noAccessTitle: { th: "คุณไม่มีสิทธิ์เข้าถึง", en: "You do not have access" },
@@ -237,16 +232,13 @@ export const A = {
   /* Staff */
   staffTitle: { th: "เจ้าหน้าที่", en: "Staff" },
   staffIntro: {
-    th: "เชิญเจ้าหน้าที่ใหม่ และจัดการบทบาทของเจ้าหน้าที่ในหน่วยงานที่คุณเป็นผู้ดูแลระบบ",
-    en: "Invite new staff and manage roles for the organisations where you are an administrator",
+    th: "เชิญเจ้าหน้าที่ใหม่ และจัดการบทบาทและหน่วยงานของเจ้าหน้าที่ทุกคน",
+    en: "Invite new staff, and manage the roles and organisations of everyone on the staff",
   },
-  staffListCaption: { th: "เจ้าหน้าที่ที่มีบทบาทอยู่ในขณะนี้", en: "Staff who currently hold a role" },
+  staffListCaption: { th: "เจ้าหน้าที่ บทบาท และหน่วยงานของแต่ละคน", en: "Staff, with their roles and organisations" },
   colPerson: { th: "บุคคล", en: "Person" },
   colRoles: { th: "บทบาท", en: "Roles" },
   noStaff: { th: "ยังไม่มีเจ้าหน้าที่", en: "There are no staff yet" },
-  removeRole: { th: "เอาบทบาทออก", en: "Remove role" },
-  removeRoleVisible: { th: "เอาออก", en: "Remove" },
-  removeRoleFor: { th: "เอาบทบาท {role} ของ {person} ออก", en: "Remove the {role} role from {person}" },
   pendingHeading: { th: "คำเชิญที่รอการตอบรับ", en: "Invitations waiting to be accepted" },
   pendingCaption: { th: "คำเชิญที่ยังใช้ได้", en: "Invitations that can still be used" },
   noPending: { th: "ไม่มีคำเชิญที่รอการตอบรับ", en: "There are no invitations waiting" },
@@ -260,12 +252,12 @@ export const A = {
     th: "เราจะสร้างลิงก์คำเชิญให้คุณส่งต่อ ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ 7 วัน อีเมลใช้ระบุบัญชี จะเป็นอีเมลของมหาวิทยาลัยหรืออีเมลอื่นก็ได้ หากตั้งค่าอีเมลไว้ เราจะส่งลิงก์ไปให้ด้วย",
     en: "We will make an invitation link for you to pass on. It works once and for 7 days. The email address names the account; it can be a university address or any other. If email is set up, we also send the link",
   },
-  inviteOrgLegend: { th: "เชิญเข้าหน่วยงานใด", en: "Which organisation are they joining?" },
+  inviteOrgLegend: { th: "เชิญเข้าหน่วยงานใด", en: "Which organisations are they joining?" },
   inviteRolesLegend: { th: "บทบาท", en: "Roles" },
   inviteRolesHint: { th: "เลือกได้หลายบทบาท", en: "Select all that apply" },
   inviteSend: { th: "สร้างลิงก์คำเชิญ", en: "Make invitation link" },
   errInviteEmailRequired: { th: "กรอกอีเมลของผู้ที่คุณต้องการเชิญ", en: "Enter the email address of the person you want to invite" },
-  errInviteOrgRequired: { th: "เลือกหน่วยงาน", en: "Select an organisation" },
+  errInviteOrgRequired: { th: "เลือกอย่างน้อยหนึ่งหน่วยงาน", en: "Select at least one organisation" },
   errInviteRolesRequired: { th: "เลือกอย่างน้อยหนึ่งบทบาท", en: "Select at least one role" },
   errInviteFailed: { th: "สร้างคำเชิญไม่สำเร็จ ลองอีกครั้ง", en: "We could not make the invitation. Try again" },
   invitedTitle: { th: "สร้างลิงก์คำเชิญแล้ว", en: "Invitation link ready" },
@@ -283,23 +275,12 @@ export const A = {
     en: "We could not email it, so send the link yourself. The link still works",
   },
   emailOffNote: { th: "ยังไม่ได้ตั้งค่าอีเมล จึงต้องส่งลิงก์ด้วยตัวเอง", en: "Email is not set up, so you need to send the link yourself" },
-  roleRemovedTitle: { th: "เอาบทบาทออกแล้ว", en: "Role removed" },
-  roleRemovedBody: {
-    th: "การเปลี่ยนแปลงมีผลทันที และถูกบันทึกไว้แล้ว",
-    en: "The change takes effect straight away and has been recorded",
-  },
   inviteCancelledBody: {
     th: "ลิงก์ในคำเชิญนั้นใช้ไม่ได้อีกแล้ว",
     en: "The link in that invitation no longer works",
   },
   goneTitle: { th: "ไม่มีรายการให้เปลี่ยน", en: "Nothing to change" },
   inviteCancelledTitle: { th: "ยกเลิกคำเชิญแล้ว", en: "Invitation cancelled" },
-  removeRoleTitle: { th: "คุณต้องการเอาบทบาทนี้ออกหรือไม่", en: "Are you sure you want to remove this role?" },
-  removeRoleBody: {
-    th: "{person} จะไม่มีบทบาท {role} ของ{organisation} ตั้งแต่การคลิกครั้งถัดไป การเปลี่ยนแปลงนี้จะถูกบันทึกไว้",
-    en: "{person} will no longer be {role} at {organisation} from their next click. This change is recorded",
-  },
-  removeRoleButton: { th: "เอาบทบาทออก", en: "Remove role" },
   cancelInviteTitle: { th: "คุณต้องการยกเลิกคำเชิญนี้หรือไม่", en: "Are you sure you want to cancel this invitation?" },
   cancelInviteBody: {
     th: "ลิงก์ที่ส่งไปให้ {email} จะใช้ไม่ได้อีก",
@@ -337,8 +318,8 @@ export const A = {
   },
   errRecoveryFailed: { th: "สร้างลิงก์กู้คืนไม่สำเร็จ ลองอีกครั้ง", en: "We could not make the recovery link. Try again" },
   errRecoveryScope: {
-    th: "คุณสร้างลิงก์กู้คืนได้เฉพาะเจ้าหน้าที่ของหน่วยงานที่คุณเป็นผู้ดูแลระบบ",
-    en: "You can only make recovery links for staff of organisations where you are an administrator",
+    th: "สร้างลิงก์กู้คืนได้เฉพาะเจ้าหน้าที่ที่ยังมีบทบาทอยู่",
+    en: "You can only make recovery links for staff who currently hold a role",
   },
   errRecoverySelf: {
     th: "คุณสร้างลิงก์กู้คืนให้ตัวเองไม่ได้ขณะที่เป็นผู้ดูแลระบบคนเดียว หากเข้าสู่ระบบอยู่ ให้เพิ่มพาสคีย์ในหน้าความปลอดภัยของฉัน หากถูกล็อกออก ให้ผู้ดูแลฐานข้อมูลใช้คำสั่งกู้คืน",
@@ -729,6 +710,7 @@ export const A = {
   ...PUBLISHING_STRINGS,
   ...PAGES_STRINGS,
   ...DIRECTORY_STRINGS,
+  ...EDITOR_STRINGS,
   ...CANTEEN_STRINGS,
   ...MEDIA_STRINGS,
   ...CASES_STRINGS,
@@ -743,6 +725,7 @@ export const A = {
   ...CONSOLE_CONTENT_STRINGS,
   ...CONSOLE_CASES_STRINGS,
   ...CONSOLE_PEOPLE_STRINGS,
+  ...STAFF_MEMBER_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 
 export type AdminKey = keyof typeof A;
@@ -761,17 +744,11 @@ export function a(key: AdminKey, locale: Locale, values?: Record<string, string 
 export const ROLE_LABEL = {
   admin: "roleAdmin",
   editor: "roleEditor",
-  lf_officer: "roleLfOfficer",
-  complaints_handler: "roleComplaintsHandler",
-  unit_lead: "roleUnitLead",
-  equipment_officer: "roleEquipmentOfficer",
+  officer: "roleOfficer",
 } as const satisfies Record<string, AdminKey>;
 
 export const ROLE_HINT = {
   admin: "roleAdminHint",
   editor: "roleEditorHint",
-  lf_officer: "roleLfOfficerHint",
-  complaints_handler: "roleComplaintsHandlerHint",
-  unit_lead: "roleUnitLeadHint",
-  equipment_officer: "roleEquipmentOfficerHint",
+  officer: "roleOfficerHint",
 } as const satisfies Record<string, AdminKey>;

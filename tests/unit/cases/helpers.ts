@@ -15,8 +15,9 @@ export async function setup() {
   async function staff(name: string, role: StaffRole, org: "tusu" | "tusc" = "tusu"): Promise<StaffActor> {
     const userId = await makeUser(ctx.db, name);
     const organisationId = orgId(org);
-    await ctx.db.insert(schema.staffRoles).values({ userId, role, organisationId, grantedBy: admin });
-    return { kind: "staff", userId, organisationId, roles: [{ role, organisationId }] };
+    await ctx.db.insert(schema.staffRoles).values({ userId, role, grantedBy: admin });
+    await ctx.db.insert(schema.staffMemberships).values({ userId, organisationId, addedBy: admin });
+    return { kind: "staff", userId, organisationId, organisationIds: [organisationId], roles: [{ role }] };
   }
   return { ...ctx, orgId, staff };
 }

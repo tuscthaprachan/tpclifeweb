@@ -11,12 +11,12 @@ export const env = { PII_ENCRYPTION_KEY: KEY_A, NODE_ENV: "test" };
 export const NOW = new Date("2026-03-09T05:00:00Z");
 export const at = (day: string, time = "10:00") => bangkokInstant(day, time)!;
 
-/** A seeded database with the equipment inventory and a few staff: an officer at TUSU, a lead and an admin. */
+/** A seeded database with the equipment inventory and a few staff: two officers at TUSU and an admin. */
 export async function setupBorrowing() {
   const t = await setup();
   await seedEquipment(t.db);
-  const officer = await t.staff("Officer", "equipment_officer", "tusu");
-  const lead = await t.staff("Lead", "unit_lead", "tusu");
+  const officer = await t.staff("Officer", "officer", "tusu");
+  const lead = await t.staff("Lead", "officer", "tusu");
   const admin = await t.staff("Admin", "admin", "tusu");
   const item = async (slug: string) => (await t.db.select().from(schema.equipmentItems).where(eq(schema.equipmentItems.slug, slug)))[0]!;
 

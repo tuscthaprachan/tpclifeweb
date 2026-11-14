@@ -1,12 +1,12 @@
 /**
  * Staff invitations. The invite is the authorisation: an admin names an email
- * address, an organisation and the roles, and whoever opens the link (shown to
- * the admin to pass on privately, and emailed too when email is configured)
+ * address, the organisations (one or both) and the roles, and whoever opens
+ * the link (shown to the admin to pass on privately, and emailed too when email is configured)
  * may create that account by registering a passkey (lib/auth/enrolment.ts), or,
  * if the address already has an account, accept it while signed in. The token
  * is single-use, stored hashed and expires. Nothing here trusts the caller to
- * be an admin; the Server Actions check that (`requireStaff("admin",
- * organisationId)`) before calling in.
+ * be an admin; the Server Actions check that (`requireStaff("admin")`)
+ * before calling in.
  *
  * Every function takes the database as a parameter and imports nothing
  * server-only, so the same code runs under Next, under the bootstrap script
@@ -14,10 +14,11 @@
  * transaction (`withAudit`).
  */
 
-import { and, eq, gt, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, gt, inArray, isNull, sql } from "drizzle-orm";
 import { withAudit, type AuditContext, type AuditExecutor } from "@/lib/db/audit";
 import { organisations, type Organisation } from "@/lib/db/schema/organisations";
 import { staffInvites, type StaffInvite } from "@/lib/db/schema/staff-invites";
+import { staffMemberships } from "@/lib/db/schema/staff-memberships";
 import { staffRoles, STAFF_ROLES, type StaffRole } from "@/lib/db/schema/staff-roles";
 import { isPlausibleEmail, normaliseEmail } from "./email-address";
 import { generateToken, hashToken } from "./tokens";
@@ -57,7 +58,7 @@ export function inviteStatus(invite: Pick<StaffInvite, "acceptedAt" | "revokedAt
 
 export interface CreateInviteInput {
   email: string;
-  organisationId: number;
+  organisationIds: readonly number[];
   roles: readonly string[];
   /** Null only for the bootstrap invite. */
   invitedBy: string | null;
@@ -74,13 +75,13 @@ function cleanRoles(roles: readonly string[]): StaffRole[] {
 
 /**
  * Creates an invite and returns the raw token (never stored). Any earlier
- * pending invite for the same address and organisation is superseded, so
- * re-inviting is also how an admin "resends" one.
+ * pending invite for the same address is superseded, so re-inviting is also
+ * how an admin "resends" one.
  */
 export async function createInvite(
   db: AuditExecutor,
   input: CreateInviteInput,
-): Promise<{ invite: StaffInvite; token: string; organisation: Organisation }> {
+): Promise<{ invite: StaffInvite; token: string; organisations: Organisation[] }> {
   const email = normaliseEmail(input.email);
   if (!isPlausibleEmail(email)) throw new InviteError("invalid_email");
   const roles = cleanRoles(input.roles);
@@ -91,8 +92,11 @@ export async function createInvite(
     db,
     { ...input.context, actorUserId: input.invitedBy ?? input.context?.actorUserId ?? null },
     async (tx, audit) => {
-      const [organisation] = await tx.select().from(organisations).where(eq(organisations.id, input.organisationId));
-      if (!organisation) throw new InviteError("unknown_organisation");
+      const wanted = [...new Set(input.organisationIds)];
+      if (wanted.length === 0) throw new InviteError("unknown_organisation");
+      const found = await tx.select().from(organisations).where(inArray(organisations.id, wanted)).orderBy(asc(organisations.id));
+      if (found.length !== wanted.length) throw new InviteError("unknown_organisation");
+      const organisationIds = found.map((o) => o.id);
 
       const superseded = await tx
         .update(staffInvites)
@@ -100,7 +104,6 @@ export async function createInvite(
         .where(
           and(
             eq(staffInvites.email, email),
-            eq(staffInvites.organisationId, organisation.id),
             isNull(staffInvites.acceptedAt),
             isNull(staffInvites.revokedAt),
           ),
@@ -114,7 +117,7 @@ export async function createInvite(
         .insert(staffInvites)
         .values({
           email,
-          organisationId: organisation.id,
+          organisationIds,
           roles,
           tokenHash: hashToken(token),
           invitedBy: input.invitedBy,
@@ -126,11 +129,11 @@ export async function createInvite(
         action: "staff_invite.create",
         entityType: "staff_invite",
         entityId: invite.id,
-        actorOrganisationId: organisation.id,
+        actorOrganisationId: organisationIds[0],
         // The token hash is deliberately left out of the log.
-        after: { email, organisationId: organisation.id, roles, expiresAt: invite.expiresAt },
+        after: { email, organisationIds, roles, expiresAt: invite.expiresAt },
       });
-      return { invite, token, organisation };
+      return { invite, token, organisations: found };
     },
   );
 }
@@ -139,14 +142,12 @@ export async function createInvite(
 export async function findInviteByToken(
   db: AuditExecutor,
   token: string,
-): Promise<{ invite: StaffInvite; organisation: Organisation } | null> {
+): Promise<{ invite: StaffInvite; organisations: Organisation[] } | null> {
   if (!token || token.length > 200) return null;
-  const [row] = await db
-    .select({ invite: staffInvites, organisation: organisations })
-    .from(staffInvites)
-    .innerJoin(organisations, eq(organisations.id, staffInvites.organisationId))
-    .where(eq(staffInvites.tokenHash, hashToken(token)));
-  return row ?? null;
+  const [invite] = await db.select().from(staffInvites).where(eq(staffInvites.tokenHash, hashToken(token)));
+  if (!invite) return null;
+  const found = await db.select().from(organisations).where(inArray(organisations.id, invite.organisationIds)).orderBy(asc(organisations.id));
+  return { invite, organisations: found };
 }
 
 export interface AcceptInviteInput {
@@ -166,7 +167,7 @@ export interface AcceptInviteInput {
 export async function acceptInvite(
   db: AuditExecutor,
   input: AcceptInviteInput,
-): Promise<{ organisationId: number; roles: StaffRole[] }> {
+): Promise<{ organisationIds: number[]; roles: StaffRole[] }> {
   const now = input.now ?? new Date();
   const found = await findInviteByToken(db, input.token);
   if (!found) throw new InviteError("not_found");
@@ -179,7 +180,7 @@ export async function acceptInvite(
 
   return withAudit(
     db,
-    { ...input.context, actorUserId: input.userId, actorOrganisationId: invite.organisationId },
+    { ...input.context, actorUserId: input.userId, actorOrganisationId: invite.organisationIds[0] ?? null },
     async (tx, audit) => {
       const claimed = await tx
         .update(staffInvites)
@@ -198,10 +199,24 @@ export async function acceptInvite(
 
       // A bootstrap invite has no inviter, so the new admin is recorded as granting it.
       const grantedBy = invite.invitedBy ?? input.userId;
+      for (const organisationId of invite.organisationIds) {
+        const [membership] = await tx
+          .insert(staffMemberships)
+          .values({ userId: input.userId, organisationId, addedBy: grantedBy })
+          .onConflictDoNothing()
+          .returning();
+        if (!membership) continue;
+        await audit({
+          action: "staff_membership.add",
+          entityType: "staff_membership",
+          entityId: `${input.userId}:${organisationId}`,
+          after: { userId: input.userId, organisationId, addedBy: grantedBy, viaInvite: invite.id },
+        });
+      }
       for (const role of invite.roles) {
         const [grant] = await tx
           .insert(staffRoles)
-          .values({ userId: input.userId, role, organisationId: invite.organisationId, grantedBy })
+          .values({ userId: input.userId, role, grantedBy })
           .onConflictDoNothing()
           .returning();
         // Already held: nothing changed, so nothing to log.
@@ -213,14 +228,13 @@ export async function acceptInvite(
           after: {
             userId: input.userId,
             role,
-            organisationId: invite.organisationId,
             grantedBy,
             viaInvite: invite.id,
             bootstrap: invite.invitedBy === null,
           },
         });
       }
-      return { organisationId: invite.organisationId, roles: [...invite.roles] };
+      return { organisationIds: [...invite.organisationIds], roles: [...invite.roles] };
     },
   );
 }
@@ -228,20 +242,14 @@ export async function acceptInvite(
 /** Revokes a pending invite. Returns false when it was not pending. */
 export async function revokeInvite(
   db: AuditExecutor,
-  input: { inviteId: number; allowedOrganisationIds?: readonly number[]; context?: AuditContext; now?: Date },
+  input: { inviteId: number; context?: AuditContext; now?: Date },
 ): Promise<boolean> {
   const now = input.now ?? new Date();
   return withAudit(db, input.context ?? {}, async (tx, audit) => {
-    const conditions = [
-      eq(staffInvites.id, input.inviteId),
-      isNull(staffInvites.acceptedAt),
-      isNull(staffInvites.revokedAt),
-    ];
-    if (input.allowedOrganisationIds) conditions.push(inArray(staffInvites.organisationId, [...input.allowedOrganisationIds]));
     const rows = await tx
       .update(staffInvites)
       .set({ revokedAt: now })
-      .where(and(...conditions))
+      .where(and(eq(staffInvites.id, input.inviteId), isNull(staffInvites.acceptedAt), isNull(staffInvites.revokedAt)))
       .returning();
     const revoked = rows[0];
     if (!revoked) return false;
@@ -249,8 +257,7 @@ export async function revokeInvite(
       action: "staff_invite.revoke",
       entityType: "staff_invite",
       entityId: revoked.id,
-      actorOrganisationId: revoked.organisationId,
-      before: { email: revoked.email, roles: revoked.roles },
+      before: { email: revoked.email, roles: revoked.roles, organisationIds: revoked.organisationIds },
     });
     return true;
   });
@@ -263,10 +270,11 @@ export async function revokeInvite(
  */
 export async function createBootstrapInvite(
   db: AuditExecutor,
-  input: { email: string; organisationSlug: string; now?: Date },
-): Promise<{ invite: StaffInvite; token: string; organisation: Organisation }> {
-  const [org] = await db.select().from(organisations).where(eq(organisations.slug, input.organisationSlug));
-  if (!org) throw new InviteError("unknown_organisation");
+  input: { email: string; organisationSlugs: readonly string[]; now?: Date },
+): Promise<{ invite: StaffInvite; token: string; organisations: Organisation[] }> {
+  const slugs = [...new Set(input.organisationSlugs)];
+  const orgs = slugs.length > 0 ? await db.select().from(organisations).where(inArray(organisations.slug, slugs)) : [];
+  if (orgs.length === 0 || orgs.length !== slugs.length) throw new InviteError("unknown_organisation");
   const [admins] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(staffRoles)
@@ -274,7 +282,7 @@ export async function createBootstrapInvite(
   if ((admins?.count ?? 0) > 0) throw new InviteError("admin_exists");
   return createInvite(db, {
     email: input.email,
-    organisationId: org.id,
+    organisationIds: orgs.map((o) => o.id),
     roles: ["admin"],
     invitedBy: null,
     context: { actorUserId: null },

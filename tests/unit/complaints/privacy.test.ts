@@ -126,12 +126,13 @@ describe("submitting through the journey", () => {
     expect((await t.db.select().from(cases)).length).toBe(before);
   });
 
-  it("a pseudonymous complainant's name is hidden from ordinary handlers but not from a lead", async () => {
+  it("a pseudonymous complainant's name is shown to officers and administrators and withheld from any other role", async () => {
     const c = await t.file({ identity: "pseudonymous", contact: { role: "reporter", name: "Real Name", email: "p@example.com", preferredContact: "email", consentContact: true } });
     const contacts = await readContacts(t.db, c.caseId, t.handler, { env });
     expect(contacts[0]!.name).toBe("Real Name");
-    expect((await redactContactsForHandler(t.db, c.caseId, t.handler.roles, contacts))[0]!.name).toBeNull();
-    expect((await redactContactsForHandler(t.db, c.caseId, t.lead.roles, contacts))[0]!.name).toBe("Real Name");
+    expect((await redactContactsForHandler(t.db, c.caseId, [{ role: "editor" }], contacts))[0]!.name).toBeNull();
+    expect((await redactContactsForHandler(t.db, c.caseId, t.handler.roles, contacts))[0]!.name).toBe("Real Name");
+    expect((await redactContactsForHandler(t.db, c.caseId, t.admin.roles, contacts))[0]!.name).toBe("Real Name");
   });
 });
 

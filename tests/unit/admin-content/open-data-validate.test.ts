@@ -37,21 +37,14 @@ const DOCUMENT = {
 };
 
 describe("scope", () => {
-  const orgs = [
-    { id: 1, slug: "tusu" },
-    { id: 2, slug: "tusc" },
-    { id: 3, slug: "other" },
-  ];
   it("gives administrators both bodies", () => {
-    expect(editableOwners([{ role: "admin", organisationId: 1 }], orgs)).toEqual(["tusc", "tusu"]);
+    expect(editableOwners([{ role: "admin" }])).toEqual(["tusc", "tusu"]);
   });
-  it("limits an editor to the bodies they hold the role for", () => {
-    expect(editableOwners([{ role: "editor", organisationId: 2 }], orgs)).toEqual(["tusc"]);
-    expect(editableOwners([{ role: "editor", organisationId: 1 }], orgs)).toEqual(["tusu"]);
-    expect(editableOwners([{ role: "editor", organisationId: 3 }], orgs)).toEqual([]);
+  it("gives an editor both bodies, whichever organisation they belong to", () => {
+    expect(editableOwners([{ role: "editor" }])).toEqual(["tusc", "tusu"]);
   });
   it("ignores other roles", () => {
-    expect(editableOwners([{ role: "lf_officer", organisationId: 2 }], orgs)).toEqual([]);
+    expect(editableOwners([{ role: "officer" }])).toEqual([]);
   });
   it("checks a single owner", () => {
     expect(canEditOwner(["tusc"], "tusc")).toBe(true);

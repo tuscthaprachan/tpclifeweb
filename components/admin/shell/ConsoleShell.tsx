@@ -25,8 +25,8 @@ export interface ConsoleShellProps {
 export function ConsoleShell({ locale, session, theme, searchEndpoint, children }: ConsoleShellProps) {
   const nav = resolveNav(buildConsoleNav(session.roles), locale);
   const labels = shellLabels(locale);
-  const orgName = new Map(session.organisations.map((o) => [o.id, pick({ th: o.nameTh, en: o.nameEn }, locale)]));
-  const roles = session.roles.map((r) => a("roleAtOrganisation", locale, { role: a(ROLE_LABEL[r.role], locale), organisation: orgName.get(r.organisationId) ?? "" }));
+  const orgNames = session.organisations.map((o) => pick({ th: o.nameTh, en: o.nameEn }, locale)).join(", ");
+  const roles = session.roles.map((r) => `${a(ROLE_LABEL[r.role], locale)} (${orgNames})`);
 
   return (
     <ShellFrame nav={nav} labels={labels}>

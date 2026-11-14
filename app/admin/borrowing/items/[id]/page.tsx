@@ -24,7 +24,7 @@ export async function generateMetadata() {
 export default async function EditItemPage({ params }: { params: Promise<{ id: string }> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
-  await requireStaff(["equipment_officer", "admin"]);
+  await requireStaff(["officer", "admin"]);
   const { id } = await params;
   if (!isUuid(id)) notFound();
   const db = getDb();

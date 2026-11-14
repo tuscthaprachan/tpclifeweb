@@ -31,7 +31,7 @@ export class InventoryError extends Error {
 
 function assertEditor(actor: StaffActor): void {
   assertStaff(actor, "borrowing");
-  if (!hasAnyRole(actor.roles, ["equipment_officer", "admin"])) throw new InventoryError("forbidden", "Only the equipment officer or an administrator can change the inventory.");
+  if (!hasAnyRole(actor.roles, ["officer", "admin"])) throw new InventoryError("forbidden", "Only an officer or an administrator can change the inventory.");
 }
 
 const bad = (field: string, message: string): never => {

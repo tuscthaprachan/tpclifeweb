@@ -26,14 +26,12 @@ import { KEY_A, KEY_B, setup } from "./helpers";
 let t: Awaited<ReturnType<typeof setup>>;
 let officer: StaffActor;
 let otherOrgOfficer: StaffActor;
-let complaintsHandler: StaffActor;
 let editor: StaffActor;
 
 beforeAll(async () => {
   t = await setup();
-  officer = await t.staff("Officer", "lf_officer", "tusu");
-  otherOrgOfficer = await t.staff("Officer 2", "lf_officer", "tusc");
-  complaintsHandler = await t.staff("Handler", "complaints_handler", "tusu");
+  officer = await t.staff("Officer", "officer", "tusu");
+  otherOrgOfficer = await t.staff("Officer 2", "officer", "tusc");
   editor = await t.staff("Editor", "editor", "tusu");
 });
 
@@ -61,8 +59,8 @@ describe("references", () => {
     expect(found.status).toBe("logged");
   });
 
-  it("forbids staff without a role in the service from opening a case", async () => {
-    await expect(createCase(t.db, { service: "lost_found", kind: "lost" }, complaintsHandler)).rejects.toMatchObject({ code: "forbidden" });
+  it("forbids staff without a case role, or acting for an organisation they are not in, from opening a case", async () => {
+    await expect(createCase(t.db, { service: "lost_found", kind: "lost" }, editor)).rejects.toMatchObject({ code: "forbidden" });
     await expect(createCase(t.db, { service: "lost_found", kind: "lost" }, { ...officer, organisationId: 999 })).rejects.toMatchObject({ code: "forbidden" });
   });
 });
@@ -179,7 +177,6 @@ describe("notes, updates, assignment and the public timeline", () => {
 
   it("only staff for the service can annotate", async () => {
     const c = await createCase(t.db, lost, { kind: "public" }, { now: NOW });
-    await expect(addNote(t.db, c.id, "x", complaintsHandler)).rejects.toMatchObject({ code: "forbidden" });
     await expect(addNote(t.db, c.id, "x", editor)).rejects.toMatchObject({ code: "forbidden" });
     await expect(addNote(t.db, c.id, "x", { kind: "public" })).rejects.toMatchObject({ code: "forbidden" });
   });
@@ -188,7 +185,7 @@ describe("notes, updates, assignment and the public timeline", () => {
     const c = await createCase(t.db, lost, { kind: "public" }, { now: NOW });
     await assign(t.db, c.id, otherOrgOfficer.userId, officer);
     expect((await getCase(t.db, c.id, officer)).assignedTo).toBe(otherOrgOfficer.userId);
-    await expect(assign(t.db, c.id, complaintsHandler.userId, officer)).rejects.toMatchObject({ code: "invalid" });
+    await expect(assign(t.db, c.id, editor.userId, officer)).rejects.toMatchObject({ code: "invalid" });
     await assign(t.db, c.id, null, officer);
     expect((await getCase(t.db, c.id, officer)).assignedTo).toBeNull();
   });
@@ -230,7 +227,7 @@ describe("contacts", () => {
 
   it("refuses staff without access to read, and public readers", async () => {
     const c = await createCase(t.db, { ...lost, contacts: [{ role: "reporter", email: "x@example.org" }] }, { kind: "public" });
-    await expect(readContacts(t.db, c.id, complaintsHandler)).rejects.toMatchObject({ code: "forbidden" });
+    await expect(readContacts(t.db, c.id, editor)).rejects.toMatchObject({ code: "forbidden" });
     await expect(readContacts(t.db, c.id, { kind: "public" })).rejects.toMatchObject({ code: "forbidden" });
     await expect(listContactSummaries(t.db, c.id, editor)).rejects.toMatchObject({ code: "forbidden" });
   });
@@ -275,19 +272,14 @@ describe("inbox", () => {
   it("lists only services the role may work, with filters", async () => {
     const lfCase = await createCase(t.db, { service: "lost_found", kind: "lost", summary: "inbox lf" }, { kind: "public" });
     const cpCase = await createCase(t.db, { service: "complaint", kind: "complaint", summary: "inbox cp" }, { kind: "public" });
-    const lfList = await listCases(t.db, officer, { pageSize: 100 });
-    expect(lfList.rows.some((r) => r.id === lfCase.id)).toBe(true);
-    expect(lfList.rows.some((r) => r.id === cpCase.id)).toBe(false);
-    const cpList = await listCases(t.db, complaintsHandler, { pageSize: 100 });
-    expect(cpList.rows.every((r) => r.service === "complaint")).toBe(true);
+    const all = await listCases(t.db, officer, { pageSize: 100 });
+    expect(all.rows.some((r) => r.id === lfCase.id)).toBe(true);
+    expect(all.rows.some((r) => r.id === cpCase.id)).toBe(true);
+    const onlyComplaints = await listCases(t.db, officer, { service: "complaint", pageSize: 100 });
+    expect(onlyComplaints.rows.every((r) => r.service === "complaint")).toBe(true);
     expect((await listCases(t.db, editor)).rows).toEqual([]);
-    expect((await listCases(t.db, officer, { service: "complaint" })).rows).toEqual([]);
-
-    const lead = await t.staff("Lead", "unit_lead");
-    const all = await listCases(t.db, lead, { pageSize: 100 });
-    expect(new Set(all.rows.map((r) => r.service))).toEqual(new Set(["lost_found", "complaint"]));
-    await expect(getCase(t.db, cpCase.id, officer)).rejects.toMatchObject({ code: "forbidden" });
-    await expect(staffTimeline(t.db, cpCase.id, officer)).rejects.toBeInstanceOf(CaseError);
+    await expect(getCase(t.db, cpCase.id, editor)).rejects.toMatchObject({ code: "forbidden" });
+    await expect(staffTimeline(t.db, cpCase.id, editor)).rejects.toBeInstanceOf(CaseError);
   });
 
   it("filters by status, assignee and reference text", async () => {

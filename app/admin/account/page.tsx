@@ -21,9 +21,7 @@ export default async function AccountPage() {
   const staff = await requireStaff();
 
   const orgName = new Map(staff.organisations.map((o) => [o.id, pick({ th: o.nameTh, en: o.nameEn }, locale)]));
-  const roleLines = staff.roles.map((r) =>
-    a("roleAtOrganisation", locale, { role: a(ROLE_LABEL[r.role], locale), organisation: orgName.get(r.organisationId) ?? "" }),
-  );
+  const roleLines = staff.roles.map((r) => a(ROLE_LABEL[r.role], locale));
 
   return (
     <ConsolePage width="narrow">

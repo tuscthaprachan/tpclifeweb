@@ -14,7 +14,7 @@ export const CONSOLE_HOME_STRINGS = {
   chStatUnassigned: { th: "ยังไม่มีผู้รับผิดชอบ", en: "Unassigned cases" },
   chStatMine: { th: "มอบหมายให้ฉัน", en: "Assigned to me" },
   chHintOverdue: { th: "เลยกำหนดที่ตั้งไว้", en: "Past a target date" },
-  chHintEscalated: { th: "แจ้งหัวหน้าหน่วยแล้ว", en: "Flagged to the leads" },
+  chHintEscalated: { th: "แจ้งเจ้าหน้าที่แล้ว", en: "Flagged to officers" },
   chHintUnassigned: { th: "ยังไม่มีใครดูแล", en: "Nobody is handling these" },
   chHintOpen: { th: "ยังไม่ปิดเรื่อง", en: "Not yet closed" },
   chHintMine: { th: "ที่ยังไม่ปิดเรื่อง", en: "Not yet closed" },

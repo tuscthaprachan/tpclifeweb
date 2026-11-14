@@ -24,7 +24,7 @@ const NOW = new Date("2026-05-01T00:00:00Z");
 
 beforeAll(async () => {
   t = await setup();
-  officer = await t.staff("Officer", "lf_officer");
+  officer = await t.staff("Officer", "officer");
 });
 
 async function fresh() {

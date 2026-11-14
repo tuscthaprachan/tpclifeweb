@@ -32,6 +32,6 @@ describe("a walk-in lost report", () => {
   });
 
   it("is refused for staff outside the service", async () => {
-    await expect(t.lostReport(t.complaints)).rejects.toMatchObject({ code: "forbidden" });
+    await expect(t.lostReport(t.outsider)).rejects.toMatchObject({ code: "forbidden" });
   });
 });

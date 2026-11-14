@@ -9,25 +9,19 @@ const session: AccessSession = {
   secondFactorAt: new Date("2026-10-23T09:55:00Z"),
 };
 const EDITORS: readonly StaffRole[] = ["editor", "admin"];
-const hold = (role: StaffRole, organisationId = 1): ActiveRole => ({ role, organisationId });
-const decide = (roles: ActiveRole[], required?: { role?: StaffRole | readonly StaffRole[]; organisationId?: number }) =>
+const hold = (role: StaffRole): ActiveRole => ({ role });
+const decide = (roles: ActiveRole[], required?: { role?: StaffRole | readonly StaffRole[] }) =>
   decideAccess({ session, now, roles, required }).kind;
 
 describe("decideAccess with a list of roles", () => {
-  it("lets an editor or an admin edit content, in any organisation", () => {
-    expect(decide([hold("editor", 1)], { role: EDITORS })).toBe("ok");
-    expect(decide([hold("admin", 2)], { role: EDITORS })).toBe("ok");
-    expect(decide([hold("lf_officer"), hold("editor", 2)], { role: EDITORS })).toBe("ok");
+  it("lets an editor or an admin edit content", () => {
+    expect(decide([hold("editor")], { role: EDITORS })).toBe("ok");
+    expect(decide([hold("admin")], { role: EDITORS })).toBe("ok");
+    expect(decide([hold("officer"), hold("editor")], { role: EDITORS })).toBe("ok");
   });
 
   it("refuses staff who hold only other roles", () => {
-    expect(decide([hold("lf_officer")], { role: EDITORS })).toBe("forbidden");
-    expect(decide([hold("complaints_handler"), hold("unit_lead")], { role: EDITORS })).toBe("forbidden");
-  });
-
-  it("still applies the organisation to the list", () => {
-    expect(decide([hold("editor", 1)], { role: EDITORS, organisationId: 2 })).toBe("forbidden");
-    expect(decide([hold("editor", 1)], { role: EDITORS, organisationId: 1 })).toBe("ok");
+    expect(decide([hold("officer")], { role: EDITORS })).toBe("forbidden");
   });
 
   it("keeps the single-role form and the earlier gates working", () => {

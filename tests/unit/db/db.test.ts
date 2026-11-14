@@ -13,11 +13,6 @@ afterAll(async () => {
   await ctx.client.close();
 });
 
-async function orgId(slug: string) {
-  const [row] = await ctx.db.select().from(organisations).where(eq(organisations.slug, slug));
-  return row!.id;
-}
-
 describe("migrations and seed", () => {
   it("applies cleanly and seeds TUSU and TUSC", async () => {
     const rows = await ctx.db.select().from(organisations);
@@ -48,22 +43,17 @@ describe("audit_log is append-only", () => {
 });
 
 describe("staff_roles uniqueness", () => {
-  it("rejects a duplicate active grant but allows regrant after revocation and other organisations", async () => {
-    const [tusu, tusc] = [await orgId("tusu"), await orgId("tusc")];
+  it("rejects a duplicate active grant but allows regrant after revocation and other roles", async () => {
     const grantor = await makeUser(ctx.db, "Grantor");
     const u = await makeUser(ctx.db);
-    const grant = (organisationId: number) =>
-      ctx.db.insert(staffRoles).values({ userId: u, role: "editor", organisationId, grantedBy: grantor });
+    const grant = (role: "editor" | "officer") => ctx.db.insert(staffRoles).values({ userId: u, role, grantedBy: grantor });
 
-    await grant(tusu);
-    await expect(grant(tusu)).rejects.toThrow();
-    await grant(tusc);
+    await grant("editor");
+    await expect(grant("editor")).rejects.toThrow();
+    await grant("officer");
 
-    await ctx.db
-      .update(staffRoles)
-      .set({ revokedAt: new Date() })
-      .where(eq(staffRoles.organisationId, tusu));
-    await grant(tusu);
+    await ctx.db.update(staffRoles).set({ revokedAt: new Date() }).where(eq(staffRoles.role, "editor"));
+    await grant("editor");
 
     const active = await getStaffRoles(u, ctx.db);
     expect(active).toHaveLength(2);

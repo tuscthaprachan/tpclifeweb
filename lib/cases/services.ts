@@ -54,7 +54,7 @@ export interface ServiceDef {
   /** Reference prefix: LF-2026-0001. */
   prefix: "LF" | "CP" | "BR";
   label: LocaleString;
-  /** Roles that may work these cases, in either organisation. `unit_lead` and `admin` see every service. */
+  /** Roles that may work these cases, for either organisation. */
   roles: readonly StaffRole[];
   kinds: Record<string, KindDef>;
 }
@@ -201,7 +201,7 @@ export const SERVICES: Record<CaseService, ServiceDef> = {
     service: "lost_found",
     prefix: "LF",
     label: s("ของหายและของที่พบ", "Lost and found"),
-    roles: ["lf_officer", "unit_lead", "admin"],
+    roles: ["officer", "admin"],
     kinds: {
       lost: { label: s("แจ้งของหาย", "Lost report"), machine: LOST },
       found: { label: s("ของที่พบ", "Found item"), machine: FOUND },
@@ -211,7 +211,7 @@ export const SERVICES: Record<CaseService, ServiceDef> = {
     service: "complaint",
     prefix: "CP",
     label: s("ข้อร้องเรียน", "Complaints"),
-    roles: ["complaints_handler", "unit_lead", "admin"],
+    roles: ["officer", "admin"],
     kinds: {
       complaint: { label: s("ข้อร้องเรียน", "Complaint"), machine: COMPLAINT },
     },
@@ -220,7 +220,7 @@ export const SERVICES: Record<CaseService, ServiceDef> = {
     service: "borrowing",
     prefix: "BR",
     label: s("ยืมอุปกรณ์", "Equipment loans"),
-    roles: ["equipment_officer", "unit_lead", "admin"],
+    roles: ["officer", "admin"],
     kinds: {
       loan: { label: s("คำขอยืมอุปกรณ์", "Loan request"), machine: LOAN },
     },

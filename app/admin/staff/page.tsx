@@ -6,8 +6,7 @@ import { Button, DataTable, NotificationBanner, Tag, Timestamp } from "@/compone
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { isAuthConfigured } from "@/lib/auth";
-import { hasOtherActiveAdmin, listPendingRecoveryUserIds } from "@/lib/auth/recovery";
-import { organisationsWithRole } from "@/lib/auth/roles";
+import { listPendingRecoveryUserIds } from "@/lib/auth/recovery";
 import { requireStaff } from "@/lib/auth/session";
 import { listOrganisations, listPendingInvites, listStaff } from "@/lib/auth/staff";
 import { getDb } from "@/lib/db";
@@ -21,27 +20,24 @@ export async function generateMetadata() {
   return adminTitle("staffTitle");
 }
 
-type Notice = "role-removed" | "invite-cancelled" | "gone";
+type Notice = "invite-cancelled" | "gone";
 
 export default async function StaffPage({ searchParams }: { searchParams: Promise<{ notice?: string }> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
 
   const staff = await requireStaff("admin");
-  const adminOrgIds = organisationsWithRole(staff.roles, "admin");
   const db = getDb();
-  const [people, invites, allOrgs, query, otherAdmin] = await Promise.all([
-    listStaff(db, adminOrgIds),
-    listPendingInvites(db, adminOrgIds),
+  const [people, invites, orgs, query] = await Promise.all([
+    listStaff(db),
+    listPendingInvites(db),
     listOrganisations(db),
     searchParams,
-    hasOtherActiveAdmin(db, staff.user.id),
   ]);
   const withRecovery = await listPendingRecoveryUserIds(
     db,
     people.map((p) => p.userId),
   );
-  const orgs = allOrgs.filter((o) => adminOrgIds.includes(o.id));
   const orgName = new Map(orgs.map((o) => [o.id, pick({ th: o.nameTh, en: o.nameEn }, locale)]));
   const notice = query.notice as Notice | undefined;
 
@@ -53,7 +49,6 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
 
   return (
     <ConsolePage width="content">
-      {notice === "role-removed" ? <NotificationBanner variant="success" title={a("roleRemovedTitle", locale)}>{a("roleRemovedBody", locale)}</NotificationBanner> : null}
       {notice === "invite-cancelled" ? <NotificationBanner variant="success" title={a("inviteCancelledTitle", locale)}>{a("inviteCancelledBody", locale)}</NotificationBanner> : null}
       {notice === "gone" ? <NotificationBanner variant="info" title={a("goneTitle", locale)}>{a("errNothingToChange", locale)}</NotificationBanner> : null}
 
@@ -86,7 +81,9 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
                       {initials(p.name, p.email)}
                     </span>
                     <span className="min-w-0">
-                      <strong>{p.name || p.email}</strong>
+                      <Link href={`/admin/staff/${encodeURIComponent(p.userId)}`} className="font-bold">
+                        {p.name || p.email}
+                      </Link>
                       {p.userId === staff.user.id ? <span className="text-sm text-ink-600"> ({a("you", locale)})</span> : null}
                       {p.name ? <span className="block break-words text-sm text-ink-600">{p.email}</span> : null}
                     </span>
@@ -96,39 +93,32 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
               {
                 id: "roles",
                 header: a("colRoles", locale),
-                cell: (p) => (
-                  <ul className="m-0 list-none p-0">
-                    {p.grants.map((g) => (
-                      <li key={g.id} className="flex flex-wrap items-center gap-x-[var(--space-2)] py-[var(--space-1)]">
-                        <Tag>{a(ROLE_LABEL[g.role], locale)}</Tag>
-                        <span className="text-sm text-ink-600">{orgName.get(g.organisationId) ?? ""}</span>
-                        <Link href={`/admin/staff/roles/${g.id}/remove`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)] text-sm">
-                          <PeopleIcon name="cancel" size={16} />
-                          {a("removeRoleVisible", locale)}
-                          <span className="visually-hidden">
-                            {" "}
-                            {a("removeRoleFor", locale, { role: a(ROLE_LABEL[g.role], locale), person: p.name || p.email })}
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                ),
+                cell: (p) =>
+                  p.suspended ? (
+                    <Tag>{a("smSuspendedTag", locale)}</Tag>
+                  ) : (
+                    <span className="flex flex-wrap gap-[var(--space-1)]">
+                      {p.roles.map((g) => (
+                        <Tag key={g.id}>{a(ROLE_LABEL[g.role], locale)}</Tag>
+                      ))}
+                    </span>
+                  ),
+              },
+              {
+                id: "organisations",
+                header: a("smColOrganisations", locale),
+                cell: (p) => p.organisationIds.map((id) => orgName.get(id) ?? "").filter(Boolean).join(", "),
               },
               {
                 id: "account",
                 header: a("cpColActions", locale),
                 cell: (p) => (
                   <span>
-                    {p.userId === staff.user.id && !otherAdmin ? (
-                      <span className="text-sm text-ink-600">-</span>
-                    ) : (
-                      <Link href={`/admin/staff/recovery/${encodeURIComponent(p.userId)}`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)]">
-                        <PeopleIcon name="lifeBuoy" size={16} />
-                        {a("recoveryLinkVisible", locale)}
-                        <span className="visually-hidden"> {a("recoveryLinkFor", locale, { person: p.name || p.email })}</span>
-                      </Link>
-                    )}
+                    <Link href={`/admin/staff/${encodeURIComponent(p.userId)}`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)]">
+                      <PeopleIcon name="users" size={16} />
+                      {a("smManage", locale)}
+                      <span className="visually-hidden"> {a("smManageFor", locale, { person: p.name || p.email })}</span>
+                    </Link>
                     {withRecovery.has(p.userId) ? (
                       <span className="flex items-center gap-[var(--space-1)] text-sm text-ink-600">
                         <PeopleIcon name="clock" size={14} />
@@ -153,7 +143,7 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
             getRowKey={(i) => String(i.id)}
             columns={[
               { id: "email", header: a("colEmail", locale), cell: (i) => i.email },
-              { id: "org", header: a("colOrganisation", locale), cell: (i) => orgName.get(i.organisationId) ?? "" },
+              { id: "org", header: a("smColOrganisations", locale), cell: (i) => i.organisationIds.map((id) => orgName.get(id) ?? "").filter(Boolean).join(", ") },
               {
                 id: "roles",
                 header: a("colRoles", locale),

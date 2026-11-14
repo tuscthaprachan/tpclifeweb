@@ -132,7 +132,7 @@ export function buildConsoleNav(roles: readonly ActiveRole[]): ConsoleNav {
   if (canAccessService(roles, "borrowing")) {
     add("borrowing", { id: "borrowing-schedule", href: "/admin/borrowing", labelKey: "brNavSchedule", icon: "borrowSchedule", matchPrefix: "/admin/borrowing", exact: true });
     add("borrowing", { id: "borrowing-calendar", href: "/admin/borrowing/calendar", labelKey: "brNavCalendar", icon: "borrowCalendar", matchPrefix: "/admin/borrowing/calendar" });
-    if (hasAnyRole(roles, ["equipment_officer", "admin"])) {
+    if (hasAnyRole(roles, ["officer", "admin"])) {
       add("borrowing", { id: "borrowing-items", href: "/admin/borrowing/items", labelKey: "brNavInventory", icon: "borrowInventory", matchPrefix: "/admin/borrowing/items" });
     }
   }

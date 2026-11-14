@@ -43,7 +43,7 @@ describe("logFoundItem", () => {
 
   it("is refused for staff without a lost and found role, leaving nothing behind", async () => {
     const before = await t.db.select().from(cases);
-    await expect(logFoundItem(t.db, KEYS, t.complaints, { now: NOW })).rejects.toMatchObject({ code: "forbidden" });
+    await expect(logFoundItem(t.db, KEYS, t.outsider, { now: NOW })).rejects.toMatchObject({ code: "forbidden" });
     expect(await t.db.select().from(cases)).toHaveLength(before.length);
   });
 
@@ -104,7 +104,7 @@ describe("storage and the hidden verification detail", () => {
     const logged = await logFoundItem(t.db, KEYS, t.officer, { now: NOW });
     await saveVerificationDetail(t.db, logged.caseId, "old", t.officer);
     await saveVerificationDetail(t.db, logged.caseId, "new", t.other);
-    await expect(readVerificationDetail(t.db, logged.caseId, t.complaints)).rejects.toMatchObject({ code: "forbidden" });
+    await expect(readVerificationDetail(t.db, logged.caseId, t.outsider)).rejects.toMatchObject({ code: "forbidden" });
     expect(await readVerificationDetail(t.db, logged.caseId, t.officer)).toBe("new");
   });
 

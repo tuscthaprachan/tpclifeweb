@@ -4,7 +4,7 @@ import { CONTENT_TYPES } from "@/lib/admin/content/types";
 import type { ActiveRole } from "@/lib/auth/roles";
 import { A } from "@/lib/i18n/admin";
 
-const role = (r: ActiveRole["role"]): ActiveRole[] => [{ role: r, organisationId: 1 }];
+const role = (r: ActiveRole["role"]): ActiveRole[] => [{ role: r }];
 const ids = (roles: ActiveRole[]) => buildConsoleNav(roles).groups.flatMap((g) => g.items.map((i) => i.id));
 
 describe("console navigation", () => {
@@ -21,9 +21,9 @@ describe("console navigation", () => {
     expect(listed).toContain("security");
   });
 
-  it("shows a desk officer only work and security, with no empty groups", () => {
-    const nav = buildConsoleNav(role("lf_officer"));
-    expect(nav.groups.map((g) => g.id)).toEqual(["work", "settings"]);
+  it("shows an officer the work and borrowing groups and security, with no empty groups", () => {
+    const nav = buildConsoleNav(role("officer"));
+    expect(nav.groups.map((g) => g.id)).toEqual(["work", "borrowing", "settings"]);
     expect(nav.quickCreate).toEqual([]);
   });
 

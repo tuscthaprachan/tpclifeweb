@@ -11,10 +11,10 @@ export interface OpenDataAccess {
   owners: OpenDataOwner[];
 }
 
-/** Gate for every open data page and action: an administrator, or an editor of `tusc` or `tusu`. */
+/** Gate for every open data page and action: an administrator or an editor, for both bodies. */
 export async function requireOpenDataEditor(): Promise<OpenDataAccess> {
   const staff = await requireEditor();
-  const owners = editableOwners(staff.roles, staff.organisations);
+  const owners = editableOwners(staff.roles);
   if (owners.length === 0) redirect("/admin/no-access");
   return { staff, owners };
 }

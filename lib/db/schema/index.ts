@@ -1,6 +1,7 @@
 export * from "./organisations";
 export * from "./auth";
 export * from "./staff-roles";
+export * from "./staff-memberships";
 export * from "./audit-log";
 export * from "./staff-invites";
 export * from "./staff-recovery";

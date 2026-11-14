@@ -1,12 +1,11 @@
 import { index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth";
-import { organisations } from "./organisations";
 import { staffRoleEnum } from "./staff-roles";
 
 /**
  * Pending and historical staff invitations. The invite is the authorisation:
- * whoever proves they own `email` and opens the link receives `roles` on
- * behalf of `organisation_id`.
+ * whoever proves they own `email` and opens the link receives `roles` and
+ * joins every body in `organisation_ids`.
  *
  * Only the SHA-256 of the token is stored (`token_hash`), so a database leak
  * cannot be turned into working invite links. The raw token exists in the
@@ -21,9 +20,7 @@ export const staffInvites = pgTable(
   {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
     email: text("email").notNull(),
-    organisationId: integer("organisation_id")
-      .notNull()
-      .references(() => organisations.id),
+    organisationIds: integer("organisation_ids").array().notNull(),
     roles: staffRoleEnum("roles").array().notNull(),
     tokenHash: text("token_hash").notNull().unique(),
     invitedBy: text("invited_by").references(() => user.id, { onDelete: "set null" }),

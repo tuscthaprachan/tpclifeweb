@@ -142,7 +142,7 @@ describe("recordHandover", () => {
 
   it("is refused for staff outside the service, and changes nothing", async () => {
     const { found } = await ready();
-    await expect(recordHandover(t.db, { ...input(found.caseId), deskOrganisationId: t.complaints.organisationId }, t.complaints)).rejects.toMatchObject({ code: "forbidden" });
+    await expect(recordHandover(t.db, { ...input(found.caseId), deskOrganisationId: t.outsider.organisationId }, t.outsider)).rejects.toMatchObject({ code: "forbidden" });
     expect(await t.statusOf(found.caseId)).toBe("ready_to_collect");
   });
 

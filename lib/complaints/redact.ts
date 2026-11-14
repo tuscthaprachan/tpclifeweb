@@ -1,7 +1,6 @@
 /**
- * A pseudonymous complainant keeps their name back: ordinary handlers see how
- * to reach them but not the name; a unit lead or an administrator (who still
- * needs access to the case itself) sees it when it is needed. Applied to what
+ * A pseudonymous complainant keeps their name back: the name is withheld from everyone but officers and administrators, who
+ * see it when it is needed. Applied to what
  * `readContacts` returns, after it has logged the view.
  */
 
@@ -12,7 +11,7 @@ import type { AuditExecutor } from "@/lib/db/audit";
 import { complaintCases } from "@/lib/db/schema/complaints";
 
 export function canSeeWithheldName(roles: readonly ActiveRole[]): boolean {
-  return hasAnyRole(roles, ["unit_lead", "admin"]);
+  return hasAnyRole(roles, ["officer", "admin"]);
 }
 
 export async function redactContactsForHandler<T extends Pick<Contact, "name">>(db: AuditExecutor, caseId: string, roles: readonly ActiveRole[], contacts: T[]): Promise<T[]> {

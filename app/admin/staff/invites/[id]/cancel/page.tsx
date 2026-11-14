@@ -5,7 +5,6 @@ import { PeopleIcon } from "@/components/admin/PeopleIcon";
 import { Button } from "@/components/ui";
 import { adminTitle } from "@/lib/admin/metadata";
 import { getAdminLocale } from "@/lib/admin/locale";
-import { organisationsWithRole } from "@/lib/auth/roles";
 import { requireStaff } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { staffInvites } from "@/lib/db/schema/staff-invites";
@@ -20,7 +19,7 @@ export async function generateMetadata() {
 
 export default async function CancelInvitePage({ params }: { params: Promise<{ id: string }> }) {
   const locale = await getAdminLocale();
-  const staff = await requireStaff("admin");
+  await requireStaff("admin");
   const { id } = await params;
   const inviteId = Number(id);
   if (!Number.isInteger(inviteId)) redirect("/admin/staff?notice=gone");
@@ -29,7 +28,7 @@ export default async function CancelInvitePage({ params }: { params: Promise<{ i
     .select()
     .from(staffInvites)
     .where(and(eq(staffInvites.id, inviteId), isNull(staffInvites.acceptedAt), isNull(staffInvites.revokedAt)));
-  if (!invite || !organisationsWithRole(staff.roles, "admin").includes(invite.organisationId)) redirect("/admin/staff?notice=gone");
+  if (!invite) redirect("/admin/staff?notice=gone");
 
   return (
     <ConfirmPanel locale={locale} title={a("cancelInviteTitle", locale)} icon="staff" warning={a("cancelInviteBody", locale, { email: invite.email })}>

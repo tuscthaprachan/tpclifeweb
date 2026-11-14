@@ -16,7 +16,7 @@ let t: Awaited<ReturnType<typeof setup>>;
 let officer: StaffActor;
 beforeAll(async () => {
   t = await setup();
-  officer = await t.staff("Officer", "lf_officer", "tusu");
+  officer = await t.staff("Officer", "officer", "tusu");
 });
 
 const range = (period: "30d" | "12m" | "all" = "all") => rangeFor(period, NOW);
@@ -99,7 +99,7 @@ describe("lost and found measures", () => {
 describe("median days to return", () => {
   it("is the median of logged to returned, shown once five items are returned", async () => {
     const t2 = await setup();
-    const o = await t2.staff("Officer", "lf_officer", "tusc");
+    const o = await t2.staff("Officer", "officer", "tusc");
     for (const days of [1, 2, 3, 10, 20]) {
       const c = await createCase(t2.db, { service: "lost_found", kind: "found", summary: "Found" }, o, { now: ago(40) });
       await transition(t2.db, c.id, "returned", o, { now: new Date(ago(40).getTime() + days * DAY) });

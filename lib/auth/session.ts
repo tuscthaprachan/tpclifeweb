@@ -12,14 +12,14 @@ import "server-only";
 import { cache } from "react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { eq, inArray } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import type { AuditContext } from "@/lib/db/audit";
 import { session as sessionTable } from "@/lib/db/schema/auth";
 import { organisations, type Organisation } from "@/lib/db/schema/organisations";
 import { decideAccess, type AccessState } from "./access";
 import { getAuth, isAuthConfigured } from "./index";
-import { getStaffRoles, type ActiveRole, type StaffRole } from "./roles";
+import { getStaffOrganisationIds, getStaffRoles, type ActiveRole, type StaffRole } from "./roles";
 import { ACTIVITY_TOUCH_MS, isSessionLive, sessionDeadlines, type SessionDeadlines, type SessionTimes } from "./session-policy";
 
 export interface AdminUser {
@@ -35,7 +35,7 @@ export interface AccessContext {
   times: SessionTimes;
   deadlines: SessionDeadlines;
   roles: ActiveRole[];
-  /** Organisations the person holds at least one role in. */
+  /** Organisations the person belongs to, lowest id first. */
   organisations: Organisation[];
 }
 
@@ -77,8 +77,8 @@ const loadAccess = cache(async (): Promise<{ state: "none" } | { state: "timed_o
   }
 
   const roles = await getStaffRoles(found.user.id, db);
-  const orgIds = [...new Set(roles.map((r) => r.organisationId))];
-  const orgs = orgIds.length ? await db.select().from(organisations).where(inArray(organisations.id, orgIds)) : [];
+  const orgIds = await getStaffOrganisationIds(found.user.id, db);
+  const orgs = orgIds.length ? await db.select().from(organisations).where(inArray(organisations.id, orgIds)).orderBy(asc(organisations.id)) : [];
 
   return {
     state: "live",
@@ -119,10 +119,9 @@ export function redirectFor(state: Exclude<AccessState, { kind: "ok" }>): string
 /**
  * Gate for every staff page and action. Redirects unless the person is signed
  * in with a passkey, within their time limits, holds at least one staff role,
- * and (when given) holds `role` (or any one of the roles,
- * if a list is given), on behalf of `organisationId` if that is given too.
+ * and (when given) holds `role` (or any one of the roles, if a list is given).
  */
-export async function requireStaff(role?: StaffRole | readonly StaffRole[], organisationId?: number): Promise<AccessContext> {
+export async function requireStaff(role?: StaffRole | readonly StaffRole[]): Promise<AccessContext> {
   const loaded = await loadAccess();
   if (loaded.state === "timed_out") redirect(redirectFor({ kind: "timed_out" }));
   if (loaded.state === "none") redirect(redirectFor({ kind: "unauthenticated" }));
@@ -131,7 +130,7 @@ export async function requireStaff(role?: StaffRole | readonly StaffRole[], orga
     session: { ...ctx.times, secondFactorAt: ctx.secondFactorAt },
     now: new Date(),
     roles: ctx.roles,
-    required: { role, organisationId },
+    required: { role },
   });
   if (state.kind !== "ok") redirect(redirectFor(state));
   return ctx;

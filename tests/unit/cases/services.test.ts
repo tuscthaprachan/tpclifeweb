@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   accessibleServices,
-  actingOrganisations,
   allowedTransitions,
   canAccessService,
   canTransition,
@@ -75,30 +74,22 @@ describe("state machines", () => {
 });
 
 describe("role access", () => {
-  const lf = [{ role: "lf_officer" as const, organisationId: 1 }];
-  const cp = [{ role: "complaints_handler" as const, organisationId: 2 }];
+  const officer = [{ role: "officer" as const }];
   it("maps roles to services", () => {
-    expect(accessibleServices(lf)).toEqual(["lost_found"]);
-    expect(accessibleServices(cp)).toEqual(["complaint"]);
-    expect(accessibleServices([{ role: "equipment_officer", organisationId: 1 }])).toEqual(["borrowing"]);
-    expect(accessibleServices([{ role: "unit_lead", organisationId: 1 }])).toEqual(["lost_found", "complaint", "borrowing"]);
-    expect(accessibleServices([{ role: "admin", organisationId: 1 }])).toEqual(["lost_found", "complaint", "borrowing"]);
-    expect(accessibleServices([{ role: "editor", organisationId: 1 }])).toEqual([]);
+    expect(accessibleServices(officer)).toEqual(["lost_found", "complaint", "borrowing"]);
+    expect(accessibleServices([{ role: "admin" }])).toEqual(["lost_found", "complaint", "borrowing"]);
+    expect(accessibleServices([{ role: "editor" }])).toEqual([]);
   });
   it("inbox visibility", () => {
-    expect(canUseCaseInbox(lf)).toBe(true);
-    expect(canUseCaseInbox([{ role: "editor", organisationId: 1 }])).toBe(false);
-    expect(canAccessService(lf, "complaint")).toBe(false);
+    expect(canUseCaseInbox(officer)).toBe(true);
+    expect(canUseCaseInbox([{ role: "editor" }])).toBe(false);
+    expect(canAccessService([{ role: "editor" }], "complaint")).toBe(false);
+    expect(canAccessService(officer, "complaint")).toBe(true);
   });
-  it("acting organisation", () => {
-    const roles = [
-      { role: "lf_officer" as const, organisationId: 1 },
-      { role: "lf_officer" as const, organisationId: 2 },
-      { role: "editor" as const, organisationId: 3 },
-    ];
-    expect(actingOrganisations(roles, "lost_found")).toEqual([1, 2]);
-    expect(resolveActingOrganisation(roles, "lost_found", 2)).toBe(2);
-    expect(resolveActingOrganisation(roles, "lost_found", 3)).toBe(1);
-    expect(resolveActingOrganisation(roles, "complaint")).toBeNull();
+  it("acting organisation comes from membership", () => {
+    expect(resolveActingOrganisation([1, 2], 2)).toBe(2);
+    expect(resolveActingOrganisation([1, 2], 3)).toBe(1);
+    expect(resolveActingOrganisation([2])).toBe(2);
+    expect(resolveActingOrganisation([])).toBeNull();
   });
 });

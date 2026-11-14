@@ -57,7 +57,7 @@ const foundValues = (over: Partial<DraftValues> = {}): DraftValues => ({
 
 beforeAll(async () => {
   t = await setup();
-  officer = await t.staff("Desk officer", "lf_officer", "tusu");
+  officer = await t.staff("Desk officer", "officer", "tusu");
   const [place] = await t.db.insert(places).values({ slug: "library", nameEn: "Library", category: "welfare" }).returning();
   placeId = place!.id;
 }, 60_000);

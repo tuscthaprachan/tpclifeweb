@@ -60,7 +60,7 @@ describe("escalation", () => {
     expect((await escalateOverdue(t.db, new Date(NOW.getTime() + 3 * DAY))).map((e) => e.caseId)).not.toContain(c.caseId);
   });
 
-  it("emails leads about ordinary complaints and only the named staff about restricted ones", async () => {
+  it("emails officers about ordinary complaints and only the named staff about restricted ones", async () => {
     const open = await t.file({ key: "other" });
     const secret = await t.file({ key: "harassment" });
     const items = await escalateOverdue(t.db, new Date(NOW.getTime() + 40 * DAY));
@@ -72,7 +72,8 @@ describe("escalation", () => {
     expect(secretMails).toEqual([email(t.named)]);
     const openMails = [...recipients].filter(([, list]) => list.some((i) => i.caseId === open.caseId)).map(([to]) => to);
     expect(openMails).toContain(email(t.lead));
-    expect(openMails).not.toContain(email(t.named));
+    expect(openMails).toContain(email(t.named));
+    expect(openMails).not.toContain(email(t.admin));
 
     const sender = new MemoryEmailSender();
     const sent = await sendEscalationDigests(t.db, mine, "https://example.test/admin/cases?overdue=1", { sender, emailConfigured: true });

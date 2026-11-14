@@ -62,12 +62,12 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
     );
   }
 
-  const organisation = pick({ th: found.organisation.nameTh, en: found.organisation.nameEn }, locale);
+  const organisation = found.organisations.map((o) => pick({ th: o.nameTh, en: o.nameEn }, locale)).join(locale === "th" ? " และ " : " and ");
   const email = found.invite.email;
   const summary = (
     <SummaryList
       rows={[
-        { key: a("colOrganisation", locale), value: organisation },
+        { key: a("smColOrganisations", locale), value: organisation },
         { key: a("rowRoles", locale), value: found.invite.roles.map((r) => a(ROLE_LABEL[r], locale)).join(", ") },
       ]}
     />

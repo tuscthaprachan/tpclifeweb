@@ -171,7 +171,7 @@ export async function listCategoryAccess(db: AuditExecutor, categoryId: string, 
     .orderBy(asc(user.name));
 }
 
-/** Staff who could be named: they hold a complaints role, in either organisation. */
+/** Staff who could be named: they hold the officer or admin role. */
 export async function listNameableStaff(db: AuditExecutor, actor: StaffActor): Promise<Array<{ id: string; name: string; email: string }>> {
   assertAdmin(actor);
   return db
@@ -193,7 +193,7 @@ export async function grantCategoryAccess(db: AuditExecutor, categoryId: string,
       .from(staffRoles)
       .where(and(eq(staffRoles.userId, userId), isNull(staffRoles.revokedAt), inArray(staffRoles.role, [...SERVICES.complaint.roles])))
       .limit(1);
-    if (holder.length === 0) throw new CategoryError("invalid", "That person does not hold a complaints role.", "userId");
+    if (holder.length === 0) throw new CategoryError("invalid", "That person is not an officer or administrator.", "userId");
     const inserted = await tx
       .insert(complaintCategoryAccess)
       .values({ categoryId, userId, grantedBy: actor.userId, createdAt: now })

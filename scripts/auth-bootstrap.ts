@@ -2,7 +2,7 @@
  * Break-glass access for staff accounts, run from a machine with the production
  * DATABASE_URL:
  *
- *   npm run auth:bootstrap -- <email> <organisation-slug>   first admin invitation (slug: tusu or tusc)
+ *   npm run auth:bootstrap -- <email> <organisations>        first admin invitation (tusu, tusc or tusu,tusc)
  *   npm run auth:bootstrap -- --recover <email>             24 hour recovery link for an existing admin
  *
  * Both print a link to open in a browser. The link is the only copy of the token
@@ -23,7 +23,7 @@ import * as schema from "@/lib/db/schema";
 
 const USAGE = [
   "Usage:",
-  "  npm run auth:bootstrap -- <email> <organisation-slug>   (slug: tusu or tusc)",
+  "  npm run auth:bootstrap -- <email> <organisations>   (tusu, tusc or tusu,tusc)",
   "  npm run auth:bootstrap -- --recover <email>",
 ].join("\n");
 
@@ -55,8 +55,8 @@ async function main() {
       console.log(`\nRecovery link for ${result.email}.`);
       console.log(`Send it to them privately. It works once, and only before ${result.expiresAt.toISOString()}:\n\n  ${result.link}\n`);
     } else {
-      const result = await runBootstrap(db, { email: first, organisationSlug: second as string, baseUrl });
-      console.log(`\nAdmin invitation for ${result.email} at ${result.organisationName}.`);
+      const result = await runBootstrap(db, { email: first, organisationSlugs: (second as string).split(",").map((slug) => slug.trim().toLowerCase()).filter(Boolean), baseUrl });
+      console.log(`\nAdmin invitation for ${result.email} at ${result.organisationNames.join(" and ")}.`);
       console.log(`Open this link before ${result.expiresAt.toISOString()}. It lets you create your account by registering a passkey:\n\n  ${result.link}\n`);
     }
   } finally {

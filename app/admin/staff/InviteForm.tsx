@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { PeopleIcon } from "@/components/admin/PeopleIcon";
 import { LinkReady } from "@/components/admin/LinkReady";
-import { Button, Checkboxes, ErrorSummary, NotificationBanner, Radios, Stack, TextInput, type ErrorSummaryItem } from "@/components/ui";
+import { Button, Checkboxes, ErrorSummary, NotificationBanner, Stack, TextInput, type ErrorSummaryItem } from "@/components/ui";
 import { a, ROLE_HINT, ROLE_LABEL } from "@/lib/i18n/admin";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { STAFF_ROLES } from "@/lib/db/schema/staff-roles";
@@ -18,13 +19,13 @@ export interface OrganisationChoice {
 
 export function InviteForm({ locale, organisations }: { locale: Locale; organisations: OrganisationChoice[] }) {
   const [state, formAction, pending] = useActionState<InviteFormState, FormData>(createStaffInvite, {
-    values: { email: "", organisation: organisations.length === 1 ? String(organisations[0]?.id) : "", roles: [] },
+    values: { email: "", organisations: organisations.length === 1 ? [String(organisations[0]?.id)] : [], roles: [] },
     errors: {},
   });
 
   const items: ErrorSummaryItem[] = [];
   if (state.errors.email) items.push({ href: "#admin-invite-email", message: state.errors.email });
-  if (state.errors.organisation) items.push({ href: "#admin-invite-organisation-0", message: state.errors.organisation });
+  if (state.errors.organisations) items.push({ href: "#admin-invite-organisations-0", message: state.errors.organisations });
   if (state.errors.roles) items.push({ href: "#admin-invite-roles-0", message: state.errors.roles });
 
   return (
@@ -40,6 +41,12 @@ export function InviteForm({ locale, organisations }: { locale: Locale; organisa
             email={state.created.email}
             emailed={state.created.emailed}
           />
+        ) : null}
+        {state.granted ? (
+          <NotificationBanner variant="success" title={a("smInviteGrantedTitle", locale)}>
+            {a(state.granted.changed ? "smInviteGrantedBody" : "smInviteUnchangedBody", locale, { email: state.granted.email })}{" "}
+            <Link href={`/admin/staff/${encodeURIComponent(state.granted.userId)}`}>{a("smOpenMember", locale)}</Link>
+          </NotificationBanner>
         ) : null}
         {state.errors.form ? (
           <NotificationBanner variant="warning" title={UI.errorTitle[locale]}>
@@ -61,18 +68,15 @@ export function InviteForm({ locale, organisations }: { locale: Locale; organisa
           className="max-w-[28rem]"
         />
 
-        {organisations.length === 1 ? (
-          <input type="hidden" name="organisation" value={organisations[0]?.id} />
-        ) : (
-          <Radios
-            id="admin-invite-organisation"
-            name="organisation"
-            legend={a("inviteOrgLegend", locale)}
-            defaultValue={state.values.organisation}
-            error={state.errors.organisation}
-            options={organisations.map((o) => ({ value: String(o.id), label: pick({ th: o.nameTh, en: o.nameEn }, locale) }))}
-          />
-        )}
+        <Checkboxes
+          id="admin-invite-organisations"
+          name="organisations"
+          legend={a("inviteOrgLegend", locale)}
+          hint={a("smOrganisationsHint", locale)}
+          defaultValue={state.values.organisations}
+          error={state.errors.organisations}
+          options={organisations.map((o) => ({ value: String(o.id), label: pick({ th: o.nameTh, en: o.nameEn }, locale) }))}
+        />
 
         <Checkboxes
           id="admin-invite-roles"

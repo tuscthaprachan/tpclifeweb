@@ -22,27 +22,27 @@ export class BootstrapError extends Error {}
 export interface BootstrapResult {
   link: string;
   email: string;
-  organisationName: string;
+  organisationNames: string[];
   expiresAt: Date;
 }
 
 export async function runBootstrap(
   db: AuditExecutor,
-  input: { email: string; organisationSlug: string; baseUrl: string; now?: Date },
+  input: { email: string; organisationSlugs: readonly string[]; baseUrl: string; now?: Date },
 ): Promise<BootstrapResult> {
   try {
-    const { invite, token, organisation } = await createBootstrapInvite(db, input);
+    const { invite, token, organisations } = await createBootstrapInvite(db, input);
     return {
       link: `${input.baseUrl.replace(/\/+$/, "")}/admin/invite/${token}`,
       email: invite.email,
-      organisationName: organisation.nameEn,
+      organisationNames: organisations.map((o) => o.nameEn),
       expiresAt: invite.expiresAt,
     };
   } catch (error) {
     if (error instanceof InviteError) {
       const reasons: Record<string, string> = {
         admin_exists: "An administrator already exists, so this command will not make another. Ask them to invite you from /admin/staff.",
-        unknown_organisation: `There is no organisation with the slug "${input.organisationSlug}". Run npm run db:seed first, then use tusu or tusc.`,
+        unknown_organisation: `At least one organisation slug is not known ("${input.organisationSlugs.join(",")}"). Run npm run db:seed first, then use tusu, tusc or tusu,tusc.`,
         invalid_email: "That does not look like an email address.",
       };
       throw new BootstrapError(reasons[error.code] ?? `Could not create the invitation (${error.code}).`);

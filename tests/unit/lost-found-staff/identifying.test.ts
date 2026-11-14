@@ -28,7 +28,7 @@ describe("the identifying detail on a lost report", () => {
     expect(views).toHaveLength(1);
     expect(views[0]).toMatchObject({ actorUserId: t.officer.userId, metadata: { subject: "identifying_detail" } });
     expect(JSON.stringify(await t.audits("lost_found.identifying_view"))).not.toContain("SECRET-STICKER");
-    await expect(readIdentifyingDetail(t.db, lost.caseId, t.complaints)).rejects.toMatchObject({ code: "forbidden" });
+    await expect(readIdentifyingDetail(t.db, lost.caseId, t.outsider)).rejects.toMatchObject({ code: "forbidden" });
   });
 
   it("reads null and logs nothing when there is none, and refuses a found item", async () => {

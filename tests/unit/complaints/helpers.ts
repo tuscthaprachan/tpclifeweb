@@ -13,11 +13,11 @@ export const NOW = new Date("2026-03-09T05:00:00Z"); // a Monday in Bangkok
 export async function setupComplaints() {
   const t = await setup();
   await seedComplaintCategories(t.db);
-  const handler = await t.staff("Handler One", "complaints_handler", "tusu");
-  const handler2 = await t.staff("Handler Two", "complaints_handler", "tusc");
-  const lead = await t.staff("Lead", "unit_lead", "tusu");
+  const handler = await t.staff("Handler One", "officer", "tusu");
+  const handler2 = await t.staff("Handler Two", "officer", "tusc");
+  const lead = await t.staff("Lead", "officer", "tusu");
   const admin = await t.staff("Admin", "admin", "tusu");
-  const named = await t.staff("Named Handler", "complaints_handler", "tusc");
+  const named = await t.staff("Named Handler", "officer", "tusc");
   const category = async (key: string) => (await t.db.select().from(schema.complaintCategories).where(eq(schema.complaintCategories.key, key)))[0]!;
   for (const key of ["harassment", "safety"]) await grantCategoryAccess(t.db, (await category(key)).id, named.userId, admin, { now: NOW });
 

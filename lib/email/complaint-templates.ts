@@ -194,7 +194,7 @@ export interface EscalationEmailParams {
   inboxUrl: string;
 }
 
-/** To a lead: complaints that have missed a target. Staff-facing, so it also names the target. */
+/** To an officer: complaints that have missed a target. Staff-facing, so it also names the target. */
 export function complaintsEscalated({ items, inboxUrl }: EscalationEmailParams): RenderedEmail {
   const th = items.map((i) => `${i.reference}: ${i.reason === "acknowledge" ? "เกินเวลาที่ตั้งไว้ในการรับเรื่อง" : "เกินเวลาที่ตั้งไว้ในการแก้ไข"}`);
   const en = items.map((i) => `${i.reference}: ${i.reason === "acknowledge" ? "not acknowledged in time" : "not resolved in time"}`);

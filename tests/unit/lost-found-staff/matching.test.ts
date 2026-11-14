@@ -92,7 +92,7 @@ describe("rankMatches (pg_trgm on PGlite)", () => {
 
   it("refuses staff without a lost and found role", async () => {
     const lost = await t.lostReport();
-    await expect(rankMatches(t.db, lost.caseId, t.complaints)).rejects.toMatchObject({ code: "forbidden" });
+    await expect(rankMatches(t.db, lost.caseId, t.outsider)).rejects.toMatchObject({ code: "forbidden" });
   });
 
   it("matches the shared fixture so the tests above are not vacuous", () => {

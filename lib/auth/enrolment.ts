@@ -49,7 +49,7 @@ export interface CreateStaffAccountInput {
 export async function createStaffAccount(
   db: AuditExecutor,
   input: CreateStaffAccountInput,
-): Promise<{ userId: string; email: string; organisationId: number }> {
+): Promise<{ userId: string; email: string; organisationIds: number[] }> {
   const name = cleanPersonName(input.name);
   if (!name) throw new InviteError("invalid_name");
   const now = input.now ?? new Date();
@@ -75,11 +75,11 @@ export async function createStaffAccount(
       action: "staff_account.create",
       entityType: "user",
       entityId: created.id,
-      actorOrganisationId: found.invite.organisationId,
+      actorOrganisationId: found.invite.organisationIds[0] ?? null,
       after: { email, name, viaInvite: found.invite.id },
     });
 
     const accepted = await acceptInvite(tx, { token: input.token, userId: created.id, userEmail: email, context: input.context, now });
-    return { userId: created.id, email, organisationId: accepted.organisationId };
+    return { userId: created.id, email, organisationIds: accepted.organisationIds };
   });
 }

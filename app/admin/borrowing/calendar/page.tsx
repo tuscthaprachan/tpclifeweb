@@ -27,7 +27,7 @@ const MONTHS_EITHER_WAY = 12;
 export default async function BorrowingCalendarPage({ searchParams }: { searchParams: Promise<Query> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
-  await requireStaff(["equipment_officer", "unit_lead", "admin"]);
+  await requireStaff(["officer", "admin"]);
   const query = await searchParams;
   const basePath = "/admin/borrowing/calendar";
 

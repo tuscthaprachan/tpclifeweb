@@ -9,8 +9,10 @@ export type RequestContext = Pick<AuditContext, "ip" | "userAgent" | "requestId"
 export interface StaffActor {
   kind: "staff";
   userId: string;
-  /** The organisation this action is attributed to; must be one the person holds a role for in the service. */
+  /** The organisation this action is attributed to; must be one the person belongs to. */
   organisationId: number;
+  /** Every organisation the person belongs to. */
+  organisationIds: readonly number[];
   roles: readonly ActiveRole[];
   context?: RequestContext;
 }

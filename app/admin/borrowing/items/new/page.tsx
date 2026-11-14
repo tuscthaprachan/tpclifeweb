@@ -22,7 +22,7 @@ export async function generateMetadata() {
 export default async function NewItemPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
-  await requireStaff(["equipment_officer", "admin"]);
+  await requireStaff(["officer", "admin"]);
   const { category } = await searchParams;
   const categories = await getDb().select().from(equipmentCategories).orderBy(equipmentCategories.position);
 

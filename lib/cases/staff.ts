@@ -4,21 +4,22 @@ import { eq } from "drizzle-orm";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { cases } from "@/lib/db/schema/cases";
 import { getRequestMeta, type AccessContext } from "@/lib/auth/session";
-import { resolveActingOrganisation } from "./access";
+import { canAccessService, resolveActingOrganisation } from "./access";
 import { CaseError, type StaffActor } from "./types";
 import type { CaseService } from "./services";
 
 /**
  * The engine actor for a signed-in member of staff working on `service`. The
- * organisation is `preferredOrganisationId` if they hold a role for the
- * service there, otherwise their first. Throws `forbidden` when they hold no
- * role for the service.
+ * organisation is `preferredOrganisationId` if they belong to it, otherwise
+ * their first. Throws `forbidden` when they hold no role for the service or
+ * belong to no organisation.
  */
 export async function staffActorFor(staff: AccessContext, service: CaseService, preferredOrganisationId?: number | null): Promise<StaffActor> {
-  const organisationId = resolveActingOrganisation(staff.roles, service, preferredOrganisationId);
+  const organisationIds = staff.organisations.map((o) => o.id);
+  const organisationId = canAccessService(staff.roles, service) ? resolveActingOrganisation(organisationIds, preferredOrganisationId) : null;
   if (organisationId === null) throw new CaseError("forbidden", "You do not have access to this service.");
   const meta = await getRequestMeta();
-  return { kind: "staff", userId: staff.user.id, organisationId, roles: staff.roles, context: { ip: meta.ip, userAgent: meta.userAgent } };
+  return { kind: "staff", userId: staff.user.id, organisationId, organisationIds, roles: staff.roles, context: { ip: meta.ip, userAgent: meta.userAgent } };
 }
 
 /** `staffActorFor` for an existing case, looking up its service. */

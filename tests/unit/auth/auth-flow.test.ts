@@ -73,7 +73,7 @@ async function signIn(ctx: Ctx, authenticator: VirtualAuthenticator) {
 }
 
 async function inviteFor(ctx: Ctx, email: string, roles: string[] = ["editor"]) {
-  return createInvite(ctx.db, { email, organisationId: ctx.org.id, roles, invitedBy: null });
+  return createInvite(ctx.db, { email, organisationIds: [ctx.org.id], roles, invitedBy: null });
 }
 
 async function enrol(ctx: Ctx, token: string, name = "Somchai Jaidee", authenticator = new VirtualAuthenticator(ORIGIN)) {
@@ -92,7 +92,7 @@ describe("creating an account from an invite", () => {
   });
 
   it("creates the account, grants the roles and signs the person in, all from a passkey", async () => {
-    const { token, invite } = await inviteFor(ctx, "New.Person@Example.org", ["editor", "lf_officer"]);
+    const { token, invite } = await inviteFor(ctx, "New.Person@Example.org", ["editor", "officer"]);
     const { cookie, passkey: created } = await enrol(ctx, token);
 
     const [account] = await ctx.db.select().from(user).where(eq(user.email, "new.person@example.org"));
@@ -332,7 +332,7 @@ describe("recovering an account", () => {
   });
 
   async function recoveryToken() {
-    return (await issueRecoveryLink(ctx.db, { userId: staffId, issuedBy: adminId, allowedOrganisationIds: [ctx.org.id] })).token;
+    return (await issueRecoveryLink(ctx.db, { userId: staffId, issuedBy: adminId })).token;
   }
 
   it("registers a new passkey on the existing account and signs the person in", async () => {

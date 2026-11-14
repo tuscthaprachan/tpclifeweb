@@ -18,9 +18,9 @@ export const KEYS: ItemDescription = {
 
 export async function lfSetup() {
   const ctx = await setup();
-  const officer = await ctx.staff("Officer", "lf_officer", "tusu");
-  const other = await ctx.staff("Other", "lf_officer", "tusc");
-  const complaints = await ctx.staff("Handler", "complaints_handler", "tusu");
+  const officer = await ctx.staff("Officer", "officer", "tusu");
+  const other = await ctx.staff("Other", "officer", "tusc");
+  const outsider = await ctx.staff("Editor", "editor", "tusu");
 
   /** A found item, fully prepared, optionally published. */
   async function foundItem(actor: StaffActor = officer, input: Partial<ItemDescription> = {}, opts: { publish?: boolean; detail?: string } = {}) {
@@ -51,5 +51,5 @@ export async function lfSetup() {
   const events = (id: string) => ctx.db.select().from(caseEvents).where(eq(caseEvents.caseId, id));
   const audits = (action: string) => ctx.db.select().from(auditLog).where(eq(auditLog.action, action));
 
-  return { ...ctx, officer, other, complaints, foundItem, lostReport, statusOf, events, audits };
+  return { ...ctx, officer, other, outsider, foundItem, lostReport, statusOf, events, audits };
 }

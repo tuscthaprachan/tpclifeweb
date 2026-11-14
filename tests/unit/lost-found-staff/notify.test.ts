@@ -71,7 +71,7 @@ describe("notifyLostReporter", () => {
 
   it("is refused for staff outside the service", async () => {
     const lost = await t.lostReport();
-    await expect(notifyLostReporter(t.db, lost.caseId, "returned", t.complaints, { emailConfigured: true })).rejects.toMatchObject({ code: "forbidden" });
+    await expect(notifyLostReporter(t.db, lost.caseId, "returned", t.outsider, { emailConfigured: true })).rejects.toMatchObject({ code: "forbidden" });
   });
 });
 

@@ -55,7 +55,7 @@ Availability calendar: `/[locale]/borrow/availability`. Choose an item (GET form
 
 ## Officer side
 
-Role `equipment_officer` (held for TUSU), plus `unit_lead` and `admin`.
+Role `officer` (held by the person, for either body), plus `admin`.
 
 Statuses (`lib/cases/services.ts`, kind `loan`):
 

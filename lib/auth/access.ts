@@ -35,7 +35,7 @@ export interface AccessInput {
   now: Date;
   roles: readonly ActiveRole[];
   /** `role` may be one role or a list of which any one will do. */
-  required?: { role?: StaffRole | readonly StaffRole[]; organisationId?: number };
+  required?: { role?: StaffRole | readonly StaffRole[] };
 }
 
 export function decideAccess({ session, now, roles, required }: AccessInput): AccessState {
@@ -44,9 +44,6 @@ export function decideAccess({ session, now, roles, required }: AccessInput): Ac
   if (!isStaff(roles)) return { kind: "not_staff" };
   if (!session.secondFactorAt) return { kind: "passkey_required" };
   const wanted = required?.role === undefined ? [] : typeof required.role === "string" ? [required.role] : required.role;
-  if (wanted.length > 0 && !hasAnyRole(roles, wanted, required?.organisationId)) return { kind: "forbidden" };
-  if (wanted.length === 0 && required?.organisationId !== undefined) {
-    if (!roles.some((r) => r.organisationId === required.organisationId)) return { kind: "forbidden" };
-  }
+  if (wanted.length > 0 && !hasAnyRole(roles, wanted)) return { kind: "forbidden" };
   return { kind: "ok" };
 }

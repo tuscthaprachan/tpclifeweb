@@ -106,7 +106,7 @@ export interface EscalatedItem {
   reason: "acknowledge" | "resolve";
 }
 
-/** Who should hear about an escalation: unit leads for ordinary categories, the named staff for a restricted one. */
+/** Who should hear about an escalation: officers for ordinary categories, the named staff for a restricted one. */
 export async function escalationRecipients(db: AuditExecutor, items: EscalatedItem[]): Promise<Map<string, EscalatedItem[]>> {
   const byEmail = new Map<string, EscalatedItem[]>();
   const add = (email: string, item: EscalatedItem) => byEmail.set(email, [...(byEmail.get(email) ?? []), item]);
@@ -117,7 +117,7 @@ export async function escalationRecipients(db: AuditExecutor, items: EscalatedIt
       .selectDistinct({ email: user.email })
       .from(staffRoles)
       .innerJoin(user, eq(user.id, staffRoles.userId))
-      .where(and(eq(staffRoles.role, "unit_lead"), isNull(staffRoles.revokedAt)))
+      .where(and(eq(staffRoles.role, "officer"), isNull(staffRoles.revokedAt)))
       .orderBy(asc(user.email));
     for (const lead of leads) for (const item of open) add(lead.email, item);
   }

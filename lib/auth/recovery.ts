@@ -1,6 +1,6 @@
 /**
  * Account recovery for staff who have lost every passkey. An admin issues a
- * single-use link for a member of staff in one of their organisations; the
+ * single-use link for a member of staff; the
  * person opens it and registers a new passkey on their existing account.
  *
  * Same shape as invites: only the token's SHA-256 is stored, the raw token
@@ -29,7 +29,6 @@ const HOUR_MS = 60 * 60 * 1000;
 export type RecoveryErrorCode =
   | "unknown_user"
   | "not_staff"
-  | "out_of_scope"
   | "last_admin"
   | "not_admin"
   | "not_found"
@@ -67,8 +66,6 @@ export interface IssueRecoveryInput {
   userId: string;
   /** The admin issuing it; null for the command line path. */
   issuedBy: string | null;
-  /** When given, the person must hold an active role in one of these organisations. */
-  allowedOrganisationIds?: readonly number[];
   /** Command line path: the person must be an admin. */
   requireAdmin?: boolean;
   context?: AuditContext;
@@ -92,14 +89,11 @@ export async function issueRecoveryLink(
     if (!person) throw new RecoveryError("unknown_user");
 
     const roles = await tx
-      .select({ role: staffRoles.role, organisationId: staffRoles.organisationId })
+      .select({ role: staffRoles.role })
       .from(staffRoles)
       .where(and(eq(staffRoles.userId, person.id), isNull(staffRoles.revokedAt)));
     if (roles.length === 0) throw new RecoveryError("not_staff");
     if (input.requireAdmin && !roles.some((r) => r.role === "admin")) throw new RecoveryError("not_admin");
-    if (input.allowedOrganisationIds && !roles.some((r) => input.allowedOrganisationIds!.includes(r.organisationId))) {
-      throw new RecoveryError("out_of_scope");
-    }
     if (input.issuedBy === person.id && !(await hasOtherActiveAdmin(tx, person.id))) throw new RecoveryError("last_admin");
 
     const superseded = await tx
@@ -189,7 +183,7 @@ export async function claimRecoveryLink(
   });
 }
 
-/** Pending recovery links for people in these organisations' staff, for the staff page. */
+/** Which of these people have a recovery link waiting, for the staff page. */
 export async function listPendingRecoveryUserIds(db: AuditExecutor, userIds: readonly string[], now: Date = new Date()): Promise<Set<string>> {
   if (userIds.length === 0) return new Set();
   const rows = await db
