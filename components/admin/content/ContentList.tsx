@@ -7,6 +7,7 @@ import { BulkBar, SelectAllCheckbox } from "@/components/admin/content/BulkContr
 import { ContentTable, type ContentTableColumn } from "@/components/admin/content/ContentTable";
 import { RowMenu } from "@/components/admin/content/RowMenu";
 import { StatusBadge } from "@/components/admin/content/StatusBadge";
+import { scheduleState } from "@/lib/admin/content/schedule";
 import { contentPlacement } from "@/app/admin/content/_list/placement";
 import { bulkContentAction } from "@/app/admin/content/bulk/actions";
 import { queryString, ResultCount, RowAction } from "@/app/admin/content/_list/parts";
@@ -17,6 +18,11 @@ import type { ListExtras } from "@/lib/admin/content/list-extras";
 import { activeFilters, listHref, listParams, nextSort, withoutFilter, type ListQuery, type ListWithin, type SortKey } from "@/lib/admin/content/list-query";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
+
+const listStatus = (row: ContentListRow): string => {
+  const state = scheduleState({ status: row.status, publishAt: row.publishAt, unpublishAt: row.unpublishAt });
+  return state === "live" ? "published" : state;
+};
 
 export interface BulkReport {
   action: "publish" | "unpublish" | "delete";
@@ -124,7 +130,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
             id: "status",
             header: a("listStatus", locale),
             sort: { key: "status", href: sortHref("status") },
-            cell: (row: ContentListRow) => <StatusBadge status={row.status ?? "draft"} locale={locale} />,
+            cell: (row: ContentListRow) => <StatusBadge status={listStatus(row)} locale={locale} />,
           } satisfies ContentTableColumn<ContentListRow>,
         ]
       : []),

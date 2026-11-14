@@ -20,6 +20,9 @@ export interface ContentListRow {
   updatedByName?: string;
   /** The public web address name; only filled when the caller asks for editor details and the type has a public page. */
   slug?: string;
+  /** Publication window, for types that have one (see `scheduleState`). */
+  publishAt?: Date | null;
+  unpublishAt?: Date | null;
   /** The type's own date (news published, event start) when it has one. */
   date?: Date | null;
 }
@@ -108,6 +111,8 @@ export async function listContentRows(
       updatedBy: editorColumn ?? sql<null>`null`,
       slug: slugColumn ?? sql<null>`null`,
       date: dateColumn ?? sql<null>`null`,
+      publishAt: tableColumns.publishAt ?? sql<null>`null`,
+      unpublishAt: tableColumns.unpublishAt ?? sql<null>`null`,
     })
     .from(def.table)
     .where(where)
@@ -127,6 +132,8 @@ export async function listContentRows(
       updatedByName: r.updatedBy ? names.get(r.updatedBy as string) : undefined,
       slug: r.slug ? String(r.slug) : undefined,
       date: r.date ? new Date(r.date as Date) : null,
+      publishAt: r.publishAt ? new Date(r.publishAt as Date) : null,
+      unpublishAt: r.unpublishAt ? new Date(r.unpublishAt as Date) : null,
     })),
   };
 }

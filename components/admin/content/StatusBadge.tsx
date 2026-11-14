@@ -12,6 +12,7 @@ export const STATUS_BADGES: Record<string, { tone: StatusTone; labelKey: AdminKe
   published: { tone: "success", labelKey: "statusPublished" },
   draft: { tone: "neutral", labelKey: "statusDraft" },
   scheduled: { tone: "info", labelKey: "statusScheduled" },
+  expired: { tone: "warning", labelKey: "clcStatusExpired" },
 };
 
 export function StatusBadge({ status, locale }: { status: string; locale: Locale }) {
