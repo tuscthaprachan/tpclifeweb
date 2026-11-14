@@ -12,6 +12,11 @@ env:
   # run against the same seeded content with no database to provision.
   DATABASE_URL: pglite:memory
   NEXT_PUBLIC_SITE_URL: http://localhost:3000
+  # `npm start` runs with NODE_ENV=production, where the journeys that collect
+  # personal data refuse to run without an encryption key and show "service
+  # unavailable". This key protects nothing: it only exists in this job, which
+  # uses an in-memory database.
+  PII_ENCRYPTION_KEY: Y2ktb25seS1ub3QtYS1zZWNyZXQtMzItYnl0ZXMhISE=
 
 jobs:
   check:
