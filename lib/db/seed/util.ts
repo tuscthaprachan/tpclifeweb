@@ -10,6 +10,7 @@
  * No `server-only` import: this runs under tsx and PGlite.
  */
 
+import { createHash } from "node:crypto";
 import { getTableColumns, sql, type SQL } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import type { AuditExecutor } from "../audit";
@@ -57,4 +58,16 @@ export function published() {
 export interface Bi {
   th: string;
   en: string;
+}
+
+/**
+ * A UUID that depends only on `kind` and `key`, so every fresh database seeds
+ * the same id for the same row (a build and a server each seeding their own
+ * in-memory database then agree). Existing rows keep their ids: seeds upsert
+ * on a natural key.
+ */
+export function stableId(kind: string, key: string): string {
+  const h = createHash("sha1").update(`trytpc:${kind}:${key}`).digest("hex");
+  const variant = ((parseInt(h[16]!, 16) & 0x3) | 0x8).toString(16);
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-${variant}${h.slice(17, 20)}-${h.slice(20, 32)}`;
 }

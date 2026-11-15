@@ -14,6 +14,9 @@ import { expect, test, type Page } from "@playwright/test";
 import { LOCALES, type Locale } from "../../lib/i18n/config";
 import { formatViolations } from "./support/axe-report";
 import { answerComplaint, answerTriage, type TriagePath } from "./support/complaint-journey";
+import { perTestClientIp } from "./support/client-ip";
+
+test.use(perTestClientIp);
 
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 

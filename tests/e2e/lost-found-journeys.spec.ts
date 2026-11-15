@@ -18,6 +18,9 @@ import { expect, test } from "@playwright/test";
 import { LOCALES, localePath, type Locale } from "../../lib/i18n/config";
 import { UI } from "../../lib/i18n/strings";
 import { answerFoundReport, answerLostReport, start } from "../a11y/support/lost-found-journey";
+import { perTestClientIp } from "../a11y/support/client-ip";
+
+test.use(perTestClientIp);
 
 test.use({ javaScriptEnabled: false });
 

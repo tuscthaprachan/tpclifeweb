@@ -2,7 +2,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { ORGANISATIONS } from "../../../data/harvested-inventory";
 import { directoryOrganisations } from "../schema/content/directory";
 import { faculties } from "../schema/content/faculties";
-import { published, type Bi, type SeedDb } from "./util";
+import { published, stableId, type Bi, type SeedDb } from "./util";
 
 /**
  * The faculties and colleges of the issue reporting service, and the link from
@@ -104,7 +104,7 @@ export async function seedFaculties(db: SeedDb): Promise<void> {
   for (const [index, faculty] of buildFaculties().entries()) {
     await db
       .insert(faculties)
-      .values({ ...published(), slug: faculty.slug, nameTh: faculty.name.th, nameEn: faculty.name.en, sortOrder: (index + 1) * 10 })
+      .values({ ...published(), id: stableId("faculty", faculty.slug), slug: faculty.slug, nameTh: faculty.name.th, nameEn: faculty.name.en, sortOrder: (index + 1) * 10 })
       .onConflictDoUpdate({ target: faculties.slug, set: { nameTh: faculty.name.th, nameEn: faculty.name.en } });
   }
 }
