@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { createElement } from "react";
+import { createElement, type ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { ContentForm } from "@/components/admin/content/ContentForm";
 import { takeEdits } from "@/components/admin/content/form/edit-stash";
@@ -9,18 +9,14 @@ import { render, step } from "../support/dom";
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: () => {} }) }));
 
 function setup(action: (prev: ContentFormState, data: FormData) => Promise<ContentFormState>) {
-  return render(
-    createElement(
-      ContentForm,
-      {
-        locale: "en",
-        action,
-        listHref: "/admin/content/news",
-        record: { id: "7", status: "draft", updatedAt: "2026-01-01T00:00:00Z" },
-      },
-      createElement("input", { name: "title", defaultValue: "old" }),
-    ),
-  );
+  const props: ComponentProps<typeof ContentForm> = {
+    locale: "en",
+    action,
+    listHref: "/admin/content/news",
+    record: { id: "7", status: "draft", updatedAt: "2026-01-01T00:00:00Z" },
+    children: createElement("input", { name: "title", defaultValue: "old" }),
+  };
+  return render(createElement(ContentForm, props));
 }
 
 const input = (host: HTMLElement) => host.querySelector<HTMLInputElement>('input[name="title"]')!;
