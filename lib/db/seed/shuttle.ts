@@ -52,33 +52,42 @@ function dormitoryNote(departures: ReadonlyArray<{ time: string; note: Bi }> | u
   return { th: th.join(" "), en: en.join(" ") };
 }
 
+type RouteSource = (typeof SHUTTLE_ROUTES)[number];
+
+/** The route columns the seed writes, apart from status and slug. */
+export function seedShuttleRouteValues(route: RouteSource) {
+  const notes = joinNotes(
+    route.notice ?? { th: "", en: "" },
+    OFFSET_UNKNOWN_NOTE,
+    dormitoryNote(route.dormitoryDepartures),
+    LAST_BUS_NOTE,
+    EFFECTIVE_NOTE,
+  );
+  return {
+    nameTh: route.name.th,
+    nameEn: route.name.en,
+    descriptionTh: route.description.th,
+    descriptionEn: route.description.en,
+    daysOfWeek: [...route.daysOfWeek],
+    validFrom: route.validFrom ?? null,
+    departures: [...route.departures],
+    notesTh: notes.th,
+    notesEn: notes.en,
+    isActive: true,
+    sourceNoteTh: SOURCE_NOTE.th,
+    sourceNoteEn: SOURCE_NOTE.en,
+    lastVerified: "2026-11-15",
+  };
+}
+
 export async function seedShuttle(db: SeedDb): Promise<void> {
   for (const route of SHUTTLE_ROUTES) {
-    const notes = joinNotes(
-      route.notice ?? { th: "", en: "" },
-      OFFSET_UNKNOWN_NOTE,
-      dormitoryNote("dormitoryDepartures" in route ? route.dormitoryDepartures : undefined),
-      LAST_BUS_NOTE,
-      EFFECTIVE_NOTE,
-    );
     const [row] = await db
       .insert(shuttleRoutes)
       .values({
         ...published(),
         slug: slugify(route.name.en),
-        nameTh: route.name.th,
-        nameEn: route.name.en,
-        descriptionTh: route.description.th,
-        descriptionEn: route.description.en,
-        daysOfWeek: [...route.daysOfWeek],
-        validFrom: route.validFrom ?? null,
-        departures: [...route.departures],
-        notesTh: notes.th,
-        notesEn: notes.en,
-        isActive: true,
-        sourceNoteTh: SOURCE_NOTE.th,
-        sourceNoteEn: SOURCE_NOTE.en,
-        lastVerified: "2026-11-15",
+        ...seedShuttleRouteValues(route),
       })
       .onConflictDoUpdate({ target: shuttleRoutes.slug, set: excludedSet(shuttleRoutes) })
       .returning({ id: shuttleRoutes.id });
