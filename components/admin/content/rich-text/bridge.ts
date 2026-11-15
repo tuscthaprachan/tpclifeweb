@@ -19,7 +19,21 @@ export class EditorBridge {
   items: (query: string) => SlashItem[] = () => [];
   onFile: (file: File, pos: number | null) => void = () => {};
 
+  private listeners = new Set<() => void>();
+
+  /** For `useSyncExternalStore`: called when `ctx` is replaced. */
+  subscribe = (listener: () => void): (() => void) => {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  };
+
+  /** For `useSyncExternalStore`: the current context. */
+  getCtx = (): BlockContext | null => this.ctx;
+
   update(patch: Partial<Pick<EditorBridge, "ctx" | "slash" | "keys" | "items" | "onFile">>) {
     Object.assign(this, patch);
+    if ("ctx" in patch) for (const listener of [...this.listeners]) listener();
   }
 }

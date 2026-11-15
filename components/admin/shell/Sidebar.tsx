@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef } from "react";
 import { ConsoleIcon } from "@/components/admin/icons";
+import { lockScroll } from "@/components/admin/hooks/scroll-lock";
 import { SiteLogo } from "@/components/layout/SiteLogo";
 import { findActive, type ResolvedNavGroup } from "@/lib/admin/nav-match";
 import { useConsoleNav, useShell } from "./ShellContext";
@@ -43,9 +44,7 @@ export function Sidebar() {
     if (desktop.matches) return;
     const root = panel.current;
     if (!root) return;
-    const html = document.documentElement;
-    const previousOverflow = html.style.overflow;
-    html.style.overflow = "hidden";
+    const unlock = lockScroll();
     root.querySelector<HTMLElement>(FOCUSABLE)?.focus();
 
     function onKey(event: KeyboardEvent) {
@@ -79,7 +78,7 @@ export function Sidebar() {
     return () => {
       document.removeEventListener("keydown", onKey);
       desktop.removeEventListener("change", onResize);
-      html.style.overflow = previousOverflow;
+      unlock();
       button?.focus();
     };
   }, [drawerOpen, closeDrawer, menuButtonRef]);

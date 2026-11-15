@@ -27,6 +27,10 @@ export const EDITOR_STRINGS = {
   edFullscreen: { th: "เต็มหน้าจอ", en: "Full screen" },
   edFullscreenExit: { th: "ออกจากโหมดเต็มหน้าจอ", en: "Exit full screen" },
   edFullscreenLabel: { th: "{label} แบบเต็มหน้าจอ", en: "{label}, full screen" },
+  edAnnounceVisual: { th: "โหมดภาพ", en: "Visual mode" },
+  edAnnounceMarkdown: { th: "โหมด Markdown", en: "Markdown mode" },
+  edAnnounceFullOn: { th: "เปิดโหมดเต็มหน้าจอ กด Escape เพื่อออก", en: "Full screen on. Press Escape to leave" },
+  edAnnounceFullOff: { th: "ออกจากโหมดเต็มหน้าจอแล้ว", en: "Full screen off" },
   edShortcuts: { th: "แป้นพิมพ์ลัด", en: "Keyboard shortcuts" },
   edBubbleLabel: { th: "จัดรูปแบบข้อความที่เลือก", en: "Format the selected text" },
 

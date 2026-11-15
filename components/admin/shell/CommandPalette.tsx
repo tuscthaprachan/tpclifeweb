@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useId, useMemo, useReducer, useRef, useState } from "react";
 import { signOutAction, setAdminLocale } from "@/app/admin/actions";
 import { ConsoleIcon, type ConsoleIconName } from "@/components/admin/icons";
+import { lockScroll } from "@/components/admin/hooks/scroll-lock";
 import { applyThemeOnClient } from "@/components/layout/ThemeToggle";
 import type { ResolvedNav } from "@/lib/admin/nav-match";
 import type { GoShortcut } from "@/lib/admin/shortcuts";
@@ -210,12 +211,10 @@ function PaletteDialog({ nav, labels, locale, shortcuts, onShowShortcuts, onClos
 
   useEffect(() => {
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const html = document.documentElement;
-    const overflow = html.style.overflow;
-    html.style.overflow = "hidden";
+    const unlock = lockScroll();
     input.current?.focus();
     return () => {
-      html.style.overflow = overflow;
+      unlock();
       previous?.focus();
     };
   }, []);

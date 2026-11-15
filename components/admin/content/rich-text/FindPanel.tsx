@@ -11,7 +11,7 @@ const FIELD =
   "min-h-[var(--target-min)] min-w-0 flex-1 basis-[10rem] rounded-control border border-line-strong bg-surface px-[var(--space-2)] py-[var(--space-1)] text-base text-ink-900";
 
 /** Find and replace for one editor: match count, next and previous, replace one or all, case toggle. Escape closes it and returns to the text. */
-export function FindPanel({ editor, locale, onClose }: { editor: Editor; locale: Locale; onClose: () => void }) {
+export function FindPanel({ editor, locale, focusNonce, onClose }: { editor: Editor; locale: Locale; focusNonce: number; onClose: () => void }) {
   const queryRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [replacement, setReplacement] = useState("");
@@ -20,11 +20,12 @@ export function FindPanel({ editor, locale, onClose }: { editor: Editor; locale:
   const find = useEditorState({ editor, selector: ({ editor: e }) => getFindState(e.state) });
   const total = find.matches.length;
 
+  useEffect(() => () => clearFind(editor), [editor]);
+
   useEffect(() => {
     queryRef.current?.focus();
     queryRef.current?.select();
-    return () => clearFind(editor);
-  }, [editor]);
+  }, [focusNonce]);
 
   function close() {
     clearFind(editor);
@@ -73,7 +74,10 @@ export function FindPanel({ editor, locale, onClose }: { editor: Editor; locale:
         className={FIELD}
       />
       <span className="min-w-[5rem] text-sm text-ink-600" aria-live="polite">
-        {note || status}
+        {status}
+      </span>
+      <span className="text-sm text-ink-600" role="status">
+        {note}
       </span>
       <IconButton icon="rteCaseSensitive" label={a("edFindCase", locale)} pressed={caseSensitive} onClick={() => {
         setCaseSensitive(!caseSensitive);

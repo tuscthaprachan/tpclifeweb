@@ -62,7 +62,7 @@ export function SlashMenu({ locale, bridge, onActiveChange, listId }: { locale: 
   const flip = below < 200 && above > below;
   const listMax = Math.max(96, Math.min(256, flip ? above : below));
   return createPortal(
-    <div style={{ position: "fixed", ...(flip ? { bottom: window.innerHeight - (open.rect?.top ?? 0) + 4 } : { top }), left, zIndex: "var(--z-overlay)" }} className="w-[17rem] max-w-[calc(100vw-1rem)] rounded-control border border-line-strong bg-surface-overlay p-[var(--space-1)] shadow-[var(--shadow-elevation)]">
+    <div data-inert-exempt="" style={{ position: "fixed", ...(flip ? { bottom: window.innerHeight - (open.rect?.top ?? 0) + 4 } : { top }), left, zIndex: "var(--z-overlay)" }} className="w-[17rem] max-w-[calc(100vw-1rem)] rounded-control border border-line-strong bg-surface-overlay p-[var(--space-1)] shadow-[var(--shadow-elevation)]">
       <div id={listId} role="listbox" aria-label={a("edSlashLabel", locale)} style={{ maxHeight: listMax }} className="overflow-y-auto">
         {open.items.map((item, i) => (
           <div

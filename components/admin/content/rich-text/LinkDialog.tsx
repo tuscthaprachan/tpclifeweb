@@ -7,17 +7,9 @@ import { a } from "@/lib/i18n/admin";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { isSafeHref } from "@/lib/rich-text/schema";
 import { PortalDialog } from "../PortalDialog";
+import type { LinkTarget } from "./editor-machine";
 
-export interface LinkTarget {
-  from: number;
-  to: number;
-  text: string;
-  href: string;
-  /** The selection is already a link. */
-  existing: boolean;
-  /** The selection stays inside one block, so its words can be rewritten. */
-  editableText: boolean;
-}
+export type { LinkTarget };
 
 /** What the link dialog starts from: the link under the caret, else the selection, else nothing. */
 export function linkTargetFor(editor: Editor): LinkTarget {
@@ -80,7 +72,10 @@ export function LinkDialog({ editor, target, lang, locale, onClose }: { editor: 
         setResults(body.results);
         setSearchError(false);
       } catch (e) {
-        if ((e as Error).name !== "AbortError") setSearchError(true);
+        if ((e as Error).name !== "AbortError") {
+          setResults(null);
+          setSearchError(true);
+        }
       }
     }, 250);
     return () => {

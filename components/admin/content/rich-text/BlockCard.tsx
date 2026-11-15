@@ -4,6 +4,7 @@ import type { Editor } from "@tiptap/core";
 import { NodeSelection } from "@tiptap/pm/state";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import Image from "next/image";
+import { useSyncExternalStore } from "react";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { CalloutBoxBlock } from "@/components/domain/rich-text/blocks/CalloutBoxBlock";
 import { a } from "@/lib/i18n/admin";
@@ -55,7 +56,8 @@ export function moveBlock(editor: Editor, pos: number, direction: -1 | 1): { pos
 
 /** How a custom block looks inside the editor: a card with its icon, a thumbnail for pictures, what it holds, and Edit, Remove, Move up and Move down. */
 export function BlockCard({ node, getPos, deleteNode, selected, extension, editor }: NodeViewProps) {
-  const ctx = (extension.options as BlockOptions).bridge.ctx;
+  const bridge = (extension.options as BlockOptions).bridge;
+  const ctx = useSyncExternalStore(bridge.subscribe, bridge.getCtx, bridge.getCtx);
   if (!ctx) return null;
   const { locale, refs, onEdit, announce } = ctx;
   const type = node.type.name as BlockType;

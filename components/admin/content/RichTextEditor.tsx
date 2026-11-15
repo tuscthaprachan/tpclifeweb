@@ -10,6 +10,7 @@ import {
   useId,
   useImperativeHandle,
   useMemo,
+  useReducer,
   useRef,
   useState,
   useSyncExternalStore,
@@ -17,7 +18,9 @@ import {
   type ReactNode,
   type Ref,
 } from "react";
+import { useScrollLock } from "@/components/admin/hooks/scroll-lock";
 import { ConsoleIcon, type ConsoleIconName } from "@/components/admin/icons";
+import { useStatusMessage } from "@/components/hooks/use-status-message";
 import { Button, ErrorMessage, TextInput } from "@/components/ui";
 import type { ImageChoice } from "@/lib/admin/content/images";
 import { fieldId } from "@/lib/admin/content/form-state";
@@ -32,13 +35,15 @@ import { useContentForm } from "./context";
 import { PortalDialog } from "./PortalDialog";
 import { BlockCard } from "./rich-text/BlockCard";
 import { EditorBridge } from "./rich-text/bridge";
+import { announcementFor, editorReducer, initialEditor, type OverlayKind } from "./rich-text/editor-machine";
+import { inertOthers } from "./rich-text/inert";
 import { BlockDialog } from "./rich-text/BlockDialog";
 import { BLOCK_ICON, BLOCK_LABEL, type RichTextRefs } from "./rich-text/blocks";
 import { FindPanel } from "./rich-text/FindPanel";
 import { FindReplace } from "./rich-text/find-replace";
 import { IconButton } from "./rich-text/IconButton";
 import { ImageUploadDialog } from "./rich-text/ImageUploadDialog";
-import { LinkDialog, linkTargetFor, type LinkTarget } from "./rich-text/LinkDialog";
+import { LinkDialog, linkTargetFor } from "./rich-text/LinkDialog";
 import { Menu } from "./rich-text/Menu";
 import { MarkdownPane } from "./rich-text/MarkdownPane";
 import { shortcutLabel, SHORTCUTS, ShortcutsDialog, type ShortcutId } from "./rich-text/ShortcutsDialog";
@@ -172,18 +177,20 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   const initial = defaultValue ?? EMPTY_DOC;
   const [json, setJson] = useState(() => JSON.stringify(initial));
   const [plain, setPlain] = useState(() => richTextToPlainText(initial));
-  const [mode, setMode] = useState<"visual" | "markdown">("visual");
-  const [md, setMd] = useState("");
-  const [mdError, setMdError] = useState<string | null>(null);
-  const [modeBusy, setModeBusy] = useState(false);
-  const [block, setBlock] = useState<{ type: BlockType; mode: "insert" | "edit"; pos?: number; attrs: Raw } | null>(null);
-  const [linkTarget, setLinkTarget] = useState<LinkTarget | null>(null);
-  const [findOpen, setFindOpen] = useState(false);
-  const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const [full, setFull] = useState(false);
-  const [pasted, setPasted] = useState<File | null>(null);
+  const [ui, dispatch] = useReducer(editorReducer, initialEditor);
   const [images, setImages] = useState<ImageChoice[]>(refs.images);
-  const [live, setLive] = useState("");
+  const status = useStatusMessage<string>();
+  const announce = status.show;
+  const mode = ui.mode.kind;
+  const md = ui.mode.kind === "markdown" ? ui.mode.md : "";
+  const mdError = ui.mode.kind === "markdown" ? ui.mode.error : null;
+  const modeBusy = ui.busy !== null;
+  const full = ui.full;
+  const findOpen = ui.overlay.kind === "find";
+  const block = ui.overlay.kind === "block" ? ui.overlay.block : null;
+  const linkTarget = ui.overlay.kind === "link" ? ui.overlay.target : null;
+  const pasted = ui.overlay.kind === "pasted" ? ui.overlay.file : null;
+  const shortcutsOpen = ui.overlay.kind === "shortcuts";
   const mac = useSyncExternalStore(subscribe, isMac, () => false);
 
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -209,11 +216,11 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
       ctx: {
         locale,
         refs: liveRefs,
-        onEdit: (type, pos, attrs) => setBlock({ type, mode: "edit", pos, attrs }),
-        announce: setLive,
+        onEdit: (type, pos, attrs) => dispatch({ type: "openBlock", block: { type, mode: "edit", pos, attrs } }),
+        announce,
       },
     });
-  }, [bridge, locale, liveRefs]);
+  }, [bridge, locale, liveRefs, announce]);
 
   const extensions = useMemo(
     () => [
@@ -272,42 +279,53 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   const T = (key: AdminKey, values?: Record<string, string | number>) => a(key, locale, values);
   const keyLabel = (id: ShortcutId) => shortcutLabel(SHORTCUTS[id], mac);
 
-  const closeDialogs = useCallback(() => {
-    setBlock(null);
-    setLinkTarget(null);
-    setShortcutsOpen(false);
-    setPasted(null);
-    pastePos.current = null;
-    editor?.commands.focus();
-  }, [editor]);
+  const closeOverlay = useCallback(
+    (kind?: OverlayKind) => {
+      dispatch({ type: "close", overlay: kind });
+      if (mode === "visual") editor?.commands.focus();
+    },
+    [editor, mode],
+  );
 
   const openLink = useCallback(() => {
-    if (editor) setLinkTarget(linkTargetFor(editor));
+    if (editor) dispatch({ type: "openLink", target: linkTargetFor(editor) });
   }, [editor]);
 
-  const toggleFull = useCallback(() => {
-    setFull((v) => !v);
-  }, []);
-
-  const openFind = useCallback(() => setFindOpen(true), []);
+  const toggleFull = useCallback(() => dispatch({ type: "toggleFull" }), []);
+  const openFind = useCallback(() => dispatch({ type: "openFind" }), []);
 
   useEffect(() => {
-    bridge.update({ keys: { link: openLink, find: openFind, fullscreen: toggleFull }, onFile: (file, pos) => {
+    bridge.update({
+      keys: { link: openLink, find: openFind, fullscreen: toggleFull },
+      onFile: (file, pos) => {
         pastePos.current = pos;
-        setPasted(file);
+        dispatch({ type: "openPasted", file });
       },
     });
   }, [bridge, openLink, openFind, toggleFull]);
 
+  useScrollLock(full);
+
   useEffect(() => {
     if (!full) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const restore = wrapRef.current ? inertOthers(wrapRef.current) : undefined;
     editor?.commands.focus();
-    return () => {
-      document.body.style.overflow = previous;
-    };
+    return restore;
   }, [full, editor]);
+
+  useEffect(() => {
+    if (ui.overlay.kind !== "pasted") pastePos.current = null;
+  }, [ui.overlay.kind]);
+
+  const seen = useRef(ui);
+  useEffect(() => {
+    const said = announcementFor(seen.current, ui);
+    seen.current = ui;
+    if (!said) return;
+    const key = { visual: "edAnnounceVisual", markdown: "edAnnounceMarkdown", fullOn: "edAnnounceFullOn", fullOff: "edAnnounceFullOff" } as const;
+    announce(T(key[said]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ui]);
 
   useEffect(() => {
     if (!editor) return;
@@ -321,7 +339,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   }, [editor]);
 
   const chain = () => editor!.chain().focus();
-  const insertBlock = (type: BlockType) => setBlock({ type, mode: "insert", attrs: structuredClone(BLOCK_DEFAULTS[type]) as Raw });
+  const insertBlock = (type: BlockType) => dispatch({ type: "openBlock", block: { type, mode: "insert", attrs: structuredClone(BLOCK_DEFAULTS[type]) as Raw } });
 
   const insertDefs: Array<{ id: string; label: string; icon: ConsoleIconName; shortcut?: string; keywords?: string; run: (range?: Range) => void }> = editor
     ? [
@@ -404,47 +422,39 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
     [editor, commit],
   );
 
-  const setMarkdown = useCallback((value: string) => {
-    mdRef.current = value;
-    setMd(value);
-  }, []);
-
-  const failMarkdownImport = (e: unknown) => setLive(T("edMdError", { message: e instanceof Error ? e.message : String(e) }));
+  const failMarkdownImport = (e: unknown) => {
+    announce(T("edMdError", { message: e instanceof Error ? e.message : String(e) }));
+    dispatch({ type: "modeFailed" });
+  };
 
   async function showMarkdown() {
-    if (!editor || mode === "markdown") return;
-    setModeBusy(true);
+    if (!editor || mode === "markdown" || ui.busy) return;
+    dispatch({ type: "modeStart", to: "markdown" });
     try {
       const lib = await loadMarkdown();
-      setMarkdown(lib.docToMarkdown(normaliseEditorDoc(editor.getJSON())));
-      setMdError(null);
-      setMode("markdown");
-      setFindOpen(false);
+      mdRef.current = lib.docToMarkdown(normaliseEditorDoc(editor.getJSON()));
+      dispatch({ type: "markdownReady", md: mdRef.current });
     } catch (e) {
       failMarkdownImport(e);
-    } finally {
-      setModeBusy(false);
     }
   }
 
   async function showVisual() {
-    if (!editor || mode === "visual") return;
-    setModeBusy(true);
+    if (!editor || mode === "visual" || ui.busy) return;
+    const dirty = ui.mode.kind === "markdown" && ui.mode.dirty;
+    dispatch({ type: "modeStart", to: "visual" });
     try {
       const lib = await loadMarkdown();
       cancelMarkdownTimer();
       try {
-        applyDoc(lib.markdownToDoc(mdRef.current), false);
-        setMdError(null);
-        setMode("visual");
+        if (dirty) applyDoc(lib.markdownToDoc(mdRef.current), false);
+        dispatch({ type: "visualReady" });
         requestAnimationFrame(() => editor.commands.focus());
       } catch (e) {
-        setMdError(T("edMdError", { message: lib.markdownErrorMessage(e) }));
+        dispatch({ type: "markdownRejected", error: T("edMdError", { message: lib.markdownErrorMessage(e) }) });
       }
     } catch (e) {
       failMarkdownImport(e);
-    } finally {
-      setModeBusy(false);
     }
   }
 
@@ -459,10 +469,10 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
     try {
       const doc = lib.markdownToDoc(value);
       commit(doc);
-      setMdError(null);
+      dispatch({ type: "markdownParsed" });
       return doc;
     } catch (e) {
-      setMdError(T("edMdError", { message: lib.markdownErrorMessage(e) }));
+      dispatch({ type: "markdownInvalid", error: T("edMdError", { message: lib.markdownErrorMessage(e) }) });
       return null;
     }
   }
@@ -478,7 +488,8 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   }
 
   function onMarkdownChange(value: string) {
-    setMarkdown(value);
+    mdRef.current = value;
+    dispatch({ type: "markdownEdited", md: value });
     markDirty();
     cancelMarkdownTimer();
     mdTimer.current = setTimeout(() => {
@@ -519,8 +530,8 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
         applyDoc(doc, true);
         if (mode === "markdown" && mdLib.current) {
           cancelMarkdownTimer();
-          setMarkdown(mdLib.current.docToMarkdown(doc));
-          setMdError(null);
+          mdRef.current = mdLib.current.docToMarkdown(doc);
+          dispatch({ type: "markdownReplaced", md: mdRef.current });
         }
       },
     }),
@@ -604,8 +615,8 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           kind: "buttons",
           label: T("edGroupTools"),
           actions: [
-            act("find", T("edFind"), "search", { pressed: findOpen, shortcut: keyLabel("find"), run: () => setFindOpen((v) => !v) }),
-            act("shortcuts", T("edShortcuts"), "rteKeyboard", { run: () => setShortcutsOpen(true) }),
+            act("find", T("edFind"), "search", { pressed: findOpen, shortcut: keyLabel("find"), run: () => dispatch({ type: "toggleFind" }) }),
+            act("shortcuts", T("edShortcuts"), "rteKeyboard", { run: () => dispatch({ type: "openShortcuts" }) }),
             act("full", full ? T("edFullscreenExit") : T("edFullscreen"), full ? "rteFullscreenExit" : "rteFullscreen", { pressed: full, shortcut: keyLabel("fullscreen"), run: toggleFull }),
           ],
         },
@@ -619,7 +630,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
       const pos = block.pos!;
       editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, attrs));
     }
-    setBlock(null);
+    dispatch({ type: "close", overlay: "block" });
     editor.commands.focus();
     commit(normaliseEditorDoc(editor.getJSON()));
     markDirty();
@@ -635,19 +646,18 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
     if (at !== null && at >= 0 && at <= editor.state.doc.content.size) chainWith.insertContentAt(at, { type: "image", attrs }).run();
     else chainWith.insertContent({ type: "image", attrs }).run();
     pastePos.current = null;
-    setPasted(null);
+    dispatch({ type: "close", overlay: "pasted" });
     editor.commands.focus();
   }
 
   const onWrapperKey = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (!full) return;
     const wrap = wrapRef.current;
-    if (event.key === "Escape" && !event.defaultPrevented && wrap?.contains(event.target as Node)) {
+    if (event.key === "Escape" && !event.defaultPrevented && wrap?.contains(event.target as Node) && (full || ui.overlay.kind !== "none")) {
       event.preventDefault();
-      setFull(false);
+      dispatch({ type: "escape" });
       return;
     }
-    if (event.key === "Tab" && wrap) {
+    if (full && event.key === "Tab" && wrap) {
       const tabbables = [...wrap.querySelectorAll<HTMLElement>('a[href], button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])')].filter(
         (el) => el.offsetParent !== null && !el.closest("[hidden]"),
       );
@@ -707,7 +717,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
         {visual ? (
           <>
             <Toolbar groups={groups} label={T("rteToolbar", { label })} controls={id} moreLabel={T("edMore")} onAfterMenu={() => editor?.commands.focus()} />
-            {editor && findOpen ? <FindPanel editor={editor} locale={locale} onClose={() => setFindOpen(false)} /> : null}
+            {editor && findOpen ? <FindPanel editor={editor} locale={locale} focusNonce={ui.findFocus} onClose={() => dispatch({ type: "close", overlay: "find" })} /> : null}
             {editor && state.inTable ? (
               <div role="toolbar" aria-label={T("edTableBar")} className="flex flex-wrap items-center gap-[2px] border-b border-line bg-surface-alt p-[var(--space-1)]">
                 <div className="sm:hidden">
@@ -807,7 +817,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
       </div>
       {error ? <ErrorMessage id={`${id}-error`}>{error}</ErrorMessage> : null}
       <p role="status" className="visually-hidden">
-        {live}
+        <span key={status.nonce}>{status.value}</span>
       </p>
 
       <SlashMenu locale={locale} bridge={bridge} onActiveChange={onSlashActive} listId={slashListId} />
@@ -821,19 +831,19 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           locale={locale}
           refs={liveRefs}
           onSubmit={applyBlock}
-          onClose={closeDialogs}
+          onClose={() => closeOverlay("block")}
           onImageUploaded={(image) => setImages((cur) => (cur.some((i) => i.id === image.id) ? cur : [image, ...cur]))}
         />
       ) : null}
 
-      {editor ? <LinkDialog key={linkTarget ? `${linkTarget.from}-${linkTarget.to}` : "closed"} editor={editor} target={linkTarget} lang={lang} locale={locale} onClose={closeDialogs} /> : null}
-      <ShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} locale={locale} mac={mac} />
+      {editor ? <LinkDialog key={linkTarget ? `${linkTarget.from}-${linkTarget.to}` : "closed"} editor={editor} target={linkTarget} lang={lang} locale={locale} onClose={() => closeOverlay("link")} /> : null}
+      <ShortcutsDialog open={shortcutsOpen} onClose={() => closeOverlay("shortcuts")} locale={locale} mac={mac} />
       <ImageUploadDialog
         key={pasted ? pasted.name + pasted.size : "none"}
         file={pasted}
         locale={locale}
         storageConfigured={refs.storageConfigured}
-        onClose={closeDialogs}
+        onClose={() => closeOverlay("pasted")}
         onUploaded={insertPastedImage}
       />
     </div>
@@ -857,14 +867,14 @@ export function BilingualRichTextField({
   const { locale } = useContentForm();
   const handles = { th: useRef<RichTextEditorHandle>(null), en: useRef<RichTextEditorHandle>(null) };
   const [pending, setPending] = useState<{ from: "th" | "en"; to: "th" | "en"; doc: RichTextDoc } | null>(null);
-  const [note, setNote] = useState("");
+  const note = useStatusMessage<string>();
 
   const langName = (l: "th" | "en") => a(l === "th" ? "langThai" : "langEnglish", locale);
 
   function copy(from: "th" | "en", to: "th" | "en") {
     const source = handles[from].current?.getDoc();
     const target = handles[to].current?.getDoc();
-    if (!source || isRichTextEmpty(source)) return setNote(a("edCopyNothing", locale, { source: langName(from) }));
+    if (!source || isRichTextEmpty(source)) return note.show(a("edCopyNothing", locale, { source: langName(from) }));
     if (target && !isRichTextEmpty(target)) return setPending({ from, to, doc: source });
     finish(from, to, source);
   }
@@ -872,7 +882,7 @@ export function BilingualRichTextField({
   function finish(from: "th" | "en", to: "th" | "en", doc: RichTextDoc) {
     handles[to].current?.setDoc(doc);
     setPending(null);
-    setNote(a("edCopyDone", locale, { source: langName(from) }));
+    note.show(a("edCopyDone", locale, { source: langName(from) }));
   }
 
   return (
@@ -898,7 +908,7 @@ export function BilingualRichTextField({
         );
       })}
       <p role="status" className="visually-hidden">
-        {note}
+        <span key={note.nonce}>{note.value}</span>
       </p>
       <PortalDialog open={pending !== null} onClose={() => setPending(null)} title={a("edCopyTitle", locale)} headingLevel={2} locale={locale} className="w-[min(100vw-2rem,30rem)]">
         {pending ? (

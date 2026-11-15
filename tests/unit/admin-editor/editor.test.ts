@@ -23,6 +23,17 @@ beforeAll(() => {
   Range.prototype.getClientRects = () => ({ length: 0, item: () => null, [Symbol.iterator]: function* () {} }) as unknown as DOMRectList;
   Range.prototype.getBoundingClientRect = () => new DOMRect();
   document.elementFromPoint = () => null;
+  Element.prototype.scrollIntoView = () => {};
+  const dialog = HTMLDialogElement.prototype;
+  dialog.showModal = function showModal(this: HTMLDialogElement) {
+    this.setAttribute("open", "");
+  };
+  dialog.close = function close(this: HTMLDialogElement) {
+    if (this.hasAttribute("open")) {
+      this.removeAttribute("open");
+      this.dispatchEvent(new Event("close"));
+    }
+  };
 });
 
 const doc = (text: string): RichTextDoc => ({
@@ -165,5 +176,118 @@ describe("RichTextEditor", () => {
     const posted = JSON.parse(String(data.get("body.en")));
     expect(posted.content[0].content[0].text).toBe("Quick ");
     expect(posted.content[0].content[1].marks).toEqual([{ type: "bold" }]);
+  });
+
+  const button = (h: HTMLElement, label: string) => h.querySelector<HTMLButtonElement>(`button[aria-label^="${label}"]`)!;
+  const key = (el: Element, init: KeyboardEventInit) => act(async () => void el.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ...init })));
+  const fullScreen = (h: HTMLElement) => h.querySelector('[role="dialog"][aria-modal="true"]');
+  const status = (h: HTMLElement) => [...h.querySelectorAll('[role="status"]')].map((n) => n.textContent).join("|");
+
+  it("enters and leaves full screen: scroll lock, inert page, announcements", async () => {
+    const h = await mount();
+    const outside = document.createElement("p");
+    document.body.append(outside);
+    await act(async () => button(h, "Full screen").click());
+    expect(fullScreen(h)).not.toBeNull();
+    expect(document.documentElement.style.overflow).toBe("hidden");
+    expect(outside.hasAttribute("inert")).toBe(true);
+    expect(fullScreen(h)!.closest("[inert]")).toBeNull();
+    expect(status(h)).toContain("Full screen on");
+    await act(async () => button(h, "Exit full screen").click());
+    expect(fullScreen(h)).toBeNull();
+    expect(document.documentElement.style.overflow).toBe("");
+    expect(outside.hasAttribute("inert")).toBe(false);
+    expect(status(h)).toContain("Full screen off");
+    outside.remove();
+  });
+
+  it("opens find, closes it from the toolbar, and refocuses the query on Mod-Shift-F", async () => {
+    const h = await mount();
+    const find = button(h, "Find and replace");
+    await act(async () => find.click());
+    const query = h.querySelector<HTMLInputElement>('[role="search"] input')!;
+    expect(query).not.toBeNull();
+    expect(document.activeElement).toBe(query);
+    const area = h.querySelector<HTMLElement>('[role="textbox"]')!;
+    await act(async () => area.focus());
+    expect(document.activeElement).not.toBe(query);
+    await key(area, { key: "f", ctrlKey: true, shiftKey: true });
+    expect(h.querySelectorAll('[role="search"]')).toHaveLength(1);
+    expect(document.activeElement).toBe(query);
+    await act(async () => find.click());
+    expect(h.querySelector('[role="search"]')).toBeNull();
+  });
+
+  it("shows the match count and the replaced note together", async () => {
+    const h = await mount();
+    await act(async () => button(h, "Find and replace").click());
+    const [query, replacement] = [...h.querySelectorAll<HTMLInputElement>('[role="search"] input')];
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+    await act(async () => {
+      setter.call(query, "สวัสดี");
+      query!.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    expect(h.querySelector('[role="search"]')!.textContent).toContain("1 of 1");
+    await act(async () => {
+      setter.call(replacement, "Bye");
+      replacement!.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await act(async () => button(h, "Replace all").click());
+    const text = h.querySelector('[role="search"]')!.textContent!;
+    expect(text).toContain("Replaced 1");
+    expect(text).toContain("No matches");
+  });
+
+  it("opens the link dialog and closes it with Cancel", async () => {
+    const h = await mount();
+    await act(async () => button(h, "Link").click());
+    expect(document.querySelector("dialog[open]")).not.toBeNull();
+    const cancel = [...document.querySelectorAll<HTMLButtonElement>("dialog button")].find((b) => b.textContent === "Cancel")!;
+    await act(async () => cancel.click());
+    expect(document.querySelector("dialog[open]")).toBeNull();
+  });
+
+  it("closes only the top overlay on Escape: find, then full screen", async () => {
+    const h = await mount();
+    await act(async () => button(h, "Full screen").click());
+    await act(async () => button(h, "Find and replace").click());
+    await key(h.querySelector('[role="search"] input')!, { key: "Escape" });
+    expect(h.querySelector('[role="search"]')).toBeNull();
+    expect(fullScreen(h)).not.toBeNull();
+    await key(fullScreen(h)!.querySelector('[role="textbox"]')!, { key: "Escape" });
+    expect(fullScreen(h)).toBeNull();
+  });
+
+  it("keeps full screen when a dialog closes", async () => {
+    const h = await mount();
+    await act(async () => button(h, "Full screen").click());
+    await act(async () => button(h, "Link").click());
+    const dialog = document.querySelector("dialog[open]")!;
+    await key(dialog.querySelector("input")!, { key: "Escape" });
+    expect(fullScreen(h)).not.toBeNull();
+    await act(async () => dialog.dispatchEvent(new Event("close")));
+    expect(document.querySelector("dialog[open]")).toBeNull();
+    expect(fullScreen(h)).not.toBeNull();
+  });
+
+  it("round trips Visual, Markdown and Visual again, closing find and announcing each mode", async () => {
+    const h = await mount();
+    await act(async () => button(h, "Find and replace").click());
+    expect(h.querySelector('[role="search"]')).not.toBeNull();
+    const toggle = (name: string) => [...h.querySelectorAll<HTMLButtonElement>("button[aria-pressed]")].filter((b) => b.textContent === name)[0]!;
+    await act(async () => {
+      toggle("Markdown").click();
+      await new Promise((r) => setTimeout(r, 600));
+    });
+    expect(h.querySelector('[role="search"]')).toBeNull();
+    expect(status(h)).toContain("Markdown mode");
+    await act(async () => {
+      toggle("Visual").click();
+      await new Promise((r) => setTimeout(r, 300));
+    });
+    expect(h.querySelector("textarea")).toBeNull();
+    expect(status(h)).toContain("Visual mode");
+    expect(JSON.parse(hidden(h, "body.th")).content[0].content[0].text).toBe("สวัสดี");
+    expect(h.querySelector('[role="search"]')).toBeNull();
   });
 });
