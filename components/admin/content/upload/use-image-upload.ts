@@ -24,6 +24,7 @@ export function useImageUpload<R>(locale: Locale): ImageUpload<R> {
 
   const start = useCallback(
     (file: File | null | undefined, upload: UploadFn<R>) => {
+      dispatch({ type: "cancel", run: ++runRef.current });
       const run = ++runRef.current;
       return runUpload<R>({ run, file, locale, upload, emit: dispatch, isCurrent: () => runRef.current === run });
     },
