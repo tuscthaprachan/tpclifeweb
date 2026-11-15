@@ -30,14 +30,14 @@ export function RedirectForm({ locale, action, defaults, submitLabel }: Redirect
       <Stack space={4}>
         {items.length > 0 ? <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={items} /> : null}
         {state.formError ? <p className="m-0 font-medium">{state.formError}</p> : null}
-        <TextInput id="rd-from" name="from" label={a("rdFrom", locale)} hint={a("rdFromHint", locale)} error={state.errors.from} defaultValue={defaults?.from ?? ""} spellCheck={false} autoCapitalize="none" autoComplete="off" className="max-w-[40rem]" />
-        <TextInput id="rd-to" name="to" label={a("rdTo", locale)} hint={a("rdToHint", locale)} error={state.errors.to} defaultValue={defaults?.to ?? ""} spellCheck={false} autoCapitalize="none" autoComplete="off" className="max-w-[40rem]" />
+        <TextInput id="rd-from" name="from" label={a("rdFrom", locale)} hint={a("rdFromHint", locale)} error={state.errors.from} defaultValue={state.values?.from ?? defaults?.from ?? ""} spellCheck={false} autoCapitalize="none" autoComplete="off" className="max-w-[40rem]" />
+        <TextInput id="rd-to" name="to" label={a("rdTo", locale)} hint={a("rdToHint", locale)} error={state.errors.to} defaultValue={state.values?.to ?? defaults?.to ?? ""} spellCheck={false} autoCapitalize="none" autoComplete="off" className="max-w-[40rem]" />
         <Select
           id="rd-status"
           name="status"
           label={a("rdStatus", locale)}
           error={state.errors.status}
-          defaultValue={String(defaults?.status ?? 301)}
+          defaultValue={state.values?.status ?? String(defaults?.status ?? 301)}
           options={[
             { value: "301", label: a("rdStatus301", locale) },
             { value: "308", label: a("rdStatus308", locale) },

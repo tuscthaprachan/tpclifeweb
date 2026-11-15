@@ -1,9 +1,10 @@
 "use client";
 
 import { useActionState, useId, useState, useTransition } from "react";
+import { useReveal } from "@/components/admin/hooks/use-reveal";
+import { uploadError, uploadNote } from "@/components/admin/content/upload/upload-machine";
+import { useImageUpload } from "@/components/admin/content/upload/use-image-upload";
 import { Button, ErrorSummary, InsetText, NotificationBanner, Select, TextInput, Textarea } from "@/components/ui";
-import { compressInBrowser } from "@/components/admin/content/compress-image-browser";
-import { formatMegabytes } from "@/components/admin/content/compress-image";
 import { ID_CHECK_TYPES } from "@/lib/lost-found/constants";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
@@ -102,6 +103,10 @@ function SaveButton({ locale, pending, label, variant = "secondary" }: { locale:
   );
 }
 
+/** What was typed before a problem was reported, else the field's usual starting value. */
+const typed = (state: LfState, name: string, fallback = "") => state.values?.[name] ?? fallback;
+const ticked = (state: LfState, name: string) => state.values?.[name] === "on";
+
 const control = (prefix: string, name: string) => `${prefix}-${name.replace(/[^a-zA-Z0-9]+/g, "-")}`;
 
 /* Description fields, shared by the found item task, the panel and the walk-in lost report */
@@ -118,26 +123,27 @@ export interface DescribeDefaults {
   occurredOn?: string;
 }
 
-function DescribeFields({ locale, prefix, errors, defaults, categories, places }: { locale: Locale; prefix: string; errors: Record<string, string>; defaults: DescribeDefaults; categories: Option[]; places: Option[] }) {
+function DescribeFields({ locale, prefix, errors, values, defaults, categories, places }: { locale: Locale; prefix: string; errors: Record<string, string>; values?: Record<string, string>; defaults: DescribeDefaults; categories: Option[]; places: Option[] }) {
   const field = (name: string) => ({ id: control(prefix, name), name, error: errors[name] });
+  const v = (name: string, fallback: string | null | undefined) => values?.[name] ?? fallback ?? "";
   return (
     <>
-      <Select {...field("category")} label={L("fieldCategory", locale)} options={[{ value: "", label: L("choiceSelect", locale) }, ...categories]} defaultValue={defaults.category ?? ""} className="max-w-[24rem]" />
+      <Select {...field("category")} label={L("fieldCategory", locale)} options={[{ value: "", label: L("choiceSelect", locale) }, ...categories]} defaultValue={v("category", defaults.category)} className="max-w-[24rem]" />
       <InsetText>{L("lfcDescribeEitherLanguage", locale)}</InsetText>
       <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
-        <TextInput {...field("title.th")} lang="th" label={`${L("fieldTitle", locale)} (${L("langThai", locale)})`} defaultValue={defaults.titleTh ?? ""} maxLength={200} />
-        <TextInput {...field("title.en")} lang="en" label={`${L("fieldTitle", locale)} (${L("langEnglish", locale)})`} defaultValue={defaults.titleEn ?? ""} maxLength={200} />
+        <TextInput {...field("title.th")} lang="th" label={`${L("fieldTitle", locale)} (${L("langThai", locale)})`} defaultValue={v("title.th", defaults.titleTh)} maxLength={200} />
+        <TextInput {...field("title.en")} lang="en" label={`${L("fieldTitle", locale)} (${L("langEnglish", locale)})`} defaultValue={v("title.en", defaults.titleEn)} maxLength={200} />
       </div>
       <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
-        <Textarea {...field("description.th")} lang="th" label={`${L("lfFieldDescription", locale)} (${L("langThai", locale)})`} hint={L("lfcDescribeHint", locale)} defaultValue={defaults.descriptionTh ?? ""} rows={4} maxLength={2000} />
-        <Textarea {...field("description.en")} lang="en" label={`${L("lfFieldDescription", locale)} (${L("langEnglish", locale)})`} hint={L("lfcDescribeHint", locale)} defaultValue={defaults.descriptionEn ?? ""} rows={4} maxLength={2000} />
+        <Textarea {...field("description.th")} lang="th" label={`${L("lfFieldDescription", locale)} (${L("langThai", locale)})`} hint={L("lfcDescribeHint", locale)} defaultValue={v("description.th", defaults.descriptionTh)} rows={4} maxLength={2000} />
+        <Textarea {...field("description.en")} lang="en" label={`${L("lfFieldDescription", locale)} (${L("langEnglish", locale)})`} hint={L("lfcDescribeHint", locale)} defaultValue={v("description.en", defaults.descriptionEn)} rows={4} maxLength={2000} />
       </div>
-      <Select {...field("placeId")} label={L("lfFieldPlace", locale)} options={[{ value: "", label: L("lfPlaceNone", locale) }, ...places]} defaultValue={defaults.placeId ?? ""} className="max-w-[32rem]" />
+      <Select {...field("placeId")} label={L("lfFieldPlace", locale)} options={[{ value: "", label: L("lfPlaceNone", locale) }, ...places]} defaultValue={v("placeId", defaults.placeId)} className="max-w-[32rem]" />
       <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
-        <TextInput {...field("locationNote.th")} lang="th" label={`${L("lfFieldLocationNote", locale)} (${L("langThai", locale)})`} hint={L("lfFieldLocationNoteHint", locale)} defaultValue={defaults.locationNoteTh ?? ""} maxLength={300} />
-        <TextInput {...field("locationNote.en")} lang="en" label={`${L("lfFieldLocationNote", locale)} (${L("langEnglish", locale)})`} hint={L("lfFieldLocationNoteHint", locale)} defaultValue={defaults.locationNoteEn ?? ""} maxLength={300} />
+        <TextInput {...field("locationNote.th")} lang="th" label={`${L("lfFieldLocationNote", locale)} (${L("langThai", locale)})`} hint={L("lfFieldLocationNoteHint", locale)} defaultValue={v("locationNote.th", defaults.locationNoteTh)} maxLength={300} />
+        <TextInput {...field("locationNote.en")} lang="en" label={`${L("lfFieldLocationNote", locale)} (${L("langEnglish", locale)})`} hint={L("lfFieldLocationNoteHint", locale)} defaultValue={v("locationNote.en", defaults.locationNoteEn)} maxLength={300} />
       </div>
-      <TextInput {...field("occurredOn")} type="date" label={L("lfFieldOccurredOn", locale)} defaultValue={defaults.occurredOn ?? ""} className="max-w-[16rem]" />
+      <TextInput {...field("occurredOn")} type="date" label={L("lfFieldOccurredOn", locale)} defaultValue={v("occurredOn", defaults.occurredOn)} className="max-w-[16rem]" />
     </>
   );
 }
@@ -153,7 +159,7 @@ export function DescribeForm({ locale, mode, caseId, orgId, defaults, categories
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]">
       <Feedback state={state} locale={locale} prefix={prefix} />
       <HiddenIds caseId={caseId} orgId={orgId} />
-      <DescribeFields locale={locale} prefix={prefix} errors={state.errors ?? {}} defaults={defaults} categories={categories} places={places} />
+      <DescribeFields locale={locale} prefix={prefix} errors={state.errors ?? {}} values={state.values} defaults={defaults} categories={categories} places={places} />
       <SaveButton locale={locale} pending={pending} variant={mode === "panel" ? "secondary" : "primary"} label={L(mode === "start" ? "lfcStartSave" : "lfcDescribeSave", locale)} />
     </form>
   );
@@ -173,19 +179,20 @@ export function WalkInLostForm({ locale, orgId, categories, places }: { locale: 
         <h2 id={`${prefix}-item`} className="m-0 text-xl font-semibold">
           {L("lfcWalkInItem", locale)}
         </h2>
-        <DescribeFields locale={locale} prefix={prefix} errors={errors} defaults={{}} categories={categories} places={places} />
+        <DescribeFields locale={locale} prefix={prefix} errors={errors} values={state.values} defaults={{}} categories={categories} places={places} />
       </section>
       <section aria-labelledby={`${prefix}-person`} className="flex flex-col gap-[var(--space-4)]">
         <h2 id={`${prefix}-person`} className="m-0 text-xl font-semibold">
           {L("lfcWalkInPerson", locale)}
         </h2>
         <InsetText>{L("lfcWalkInPersonHint", locale)}</InsetText>
-        <TextInput {...field("contact.name")} label={L("lfcFieldName", locale)} autoComplete="off" maxLength={200} className="max-w-[24rem]" />
-        <TextInput {...field("contact.email")} type="email" label={L("contactEmail", locale)} autoComplete="off" maxLength={320} className="max-w-[24rem]" />
-        <TextInput {...field("contact.phone")} type="tel" label={L("contactPhone", locale)} autoComplete="off" maxLength={40} className="max-w-[16rem]" />
-        <TextInput {...field("contact.lineId")} label={L("contactLine", locale)} autoComplete="off" maxLength={100} className="max-w-[16rem]" />
+        <TextInput {...field("contact.name")} defaultValue={typed(state, "contact.name")} label={L("lfcFieldName", locale)} autoComplete="off" maxLength={200} className="max-w-[24rem]" />
+        <TextInput {...field("contact.email")} defaultValue={typed(state, "contact.email")} type="email" label={L("contactEmail", locale)} autoComplete="off" maxLength={320} className="max-w-[24rem]" />
+        <TextInput {...field("contact.phone")} defaultValue={typed(state, "contact.phone")} type="tel" label={L("contactPhone", locale)} autoComplete="off" maxLength={40} className="max-w-[16rem]" />
+        <TextInput {...field("contact.lineId")} defaultValue={typed(state, "contact.lineId")} label={L("contactLine", locale)} autoComplete="off" maxLength={100} className="max-w-[16rem]" />
         <Select
           {...field("contact.preferred")}
+          defaultValue={typed(state, "contact.preferred")}
           label={L("contactPreferred", locale)}
           options={[
             { value: "", label: L("choiceNone", locale) },
@@ -202,15 +209,15 @@ export function WalkInLostForm({ locale, orgId, categories, places }: { locale: 
             { value: "th", label: L("langThai", locale) },
             { value: "en", label: L("langEnglish", locale) },
           ]}
-          defaultValue={locale}
+          defaultValue={typed(state, "language", locale)}
           className="max-w-[16rem]"
         />
         <label className="flex items-start gap-[var(--space-2)]">
-          <input type="checkbox" name="contact.consentContact" className={checkbox} />
+          <input type="checkbox" name="contact.consentContact" defaultChecked={ticked(state, "contact.consentContact")} className={checkbox} />
           <span>{L("lfcConsentContact", locale)}</span>
         </label>
         <label className="flex items-start gap-[var(--space-2)]">
-          <input type="checkbox" name="contact.consentShare" className={checkbox} />
+          <input type="checkbox" name="contact.consentShare" defaultChecked={ticked(state, "contact.consentShare")} className={checkbox} />
           <span>{L("lfcConsentShare", locale)}</span>
         </label>
       </section>
@@ -260,30 +267,32 @@ export function MatchButton({ locale, caseId, orgId, lostCaseId, foundCaseId, sc
 /* Show and hide a decrypted value (hidden detail, claim answer) */
 
 function Reveal({ locale, action, fields, showLabel, shownTitle, loggedNote, emptyNote }: { locale: Locale; action: typeof revealVerificationAction; fields: Record<string, string | number>; showLabel: string; shownTitle: string; loggedNote: string; emptyNote: string }) {
-  const [state, run, pending] = useActionState<LfState, FormData>(action, EMPTY);
-  const [hidden, setHidden] = useState(false);
-  const shown = state.secret !== undefined && !hidden;
+  const { state, pending, reveal, hide } = useReveal<LfState, string>({
+    action,
+    initial: EMPTY,
+    select: (s) => (s.error ? { error: s.error } : s.secret !== undefined ? { value: s.secret ?? "" } : null),
+    failureMessage: a("csRevealFailed", locale),
+  });
   return (
     <div className="flex flex-col gap-[var(--space-2)]">
-      {state.error ? <p role="alert" className="m-0 font-medium text-error">{state.error}</p> : null}
-      {shown ? (
+      {state.status === "error" ? (
+        <p role="alert" className="m-0 font-medium text-error">
+          {state.message}
+        </p>
+      ) : null}
+      {state.status === "shown" ? (
         <div aria-live="polite" className="flex flex-col gap-[var(--space-2)]">
           <p className="m-0 text-sm font-medium text-ink-600">{shownTitle}</p>
-          <p className="m-0 whitespace-pre-wrap rounded-control border border-line-strong bg-surface-alt p-[var(--space-3)]">{state.secret ? state.secret : emptyNote}</p>
+          <p className="m-0 whitespace-pre-wrap rounded-control border border-line-strong bg-surface-alt p-[var(--space-3)]">{state.value ? state.value : emptyNote}</p>
           <div>
-            <Button type="button" variant="secondary" size="sm" onClick={() => setHidden(true)}>
+            <Button type="button" variant="secondary" size="sm" onClick={hide}>
               {a("lfcRevealHide", locale)}
               <span className="visually-hidden"> {shownTitle}</span>
             </Button>
           </div>
         </div>
       ) : (
-        <form
-          action={(fd) => {
-            setHidden(false);
-            run(fd);
-          }}
-        >
+        <form action={reveal}>
           {Object.entries(fields).map(([name, value]) => (
             <input key={name} type="hidden" name={name} value={value} />
           ))}
@@ -349,8 +358,8 @@ export function StorageForm({ locale, caseId, orgId, desks, deskId, shelf }: Bas
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]">
       <Feedback state={state} locale={locale} prefix={prefix} />
       <HiddenIds caseId={caseId} orgId={orgId} />
-      <Select id={control(prefix, "organisationId")} name="organisationId" error={errors.organisationId} label={L("lfcFieldDesk", locale)} options={desks} defaultValue={deskId ? String(deskId) : String(orgId)} className="max-w-[24rem]" />
-      <TextInput id={control(prefix, "shelf")} name="shelf" error={errors.shelf} label={L("lfcFieldShelf", locale)} hint={L("lfcFieldShelfHint", locale)} defaultValue={shelf} maxLength={120} className="max-w-[24rem]" />
+      <Select id={control(prefix, "organisationId")} name="organisationId" error={errors.organisationId} label={L("lfcFieldDesk", locale)} options={desks} defaultValue={typed(state, "organisationId", deskId ? String(deskId) : String(orgId))} className="max-w-[24rem]" />
+      <TextInput id={control(prefix, "shelf")} name="shelf" error={errors.shelf} label={L("lfcFieldShelf", locale)} hint={L("lfcFieldShelfHint", locale)} defaultValue={typed(state, "shelf", shelf)} maxLength={120} className="max-w-[24rem]" />
       <SaveButton locale={locale} pending={pending} label={L("lfcStorageSave", locale)} />
     </form>
   );
@@ -369,6 +378,7 @@ export function VerificationForm({ locale, caseId, orgId, has }: Base & { has: b
         error={state.errors?.detail}
         label={L(has ? "lfcVerificationReplace" : "lfcFieldVerification", locale)}
         hint={L("lfcFieldVerificationHint", locale)}
+        defaultValue={typed(state, "detail")}
         rows={4}
         maxLength={2000}
         key={state.saved ? "saved" : "typing"}
@@ -389,12 +399,12 @@ export function FinderForm({ locale, caseId, orgId, has }: Base & { has: boolean
       <HiddenIds caseId={caseId} orgId={orgId} />
       {has ? <InsetText>{L("lfcFinderHeld", locale)}</InsetText> : null}
       <InsetText>{L("lfcFinderHint", locale)}</InsetText>
-      <TextInput {...f("name")} label={L("lfcFieldName", locale)} maxLength={200} className="max-w-[24rem]" />
-      <TextInput {...f("email")} type="email" label={L("contactEmail", locale)} maxLength={320} className="max-w-[24rem]" />
-      <TextInput {...f("phone")} type="tel" label={L("contactPhone", locale)} maxLength={40} className="max-w-[16rem]" />
-      <TextInput {...f("lineId")} label={L("contactLine", locale)} maxLength={100} className="max-w-[16rem]" />
+      <TextInput {...f("name")} defaultValue={typed(state, "finder.name")} label={L("lfcFieldName", locale)} maxLength={200} className="max-w-[24rem]" />
+      <TextInput {...f("email")} defaultValue={typed(state, "finder.email")} type="email" label={L("contactEmail", locale)} maxLength={320} className="max-w-[24rem]" />
+      <TextInput {...f("phone")} defaultValue={typed(state, "finder.phone")} type="tel" label={L("contactPhone", locale)} maxLength={40} className="max-w-[16rem]" />
+      <TextInput {...f("lineId")} defaultValue={typed(state, "finder.lineId")} label={L("contactLine", locale)} maxLength={100} className="max-w-[16rem]" />
       <label className="flex items-start gap-[var(--space-2)]">
-        <input type="checkbox" name="finder.consentContact" className={checkbox} />
+        <input type="checkbox" name="finder.consentContact" defaultChecked={ticked(state, "finder.consentContact")} className={checkbox} />
         <span>{L("lfcFinderConsent", locale)}</span>
       </label>
       <SaveButton locale={locale} pending={pending} label={L("lfcFinderSave", locale)} />
@@ -404,9 +414,12 @@ export function FinderForm({ locale, caseId, orgId, has }: Base & { has: boolean
 
 /** Photo upload. The picture is compressed in the browser first, as in the content image picker. */
 export function PhotoUpload({ locale, caseId, orgId, storageConfigured, canPublic }: Base & { storageConfigured: boolean; canPublic: boolean }) {
-  const [state, setState] = useState<LfState>({});
-  const [note, setNote] = useState<string | null>(null);
-  const [pending, start] = useTransition();
+  const upload = useImageUpload<LfState>(locale);
+  const [saved, setSaved] = useState<LfState>({});
+  const [pending, startTransition] = useTransition();
+  const failed = uploadError(upload.state);
+  const note = uploadNote(upload.state);
+  const state: LfState = failed ? { error: failed } : saved;
   const id = useId().replace(/:/g, "");
   if (!storageConfigured) {
     return (
@@ -423,20 +436,23 @@ export function PhotoUpload({ locale, caseId, orgId, storageConfigured, canPubli
         const form = event.currentTarget;
         const file = form.querySelector<HTMLInputElement>('input[type="file"]')?.files?.[0];
         const publicToo = form.querySelector<HTMLInputElement>('input[name="publicToo"]')?.checked;
-        setState({});
-        setNote(null);
-        start(async () => {
-          if (!file) return setState({ error: a("errUploadChoose", locale) });
-          const compressed = await compressInBrowser(file);
-          if (compressed.status === "failed") return setState({ error: a(compressed.reason === "decode" ? "errUploadCompressDecode" : "errUploadCompressStill", locale) });
-          if (compressed.status === "compressed") setNote(a("imageCompressed", locale, { from: formatMegabytes(compressed.originalBytes), to: formatMegabytes(compressed.compressedBytes) }));
-          const data = new FormData();
-          data.set("caseId", caseId);
-          data.set("org", String(orgId));
-          data.set("file", compressed.file);
-          if (publicToo) data.set("publicToo", "on");
-          setState(await uploadPhotoAction(data));
-          form.reset();
+        setSaved({});
+        upload.reset();
+        startTransition(async () => {
+          if (!file) return setSaved({ error: a("errUploadChoose", locale) });
+          const outcome = await upload.start(file, async (sent) => {
+            const data = new FormData();
+            data.set("caseId", caseId);
+            data.set("org", String(orgId));
+            data.set("file", sent ?? file);
+            if (publicToo) data.set("publicToo", "on");
+            const result = await uploadPhotoAction(data);
+            return result.error ? { ok: false, error: result.error } : { ok: true, result };
+          });
+          if (outcome.status === "done") {
+            setSaved(outcome.result);
+            form.reset();
+          }
         });
       }}
     >
@@ -479,13 +495,13 @@ export function AddClaimForm({ locale, caseId, orgId }: Base) {
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]" autoComplete="off">
       <Feedback state={state} locale={locale} prefix={prefix} />
       <HiddenIds caseId={caseId} orgId={orgId} />
-      <Textarea {...f("answer")} label={L("lfcFieldClaimAnswer", locale)} hint={L("lfcFieldClaimAnswerHint", locale)} rows={4} maxLength={2000} key={state.saved ? "saved" : "typing"} />
-      <TextInput {...f("claimant.name")} label={L("lfcFieldName", locale)} maxLength={200} className="max-w-[24rem]" />
-      <TextInput {...f("claimant.email")} type="email" label={L("contactEmail", locale)} maxLength={320} className="max-w-[24rem]" />
-      <TextInput {...f("claimant.phone")} type="tel" label={L("contactPhone", locale)} maxLength={40} className="max-w-[16rem]" />
-      <TextInput {...f("claimant.lineId")} label={L("contactLine", locale)} maxLength={100} className="max-w-[16rem]" />
+      <Textarea {...f("answer")} defaultValue={typed(state, "answer")} label={L("lfcFieldClaimAnswer", locale)} hint={L("lfcFieldClaimAnswerHint", locale)} rows={4} maxLength={2000} key={state.saved ? "saved" : "typing"} />
+      <TextInput {...f("claimant.name")} defaultValue={typed(state, "claimant.name")} label={L("lfcFieldName", locale)} maxLength={200} className="max-w-[24rem]" />
+      <TextInput {...f("claimant.email")} defaultValue={typed(state, "claimant.email")} type="email" label={L("contactEmail", locale)} maxLength={320} className="max-w-[24rem]" />
+      <TextInput {...f("claimant.phone")} defaultValue={typed(state, "claimant.phone")} type="tel" label={L("contactPhone", locale)} maxLength={40} className="max-w-[16rem]" />
+      <TextInput {...f("claimant.lineId")} defaultValue={typed(state, "claimant.lineId")} label={L("contactLine", locale)} maxLength={100} className="max-w-[16rem]" />
       <label className="flex items-start gap-[var(--space-2)]">
-        <input type="checkbox" name="claimant.consentContact" className={checkbox} />
+        <input type="checkbox" name="claimant.consentContact" defaultChecked={ticked(state, "claimant.consentContact")} className={checkbox} />
         <span>{L("lfcConsentContact", locale)}</span>
       </label>
       <SaveButton locale={locale} pending={pending} label={L("lfcClaimAdd", locale)} />
@@ -507,8 +523,8 @@ export function ClaimReview({ locale, caseId, orgId, claimId, defaultReject, has
       {rejecting ? (
         <div className="flex flex-col gap-[var(--space-3)]">
           <InsetText>{L("lfcRejectHint", locale)}</InsetText>
-          <Textarea id={control(prefix, "message.th")} name="message.th" lang="th" error={errors["message.th"]} label={`${L("lfcFieldRejectMessage", locale)} (${L("langThai", locale)})`} defaultValue={defaultReject.th} rows={3} maxLength={1000} />
-          <Textarea id={control(prefix, "message.en")} name="message.en" lang="en" error={errors["message.en"]} label={`${L("lfcFieldRejectMessage", locale)} (${L("langEnglish", locale)})`} defaultValue={defaultReject.en} rows={3} maxLength={1000} />
+          <Textarea id={control(prefix, "message.th")} name="message.th" lang="th" error={errors["message.th"]} label={`${L("lfcFieldRejectMessage", locale)} (${L("langThai", locale)})`} defaultValue={typed(state, "message.th", defaultReject.th)} rows={3} maxLength={1000} />
+          <Textarea id={control(prefix, "message.en")} name="message.en" lang="en" error={errors["message.en"]} label={`${L("lfcFieldRejectMessage", locale)} (${L("langEnglish", locale)})`} defaultValue={typed(state, "message.en", defaultReject.en)} rows={3} maxLength={1000} />
           <div className="flex flex-wrap gap-[var(--space-2)]">
             <Button type="submit" name="decision" value="rejected" variant="destructive" loading={pending} loadingLabel={a("caseSaving", locale)}>
               {L("lfcRejectConfirm", locale)}
@@ -521,8 +537,8 @@ export function ClaimReview({ locale, caseId, orgId, claimId, defaultReject, has
       ) : (
         <>
           <InsetText>{L("lfcCollectionHint", locale)}</InsetText>
-          <Textarea id={control(prefix, "collection.th")} name="collection.th" lang="th" error={errors["collection.th"]} label={`${L("lfcFieldCollectionNote", locale)} (${L("langThai", locale)})`} rows={2} maxLength={1000} />
-          <Textarea id={control(prefix, "collection.en")} name="collection.en" lang="en" error={errors["collection.en"]} label={`${L("lfcFieldCollectionNote", locale)} (${L("langEnglish", locale)})`} rows={2} maxLength={1000} />
+          <Textarea id={control(prefix, "collection.th")} name="collection.th" lang="th" error={errors["collection.th"]} defaultValue={typed(state, "collection.th")} label={`${L("lfcFieldCollectionNote", locale)} (${L("langThai", locale)})`} rows={2} maxLength={1000} />
+          <Textarea id={control(prefix, "collection.en")} name="collection.en" lang="en" error={errors["collection.en"]} defaultValue={typed(state, "collection.en")} label={`${L("lfcFieldCollectionNote", locale)} (${L("langEnglish", locale)})`} rows={2} maxLength={1000} />
           <div className="flex flex-wrap gap-[var(--space-2)]">
             <Button type="submit" name="decision" value="accepted" loading={pending} loadingLabel={a("caseSaving", locale)}>
               {L("lfcAccept", locale)}
@@ -549,17 +565,18 @@ export function HandoverForm({ locale, caseId, orgId, desks, deskId, nowLocal, l
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]" autoComplete="off">
       <Feedback state={state} locale={locale} prefix={prefix} />
       <HiddenIds caseId={caseId} orgId={orgId} />
-      <TextInput {...f("collectedByName")} label={L("lfcFieldCollector", locale)} hint={L(collectorKnown ? "lfcFieldCollectorKnown" : "lfcFieldCollectorHint", locale)} maxLength={200} className="max-w-[24rem]" />
+      <TextInput {...f("collectedByName")} defaultValue={typed(state, "collectedByName")} label={L("lfcFieldCollector", locale)} hint={L(collectorKnown ? "lfcFieldCollectorKnown" : "lfcFieldCollectorHint", locale)} maxLength={200} className="max-w-[24rem]" />
       <Select
         {...f("idCheckType")}
+        defaultValue={typed(state, "idCheckType")}
         label={L("lfcFieldIdCheck", locale)}
         hint={L("lfcFieldIdCheckHint", locale)}
         options={[{ value: "", label: L("choiceSelect", locale) }, ...ID_CHECK_TYPES.map((value) => ({ value, label: L(`lfcIdCheck_${value}` as AdminKey, locale) }))]}
         className="max-w-[24rem]"
       />
-      <TextInput {...f("collectedAt")} type="datetime-local" label={L("lfcFieldCollectedAt", locale)} defaultValue={nowLocal} className="max-w-[20rem]" />
-      <Select {...f("deskOrganisationId")} label={L("lfcFieldHandoverDesk", locale)} hint={L("lfcFieldHandoverDeskHint", locale)} options={desks} defaultValue={String(deskId)} className="max-w-[24rem]" />
-      {lostChoices.length > 1 ? <Select {...f("lostCaseId")} label={L("lfcFieldLostReport", locale)} options={lostChoices} className="max-w-[24rem]" /> : lostChoices.length === 1 ? <input type="hidden" name="lostCaseId" value={lostChoices[0]!.value} /> : null}
+      <TextInput {...f("collectedAt")} type="datetime-local" label={L("lfcFieldCollectedAt", locale)} defaultValue={typed(state, "collectedAt", nowLocal)} className="max-w-[20rem]" />
+      <Select {...f("deskOrganisationId")} label={L("lfcFieldHandoverDesk", locale)} hint={L("lfcFieldHandoverDeskHint", locale)} options={desks} defaultValue={typed(state, "deskOrganisationId", String(deskId))} className="max-w-[24rem]" />
+      {lostChoices.length > 1 ? <Select {...f("lostCaseId")} defaultValue={typed(state, "lostCaseId")} label={L("lfcFieldLostReport", locale)} options={lostChoices} className="max-w-[24rem]" /> : lostChoices.length === 1 ? <input type="hidden" name="lostCaseId" value={lostChoices[0]!.value} /> : null}
       <InsetText>{L("lfcHandoverNoId", locale)}</InsetText>
       <SaveButton locale={locale} pending={pending} variant="primary" label={L("lfcHandoverSave", locale)} />
     </form>

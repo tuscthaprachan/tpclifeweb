@@ -34,6 +34,7 @@ import { notifyLostReporter, type NoticeKind, type ReminderReason } from "@/lib/
 import { addPrivatePhoto } from "@/lib/lost-found/photos";
 import { readIdentifyingDetail } from "@/lib/lost-found/identifying";
 import { getStorage } from "@/lib/storage";
+import { withValues } from "./form-values";
 import type { CasePreferredContact } from "@/lib/db/schema/cases";
 
 /** What every form here returns. `errors` are keyed by posted field name. */
@@ -45,6 +46,8 @@ export interface LfState {
   notice?: { result: "sent" | "remind"; reason?: ReminderReason; preferred?: CasePreferredContact | null };
   /** The text of a decrypted field, for this response only. */
   secret?: string | null;
+  /** The submitted text fields, returned with a problem so the inputs keep what was typed. */
+  values?: Record<string, string>;
 }
 
 const text = (fd: FormData, name: string): string => {
@@ -91,9 +94,9 @@ async function onCase(fd: FormData, work: (ctx: Ctx) => Promise<LfState>, field 
     const state = await work({ locale, caseId, actor });
     revalidatePath(`/admin/cases/${caseId}`);
     revalidatePath("/admin/cases");
-    return state;
+    return withValues(state, fd);
   } catch (error) {
-    return { error: messageFor(error, locale) };
+    return withValues({ error: messageFor(error, locale) }, fd);
   }
 }
 
@@ -314,12 +317,12 @@ export async function startFoundAction(_prev: LfState, fd: FormData): Promise<Lf
     throw error;
   });
   const parsed = parseDescription(fd, locale);
-  if (!parsed.ok) return { errors: parsed.errors };
+  if (!parsed.ok) return withValues({ errors: parsed.errors }, fd);
   let caseId: string;
   try {
     ({ caseId } = await logFoundItem(getDb(), parsed.data, actor, { locale, staffLocale: locale }));
   } catch (error) {
-    return { error: messageFor(error, locale) };
+    return withValues({ error: messageFor(error, locale) }, fd);
   }
   revalidatePath("/admin/cases");
   redirect(`/admin/cases/new/found/${caseId}`);
@@ -344,12 +347,12 @@ export async function logLostAction(_prev: LfState, fd: FormData): Promise<LfSta
     throw error;
   });
   const parsed = parseWalkIn(fd, locale);
-  if (!parsed.ok) return { errors: parsed.errors };
+  if (!parsed.ok) return withValues({ errors: parsed.errors }, fd);
   let caseId: string;
   try {
     ({ caseId } = await logWalkInLostReport(getDb(), parsed.data, actor, { staffLocale: locale }));
   } catch (error) {
-    return { error: messageFor(error, locale) };
+    return withValues({ error: messageFor(error, locale) }, fd);
   }
   revalidatePath("/admin/cases");
   redirect(`/admin/cases/${caseId}`);

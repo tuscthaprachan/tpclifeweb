@@ -9,12 +9,15 @@ import { getDb } from "@/lib/db";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { RedirectExistsError, RedirectInvalidError, RedirectNotFoundError, deleteRedirect, saveRedirect } from "@/lib/redirects/store";
 import type { RedirectProblem } from "@/lib/redirects/validate";
+import { redirectValues, type RedirectValues } from "./form-values";
 
 const LIST = "/admin/settings/redirects";
 
 export interface RedirectFormState {
   errors: { from?: string; to?: string; status?: string };
   formError?: string;
+  /** What was typed, returned with a problem so the inputs keep it. */
+  values?: RedirectValues;
 }
 
 const PROBLEM_KEY: Record<RedirectProblem, AdminKey> = {
@@ -38,7 +41,7 @@ const text = (data: FormData, key: string): string => {
 export async function saveRedirectAction(id: string | null, _prev: RedirectFormState, formData: FormData): Promise<RedirectFormState> {
   const locale = await getAdminLocale();
   const staff = await requireEditor();
-  if (id !== null && !isUuid(id)) return { errors: {}, formError: a("errNotFound", locale) };
+  if (id !== null && !isUuid(id)) return { errors: {}, formError: a("errNotFound", locale), values: redirectValues(formData) };
   try {
     await saveRedirect(getDb(), await contentActor(staff), {
       id: id ?? undefined,
@@ -53,10 +56,10 @@ export async function saveRedirectAction(id: string | null, _prev: RedirectFormS
         const problem = error.errors[field];
         if (problem) errors[field] = a(PROBLEM_KEY[problem], locale);
       }
-      return { errors };
+      return { errors, values: redirectValues(formData) };
     }
-    if (error instanceof RedirectExistsError) return { errors: { from: a("rdErrExists", locale) } };
-    if (error instanceof RedirectNotFoundError) return { errors: {}, formError: a("errNotFound", locale) };
+    if (error instanceof RedirectExistsError) return { errors: { from: a("rdErrExists", locale) }, values: redirectValues(formData) };
+    if (error instanceof RedirectNotFoundError) return { errors: {}, formError: a("errNotFound", locale), values: redirectValues(formData) };
     throw error;
   }
   revalidateFor("redirect");

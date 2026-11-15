@@ -1,13 +1,14 @@
 "use client";
 
 import { useActionState } from "react";
-import { importCsv, type CsvImportKind, type CsvImportState } from "@/app/admin/content/open-data/actions";
+import { importCsv, type CsvImportKind } from "@/app/admin/content/open-data/actions";
 import { Button, DataTable, ErrorSummary, NotificationBanner, Select, TextInput, type DataTableColumn } from "@/components/ui";
 import { describeCsvError, type CsvRowError } from "@/lib/admin/open-data/csv-import";
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
+import { IMPORT_IDLE, importValues, importView, type ImportView } from "./import-state";
 
 interface Props {
   locale: Locale;
@@ -18,8 +19,9 @@ interface Props {
 
 /** One CSV upload. The whole file is checked on the server; either every row is saved or none and each problem row is listed. */
 export function ImportForm({ locale, kind, columns, owners }: Props) {
-  const [state, formAction, pending] = useActionState<CsvImportState, FormData>(importCsv.bind(null, kind), {});
-  const failure = state.failure;
+  const [state, formAction, pending] = useActionState<ImportView, FormData>(async (_previous, formData) => importView(await importCsv(kind, {}, formData), importValues(formData)), IMPORT_IDLE);
+  const failure = state.status === "failure" ? state.failure : null;
+  const values = state.status === "error" || state.status === "failure" ? state.values : null;
   const id = `import-${kind}`;
 
   const rowColumns: DataTableColumn<CsvRowError>[] = [
@@ -29,8 +31,8 @@ export function ImportForm({ locale, kind, columns, owners }: Props) {
     { id: "problem", header: a("odmCsvProblem", locale), cell: (e) => describeCsvError(e, locale) },
   ];
 
-  const summary: string | null = state.error
-    ? state.error
+  const summary: string | null = state.status === "error"
+    ? state.message
     : failure?.reason === "empty"
       ? a("odmCsvEmptyFile", locale)
       : failure?.reason === "headers"
@@ -44,7 +46,7 @@ export function ImportForm({ locale, kind, columns, owners }: Props) {
   return (
     <form action={formAction} noValidate className="flex flex-col gap-[var(--space-4)]">
       {summary ? <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={3} items={[{ href: `#${id}-file`, message: summary }]} /> : null}
-      {state.done ? (
+      {state.status === "done" ? (
         <NotificationBanner variant="success" title={a("odmCsvDone", locale)}>
           {a("odmCsvDoneBody", locale, {
             total: formatNumber(state.done.total, locale),
@@ -72,8 +74,8 @@ export function ImportForm({ locale, kind, columns, owners }: Props) {
       <p className="m-0 text-sm text-ink-600">
         {a("odmCsvColumnsHint", locale)} <code>{columns.join(", ")}</code>
       </p>
-      <Select id={`${id}-owner`} name="owner" label={a("fieldOwner", locale)} options={owners} defaultValue={owners.length === 1 ? owners[0]?.value : ""} className="max-w-[24rem]" />
-      {kind === "budget" ? <TextInput id={`${id}-source`} name="sourceDocument" label={a("odmFieldSourceNumber", locale)} hint={a("odmHintSourceNumber", locale)} autoComplete="off" className="max-w-[16rem]" /> : null}
+      <Select id={`${id}-owner`} name="owner" label={a("fieldOwner", locale)} options={owners} defaultValue={values?.owner ?? (owners.length === 1 ? owners[0]?.value : "")} className="max-w-[24rem]" />
+      {kind === "budget" ? <TextInput id={`${id}-source`} name="sourceDocument" defaultValue={values?.sourceDocument ?? ""} label={a("odmFieldSourceNumber", locale)} hint={a("odmHintSourceNumber", locale)} autoComplete="off" className="max-w-[16rem]" /> : null}
       <div className="flex flex-col gap-[var(--space-1)]">
         <label htmlFor={`${id}-file`} className="font-medium">
           {a("odmFieldCsvFile", locale)}
