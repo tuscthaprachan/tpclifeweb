@@ -116,7 +116,7 @@ export default async function BorrowStatusPage({ params, searchParams }: { param
           </ol>
         </Stack>
 
-        {loan.canCancel ? (
+        {loan.actions.includes("withdraw") ? (
           <Stack space={2} as="section">
             <Heading level={2}>{UI.brYouCan[locale]}</Heading>
             <p className="m-0">

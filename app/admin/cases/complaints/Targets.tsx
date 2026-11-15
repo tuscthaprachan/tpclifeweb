@@ -1,3 +1,4 @@
+import { isTerminalStatus } from "@/lib/cases/services";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Timestamp } from "@/components/ui";
 import type { ComplaintFacts } from "@/lib/complaints/details";
@@ -5,11 +6,9 @@ import { workingDaysUntil } from "@/lib/complaints/working-days";
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 
-export const WORKING_STATUSES = new Set(["received", "acknowledged", "in_progress", "reopened"]);
-
 /** The acknowledge and resolve targets of a complaint with the time left, as plain facts with no personal data. */
 export function ComplaintTargets({ facts, status, locale, now }: { facts: ComplaintFacts; status: string; locale: Locale; now: Date }) {
-  const open = WORKING_STATUSES.has(status);
+  const open = !isTerminalStatus("complaint", "complaint", status);
   const target = (label: string, due: Date, done: Date | null) => {
     let state: React.ReactNode;
     if (done) {

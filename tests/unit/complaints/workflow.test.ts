@@ -116,8 +116,8 @@ describe("workflow", () => {
     const open = await openTracked(t.db, c.reference, c.token, "1.1.1.1", NOW);
     expect(open.state).toBe("ok");
     if (open.state === "ok") {
-      expect(open.complaint.canWithdraw).toBe(true);
-      expect(open.complaint.canReopen).toBe(false);
+      expect(open.complaint.actions).toContain("withdraw");
+      expect(open.complaint.actions).not.toContain("reopen");
     }
     expect(await reopenTracked(t.db, c.reference, c.token, "", { ip: "1.1.1.1" }, { now: NOW })).toBe("not_allowed");
     expect(await withdrawTracked(t.db, c.reference, c.token, { ip: "1.1.1.1" }, NOW)).toBe("done");

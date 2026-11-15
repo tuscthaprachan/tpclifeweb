@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formValues, withValues } from "@/app/admin/cases/lost-found/form-values";
+import type { LfState } from "@/app/admin/cases/lost-found/lf-state";
 
 const form = (entries: Array<[string, string | Blob]>) => {
   const fd = new FormData();
@@ -27,19 +28,19 @@ describe("formValues", () => {
 describe("withValues", () => {
   const fd = form([["shelf", "A2"]]);
   it("adds the values to a validation error and to a thrown-error message", () => {
-    expect(withValues({ errors: { shelf: "x" } }, fd)).toEqual({ errors: { shelf: "x" }, values: { shelf: "A2" } });
-    expect(withValues({ error: "boom" }, fd)).toEqual({ error: "boom", values: { shelf: "A2" } });
+    expect(withValues({ status: "invalid", errors: { shelf: "x" } }, fd)).toEqual({ status: "invalid", errors: { shelf: "x" }, values: { shelf: "A2" } });
+    expect(withValues({ status: "failed", error: "boom" }, fd)).toEqual({ status: "failed", error: "boom", values: { shelf: "A2" } });
   });
   it("leaves a saved or empty result alone so a save still clears the fields", () => {
-    const saved = { saved: "lfcSavedStorage" };
+    const saved: LfState = { status: "saved", saved: "lfcSavedStorage" };
     expect(withValues(saved, fd)).toBe(saved);
-    const empty = {};
-    expect(withValues(empty, fd)).toBe(empty);
-    const none = { errors: {} };
-    expect(withValues(none, fd)).toBe(none);
+    const idle: LfState = { status: "idle" };
+    expect(withValues(idle, fd)).toBe(idle);
+    const secret: LfState = { status: "secret", secret: "x" };
+    expect(withValues(secret, fd)).toBe(secret);
   });
   it("does not overwrite values the action already set", () => {
-    const state = { error: "e", values: { shelf: "keep" } };
+    const state: LfState = { status: "failed", error: "e", values: { shelf: "keep" } };
     expect(withValues(state, fd)).toBe(state);
   });
 });

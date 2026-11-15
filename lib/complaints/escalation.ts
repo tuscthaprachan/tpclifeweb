@@ -8,15 +8,16 @@
  *                           not yet acknowledged) or its resolve target is
  *                           flagged `escalated`, with an internal event
  *
- * Neither is a status change by a person, so the engine's `transition` (which
- * refuses the system actor) is not used: the same rows are written here under
- * one lock, event and audit entry per complaint. A failure for one complaint
- * is logged and the rest go on; the next run tries it again.
+ * Closing is a system move the machine declares (`systemTo`), made through the
+ * engine's `systemTransition` with the audit action `complaint.auto_close`;
+ * escalation is a flag, written here under one lock, event and audit entry per
+ * complaint. A failure for one complaint is logged and the rest go on; the
+ * next run tries it again.
  */
 
 import { and, eq, isNull, lt, or } from "drizzle-orm";
-import { addOneYear, appendEvent, lockCase } from "@/lib/cases/internal";
-import { isPublicStatus } from "@/lib/cases/services";
+import { systemTransition } from "@/lib/cases/engine";
+import { appendEvent, lockCase } from "@/lib/cases/internal";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { caseAudience, createNotifications } from "@/lib/notifications/create";
 import { cases } from "@/lib/db/schema/cases";
@@ -40,21 +41,13 @@ export async function closeLapsedResolutions(db: AuditExecutor, now: Date): Prom
   const closed: string[] = [];
   for (const { caseId } of due) {
     try {
-      const reference = await withAudit(db, { actorUserId: null }, async (tx, audit) => {
-        const row = await lockCase(tx, caseId);
-        if (row.status !== "resolved") return null;
-        await tx.update(cases).set({ status: "closed", closedAt: now, piiDeleteAfter: addOneYear(now), updatedAt: now }).where(eq(cases.id, caseId));
-        await appendEvent(tx, caseId, SYSTEM, now, {
-          type: "status_changed",
-          visibility: isPublicStatus("complaint", "complaint", "closed") ? "public" : "internal",
-          fromStatus: "resolved",
-          toStatus: "closed",
-          metadata: { auto: true },
-        });
-        await audit({ action: "complaint.auto_close", entityType: "case", entityId: caseId, before: { status: "resolved" }, after: { status: "closed", reopenWindowDays: REOPEN_WINDOW_DAYS } });
-        return row.reference;
+      const moved = await systemTransition(db, caseId, "closed", SYSTEM, {
+        now,
+        auditAction: "complaint.auto_close",
+        auditAfter: { reopenWindowDays: REOPEN_WINDOW_DAYS },
+        metadata: { auto: true },
       });
-      if (reference) closed.push(reference);
+      if (moved) closed.push(moved.reference);
     } catch (error) {
       console.error(`[complaints] could not close ${caseId}`, error instanceof Error ? error.message : error);
     }

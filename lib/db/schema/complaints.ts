@@ -4,6 +4,7 @@ import { user } from "./auth";
 import { caseAttachments, cases } from "./cases";
 import { directoryOrganisations } from "./content/directory";
 import { faculties } from "./content/faculties";
+import type { EscalationReason } from "@/lib/complaints/overdue";
 
 /**
  * Complaints (lib/complaints), additive to the case engine's tables. A
@@ -118,7 +119,7 @@ export const complaintCases = pgTable(
     acknowledgedAt: timestamp("acknowledged_at", { withTimezone: true }),
     resolvedAt: timestamp("resolved_at", { withTimezone: true }),
     escalatedAt: timestamp("escalated_at", { withTimezone: true }),
-    escalatedReason: text("escalated_reason"),
+    escalatedReason: text("escalated_reason").$type<EscalationReason>(),
     wellbeingRoutedAt: timestamp("wellbeing_routed_at", { withTimezone: true }),
     reopenCount: integer("reopen_count").notNull().default(0),
     redirectedAt: timestamp("redirected_at", { withTimezone: true }),

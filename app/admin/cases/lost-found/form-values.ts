@@ -1,3 +1,5 @@
+import type { LfState } from "./lf-state";
+
 /** Field names never echoed back to the browser, whatever the form. Hidden ids are not form content. */
 const NEVER_ECHOED = /password|passcode|token|secret/i;
 const HIDDEN_IDS: ReadonlySet<string> = new Set(["caseId", "org"]);
@@ -17,9 +19,8 @@ export function formValues(formData: FormData, omit: readonly string[] = []): Re
   return values;
 }
 
-/** Adds the submitted values to a state that reports a problem; a saved or empty state passes through. */
-export function withValues<S extends { error?: string; errors?: Record<string, string>; saved?: unknown; values?: Record<string, string> }>(state: S, formData: FormData): S {
-  if (state.saved || state.values) return state;
-  const failed = state.error !== undefined || Object.keys(state.errors ?? {}).length > 0;
-  return failed ? { ...state, values: formValues(formData) } : state;
+/** Adds the submitted values to a state that reports a problem, unless the action already set them; any other state passes through, so a save still clears the fields. */
+export function withValues(state: LfState, formData: FormData): LfState {
+  if ((state.status !== "invalid" && state.status !== "failed") || state.values) return state;
+  return { ...state, values: formValues(formData) };
 }

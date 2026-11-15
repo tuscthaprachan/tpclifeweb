@@ -24,6 +24,9 @@ export interface StaffActor {
  */
 export type CaseActor = StaffActor | { kind: "public"; context?: RequestContext } | { kind: "system"; context?: RequestContext };
 
+/** An actor with no account: a scheduled job, or a person on a public journey. Only these may make a system move. */
+export type SystemActor = Exclude<CaseActor, StaffActor>;
+
 export type CaseErrorCode =
   | "forbidden"
   | "not_found"

@@ -15,7 +15,12 @@ import { organisations } from "@/lib/db/schema";
 import { lostFoundCaseDetails, lostFoundClaims, lostFoundHandovers } from "@/lib/db/schema/lost-found-staff";
 import type { LocaleString } from "@/lib/i18n/config";
 
-export type ClaimStage = "waiting" | "accepted" | "not_accepted" | "returned";
+/**
+ * Where a claim is, from the claimant's side. `closed` is derived: nobody decided
+ * the claim, and the item has since been promised to someone else, returned or
+ * removed from the register, so it will not be decided.
+ */
+export type ClaimStage = "waiting" | "accepted" | "not_accepted" | "returned" | "closed";
 
 export interface ClaimTrackEntry {
   id: string;
@@ -45,7 +50,18 @@ export const CLAIM_STAGE_LABEL: Record<ClaimStage, LocaleString> = {
   accepted: s("ยืนยันแล้ว พร้อมให้มารับ", "Accepted, ready to collect"),
   not_accepted: s("ยังยืนยันไม่ได้", "Not accepted"),
   returned: s("คืนให้คุณแล้ว", "Returned to you"),
+  closed: s("ปิดคำขอแล้ว", "Claim closed"),
 };
+
+/** The found item statuses after which an undecided claim will never be decided. */
+const ITEM_SETTLED = ["ready_to_collect", "returned", "withdrawn"];
+
+/** The stage of a claim from the officer's decision (null while undecided) and the found item's case status. */
+export function claimStage(decision: string | null, itemStatus: string): ClaimStage {
+  if (decision === "rejected") return "not_accepted";
+  if (decision === "accepted") return itemStatus === "returned" ? "returned" : "accepted";
+  return ITEM_SETTLED.includes(itemStatus) ? "closed" : "waiting";
+}
 
 const RECEIVED = s("ได้รับคำขอรับของแล้ว", "Claim received");
 const MESSAGE = s("ข้อความจากเจ้าหน้าที่", "Message from staff");
@@ -54,10 +70,10 @@ const MESSAGE = s("ข้อความจากเจ้าหน้าที�
 export async function claimTrackView(db: AuditExecutor, caseId: string, claimId: string): Promise<ClaimTrackView> {
   const [claim] = await db.select().from(lostFoundClaims).where(and(eq(lostFoundClaims.id, claimId), eq(lostFoundClaims.caseId, caseId)));
   if (!claim) throw new CaseError("not_found", "Claim not found.");
-  const [item] = await db.select({ reference: cases.reference, status: cases.status }).from(cases).where(eq(cases.id, caseId));
+  const [item] = await db.select({ reference: cases.reference, status: cases.status, updatedAt: cases.updatedAt }).from(cases).where(eq(cases.id, caseId));
   if (!item) throw new CaseError("not_found", "Case not found.");
 
-  const stage: ClaimStage = claim.decision === "rejected" ? "not_accepted" : claim.decision === "accepted" ? (item.status === "returned" ? "returned" : "accepted") : "waiting";
+  const stage = claimStage(claim.decision, item.status);
 
   const messages = await db
     .select({ id: caseEvents.id, bodyTh: caseEvents.bodyTh, bodyEn: caseEvents.bodyEn, createdAt: caseEvents.createdAt })
@@ -71,6 +87,7 @@ export async function claimTrackView(db: AuditExecutor, caseId: string, claimId:
     const [handover] = await db.select({ collectedAt: lostFoundHandovers.collectedAt }).from(lostFoundHandovers).where(eq(lostFoundHandovers.caseId, caseId));
     if (handover) timeline.push({ id: "returned", at: handover.collectedAt, title: CLAIM_STAGE_LABEL.returned, body: null });
   }
+  if (stage === "closed") timeline.push({ id: "closed", at: item.updatedAt, title: CLAIM_STAGE_LABEL.closed, body: null });
   for (const m of messages) timeline.push({ id: m.id, at: m.createdAt, title: MESSAGE, body: m.bodyTh || m.bodyEn ? { th: m.bodyTh, en: m.bodyEn } : null });
   // Stable, so a decision comes before the message written with it.
   timeline.sort((x, y) => x.at.getTime() - y.at.getTime());

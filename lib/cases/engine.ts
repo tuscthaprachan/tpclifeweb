@@ -20,15 +20,15 @@ import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { complaintEscalated, complaintOverdue } from "@/lib/complaints/overdue";
 import { accessibleServices } from "./access";
-import { AFTER_TRANSITION } from "./hooks";
+import { AFTER_TRANSITION, loadGuardFacts } from "./hooks";
 import { caseDueAt, dueState, type DueState } from "./due";
 import { DEFAULT_CASE_SORT, defaultCaseDir, type CaseSortDir, type CaseSortKey } from "./inbox-query";
 import { listMentionable, parseMentions } from "./mentions";
 import { assertCaseAccess, canSeeCase, caseVisibleTo } from "./restrictions";
 import { insertContact, type ContactInput } from "./contacts";
 import { addOneYear, appendEvent, assertStaff, auditContextOf, cleanText, lockCase, NOTE_MAX, touchCase } from "./internal";
-import { allowedTransitions, getServiceDef, getStatusDef, initialStatus, isPublicStatus, isTerminalStatus, isValidKind, SERVICES } from "./services";
-import { CaseError, type BilingualText, type CaseActor, type PublicUpdateText, type StaffActor } from "./types";
+import { allowedTransitions, canSystemTransition, getServiceDef, getStatusDef, guardsAllow, guardsFor, initialStatus, isPublicStatus, isTerminalStatus, isValidKind, SERVICES } from "./services";
+import { CaseError, type BilingualText, type CaseActor, type PublicUpdateText, type StaffActor, type SystemActor } from "./types";
 import type { PiiEnv } from "@/lib/crypto/pii";
 
 export interface CreateCaseInput {
@@ -118,6 +118,30 @@ export function cleanPublicUpdate(text: PublicUpdateText, what: string): { th: s
   return { th: th ? cleanText(th, NOTE_MAX, `${what} (Thai)`) : null, en: en ? cleanText(en, NOTE_MAX, `${what} (English)`) : null };
 }
 
+/** Throws `invalid_transition` unless every guard on the move allows it. Facts are read only when a guard applies. */
+async function assertGuards(tx: AuditExecutor, row: CaseRow, to: string, now: Date): Promise<void> {
+  if (guardsFor(row.service, row.kind, row.status, to).length === 0) return;
+  const facts = await loadGuardFacts(tx, row.service, row.id);
+  if (!guardsAllow(row.service, row.kind, row.status, to, facts, now)) throw new CaseError("invalid_transition", `${row.status} cannot move to ${to} now.`);
+}
+
+/**
+ * The columns a move to `to` changes: the status, and the closing clocks. Reaching a terminal status sets
+ * `closed_at` and `pii_delete_after` (one year later); leaving one clears both, unless personal data was already deleted.
+ */
+function statusChange(row: CaseRow, to: string, now: Date): Partial<typeof cases.$inferInsert> {
+  const set: Partial<typeof cases.$inferInsert> = { status: to };
+  if (isTerminalStatus(row.service, row.kind, to)) {
+    set.closedAt = now;
+    set.piiDeleteAfter = addOneYear(now);
+  } else if (isTerminalStatus(row.service, row.kind, row.status)) {
+    if (row.piiDeletedAt) throw new CaseError("pii_deleted", "This case cannot be reopened: its personal data has been deleted.");
+    set.closedAt = null;
+    set.piiDeleteAfter = null;
+  }
+  return set;
+}
+
 /**
  * Moves a case to `to` if its state machine allows it. Records a
  * `status_changed` event (public when the new status has a public label).
@@ -139,17 +163,9 @@ export async function transition(db: AuditExecutor, caseId: string, to: string, 
     if (!allowedTransitions(row.service, row.kind, row.status, by).includes(to)) {
       throw new CaseError("invalid_transition", `${row.status} cannot move to ${to}.`);
     }
+    await assertGuards(tx, row, to, now);
     const target = getStatusDef(row.service, row.kind, to)!;
-    const wasTerminal = isTerminalStatus(row.service, row.kind, row.status);
-    const set: Partial<typeof cases.$inferInsert> = { status: to };
-    if (target.terminal) {
-      set.closedAt = now;
-      set.piiDeleteAfter = addOneYear(now);
-    } else if (wasTerminal) {
-      if (row.piiDeletedAt) throw new CaseError("pii_deleted", "This case cannot be reopened: its personal data has been deleted.");
-      set.closedAt = null;
-      set.piiDeleteAfter = null;
-    }
+    const set = statusChange(row, to, now);
     await touchCase(tx, caseId, actor, now, set);
     await appendEvent(tx, caseId, actor, now, {
       type: "status_changed",
@@ -166,6 +182,51 @@ export async function transition(db: AuditExecutor, caseId: string, to: string, 
       entityId: caseId,
       before: { status: row.status },
       after: { status: to, ...(target.terminal ? { piiDeleteAfter: set.piiDeleteAfter?.toISOString() } : {}) },
+    });
+    return { ...row, ...set, updatedAt: now } as CaseRow;
+  });
+}
+
+export interface SystemTransitionOptions {
+  now?: Date;
+  /** The audit action name. Defaults to `case.transition`. */
+  auditAction?: string;
+  /** Extra fields on the audit entry's `after`. */
+  auditAfter?: Record<string, unknown>;
+  /** Stored on the status event. */
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Makes a move the machine lists in `systemTo`, for a job or for a person's
+ * public claim, which `transition` refuses. It runs under the same lock, closing
+ * clocks, guards, public event and after-transition hook as `transition`. Returns
+ * null, changing nothing, when the case is no longer in a status the system may
+ * move to `to` from (someone else moved it first).
+ */
+export async function systemTransition(db: AuditExecutor, caseId: string, to: string, actor: SystemActor, opts: SystemTransitionOptions = {}): Promise<CaseRow | null> {
+  const now = opts.now ?? new Date();
+  return withAudit(db, auditContextOf(actor), async (tx, audit) => {
+    const row = await lockCase(tx, caseId);
+    if (!canSystemTransition(row.service, row.kind, row.status, to)) return null;
+    await assertGuards(tx, row, to, now);
+    const target = getStatusDef(row.service, row.kind, to)!;
+    const set = statusChange(row, to, now);
+    await touchCase(tx, caseId, actor, now, set);
+    await appendEvent(tx, caseId, actor, now, {
+      type: "status_changed",
+      visibility: isPublicStatus(row.service, row.kind, to) ? "public" : "internal",
+      fromStatus: row.status,
+      toStatus: to,
+      metadata: opts.metadata,
+    });
+    await AFTER_TRANSITION[row.service]?.(tx, { caseId, kind: row.kind, from: row.status, to, actor, now });
+    await audit({
+      action: opts.auditAction ?? "case.transition",
+      entityType: "case",
+      entityId: caseId,
+      before: { status: row.status },
+      after: { status: to, ...(target.terminal ? { piiDeleteAfter: set.piiDeleteAfter?.toISOString() } : {}), ...opts.auditAfter },
     });
     return { ...row, ...set, updatedAt: now } as CaseRow;
   });

@@ -153,18 +153,18 @@ export default async function ComplaintStatusPage({ params, searchParams }: { pa
           </InsetText>
         ) : null}
 
-        {c.survey === "open" || c.canReopen || c.canWithdraw ? (
+        {c.actions.length > 0 ? (
           <Stack space={2} as="section">
             <Heading level={2}>{UI.cpYouCan[locale]}</Heading>
             <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
-              {c.survey === "open" ? (
+              {c.actions.includes("survey") ? (
                 <li>
                   <Link href={localePath(locale, "/complaints/track/survey")} className="text-action underline">
                     {UI.cpSurveyLink[locale]}
                   </Link>
                 </li>
               ) : null}
-              {c.canReopen && c.reopenUntil ? (
+              {c.actions.includes("reopen") && c.reopenUntil ? (
                 <li>
                   <Link href={localePath(locale, "/complaints/track/reopen")} className="text-action underline">
                     {UI.cpReopenLink[locale]}
@@ -172,7 +172,7 @@ export default async function ComplaintStatusPage({ params, searchParams }: { pa
                   <span className="text-ink-600">{UI.cpReopenUntil[locale].replace("{date}", formatDate(c.reopenUntil, locale))}</span>
                 </li>
               ) : null}
-              {c.canWithdraw ? (
+              {c.actions.includes("withdraw") ? (
                 <li>
                   <Link href={localePath(locale, "/complaints/track/withdraw")} className="text-action underline">
                     {UI.cpWithdrawLink[locale]}

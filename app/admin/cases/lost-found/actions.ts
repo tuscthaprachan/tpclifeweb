@@ -30,25 +30,12 @@ import { recordHandover } from "@/lib/lost-found/handover";
 import { logFoundItem, logWalkInLostReport, publishFoundItem, updateItemDescription } from "@/lib/lost-found/intake";
 import { markPossibleMatch } from "@/lib/lost-found/links";
 import { appendListingPhoto, contentActorOf, expireListing, getListingForCase, ListingIncompleteError, publishListingForCase } from "@/lib/lost-found/listing";
-import { notifyLostReporter, type NoticeKind, type ReminderReason } from "@/lib/lost-found/notify";
+import { notifyLostReporter, type NoticeKind } from "@/lib/lost-found/notify";
 import { addPrivatePhoto } from "@/lib/lost-found/photos";
 import { readIdentifyingDetail } from "@/lib/lost-found/identifying";
 import { getStorage } from "@/lib/storage";
 import { withValues } from "./form-values";
-import type { CasePreferredContact } from "@/lib/db/schema/cases";
-
-/** What every form here returns. `errors` are keyed by posted field name. */
-export interface LfState {
-  error?: string;
-  errors?: Record<string, string>;
-  saved?: AdminKey;
-  /** What happened when the person was told (possible match, ready to collect, returned). */
-  notice?: { result: "sent" | "remind"; reason?: ReminderReason; preferred?: CasePreferredContact | null };
-  /** The text of a decrypted field, for this response only. */
-  secret?: string | null;
-  /** The submitted text fields, returned with a problem so the inputs keep what was typed. */
-  values?: Record<string, string>;
-}
+import { lfFailed, lfInvalid, lfSaved, lfSecret, type LfNotice, type LfState } from "./lf-state";
 
 const text = (fd: FormData, name: string): string => {
   const v = fd.get(name);
@@ -96,7 +83,7 @@ async function onCase(fd: FormData, work: (ctx: Ctx) => Promise<LfState>, field 
     revalidatePath("/admin/cases");
     return withValues(state, fd);
   } catch (error) {
-    return withValues({ error: messageFor(error, locale) }, fd);
+    return withValues(lfFailed(messageFor(error, locale)), fd);
   }
 }
 
@@ -110,9 +97,9 @@ function refresh(...ids: Array<string | null | undefined>) {
 export async function updateListingAction(_prev: LfState, fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ locale, caseId, actor }) => {
     const parsed = parseDescription(fd, locale);
-    if (!parsed.ok) return { errors: parsed.errors };
+    if (!parsed.ok) return lfInvalid(parsed.errors);
     await updateItemDescription(getDb(), caseId, parsed.data, actor, { staffLocale: locale });
-    return { saved: "lfcSavedListing" };
+    return lfSaved("lfcSavedListing");
   });
 }
 
@@ -122,7 +109,7 @@ export async function publishListingAction(_prev: LfState, fd: FormData): Promis
     const db = getDb();
     await db.transaction((tx) => publishListingForCase(tx, caseId, contentActorOf(actor), new Date()));
     await expireListing(db, caseId);
-    return { saved: "lfcSavedPublished" };
+    return lfSaved("lfcSavedPublished");
   });
 }
 
@@ -130,15 +117,15 @@ export async function publishListingAction(_prev: LfState, fd: FormData): Promis
 export async function publishFoundAction(_prev: LfState, fd: FormData): Promise<LfState> {
   const done = await onCase(fd, async ({ caseId, actor }) => {
     await publishFoundItem(getDb(), caseId, actor);
-    return { saved: "lfcSavedPublished" };
+    return lfSaved("lfcSavedPublished");
   });
-  if (done.saved && text(fd, "next") === "case") redirect(`/admin/cases/${text(fd, "caseId")}`);
+  if (done.status === "saved" && text(fd, "next") === "case") redirect(`/admin/cases/${text(fd, "caseId")}`);
   return done;
 }
 
 /* Matching */
 
-async function tell(db: ReturnType<typeof getDb>, lostCaseId: string, kind: NoticeKind, actor: StaffActor, deskOrganisationId: number | null): Promise<LfState["notice"]> {
+async function tell(db: ReturnType<typeof getDb>, lostCaseId: string, kind: NoticeKind, actor: StaffActor, deskOrganisationId: number | null): Promise<LfNotice> {
   const outcome = await notifyLostReporter(db, lostCaseId, kind, actor, { deskOrganisationId });
   return outcome.result === "sent" ? { result: "sent" } : { result: "remind", reason: outcome.reason, preferred: outcome.preferred };
 }
@@ -152,7 +139,7 @@ export async function markMatchAction(_prev: LfState, fd: FormData): Promise<LfS
     await markPossibleMatch(db, { lostCaseId, foundCaseId, score: Number(text(fd, "score")) || null }, actor);
     refresh(lostCaseId, foundCaseId, caseId);
     const notice = await tell(db, lostCaseId, "possible_match", actor, actor.organisationId);
-    return { saved: "lfcSavedMatch", notice };
+    return lfSaved("lfcSavedMatch", notice);
   });
 }
 
@@ -161,19 +148,19 @@ export async function markMatchAction(_prev: LfState, fd: FormData): Promise<LfS
 export async function saveStorageAction(_prev: LfState, fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ locale, caseId, actor }) => {
     const parsed = parseStorage(fd, locale);
-    if (!parsed.ok) return { errors: parsed.errors };
+    if (!parsed.ok) return lfInvalid(parsed.errors);
     await saveStorageLocation(getDb(), caseId, parsed.data, actor);
     await expireListing(getDb(), caseId);
-    return { saved: "lfcSavedStorage" };
+    return lfSaved("lfcSavedStorage");
   });
 }
 
 export async function saveVerificationAction(_prev: LfState, fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ locale, caseId, actor }) => {
     const parsed = parseVerification(fd, locale);
-    if (!parsed.ok) return { errors: parsed.errors };
+    if (!parsed.ok) return lfInvalid(parsed.errors);
     await saveVerificationDetail(getDb(), caseId, parsed.data.detail, actor);
-    return { saved: "lfcSavedVerification" };
+    return lfSaved("lfcSavedVerification");
   });
 }
 
@@ -181,7 +168,7 @@ export async function saveVerificationAction(_prev: LfState, fd: FormData): Prom
 export async function revealVerificationAction(_prev: LfState, fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ caseId, actor }) => {
     const detail = await readVerificationDetail(getDb(), caseId, actor);
-    return { secret: detail ?? "" };
+    return lfSecret(detail ?? "");
   });
 }
 
@@ -189,7 +176,7 @@ export async function revealVerificationAction(_prev: LfState, fd: FormData): Pr
 export async function revealIdentifyingAction(_prev: LfState, fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ caseId, actor }) => {
     const detail = await readIdentifyingDetail(getDb(), caseId, actor);
-    return { secret: detail ?? "" };
+    return lfSecret(detail ?? "");
   });
 }
 
@@ -197,17 +184,17 @@ export async function revealIdentifyingAction(_prev: LfState, fd: FormData): Pro
 export async function revealClaimAction(_prev: LfState, fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ actor }) => {
     const answer = await readClaimAnswer(getDb(), text(fd, "claimId"), actor);
-    return { secret: answer ?? "" };
+    return lfSecret(answer ?? "");
   });
 }
 
 export async function addFinderAction(_prev: LfState, fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ locale, caseId, actor }) => {
     const parsed = parseContactFields(fd, locale, "finder");
-    if (!parsed.ok) return { errors: parsed.errors };
+    if (!parsed.ok) return lfInvalid(parsed.errors);
     const f = parsed.data;
     await addContact(getDb(), caseId, { role: "finder", name: f.name, email: f.email, phone: f.phone, lineId: f.lineId, preferredContact: f.preferredContact, consentContact: f.consentContact }, actor);
-    return { saved: "lfcSavedFinder" };
+    return lfSaved("lfcSavedFinder");
   });
 }
 
@@ -220,14 +207,14 @@ export async function addFinderAction(_prev: LfState, fd: FormData): Promise<LfS
 export async function uploadPhotoAction(fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ locale, caseId, actor }) => {
     const file = fd.get("file");
-    if (!(file instanceof File) || file.size === 0) return { error: a("errUploadChoose", locale) };
+    if (!(file instanceof File) || file.size === 0) return lfFailed(a("errUploadChoose", locale));
     const db = getDb();
     const bytes = new Uint8Array(await file.arrayBuffer());
     const stored = await addPrivatePhoto(db, caseId, { bytes, declaredType: file.type }, actor, { storage: getStorage });
     if (!stored.ok) {
       const key: AdminKey =
         stored.reason === "too_large" ? "errUploadTooLarge" : stored.reason === "not_configured" ? "errStorageNotConfigured" : stored.reason === "too_many" ? "lfcErrTooManyPhotos" : stored.reason === "failed" ? "errUploadFailed" : "errUploadType";
-      return { error: a(key, locale) };
+      return lfFailed(a(key, locale));
     }
     if (text(fd, "publicToo") === "on") {
       const listing = await getListingForCase(db, caseId);
@@ -237,12 +224,12 @@ export async function uploadPhotoAction(fd: FormData): Promise<LfState> {
           en: `${categoryLabel(listing.category, "en")}: ${listing.title.en || listing.title.th}`,
         };
         const uploaded = await uploadContentImage({ file, altTh: alt.th, altEn: alt.en, isDecorative: false, actor: contentActorOf(actor), locale });
-        if (!uploaded.ok) return { error: uploaded.error };
+        if (!uploaded.ok) return lfFailed(uploaded.error);
         await appendListingPhoto(db, listing.id, uploaded.image.id);
         await expireListing(db, caseId);
       }
     }
-    return { saved: "lfcSavedPhoto" };
+    return lfSaved("lfcSavedPhoto");
   });
 }
 
@@ -251,10 +238,10 @@ export async function uploadPhotoAction(fd: FormData): Promise<LfState> {
 export async function addClaimAction(_prev: LfState, fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ locale, caseId, actor }) => {
     const parsed = parseClaim(fd, locale);
-    if (!parsed.ok) return { errors: parsed.errors };
+    if (!parsed.ok) return lfInvalid(parsed.errors);
     const c = parsed.data.claimant;
     await createClaim(getDb(), { foundCaseId: caseId, answer: parsed.data.answer, claimant: { name: c.name, email: c.email, phone: c.phone, lineId: c.lineId, preferredContact: c.preferredContact, consentContact: c.consentContact } }, actor);
-    return { saved: "lfcSavedClaim" };
+    return lfSaved("lfcSavedClaim");
   });
 }
 
@@ -271,18 +258,18 @@ export async function decideClaimAction(_prev: LfState, fd: FormData): Promise<L
     let collectionNote: { th: string; en: string } | undefined;
     if (decision === "rejected") {
       const parsed = parseRejection(fd, locale);
-      if (!parsed.ok) return { errors: parsed.errors };
+      if (!parsed.ok) return lfInvalid(parsed.errors);
       message = parsed.data;
     } else {
       const parsed = parseCollectionNote(fd, locale);
-      if (!parsed.ok) return { errors: parsed.errors };
+      if (!parsed.ok) return lfInvalid(parsed.errors);
       collectionNote = parsed.data;
     }
     const db = getDb();
     const result = await decideClaim(db, { claimId, decision, message, collectionNote }, actor);
     refresh(result.lostCaseId, caseId);
     const notice = decision === "accepted" && result.lostCaseId ? await tell(db, result.lostCaseId, "ready_to_collect", actor, await deskOf(db, caseId)) : undefined;
-    return { saved: decision === "accepted" ? "lfcSavedAccepted" : "lfcSavedRejected", notice };
+    return lfSaved(decision === "accepted" ? "lfcSavedAccepted" : "lfcSavedRejected", notice);
   });
 }
 
@@ -291,12 +278,12 @@ export async function decideClaimAction(_prev: LfState, fd: FormData): Promise<L
 export async function handoverAction(_prev: LfState, fd: FormData): Promise<LfState> {
   return onCase(fd, async ({ locale, caseId, actor }) => {
     const parsed = parseHandover(fd, locale);
-    if (!parsed.ok) return { errors: parsed.errors };
+    if (!parsed.ok) return lfInvalid(parsed.errors);
     const db = getDb();
     const result = await recordHandover(db, { foundCaseId: caseId, ...parsed.data }, actor, { staffLocale: locale });
     refresh(result.lostCaseId, caseId);
     const notice = result.lostCaseId ? await tell(db, result.lostCaseId, "returned", actor, actor.organisationId) : undefined;
-    return { saved: "lfcSavedHandover", notice };
+    return lfSaved("lfcSavedHandover", notice);
   });
 }
 
@@ -317,12 +304,12 @@ export async function startFoundAction(_prev: LfState, fd: FormData): Promise<Lf
     throw error;
   });
   const parsed = parseDescription(fd, locale);
-  if (!parsed.ok) return withValues({ errors: parsed.errors }, fd);
+  if (!parsed.ok) return withValues(lfInvalid(parsed.errors), fd);
   let caseId: string;
   try {
     ({ caseId } = await logFoundItem(getDb(), parsed.data, actor, { locale, staffLocale: locale }));
   } catch (error) {
-    return withValues({ error: messageFor(error, locale) }, fd);
+    return withValues(lfFailed(messageFor(error, locale)), fd);
   }
   revalidatePath("/admin/cases");
   redirect(`/admin/cases/new/found/${caseId}`);
@@ -332,11 +319,11 @@ export async function startFoundAction(_prev: LfState, fd: FormData): Promise<Lf
 export async function describeFoundAction(_prev: LfState, fd: FormData): Promise<LfState> {
   const done = await onCase(fd, async ({ locale, caseId, actor }) => {
     const parsed = parseDescription(fd, locale);
-    if (!parsed.ok) return { errors: parsed.errors };
+    if (!parsed.ok) return lfInvalid(parsed.errors);
     await updateItemDescription(getDb(), caseId, parsed.data, actor, { staffLocale: locale });
-    return { saved: "lfcSavedListing" };
+    return lfSaved("lfcSavedListing");
   });
-  if (done.saved) redirect(`/admin/cases/new/found/${text(fd, "caseId")}`);
+  if (done.status === "saved") redirect(`/admin/cases/new/found/${text(fd, "caseId")}`);
   return done;
 }
 
@@ -347,12 +334,12 @@ export async function logLostAction(_prev: LfState, fd: FormData): Promise<LfSta
     throw error;
   });
   const parsed = parseWalkIn(fd, locale);
-  if (!parsed.ok) return withValues({ errors: parsed.errors }, fd);
+  if (!parsed.ok) return withValues(lfInvalid(parsed.errors), fd);
   let caseId: string;
   try {
     ({ caseId } = await logWalkInLostReport(getDb(), parsed.data, actor, { staffLocale: locale }));
   } catch (error) {
-    return withValues({ error: messageFor(error, locale) }, fd);
+    return withValues(lfFailed(messageFor(error, locale)), fd);
   }
   revalidatePath("/admin/cases");
   redirect(`/admin/cases/${caseId}`);

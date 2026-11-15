@@ -17,6 +17,7 @@ import { caseAccessTokens, caseAttachments, caseContacts, cases } from "@/lib/db
 import type { Storage } from "@/lib/storage/types";
 import { purgeBorrowingPii } from "@/lib/borrowing/retention";
 import { purgeComplaintPii } from "@/lib/complaints/retention";
+import { markUnclaimedListings } from "@/lib/lost-found/listing";
 import { purgeLostFoundPii } from "@/lib/lost-found/retention";
 import { appendEvent } from "./internal";
 
@@ -27,6 +28,8 @@ export interface PurgeResult {
   attachments: number;
   /** Cases that failed and will be retried. */
   failed: number;
+  /** Found listings whose claim window passed, moved to `unclaimed` on the register. */
+  unclaimed: number;
 }
 
 export const PURGE_BATCH = 100;
@@ -34,7 +37,9 @@ export const PURGE_BATCH = 100;
 /**
  * Deletes personal data for up to `PURGE_BATCH` cases past their date.
  * `getStorage` is only called when a case has attachments, so a deployment
- * without file storage can still purge contacts.
+ * without file storage can still purge contacts. Afterwards it applies the
+ * derived `unclaimed` register state to found listings whose claim window has
+ * passed (`markUnclaimedListings`); a failure there is logged, not thrown.
  */
 export async function purgeExpiredPii(db: AuditExecutor, now: Date, getStorage?: () => Storage): Promise<PurgeResult> {
   const due = await db
@@ -44,7 +49,7 @@ export async function purgeExpiredPii(db: AuditExecutor, now: Date, getStorage?:
     .orderBy(cases.piiDeleteAfter)
     .limit(PURGE_BATCH);
 
-  const result: PurgeResult = { purged: 0, contacts: 0, attachments: 0, failed: 0 };
+  const result: PurgeResult = { purged: 0, contacts: 0, attachments: 0, failed: 0, unclaimed: 0 };
   for (const item of due) {
     try {
       const files = await db.select({ key: caseAttachments.storageKey }).from(caseAttachments).where(eq(caseAttachments.caseId, item.id));
@@ -80,6 +85,11 @@ export async function purgeExpiredPii(db: AuditExecutor, now: Date, getStorage?:
       result.failed += 1;
       console.error(`[retention] could not purge ${item.reference}`, error);
     }
+  }
+  try {
+    result.unclaimed = (await markUnclaimedListings(db, now)).length;
+  } catch (error) {
+    console.error("[retention] could not mark unclaimed listings", error);
   }
   return result;
 }

@@ -48,7 +48,7 @@ export default async function WithdrawPage({ params, searchParams }: { params: P
   if (tracked.state === "limited") redirect(`${track}${limitedQuery(tracked.retryAfterSeconds)}`);
   if (tracked.state === "claim") redirect(status);
   if (tracked.state !== "ok") redirect(`${track}?problem=1`);
-  if (!tracked.canWithdraw) redirect(status);
+  if (!tracked.actions.includes("withdraw")) redirect(status);
   const failed = first((await searchParams).problem) === "1";
 
   return (

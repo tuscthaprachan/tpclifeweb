@@ -21,9 +21,8 @@
 
 import { and, eq } from "drizzle-orm";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
-import { addContact, createCase, isPublicStatus, issueTrackingLink, type CaseActor, type ContactInput, type RequestContext } from "@/lib/cases";
-import { syncListingRegister } from "../listing";
-import { appendEvent, lockCase, touchCase } from "@/lib/cases/internal";
+import { addContact, createCase, issueTrackingLink, systemTransition, type ContactInput, type RequestContext, type SystemActor } from "@/lib/cases";
+import { appendEvent } from "@/lib/cases/internal";
 import { consumeRateLimit, type RateResult, type RateRule } from "@/lib/auth/rate-limit";
 import { encryptPii, type PiiEnv } from "@/lib/crypto/pii";
 import { recordAudit, type AuditContext, type AuditExecutor } from "@/lib/db/audit";
@@ -76,7 +75,7 @@ export function consumeSubmitAttempt(db: AuditExecutor, ip: string | null, now?:
   return consumeRateLimit(db, `lfsubmit:${ip ?? "unknown"}`, SUBMIT_RATE_RULE, now);
 }
 
-function publicActor(ctx: SubmitContext): CaseActor {
+function publicActor(ctx: SubmitContext): SystemActor {
   const context: RequestContext = { ip: ctx.ip ?? null, userAgent: ctx.userAgent ?? null, requestId: ctx.requestId ?? null };
   return { kind: "public", context };
 }
@@ -225,25 +224,15 @@ export async function findClaimTarget(db: AuditExecutor, slug: string): Promise<
 
 /**
  * The found item case moves to `claim_pending` when it is `logged` or
- * `listed`. The engine's `transition` does not let a public actor do this
- * (FOUND.publicActorTo is empty), so the same writes are made here: lock,
- * status, public event, listing register, audit. A case already `ready_to_collect` for someone
+ * `listed`: a system move the machine declares (`systemTo`), because the
+ * engine's `transition` does not let a public actor do this
+ * (FOUND.publicActorTo is empty). A case already `ready_to_collect` for someone
  * else is left alone, so a stranger cannot disturb a confirmed match; the
  * claim record is still there for staff.
  */
-async function markClaimPending(tx: AuditExecutor, caseId: string, actor: CaseActor, now: Date, audit: AuditContext): Promise<boolean> {
-  const row = await lockCase(tx, caseId);
-  if (row.status !== "logged" && row.status !== "listed") return false;
-  await touchCase(tx, caseId, actor, now, { status: "claim_pending" });
-  await syncListingRegister(tx, caseId, row.kind, "claim_pending", actor, now);
-  await appendEvent(tx, caseId, actor, now, {
-    type: "status_changed",
-    visibility: isPublicStatus(row.service, row.kind, "claim_pending") ? "public" : "internal",
-    fromStatus: row.status,
-    toStatus: "claim_pending",
-  });
-  await recordAudit(tx, { ...audit, action: "case.transition", entityType: "case", entityId: caseId, before: { status: row.status }, after: { status: "claim_pending", via: "public_claim" } });
-  return true;
+async function markClaimPending(tx: AuditExecutor, caseId: string, actor: SystemActor, now: Date): Promise<boolean> {
+  const moved = await systemTransition(tx, caseId, "claim_pending", actor, { now, auditAfter: { via: "public_claim" } });
+  return moved !== null;
 }
 
 /** Submits a claim on a published found item. Throws `JourneyInvalidError`, `ClaimUnavailableError`, `PiiUnavailableError`. */
@@ -272,7 +261,7 @@ export async function submitClaim(
       createdAt: now,
     });
     await appendEvent(tx, target.caseId, actor, now, { type: "internal_note", body: "A claim was made from the public listing.", metadata: { claimId: id } });
-    const moved = await markClaimPending(tx, target.caseId, actor, now, auditContext(ctx));
+    const moved = await markClaimPending(tx, target.caseId, actor, now);
     await recordAudit(tx, {
       ...auditContext(ctx),
       action: "lost_found_claim.create",

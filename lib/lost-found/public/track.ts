@@ -7,7 +7,7 @@
  */
 
 import { claimTrackView, type ClaimTrackView } from "./claim-view";
-import { allowedTransitions, consumeTrackingAttempt, publicCaseView, resolveTrackingLink, transition, type CaseActor, type PublicCaseView, type TrackedCase } from "@/lib/cases";
+import { availableActions, consumeTrackingAttempt, publicCaseView, resolveTrackingLink, transition, type CaseActor, type PublicAction, type PublicCaseView, type TrackedCase } from "@/lib/cases";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { expireListing } from "../listing";
@@ -53,7 +53,7 @@ export async function lookupTracked(db: AuditExecutor, reference: string, token:
 }
 
 export type TrackedView =
-  | { state: "ok"; view: PublicCaseView; canWithdraw: boolean }
+  | { state: "ok"; view: PublicCaseView; actions: PublicAction[] }
   /** A claimant's link: their own claim only. */
   | { state: "claim"; claim: ClaimTrackView }
   | { state: "limited"; retryAfterSeconds: number }
@@ -64,7 +64,7 @@ export async function openTracked(db: AuditExecutor, reference: string, token: s
   if (found.state !== "ok") return found;
   if (found.tracked.claimId) return { state: "claim", claim: await claimTrackView(db, found.tracked.id, found.tracked.claimId) };
   const view = await publicCaseView(db, found.tracked.id);
-  return { state: "ok", view, canWithdraw: allowedTransitions(view.service, view.kind, view.status, "public").includes("withdrawn") };
+  return { state: "ok", view, actions: availableActions(view, now) };
 }
 
 /** The query for the track form when the attempt limit was reached: the problem and whole minutes to wait (at least one). */
@@ -99,7 +99,7 @@ export async function withdrawTracked(
   if (found.state === "none") return "none";
   const { tracked } = found;
   if (tracked.claimId) return "not_allowed";
-  if (!allowedTransitions(tracked.service, tracked.kind, tracked.status, "public").includes("withdrawn")) return "not_allowed";
+  if (!availableActions(tracked, now).includes("withdraw")) return "not_allowed";
   const actor: CaseActor = { kind: "public", context: { ip: ctx.ip, userAgent: ctx.userAgent ?? null, requestId: ctx.requestId ?? null } };
   try {
     await transition(db, tracked.id, "withdrawn", actor, { expectedFrom: tracked.status, now });

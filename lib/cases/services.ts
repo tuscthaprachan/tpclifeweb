@@ -14,12 +14,18 @@
  * internal. Staff always see `label`. `publicActorTo` lists the statuses the
  * person holding the tracking link may move the case to themselves (for
  * example withdrawing a report); the caller must have resolved the link first.
+ *
+ * SYSTEM MOVES AND GUARDS. `systemTo` lists the moves the system itself may
+ * make (a daily job, or a person's public claim), which only the engine's
+ * `systemTransition` performs. `guards` are conditions on a move, checked by
+ * the engine for every actor, so no path can bypass them.
  */
 
 import type { StaffRole } from "@/lib/db/schema/staff-roles";
 import type { CaseService } from "@/lib/db/schema/cases";
 import type { AdminKey } from "@/lib/i18n/admin";
 import type { LocaleString } from "@/lib/i18n/config";
+import { withinReopenWindow } from "@/lib/complaints/reopen-window";
 
 export type { CaseService };
 export { CASE_SERVICES } from "@/lib/db/schema/cases";
@@ -36,6 +42,19 @@ export interface StatusDef {
   terminal: boolean;
 }
 
+/** Facts about a case that a guard may read. Loaded by the engine (lib/cases/hooks.ts) only when a guard applies. */
+export interface GuardFacts {
+  /** A complaint's resolution date; null for any other case. */
+  resolvedAt: Date | null;
+}
+
+/** A condition on one move, true when the move is allowed at `now`. */
+export interface TransitionGuard {
+  from: string;
+  to: string;
+  allows: (facts: GuardFacts, now: Date) => boolean;
+}
+
 export interface MachineDef {
   initial: string;
   statuses: Record<string, StatusDef>;
@@ -43,6 +62,10 @@ export interface MachineDef {
   transitions: Record<string, readonly string[]>;
   /** Statuses the person with the tracking link may choose. Each must also be an allowed transition. */
   publicActorTo: readonly string[];
+  /** From status, to the statuses the system may move it to without a person. Each must also be an allowed transition. */
+  systemTo?: Record<string, readonly string[]>;
+  /** Conditions on moves, enforced for every actor. */
+  guards?: readonly TransitionGuard[];
 }
 
 export interface KindDef {
@@ -126,6 +149,7 @@ const FOUND: MachineDef = {
     withdrawn: [],
   },
   publicActorTo: [],
+  systemTo: { logged: ["claim_pending"], listed: ["claim_pending"] },
 };
 
 /**
@@ -167,6 +191,8 @@ const COMPLAINT: MachineDef = {
     withdrawn: [],
   },
   publicActorTo: ["withdrawn", "reopened"],
+  systemTo: { resolved: ["closed"] },
+  guards: [{ from: "resolved", to: "reopened", allows: (facts, now) => withinReopenWindow(facts.resolvedAt, now) }],
 };
 
 /**
@@ -194,12 +220,12 @@ const LOAN: MachineDef = {
   },
   transitions: {
     requested: ["approved", "declined", "cancelled"],
-    approved: ["on_loan", "requested", "cancelled", "not_collected"],
+    approved: ["on_loan", "cancelled", "not_collected"],
     on_loan: ["returned", "compensation_due"],
     compensation_due: ["settled"],
     returned: [],
     settled: [],
-    declined: ["requested"],
+    declined: [],
     cancelled: [],
     not_collected: [],
   },
@@ -282,6 +308,21 @@ export function allowedTransitions(service: CaseService, kind: string, status: s
 
 export function canTransition(service: CaseService, kind: string, from: string, to: string, by: "staff" | "public" = "staff"): boolean {
   return allowedTransitions(service, kind, from, by).includes(to);
+}
+
+/** The guards that apply to a move, if any. */
+export function guardsFor(service: CaseService, kind: string, from: string, to: string): TransitionGuard[] {
+  return getMachine(service, kind)?.guards?.filter((g) => g.from === from && g.to === to) ?? [];
+}
+
+/** True when every guard on the move allows it. A move with no guard is allowed. */
+export function guardsAllow(service: CaseService, kind: string, from: string, to: string, facts: GuardFacts, now: Date): boolean {
+  return guardsFor(service, kind, from, to).every((g) => g.allows(facts, now));
+}
+
+/** True when the system may move a case from `from` to `to` (see `systemTo`). Guards are checked separately. */
+export function canSystemTransition(service: CaseService, kind: string, from: string, to: string): boolean {
+  return getMachine(service, kind)?.systemTo?.[from]?.includes(to) ?? false;
 }
 
 /** What the person sees for the current status; statuses with no public label read as "In progress". */

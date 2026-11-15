@@ -46,7 +46,7 @@ export default async function WithdrawComplaintPage({ params, searchParams }: { 
   const meta = await requestContext();
   const tracked = await openTracked(getDb(), cookie.reference, cookie.token, meta.ip);
   if (tracked.state !== "ok") redirect(`${track}?problem=1`);
-  if (!tracked.complaint.canWithdraw) redirect(status);
+  if (!tracked.complaint.actions.includes("withdraw")) redirect(status);
   const failed = first((await searchParams).problem) === "1";
 
   return (

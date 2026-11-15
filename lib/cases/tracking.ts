@@ -11,13 +11,16 @@
  */
 
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { tokenPending, tokenState } from "@/lib/auth/token-state";
 import { consumeRateLimit, type RateResult, type RateRule } from "@/lib/auth/rate-limit";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { caseAccessTokens, cases, type CaseService } from "@/lib/db/schema/cases";
 import { appendEvent, auditContextOf, lockCase } from "./internal";
 import { assertCaseAccess } from "./restrictions";
 import type { CaseActor } from "./types";
+
+const trackingColumns = { revokedAt: caseAccessTokens.revokedAt, expiresAt: caseAccessTokens.expiresAt };
 
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 
@@ -74,7 +77,7 @@ export async function revokeTrackingLinks(db: AuditExecutor, caseId: string, act
     const revoked = await tx
       .update(caseAccessTokens)
       .set({ revokedAt: now })
-      .where(and(eq(caseAccessTokens.caseId, caseId), isNull(caseAccessTokens.revokedAt)))
+      .where(and(eq(caseAccessTokens.caseId, caseId), tokenPending(trackingColumns, now)))
       .returning({ id: caseAccessTokens.id });
     if (revoked.length > 0) {
       await appendEvent(tx, caseId, actor, now, { type: "tracking_link_revoked", metadata: { count: revoked.length } });
@@ -118,6 +121,6 @@ export async function resolveTrackingLink(db: AuditExecutor, reference: string, 
   const given = Buffer.from(hash);
   if (stored.length !== given.length || !timingSafeEqual(stored, given)) return null;
   if (row.reference !== reference.trim().toUpperCase()) return null;
-  if (row.revokedAt || (row.expiresAt && row.expiresAt <= now)) return null;
+  if (tokenState({ revokedAt: row.revokedAt, expiresAt: row.expiresAt }, now) !== "pending") return null;
   return { id: row.id, reference: row.reference, service: row.service, kind: row.kind, status: row.status, claimId: row.claimId };
 }

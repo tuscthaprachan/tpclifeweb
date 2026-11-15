@@ -22,11 +22,9 @@ import { directoryOrganisations, faculties } from "@/lib/db/schema/content";
 import { COMPLAINT_REDIRECT_LEVELS, complaintCases, type ComplaintCaseRow, type ComplaintRedirectLevel } from "@/lib/db/schema/complaints";
 import { complaintTextAad } from "./aad";
 import { getCategory } from "./categories";
-import { REOPEN_WINDOW_DAYS } from "./constants";
 import { ComplaintError } from "./errors";
+import { canReopenNow, reopenWindowEnds, withinReopenWindow } from "./reopen-window";
 import { addWorkingDays } from "./working-days";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 async function lockComplaint(tx: AuditExecutor, caseId: string): Promise<ComplaintCaseRow> {
   const [row] = await tx.select().from(complaintCases).where(eq(complaintCases.caseId, caseId)).for("update");
@@ -34,15 +32,7 @@ async function lockComplaint(tx: AuditExecutor, caseId: string): Promise<Complai
   return row;
 }
 
-/** True while a resolved complaint may still be reopened by the person: up to and including the end of the window. The daily job closes it only strictly after that instant, so the two never overlap. */
-export function canReopenNow(resolvedAt: Date | null, status: string, now: Date): boolean {
-  return status === "resolved" && resolvedAt !== null && now.getTime() <= resolvedAt.getTime() + REOPEN_WINDOW_DAYS * DAY_MS;
-}
-
-/** The last instant the person may reopen. */
-export function reopenWindowEnds(resolvedAt: Date): Date {
-  return new Date(resolvedAt.getTime() + REOPEN_WINDOW_DAYS * DAY_MS);
-}
+export { canReopenNow, reopenWindowEnds };
 
 export interface AcknowledgeInput {
   /** Optional extra words for the person, in either language. The standard acknowledgement is always added. */
@@ -136,8 +126,8 @@ export interface ReopenInput {
 
 /**
  * Reopens a resolved complaint. The person (a `public` actor who has resolved
- * their tracking link) may do it only inside the reopen window; staff may do it
- * for them any time while it is still `resolved`. The resolve target restarts
+ * their tracking link) or staff on their behalf may do it only inside the reopen
+ * window, which the engine's guard enforces for every actor. The resolve target restarts
  * from now, escalation is cleared, and the one year clock stops.
  */
 export async function reopenComplaint(db: AuditExecutor, caseId: string, input: ReopenInput, actor: CaseActor, opts: { now?: Date; env?: PiiEnv } = {}): Promise<void> {
@@ -149,7 +139,7 @@ export async function reopenComplaint(db: AuditExecutor, caseId: string, input: 
     if (actor.kind === "staff") await assertCaseAccess(tx, row, actor);
     else if (actor.kind !== "public") throw new CaseError("forbidden", "Only staff or the person concerned can reopen a complaint.");
     const complaint = await lockComplaint(tx, caseId);
-    if (actor.kind === "public" && !canReopenNow(complaint.resolvedAt, row.status, now)) {
+    if (row.status === "resolved" ? !withinReopenWindow(complaint.resolvedAt, now) : actor.kind === "public") {
       throw new ComplaintError(row.status === "resolved" ? "window_closed" : "invalid", "This complaint can no longer be reopened.");
     }
     const category = await getCategory(tx, complaint.categoryId);

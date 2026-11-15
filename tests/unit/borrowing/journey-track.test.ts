@@ -45,7 +45,7 @@ describe("opening and cancelling", () => {
     expect(view.loan.collectAt).toEqual(at("2026-03-12", "10:00"));
     expect(view.loan.returnDueAt).toEqual(at("2026-03-13", "16:00"));
     expect(view.loan.lines).toEqual([{ name: { th: "ลูกฟุตบอล", en: "Football" }, unit: { th: "ลูก", en: "ball" }, quantity: 2 }]);
-    expect(view.loan.canCancel).toBe(true);
+    expect(view.loan.actions).toEqual(["withdraw"]);
     expect(view.loan.view.timeline.length).toBeGreaterThan(0);
 
     expect(await openTracked(t.db, made.reference, "b".repeat(43), ip, NOW)).toEqual({ state: "none" });
@@ -78,7 +78,7 @@ describe("opening and cancelling", () => {
     expect(await findShortfalls(t.db, [{ itemId: football.id, quantity: 4 }], at("2026-03-23"), at("2026-03-24"), { now: NOW })).toEqual([]);
 
     const view = await openTracked(t.db, made.reference, made.token, ip, NOW);
-    expect(view.state === "ok" && view.loan.canCancel).toBe(false);
+    expect(view.state === "ok" && view.loan.actions).toEqual([]);
     expect(await cancelTracked(t.db, made.reference, made.token, { ip }, NOW)).toBe("not_allowed");
   });
 
@@ -86,14 +86,14 @@ describe("opening and cancelling", () => {
     const approved = await t.request({ collectAt: at("2026-03-30"), returnDueAt: at("2026-03-31") });
     await transition(t.db, approved.caseId, "approved", t.officer, { now: NOW });
     const seen = await openTracked(t.db, approved.reference, approved.token, ip, NOW);
-    expect(seen.state === "ok" && seen.loan.canCancel).toBe(true);
+    expect(seen.state === "ok" && seen.loan.actions).toEqual(["withdraw"]);
     expect(await cancelTracked(t.db, approved.reference, approved.token, { ip }, NOW)).toBe("done");
 
     const out = await t.request({ collectAt: at("2026-04-06"), returnDueAt: at("2026-04-07") });
     await transition(t.db, out.caseId, "approved", t.officer, { now: NOW });
     await transition(t.db, out.caseId, "on_loan", t.officer, { now: NOW });
     const view = await openTracked(t.db, out.reference, out.token, ip, NOW);
-    expect(view.state === "ok" && view.loan.canCancel).toBe(false);
+    expect(view.state === "ok" && view.loan.actions).toEqual([]);
     expect(await cancelTracked(t.db, out.reference, out.token, { ip }, NOW)).toBe("not_allowed");
     const [row] = await t.db.select().from(cases).where(eq(cases.id, out.caseId));
     expect(row!.status).toBe("on_loan");

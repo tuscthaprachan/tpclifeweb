@@ -9,12 +9,11 @@
  */
 
 import { asc, eq } from "drizzle-orm";
-import { allowedTransitions, consumeTrackingAttempt, publicCaseView, resolveTrackingLink, transition, type CaseActor, type PublicCaseView, type TrackedCase } from "@/lib/cases";
+import { availableActions, consumeTrackingAttempt, publicCaseView, resolveTrackingLink, transition, type CaseActor, type PublicAction, type PublicCaseView, type TrackedCase } from "@/lib/cases";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { borrowingLines, borrowingRequests, equipmentItems } from "@/lib/db/schema/borrowing";
 import { localePath, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { SITE_URL } from "@/lib/site-url";
-import { CANCELLABLE_STATUSES } from "../constants";
 
 const REFERENCE = /^BR-\d{4}-\d{4,}$/;
 const TOKEN = /[A-Za-z0-9_-]{43}/;
@@ -63,7 +62,8 @@ export interface TrackedLoan {
   collectAt: Date;
   returnDueAt: Date;
   lines: TrackedLine[];
-  canCancel: boolean;
+  /** What the borrower may do now: `withdraw` is cancelling the request. */
+  actions: PublicAction[];
 }
 
 export type TrackedView = { state: "ok"; loan: TrackedLoan } | { state: "limited"; retryAfterSeconds: number } | { state: "none" };
@@ -88,7 +88,7 @@ export async function openTracked(db: AuditExecutor, reference: string, token: s
       collectAt: request.collectAt,
       returnDueAt: request.returnDueAt,
       lines: rows.map((r) => ({ name: { th: r.nameTh, en: r.nameEn }, unit: { th: r.unitTh, en: r.unitEn }, quantity: r.quantity })),
-      canCancel: CANCELLABLE_STATUSES.includes(view.status) && allowedTransitions(view.service, view.kind, view.status, "public").includes("cancelled"),
+      actions: availableActions(view, now),
     },
   };
 }
@@ -109,8 +109,7 @@ export async function cancelTracked(db: AuditExecutor, reference: string, token:
   if (found.state === "limited") return "limited";
   if (found.state === "none") return "none";
   const { tracked } = found;
-  if (!CANCELLABLE_STATUSES.includes(tracked.status)) return "not_allowed";
-  if (!allowedTransitions(tracked.service, tracked.kind, tracked.status, "public").includes("cancelled")) return "not_allowed";
+  if (!availableActions(tracked, now).includes("withdraw")) return "not_allowed";
   try {
     await transition(db, tracked.id, "cancelled", publicActor(ctx), { expectedFrom: tracked.status, now });
   } catch {

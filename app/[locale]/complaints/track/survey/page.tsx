@@ -46,7 +46,7 @@ export default async function ComplaintSurveyPage({ params, searchParams }: { pa
   const meta = await requestContext();
   const tracked = await openTracked(getDb(), cookie.reference, cookie.token, meta.ip);
   if (tracked.state !== "ok") redirect(`${track}?problem=1`);
-  if (tracked.complaint.survey !== "open") redirect(status);
+  if (!tracked.complaint.actions.includes("survey")) redirect(status);
 
   const problem = first((await searchParams).problem);
   const items: ErrorSummaryItem[] =

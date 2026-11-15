@@ -296,7 +296,7 @@ describe("tracking and withdrawing", () => {
   it("shows the public view for the right reference and link, and the same nothing for any failure", async () => {
     const out = await submitReport(t.db, "lost", lostValues(), ctx, { now: NOW, env });
     const ok = await openTracked(t.db, out.reference, out.token, "198.51.100.1", NOW);
-    expect(ok).toMatchObject({ state: "ok", canWithdraw: true });
+    expect(ok).toMatchObject({ state: "ok", actions: ["withdraw"] });
     expect(await openTracked(t.db, out.reference, "c".repeat(43), "198.51.100.1", NOW)).toEqual({ state: "none" });
     expect(await openTracked(t.db, "LF-2026-0999", out.token, "198.51.100.1", NOW)).toEqual({ state: "none" });
     expect(await openTracked(t.db, out.reference, "short", "198.51.100.1", NOW)).toEqual({ state: "none" });
@@ -323,7 +323,7 @@ describe("tracking and withdrawing", () => {
     expect(item!.registerStatus).toBe("withdrawn");
     expect(item!.resolvedAt).toEqual(NOW);
     const view = await openTracked(t.db, out.reference, out.token, "198.51.100.3", NOW);
-    expect(view).toMatchObject({ state: "ok", canWithdraw: false, view: { status: "withdrawn" } });
+    expect(view).toMatchObject({ state: "ok", actions: [], view: { status: "withdrawn" } });
     // Withdrawing twice, or after the case is closed, is not allowed.
     expect(await withdrawTracked(t.db, out.reference, out.token, { ip: "198.51.100.2" }, NOW)).toBe("not_allowed");
   });
@@ -346,7 +346,7 @@ describe("tracking and withdrawing", () => {
 
   it("does not offer withdrawal on a found item case", async () => {
     const out = await submitReport(t.db, "found", foundValues(), ctx, { now: NOW, env });
-    expect(await openTracked(t.db, out.reference, out.token, "198.51.100.4", NOW)).toMatchObject({ state: "ok", canWithdraw: false });
+    expect(await openTracked(t.db, out.reference, out.token, "198.51.100.4", NOW)).toMatchObject({ state: "ok", actions: [] });
     expect(await withdrawTracked(t.db, out.reference, out.token, { ip: "198.51.100.4" }, NOW)).toBe("not_allowed");
   });
 });

@@ -13,11 +13,12 @@
  * not set up, so a later run can still do it.
  */
 
-import { and, eq, exists, inArray, isNull, lte, sql } from "drizzle-orm";
+import { and, asc, eq, exists, inArray, isNull, lte, notExists, sql } from "drizzle-orm";
 import type { PiiEnv } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { borrowingJourneys, borrowingRequests } from "@/lib/db/schema/borrowing";
 import { caseContacts, cases } from "@/lib/db/schema/cases";
+import { notifications } from "@/lib/db/schema/notifications";
 import { createNotifications, serviceStaffIds } from "@/lib/notifications/create";
 import { isEmailConfigured, type EmailSender } from "@/lib/email";
 import { notifyBorrower } from "./notify";
@@ -119,13 +120,29 @@ export async function runBorrowingDaily(db: AuditExecutor, now: Date, opts: Opts
   return result;
 }
 
-/** Tells every officer about each loan still out past its return time, once per loan, whether or not the borrower can be emailed. */
+/** The dedupe key of the officers' notice for a loan: one per loan, however often the job runs. */
+export const overdueDedupeKey = (caseId: string) => `overdue:${caseId}`;
+
+/**
+ * Tells every officer about each loan still out past its return time, once per
+ * loan, whether or not the borrower can be emailed. The scan skips loans that
+ * already have a notice and takes the longest overdue first, so a backlog of
+ * notified loans can never crowd newer ones out of the batch.
+ */
 export async function notifyOverdueToOfficers(db: AuditExecutor, now: Date): Promise<number> {
   const late = await db
     .select({ id: cases.id, reference: cases.reference, returnDueAt: borrowingRequests.returnDueAt })
     .from(cases)
     .innerJoin(borrowingRequests, eq(borrowingRequests.caseId, cases.id))
-    .where(and(eq(cases.service, "borrowing"), loanOverdueSql(now), isNull(cases.piiDeletedAt)))
+    .where(
+      and(
+        eq(cases.service, "borrowing"),
+        loanOverdueSql(now),
+        isNull(cases.piiDeletedAt),
+        notExists(sql`(select 1 from ${notifications} as n where n.dedupe_key = 'overdue:' || ${cases.id}::text)`),
+      ),
+    )
+    .orderBy(asc(borrowingRequests.returnDueAt), asc(cases.id))
     .limit(500);
   if (late.length === 0) return 0;
   const officers = await serviceStaffIds(db, "borrowing");
@@ -140,7 +157,7 @@ export async function notifyOverdueToOfficers(db: AuditExecutor, now: Date): Pro
         href: `/admin/cases/${loan.id}`,
         entityType: "case",
         entityId: loan.id,
-        dedupeKey: `overdue:${loan.id}`,
+        dedupeKey: overdueDedupeKey(loan.id),
       })),
       now,
     );

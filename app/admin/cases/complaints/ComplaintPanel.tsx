@@ -14,7 +14,6 @@ import { a, type AdminKey } from "@/lib/i18n/admin";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { CasePanelProps } from "../panels";
 import { Glyph, SectionCard } from "../SectionCard";
-import { WORKING_STATUSES as WORKING } from "./Targets";
 import { AcknowledgeForm, CloseButton, EvidenceReveal, RecategoriseForm, RedirectForm, ReopenButton, ResolveForm, StartButton, TextReveal, WellbeingButton, WithdrawButton } from "./Forms";
 
 /**
@@ -29,12 +28,14 @@ export async function ComplaintPanel(props: CasePanelProps) {
   const actor = await staffActorFor(staff, "complaint", props.organisationId);
   const db = getDb();
   const { locale, status, caseId } = props;
+  const closed = isTerminalStatus("complaint", "complaint", status);
+  const working = !closed;
   const facts = await getComplaintFacts(db, caseId, actor);
   const categories = await listCategories(db);
-  const redirectFaculties = WORKING.has(status) ? await readFacultiesWithOrganisations(db) : [];
+  const redirectFaculties = working ? await readFacultiesWithOrganisations(db) : [];
   const redirected = status === "redirected" ? await loadRedirectTarget(db, caseId) : null;
   const base = { locale, caseId, orgId: actor.organisationId };
-  const piiGone = facts.hasText === false && facts.evidenceCount === 0 && isTerminalStatus("complaint", "complaint", status);
+  const piiGone = facts.hasText === false && facts.evidenceCount === 0 && closed;
 
   return (
     <>
@@ -57,12 +58,12 @@ export async function ComplaintPanel(props: CasePanelProps) {
             <AcknowledgeForm {...base} />
           </Step>
         ) : null}
-        {WORKING.has(status) && status !== "in_progress" ? (
+        {working && status !== "in_progress" ? (
           <Step title={a("cpcStart", locale)}>
             <StartButton {...base} />
           </Step>
         ) : null}
-        {WORKING.has(status) || status === "in_progress" ? (
+        {working ? (
           <Step title={a("cpcResolve", locale)}>
             <ResolveForm {...base} />
           </Step>
@@ -77,7 +78,7 @@ export async function ComplaintPanel(props: CasePanelProps) {
             </Step>
           </>
         ) : null}
-        {WORKING.has(status) ? (
+        {working ? (
           <Step title={a("cpcRedirectHeading", locale)} hint={a("cpcRedirectHint", locale)}>
             <RedirectForm
               {...base}
@@ -105,7 +106,7 @@ export async function ComplaintPanel(props: CasePanelProps) {
             <WellbeingButton {...base} />
           )}
         </Step>
-        {WORKING.has(status) ? (
+        {working ? (
           <Step title={a("cpcWithdrawHeading", locale)} hint={a("cpcWithdrawHint", locale)}>
             <WithdrawButton {...base} from={status} />
           </Step>

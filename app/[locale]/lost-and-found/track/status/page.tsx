@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-const CLAIM_TONE: Record<ClaimStage, "info" | "success" | "neutral"> = { waiting: "info", accepted: "success", not_accepted: "neutral", returned: "success" };
+const CLAIM_TONE: Record<ClaimStage, "info" | "success" | "neutral"> = { waiting: "info", accepted: "success", not_accepted: "neutral", returned: "success", closed: "neutral" };
 
 /** A message from staff in the reader's language, or the other one, marked with its own `lang`. */
 function Message({ body, locale }: { body: PublicBody | null; locale: Locale }) {
@@ -148,7 +148,7 @@ export default async function TrackStatusPage({ params, searchParams }: { params
   if (tracked.state === "none") redirect(`${track}?problem=1`);
   if (tracked.state === "limited") redirect(`${track}${limitedQuery(tracked.retryAfterSeconds)}`);
   if (tracked.state === "claim") return <ClaimStatus claim={tracked.claim} locale={locale} />;
-  const { view, canWithdraw } = tracked;
+  const { view, actions } = tracked;
 
   const tone = getStatusDef(view.service, view.kind, view.status)?.tone ?? "neutral";
   const title = view.kind === "lost" ? UI.lfpStatusTitleReport[locale] : UI.lfpStatusTitleItem[locale];
@@ -197,7 +197,7 @@ export default async function TrackStatusPage({ params, searchParams }: { params
           </ol>
         </Stack>
 
-        {canWithdraw ? (
+        {actions.includes("withdraw") ? (
           <p className="m-0">
             <Link href={localePath(locale, "/lost-and-found/track/withdraw")} className="text-action underline">
               {UI.lfpWithdrawLink[locale]}

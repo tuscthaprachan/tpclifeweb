@@ -5,6 +5,7 @@ import { useReveal } from "@/components/admin/hooks/use-reveal";
 import { uploadError, uploadNote } from "@/components/admin/content/upload/upload-machine";
 import { useImageUpload } from "@/components/admin/content/upload/use-image-upload";
 import { Button, ErrorSummary, InsetText, NotificationBanner, Select, TextInput, Textarea } from "@/components/ui";
+import { LF_IDLE, lfErrors, lfFailed, lfValues, type LfNotice, type LfState } from "./lf-state";
 import { ID_CHECK_TYPES } from "@/lib/lost-found/constants";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
@@ -27,7 +28,6 @@ import {
   logLostAction,
   updateListingAction,
   uploadPhotoAction,
-  type LfState,
 } from "./actions";
 
 export interface Option {
@@ -42,7 +42,7 @@ interface Base {
 }
 
 const L = a;
-const EMPTY: LfState = {};
+const EMPTY = LF_IDLE;
 const checkbox = "size-5";
 
 function HiddenIds({ caseId, orgId }: { caseId?: string; orgId: number }) {
@@ -57,17 +57,17 @@ function HiddenIds({ caseId, orgId }: { caseId?: string; orgId: number }) {
 /** Error summary, success banner and the "told the person" notice for a form. */
 function Feedback({ state, locale, prefix }: { state: LfState; locale: Locale; prefix: string }) {
   const items = [
-    ...Object.entries(state.errors ?? {}).map(([name, message]) => ({ href: `#${prefix}-${name.replace(/[^a-zA-Z0-9]+/g, "-")}`, message })),
-    ...(state.error ? [{ href: `#${prefix}-form`, message: state.error }] : []),
+    ...Object.entries(lfErrors(state)).map(([name, message]) => ({ href: `#${prefix}-${name.replace(/[^a-zA-Z0-9]+/g, "-")}`, message })),
+    ...(state.status === "failed" ? [{ href: `#${prefix}-form`, message: state.error }] : []),
   ];
   return (
     <>
-      {state.saved ? (
+      {state.status === "saved" ? (
         <NotificationBanner variant="success" title={a(state.saved, locale)}>
           {null}
         </NotificationBanner>
       ) : null}
-      {state.notice ? <NoticeBanner notice={state.notice} locale={locale} /> : null}
+      {state.status === "saved" && state.notice ? <NoticeBanner notice={state.notice} locale={locale} /> : null}
       {items.length > 0 ? <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={3} items={items} /> : null}
       <span id={`${prefix}-form`} tabIndex={-1} />
     </>
@@ -75,7 +75,7 @@ function Feedback({ state, locale, prefix }: { state: LfState; locale: Locale; p
 }
 
 /** What happened when the person was told, or the reminder to do it by hand. */
-export function NoticeBanner({ notice, locale }: { notice: NonNullable<LfState["notice"]>; locale: Locale }) {
+export function NoticeBanner({ notice, locale }: { notice: LfNotice; locale: Locale }) {
   if (notice.result === "sent") {
     return (
       <NotificationBanner variant="success" title={a("lfcNoticeSentTitle", locale)}>
@@ -104,8 +104,8 @@ function SaveButton({ locale, pending, label, variant = "secondary" }: { locale:
 }
 
 /** What was typed before a problem was reported, else the field's usual starting value. */
-const typed = (state: LfState, name: string, fallback = "") => state.values?.[name] ?? fallback;
-const ticked = (state: LfState, name: string) => state.values?.[name] === "on";
+const typed = (state: LfState, name: string, fallback = "") => lfValues(state)?.[name] ?? fallback;
+const ticked = (state: LfState, name: string) => lfValues(state)?.[name] === "on";
 
 const control = (prefix: string, name: string) => `${prefix}-${name.replace(/[^a-zA-Z0-9]+/g, "-")}`;
 
@@ -159,7 +159,7 @@ export function DescribeForm({ locale, mode, caseId, orgId, defaults, categories
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]">
       <Feedback state={state} locale={locale} prefix={prefix} />
       <HiddenIds caseId={caseId} orgId={orgId} />
-      <DescribeFields locale={locale} prefix={prefix} errors={state.errors ?? {}} values={state.values} defaults={defaults} categories={categories} places={places} />
+      <DescribeFields locale={locale} prefix={prefix} errors={lfErrors(state)} values={lfValues(state)} defaults={defaults} categories={categories} places={places} />
       <SaveButton locale={locale} pending={pending} variant={mode === "panel" ? "secondary" : "primary"} label={L(mode === "start" ? "lfcStartSave" : "lfcDescribeSave", locale)} />
     </form>
   );
@@ -169,7 +169,7 @@ export function DescribeForm({ locale, mode, caseId, orgId, defaults, categories
 export function WalkInLostForm({ locale, orgId, categories, places }: { locale: Locale; orgId: number; categories: Option[]; places: Option[] }) {
   const [state, run, pending] = useActionState<LfState, FormData>(logLostAction, EMPTY);
   const prefix = useId().replace(/:/g, "");
-  const errors = state.errors ?? {};
+  const errors = lfErrors(state);
   const field = (name: string) => ({ id: control(prefix, name), name, error: errors[name] });
   return (
     <form action={run} noValidate className="flex flex-col gap-[var(--space-6)]">
@@ -179,7 +179,7 @@ export function WalkInLostForm({ locale, orgId, categories, places }: { locale: 
         <h2 id={`${prefix}-item`} className="m-0 text-xl font-semibold">
           {L("lfcWalkInItem", locale)}
         </h2>
-        <DescribeFields locale={locale} prefix={prefix} errors={errors} values={state.values} defaults={{}} categories={categories} places={places} />
+        <DescribeFields locale={locale} prefix={prefix} errors={errors} values={lfValues(state)} defaults={{}} categories={categories} places={places} />
       </section>
       <section aria-labelledby={`${prefix}-person`} className="flex flex-col gap-[var(--space-4)]">
         <h2 id={`${prefix}-person`} className="m-0 text-xl font-semibold">
@@ -255,7 +255,7 @@ export function MatchButton({ locale, caseId, orgId, lostCaseId, foundCaseId, sc
       <input type="hidden" name="foundCaseId" value={foundCaseId} />
       <input type="hidden" name="score" value={score} />
       <div>
-        <Button type="submit" variant="secondary" size="sm" disabled={linked || state.saved !== undefined} loading={pending} loadingLabel={a("caseSaving", locale)}>
+        <Button type="submit" variant="secondary" size="sm" disabled={linked || state.status === "saved"} loading={pending} loadingLabel={a("caseSaving", locale)}>
           {linked ? L("lfcMatchLinked", locale) : L("lfcMatchMark", locale)}
           <span className="visually-hidden"> {reference}</span>
         </Button>
@@ -270,7 +270,7 @@ function Reveal({ locale, action, fields, showLabel, shownTitle, loggedNote, emp
   const { state, pending, reveal, hide } = useReveal<LfState, string>({
     action,
     initial: EMPTY,
-    select: (s) => (s.error ? { error: s.error } : s.secret !== undefined ? { value: s.secret ?? "" } : null),
+    select: (s) => (s.status === "failed" ? { error: s.error } : s.status === "secret" ? { value: s.secret } : null),
     failureMessage: a("csRevealFailed", locale),
   });
   return (
@@ -353,7 +353,7 @@ export function ClaimAnswerReveal({ locale, caseId, orgId, claimId }: Base & { c
 export function StorageForm({ locale, caseId, orgId, desks, deskId, shelf }: Base & { desks: Option[]; deskId: number | null; shelf: string }) {
   const [state, run, pending] = useActionState<LfState, FormData>(saveStorageAction, EMPTY);
   const prefix = useId().replace(/:/g, "");
-  const errors = state.errors ?? {};
+  const errors = lfErrors(state);
   return (
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]">
       <Feedback state={state} locale={locale} prefix={prefix} />
@@ -375,13 +375,13 @@ export function VerificationForm({ locale, caseId, orgId, has }: Base & { has: b
       <Textarea
         id={control(prefix, "detail")}
         name="detail"
-        error={state.errors?.detail}
+        error={lfErrors(state).detail}
         label={L(has ? "lfcVerificationReplace" : "lfcFieldVerification", locale)}
         hint={L("lfcFieldVerificationHint", locale)}
         defaultValue={typed(state, "detail")}
         rows={4}
         maxLength={2000}
-        key={state.saved ? "saved" : "typing"}
+        key={state.status === "saved" ? "saved" : "typing"}
       />
       <SaveButton locale={locale} pending={pending} label={L("lfcVerificationSave", locale)} />
     </form>
@@ -391,7 +391,7 @@ export function VerificationForm({ locale, caseId, orgId, has }: Base & { has: b
 export function FinderForm({ locale, caseId, orgId, has }: Base & { has: boolean }) {
   const [state, run, pending] = useActionState<LfState, FormData>(addFinderAction, EMPTY);
   const prefix = useId().replace(/:/g, "");
-  const errors = state.errors ?? {};
+  const errors = lfErrors(state);
   const f = (name: string) => ({ id: control(prefix, `finder.${name}`), name: `finder.${name}`, error: errors[`finder.${name}`] });
   return (
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]" autoComplete="off">
@@ -415,11 +415,11 @@ export function FinderForm({ locale, caseId, orgId, has }: Base & { has: boolean
 /** Photo upload. The picture is compressed in the browser first, as in the content image picker. */
 export function PhotoUpload({ locale, caseId, orgId, storageConfigured, canPublic }: Base & { storageConfigured: boolean; canPublic: boolean }) {
   const upload = useImageUpload<LfState>(locale);
-  const [saved, setSaved] = useState<LfState>({});
+  const [saved, setSaved] = useState<LfState>(LF_IDLE);
   const [pending, startTransition] = useTransition();
   const failed = uploadError(upload.state);
   const note = uploadNote(upload.state);
-  const state: LfState = failed ? { error: failed } : saved;
+  const state: LfState = failed ? lfFailed(failed) : saved;
   const id = useId().replace(/:/g, "");
   if (!storageConfigured) {
     return (
@@ -436,10 +436,10 @@ export function PhotoUpload({ locale, caseId, orgId, storageConfigured, canPubli
         const form = event.currentTarget;
         const file = form.querySelector<HTMLInputElement>('input[type="file"]')?.files?.[0];
         const publicToo = form.querySelector<HTMLInputElement>('input[name="publicToo"]')?.checked;
-        setSaved({});
+        setSaved(LF_IDLE);
         upload.reset();
         startTransition(async () => {
-          if (!file) return setSaved({ error: a("errUploadChoose", locale) });
+          if (!file) return setSaved(lfFailed(a("errUploadChoose", locale)));
           const outcome = await upload.start(file, async (sent) => {
             const data = new FormData();
             data.set("caseId", caseId);
@@ -447,7 +447,7 @@ export function PhotoUpload({ locale, caseId, orgId, storageConfigured, canPubli
             data.set("file", sent ?? file);
             if (publicToo) data.set("publicToo", "on");
             const result = await uploadPhotoAction(data);
-            return result.error ? { ok: false, error: result.error } : { ok: true, result };
+            return result.status === "failed" ? { ok: false, error: result.error } : { ok: true, result };
           });
           if (outcome.status === "done") {
             setSaved(outcome.result);
@@ -489,13 +489,13 @@ export function PhotoUpload({ locale, caseId, orgId, storageConfigured, canPubli
 export function AddClaimForm({ locale, caseId, orgId }: Base) {
   const [state, run, pending] = useActionState<LfState, FormData>(addClaimAction, EMPTY);
   const prefix = useId().replace(/:/g, "");
-  const errors = state.errors ?? {};
+  const errors = lfErrors(state);
   const f = (name: string) => ({ id: control(prefix, name), name, error: errors[name] });
   return (
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]" autoComplete="off">
       <Feedback state={state} locale={locale} prefix={prefix} />
       <HiddenIds caseId={caseId} orgId={orgId} />
-      <Textarea {...f("answer")} defaultValue={typed(state, "answer")} label={L("lfcFieldClaimAnswer", locale)} hint={L("lfcFieldClaimAnswerHint", locale)} rows={4} maxLength={2000} key={state.saved ? "saved" : "typing"} />
+      <Textarea {...f("answer")} defaultValue={typed(state, "answer")} label={L("lfcFieldClaimAnswer", locale)} hint={L("lfcFieldClaimAnswerHint", locale)} rows={4} maxLength={2000} key={state.status === "saved" ? "saved" : "typing"} />
       <TextInput {...f("claimant.name")} defaultValue={typed(state, "claimant.name")} label={L("lfcFieldName", locale)} maxLength={200} className="max-w-[24rem]" />
       <TextInput {...f("claimant.email")} defaultValue={typed(state, "claimant.email")} type="email" label={L("contactEmail", locale)} maxLength={320} className="max-w-[24rem]" />
       <TextInput {...f("claimant.phone")} defaultValue={typed(state, "claimant.phone")} type="tel" label={L("contactPhone", locale)} maxLength={40} className="max-w-[16rem]" />
@@ -514,7 +514,7 @@ export function ClaimReview({ locale, caseId, orgId, claimId, defaultReject, has
   const [state, run, pending] = useActionState<LfState, FormData>(decideClaimAction, EMPTY);
   const [rejecting, setRejecting] = useState(false);
   const prefix = useId().replace(/:/g, "");
-  const errors = state.errors ?? {};
+  const errors = lfErrors(state);
   return (
     <form action={run} noValidate className="flex flex-col gap-[var(--space-3)]">
       <Feedback state={state} locale={locale} prefix={prefix} />
@@ -559,7 +559,7 @@ export function ClaimReview({ locale, caseId, orgId, claimId, defaultReject, has
 export function HandoverForm({ locale, caseId, orgId, desks, deskId, nowLocal, lostChoices, collectorKnown }: Base & { desks: Option[]; deskId: number; nowLocal: string; lostChoices: Option[]; collectorKnown: boolean }) {
   const [state, run, pending] = useActionState<LfState, FormData>(handoverAction, EMPTY);
   const prefix = useId().replace(/:/g, "");
-  const errors = state.errors ?? {};
+  const errors = lfErrors(state);
   const f = (name: string) => ({ id: control(prefix, name), name, error: errors[name] });
   return (
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]" autoComplete="off">

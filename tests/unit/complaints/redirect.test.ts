@@ -127,7 +127,7 @@ describe("what the person sees", () => {
     expect(view.state).toBe("ok");
     if (view.state !== "ok") return;
     expect(view.complaint.view.status).toBe("redirected");
-    expect(view.complaint).toMatchObject({ canWithdraw: false, canReopen: false, survey: "unavailable" });
+    expect(view.complaint).toMatchObject({ actions: [] });
     const target = view.complaint.redirect!;
     expect(target.level).toBe("faculty");
     expect(target.bodies.map((b) => b.name.en)).toEqual(["British and American Studies"]);

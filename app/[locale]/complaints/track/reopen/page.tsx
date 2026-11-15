@@ -48,7 +48,7 @@ export default async function ReopenComplaintPage({ params, searchParams }: { pa
   const tracked = await openTracked(getDb(), cookie.reference, cookie.token, meta.ip);
   if (tracked.state !== "ok") redirect(`${track}?problem=1`);
   const c = tracked.complaint;
-  if (!c.canReopen || !c.reopenUntil) redirect(status);
+  if (!c.actions.includes("reopen") || !c.reopenUntil) redirect(status);
 
   const problem = first((await searchParams).problem);
   const items: ErrorSummaryItem[] = problem === "long" ? [{ href: "#reason", message: UI.cpErrReasonLong[locale] }] : problem ? [{ href: "#reason", message: UI.cpReopenFailed[locale] }] : [];

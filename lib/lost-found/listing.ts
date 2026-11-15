@@ -9,17 +9,17 @@
  * lowercased reference, so one number works for the case and the page.
  */
 
-import { and, asc, eq, ne, sql } from "drizzle-orm";
+import { and, asc, eq, getTableName, ne, sql } from "drizzle-orm";
 import type { ContentActor } from "@/lib/admin/content/access";
 import { saveContent } from "@/lib/admin/content/save";
 import { revalidateFor } from "@/lib/content/revalidate";
-import type { AuditExecutor } from "@/lib/db/audit";
+import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { lostFoundItemPhotos, lostFoundItems } from "@/lib/db/schema";
 import type { ContentStatus, OWNERS } from "@/lib/db/schema/content/enums";
 import type { LOST_FOUND_CATEGORIES, LOST_FOUND_STATUSES } from "@/lib/db/schema/content/enums";
 import type { CaseActor, StaffActor } from "@/lib/cases/types";
 import { auditedLostFoundItems } from "./audited-item";
-import { listingRegisterFor, resolvedAtFor } from "./register";
+import { listingRegisterFor, resolvedAtFor, unclaimedSql } from "./register";
 
 type Category = (typeof LOST_FOUND_CATEGORIES)[number];
 type Owner = (typeof OWNERS)[number];
@@ -237,7 +237,7 @@ export async function publishListingForCase(tx: AuditExecutor, caseId: string, a
 
 /**
  * Sets the register status (open, matched, returned...) of a case's listing.
- * `returned` and `withdrawn` also stamp `resolved_at`; `open` clears it. A no-op without a listing.
+ * `returned`, `withdrawn` and `unclaimed` also stamp `resolved_at`; `open` and `matched` clear it. A no-op without a listing.
  */
 export async function setListingRegisterStatus(tx: AuditExecutor, caseId: string, registerStatus: RegisterStatus, actor: ContentActor, now: Date): Promise<void> {
   const [row] = await tx.select({ id: lostFoundItems.id, registerStatus: lostFoundItems.registerStatus }).from(lostFoundItems).where(eq(lostFoundItems.caseId, caseId));
@@ -249,7 +249,7 @@ export async function setListingRegisterStatus(tx: AuditExecutor, caseId: string
     actor,
     db: tx,
     id: row.id,
-    values: { registerStatus, ...(resolvedAt !== undefined ? { resolvedAt } : {}) },
+    values: { registerStatus, resolvedAt },
     now,
   });
 }
@@ -267,7 +267,7 @@ export async function syncListingRegister(tx: AuditExecutor, caseId: string, kin
   const resolvedAt = resolvedAtFor(register, now);
   await tx
     .update(lostFoundItems)
-    .set({ registerStatus: register, ...(resolvedAt !== undefined ? { resolvedAt } : {}), updatedAt: now })
+    .set({ registerStatus: register, resolvedAt, updatedAt: now })
     .where(and(eq(lostFoundItems.caseId, caseId), ne(lostFoundItems.registerStatus, register)));
 }
 
@@ -284,3 +284,38 @@ export async function appendListingPhoto(tx: AuditExecutor, itemId: string, imag
   await tx.insert(lostFoundItemPhotos).values({ itemId, imageId, position: next });
 }
 
+
+/** The audit entity type and action prefix `saveContent` uses for listings, so the audit viewer reads these entries as listing updates. */
+const LISTING_TABLE = getTableName(lostFoundItems);
+
+/**
+ * Applies the derived `unclaimed` state: every published found listing that is
+ * still `open` after its `claimBy` day (`isUnclaimed`) moves to `unclaimed`
+ * through the register, with `resolved_at` stamped. The case keeps its status
+ * (staff may still hand the item over). One audit entry per listing; returns the
+ * case ids moved. Run by the daily retention job.
+ */
+export async function markUnclaimedListings(db: AuditExecutor, now: Date): Promise<string[]> {
+  const due = await db
+    .select({ id: lostFoundItems.id, caseId: lostFoundItems.caseId, slug: lostFoundItems.slug, claimBy: lostFoundItems.claimBy })
+    .from(lostFoundItems)
+    .where(and(eq(lostFoundItems.status, "published"), unclaimedSql(now, lostFoundItems)))
+    .limit(500);
+  const moved: string[] = [];
+  for (const item of due) {
+    const changed = await withAudit(db, { actorUserId: null }, async (tx, audit) => {
+      const rows = await tx
+        .update(lostFoundItems)
+        .set({ registerStatus: "unclaimed", resolvedAt: resolvedAtFor("unclaimed", now), updatedAt: now })
+        .where(and(eq(lostFoundItems.id, item.id), eq(lostFoundItems.registerStatus, "open")))
+        .returning({ id: lostFoundItems.id });
+      if (rows.length === 0) return false;
+      await audit({ action: `${LISTING_TABLE}.update`, entityType: LISTING_TABLE, entityId: item.id, before: { registerStatus: "open" }, after: { registerStatus: "unclaimed", claimBy: item.claimBy } });
+      return true;
+    });
+    if (!changed) continue;
+    revalidateFor("lostFoundItem", item.slug);
+    if (item.caseId) moved.push(item.caseId);
+  }
+  return moved;
+}

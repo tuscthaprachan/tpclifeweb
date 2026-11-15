@@ -90,7 +90,7 @@ describe("a claimant's tracking link", () => {
     expect(mine.timeline.map((e) => e.title.en)).toEqual(["Claim received", "Accepted, ready to collect", "Message from staff"]);
     // The other claimant has not been told anything.
     const theirs = await view(found.reference, b.token);
-    expect(theirs).toMatchObject({ stage: "waiting", desk: null, collectionNote: null });
+    expect(theirs).toMatchObject({ stage: "closed", desk: null, collectionNote: null });
     expect(JSON.stringify(theirs)).not.toContain("weekdays");
     // The item's own timeline does not carry the claimant's message.
     expect(JSON.stringify(await publicTimeline(t.db, found.caseId))).not.toContain("weekdays");

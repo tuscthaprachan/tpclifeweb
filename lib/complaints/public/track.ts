@@ -9,7 +9,7 @@
  */
 
 import { and, desc, eq } from "drizzle-orm";
-import { allowedTransitions, consumeTrackingAttempt, publicCaseView, resolveTrackingLink, transition, type CaseActor, type PublicCaseView, type TrackedCase } from "@/lib/cases";
+import { availableActions, consumeTrackingAttempt, publicCaseView, resolveTrackingLink, transition, type CaseActor, type PublicAction, type PublicCaseView, type TrackedCase } from "@/lib/cases";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { caseEvents } from "@/lib/db/schema/cases";
 import { complaintCases, complaintCategories, type ComplaintIdentity } from "@/lib/db/schema/complaints";
@@ -18,7 +18,7 @@ import { SITE_URL } from "@/lib/site-url";
 import { ComplaintError } from "../errors";
 import { loadRedirectTarget, type RedirectTarget } from "../redirect";
 import { surveyState, submitSurvey, type SurveyOutcome } from "../survey";
-import { canReopenNow, reopenComplaint, reopenWindowEnds } from "../workflow";
+import { reopenComplaint, reopenWindowEnds } from "../workflow";
 
 const REFERENCE = /^CP-\d{4}-\d{4,}$/;
 const TOKEN = /[A-Za-z0-9_-]{43}/;
@@ -70,10 +70,9 @@ export interface TrackedComplaint {
   wellbeingRouted: boolean;
   /** Set once the complaint was redirected to a faculty or a course: who to contact instead. */
   redirect: RedirectTarget | null;
-  canWithdraw: boolean;
-  canReopen: boolean;
+  /** What the person may do now (`withdraw`, `reopen`, `survey`), from the state machine. */
+  actions: PublicAction[];
   reopenUntil: Date | null;
-  survey: "open" | "answered" | "unavailable";
 }
 
 export type TrackedView = { state: "ok"; complaint: TrackedComplaint } | { state: "limited"; retryAfterSeconds: number } | { state: "none" };
@@ -109,10 +108,8 @@ export async function openTracked(db: AuditExecutor, reference: string, token: s
       outcome: showOutcome && outcome && (outcome.th || outcome.en) ? outcome : null,
       wellbeingRouted: Boolean(cc.cc.wellbeingRoutedAt),
       redirect: view.status === "redirected" ? await loadRedirectTarget(db, id) : null,
-      canWithdraw: allowedTransitions(view.service, view.kind, view.status, "public").includes("withdrawn"),
-      canReopen: canReopenNow(cc.cc.resolvedAt, view.status, now),
+      actions: availableActions(view, now, { resolvedAt: cc.cc.resolvedAt, surveyOpen: (await surveyState(db, id)) === "open" }),
       reopenUntil: view.status === "resolved" && cc.cc.resolvedAt ? reopenWindowEnds(cc.cc.resolvedAt) : null,
-      survey: await surveyState(db, id),
     },
   };
 }
@@ -133,7 +130,7 @@ export async function withdrawTracked(db: AuditExecutor, reference: string, toke
   if (found.state === "limited") return "limited";
   if (found.state === "none") return "none";
   const { tracked } = found;
-  if (!allowedTransitions(tracked.service, tracked.kind, tracked.status, "public").includes("withdrawn")) return "not_allowed";
+  if (!availableActions(tracked, now).includes("withdraw")) return "not_allowed";
   try {
     await transition(db, tracked.id, "withdrawn", publicActor(ctx), { expectedFrom: tracked.status, now });
   } catch {

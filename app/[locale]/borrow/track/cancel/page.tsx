@@ -46,7 +46,7 @@ export default async function CancelRequestPage({ params, searchParams }: { para
   const meta = await requestContext();
   const tracked = await openTracked(getDb(), cookie.reference, cookie.token, meta.ip);
   if (tracked.state !== "ok") redirect(`${track}?problem=1`);
-  if (!tracked.loan.canCancel) redirect(status);
+  if (!tracked.loan.actions.includes("withdraw")) redirect(status);
   const failed = first((await searchParams).problem) === "1";
 
   return (
