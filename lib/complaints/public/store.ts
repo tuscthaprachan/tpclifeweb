@@ -8,23 +8,22 @@
  * In-progress rows live two hours from the last save; the page that shows the
  * private tracking link lives thirty minutes. Expired rows are swept whenever
  * a new journey starts, and their uploaded files are deleted with them.
+ * The mechanics are shared (lib/journeys/store.ts); this file holds what is
+ * specific to complaints.
  */
 
-import { createHash, randomBytes } from "node:crypto";
-import { eq, inArray, lte } from "drizzle-orm";
-import { decryptPii, encryptPii, type PiiEnv } from "@/lib/crypto/pii";
+import type { PiiEnv } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
-import { recordJourneyStart } from "@/lib/performance/journeys";
 import { complaintJourneyFiles, complaintJourneys, type ComplaintIdentity } from "@/lib/db/schema/complaints";
 import type { Locale } from "@/lib/i18n/config";
 import type { UiKey } from "@/lib/i18n/strings";
+import { createJourneyStore, hashJourneyToken, JOURNEY_TTL_MS, RESULT_TTL_MS, type LoadedJourney as Loaded } from "@/lib/journeys/store";
 import type { Storage } from "@/lib/storage";
 import { journeyAad } from "../aad";
 import type { DraftValues } from "./steps";
 import { emptyValues } from "./validate";
 
-export const JOURNEY_TTL_MS = 2 * 60 * 60 * 1000;
-export const RESULT_TTL_MS = 30 * 60 * 1000;
+export { hashJourneyToken, JOURNEY_TTL_MS, RESULT_TTL_MS };
 
 /** What a submitted journey leaves for the confirmation page. */
 export interface JourneyResult {
@@ -53,84 +52,30 @@ export interface JourneyData {
   result?: JourneyResult;
 }
 
-export interface LoadedJourney {
-  id: string;
-  data: JourneyData;
-}
+export type LoadedJourney = Loaded<JourneyData>;
 
-export function hashJourneyToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex");
-}
+export const complaintStore = createJourneyStore<JourneyData, JourneyResult, { locale: Locale }>({
+  table: complaintJourneys,
+  aad: journeyAad,
+  kind: () => "complaint",
+  empty: ({ locale }, now) => ({ v: 1, locale, startedAt: now.toISOString(), values: emptyValues() }),
+  blank: emptyValues,
+  // A draft saved before the triage questions existed has no such answers: they read as not answered.
+  migrate: (raw) => {
+    const data = raw as JourneyData;
+    return data.v === 1 ? { ...data, values: { ...emptyValues(), ...data.values } } : null;
+  },
+  files: { table: complaintJourneyFiles, label: "complaints" },
+});
 
-/**
- * Deletes journeys past their expiry and the files uploaded to them. Files are
- * deleted from storage first; if storage cannot be reached the journey stays
- * and is tried again next time, so no file is left without a record.
- */
-export async function sweepExpiredJourneys(db: AuditExecutor, now: Date = new Date(), getStorage?: () => Storage): Promise<number> {
-  const expired = await db.select({ id: complaintJourneys.id }).from(complaintJourneys).where(lte(complaintJourneys.expiresAt, now));
-  if (expired.length === 0) return 0;
-  const ids = expired.map((j) => j.id);
-  const files = await db.select({ key: complaintJourneyFiles.storageKey }).from(complaintJourneyFiles).where(inArray(complaintJourneyFiles.journeyId, ids));
-  if (files.length > 0) {
-    try {
-      const storage = getStorage?.();
-      if (!storage) return 0;
-      for (const file of files) await storage.delete(file.key);
-    } catch (error) {
-      console.error("[complaints] could not delete files of expired journeys", error instanceof Error ? error.message : error);
-      return 0;
-    }
-  }
-  const gone = await db.delete(complaintJourneys).where(inArray(complaintJourneys.id, ids)).returning({ id: complaintJourneys.id });
-  return gone.length;
-}
+/** Deletes journeys past their expiry and the files uploaded to them. */
+export const sweepExpiredJourneys = (db: AuditExecutor, now: Date = new Date(), getStorage?: () => Storage) => complaintStore.sweep(db, now, getStorage);
 
 /** Starts a journey and returns the token for the cookie. Throws `PiiUnavailableError` without an encryption key. */
-export async function startJourney(
-  db: AuditExecutor,
-  input: { locale: Locale },
-  opts: { now?: Date; env?: PiiEnv; getStorage?: () => Storage } = {},
-): Promise<{ token: string; id: string }> {
-  const now = opts.now ?? new Date();
-  await sweepExpiredJourneys(db, now, opts.getStorage);
-  const id = crypto.randomUUID();
-  const token = randomBytes(32).toString("base64url");
-  const data: JourneyData = { v: 1, locale: input.locale, startedAt: now.toISOString(), values: emptyValues() };
-  await db.insert(complaintJourneys).values({
-    id,
-    tokenHash: hashJourneyToken(token),
-    dataEnc: encryptPii(JSON.stringify(data), journeyAad(id), opts.env),
-    createdAt: now,
-    updatedAt: now,
-    expiresAt: new Date(now.getTime() + JOURNEY_TTL_MS),
-  });
-  // A count for the completion rate on /performance: the kind and the time, nothing about the person.
-  await recordJourneyStart(db, id, "complaint", now);
-  return { token, id };
-}
+export const startJourney = (db: AuditExecutor, input: { locale: Locale }, opts: { now?: Date; env?: PiiEnv; getStorage?: () => Storage } = {}) => complaintStore.start(db, input, opts);
 
 /** The journey a cookie token points to, or null if there is none or it expired. */
-export async function loadJourney(db: AuditExecutor, token: string | undefined, opts: { now?: Date; env?: PiiEnv } = {}): Promise<LoadedJourney | null> {
-  if (!token || token.length > 100) return null;
-  const now = opts.now ?? new Date();
-  const [row] = await db.select().from(complaintJourneys).where(eq(complaintJourneys.tokenHash, hashJourneyToken(token)));
-  if (!row || row.expiresAt <= now) return null;
-  try {
-    const data = JSON.parse(decryptPii(row.dataEnc, journeyAad(row.id), opts.env)) as JourneyData;
-    if (data.v !== 1) return null;
-    // A draft saved before the triage questions existed has no such answers: they read as not answered.
-    return { id: row.id, data: { ...data, values: { ...emptyValues(), ...data.values } } };
-  } catch {
-    return null;
-  }
-}
+export const loadJourney = (db: AuditExecutor, token: string | undefined, opts: { now?: Date; env?: PiiEnv } = {}) => complaintStore.load(db, token, opts);
 
-/** Writes the journey back. `ttlMs` restarts the clock (default: in-progress length). */
-export async function saveJourney(db: AuditExecutor, id: string, data: JourneyData, opts: { now?: Date; env?: PiiEnv; ttlMs?: number } = {}): Promise<void> {
-  const now = opts.now ?? new Date();
-  await db
-    .update(complaintJourneys)
-    .set({ dataEnc: encryptPii(JSON.stringify(data), journeyAad(id), opts.env), updatedAt: now, expiresAt: new Date(now.getTime() + (opts.ttlMs ?? JOURNEY_TTL_MS)) })
-    .where(eq(complaintJourneys.id, id));
-}
+/** Replaces the journey's data under the row lock. Pages and actions use `complaintStore.update`. */
+export const saveJourney = (db: AuditExecutor, id: string, data: JourneyData, opts: { now?: Date; env?: PiiEnv; ttlMs?: number } = {}) => complaintStore.save(db, id, data, opts);

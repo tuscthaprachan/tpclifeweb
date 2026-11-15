@@ -10,6 +10,7 @@
 
 import { CASE_PREFERRED_CONTACTS, type CasePreferredContact } from "@/lib/db/schema/cases";
 import type { UiKey } from "@/lib/i18n/strings";
+import { defineJourney } from "@/lib/journeys/machine";
 import { COMPLAINT_LIMITS as LIMITS } from "../constants";
 import { isIdentity, LECTURER_ANSWERS, LEVELS, NO_PROGRAMME, reachesCase, stepsFor, STEP_FIELDS, type DraftValues } from "./steps";
 
@@ -70,6 +71,13 @@ export function readStepValues(step: string, form: FormData): Partial<DraftValue
   }
 }
 
+/** The draft after saving the answers `read` from `step`'s form. Choosing to stay anonymous drops any contact details typed earlier (an anonymous complaint holds none), and a different faculty makes the programme chosen before it meaningless. */
+export function applyAnswers(values: DraftValues, step: string, read: Partial<DraftValues>): DraftValues {
+  const anonymous = step === "identity" && read.identity === "anonymous";
+  const newFaculty = step === "faculty" && read.faculty !== values.faculty;
+  return { ...values, ...read, ...(anonymous ? { name: "", email: "", phone: "", lineId: "", preferred: "", consent: "" } : {}), ...(newFaculty ? { programme: "" } : {}) };
+}
+
 function phoneDigits(phone: string): number {
   return phone.replace(/\D/g, "").length;
 }
@@ -119,23 +127,6 @@ export function facultyChoices(faculties: ReadonlyArray<{ slug: string; programm
 /** Whether the chosen faculty has programme associations to pick from. Without any, the programme page is skipped. */
 export function hasProgrammes(faculties: readonly FacultyChoice[], slug: string): boolean {
   return (faculties.find((f) => f.slug === slug)?.programmeIds.length ?? 0) > 0;
-}
-
-const TRIAGE_STEPS: readonly string[] = ["emergency", "level", "faculty", "lecturer", "programme"];
-
-/**
- * Where a person who asks for `step` should be sent instead, or null when they
- * may see it. A page that is not on their route goes to the end of it, and no
- * page may be reached while a question before it is unanswered.
- */
-export function misroute(step: string, v: DraftValues, categoryKeys: readonly string[], faculties: readonly FacultyChoice[]): string | null {
-  const steps = stepsFor(v, hasProgrammes(faculties, v.faculty));
-  const at = steps.indexOf(step as (typeof steps)[number]);
-  const before = at < 0 ? steps : steps.slice(0, at);
-  const unanswered = before.find((s) => TRIAGE_STEPS.includes(s) && Object.keys(validateStep(s, v, categoryKeys, faculties)).length > 0);
-  if (unanswered) return unanswered;
-  if (at >= 0) return null;
-  return reachesCase(v) ? "check" : steps[steps.length - 1]!;
 }
 
 /**
@@ -191,16 +182,34 @@ export function validateStep(step: string, v: DraftValues, categoryKeys: readonl
  * help is not a complaint: it is returned as the page to go back to, with no
  * errors to show.
  */
-export function firstProblem(v: DraftValues, categoryKeys: readonly string[]): { step: string; errors: FieldErrors } | null {
+export function firstProblem(v: DraftValues, categoryKeys: readonly string[], faculties: readonly FacultyChoice[] = []): { step: string; errors: FieldErrors } | null {
   for (const step of ["emergency", "level"]) {
     const errors = validateStep(step, v, categoryKeys);
     if (Object.keys(errors).length > 0) return { step, errors };
   }
   if (!reachesCase(v)) return { step: v.emergency === "yes" ? "urgent" : "signpost", errors: {} };
-  for (const step of stepsFor(v)) {
+  for (const step of stepsFor(v, hasProgrammes(faculties, v.faculty))) {
     if (!(step in STEP_FIELDS) || step === "emergency" || step === "level") continue;
-    const errors = validateStep(step, v, categoryKeys);
+    const errors = validateStep(step, v, categoryKeys, faculties);
     if (Object.keys(errors).length > 0) return { step, errors };
   }
   return null;
+}
+
+/** What the route of a complaint needs from the database: the categories and faculties on offer. */
+export interface ComplaintRouteContext {
+  categoryKeys: readonly string[];
+  faculties: readonly FacultyChoice[];
+}
+
+/** The route of the complaint journey (lib/journeys/machine.ts). */
+export const complaintJourney = defineJourney<DraftValues, FieldErrors, ComplaintRouteContext>({
+  steps: (v, ctx) => stepsFor(v, hasProgrammes(ctx.faculties, v.faculty)),
+  validate: (step, v, ctx) => validateStep(step, v, ctx.categoryKeys, ctx.faculties),
+  problems: (v, ctx) => firstProblem(v, ctx.categoryKeys, ctx.faculties),
+});
+
+/** Where a person who asks for `step` should be sent instead, or null when they may see it. */
+export function misroute(step: string, v: DraftValues, categoryKeys: readonly string[], faculties: readonly FacultyChoice[]): string | null {
+  return complaintJourney.guard(v, step, { categoryKeys, faculties })?.step ?? null;
 }

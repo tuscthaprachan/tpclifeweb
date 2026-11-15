@@ -19,13 +19,15 @@ import { clearJourneyToken, readJourneyToken, requestContext, siteOrigin, writeJ
 import { sendTrackingLinkEmail } from "@/lib/complaints/public/email";
 import { addJourneyFile, removeJourneyFile } from "@/lib/complaints/public/evidence";
 import { finishJourney, JourneyTooFastError } from "@/lib/complaints/public/journey";
-import { isStep, nextStep, reachesCase, signpostLevel, STEP_FIELDS, stepPath } from "@/lib/complaints/public/steps";
-import { loadJourney, saveJourney, startJourney, type JourneyData } from "@/lib/complaints/public/store";
+import { type DraftValues, isStep, signpostLevel, STEP_FIELDS, stepPath } from "@/lib/complaints/public/steps";
+import { complaintStore, loadJourney, startJourney } from "@/lib/complaints/public/store";
 import { consumeSubmitAttempt, consumeUploadAttempt, JourneyInvalidError } from "@/lib/complaints/public/submit";
 import { trackingLinkUrl } from "@/lib/complaints/public/track";
-import { facultyChoices, firstProblem, hasProgrammes, readStepValues, validateStep } from "@/lib/complaints/public/validate";
+import { applyAnswers, complaintJourney, facultyChoices, firstProblem, readStepValues, validateStep } from "@/lib/complaints/public/validate";
 import { getFacultiesWithOrganisations } from "@/lib/content";
 import { isPiiAvailable, PiiUnavailableError } from "@/lib/crypto/pii";
+import { emailResultOnce } from "@/lib/journeys/email";
+import { recordAnswers, recordFlash } from "@/lib/journeys/machine";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { recordSignpost } from "@/lib/performance/journeys";
@@ -74,27 +76,21 @@ export async function saveStep(form: FormData): Promise<void> {
   if (!draft) redirect(`${basePath(locale)}?expired=1`);
 
   const read = readStepValues(step, form);
-  // Choosing to stay anonymous drops any contact details typed earlier: an anonymous complaint holds none.
-  const anonymous = step === "identity" && read.identity === "anonymous";
-  // A different faculty makes the programme chosen before it meaningless.
-  const newFaculty = step === "faculty" && read.faculty !== draft.data.values.faculty;
-  const values = { ...draft.data.values, ...read, ...(anonymous ? { name: "", email: "", phone: "", lineId: "", preferred: "", consent: "" } : {}), ...(newFaculty ? { programme: "" } : {}) };
-  const data: JourneyData = { ...draft.data, locale, values };
+  const merge = (values: DraftValues) => applyAnswers(values, step, read);
+  const values = merge(draft.data.values);
   const keys = categories.map((c) => c.key);
   const faculties = facultyChoices(facultyList);
   const errors = validateStep(step, values, keys, faculties);
   if (Object.keys(errors).length > 0) {
-    await saveJourney(db, draft.id, { ...data, flash: { step, errors } });
+    await complaintStore.update(db, draft.id, (d) => recordAnswers(d, { locale, merge, flash: { step, errors } }));
     redirect(pathTo(locale, step, fromCheck ? "?from=check" : ""));
   }
-  await saveJourney(db, draft.id, { ...data, flash: undefined });
-  // Coming back from "check" goes straight back, unless the change needs another page answering (switching to named needs a contact page) or no longer leads to a complaint.
-  if (fromCheck && reachesCase(values)) redirect(pathTo(locale, firstProblem(values, keys)?.step ?? "check"));
-  const next = nextStep(values, step, hasProgrammes(faculties, values.faculty)) ?? "check";
+  await complaintStore.update(db, draft.id, (d) => recordAnswers(d, { locale, merge }));
+  const after = complaintJourney.afterSave(values, step, { fromCheck, ctx: { categoryKeys: keys, faculties } });
   // Counted here, on the post that routes there, so reloading the page does not count again.
-  const counted = signpostLevel(next, values);
+  const counted = signpostLevel(after.step, values);
   if (counted) await recordSignpost(db, counted);
-  redirect(pathTo(locale, next));
+  redirect(pathTo(locale, after.step, after.fromCheck ? "?from=check" : ""));
 }
 
 /** "Report it afterwards" on the emergency page: the danger has passed, so carry on to the next question. */
@@ -102,7 +98,7 @@ export async function afterEmergency(form: FormData): Promise<void> {
   const locale = localeOf(form);
   const draft = await currentDraft();
   if (!draft) redirect(`${basePath(locale)}?expired=1`);
-  await saveJourney(getDb(), draft.id, { ...draft.data, locale, values: { ...draft.data.values, emergency: "no" }, flash: undefined });
+  await complaintStore.update(getDb(), draft.id, (d) => recordAnswers(d, { locale, merge: (v) => ({ ...v, emergency: "no" }) }));
   redirect(pathTo(locale, "level"));
 }
 
@@ -117,8 +113,8 @@ export async function continueToTusu(form: FormData): Promise<void> {
   if (!draft) redirect(`${basePath(locale)}?expired=1`);
   const db = getDb();
   const categories = await listCategories(db, { activeOnly: true });
-  const category = categories.some((c) => c.key === "harassment") ? "harassment" : draft.data.values.category;
-  await saveJourney(db, draft.id, { ...draft.data, locale, values: { ...draft.data.values, emergency: "no", level: "university", category }, flash: undefined });
+  const category = categories.some((c) => c.key === "harassment") ? "harassment" : "";
+  await complaintStore.update(db, draft.id, (d) => recordAnswers(d, { locale, merge: (v) => ({ ...v, emergency: "no", level: "university", category: category || v.category }) }));
   redirect(pathTo(locale, "identity"));
 }
 
@@ -139,7 +135,7 @@ export async function uploadEvidence(form: FormData): Promise<void> {
   if (!draft) redirect(`${basePath(locale)}?expired=1`);
   const db = getDb();
   const back = async (key: (typeof UPLOAD_ERRORS)[keyof typeof UPLOAD_ERRORS] | "cpErrFileNone" | "cpErrFileTooMany" | "cpSubmitTooMany"): Promise<never> => {
-    await saveJourney(db, draft.id, { ...draft.data, flash: { step: "evidence", errors: { evidence: key } } });
+    await complaintStore.update(db, draft.id, (d) => recordFlash(d, { step: "evidence", errors: { evidence: key } }));
     redirect(pathTo(locale, "evidence"));
   };
 
@@ -155,7 +151,7 @@ export async function uploadEvidence(form: FormData): Promise<void> {
     console.error("[complaints] evidence not saved", error instanceof Error ? error.message : error);
   }
   if (!outcome.ok) return back(UPLOAD_ERRORS[outcome.reason]);
-  await saveJourney(db, draft.id, { ...draft.data, flash: undefined });
+  await complaintStore.update(db, draft.id, (d) => recordFlash(d, undefined));
   redirect(pathTo(locale, "evidence"));
 }
 
@@ -176,7 +172,7 @@ export async function sendJourney(form: FormData): Promise<void> {
 
   const db = getDb();
   const fail = async (key: "cpSubmitFailed" | "cpSubmitTooMany"): Promise<never> => {
-    await saveJourney(db, draft.id, { ...draft.data, flash: { step: "check", errors: { form: key } } });
+    await complaintStore.update(db, draft.id, (d) => recordFlash(d, { step: "check", errors: { form: key } }));
     redirect(pathTo(locale, "check"));
   };
 
@@ -191,7 +187,7 @@ export async function sendJourney(form: FormData): Promise<void> {
   const keys = (await listCategories(db, { activeOnly: true })).map((c) => c.key);
   const problem = firstProblem(draft.data.values, keys);
   if (problem) {
-    await saveJourney(db, draft.id, { ...draft.data, flash: { step: problem.step, errors: problem.errors } });
+    await complaintStore.update(db, draft.id, (d) => recordFlash(d, { step: problem.step, errors: problem.errors }));
     redirect(pathTo(locale, problem.step));
   }
 
@@ -201,7 +197,7 @@ export async function sendJourney(form: FormData): Promise<void> {
     done = true;
   } catch (error) {
     if (error instanceof JourneyInvalidError) {
-      await saveJourney(db, draft.id, { ...draft.data, flash: { step: error.step, errors: error.errors } });
+      await complaintStore.update(db, draft.id, (d) => recordFlash(d, { step: error.step, errors: error.errors }));
       redirect(pathTo(locale, error.step));
     }
     // Logged without the answers: the message names the failure, never the person.
@@ -217,14 +213,16 @@ export async function sendJourney(form: FormData): Promise<void> {
 export async function emailLink(form: FormData): Promise<void> {
   const locale = localeOf(form);
   const draft = await currentDraft();
-  const result = draft?.data.result;
-  if (!draft || !result) redirect(basePath(locale));
-  if (result.emailed || !result.email || result.identity === "anonymous") redirect(pathTo(locale, "confirmation"));
-
-  const link = trackingLinkUrl(locale, result.reference, result.token, await siteOrigin());
-  const sent = await sendTrackingLinkEmail(result.email, result.reference, link);
-  if (sent) await saveJourney(getDb(), draft.id, { ...draft.data, result: { ...result, emailed: true } }, { ttlMs: 30 * 60 * 1000 });
-  redirect(pathTo(locale, "confirmation", `?email=${sent ? "sent" : "failed"}`));
+  if (!draft?.data.result) redirect(basePath(locale));
+  const origin = await siteOrigin();
+  const outcome = await emailResultOnce(
+    complaintStore,
+    getDb(),
+    draft.id,
+    (result) => sendTrackingLinkEmail(result.email!, result.reference, trackingLinkUrl(locale, result.reference, result.token, origin)),
+    { eligible: (result) => result.identity !== "anonymous" },
+  );
+  redirect(pathTo(locale, "confirmation", outcome === "skipped" ? "" : `?email=${outcome}`));
 }
 
 /** Forgets the draft on this browser (used by "start again"). The server copy simply expires. */

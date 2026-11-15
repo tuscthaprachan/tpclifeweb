@@ -72,7 +72,8 @@ export function reachesCase(v: RouteValues): boolean {
 }
 
 /**
- * The pages this person will see, in order. `programmes` says whether the
+ * The pages this person will see, in order, up to `check` or the page that
+ * ends the journey; `confirmation` is the result and is not listed. `programmes` says whether the
  * chosen faculty has programme associations to pick from; without any, the
  * programme page is skipped. Before the first questions are answered the
  * complaint pages are listed, so the order of the whole journey can be read.
@@ -81,7 +82,7 @@ export function stepsFor(v: RouteValues, programmes = true): readonly ComplaintS
   if (v.emergency === "yes") return ["emergency", "urgent"];
   if (v.level === "course") return ["emergency", "level", "faculty", "lecturer", "signpost"];
   if (v.level === "faculty") return ["emergency", "level", "faculty", ...(programmes ? (["programme"] as const) : []), "signpost"];
-  const complaint = COMPLAINT_STEPS.slice(COMPLAINT_STEPS.indexOf("identity"));
+  const complaint = COMPLAINT_STEPS.slice(COMPLAINT_STEPS.indexOf("identity"), COMPLAINT_STEPS.indexOf("confirmation"));
   return ["emergency", "level", ...(v.identity === "anonymous" ? complaint.filter((s) => s !== "contact") : complaint)];
 }
 

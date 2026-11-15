@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { effectivePreferred, emptyValues, facultyChoices, firstProblem, hasProgrammes, misroute, readStepValues, validateStep } from "@/lib/complaints/public/validate";
+import { applyAnswers, effectivePreferred, emptyValues, facultyChoices, firstProblem, hasProgrammes, misroute, readStepValues, validateStep } from "@/lib/complaints/public/validate";
 import { nextStep, previousStep, reachesCase, signpostLevel, stepsFor } from "@/lib/complaints/public/steps";
 import type { DraftValues } from "@/lib/complaints/public/steps";
 
@@ -175,5 +175,17 @@ describe("triage validation", () => {
     expect(misroute("urgent", good({ emergency: "yes" }), KEYS, FACULTIES)).toBeNull();
     expect(misroute("level", good({ emergency: "yes" }), KEYS, FACULTIES)).toBe("urgent");
     expect(misroute("signpost", good(), KEYS, FACULTIES)).toBe("check");
+  });
+});
+
+describe("applyAnswers", () => {
+  it("drops contact details when the person chooses to stay anonymous", () => {
+    const v = applyAnswers(good(), "identity", { identity: "anonymous" });
+    expect(v).toMatchObject({ identity: "anonymous", name: "", email: "", consent: "" });
+  });
+
+  it("forgets the programme when the faculty changes, and keeps it when it does not", () => {
+    expect(applyAnswers(good({ faculty: "law", programme: "p-llb" }), "faculty", { faculty: "economics" }).programme).toBe("");
+    expect(applyAnswers(good({ faculty: "law", programme: "p-llb" }), "faculty", { faculty: "law" }).programme).toBe("p-llb");
   });
 });

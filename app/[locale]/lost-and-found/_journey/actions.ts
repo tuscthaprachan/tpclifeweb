@@ -15,17 +15,19 @@
 
 import { redirect } from "next/navigation";
 import { isPiiAvailable, PiiUnavailableError } from "@/lib/crypto/pii";
+import { emailResultOnce } from "@/lib/journeys/email";
+import { recordAnswers, recordFlash } from "@/lib/journeys/machine";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { clearJourneyToken, readJourneyToken, requestContext, siteOrigin, writeJourneyToken } from "@/lib/lost-found/public/cookies";
 import { sendTrackingLinkEmail } from "@/lib/lost-found/public/email";
 import { finishJourney, JourneyTooFastError } from "@/lib/lost-found/public/journey";
 import { claimStateFor } from "@/lib/lost-found/public/listing";
-import { firstStep, isJourney, isStep, journeyBasePath, nextStep, stepPath, STEP_FIELDS, type JourneyKind } from "@/lib/lost-found/public/steps";
-import { loadJourney, saveJourney, startJourney, type JourneyData } from "@/lib/lost-found/public/store";
+import { type DraftValues, firstStep, isJourney, isStep, journeyBasePath, stepPath, STEP_FIELDS, type JourneyKind } from "@/lib/lost-found/public/steps";
+import { loadJourney, lostFoundStore, startJourney } from "@/lib/lost-found/public/store";
 import { ClaimUnavailableError, consumeSubmitAttempt, JourneyInvalidError } from "@/lib/lost-found/public/submit";
 import { trackingLinkUrl } from "@/lib/lost-found/public/track";
-import { firstProblem, readStepValues, validateStep } from "@/lib/lost-found/public/validate";
+import { firstProblem, lostFoundJourney, readStepValues, validateStep } from "@/lib/lost-found/public/validate";
 
 const SLUG = /^[a-z0-9][a-z0-9-]{0,80}$/;
 
@@ -87,14 +89,17 @@ export async function saveStep(form: FormData): Promise<void> {
   const draft = await currentDraft(t);
   if (!draft) redirect(`${basePath(t)}?expired=1`);
 
-  const data: JourneyData = { ...draft.data, locale: t.locale, values: { ...draft.data.values, ...readStepValues(step, form) } };
-  const errors = validateStep(t.kind, step, data.values);
+  const db = getDb();
+  const merge = (values: DraftValues) => ({ ...values, ...readStepValues(step, form) });
+  const values = merge(draft.data.values);
+  const errors = validateStep(t.kind, step, values);
   if (Object.keys(errors).length > 0) {
-    await saveJourney(getDb(), draft.id, { ...data, flash: { step, errors } });
+    await lostFoundStore.update(db, draft.id, (d) => recordAnswers(d, { locale: t.locale, merge, flash: { step, errors } }));
     redirect(pathTo(t, step, fromCheck ? "?from=check" : ""));
   }
-  await saveJourney(getDb(), draft.id, { ...data, flash: undefined });
-  redirect(pathTo(t, fromCheck ? "check" : (nextStep(t.kind, step) ?? "check")));
+  await lostFoundStore.update(db, draft.id, (d) => recordAnswers(d, { locale: t.locale, merge }));
+  const after = lostFoundJourney.afterSave(values, step, { fromCheck, ctx: { kind: t.kind } });
+  redirect(pathTo(t, after.step, after.fromCheck ? "?from=check" : ""));
 }
 
 /** Accept and send: checks everything again, then makes the case in one transaction. */
@@ -106,7 +111,7 @@ export async function sendJourney(form: FormData): Promise<void> {
 
   const db = getDb();
   const fail = async (key: "lfpSubmitFailed" | "lfpSubmitTooMany"): Promise<never> => {
-    await saveJourney(db, draft.id, { ...draft.data, flash: { step: "check", errors: { form: key } } });
+    await lostFoundStore.update(db, draft.id, (d) => recordFlash(d, { step: "check", errors: { form: key } }));
     redirect(pathTo(t, "check"));
   };
 
@@ -120,7 +125,7 @@ export async function sendJourney(form: FormData): Promise<void> {
 
   const problem = firstProblem(t.kind, draft.data.values);
   if (problem) {
-    await saveJourney(db, draft.id, { ...draft.data, flash: { step: problem.step, errors: problem.errors } });
+    await lostFoundStore.update(db, draft.id, (d) => recordFlash(d, { step: problem.step, errors: problem.errors }));
     redirect(pathTo(t, problem.step));
   }
 
@@ -131,7 +136,7 @@ export async function sendJourney(form: FormData): Promise<void> {
   } catch (error) {
     if (error instanceof ClaimUnavailableError) redirect(basePath(t));
     if (error instanceof JourneyInvalidError) {
-      await saveJourney(db, draft.id, { ...draft.data, flash: { step: error.step, errors: error.errors } });
+      await lostFoundStore.update(db, draft.id, (d) => recordFlash(d, { step: error.step, errors: error.errors }));
       redirect(pathTo(t, error.step));
     }
     // Logged without the answers: the message names the failure, never the person.
@@ -148,14 +153,10 @@ export async function emailLink(form: FormData): Promise<void> {
   const t = target(form);
   if (!t) redirect(localePath(DEFAULT_LOCALE, "/lost-and-found"));
   const draft = await currentDraft(t);
-  const result = draft?.data.result;
-  if (!draft || !result) redirect(basePath(t));
-  if (result.emailed || !result.email) redirect(pathTo(t, "confirmation"));
-
-  const link = trackingLinkUrl(t.locale, result.reference, result.token, await siteOrigin());
-  const sent = await sendTrackingLinkEmail(result.email, t.kind, result.reference, link);
-  if (sent) await saveJourney(getDb(), draft.id, { ...draft.data, result: { ...result, emailed: true } }, { ttlMs: 30 * 60 * 1000 });
-  redirect(pathTo(t, "confirmation", `?email=${sent ? "sent" : "failed"}`));
+  if (!draft?.data.result) redirect(basePath(t));
+  const origin = await siteOrigin();
+  const outcome = await emailResultOnce(lostFoundStore, getDb(), draft.id, (result) => sendTrackingLinkEmail(result.email!, t.kind, result.reference, trackingLinkUrl(t.locale, result.reference, result.token, origin)));
+  redirect(pathTo(t, "confirmation", outcome === "skipped" ? "" : `?email=${outcome}`));
 }
 
 /** Forgets the draft on this browser (used by "start again"). The server copy simply expires. */

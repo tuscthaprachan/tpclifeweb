@@ -7,22 +7,20 @@
  * answers are AES-256-GCM ciphertext (lib/crypto/pii.ts) bound to the row id.
  * In-progress rows live two hours from the last save; the page that shows the
  * private tracking link lives thirty minutes. Expired rows are swept whenever
- * a new journey starts.
+ * a new journey starts. The mechanics are shared (lib/journeys/store.ts); this
+ * file holds what is specific to borrowing.
  */
 
-import { createHash, randomBytes } from "node:crypto";
-import { eq, lte } from "drizzle-orm";
-import { decryptPii, encryptPii, type PiiEnv } from "@/lib/crypto/pii";
+import type { PiiEnv } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { borrowingJourneys } from "@/lib/db/schema/borrowing";
 import type { Locale } from "@/lib/i18n/config";
-import { recordJourneyStart } from "@/lib/performance/journeys";
+import { createJourneyStore, hashJourneyToken, JOURNEY_TTL_MS, RESULT_TTL_MS, type LoadedJourney as Loaded } from "@/lib/journeys/store";
 import { journeyAad } from "../aad";
 import type { DraftValues } from "./steps";
 import { emptyValues, type FieldErrors } from "./validate";
 
-export const JOURNEY_TTL_MS = 2 * 60 * 60 * 1000;
-export const RESULT_TTL_MS = 30 * 60 * 1000;
+export { hashJourneyToken, JOURNEY_TTL_MS, RESULT_TTL_MS };
 
 /** What a submitted journey leaves for the confirmation page. */
 export interface JourneyResult {
@@ -53,61 +51,28 @@ export interface JourneyData {
   result?: JourneyResult;
 }
 
-export interface LoadedJourney {
-  id: string;
-  data: JourneyData;
-}
+export type LoadedJourney = Loaded<JourneyData>;
 
-export function hashJourneyToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex");
-}
+export const borrowingStore = createJourneyStore<JourneyData, JourneyResult, { locale: Locale }>({
+  table: borrowingJourneys,
+  aad: journeyAad,
+  kind: () => "borrow",
+  empty: ({ locale }, now) => ({ v: 1, locale, startedAt: now.toISOString(), values: emptyValues() }),
+  blank: emptyValues,
+  migrate: (raw) => {
+    const data = raw as JourneyData;
+    return data.v === 1 ? { ...data, values: { ...emptyValues(), ...data.values } } : null;
+  },
+});
 
 /** Deletes journeys past their expiry. */
-export async function sweepExpiredJourneys(db: AuditExecutor, now: Date = new Date()): Promise<number> {
-  const gone = await db.delete(borrowingJourneys).where(lte(borrowingJourneys.expiresAt, now)).returning({ id: borrowingJourneys.id });
-  return gone.length;
-}
+export const sweepExpiredJourneys = (db: AuditExecutor, now: Date = new Date()) => borrowingStore.sweep(db, now);
 
 /** Starts a journey and returns the token for the cookie. Throws `PiiUnavailableError` without an encryption key. */
-export async function startJourney(db: AuditExecutor, input: { locale: Locale }, opts: { now?: Date; env?: PiiEnv } = {}): Promise<{ token: string; id: string }> {
-  const now = opts.now ?? new Date();
-  await sweepExpiredJourneys(db, now);
-  const id = crypto.randomUUID();
-  const token = randomBytes(32).toString("base64url");
-  const data: JourneyData = { v: 1, locale: input.locale, startedAt: now.toISOString(), values: emptyValues() };
-  await db.insert(borrowingJourneys).values({
-    id,
-    tokenHash: hashJourneyToken(token),
-    dataEnc: encryptPii(JSON.stringify(data), journeyAad(id), opts.env),
-    createdAt: now,
-    updatedAt: now,
-    expiresAt: new Date(now.getTime() + JOURNEY_TTL_MS),
-  });
-  // A count for the completion rate on /performance: the kind and the time, nothing about the person.
-  await recordJourneyStart(db, id, "borrow", now);
-  return { token, id };
-}
+export const startJourney = (db: AuditExecutor, input: { locale: Locale }, opts: { now?: Date; env?: PiiEnv } = {}) => borrowingStore.start(db, input, opts);
 
 /** The journey a cookie token points to, or null if there is none or it expired. */
-export async function loadJourney(db: AuditExecutor, token: string | undefined, opts: { now?: Date; env?: PiiEnv } = {}): Promise<LoadedJourney | null> {
-  if (!token || token.length > 100) return null;
-  const now = opts.now ?? new Date();
-  const [row] = await db.select().from(borrowingJourneys).where(eq(borrowingJourneys.tokenHash, hashJourneyToken(token)));
-  if (!row || row.expiresAt <= now) return null;
-  try {
-    const data = JSON.parse(decryptPii(row.dataEnc, journeyAad(row.id), opts.env)) as JourneyData;
-    if (data.v !== 1) return null;
-    return { id: row.id, data: { ...data, values: { ...emptyValues(), ...data.values } } };
-  } catch {
-    return null;
-  }
-}
+export const loadJourney = (db: AuditExecutor, token: string | undefined, opts: { now?: Date; env?: PiiEnv } = {}) => borrowingStore.load(db, token, opts);
 
-/** Writes the journey back. `ttlMs` restarts the clock (default: in-progress length). */
-export async function saveJourney(db: AuditExecutor, id: string, data: JourneyData, opts: { now?: Date; env?: PiiEnv; ttlMs?: number } = {}): Promise<void> {
-  const now = opts.now ?? new Date();
-  await db
-    .update(borrowingJourneys)
-    .set({ dataEnc: encryptPii(JSON.stringify(data), journeyAad(id), opts.env), updatedAt: now, expiresAt: new Date(now.getTime() + (opts.ttlMs ?? JOURNEY_TTL_MS)) })
-    .where(eq(borrowingJourneys.id, id));
-}
+/** Replaces the journey's data under the row lock. Pages and actions use `borrowingStore.update`. */
+export const saveJourney = (db: AuditExecutor, id: string, data: JourneyData, opts: { now?: Date; env?: PiiEnv; ttlMs?: number } = {}) => borrowingStore.save(db, id, data, opts);

@@ -16,14 +16,15 @@ import { listCategories } from "@/lib/complaints/categories";
 import { MAX_EVIDENCE_BYTES, MAX_EVIDENCE_FILES } from "@/lib/complaints/constants";
 import { readJourneyToken } from "@/lib/complaints/public/cookies";
 import { isEvidenceStorageAvailable, listJourneyFiles } from "@/lib/complaints/public/evidence";
-import { isStep, JOURNEY_BASE, NO_PROGRAMME, previousStep, stepPath, type DraftValues } from "@/lib/complaints/public/steps";
-import { loadJourney, saveJourney, type JourneyData } from "@/lib/complaints/public/store";
-import { facultyChoices, firstProblem, hasProgrammes, misroute } from "@/lib/complaints/public/validate";
+import { isStep, JOURNEY_BASE, NO_PROGRAMME, stepPath, type DraftValues } from "@/lib/complaints/public/steps";
+import { complaintStore, loadJourney } from "@/lib/complaints/public/store";
+import { complaintJourney, facultyChoices } from "@/lib/complaints/public/validate";
 import { getFacultiesWithOrganisations } from "@/lib/content";
 import { isPiiAvailable } from "@/lib/crypto/pii";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
+import { consumeFlash, recordFlash } from "@/lib/journeys/machine";
 import { getStorage } from "@/lib/storage";
 import { removeEvidence, saveStep, uploadEvidence } from "./actions";
 import { BackLink } from "./BackLink";
@@ -66,55 +67,37 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
       ]}
     />
   );
-  if (!isDatabaseConfigured() || !isPiiAvailable()) {
-    return <Unavailable locale={locale} title={UI.cpServiceName[locale]} breadcrumbs={crumbs} />;
-  }
-
-  const db = getDb();
-  const loaded = await loadJourney(db, await readJourneyToken());
-  if (!loaded) redirect(`${base}?expired=1`);
-  const data: JourneyData = loaded.data;
-
-  // Once sent, the only page that makes sense is the confirmation.
-  if (data.result && step !== "confirmation") redirect(localePath(locale, stepPath("confirmation")));
-
-  if (step === "confirmation") {
-    if (!data.result) redirect(base);
-    return <Confirmation locale={locale} result={data.result} email={email} crumbs={crumbs} />;
-  }
-
-  // Show the errors from the last rejected post once, then forget them.
-  const flash = data.flash && data.flash.step === step ? data.flash : undefined;
-  const [categories, faculties] = await Promise.all([
-    listCategories(db, { activeOnly: true }),
-    getFacultiesWithOrganisations(),
-    data.flash ? saveJourney(db, loaded.id, { ...data, flash: undefined }) : null,
-  ]);
-  const identity = data.values.identity;
+  const available = isDatabaseConfigured() && isPiiAvailable();
+  const db = available ? getDb() : null;
+  const loaded = db ? await loadJourney(db, await readJourneyToken()) : null;
+  // The errors of the last rejected post are shown once: read and cleared under the same row lock a post takes.
+  const opened = db && loaded ? await complaintStore.update(db, loaded.id, (d) => consumeFlash(d, step).data) : null;
+  const data = opened?.data ?? null;
+  const flash = opened ? consumeFlash(opened.before, step).flash : undefined;
+  const [categories, faculties] = db && data ? await Promise.all([listCategories(db, { activeOnly: true }), getFacultiesWithOrganisations()]) : [[], []];
   const choices = facultyChoices(faculties);
-  const programmes = hasProgrammes(choices, data.values.faculty);
+  const ctx = { categoryKeys: categories.map((c) => c.key), faculties: choices };
+
+  const next = complaintJourney.route({ available, data, requested: step, ctx });
+  if (next.kind === "unavailable") return <Unavailable locale={locale} title={UI.cpServiceName[locale]} breadcrumbs={crumbs} />;
+  if (!db || !loaded || !data || next.kind === "expired") redirect(`${base}?expired=1`);
+  if (next.kind === "start") redirect(base);
+  if (next.kind === "redirect") {
+    if (Object.keys(next.errors).length > 0) await complaintStore.update(db, loaded.id, (d) => recordFlash(d, { step: next.step, errors: next.errors }));
+    redirect(localePath(locale, stepPath(next.step)));
+  }
+  if (next.kind === "confirmation") return <Confirmation locale={locale} result={data.result!} email={email} crumbs={crumbs} />;
+
   const faculty = faculties.find((f) => f.slug === data.values.faculty) ?? null;
 
-  // Only the pages on this person's route, and none before the questions ahead of it are answered.
-  const elsewhere = misroute(step, data.values, categories.map((c) => c.key), choices);
-  if (elsewhere) redirect(localePath(locale, stepPath(elsewhere)));
-
-  // A page for a stage that does not apply (contact, for an anonymous complaint) is skipped.
-  if (step === "contact" && identity === "anonymous") redirect(localePath(locale, stepPath("check")));
-
   if (step === "check") {
-    const problem = firstProblem(data.values, categories.map((c) => c.key));
-    if (problem) {
-      await saveJourney(db, loaded.id, { ...data, flash: { step: problem.step, errors: problem.errors } });
-      redirect(localePath(locale, stepPath(problem.step)));
-    }
     const files = await listJourneyFiles(db, loaded.id);
     const category = categories.find((c) => c.key === data.values.category);
     return (
       <Container width="narrow">
         {crumbs}
         <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-          <BackLink href={localePath(locale, stepPath(previousStep(data.values, "check") ?? "identity"))} locale={locale} />
+          <BackLink href={localePath(locale, stepPath(complaintJourney.previous(data.values, "check", ctx) ?? "identity"))} locale={locale} />
           {flash?.errors.form ? (
             <NotificationBanner variant="warning" title={UI.cpSubmitProblemTitle[locale]}>
               {UI[flash.errors.form][locale]}
@@ -135,7 +118,7 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
   };
 
   const fromCheck = from === "check";
-  const previous = previousStep(data.values, step, programmes);
+  const previous = complaintJourney.previous(data.values, step, ctx);
   const backHref = fromCheck ? localePath(locale, stepPath("check")) : previous ? localePath(locale, stepPath(previous)) : base;
   const title = stepTitle(step, locale);
   const values = data.values;

@@ -16,12 +16,14 @@ import { redirect } from "next/navigation";
 import { clearJourneyToken, readJourneyToken, requestContext, siteOrigin, writeJourneyToken } from "@/lib/borrowing/public/cookies";
 import { sendTrackingLinkEmail } from "@/lib/borrowing/public/email";
 import { finishJourney, JourneyTooFastError } from "@/lib/borrowing/public/journey";
-import { isStep, nextStep, QUESTION_STEPS, stepPath } from "@/lib/borrowing/public/steps";
-import { loadJourney, saveJourney, startJourney, type JourneyData } from "@/lib/borrowing/public/store";
+import { type DraftValues, isStep, QUESTION_STEPS, stepPath } from "@/lib/borrowing/public/steps";
+import { borrowingStore, loadJourney, startJourney } from "@/lib/borrowing/public/store";
 import { consumeSubmitAttempt, JourneyInvalidError, loadContext } from "@/lib/borrowing/public/submit";
 import { trackingLinkUrl } from "@/lib/borrowing/public/track";
-import { firstProblem, readStepValues, validateStep } from "@/lib/borrowing/public/validate";
+import { borrowJourney, firstProblem, readStepValues, validateStep } from "@/lib/borrowing/public/validate";
 import { isPiiAvailable, PiiUnavailableError } from "@/lib/crypto/pii";
+import { emailResultOnce } from "@/lib/journeys/email";
+import { recordAnswers, recordFlash } from "@/lib/journeys/machine";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 
@@ -62,28 +64,21 @@ export async function saveStep(form: FormData): Promise<void> {
   const draft = await currentDraft();
   if (!draft) redirect(`${basePath(locale)}?expired=1`);
 
-  const values = { ...draft.data.values, ...readStepValues(step, form, draft.data.values) };
-  const data: JourneyData = { ...draft.data, locale, values };
+  const merge = (current: DraftValues) => ({ ...current, ...readStepValues(step, form, current) });
+  const values = merge(draft.data.values);
   const db = getDb();
   const ctx = await loadContext(db, values);
   const errors = validateStep(step, values, ctx);
   if (Object.keys(errors).length > 0) {
-    await saveJourney(db, draft.id, { ...data, flash: { step, errors } });
+    await borrowingStore.update(db, draft.id, (d) => recordAnswers(d, { locale, merge, flash: { step, errors } }));
     redirect(pathTo(locale, step, fromCheck ? "?from=check" : ""));
   }
-  await saveJourney(db, draft.id, { ...data, flash: undefined });
-
   // Coming back from "check" goes straight back, unless the change leaves another page needing an answer or no longer holding
   // (new dates change what is free, so the items and quantities are checked again and the person is told which).
-  if (fromCheck) {
-    const problem = firstProblem(values, ctx);
-    if (problem) {
-      await saveJourney(db, draft.id, { ...data, flash: { step: problem.step, errors: problem.step === "dates" || problem.step === "items" || problem.step === "quantities" ? problem.errors : {} } });
-      redirect(pathTo(locale, problem.step, "?from=check"));
-    }
-    redirect(pathTo(locale, "check"));
-  }
-  redirect(pathTo(locale, nextStep(step) ?? "check"));
+  const after = borrowJourney.afterSave(values, step, { fromCheck, ctx });
+  const flash = Object.keys(after.errors).length > 0 ? { step: after.step, errors: after.errors } : undefined;
+  await borrowingStore.update(db, draft.id, (d) => recordAnswers(d, { locale, merge, flash }));
+  redirect(pathTo(locale, after.step, after.fromCheck ? "?from=check" : ""));
 }
 
 /** Accept and send: checks everything again, then makes the request in one transaction. */
@@ -94,7 +89,7 @@ export async function sendJourney(form: FormData): Promise<void> {
 
   const db = getDb();
   const fail = async (key: "brSubmitFailed" | "brSubmitTooMany"): Promise<never> => {
-    await saveJourney(db, draft.id, { ...draft.data, flash: { step: "check", errors: { form: { key } } } });
+    await borrowingStore.update(db, draft.id, (d) => recordFlash(d, { step: "check", errors: { form: { key } } }));
     redirect(pathTo(locale, "check"));
   };
 
@@ -108,7 +103,7 @@ export async function sendJourney(form: FormData): Promise<void> {
 
   const problem = firstProblem(draft.data.values, await loadContext(db, draft.data.values));
   if (problem) {
-    await saveJourney(db, draft.id, { ...draft.data, flash: { step: problem.step, errors: problem.errors } });
+    await borrowingStore.update(db, draft.id, (d) => recordFlash(d, { step: problem.step, errors: problem.errors }));
     redirect(pathTo(locale, problem.step));
   }
 
@@ -119,7 +114,7 @@ export async function sendJourney(form: FormData): Promise<void> {
   } catch (error) {
     // The stock moved while the person was checking: back to the page it concerns, with the reason.
     if (error instanceof JourneyInvalidError) {
-      await saveJourney(db, draft.id, { ...draft.data, flash: { step: error.step, errors: error.errors } });
+      await borrowingStore.update(db, draft.id, (d) => recordFlash(d, { step: error.step, errors: error.errors }));
       redirect(pathTo(locale, error.step));
     }
     // Logged without the answers: the message names the failure, never the person.
@@ -135,14 +130,10 @@ export async function sendJourney(form: FormData): Promise<void> {
 export async function emailLink(form: FormData): Promise<void> {
   const locale = localeOf(form);
   const draft = await currentDraft();
-  const result = draft?.data.result;
-  if (!draft || !result) redirect(basePath(locale));
-  if (result.emailed || !result.email) redirect(pathTo(locale, "confirmation"));
-
-  const link = trackingLinkUrl(locale, result.reference, result.token, await siteOrigin());
-  const sent = await sendTrackingLinkEmail(result.email, result.reference, link);
-  if (sent) await saveJourney(getDb(), draft.id, { ...draft.data, result: { ...result, emailed: true } }, { ttlMs: 30 * 60 * 1000 });
-  redirect(pathTo(locale, "confirmation", `?email=${sent ? "sent" : "failed"}`));
+  if (!draft?.data.result) redirect(basePath(locale));
+  const origin = await siteOrigin();
+  const outcome = await emailResultOnce(borrowingStore, getDb(), draft.id, (result) => sendTrackingLinkEmail(result.email!, result.reference, trackingLinkUrl(locale, result.reference, result.token, origin)));
+  redirect(pathTo(locale, "confirmation", outcome === "skipped" ? "" : `?email=${outcome}`));
 }
 
 /** Forgets the draft on this browser (used by "start again"). The server copy simply expires. */

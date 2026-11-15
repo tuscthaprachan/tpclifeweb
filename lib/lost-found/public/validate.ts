@@ -11,6 +11,7 @@
 import { LOST_FOUND_CATEGORIES } from "@/components/domain/lostfound/categoryLabel";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import type { UiKey } from "@/lib/i18n/strings";
+import { defineJourney } from "@/lib/journeys/machine";
 import { CASE_PREFERRED_CONTACTS, type CasePreferredContact } from "@/lib/db/schema/cases";
 import { STEP_FIELDS, STEPS, WHERE_NOW_VALUES, type DraftValues, type JourneyKind } from "./steps";
 
@@ -193,3 +194,16 @@ export function firstProblem(kind: JourneyKind, v: DraftValues, now: Date = new 
   }
   return null;
 }
+
+/** What the route of a lost and found journey needs: which journey it is, and the clock for dates. */
+export interface LostFoundRouteContext {
+  kind: JourneyKind;
+  now?: Date;
+}
+
+/** The route of the lost, found and claim journeys (lib/journeys/machine.ts). No page is reachable while a question before it is unanswered. */
+export const lostFoundJourney = defineJourney<DraftValues, FieldErrors, LostFoundRouteContext>({
+  steps: (_v, ctx) => STEPS[ctx.kind].filter((s) => s !== "confirmation"),
+  validate: (step, v, ctx) => validateStep(ctx.kind, step, v, ctx.now),
+  problems: (v, ctx) => firstProblem(ctx.kind, v, ctx.now),
+});

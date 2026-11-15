@@ -19,6 +19,7 @@ import { hasNotice, lineProblems, periodProblems, shortestNotice, type PeriodPro
 import { bangkokInstant, dayKeyOf, deskSlots, earliestCollectionDay, isDayKey } from "../time";
 import type { LocaleString } from "@/lib/i18n/config";
 import type { UiKey } from "@/lib/i18n/strings";
+import { defineJourney } from "@/lib/journeys/machine";
 import { QUESTION_STEPS, quantityField, type DraftValues } from "./steps";
 
 export type ErrorVars = Record<string, string | number | LocaleString>;
@@ -330,20 +331,17 @@ function touched(step: string, v: DraftValues): boolean {
   return false;
 }
 
-/**
- * Where a person who asks for `step` should be sent instead, or null when they
- * may see it. No page may be reached while a question before it is unanswered
- * or no longer holds (the dates moved and an item is no longer free). The
- * errors are returned only for a page they had answered, to show once there.
- */
+/** The route of the borrowing journey (lib/journeys/machine.ts). Every borrower sees every question in order, so no page is reachable while one before it is unanswered or no longer holds (the dates moved and an item is no longer free). The errors are shown only for a page they had answered. */
+export const borrowJourney = defineJourney<DraftValues, FieldErrors, ValidationContext>({
+  steps: () => [...QUESTION_STEPS, "check"],
+  validate: validateStep,
+  problems: firstProblem,
+  explain: touched,
+});
+
+/** Where a person who asks for `step` should be sent instead, or null when they may see it. */
 export function misroute(step: string, v: DraftValues, ctx: ValidationContext): { step: string; errors: FieldErrors } | null {
-  const at = QUESTION_STEPS.indexOf(step as (typeof QUESTION_STEPS)[number]);
-  const before = at < 0 ? QUESTION_STEPS : QUESTION_STEPS.slice(0, at);
-  for (const earlier of before) {
-    const errors = validateStep(earlier, v, ctx);
-    if (Object.keys(errors).length > 0) return { step: earlier, errors: touched(earlier, v) ? errors : {} };
-  }
-  return null;
+  return borrowJourney.guard(v, step, ctx);
 }
 
 /** The earliest day a collection may be on, for the hint and the items page. */

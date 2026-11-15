@@ -14,15 +14,16 @@ import { notFound, redirect } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Button, Container, ErrorSummary, NotificationBanner, Radios, Select, Stack, Textarea, TextInput, type ErrorSummaryItem } from "@/components/ui";
 import { readJourneyToken } from "@/lib/borrowing/public/cookies";
-import { isStep, JOURNEY_BASE, previousStep, stepPath } from "@/lib/borrowing/public/steps";
-import { loadJourney, saveJourney } from "@/lib/borrowing/public/store";
+import { isStep, JOURNEY_BASE, stepPath } from "@/lib/borrowing/public/steps";
+import { borrowingStore, loadJourney } from "@/lib/borrowing/public/store";
 import { loadContext } from "@/lib/borrowing/public/submit";
-import { firstProblem, LIMITS, misroute } from "@/lib/borrowing/public/validate";
+import { borrowJourney, LIMITS } from "@/lib/borrowing/public/validate";
 import { getFacultiesWithOrganisations } from "@/lib/content";
 import { isPiiAvailable } from "@/lib/crypto/pii";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
+import { consumeFlash, recordFlash } from "@/lib/journeys/machine";
 import { saveStep } from "./actions";
 import { BackLink } from "./BackLink";
 import { CheckAnswers } from "./CheckAnswers";
@@ -58,46 +59,33 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
       ]}
     />
   );
-  if (!isDatabaseConfigured() || !isPiiAvailable()) {
-    return <Unavailable locale={locale} title={UI.brServiceName[locale]} breadcrumbs={crumbs} />;
-  }
+  const available = isDatabaseConfigured() && isPiiAvailable();
+  const db = available ? getDb() : null;
+  const loaded = db ? await loadJourney(db, await readJourneyToken()) : null;
+  // The errors of the last rejected post are shown once: read and cleared under the same row lock a post takes.
+  const opened = db && loaded ? await borrowingStore.update(db, loaded.id, (d) => consumeFlash(d, step).data) : null;
+  const data = opened?.data ?? null;
+  const flash = opened ? consumeFlash(opened.before, step).flash : undefined;
+  const ctx = db && data ? await loadContext(db, data.values) : undefined;
 
-  const db = getDb();
-  const loaded = await loadJourney(db, await readJourneyToken());
-  if (!loaded) redirect(`${base}?expired=1`);
-  const data = loaded.data;
+  const next = borrowJourney.route({ available, data, requested: step, ctx });
+  if (next.kind === "unavailable") return <Unavailable locale={locale} title={UI.brServiceName[locale]} breadcrumbs={crumbs} />;
+  if (!db || !loaded || !data || !ctx || next.kind === "expired") redirect(`${base}?expired=1`);
+  if (next.kind === "start") redirect(base);
+  if (next.kind === "redirect") {
+    if (Object.keys(next.errors).length > 0) await borrowingStore.update(db, loaded.id, (d) => recordFlash(d, { step: next.step, errors: next.errors }));
+    redirect(localePath(locale, stepPath(next.step)));
+  }
+  if (next.kind === "confirmation") return <Confirmation locale={locale} result={data.result!} email={email} crumbs={crumbs} />;
   const values = data.values;
 
-  // Once sent, the only page that makes sense is the confirmation.
-  if (data.result && step !== "confirmation") redirect(localePath(locale, stepPath("confirmation")));
-  if (step === "confirmation") {
-    if (!data.result) redirect(base);
-    return <Confirmation locale={locale} result={data.result} email={email} crumbs={crumbs} />;
-  }
-
-  // Show the errors from the last rejected post once, then forget them.
-  const flash = data.flash && data.flash.step === step ? data.flash : undefined;
-  const [ctx] = await Promise.all([loadContext(db, values), data.flash ? saveJourney(db, loaded.id, { ...data, flash: undefined }) : null]);
-
-  // No page before the questions ahead of it are answered and still hold.
-  const elsewhere = misroute(step, values, ctx);
-  if (elsewhere) {
-    if (Object.keys(elsewhere.errors).length > 0) await saveJourney(db, loaded.id, { ...data, flash: { step: elsewhere.step, errors: elsewhere.errors } });
-    redirect(localePath(locale, stepPath(elsewhere.step)));
-  }
-
   if (step === "check") {
-    const problem = firstProblem(values, ctx);
-    if (problem) {
-      await saveJourney(db, loaded.id, { ...data, flash: { step: problem.step, errors: problem.errors } });
-      redirect(localePath(locale, stepPath(problem.step)));
-    }
     const faculty = (await getFacultiesWithOrganisations()).find((f) => f._id === values.faculty);
     return (
       <Container width="narrow">
         {crumbs}
         <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-          <BackLink href={localePath(locale, stepPath(previousStep("check") ?? "terms"))} locale={locale} />
+          <BackLink href={localePath(locale, stepPath(borrowJourney.previous(values, "check", ctx) ?? "terms"))} locale={locale} />
           {flash?.errors.form ? (
             <NotificationBanner variant="warning" title={UI.brSubmitProblemTitle[locale]}>
               {errorMessage(flash.errors.form, locale)}
@@ -116,7 +104,7 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
   };
 
   const fromCheck = from === "check";
-  const previous = previousStep(step);
+  const previous = borrowJourney.previous(values, step, ctx);
   const backHref = fromCheck ? localePath(locale, stepPath("check")) : previous ? localePath(locale, stepPath(previous)) : base;
   const title = stepTitle(step, locale);
   const chosenCategories = ctx.inventory.filter((c) => c.items.some((i) => values.items.includes(i.id)));

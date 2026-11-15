@@ -18,10 +18,11 @@ import { isPiiAvailable } from "@/lib/crypto/pii";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
+import { consumeFlash, recordFlash } from "@/lib/journeys/machine";
 import { readJourneyToken } from "@/lib/lost-found/public/cookies";
-import { isStep, journeyBasePath, previousStep, stepPath, type DraftValues, type JourneyKind } from "@/lib/lost-found/public/steps";
-import { loadJourney, saveJourney, type JourneyData } from "@/lib/lost-found/public/store";
-import { firstProblem } from "@/lib/lost-found/public/validate";
+import { isStep, journeyBasePath, stepPath, type DraftValues, type JourneyKind } from "@/lib/lost-found/public/steps";
+import { loadJourney, lostFoundStore } from "@/lib/lost-found/public/store";
+import { lostFoundJourney } from "@/lib/lost-found/public/validate";
 import { saveStep } from "./actions";
 import { CheckAnswers } from "./CheckAnswers";
 import { Confirmation } from "./Confirmation";
@@ -71,40 +72,33 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
       ]}
     />
   );
-  if (!isDatabaseConfigured() || !isPiiAvailable()) {
-    return <Unavailable locale={locale} title={journeyName(kind, locale)} breadcrumbs={crumbs} />;
+  const available = isDatabaseConfigured() && isPiiAvailable();
+  const db = available ? getDb() : null;
+  const found = db ? await loadJourney(db, await readJourneyToken(kind), kind) : null;
+  const loaded = found && (kind !== "claim" || found.data.slug === slug) ? found : null;
+  // The errors of the last rejected post are shown once: read and cleared under the same row lock a post takes.
+  const opened = db && loaded ? await lostFoundStore.update(db, loaded.id, (d) => consumeFlash(d, step).data) : null;
+  const data = opened?.data ?? null;
+  const flash = opened ? consumeFlash(opened.before, step).flash : undefined;
+
+  const next = lostFoundJourney.route({ available, data, requested: step, ctx: { kind } });
+  if (next.kind === "unavailable") return <Unavailable locale={locale} title={journeyName(kind, locale)} breadcrumbs={crumbs} />;
+  if (!db || !loaded || !data || next.kind === "expired") redirect(`${base}?expired=1`);
+  if (next.kind === "start") redirect(base);
+  if (next.kind === "redirect") {
+    if (Object.keys(next.errors).length > 0) await lostFoundStore.update(db, loaded.id, (d) => recordFlash(d, { step: next.step, errors: next.errors }));
+    redirect(localePath(locale, stepPath(kind, next.step, slug)));
   }
-
-  const db = getDb();
-  const loaded = await loadJourney(db, await readJourneyToken(kind), kind);
-  if (!loaded || (kind === "claim" && loaded.data.slug !== slug)) redirect(`${base}?expired=1`);
-  const data: JourneyData = loaded.data;
-
-  // Once sent, the only page that makes sense is the confirmation.
-  if (data.result && step !== "confirmation") redirect(localePath(locale, stepPath(kind, "confirmation", slug)));
-
-  if (step === "confirmation") {
-    if (!data.result) redirect(base);
-    return <Confirmation kind={kind} locale={locale} slug={slug} result={data.result} email={email} crumbs={crumbs} />;
-  }
-
-  // Show the errors from the last rejected post once, then forget them.
-  const flash = data.flash && data.flash.step === step ? data.flash : undefined;
-  if (data.flash) await saveJourney(db, loaded.id, { ...data, flash: undefined });
+  if (next.kind === "confirmation") return <Confirmation kind={kind} locale={locale} slug={slug} result={data.result!} email={email} crumbs={crumbs} />;
 
   if (step === "check") {
-    const problem = firstProblem(kind, data.values);
-    if (problem) {
-      await saveJourney(db, loaded.id, { ...data, flash: { step: problem.step, errors: problem.errors } });
-      redirect(localePath(locale, stepPath(kind, problem.step, slug)));
-    }
     const places = await getPlaces();
     const place = data.values.placeId ? places.find((p) => p._id === data.values.placeId) : undefined;
     return (
       <Container width="narrow">
         {crumbs}
         <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-          <BackLink href={localePath(locale, stepPath(kind, previousStep(kind, "check")!, slug))} locale={locale} />
+          <BackLink href={localePath(locale, stepPath(kind, lostFoundJourney.previous(data.values, "check", { kind })!, slug))} locale={locale} />
           {flash?.errors.form ? (
             <NotificationBanner variant="warning" title={UI.lfpSubmitProblemTitle[locale]}>
               {UI[flash.errors.form][locale]}
@@ -125,7 +119,7 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
   };
 
   const fromCheck = from === "check";
-  const previous = previousStep(kind, step);
+  const previous = lostFoundJourney.previous(data.values, step, { kind });
   const backHref = fromCheck
     ? localePath(locale, stepPath(kind, "check", slug))
     : previous
