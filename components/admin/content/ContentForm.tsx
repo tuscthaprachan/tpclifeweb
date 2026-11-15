@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useId, useMemo, useRef, useState, startTransition, type FormEvent, type ReactNode } from "react";
+import { useActionState, useCallback, useEffect, useId, useReducer, useRef, useState, startTransition, type FormEvent, type ReactNode } from "react";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { ActionBar, Card, FormLayout, KeyValue } from "@/components/admin/ui";
 import { Button, ErrorSummary, NotificationBanner, Stack, StatusTag, Timestamp, type ErrorSummaryItem } from "@/components/ui";
@@ -11,7 +11,9 @@ import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { ContentFormProvider } from "./context";
 import { LifecycleTools } from "./LifecycleTools";
-import { PortalDialog } from "./PortalDialog";
+import { contentFormReducer, hasEditsInFlight, initialContentForm, isContentFormDirty, isContentFormSaving } from "./form/content-form-machine";
+import { DeleteDialog } from "./form/DeleteDialog";
+import { formEntries, restoreEntries, stashEdits, takeEdits, type FormEntries } from "./form/edit-stash";
 import { UnsavedChangesGuard } from "./UnsavedChangesGuard";
 
 export interface ContentRecordInfo {
@@ -50,32 +52,67 @@ const SAVED_KEY = { saved: "formSavedDraft", published: "formSavedPublished", un
  * The shell around every content form: error summary, the fields in the main
  * column, a side column with status, last saved, "View on site" and a danger
  * zone (Delete, with confirmation), a sticky action bar with the save buttons,
- * and a warning before leaving with unsaved changes. Key it on `record.updatedAt` so a save remounts it
- * with the stored values:
+ * and a warning before leaving with unsaved changes. Its state is the
+ * `content-form-machine`: a second submit while one is saving is ignored, and
+ * text typed during a save is put back after the reload with a warning, never
+ * dropped. Key it on `record.updatedAt` so a save remounts it with the stored values:
  *
  *   <ContentForm key={row.updatedAt.toISOString()} ...>
  */
 export function ContentForm({ locale, action, record, deleteAction, listHref, saved, hasStatus = true, children }: ContentFormProps) {
   const [state, formAction, pending] = useActionState(action, EMPTY_FORM_STATE);
-  const [intent, setIntent] = useState<SaveIntent | null>(null);
-  const [dirty, setDirty] = useState(false);
+  const [machine, send] = useReducer(contentFormReducer, initialContentForm);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
-  const submitted = useRef(false);
+  const [restored, setRestored] = useState(false);
+  const form = useRef<HTMLFormElement | null>(null);
+  const latest = useRef(machine);
+  const inFlight = useRef<FormEntries>([]);
+  const sawPending = useRef(false);
   const formId = useId();
-
-  const markDirty = useMemo(() => () => setDirty(true), []);
+  const stashKey = record ? `${listHref}:${record.id}` : null;
+  const dirty = isContentFormDirty(machine);
+  const saving = isContentFormSaving(machine);
+  const intent = saving ? machine.intent : null;
 
   useEffect(() => {
-    if (!pending && submitted.current && Object.keys(state.errors).length === 0 && !state.formError) setDirty(false);
+    latest.current = machine;
+  });
+
+  const markDirty = useCallback(() => {
+    send({ type: "edit" });
+    if (isContentFormSaving(latest.current) && form.current) inFlight.current = formEntries(form.current);
+  }, []);
+
+  useEffect(() => {
+    if (pending) {
+      sawPending.current = true;
+      return;
+    }
+    if (!sawPending.current) return;
+    sawPending.current = false;
+    send({ type: Object.keys(state.errors).length > 0 || state.formError ? "failed" : "succeeded" });
   }, [pending, state]);
+
+  useEffect(() => {
+    const entries = stashKey ? takeEdits(stashKey) : null;
+    if (entries && form.current) {
+      restoreEntries(form.current, entries);
+      send({ type: "edit" });
+      setRestored(true);
+    }
+    return () => {
+      if (stashKey && hasEditsInFlight(latest.current)) stashEdits(stashKey, inFlight.current);
+    };
+  }, [stashKey]);
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isContentFormSaving(latest.current)) return;
     const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
     // Not `action={formAction}`: React would reset the fields after a failed save and the typing would be lost.
     const data = new FormData(event.currentTarget, submitter);
-    setIntent((data.get("intent") as SaveIntent | null) ?? "save");
-    submitted.current = true;
+    send({ type: "submit", intent: (data.get("intent") as SaveIntent | null) ?? "save" });
+    latest.current = contentFormReducer(latest.current, { type: "submit", intent: (data.get("intent") as SaveIntent | null) ?? "save" });
     startTransition(() => formAction(data));
   }
 
@@ -87,8 +124,8 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
   const live = phase === "live" && record?.viewHref;
   const whenText = (iso: string | null | undefined) => (iso ? new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Bangkok" }).format(new Date(iso)) : "");
 
-  const busy = (which: SaveIntent) => pending && intent === which;
-  const submit = { type: "submit" as const, form: formId, name: "intent", loadingLabel: a("formSaving", locale), disabled: pending };
+  const busy = (which: SaveIntent) => saving && intent === which;
+  const submit = { type: "submit" as const, form: formId, name: "intent", loadingLabel: a("formSaving", locale), disabled: saving || pending };
 
   const aside = (
     <Stack space={4}>
@@ -132,7 +169,7 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
           <Stack space={3}>
             <p className="m-0 text-sm text-ink-600">{a("cfDangerHint", locale)}</p>
             <div>
-              <Button type="button" variant="destructive" icon={<ConsoleIcon name="delete" />} onClick={() => setConfirmingDelete(true)} disabled={pending}>
+              <Button type="button" variant="destructive" icon={<ConsoleIcon name="delete" />} onClick={() => setConfirmingDelete(true)} disabled={saving || pending}>
                 {a("formDelete", locale)}
               </Button>
             </div>
@@ -143,10 +180,10 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
   );
 
   return (
-    <ContentFormProvider value={{ locale, errors: state.errors, pending, markDirty }}>
+    <ContentFormProvider value={{ locale, errors: state.errors, pending: saving || pending, dirty, markDirty }}>
       <UnsavedChangesGuard dirty={dirty} locale={locale} />
       <FormLayout aside={aside}>
-        <form id={formId} onSubmit={onSubmit} onChange={markDirty} noValidate>
+        <form ref={form} id={formId} onSubmit={onSubmit} onChange={markDirty} noValidate>
           <Stack space={6}>
             {savedKey && !dirty ? (
               <NotificationBanner variant="success" title={a(savedKey, locale)}>
@@ -158,6 +195,11 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
                 ) : (
                   a(status === "published" ? "formSavedLiveNote" : "formSavedNote", locale)
                 )}
+              </NotificationBanner>
+            ) : null}
+            {restored ? (
+              <NotificationBanner variant="warning" title={UI.errorTitle[locale]}>
+                {a("cfEditedDuringSave", locale)}
               </NotificationBanner>
             ) : null}
             {state.formError ? (
@@ -205,23 +247,7 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
         </span>
       </ActionBar>
 
-      {record && deleteAction ? (
-        <PortalDialog open={confirmingDelete} onClose={() => setConfirmingDelete(false)} title={a("formDeleteTitle", locale)} headingLevel={2} locale={locale}>
-          <form action={deleteAction}>
-            <Stack space={4}>
-              <p className="m-0">{a("formDeleteBody", locale)}</p>
-              <div className="flex flex-wrap gap-[var(--space-3)]">
-                <Button type="submit" variant="destructive">
-                  {a("formDeleteConfirm", locale)}
-                </Button>
-                <Button type="button" variant="secondary" onClick={() => setConfirmingDelete(false)}>
-                  {a("formDeleteCancel", locale)}
-                </Button>
-              </div>
-            </Stack>
-          </form>
-        </PortalDialog>
-      ) : null}
+      {record && deleteAction ? <DeleteDialog locale={locale} open={confirmingDelete} onClose={() => setConfirmingDelete(false)} action={deleteAction} dirty={dirty} saving={saving || pending} /> : null}
     </ContentFormProvider>
   );
 }

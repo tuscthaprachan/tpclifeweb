@@ -14,7 +14,7 @@ import { PortalDialog } from "./PortalDialog";
  * (Stay / Leave without saving) for any in-app link, including the sidebar,
  * breadcrumbs and Next `Link`s. Render it anywhere inside a client form.
  */
-export function UnsavedChangesGuard({ dirty, locale }: { dirty: boolean; locale: Locale }) {
+export function UnsavedChangesGuard({ dirty, locale, body }: { dirty: boolean; locale: Locale; /** Replaces the default "unsaved changes" sentence. */ body?: string }) {
   const router = useRouter();
   const [target, setTarget] = useState<string | null>(null);
   const leaving = useRef(false);
@@ -57,7 +57,7 @@ export function UnsavedChangesGuard({ dirty, locale }: { dirty: boolean; locale:
   return (
     <PortalDialog open={target !== null} onClose={() => setTarget(null)} title={a("cfLeaveTitle", locale)} headingLevel={2} locale={locale}>
       <Stack space={4}>
-        <p className="m-0">{a("cfLeaveBody", locale)}</p>
+        <p className="m-0">{body ?? a("cfLeaveBody", locale)}</p>
         <div className="flex flex-wrap gap-[var(--space-3)]">
           <Button type="button" onClick={() => setTarget(null)} icon={<ConsoleIcon name="back" />}>
             {a("cfStay", locale)}

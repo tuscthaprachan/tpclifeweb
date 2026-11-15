@@ -6,7 +6,8 @@ import { fieldId } from "@/lib/admin/content/form-state";
 import { slugify } from "@/lib/admin/content/slug";
 import { a } from "@/lib/i18n/admin";
 import { useContentForm } from "./context";
-import { AddRowButton, RowActions } from "./RowButtons";
+import { useRepeater } from "@/components/admin/hooks/use-repeater";
+import { AddRowButton, RepeaterStatus, RowActions } from "./RowButtons";
 
 /**
  * Form controls for content forms. Each takes the field's `name` (dotted for
@@ -267,17 +268,16 @@ export function BilingualListField({
   max?: number;
 }) {
   const { errors, locale, markDirty } = useContentForm();
-  const nextKey = useRef(defaultValue.length);
-  const [rows, setRows] = useState(() => defaultValue.map((value, i) => ({ key: i, value })));
-  const [focusKey, setFocusKey] = useState<number | null>(null);
+  const list = useRepeater(defaultValue, { locale, itemLabel, max, onChange: markDirty });
 
   return (
     <fieldset className="m-0 border-0 p-0">
       <legend className="mb-[var(--space-1)] text-lg font-semibold text-ink-900">{label}</legend>
       {hint ? <p className="mb-[var(--space-2)] text-sm text-ink-600">{hint}</p> : null}
+      <RepeaterStatus message={list.message} />
       <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">
-        {rows.map((row, index) => (
-          <li key={row.key} className="flex flex-col gap-[var(--space-2)] rounded-panel border border-line p-[var(--space-3)]">
+        {list.rows.map((row, index) => (
+          <li key={row.key} ref={list.rowRef(row.key)} className="flex flex-col gap-[var(--space-2)] rounded-panel border border-line p-[var(--space-3)]">
             <div className="grid gap-[var(--space-3)] md:grid-cols-2">
               {(["th", "en"] as const).map((lang) => {
                 const path = `${name}.${index}.${lang}`;
@@ -291,7 +291,6 @@ export function BilingualListField({
                     defaultValue={row.value[lang]}
                     error={errors[path]}
                     autoComplete="off"
-                    autoFocus={focusKey === row.key && lang === "th"}
                   />
                 );
               })}
@@ -299,25 +298,12 @@ export function BilingualListField({
             <RowActions
               locale={locale}
               label={`${itemLabel} ${index + 1}`}
-              onRemove={() => {
-                setRows((cur) => cur.filter((r) => r.key !== row.key));
-                markDirty();
-              }}
+              onRemove={() => list.remove(row.key)}
             />
           </li>
         ))}
       </ul>
-      {rows.length < max ? (
-        <AddRowButton
-          label={a("listAddItem", locale, { item: itemLabel.toLowerCase() })}
-          onClick={() => {
-            const key = nextKey.current++;
-            setRows((cur) => [...cur, { key, value: { th: "", en: "" } }]);
-            setFocusKey(key);
-            markDirty();
-          }}
-        />
-      ) : null}
+      {list.canAdd ? <AddRowButton addRef={list.addRef} label={a("listAddItem", locale, { item: itemLabel.toLowerCase() })} onClick={() => list.add({ th: "", en: "" })} /> : null}
     </fieldset>
   );
 }

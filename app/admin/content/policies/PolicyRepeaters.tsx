@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Select, Textarea, TextInput, type SelectOption } from "@/components/ui";
 import { useContentForm } from "@/components/admin/content/context";
 import { fieldId } from "@/lib/admin/content/form-state";
 import { a } from "@/lib/i18n/admin";
-import { AddRowButton, RowActions } from "@/components/admin/content/RowButtons";
+import { AddRowButton, RepeaterStatus, RowActions } from "@/components/admin/content/RowButtons";
+import { useRepeater, type UseRepeater } from "@/components/admin/hooks/use-repeater";
 import type { Locale } from "@/lib/i18n/config";
 
 /**
@@ -14,32 +15,18 @@ import type { Locale } from "@/lib/i18n/config";
  * Rows left completely blank are ignored by the action.
  */
 
-function useRows<T>(initial: T[]) {
-  const next = useRef(initial.length);
-  const [rows, setRows] = useState(() => initial.map((value, i) => ({ key: i, value })));
-  const [focusKey, setFocusKey] = useState<number | null>(null);
-  return {
-    rows,
-    focusKey,
-    remove: (key: number) => setRows((cur) => cur.filter((r) => r.key !== key)),
-    add: (value: T) => {
-      const key = next.current++;
-      setRows((cur) => [...cur, { key, value }]);
-      setFocusKey(key);
-    },
-  };
-}
-
 function RepeaterShell({
   legend,
   hint,
   addLabel,
+  list,
   onAdd,
   children,
 }: {
   legend: string;
   hint?: string;
   addLabel: string;
+  list: Pick<UseRepeater<unknown>, "message" | "addRef">;
   onAdd: () => void;
   children: ReactNode;
 }) {
@@ -47,15 +34,16 @@ function RepeaterShell({
     <fieldset className="m-0 border-0 p-0">
       <legend className="mb-[var(--space-1)] text-lg font-semibold text-ink-900">{legend}</legend>
       {hint ? <p className="mb-[var(--space-2)] text-sm text-ink-600">{hint}</p> : null}
+      <RepeaterStatus message={list.message} />
       <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">{children}</ul>
-      <AddRowButton label={addLabel} onClick={onAdd} />
+      <AddRowButton addRef={list.addRef} label={addLabel} onClick={onAdd} />
     </fieldset>
   );
 }
 
-function RowShell({ title, locale, onRemove, children }: { title: string; locale: Locale; onRemove: () => void; children: ReactNode }) {
+function RowShell({ title, locale, rowRef, onRemove, children }: { title: string; locale: Locale; rowRef: (element: HTMLElement | null) => void; onRemove: () => void; children: ReactNode }) {
   return (
-    <li className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-3)]">
+    <li ref={rowRef} className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-3)]">
       <p className="m-0 font-semibold text-ink-900">{title}</p>
       {children}
       <RowActions locale={locale} label={title} onRemove={onRemove} />
@@ -83,19 +71,18 @@ export function PolicyUpdatesField({
   newRow: UpdateRowValue;
 }) {
   const { errors, locale, markDirty } = useContentForm();
-  const { rows, focusKey, remove, add } = useRows(defaultValue);
+  const list = useRepeater(defaultValue, { locale, itemLabel: a("policiesFieldUpdate", locale), onChange: markDirty });
+  const { rows, remove, add } = list;
   const L = (key: Parameters<typeof a>[0]) => a(key, locale);
   const lang = (l: "th" | "en") => ` (${a(l === "th" ? "langThai" : "langEnglish", locale)})`;
 
   return (
     <RepeaterShell
+      list={list}
       legend={L("policiesFieldUpdates")}
       hint={L("policiesHintUpdates")}
       addLabel={a("listAddItem", locale, { item: L("policiesFieldUpdate") })}
-      onAdd={() => {
-        add(newRow);
-        markDirty();
-      }}
+      onAdd={() => add(newRow)}
     >
       {rows.map((row, index) => {
         const p = `updates.${index}`;
@@ -104,10 +91,8 @@ export function PolicyUpdatesField({
             key={row.key}
             title={`${L("policiesFieldUpdate")} ${index + 1}`}
             locale={locale}
-            onRemove={() => {
-              remove(row.key);
-              markDirty();
-            }}
+            rowRef={list.rowRef(row.key)}
+            onRemove={() => remove(row.key)}
           >
             <div className="grid gap-[var(--space-3)] md:grid-cols-2">
               <TextInput
@@ -117,7 +102,6 @@ export function PolicyUpdatesField({
                 label={L("policiesFieldUpdateDate")}
                 defaultValue={row.value.date}
                 error={errors[`${p}.date`]}
-                autoFocus={focusKey === row.key}
               />
               <Select
                 id={fieldId(`${p}.status`)}
@@ -183,20 +167,19 @@ export interface EvidenceRowValue {
 /** Evidence links shown on the policy page. */
 export function EvidenceLinksField({ defaultValue }: { defaultValue: EvidenceRowValue[] }) {
   const { errors, locale, markDirty } = useContentForm();
-  const { rows, focusKey, remove, add } = useRows(defaultValue);
+  const list = useRepeater(defaultValue, { locale, itemLabel: a("policiesFieldEvidenceItem", locale), onChange: markDirty });
+  const { rows, remove, add } = list;
   const L = (key: Parameters<typeof a>[0]) => a(key, locale);
   const lang = (l: "th" | "en") => ` (${a(l === "th" ? "langThai" : "langEnglish", locale)})`;
   const blank: EvidenceRowValue = { label: { th: "", en: "" }, url: "", description: { th: "", en: "" }, requiresSignIn: false };
 
   return (
     <RepeaterShell
+      list={list}
       legend={L("policiesFieldEvidence")}
       hint={L("policiesHintEvidence")}
       addLabel={a("listAddItem", locale, { item: L("policiesFieldEvidenceItem") })}
-      onAdd={() => {
-        add(blank);
-        markDirty();
-      }}
+      onAdd={() => add(blank)}
     >
       {rows.map((row, index) => {
         const p = `evidence.${index}`;
@@ -205,10 +188,8 @@ export function EvidenceLinksField({ defaultValue }: { defaultValue: EvidenceRow
             key={row.key}
             title={`${L("policiesFieldEvidenceItem")} ${index + 1}`}
             locale={locale}
-            onRemove={() => {
-              remove(row.key);
-              markDirty();
-            }}
+            rowRef={list.rowRef(row.key)}
+            onRemove={() => remove(row.key)}
           >
             <div className="grid gap-[var(--space-3)] md:grid-cols-2">
               {(["th", "en"] as const).map((l) => (
@@ -221,7 +202,6 @@ export function EvidenceLinksField({ defaultValue }: { defaultValue: EvidenceRow
                   defaultValue={row.value.label[l]}
                   error={errors[`${p}.label.${l}`]}
                   autoComplete="off"
-                  autoFocus={focusKey === row.key && l === "th"}
                 />
               ))}
             </div>

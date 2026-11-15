@@ -147,4 +147,9 @@ export const CONTENT_LIFECYCLE_STRINGS = {
   rdErrLoop: { th: "การเปลี่ยนเส้นทางนี้จะวนกลับมาที่เดิม ตรวจรายการอื่นที่เกี่ยวข้อง", en: "This redirect would lead back to where it started. Check the other redirects involved." },
   rdErrStatus: { th: "เลือกประเภทการเปลี่ยนเส้นทาง", en: "Choose a redirect type" },
   rdErrExists: { th: "มีการเปลี่ยนเส้นทางจากที่อยู่นี้อยู่แล้ว", en: "A redirect from this address already exists" },
+  clcDuplicateTitle: { th: "ทำสำเนารายการนี้หรือไม่", en: "Duplicate this item?" },
+  clcDuplicateBody: { th: "จะสร้างฉบับร่างใหม่จากเวอร์ชันที่บันทึกไว้ รายการเดิมไม่เปลี่ยนแปลง", en: "A new draft will be created from the saved version. The original does not change." },
+  clcDuplicateUnsaved: { th: "การเปลี่ยนแปลงที่ยังไม่ได้บันทึกจะไม่อยู่ในสำเนา", en: "Changes you have not saved will not be in the copy." },
+  clcDuplicateConfirm: { th: "สร้างสำเนา", en: "Create the copy" },
+  clcDuplicating: { th: "กำลังสร้างสำเนา", en: "Creating the copy" },
 } as const satisfies Record<string, LocaleString>;

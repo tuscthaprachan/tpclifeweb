@@ -9,6 +9,8 @@ export interface ContentFormContextValue {
   locale: Locale;
   errors: FieldErrors;
   pending: boolean;
+  /** True while anything on the form is not saved, so side tools (Duplicate) can say what they leave out. */
+  dirty?: boolean;
   /** Call when the staff member changes something outside a native input (the rich text editor), so leaving the page warns. */
   markDirty: () => void;
 }

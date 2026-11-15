@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useContentForm } from "@/components/admin/content/context";
 import { fieldId } from "@/lib/admin/content/form-state";
 import { a } from "@/lib/i18n/admin";
-import { AddRowButton, RowActions } from "@/components/admin/content/RowButtons";
+import { AddRowButton, RepeaterStatus, RowActions } from "@/components/admin/content/RowButtons";
+import { useRepeater } from "@/components/admin/hooks/use-repeater";
 
 export interface RowContext {
   /** Position in the list right now; use it to build field names (`${name}.${index}.field`). */
@@ -38,31 +39,20 @@ interface RowListProps<R> {
  */
 export function RowList<R>({ name, legend, hint, itemLabel, initial, blank, renderRow, max = 100, orderable = true, compact = false }: RowListProps<R>) {
   const { errors, locale, markDirty } = useContentForm();
-  const nextKey = useRef(initial.length);
-  const [rows, setRows] = useState(() => initial.map((value, i) => ({ key: i, value })));
+  const list = useRepeater<R>(initial, { locale, itemLabel, max, onChange: markDirty });
   const error = errors[name];
   const item = (index: number) => a("dirRowTitle", locale, { item: itemLabel, n: index + 1 });
-
-  function move(index: number, by: -1 | 1) {
-    setRows((cur) => {
-      const next = [...cur];
-      const target = index + by;
-      if (target < 0 || target >= next.length) return cur;
-      [next[index], next[target]] = [next[target]!, next[index]!];
-      return next;
-    });
-    markDirty();
-  }
 
   return (
     <fieldset id={fieldId(name)} tabIndex={-1} className="m-0 border-0 p-0">
       <legend className="mb-[var(--space-1)] text-lg font-semibold text-ink-900">{legend}</legend>
       {hint ? <p className="mb-[var(--space-2)] text-sm text-ink-600">{hint}</p> : null}
       {error ? <p className="m-0 mb-[var(--space-2)] text-base font-medium text-error">{error}</p> : null}
-      {rows.length === 0 ? <p className="m-0 mb-[var(--space-2)] text-ink-600">{a("dirRowsEmpty", locale)}</p> : null}
+      {list.rows.length === 0 ? <p className="m-0 mb-[var(--space-2)] text-ink-600">{a("dirRowsEmpty", locale)}</p> : null}
+      <RepeaterStatus message={list.message} />
       <ol className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">
-        {rows.map((row, index) => (
-          <li key={row.key}>
+        {list.rows.map((row, index) => (
+          <li key={row.key} ref={list.rowRef(row.key)}>
             <fieldset className={compact ? "m-0 flex flex-wrap items-end gap-[var(--space-3)] border-0 p-0" : "m-0 flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-3)]"}>
               <legend className={compact ? "visually-hidden" : "px-[var(--space-1)] font-semibold text-ink-900"}>{item(index)}</legend>
               {renderRow(row.value, { index })}
@@ -70,27 +60,15 @@ export function RowList<R>({ name, legend, hint, itemLabel, initial, blank, rend
                 locale={locale}
                 label={item(index)}
                 first={index === 0}
-                last={index === rows.length - 1}
-                onMove={orderable ? (by) => move(index, by) : undefined}
-                onRemove={() => {
-                  setRows((cur) => cur.filter((r) => r.key !== row.key));
-                  markDirty();
-                }}
+                last={index === list.rows.length - 1}
+                onMove={orderable ? (by) => list.move(row.key, by) : undefined}
+                onRemove={() => list.remove(row.key)}
               />
             </fieldset>
           </li>
         ))}
       </ol>
-      {rows.length < max ? (
-        <AddRowButton
-          label={a("listAddItem", locale, { item: itemLabel.toLowerCase() })}
-          onClick={() => {
-            const key = nextKey.current++;
-            setRows((cur) => [...cur, { key, value: blank() }]);
-            markDirty();
-          }}
-        />
-      ) : null}
+      {list.canAdd ? <AddRowButton addRef={list.addRef} label={a("listAddItem", locale, { item: itemLabel.toLowerCase() })} onClick={() => list.add(blank())} /> : null}
     </fieldset>
   );
 }

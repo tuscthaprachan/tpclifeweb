@@ -133,4 +133,5 @@ export const MEDIA_LIBRARY_STRINGS = {
   mlQueueAllDone: { th: "อัปโหลดเสร็จแล้ว {ok} รูป", en: "Uploaded {ok} pictures" },
   mlQueueSomeFailed: { th: "อัปโหลดไม่สำเร็จ {failed} รูป แก้ไขแล้วลองอีกครั้ง", en: "{failed} pictures were not uploaded. Fix them and try again" },
   mlQueueAltNeeded: { th: "กรอกคำอธิบายภาพทั้งสองภาษา หรือเลือกว่าเป็นรูปตกแต่ง", en: "Enter the description in both languages, or mark the picture as decorative" },
+  mlLeaveBody: { th: "ภาพบางรายการยังไม่ได้อัปโหลด หากออกตอนนี้ ภาพเหล่านั้นจะหายไป", en: "Some pictures have not been uploaded. If you leave now, they will be lost." },
 } as const satisfies Record<string, LocaleString>;

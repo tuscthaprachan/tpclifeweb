@@ -57,4 +57,14 @@ export const CONSOLE_CONTENT_STRINGS = {
   cfSecLfHandling: { th: "สถานะและการรับคืน", en: "Progress and collection" },
   cfSecImageFile: { th: "ไฟล์รูปภาพ", en: "Image file" },
   cfSecImageDetails: { th: "รายละเอียดรูปภาพ", en: "Image details" },
+  /* Repeating rows and the form while it saves or deletes */
+  rpAdded: { th: "เพิ่ม{item} {n} แล้ว", en: "{item} {n} added" },
+  rpRemoved: { th: "ลบ{item} {n} แล้ว", en: "{item} {n} removed" },
+  rpMoved: { th: "ย้าย{item}ไปลำดับที่ {n} จาก {total}", en: "{item} moved to position {n} of {total}" },
+  cfEditedDuringSave: {
+    th: "ระหว่างบันทึก คุณแก้ไขต่อ การแก้ไขช่วงนั้นไม่ได้ถูกบันทึก และใส่กลับในแบบฟอร์มแล้ว โปรดตรวจและบันทึกอีกครั้ง",
+    en: "You kept editing while the save ran. Those later edits were not saved and are back in the form. Check them and save again.",
+  },
+  cfDeleting: { th: "กำลังลบ", en: "Deleting" },
+  cfDeleteUnsaved: { th: "การเปลี่ยนแปลงที่ยังไม่ได้บันทึกในหน้านี้จะหายไปด้วย", en: "Changes on this page that you have not saved will be lost too." },
 } as const satisfies Record<string, LocaleString>;

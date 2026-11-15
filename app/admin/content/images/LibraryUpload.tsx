@@ -5,6 +5,7 @@ import { useId, useRef, useState, useSyncExternalStore } from "react";
 import { uploadImageAction } from "@/app/admin/content/actions";
 import { runUpload } from "@/components/admin/content/upload/run-upload";
 import { initialUpload, isUploadBusy, uploadError, uploadProgress, uploadReducer, type UploadEvent, type UploadState } from "@/components/admin/content/upload/upload-machine";
+import { UnsavedChangesGuard } from "@/components/admin/content/UnsavedChangesGuard";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Button, TextInput } from "@/components/ui";
 import { a } from "@/lib/i18n/admin";
@@ -113,6 +114,7 @@ export function LibraryUpload({ locale }: { locale: Locale }) {
 
   return (
     <section aria-labelledby={`${inputId}-title`} className="console-card flex flex-col gap-[var(--space-3)] p-[var(--space-4)]">
+      <UnsavedChangesGuard dirty={waiting > 0} locale={locale} body={a("mlLeaveBody", locale)} />
       <div
         onDragOver={(e) => {
           e.preventDefault();

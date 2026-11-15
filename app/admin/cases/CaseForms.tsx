@@ -78,6 +78,7 @@ export function NoteForm({ locale, caseId, organisationId, people }: Common & { 
           hint={`${a("caseNoteHint", locale)} ${a("ckMentionHint", locale)}`}
           defaultValue={state.values?.note ?? ""}
           key={state.saved ? "saved" : "typing"}
+          clearOn={state.saved ? state : null}
           rows={4}
           maxLength={4000}
           people={people}

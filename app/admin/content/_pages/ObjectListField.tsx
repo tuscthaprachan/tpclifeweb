@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Select, Textarea, TextInput } from "@/components/ui";
 import { CheckboxField } from "@/components/admin/content/fields";
 import { useContentForm } from "@/components/admin/content/context";
 import { fieldId } from "@/lib/admin/content/form-state";
 import { a } from "@/lib/i18n/admin";
-import { AddRowButton, RowActions } from "@/components/admin/content/RowButtons";
+import { AddRowButton, RepeaterStatus, RowActions } from "@/components/admin/content/RowButtons";
+import { useRepeater } from "@/components/admin/hooks/use-repeater";
+import type { RepeaterRow } from "@/components/admin/hooks/repeater-machine";
 
 /** One input inside a row. Plain data, so a server component can pass it down. */
 export type RowFieldSpec =
@@ -16,11 +18,6 @@ export type RowFieldSpec =
   | { key: string; type: "select"; label: string; hint?: string; options: { value: string; label: string }[] };
 
 export type RowValue = Record<string, string | boolean | { th?: string; en?: string } | null | undefined>;
-
-interface Row {
-  key: number;
-  value: RowValue;
-}
 
 /**
  * A growing list of small records (links, checklist items), each with the
@@ -47,21 +44,9 @@ export function ObjectListField({
   max?: number;
 }) {
   const { errors, locale, markDirty } = useContentForm();
-  const nextKey = useRef(defaultValue.length);
-  const [rows, setRows] = useState<Row[]>(() => defaultValue.map((value, i) => ({ key: i, value })));
-  const [focusKey, setFocusKey] = useState<number | null>(null);
+  const list = useRepeater<RowValue>(defaultValue, { locale, itemLabel, max, onChange: markDirty });
 
-  const move = (index: number, by: -1 | 1) => {
-    setRows((cur) => {
-      const next = [...cur];
-      const [row] = next.splice(index, 1);
-      next.splice(index + by, 0, row!);
-      return next;
-    });
-    markDirty();
-  };
-
-  const input = (row: Row, index: number, field: RowFieldSpec, first: boolean) => {
+  const input = (row: RepeaterRow<RowValue>, index: number, field: RowFieldSpec) => {
     const path = `${name}.${index}.${field.key}`;
     const stored = row.value[field.key];
     if (field.type === "checkbox") {
@@ -100,7 +85,6 @@ export function ObjectListField({
                 error={errors[p]}
                 defaultValue={pair[lang] ?? ""}
                 autoComplete="off"
-                autoFocus={focusKey === row.key && first && lang === "th"}
                 {...(field.multiline ? { rows: 3 } : {})}
               />
             );
@@ -121,7 +105,6 @@ export function ObjectListField({
         defaultValue={typeof stored === "string" ? stored : ""}
         maxLength={field.maxLength}
         autoComplete="off"
-        autoFocus={focusKey === row.key && first}
       />
     );
   };
@@ -130,38 +113,26 @@ export function ObjectListField({
     <fieldset className="m-0 border-0 p-0">
       <legend className="mb-[var(--space-1)] text-lg font-semibold text-ink-900">{label}</legend>
       {hint ? <p className="mb-[var(--space-2)] text-sm text-ink-600">{hint}</p> : null}
+      <RepeaterStatus message={list.message} />
       <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">
-        {rows.map((row, index) => (
-          <li key={row.key} className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-3)]">
+        {list.rows.map((row, index) => (
+          <li key={row.key} ref={list.rowRef(row.key)} className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-3)]">
             <p className="m-0 text-base font-semibold">
               {itemLabel} {index + 1}
             </p>
-            {fields.map((field, i) => input(row, index, field, i === 0))}
+            {fields.map((field) => input(row, index, field))}
             <RowActions
               locale={locale}
               label={`${itemLabel} ${index + 1}`}
               first={index === 0}
-              last={index === rows.length - 1}
-              onMove={(by) => move(index, by)}
-              onRemove={() => {
-                setRows((cur) => cur.filter((r) => r.key !== row.key));
-                markDirty();
-              }}
+              last={index === list.rows.length - 1}
+              onMove={(by) => list.move(row.key, by)}
+              onRemove={() => list.remove(row.key)}
             />
           </li>
         ))}
       </ul>
-      {rows.length < max ? (
-        <AddRowButton
-          label={a("listAddItem", locale, { item: itemLabel.toLowerCase() })}
-          onClick={() => {
-            const key = nextKey.current++;
-            setRows((cur) => [...cur, { key, value: {} }]);
-            setFocusKey(key);
-            markDirty();
-          }}
-        />
-      ) : null}
+      {list.canAdd ? <AddRowButton addRef={list.addRef} label={a("listAddItem", locale, { item: itemLabel.toLowerCase() })} onClick={() => list.add({})} /> : null}
     </fieldset>
   );
 }

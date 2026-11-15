@@ -34,6 +34,7 @@ export function MentionTextarea({
   maxLength,
   people,
   labels,
+  clearOn,
 }: {
   id: string;
   name: string;
@@ -44,12 +45,19 @@ export function MentionTextarea({
   maxLength?: number;
   people: MentionPerson[];
   labels: MentionLabels;
+  /** Any value that changes each time a note is saved (the action state of a success); the picked people are forgotten when it does. */
+  clearOn?: unknown;
 }) {
   const listId = useId();
   const area = useRef<HTMLTextAreaElement | null>(null);
   const options = useRef<(HTMLButtonElement | null)[]>([]);
   const [query, setQuery] = useState<string | null>(null);
   const [chosen, setChosen] = useState<string[]>([]);
+  const [seen, setSeen] = useState(clearOn);
+  if (seen !== clearOn) {
+    setSeen(clearOn);
+    setChosen([]);
+  }
 
   const matches =
     query === null
