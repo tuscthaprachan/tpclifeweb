@@ -274,6 +274,10 @@ export const budget = {
   removeNamed(locale: Locale, name: string): string {
     return `${locale === "th" ? "เอาออก" : "Remove"}: ${name}`;
   },
+  /** "Removed: Pad kra pao". */
+  removedNamed(locale: Locale, name: string): string {
+    return `${locale === "th" ? "เอาออกแล้ว" : "Removed"}: ${name}`;
+  },
   historyLine(locale: Locale, price: number): string {
     return locale === "th" ? `จ่าย ${n(price, locale)} บาท (ราคาตอนกด)` : `${n(price, locale)} baht (price when tapped)`;
   },

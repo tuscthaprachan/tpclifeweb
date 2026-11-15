@@ -17,13 +17,13 @@ interface EatThisButtonProps {
  * "Go with this", the one primary action of the result. A real link first, so
  * without JavaScript it simply opens the stall page. With JavaScript, a click
  * first logs the dish to the device history (a synchronous write, nothing
- * leaves the device) and then the link's own navigation carries on, so it is
+ * leaves the device, and a quick second tap is not logged again) and then the link's own navigation carries on, so it is
  * one tap to go. If the device will not keep it, the navigation still happens.
  */
 export function EatThisButton({ locale, items, href }: EatThisButtonProps) {
   function onClick() {
     const at = new Date().toISOString();
-    items.forEach((item) => device.addHistory({ slug: item.slug, price: item.price, at }));
+    device.logEaten(items.map((item) => ({ slug: item.slug, price: item.price, at })));
   }
 
   return (

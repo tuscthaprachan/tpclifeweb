@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 
+import { useCopy } from "@/components/hooks/use-copy";
+import { useStatusMessage } from "@/components/hooks/use-status-message";
 import { Button } from "@/components/ui/Button";
 import { Heading } from "@/components/ui/Heading";
-import { AVOID_KEYS, DIET_KEYS, type AvoidKey, type DietKey } from "@/lib/canteen/params";
+import { AVOID_KEYS, DIET_KEYS, MAX_BUDGET, budgetValue, type AvoidKey, type DietKey } from "@/lib/canteen/params";
 import { MAX_NAME_LENGTH, MAX_PEOPLE, type Person } from "@/lib/canteen/group";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -12,10 +14,11 @@ import { foldRetiredAvoid, OFFERED_AVOID_KEYS } from "../chips";
 import { AVOID_LABEL, DIET_LABEL } from "../labels";
 import { GROUP, group } from "./strings";
 import {
-  blankPerson,
+  applyRowAction,
   groupHref,
   personLabel,
   toggleKey,
+  type PersonRow,
   type Strategy,
 } from "./state";
 
@@ -33,11 +36,6 @@ interface GroupBuilderProps {
   onEdit: (search: string) => void;
   /** "Show results" was pressed. `href` is the compact link to the group, ending in `#results`. */
   onShow: (href: string) => void;
-}
-
-interface Row {
-  key: number;
-  person: Person;
 }
 
 const noopSubscribe = () => () => {};
@@ -58,9 +56,9 @@ const noopSubscribe = () => () => {};
  */
 export function GroupBuilder({ locale, action, initialPeople, strategy, seed, showShare = false, onEdit, onShow }: GroupBuilderProps) {
   const nextKey = useRef(initialPeople.length);
-  const [rows, setRows] = useState<Row[]>(() => initialPeople.map((person, key) => ({ key, person: { ...person, ...foldRetiredAvoid(person.diet, person.avoid) } })));
+  const [rows, setRows] = useState<PersonRow[]>(() => initialPeople.map((person, key) => ({ key, person: { ...person, ...foldRetiredAvoid(person.diet, person.avoid) } })));
   const [dirty, setDirty] = useState(false);
-  const [status, setStatus] = useState("");
+  const status = useStatusMessage<string>();
   const statusRef = useRef<HTMLParagraphElement>(null);
   const focusKey = useRef<number | null>(null);
   const people = rows.map((row) => row.person);
@@ -87,17 +85,24 @@ export function GroupBuilder({ locale, action, initialPeople, strategy, seed, sh
 
   function update(key: number, patch: Partial<Person>) {
     setDirty(true);
+    status.clear();
     setRows((current) => current.map((row) => (row.key === key ? { ...row, person: { ...row.person, ...patch } } : row)));
+  }
+
+  function edit(action: { kind: "add" } | { kind: "remove"; index: number }) {
+    const next = applyRowAction(rows, action, nextKey.current);
+    const created = next.find((row) => row.key === nextKey.current);
+    if (created) nextKey.current += 1;
+    setDirty(true);
+    setRows(next);
+    return { next, created };
   }
 
   function add() {
     if (full) return;
-    const key = nextKey.current;
-    nextKey.current += 1;
-    focusKey.current = key;
-    setDirty(true);
-    setRows((current) => [...current, { key, person: blankPerson() }]);
-    setStatus(group.addedStatus(rows.length + 1, rows.length + 1, locale));
+    const { next, created } = edit({ kind: "add" });
+    if (created) focusKey.current = created.key;
+    status.show(group.addedStatus(next.length, next.length, locale));
   }
 
   function remove(key: number) {
@@ -105,17 +110,8 @@ export function GroupBuilder({ locale, action, initialPeople, strategy, seed, sh
     const row = rows[index];
     if (!row) return;
     const label = personLabel(row.person, index, personWord);
-    const remaining = rows.filter((entry) => entry.key !== key);
-    setDirty(true);
-    if (remaining.length === 0) {
-      const blank = { key: nextKey.current, person: blankPerson() };
-      nextKey.current += 1;
-      setRows([blank]);
-      setStatus(group.removedStatus(label, 1, locale));
-    } else {
-      setRows(remaining);
-      setStatus(group.removedStatus(label, remaining.length, locale));
-    }
+    const { next } = edit({ kind: "remove", index });
+    status.show(group.removedStatus(label, next.length, locale));
     // The removed button is gone, so focus goes to the announcement, which sits above the people.
     window.setTimeout(() => statusRef.current?.focus(), 0);
   }
@@ -145,7 +141,7 @@ export function GroupBuilder({ locale, action, initialPeople, strategy, seed, sh
       {seed ? <input type="hidden" name="seed" value={seed} /> : null}
 
       <p ref={statusRef} tabIndex={-1} role="status" aria-live="polite" className="m-0 text-base font-medium text-ink-900 empty:hidden">
-        {status}
+        {status.value ? <span key={status.nonce}>{status.value}</span> : null}
       </p>
 
       <ol className="m-0 flex list-none flex-col gap-[var(--space-4)] p-0">
@@ -193,7 +189,7 @@ export function GroupBuilder({ locale, action, initialPeople, strategy, seed, sh
         </p>
       ) : null}
 
-      {showShare ? <ShareBox locale={locale} value={shareValue} hydrated={origin !== ""} /> : null}
+      {showShare ? <ShareBox key={shareValue} locale={locale} value={shareValue} hydrated={origin !== ""} /> : null}
     </form>
   );
 }
@@ -254,13 +250,13 @@ function PersonFieldset({ locale, index, rowKey, person, canRemove, onChange, on
             type="number"
             inputMode="numeric"
             min={1}
-            max={5000}
+            max={MAX_BUDGET}
             step={1}
             aria-describedby={`${id}-max-hint`}
             value={person.max ?? ""}
             onChange={(event) => {
-              const value = Number(event.target.value);
-              onChange({ max: event.target.value !== "" && Number.isInteger(value) && value >= 1 ? value : undefined });
+              const text = event.target.value;
+              onChange({ max: budgetValue(text) ?? (/^\d+$/.test(text) && Number(text) > MAX_BUDGET ? MAX_BUDGET : undefined) });
             }}
             className="scroll-my-24 min-h-[var(--target-min)] rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900"
           />
@@ -343,16 +339,7 @@ function CheckGroup({ legend, name, idPrefix, options, selected, onToggle }: Che
 }
 
 function ShareBox({ locale, value, hydrated }: { locale: Locale; value: string; hydrated: boolean }) {
-  const [message, setMessage] = useState("");
-
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(value);
-      setMessage(GROUP.copied[locale]);
-    } catch {
-      setMessage(GROUP.copyFailed[locale]);
-    }
-  }
+  const { copy, value: result, nonce } = useCopy();
 
   return (
     <section aria-labelledby="share" className="flex flex-col gap-[var(--space-2)] border-t border-line pt-[var(--space-4)]">
@@ -375,13 +362,13 @@ function ShareBox({ locale, value, hydrated }: { locale: Locale; value: string; 
           />
         </div>
         {hydrated ? (
-          <Button type="button" variant="secondary" onClick={copy}>
+          <Button type="button" variant="secondary" onClick={() => void copy(value)}>
             {GROUP.copy[locale]}
           </Button>
         ) : null}
       </div>
       <p role="status" aria-live="polite" className="m-0 text-base text-ink-900 empty:hidden">
-        {message}
+        {result ? <span key={nonce}>{result === "copied" ? GROUP.copied[locale] : GROUP.copyFailed[locale]}</span> : null}
       </p>
     </section>
   );

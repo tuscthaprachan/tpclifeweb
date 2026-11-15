@@ -21,7 +21,7 @@
 import {
   AVOID_KEYS,
   DIET_KEYS,
-  MAX_BUDGET,
+  budgetValue,
   type AvoidKey,
   type DietKey,
   type RawParams,
@@ -154,10 +154,7 @@ function parseAction(raw: string | undefined): GroupAction {
 }
 
 function parseBudget(raw: string | undefined): number | undefined {
-  const text = raw?.trim();
-  if (!text || !/^\d{1,5}$/.test(text)) return undefined;
-  const value = Number(text);
-  return value >= 1 && value <= MAX_BUDGET ? value : undefined;
+  return budgetValue(raw?.trim());
 }
 
 /** The people the form fields describe, in field order, at most eight. Unknown values are dropped. */
@@ -193,6 +190,29 @@ export function applyAction(people: readonly Person[], action: GroupAction): Per
     return next.length > 0 ? next : [blankPerson()];
   }
   return [...people];
+}
+
+/** One person in the builder, with a stable key so the fields keep their state when others are added or removed. */
+export interface PersonRow {
+  key: number;
+  person: Person;
+}
+
+/** `applyAction` for keyed rows: survivors keep their keys, and a new person (or the blank left by removing the only one) gets `newKey`. */
+export function applyRowAction(rows: readonly PersonRow[], action: GroupAction, newKey: number): PersonRow[] {
+  const people = applyAction(
+    rows.map((row) => row.person),
+    action,
+  );
+  if (action.kind === "add") {
+    return people.length > rows.length ? [...rows, { key: newKey, person: people[people.length - 1]! }] : [...rows];
+  }
+  if (action.kind === "remove") {
+    if (action.index < 0 || action.index >= rows.length) return [...rows];
+    const kept = rows.filter((_, index) => index !== action.index);
+    return kept.length > 0 ? kept : [{ key: newKey, person: people[0]! }];
+  }
+  return [...rows];
 }
 
 /**

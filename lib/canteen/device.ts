@@ -301,6 +301,31 @@ export function addHistory(entry: EatenEntry): boolean {
   return writeValue(KEYS.history, [...getHistory(), entry].slice(-MAX_HISTORY));
 }
 
+/** Two taps on the same dish at the same price within this many milliseconds count as one. */
+export const DUPLICATE_WINDOW_MS = 5000;
+
+/** Whether `entry` repeats one already in `history` (same dish, same price) within `windowMs` either side of its time. */
+export function isRecentDuplicate(history: readonly EatenEntry[], entry: EatenEntry, windowMs: number = DUPLICATE_WINDOW_MS): boolean {
+  const at = Date.parse(entry.at);
+  if (!Number.isFinite(at)) return false;
+  return history.some((item) => item.slug === entry.slug && item.price === entry.price && Math.abs(Date.parse(item.at) - at) < windowMs);
+}
+
+/**
+ * Logs several dishes eaten together, skipping any that repeat an entry already
+ * logged a moment ago, so a double tap does not count twice. Returns false if
+ * anything could not be saved.
+ */
+export function logEaten(entries: readonly EatenEntry[], windowMs: number = DUPLICATE_WINDOW_MS): boolean {
+  const before = getHistory();
+  let ok = true;
+  for (const entry of entries) {
+    if (isRecentDuplicate(before, entry, windowMs)) continue;
+    if (!addHistory(entry)) ok = false;
+  }
+  return ok;
+}
+
 /** Removes one history entry (matched by slug and time), for a mis-tap. Returns false if it could not be saved. */
 export function removeHistory(entry: Pick<EatenEntry, "slug" | "at">): boolean {
   return writeValue(

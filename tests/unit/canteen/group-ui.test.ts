@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import { decodeGroup, type Person } from "@/lib/canteen/group";
+import { MAX_BUDGET, budgetValue } from "@/lib/canteen/params";
 import {
   applyAction,
   applyChange,
+  applyRowAction,
+  blankPerson,
   bumpReroll,
   cleanSeed,
   encodeRerolls,
@@ -158,5 +161,42 @@ describe("group helpers", () => {
     const query = groupQuery({ people: [{ name: "<img src=x>", diet: [], avoid: [] }], strategy: "one" });
     expect(query).not.toContain("<");
     expect(decodeGroup(decodeURIComponent(query.slice(2)))[0]!.name).toBe("<img src=x>");
+  });
+});
+
+describe("builder rows", () => {
+  const rows = [
+    { key: 0, person: mint },
+    { key: 1, person: ben },
+  ];
+
+  it("adds a blank person with the new key, up to the limit", () => {
+    const next = applyRowAction(rows, { kind: "add" }, 7);
+    expect(next.map((row) => row.key)).toEqual([0, 1, 7]);
+    expect(next[2]!.person).toEqual(blankPerson());
+    const full = Array.from({ length: 8 }, (_, key) => ({ key, person: blankPerson() }));
+    expect(applyRowAction(full, { kind: "add" }, 9)).toEqual(full);
+  });
+
+  it("agrees with applyAction on the people", () => {
+    for (const action of [{ kind: "add" }, { kind: "remove", index: 0 }, { kind: "remove", index: 1 }, { kind: "remove", index: 5 }] as const) {
+      expect(applyRowAction(rows, action, 7).map((row) => row.person)).toEqual(applyAction(rows.map((row) => row.person), action));
+    }
+  });
+
+  it("removing keeps the other keys, and removing the only person leaves a blank with the new key", () => {
+    expect(applyRowAction(rows, { kind: "remove", index: 0 }, 7).map((row) => row.key)).toEqual([1]);
+    expect(applyRowAction([rows[0]!], { kind: "remove", index: 0 }, 7)).toEqual([{ key: 7, person: blankPerson() }]);
+  });
+});
+
+describe("builder budget", () => {
+  it("accepts and drops the same values on the client and in the URL", () => {
+    for (const text of ["1", "50", "5000", "0", "5001", "99999", "12.5", "", "abc", "-3"]) {
+      if (!text.includes(".")) expect(budgetValue(text)).toBe(readGroupState(new URLSearchParams({ p: `A.${text}` })).people[0]?.max);
+      expect(peopleFromForm(new URLSearchParams({ n0: "A", max0: text }))[0]?.max).toBe(budgetValue(text));
+    }
+    expect(budgetValue("5001")).toBeUndefined();
+    expect(budgetValue("5000")).toBe(MAX_BUDGET);
   });
 });

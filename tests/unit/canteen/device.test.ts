@@ -84,6 +84,28 @@ describe("device storage", () => {
     expect(device.getHistory().at(-1)!.slug).toBe("d303");
   });
 
+  it("does not log the same dish twice for a quick double tap", () => {
+    const first = { slug: "a", price: 40, at: "2026-08-10T05:00:00.000Z" };
+    expect(device.logEaten([first])).toBe(true);
+    expect(device.logEaten([{ ...first, at: "2026-08-10T05:00:00.400Z" }])).toBe(true);
+    expect(device.getHistory()).toEqual([first]);
+  });
+
+  it("logs the same dish again once the window has passed, and a different price or dish at once", () => {
+    const first = { slug: "a", price: 40, at: "2026-08-10T05:00:00.000Z" };
+    device.logEaten([first]);
+    device.logEaten([{ ...first, at: "2026-08-10T05:00:06.000Z" }]);
+    device.logEaten([{ slug: "a", price: 45, at: "2026-08-10T05:00:06.100Z" }, { slug: "b", price: 40, at: "2026-08-10T05:00:06.100Z" }]);
+    expect(device.getHistory()).toHaveLength(4);
+  });
+
+  it("tells a recent duplicate from a new entry", () => {
+    const history = [{ slug: "a", price: 40, at: "2026-08-10T05:00:00.000Z" }];
+    expect(device.isRecentDuplicate(history, { slug: "a", price: 40, at: "2026-08-10T05:00:04.999Z" })).toBe(true);
+    expect(device.isRecentDuplicate(history, { slug: "a", price: 40, at: "2026-08-10T05:00:05.000Z" })).toBe(false);
+    expect(device.isRecentDuplicate(history, { slug: "a", price: 40, at: "not a date" })).toBe(false);
+  });
+
   it("ignores corrupt or tampered storage", () => {
     store.map.set("trytpc.eat.v1.favourites", "{not json");
     store.map.set("trytpc.eat.v1.history", JSON.stringify([{ slug: 1 }, { slug: "ok", price: 40, at: "2026-08-10T00:00:00Z" }, null]));

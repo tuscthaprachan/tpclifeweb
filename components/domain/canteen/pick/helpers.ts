@@ -165,3 +165,25 @@ export function reelNames(names: readonly string[], final: string, seed: string,
   }
   return [...unique.slice(0, Math.max(0, max - 1)), final];
 }
+
+/** The reel: absent, spinning, or done and celebrating. */
+export type ReelPhase = "off" | "playing" | "celebrating";
+
+export interface ReelInputs {
+  hydrated: boolean;
+  /** The user arrived by spinning, not by a shared link, Back or a reload. */
+  spun: boolean;
+  reducedMotion: boolean;
+  /** How many names the reel has to cycle through. */
+  nameCount: number;
+  /** The key of the result whose reel has finished, if any. */
+  doneKey: string | null;
+  /** The key of the result on screen. */
+  pickKey: string;
+}
+
+/** Which phase the reel is in. It never runs before hydration, without a spin, under reduced motion, or with nothing to cycle. */
+export function reelPhase({ hydrated, spun, reducedMotion, nameCount, doneKey, pickKey }: ReelInputs): ReelPhase {
+  if (!hydrated || !spun || reducedMotion || nameCount <= 1) return "off";
+  return doneKey === pickKey ? "celebrating" : "playing";
+}

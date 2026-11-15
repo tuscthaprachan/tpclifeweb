@@ -6,6 +6,7 @@ import { device } from "@/lib/canteen";
 import type { Locale } from "@/lib/i18n/config";
 import { HeartIcon } from "./icons";
 import { EAT, t } from "./strings";
+import { useDeviceStorage } from "./use-device-storage";
 
 interface FavouriteToggleProps {
   /** The dish's slug. Stored on this device only. */
@@ -15,16 +16,6 @@ interface FavouriteToggleProps {
   locale: Locale;
   className?: string;
 }
-
-let storageProbe: boolean | undefined;
-
-/** `isStorageAvailable` writes to storage, so ask once and keep the answer. */
-function storageReady(): boolean {
-  if (storageProbe === undefined) storageProbe = device.isStorageAvailable();
-  return storageProbe;
-}
-
-const subscribeNever = () => () => {};
 
 /**
  * Stars a dish on this device. A client island and nothing more: the card it
@@ -37,11 +28,11 @@ const subscribeNever = () => () => {};
  * and outlined when off, so the state is not colour alone.
  */
 export function FavouriteToggle({ slug, name, locale, className }: FavouriteToggleProps) {
-  const ready = useSyncExternalStore(subscribeNever, storageReady, () => false);
+  const ready = useDeviceStorage();
   const saved = useSyncExternalStore(device.subscribe, () => device.isFavourite(slug), () => false);
   const [failed, setFailed] = useState(false);
 
-  if (!ready) return null;
+  if (ready !== true) return null;
 
   return (
     <span className={cx("inline-flex flex-col items-end", className)}>

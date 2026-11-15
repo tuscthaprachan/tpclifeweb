@@ -31,6 +31,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 
+import { useHydrated } from "@/components/hooks/use-hydrated";
 import { cx } from "@/components/ui/cx";
 import { device } from "@/lib/canteen";
 import { applyFilters } from "@/lib/canteen/filter";
@@ -41,7 +42,7 @@ import type { CanteenData } from "@/lib/content/types";
 
 import { eat } from "../strings";
 import "../fun.css";
-import { biasNeedsDevice, reelNames, toPickLock, vetoedDishes, type PickParams } from "./helpers";
+import { biasNeedsDevice, reelNames, reelPhase, toPickLock, vetoedDishes, type PickParams } from "./helpers";
 import { PickEmpty } from "./PickEmpty";
 import { PickResult } from "./PickResult";
 import { consumeSpin, SPIN_PENDING_ID, SPIN_PENDING_SCRIPT, SpinListener } from "./SpinListener";
@@ -136,7 +137,7 @@ function subscribeReducedMotion(onChange: () => void): () => void {
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, reel, announce, children }: RandomiserProps) {
-  const hydrated = useSyncExternalStore(subscribeNever, () => true, () => false);
+  const hydrated = useHydrated();
   const reduced = useSyncExternalStore(subscribeReducedMotion, reducedMotion, () => false);
   const snapshot = useSyncExternalStore(subscribeNever, () => readDevice(pickKey), () => null);
 
@@ -179,8 +180,9 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
   // The reel plays only for a result the user spun for, until `doneKey` catches up with its key.
   const [doneKey, setDoneKey] = useState<string | null>(null);
   const spun = useSyncExternalStore(subscribeNever, () => spunFor(pickKey), () => false);
-  const playing = hydrated && spun && !reduced && names.length > 1 && doneKey !== pickKey;
-  const celebrate = hydrated && spun && !reduced && names.length > 1 && doneKey === pickKey;
+  const phase = reelPhase({ hydrated, spun, reducedMotion: reduced, nameCount: names.length, doneKey, pickKey });
+  const playing = phase === "playing";
+  const celebrate = phase === "celebrating";
   const strip = useMemo(() => reelStrip(names), [names]);
 
   useEffect(() => {

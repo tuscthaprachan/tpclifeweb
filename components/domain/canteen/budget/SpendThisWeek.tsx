@@ -7,6 +7,7 @@ import { device } from "@/lib/canteen";
 import type { Locale } from "@/lib/i18n/config";
 
 import { t } from "../strings";
+import { useDeviceStorage } from "../use-device-storage";
 import { BUDGET, budget } from "./strings";
 
 interface SpendThisWeekProps {
@@ -16,13 +17,6 @@ interface SpendThisWeekProps {
   className?: string;
 }
 
-const subscribeNever = () => () => {};
-let storageProbe: boolean | undefined;
-function storageReady(): boolean {
-  if (storageProbe === undefined) storageProbe = device.isStorageAvailable();
-  return storageProbe;
-}
-
 /**
  * "You've logged 230 of 400 baht this week", from the device. Counts only
  * what the student tapped "I'll eat this" for, and says so. The target is the
@@ -30,10 +24,10 @@ function storageReady(): boolean {
  * Renders nothing until JavaScript runs and only when the device can keep data.
  */
 export function SpendThisWeek({ locale, explain = true, className }: SpendThisWeekProps) {
-  const ready = useSyncExternalStore(subscribeNever, storageReady, () => false);
+  const ready = useDeviceStorage();
   const spent = useSyncExternalStore(device.subscribe, () => device.spendThisWeek(new Date()), () => 0);
   const saved = useSyncExternalStore(device.subscribe, () => device.getSavedWeek(), () => null);
-  if (!ready) return null;
+  if (ready !== true) return null;
 
   const target = saved?.budget;
   const diff = target === undefined ? undefined : target - spent;

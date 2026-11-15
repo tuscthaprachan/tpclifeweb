@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { useStatusMessage } from "@/components/hooks/use-status-message";
 import { Button } from "@/components/ui/Button";
 import { Grid } from "@/components/ui/Grid";
 import { newSeed, pickSuggested, type SuggestedCandidate } from "@/lib/canteen/random";
@@ -28,7 +29,7 @@ interface SuggestedMenuProps {
  */
 export function SuggestedMenu({ locale, candidates, cards, count, initialSeed }: SuggestedMenuProps) {
   const [seed, setSeed] = useState(initialSeed);
-  const [announce, setAnnounce] = useState("");
+  const announce = useStatusMessage<string>(5000);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setSeed(newSeed()), 0);
@@ -54,7 +55,7 @@ export function SuggestedMenu({ locale, candidates, cards, count, initialSeed }:
             variant="secondary"
             onClick={() => {
               setSeed(newSeed());
-              setAnnounce(t(EAT.suggestedUpdated, locale));
+              announce.show(t(EAT.suggestedUpdated, locale));
             }}
           >
             {t(EAT.suggestedShuffle, locale)}
@@ -62,7 +63,7 @@ export function SuggestedMenu({ locale, candidates, cards, count, initialSeed }:
         </p>
       ) : null}
       <p role="status" aria-live="polite" className="visually-hidden">
-        {announce}
+        {announce.value ? <span key={announce.nonce}>{announce.value}</span> : null}
       </p>
     </>
   );

@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 
+import { useStatusMessage } from "@/components/hooks/use-status-message";
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
 import { Heading } from "@/components/ui/Heading";
@@ -15,6 +16,7 @@ import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { filterSummary } from "../chips";
 import { dishHref } from "../links";
 import { OtherName } from "../OtherName";
+import { useDeviceStorage } from "../use-device-storage";
 import { EAT, eat, t } from "../strings";
 import { BUDGET, WEEKDAY_NAME, budget } from "./strings";
 import { SpendThisWeek } from "./SpendThisWeek";
@@ -40,12 +42,6 @@ interface MineClientProps {
 }
 
 const HISTORY_SHOWN = 30;
-const subscribeNever = () => () => {};
-let storageProbe: boolean | undefined;
-function storageReady(): boolean {
-  if (storageProbe === undefined) storageProbe = device.isStorageAvailable();
-  return storageProbe;
-}
 
 /**
  * Everything the device remembers, drawn in the browser. Nothing here comes
@@ -56,15 +52,26 @@ function storageReady(): boolean {
  * shows no list.
  */
 export function MineClient({ locale, dishes, stallNames, currentQuery }: MineClientProps) {
-  const ready = useSyncExternalStore(subscribeNever, storageReady, () => null as boolean | null);
+  const ready = useDeviceStorage();
   const favourites = useSyncExternalStore(device.subscribe, device.getFavourites, () => device.EMPTY_FAVOURITES);
   const dislikes = useSyncExternalStore(device.subscribe, device.getDislikes, () => device.EMPTY_DISLIKES);
   const history = useSyncExternalStore(device.subscribe, device.getHistory, () => device.EMPTY_HISTORY);
   const defaults = useSyncExternalStore(device.subscribe, device.getDefaultFilters, () => null);
   const savedWeek = useSyncExternalStore(device.subscribe, device.getSavedWeek, () => null);
 
-  const [message, setMessage] = useState<string>("");
+  const status = useStatusMessage<string>(8000);
   const [confirming, setConfirming] = useState(false);
+  const focusAfter = useRef<string | null>(null);
+
+  useEffect(() => {
+    const id = focusAfter.current;
+    if (id === null) return;
+    focusAfter.current = null;
+    const heading = document.getElementById(id);
+    if (!heading) return;
+    heading.tabIndex = -1;
+    heading.focus();
+  }, [favourites, dislikes, history, defaults, savedWeek]);
 
   if (ready === null) {
     return (
@@ -86,7 +93,12 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
   }
 
   const failed = () => t(BUDGET.saveFailed, locale);
-  const run = (ok: boolean, done = "") => setMessage(ok ? done : failed());
+  const run = (ok: boolean, done = "", focusId: string | null = null) => {
+    status.show(ok ? done : failed());
+    if (ok) focusAfter.current = focusId;
+  };
+  const removed = (name: string) => budget.removedNamed(locale, name);
+  const dishName = (slug: string) => (dishes[slug] ? pick(dishes[slug]!.name, locale) : t(BUDGET.staleDish, locale));
 
   const stallLabel = (dish: MineDish) => eat.stallFull(locale, dish.stallNumber, pick(dish.stallName, locale));
   const noFilters = defaultFilters();
@@ -162,7 +174,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
   return (
     <div className="flex flex-col gap-[var(--space-8)]">
       <div role="status" className="min-h-0 text-ink-900 empty:hidden">
-        {message}
+        {status.value ? <span key={status.nonce}>{status.value}</span> : null}
       </div>
 
       {section(
@@ -176,7 +188,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
         t(BUDGET.favouritesTitle, locale),
         list(
           favourites.map((slug) =>
-            row(slug, <>{dishLine(slug)}{removeButton(slug, () => run(device.toggleFavourite(slug)))}</>),
+            row(slug, <>{dishLine(slug)}{removeButton(slug, () => run(device.toggleFavourite(slug), removed(dishName(slug)), "mine-favourites"))}</>),
           ),
           t(BUDGET.favouritesEmpty, locale),
         ),
@@ -197,7 +209,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
                       <Timestamp value={entry.at} locale={locale} format="datetime" /> · {budget.historyLine(locale, entry.price)}
                     </span>,
                   )}
-                  {removeButton(entry.slug, () => run(device.removeHistory(entry)))}
+                  {removeButton(entry.slug, () => run(device.removeHistory(entry), removed(dishName(entry.slug)), "mine-history"))}
                 </>,
               ),
             ),
@@ -213,7 +225,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
         "dislikes",
         t(BUDGET.dislikesTitle, locale),
         list(
-          dislikes.map((slug) => row(slug, <>{dishLine(slug)}{removeButton(slug, () => run(device.toggleDislike(slug)))}</>)),
+          dislikes.map((slug) => row(slug, <>{dishLine(slug)}{removeButton(slug, () => run(device.toggleDislike(slug), removed(dishName(slug)), "mine-dislikes"))}</>)),
           t(BUDGET.dislikesEmpty, locale),
         ),
       )}
@@ -229,7 +241,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
                 <Button variant="secondary" href={`${localePath(locale, "/eat/dishes")}${savedQuery ? `?${savedQuery}` : ""}`}>
                   {t(BUDGET.defaultsUse, locale)}
                 </Button>
-                <Button variant="secondary" type="button" onClick={() => run(device.clearDefaultFilters())}>
+                <Button variant="secondary" type="button" onClick={() => run(device.clearDefaultFilters(), removed(t(BUDGET.defaultsTitle, locale)), "mine-defaults")}>
                   {t(BUDGET.defaultsClear, locale)}
                 </Button>
               </div>
@@ -287,7 +299,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
               <Button variant="secondary" href={savedWeekHref(locale, savedWeek)}>
                 {t(BUDGET.savedWeekOpen, locale)}
               </Button>
-              <Button variant="secondary" type="button" onClick={() => run(device.clearSavedWeek())}>
+              <Button variant="secondary" type="button" onClick={() => run(device.clearSavedWeek(), removed(t(BUDGET.savedWeekTitle, locale)), "mine-week")}>
                 {t(BUDGET.savedWeekClear, locale)}
               </Button>
             </div>
@@ -323,7 +335,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
             onClick={() => {
               const ok = device.clearAll();
               setConfirming(false);
-              setMessage(ok ? t(BUDGET.clearDone, locale) : t(BUDGET.clearFailed, locale));
+              status.show(ok ? t(BUDGET.clearDone, locale) : t(BUDGET.clearFailed, locale));
             }}
           >
             {t(BUDGET.clearConfirm, locale)}

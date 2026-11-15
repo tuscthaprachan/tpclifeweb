@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState, useTransition, type ChangeEvent, type FocusEvent, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, useTransition, type ChangeEvent, type FocusEvent, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { liveRegionProps } from "@/lib/a11y";
+import { filterApplyDelay, type FilterChange } from "@/lib/canteen/apply-delay";
 import { serialise } from "@/lib/canteen/params";
 import { formQuery, readFilters } from "./query";
 
@@ -23,12 +24,6 @@ interface FilterFormProps {
   /** The fields. Passed through as children. */
   children: ReactNode;
 }
-
-/** How long to wait after the last keystroke in the budget box before applying. */
-const TYPING_DELAY_MS = 450;
-
-/** How long to wait after a radio or select changed by keyboard, so arrowing through the options applies once (3.2.2 On Input). */
-const KEYBOARD_DELAY_MS = 600;
 
 /**
  * The wrapper of the filter form. The base is a real `<form method="get">`
@@ -77,6 +72,8 @@ export function FilterForm({ action, carry = {}, queryKey, submitLabel, footer =
     });
   }
 
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
   function schedule(form: HTMLFormElement, delay: number) {
     window.clearTimeout(timer.current);
     timer.current = setTimeout(() => {
@@ -93,13 +90,20 @@ export function FilterForm({ action, carry = {}, queryKey, submitLabel, footer =
   function onChange(event: ChangeEvent<HTMLFormElement>) {
     const form = event.currentTarget;
     const target = event.target;
-    if (target instanceof HTMLInputElement && target.type === "text") {
-      schedule(form, TYPING_DELAY_MS);
-    } else if (!pointer.current && ((target instanceof HTMLInputElement && target.type === "radio") || target instanceof HTMLSelectElement)) {
-      schedule(form, KEYBOARD_DELAY_MS);
-    } else {
+    const change: FilterChange =
+      target instanceof HTMLInputElement && target.type === "text"
+        ? { control: "text" }
+        : target instanceof HTMLInputElement && target.type === "radio"
+          ? { control: "radio", pointer: pointer.current }
+          : target instanceof HTMLSelectElement
+            ? { control: "select", pointer: pointer.current }
+            : { control: "other" };
+    const delay = filterApplyDelay(change);
+    if (delay === null) {
       cancel();
       apply(form);
+    } else {
+      schedule(form, delay);
     }
   }
 

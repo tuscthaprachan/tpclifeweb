@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  reelPhase,
   chooseCombo,
   pickExtras,
   pickHref,
@@ -167,5 +168,22 @@ describe("reelNames", () => {
 
   it("copes with one name", () => {
     expect(reelNames(["only"], "only", "s")).toEqual(["only"]);
+  });
+});
+
+describe("reelPhase", () => {
+  const base = { hydrated: true, spun: true, reducedMotion: false, nameCount: 5, doneKey: null as string | null, pickKey: "a" };
+
+  it("plays for a fresh spin and celebrates once its key is done", () => {
+    expect(reelPhase(base)).toBe("playing");
+    expect(reelPhase({ ...base, doneKey: "a" })).toBe("celebrating");
+    expect(reelPhase({ ...base, doneKey: "b" })).toBe("playing");
+  });
+
+  it("is absent on a fresh load, before hydration, under reduced motion and with nothing to cycle", () => {
+    expect(reelPhase({ ...base, spun: false })).toBe("off");
+    expect(reelPhase({ ...base, hydrated: false })).toBe("off");
+    expect(reelPhase({ ...base, reducedMotion: true })).toBe("off");
+    expect(reelPhase({ ...base, nameCount: 1 })).toBe("off");
   });
 });

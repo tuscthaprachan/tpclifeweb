@@ -6,7 +6,7 @@ import { canteenData } from "../data-client";
 
 export function PreloadCanteenData() {
   useEffect(() => {
-    void canteenData();
+    canteenData().catch(() => {});
   }, []);
   return null;
 }

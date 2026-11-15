@@ -218,3 +218,13 @@ function planWithSkips(data: CanteenData, filters: CanteenFilters, options: Week
   const total = plan.reduce((sum, day) => sum + day.price, 0);
   return { ok: true, days: plan, total, allowance: options.budget / days.length, change: options.budget - total };
 }
+
+/** What identifies a week plan: its seed, budget and each day's dish and price. A result about one plan says nothing about another. */
+export function planKey(plan: { seed: string; budget: number; days: ReadonlyArray<{ weekday: number; slug: string; price: number }> }): string {
+  return `${plan.seed}|${plan.budget}|${plan.days.map((day) => `${day.weekday}:${day.slug}:${day.price}`).join(",")}`;
+}
+
+/** The outcome to show for the plan now on screen: the stored one only if it was for this plan. */
+export function resultForPlan<T>(stored: { key: string; result: T } | null, key: string): T | null {
+  return stored !== null && stored.key === key ? stored.result : null;
+}

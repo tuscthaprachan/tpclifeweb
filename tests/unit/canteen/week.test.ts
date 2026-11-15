@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { defaultFilters, planWeek, type CanteenFilters, type WeekResult } from "@/lib/canteen";
+import { planKey, resultForPlan } from "@/lib/canteen/week";
 
 import { NOW, makeData } from "./fixture";
 
@@ -103,5 +104,25 @@ describe("planWeek", () => {
     const options = { days: [1, 2], budget: 90, locks: { 1: "fixture-dish-b" } };
     expect(plan("v", options).ok).toBe(true); // 45 + the cheapest other stall, 38
     expect(plan("v", options, f({ variants: true }))).toEqual({ ok: false, reason: "budgetTooLow" }); // 55 + 38 > 90
+  });
+});
+
+describe("planKey and resultForPlan", () => {
+  const plan = { seed: "abc", budget: 400, days: [{ weekday: 1, slug: "a", price: 40 }] };
+
+  it("changes when the seed, budget, a dish or a price changes", () => {
+    const key = planKey(plan);
+    expect(planKey({ ...plan })).toBe(key);
+    expect(planKey({ ...plan, seed: "abd" })).not.toBe(key);
+    expect(planKey({ ...plan, budget: 450 })).not.toBe(key);
+    expect(planKey({ ...plan, days: [{ weekday: 1, slug: "b", price: 40 }] })).not.toBe(key);
+    expect(planKey({ ...plan, days: [{ weekday: 1, slug: "a", price: 45 }] })).not.toBe(key);
+  });
+
+  it("shows a saved result only for the plan it was saved for", () => {
+    const stored = { key: planKey(plan), result: "saved" as const };
+    expect(resultForPlan(stored, planKey(plan))).toBe("saved");
+    expect(resultForPlan(stored, planKey({ ...plan, budget: 450 }))).toBeNull();
+    expect(resultForPlan(null, planKey(plan))).toBeNull();
   });
 });

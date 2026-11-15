@@ -1,7 +1,9 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState } from "react";
 
+import { useCopy } from "@/components/hooks/use-copy";
+import { useHydrated } from "@/components/hooks/use-hydrated";
 import { Button } from "@/components/ui/Button";
 import type { Locale } from "@/lib/i18n/config";
 import { PICK } from "./strings";
@@ -14,8 +16,6 @@ interface ShareButtonProps {
   id: string;
 }
 
-const subscribeNever = () => () => {};
-
 /**
  * Share this pick. The seed is in the URL, so the link reopens the same
  * result. Without JavaScript (and whenever copying fails) the link sits in a
@@ -23,20 +23,12 @@ const subscribeNever = () => () => {};
  * says so in a status line.
  */
 export function ShareButton({ locale, href, id }: ShareButtonProps) {
-  const hydrated = useSyncExternalStore(subscribeNever, () => true, () => false);
-  const [state, setState] = useState<"idle" | "copied" | "manual">("idle");
+  const hydrated = useHydrated();
+  const { copy, value: result, nonce } = useCopy();
+  const [manual, setManual] = useState(false);
   const input = useRef<HTMLTextAreaElement>(null);
 
   const url = hydrated ? new URL(href, window.location.origin).toString() : href;
-
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(url);
-      setState("copied");
-    } catch {
-      setState("manual");
-    }
-  }
 
   const field = (
     <div className="flex flex-col gap-[var(--space-1)]">
@@ -67,14 +59,14 @@ export function ShareButton({ locale, href, id }: ShareButtonProps) {
   return (
     <div className="flex flex-col gap-[var(--space-2)]">
       <div>
-        <Button variant="secondary" onClick={copy}>
+        <Button variant="secondary" onClick={() => void copy(url).then((outcome) => outcome === "failed" && setManual(true))}>
           {PICK.share[locale]}
         </Button>
       </div>
       <p role="status" className="m-0 text-base text-ink-900">
-        {state === "copied" ? PICK.shareCopied[locale] : ""}
+        {result === "copied" ? <span key={nonce}>{PICK.shareCopied[locale]}</span> : null}
       </p>
-      {state === "manual" ? field : null}
+      {manual ? field : null}
     </div>
   );
 }

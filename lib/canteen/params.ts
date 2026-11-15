@@ -135,8 +135,8 @@ export function normaliseQuery(text: string | undefined): string | undefined {
 /** A slug as it appears in a URL: lowercase letters, digits and hyphens. */
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,79}$/;
 
-/** A whole number of baht from 1 to `MAX_BUDGET`, or undefined for anything else. */
-function budgetValue(text: string | undefined): number | undefined {
+/** A whole number of baht from 1 to `MAX_BUDGET`, or undefined for anything else. Shared by the URL parsers and the group builder's budget box. */
+export function budgetValue(text: string | undefined): number | undefined {
   if (text === undefined || !/^\d{1,5}$/.test(text)) return undefined;
   const amount = Number(text);
   return amount >= 1 && amount <= MAX_BUDGET ? amount : undefined;
