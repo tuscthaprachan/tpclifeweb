@@ -8,6 +8,7 @@ import {
   rerollAll,
   rerollDay,
   rerollSeed,
+  skippedDishes,
   unlockDay,
   weekHref,
   weekQuery,
@@ -24,7 +25,8 @@ describe("parseWeekRequest", () => {
     expect(request.budget).toBe(250);
     expect(request.days).toEqual([1, 2, 3, 4, 5]);
     expect(request.seed).toBe("abc123");
-    expect(request.locks).toEqual({ 1: "fixture-dish-a" });
+    expect(request.pins).toEqual({ 1: { mode: "lock", slug: "fixture-dish-a" } });
+    expect(allPins(request)).toEqual({ 1: "fixture-dish-a" });
   });
 
   it("tells no days ticked from days not given", () => {
@@ -61,8 +63,8 @@ describe("pinning moves", () => {
     for (const weekday of [1, 3, 5]) {
       const next = rerollDay(request, plan, weekday);
       expect(next.seed).not.toBe(request.seed);
-      expect(next.keeps[weekday]).toBeUndefined();
-      expect(Object.keys(next.keeps)).toHaveLength(4);
+      expect(next.pins[weekday]?.mode).toBe("free");
+      expect(Object.keys(allPins(next))).toHaveLength(4);
       const again = planWeek(data, defaultFilters(), { budget: 250, days: [1, 2, 3, 4, 5], seed: next.seed!, locks: allPins(next), now: NOW });
       expect(again.ok).toBe(true);
       if (!again.ok) continue;
@@ -76,32 +78,39 @@ describe("pinning moves", () => {
     for (const weekday of [1, 2, 3, 4, 5]) {
       const next = rerollDay(request, plan, weekday);
       const current = plan.find((p) => p.weekday === weekday)!.slug;
-      expect(next.skips).toEqual({ [weekday]: current });
+      expect(skippedDishes(next)).toEqual({ [weekday]: current });
       const reread = parseWeekRequest(new URLSearchParams(weekQuery(next, defaultFilters())));
-      expect(reread.skips).toEqual({ [weekday]: current });
-      const again = planWeek(data, defaultFilters(), { budget: 400, days: [1, 2, 3, 4, 5], seed: reread.seed!, locks: allPins(reread), skips: reread.skips, now: NOW });
+      expect(skippedDishes(reread)).toEqual({ [weekday]: current });
+      const again = planWeek(data, defaultFilters(), { budget: 400, days: [1, 2, 3, 4, 5], seed: reread.seed!, locks: allPins(reread), skips: skippedDishes(reread), now: NOW });
       expect(again.ok).toBe(true);
       if (again.ok) expect(again.days.find((d) => d.weekday === weekday)!.dish.slug.current).not.toBe(current);
     }
-    expect(lockDay(rerollDay(request, plan, 2), plan, 3).skips).toEqual({});
+    expect(skippedDishes(lockDay(rerollDay(request, plan, 2), plan, 3))).toEqual({});
   });
 
   it("lock and unlock keep the whole plan stable", () => {
     const locked = lockDay(request, plan, 2);
-    expect(Object.keys(locked.locks)).toEqual(["2"]);
-    expect(Object.keys(locked.keeps)).toHaveLength(4);
+    expect(locked.pins[2]).toEqual({ mode: "lock", slug: plan.find((d) => d.weekday === 2)!.slug });
+    expect(Object.values(locked.pins).filter((pin) => pin.mode === "keep")).toHaveLength(4);
     const lockedPlan = plan.map((day) => ({ ...day, locked: day.weekday === 2 }));
     const unlocked = unlockDay(locked, lockedPlan, 2);
-    expect(unlocked.locks).toEqual({});
-    expect(Object.keys(unlocked.keeps)).toHaveLength(5);
+    expect(Object.values(unlocked.pins).filter((pin) => pin.mode === "lock")).toHaveLength(0);
+    expect(Object.values(unlocked.pins).filter((pin) => pin.mode === "keep")).toHaveLength(5);
   });
 
   it("reroll all keeps locks only, and the seed is derived", () => {
     const lockedPlan = plan.map((day) => ({ ...day, locked: day.weekday === 4 }));
     const next = rerollAll(request, lockedPlan);
-    expect(Object.keys(next.locks)).toEqual(["4"]);
-    expect(next.keeps).toEqual({});
+    expect(Object.keys(next.pins)).toEqual(["4"]);
+    expect(next.pins[4]?.mode).toBe("lock");
     expect(rerollSeed("start1", 3)).toBe(rerollSeed("start1", 3));
     expect(rerollSeed("start1", 3)).not.toBe(rerollSeed("start1", 4));
+  });
+
+  it("cannot represent a lock and a skip on the same day", () => {
+    const request = parseWeekRequest({ "lock.2": "a-b", "skip.2": "c-d", "keep.3": "e-f", "skip.3": "g-h", "skip.4": "i-j" });
+    expect(request.pins).toEqual({ 2: { mode: "lock", slug: "a-b" }, 3: { mode: "keep", slug: "e-f" }, 4: { mode: "free", skip: "i-j" } });
+    expect(skippedDishes(request)).toEqual({ 4: "i-j" });
+    expect(weekQuery(request, defaultFilters())).toBe("mode=week&days=1,2,3,4,5&lock.2=a-b&keep.3=e-f&skip.4=i-j");
   });
 });

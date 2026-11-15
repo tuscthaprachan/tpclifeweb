@@ -18,7 +18,7 @@ import { WeekForm } from "@/components/domain/canteen/budget/WeekForm";
 import { WeekPlanner } from "@/components/domain/canteen/budget/WeekPlanner";
 import { UI } from "@/lib/i18n/strings";
 import { BUDGET, budget } from "@/components/domain/canteen/budget/strings";
-import { MAX_WEEK_BUDGET, allPins, clearPins, invalidWeekBudget, parseWeekRequest, weekHref, weekQuery, type WeekRequest } from "@/components/domain/canteen/budget/week-params";
+import { MAX_WEEK_BUDGET, allPins, clearPins, invalidWeekBudget, parseWeekRequest, skippedDishes, weekHref, weekQuery, type WeekRequest } from "@/components/domain/canteen/budget/week-params";
 import { EmptyState, Heading, Stack, WarningText } from "@/components/ui";
 import { facetCounts } from "@/lib/canteen/filter";
 import { countActiveValues, defaultFilters, type CanteenFilters, type RawParams } from "@/lib/canteen/params";
@@ -66,7 +66,7 @@ export function WeekMode({
       days: overrides.days ?? request.days,
       seed: request.seed ?? "",
       locks: allPins(request),
-      skips: request.skips,
+      skips: skippedDishes(request),
       now,
     });
 

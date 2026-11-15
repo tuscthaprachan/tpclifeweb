@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition, type ChangeEvent, type FocusEvent, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useTransition, type ChangeEvent, type FocusEvent, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { useUrlEcho } from "@/components/hooks/use-url-echo";
 import { Button } from "@/components/ui/Button";
 import { liveRegionProps } from "@/lib/a11y";
 import { filterApplyDelay, type FilterChange } from "@/lib/canteen/apply-delay";
@@ -48,16 +49,7 @@ export function FilterForm({ action, carry = {}, queryKey, submitLabel, footer =
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const pointer = useRef(false);
 
-  const [seen, setSeen] = useState(queryKey);
-  const [shown, setShown] = useState(queryKey);
-  const [generation, setGeneration] = useState(0);
-  if (queryKey !== seen) {
-    setSeen(queryKey);
-    if (queryKey !== shown) {
-      setShown(queryKey);
-      setGeneration((value) => value + 1);
-    }
-  }
+  const echo = useUrlEcho(queryKey);
 
   function apply(form: HTMLFormElement) {
     const entries = new URLSearchParams();
@@ -66,7 +58,7 @@ export function FilterForm({ action, carry = {}, queryKey, submitLabel, footer =
     }
     if (entries.get("max") !== "other") entries.delete("maxOther");
     const query = formQuery(entries, carry);
-    setShown(serialise(readFilters(entries)));
+    echo.edit(serialise(readFilters(entries)), true);
     startTransition(() => {
       router.replace(query ? `${action}?${query}` : action, { scroll: false });
     });
@@ -142,7 +134,7 @@ export function FilterForm({ action, carry = {}, queryKey, submitLabel, footer =
       {Object.entries(carry).map(([name, value]) => (
         <input key={name} type="hidden" name={name} value={value} />
       ))}
-      <div key={generation} className="flex flex-col gap-[var(--space-6)]">
+      <div key={echo.generation} className="flex flex-col gap-[var(--space-6)]">
         {children}
       </div>
       <div

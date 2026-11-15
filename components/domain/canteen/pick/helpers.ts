@@ -17,6 +17,7 @@ import type { MealCombo } from "@/lib/canteen/combos";
 import { parseMealBudget, type CanteenFilters, type RawParams } from "@/lib/canteen/params";
 import type { Locale } from "@/lib/i18n/config";
 import type { CanteenData } from "@/lib/content/types";
+import type { SpinState } from "./spin-machine";
 
 export const PICK_ROUTE = "/eat/pick";
 
@@ -171,19 +172,15 @@ export type ReelPhase = "off" | "playing" | "celebrating";
 
 export interface ReelInputs {
   hydrated: boolean;
-  /** The user arrived by spinning, not by a shared link, Back or a reload. */
-  spun: boolean;
+  /** Where the spin is: idle for a shared link, Back or a reload. */
+  spin: SpinState;
   reducedMotion: boolean;
   /** How many names the reel has to cycle through. */
   nameCount: number;
-  /** The key of the result whose reel has finished, if any. */
-  doneKey: string | null;
-  /** The key of the result on screen. */
-  pickKey: string;
 }
 
 /** Which phase the reel is in. It never runs before hydration, without a spin, under reduced motion, or with nothing to cycle. */
-export function reelPhase({ hydrated, spun, reducedMotion, nameCount, doneKey, pickKey }: ReelInputs): ReelPhase {
-  if (!hydrated || !spun || reducedMotion || nameCount <= 1) return "off";
-  return doneKey === pickKey ? "celebrating" : "playing";
+export function reelPhase({ hydrated, spin, reducedMotion, nameCount }: ReelInputs): ReelPhase {
+  if (!hydrated || spin.status === "idle" || reducedMotion || nameCount <= 1) return "off";
+  return spin.status === "settled" ? "celebrating" : "playing";
 }

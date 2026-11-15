@@ -56,6 +56,11 @@ function parsePage(raw: string | undefined): number {
   return Number.isFinite(n) && n > 0 ? n : 1;
 }
 
+/** The page to show: the requested one, brought back to the last page when it is beyond the results, as on the news list. */
+export function clampPage(page: number, total: number, pageSize: number = LOST_FOUND_PAGE_SIZE): number {
+  return Math.min(page, Math.max(1, Math.ceil(total / pageSize)));
+}
+
 function buildQuery(params: { kind: string; category: string; status: string; page?: number }): string {
   const search = new URLSearchParams();
   if (params.kind) search.set("kind", params.kind);
@@ -82,7 +87,6 @@ export function LostFoundResults({ locale, items: allItems, query }: LostFoundRe
   const kind = parseKind(query.kind);
   const category = parseCategory(query.category);
   const status = parseStatus(query.status);
-  const page = parsePage(query.page);
   const hasActiveFilters = kind !== "" || category !== "" || status !== "open";
 
   const matching = allItems.filter(
@@ -90,6 +94,7 @@ export function LostFoundResults({ locale, items: allItems, query }: LostFoundRe
       (kind === "" || item.kind === kind) && (category === "" || item.category === category) && (status === "" || item.status === status),
   );
   const total = matching.length;
+  const page = clampPage(parsePage(query.page), total);
   const items = matching.slice((page - 1) * LOST_FOUND_PAGE_SIZE, page * LOST_FOUND_PAGE_SIZE);
   const totalPages = Math.max(1, Math.ceil(total / LOST_FOUND_PAGE_SIZE));
 

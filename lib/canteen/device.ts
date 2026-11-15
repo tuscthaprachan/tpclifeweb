@@ -10,7 +10,7 @@
  * and options that need it. The rest of the service works without it.
  *
  * Keys carry the prefix `trytpc.eat.v1.`. Keys under the pre-rebrand prefix
- * `tpclife.eat.v1.` are moved across once, before the first read or write. Change the version if a stored
+ * `tpclife.eat.v1.` are moved across once, when the first subscriber arrives (or before the first write), never inside a read, and subscribers are notified after the move. Change the version if a stored
  * shape ever changes incompatibly.
  *
  * REACT. `subscribe` and the getters work with `useSyncExternalStore`.
@@ -30,7 +30,7 @@ import { parse, serialise, type CanteenFilters } from "./params";
 /** Every key this module writes starts with this. */
 export const STORAGE_PREFIX = "trytpc.eat.v1.";
 
-/** The prefix before the rebrand. Migrated to `STORAGE_PREFIX` on first use and removed by `clearAll`. */
+/** The prefix before the rebrand. Migrated to `STORAGE_PREFIX` on first subscribe or write and removed by `clearAll`. */
 export const LEGACY_STORAGE_PREFIX = "tpclife.eat.v1.";
 
 const KEYS = {
@@ -81,12 +81,12 @@ function storage(): StorageLike | null {
 let migrated = false;
 
 /** Moves legacy-prefixed keys to the current prefix without overwriting an existing new key. Runs once per provider. */
-function migrateLegacyKeys(): void {
-  if (migrated) return;
+function migrateLegacyKeys(): boolean {
+  if (migrated) return false;
   migrated = true;
   try {
     const store = storage();
-    if (!store) return;
+    if (!store) return false;
     const legacy: string[] = [];
     for (let i = 0; i < store.length; i += 1) {
       const key = store.key(i);
@@ -98,13 +98,18 @@ function migrateLegacyKeys(): void {
       if (value !== null && store.getItem(next) === null) store.setItem(next, value);
       store.removeItem(key);
     }
+    return legacy.length > 0;
   } catch {
     // Migration is best effort; a failure leaves the old keys where they were.
+    return false;
   }
 }
 
+function ensureMigrated(): void {
+  if (migrateLegacyKeys()) notify();
+}
+
 function readRaw(key: string): string | null {
-  migrateLegacyKeys();
   try {
     return storage()?.getItem(key) ?? null;
   } catch {
@@ -164,6 +169,7 @@ function onStorageEvent(event: StorageEvent): void {
  */
 export function subscribe(listener: () => void): () => void {
   listeners.add(listener);
+  ensureMigrated();
   if (!storageListenerAttached && typeof window !== "undefined" && typeof window.addEventListener === "function") {
     window.addEventListener("storage", onStorageEvent);
     storageListenerAttached = true;
@@ -240,6 +246,7 @@ export function isFavourite(slug: string): boolean {
 
 /** Stars or unstars a dish. Returns false if it could not be saved. */
 export function toggleFavourite(slug: string): boolean {
+  ensureMigrated();
   const current = getFavourites();
   const next = current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug];
   return writeValue(KEYS.favourites, next);
@@ -256,6 +263,7 @@ export function isDisliked(slug: string): boolean {
 
 /** Adds or removes a dish from "never suggest this". Returns false if it could not be saved. */
 export function toggleDislike(slug: string): boolean {
+  ensureMigrated();
   const current = getDislikes();
   const next = current.includes(slug) ? current.filter((item) => item !== slug) : [...current, slug];
   return writeValue(KEYS.dislikes, next);
@@ -298,6 +306,7 @@ export function getHistory(): readonly EatenEntry[] {
 
 /** Logs a dish as eaten. Keeps the newest `MAX_HISTORY`. Returns false if it could not be saved. */
 export function addHistory(entry: EatenEntry): boolean {
+  ensureMigrated();
   return writeValue(KEYS.history, [...getHistory(), entry].slice(-MAX_HISTORY));
 }
 
@@ -317,6 +326,7 @@ export function isRecentDuplicate(history: readonly EatenEntry[], entry: EatenEn
  * anything could not be saved.
  */
 export function logEaten(entries: readonly EatenEntry[], windowMs: number = DUPLICATE_WINDOW_MS): boolean {
+  ensureMigrated();
   const before = getHistory();
   let ok = true;
   for (const entry of entries) {
@@ -328,6 +338,7 @@ export function logEaten(entries: readonly EatenEntry[], windowMs: number = DUPL
 
 /** Removes one history entry (matched by slug and time), for a mis-tap. Returns false if it could not be saved. */
 export function removeHistory(entry: Pick<EatenEntry, "slug" | "at">): boolean {
+  ensureMigrated();
   return writeValue(
     KEYS.history,
     getHistory().filter((item) => !(item.slug === entry.slug && item.at === entry.at)),

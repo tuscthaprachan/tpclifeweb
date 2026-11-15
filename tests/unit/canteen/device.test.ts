@@ -182,10 +182,16 @@ describe("device storage", () => {
     expect(device.getFavourites()).toEqual([]);
   });
 
-  it("moves legacy-prefixed keys to the new prefix on first use and removes the old ones", () => {
+  it("moves legacy-prefixed keys to the new prefix when the first subscriber arrives, and tells it", () => {
     store.map.set("tpclife.eat.v1.favourites", JSON.stringify(["old-dish"]));
     store.map.set("tpclife.eat.v1.dislikes", JSON.stringify(["bad-dish"]));
     store.map.set("unrelated", "keep");
+    let heard = 0;
+    const unsubscribe = device.subscribe(() => {
+      heard += 1;
+    });
+    expect(heard).toBe(1);
+    unsubscribe();
     expect(device.getFavourites()).toEqual(["old-dish"]);
     expect(device.getDislikes()).toEqual(["bad-dish"]);
     expect([...store.map.keys()].sort()).toEqual(["trytpc.eat.v1.dislikes", "trytpc.eat.v1.favourites", "unrelated"]);
@@ -201,8 +207,14 @@ describe("device storage", () => {
     expect([...store.map.keys()].some((key) => key.startsWith("tpclife."))).toBe(false);
   });
 
+  it("does not migrate inside a read", () => {
+    store.map.set("tpclife.eat.v1.favourites", JSON.stringify(["old-dish"]));
+    expect(device.getFavourites()).toEqual([]);
+    expect(store.map.has("tpclife.eat.v1.favourites")).toBe(true);
+  });
+
   it("migrates only once, so legacy keys written afterwards are left alone", () => {
-    device.getFavourites();
+    device.subscribe(() => {})();
     store.map.set("tpclife.eat.v1.favourites", JSON.stringify(["late"]));
     expect(device.getFavourites()).toEqual([]);
     expect(store.map.has("tpclife.eat.v1.favourites")).toBe(true);

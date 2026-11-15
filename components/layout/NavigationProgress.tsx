@@ -1,7 +1,9 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+
+import { useUrlEcho } from "@/components/hooks/use-url-echo";
 
 function targetOf(event: Event): URL | null {
   if (event instanceof MouseEvent) {
@@ -25,12 +27,7 @@ export function NavigationProgress() {
   const pathname = usePathname();
   const search = useSearchParams().toString();
   const current = search ? `${pathname}?${search}` : pathname;
-  const [pending, setPending] = useState(false);
-  const [seen, setSeen] = useState(current);
-  if (seen !== current) {
-    setSeen(current);
-    setPending(false);
-  }
+  const { editing, edit, cancel } = useUrlEcho(current);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -38,9 +35,10 @@ export function NavigationProgress() {
       const url = targetOf(event);
       if (!url || url.origin !== window.location.origin || url.pathname.startsWith("/api/")) return;
       if (url.pathname === window.location.pathname && url.search === window.location.search) return;
-      setPending(true);
+      const query = new URLSearchParams(url.search).toString();
+      edit(query ? `${url.pathname}?${query}` : url.pathname);
       clearTimeout(timer);
-      timer = setTimeout(() => setPending(false), 15000);
+      timer = setTimeout(cancel, 15000);
     };
     document.addEventListener("click", start);
     document.addEventListener("submit", start);
@@ -49,7 +47,7 @@ export function NavigationProgress() {
       document.removeEventListener("click", start);
       document.removeEventListener("submit", start);
     };
-  }, []);
+  }, [edit, cancel]);
 
-  return <div aria-hidden="true" className="nav-progress" data-active={pending || undefined} />;
+  return <div aria-hidden="true" className="nav-progress" data-active={editing || undefined} />;
 }

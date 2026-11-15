@@ -13,6 +13,7 @@ import {
   type PickParams,
 } from "@/components/domain/canteen/pick/helpers";
 import { defaultFilters, mealCombos } from "@/lib/canteen";
+import type { SpinState } from "@/components/domain/canteen/pick/spin-machine";
 import { pick } from "@/lib/canteen/random";
 
 import { NOW, makeData } from "./fixture";
@@ -172,16 +173,15 @@ describe("reelNames", () => {
 });
 
 describe("reelPhase", () => {
-  const base = { hydrated: true, spun: true, reducedMotion: false, nameCount: 5, doneKey: null as string | null, pickKey: "a" };
+  const base = { hydrated: true, spin: { status: "playing", nonce: "n1" } as SpinState, reducedMotion: false, nameCount: 5 };
 
-  it("plays for a fresh spin and celebrates once its key is done", () => {
+  it("plays for a spin and celebrates once it has settled", () => {
     expect(reelPhase(base)).toBe("playing");
-    expect(reelPhase({ ...base, doneKey: "a" })).toBe("celebrating");
-    expect(reelPhase({ ...base, doneKey: "b" })).toBe("playing");
+    expect(reelPhase({ ...base, spin: { status: "settled", nonce: "n1" } })).toBe("celebrating");
   });
 
   it("is absent on a fresh load, before hydration, under reduced motion and with nothing to cycle", () => {
-    expect(reelPhase({ ...base, spun: false })).toBe("off");
+    expect(reelPhase({ ...base, spin: { status: "idle" } })).toBe("off");
     expect(reelPhase({ ...base, hydrated: false })).toBe("off");
     expect(reelPhase({ ...base, reducedMotion: true })).toBe("off");
     expect(reelPhase({ ...base, nameCount: 1 })).toBe("off");

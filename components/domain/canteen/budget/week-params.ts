@@ -31,15 +31,21 @@ export const DEFAULT_DAYS: readonly number[] = [1, 2, 3, 4, 5];
 const SLUG = /^[a-z0-9][a-z0-9-]{0,79}$/;
 const SEED = /^[a-z0-9]{1,24}$/;
 
+/** Weekday to dish slug. */
 export type Pins = Record<number, string>;
+
+/**
+ * What the request says about one weekday. `lock` and `keep` pin a dish; `free` leaves the day to the
+ * planner and may name one dish to move off. A pinned day cannot also skip, so the union cannot say both.
+ */
+export type DayPin = { mode: "free"; skip?: string } | { mode: "keep" | "lock"; slug: string };
 
 export interface WeekRequest {
   budget?: number;
   days: number[];
   seed?: string;
-  locks: Pins;
-  keeps: Pins;
-  skips?: Pins;
+  /** Sparse: a weekday without an entry is `free`. */
+  pins: Readonly<Record<number, DayPin>>;
 }
 
 function parseInt10(text: string | null | undefined, min: number, max: number): number | undefined {
@@ -48,11 +54,26 @@ function parseInt10(text: string | null | undefined, min: number, max: number): 
   return value >= min && value <= max ? value : undefined;
 }
 
-function pins(params: URLSearchParams, prefix: "lock" | "keep" | "skip"): Pins {
-  const out: Pins = {};
+function slugParam(params: URLSearchParams, prefix: "lock" | "keep" | "skip", day: number): string | undefined {
+  const slug = params.get(`${prefix}.${day}`);
+  return slug && SLUG.test(slug) ? slug : undefined;
+}
+
+/** One weekday's pin from the URL. A lock beats a keep, a keep beats a skip, so a day is never two things. */
+export function dayPinOf(params: URLSearchParams, day: number): DayPin | undefined {
+  const lock = slugParam(params, "lock", day);
+  if (lock) return { mode: "lock", slug: lock };
+  const keep = slugParam(params, "keep", day);
+  if (keep) return { mode: "keep", slug: keep };
+  const skip = slugParam(params, "skip", day);
+  return skip ? { mode: "free", skip } : undefined;
+}
+
+function pinsOf(params: URLSearchParams): Record<number, DayPin> {
+  const out: Record<number, DayPin> = {};
   for (let day = 0; day <= 6; day += 1) {
-    const slug = params.get(`${prefix}.${day}`);
-    if (slug && SLUG.test(slug)) out[day] = slug;
+    const pin = dayPinOf(params, day);
+    if (pin) out[day] = pin;
   }
   return out;
 }
@@ -85,12 +106,26 @@ export function parseWeekRequest(raw: RawParams): WeekRequest {
 
   const seedText = params.get("seed")?.toLowerCase();
   const seed = seedText && SEED.test(seedText) ? seedText : undefined;
-  return { ...(budget !== undefined ? { budget } : {}), days, ...(seed ? { seed } : {}), locks: pins(params, "lock"), keeps: pins(params, "keep"), skips: pins(params, "skip") };
+  return { ...(budget !== undefined ? { budget } : {}), days, ...(seed ? { seed } : {}), pins: pinsOf(params) };
 }
 
-/** Locks and keeps together, with locks winning, for `planWeek`. Only days that are on campus matter to it. */
+function slugsWhere(request: WeekRequest, pick: (pin: DayPin) => string | undefined): Pins {
+  const out: Pins = {};
+  for (const [day, pin] of Object.entries(request.pins)) {
+    const slug = pick(pin);
+    if (slug) out[Number(day)] = slug;
+  }
+  return out;
+}
+
+/** Locks and keeps together, for `planWeek`. Only days that are on campus matter to it. */
 export function allPins(request: WeekRequest): Pins {
-  return { ...request.keeps, ...request.locks };
+  return slugsWhere(request, (pin) => (pin.mode === "free" ? undefined : pin.slug));
+}
+
+/** The dishes a reroll moved days off, for `planWeek`. */
+export function skippedDishes(request: WeekRequest): Pins {
+  return slugsWhere(request, (pin) => (pin.mode === "free" ? pin.skip : undefined));
 }
 
 /** The query string (no leading `?`) for a request plus filters. Fixed order, so equal plans give equal links. */
@@ -101,17 +136,13 @@ export function weekQuery(request: WeekRequest, filters: CanteenFilters): string
   if (request.budget !== undefined) parts.push(`budget=${request.budget}`);
   parts.push(`days=${request.days.join(",")}`);
   if (request.seed) parts.push(`seed=${request.seed}`);
-  for (let day = 0; day <= 6; day += 1) {
-    const slug = request.locks[day];
-    if (slug) parts.push(`lock.${day}=${encodeURIComponent(slug)}`);
-  }
-  for (let day = 0; day <= 6; day += 1) {
-    const slug = request.keeps[day];
-    if (slug && !request.locks[day]) parts.push(`keep.${day}=${encodeURIComponent(slug)}`);
-  }
-  for (let day = 0; day <= 6; day += 1) {
-    const slug = request.skips?.[day];
-    if (slug && !request.locks[day]) parts.push(`skip.${day}=${encodeURIComponent(slug)}`);
+  for (const mode of ["lock", "keep", "skip"] as const) {
+    for (let day = 0; day <= 6; day += 1) {
+      const pin = request.pins[day];
+      if (!pin) continue;
+      const slug = pin.mode === "free" ? (mode === "skip" ? pin.skip : undefined) : pin.mode === mode ? pin.slug : undefined;
+      if (slug) parts.push(`${mode}.${day}=${encodeURIComponent(slug)}`);
+    }
   }
   return parts.join("&");
 }
@@ -133,52 +164,39 @@ export interface PinDay {
   locked: boolean;
 }
 
-/** Everything currently shown becomes pinned, locks staying locks and the rest becoming keeps. */
-function pinnedState(plan: readonly PinDay[]): Pick<WeekRequest, "locks" | "keeps"> {
-  const locks: Pins = {};
-  const keeps: Pins = {};
+function pinned(plan: readonly PinDay[], lockedDay?: number, except?: number): Record<number, DayPin> {
+  const out: Record<number, DayPin> = {};
   for (const day of plan) {
-    if (day.locked) locks[day.weekday] = day.slug;
-    else keeps[day.weekday] = day.slug;
+    if (day.weekday === except) continue;
+    out[day.weekday] = { mode: day.locked || day.weekday === lockedDay ? "lock" : "keep", slug: day.slug };
   }
-  return { locks, keeps };
+  return out;
 }
 
+/** Pins `weekday` and keeps every other day as it is. */
 export function lockDay(request: WeekRequest, plan: readonly PinDay[], weekday: number): WeekRequest {
-  const { locks, keeps } = pinnedState(plan);
-  const slug = plan.find((day) => day.weekday === weekday)?.slug;
-  if (slug) {
-    locks[weekday] = slug;
-    delete keeps[weekday];
-  }
-  return { ...request, locks, keeps, skips: {} };
+  return { ...request, pins: pinned(plan, weekday) };
 }
 
+/** Turns a lock back into a keep, so the day stays put but is no longer shown as locked. */
 export function unlockDay(request: WeekRequest, plan: readonly PinDay[], weekday: number): WeekRequest {
-  const { locks, keeps } = pinnedState(plan);
-  const slug = locks[weekday];
-  if (slug) {
-    delete locks[weekday];
-    keeps[weekday] = slug;
-  }
-  return { ...request, locks, keeps, skips: {} };
+  return { ...request, pins: pinned(plan.map((day) => (day.weekday === weekday ? { ...day, locked: false } : day))) };
 }
 
 /** A new plan for one day: a new seed, every other day pinned as it is, and the day's current dish set aside. */
 export function rerollDay(request: WeekRequest, plan: readonly PinDay[], weekday: number): WeekRequest {
-  const others = plan.filter((day) => day.weekday !== weekday);
-  const { locks, keeps } = pinnedState(others);
+  const pins = pinned(plan, undefined, weekday);
   const current = plan.find((day) => day.weekday === weekday)?.slug;
-  return { ...request, seed: rerollSeed(request.seed ?? "", weekday), locks, keeps, skips: current ? { [weekday]: current } : {} };
+  if (current) pins[weekday] = { mode: "free", skip: current };
+  return { ...request, seed: rerollSeed(request.seed ?? "", weekday), pins };
 }
 
 /** A new plan for every day that is not locked. */
 export function rerollAll(request: WeekRequest, plan: readonly PinDay[]): WeekRequest {
-  const { locks } = pinnedState(plan);
-  return { ...request, seed: rerollSeed(request.seed ?? "", 7), locks, keeps: {}, skips: {} };
+  return { ...request, seed: rerollSeed(request.seed ?? "", 7), pins: pinned(plan.filter((day) => day.locked)) };
 }
 
 /** Drops every pin, keeping the seed. */
 export function clearPins(request: WeekRequest): WeekRequest {
-  return { ...request, locks: {}, keeps: {}, skips: {} };
+  return { ...request, pins: {} };
 }

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
+import { useHydrated } from "@/components/hooks/use-hydrated";
 import { useStatusMessage } from "@/components/hooks/use-status-message";
 import { Button } from "@/components/ui/Button";
 import { Grid } from "@/components/ui/Grid";
@@ -24,17 +25,16 @@ interface SuggestedMenuProps {
 /**
  * The hub's suggested menu. The server and the first client render use the
  * same seed, so there is no hydration mismatch and the list works without
- * JavaScript. After mount it redraws with a fresh seed, so every visit
- * differs, and the button redraws in place.
+ * JavaScript. Once hydrated it draws with a fresh seed in the same commit, so
+ * every visit differs and the first paint is already the final list. The
+ * button redraws in place.
  */
 export function SuggestedMenu({ locale, candidates, cards, count, initialSeed }: SuggestedMenuProps) {
-  const [seed, setSeed] = useState(initialSeed);
+  const hydrated = useHydrated();
+  const [fresh] = useState(() => newSeed());
+  const [shuffled, setShuffled] = useState<string | null>(null);
+  const seed = shuffled ?? (hydrated ? fresh : initialSeed);
   const announce = useStatusMessage<string>(5000);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setSeed(newSeed()), 0);
-    return () => window.clearTimeout(timer);
-  }, []);
 
   const shown = useMemo(() => pickSuggested(candidates, count, seed), [candidates, count, seed]);
   const canShuffle = candidates.length > 1;
@@ -54,7 +54,7 @@ export function SuggestedMenu({ locale, candidates, cards, count, initialSeed }:
             type="button"
             variant="secondary"
             onClick={() => {
-              setSeed(newSeed());
+              setShuffled(newSeed());
               announce.show(t(EAT.suggestedUpdated, locale));
             }}
           >

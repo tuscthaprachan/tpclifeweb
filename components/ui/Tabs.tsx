@@ -21,11 +21,12 @@ interface TabsProps {
   className?: string;
 }
 
-/** Roving tabindex: only the active tab is in the Tab order, arrow keys move the ARIA "tab" selection (WAI-ARIA APG tabs pattern). */
+/** Falls back to the first tab when the chosen one is no longer in `items`. Roving tabindex: only the active tab is in the Tab order, arrow keys move the ARIA "tab" selection (WAI-ARIA APG tabs pattern). */
 export function Tabs({ items, label, defaultTabId, className }: TabsProps) {
   const baseId = useId();
   const firstItem = items[0];
-  const [active, setActive] = useState(defaultTabId ?? firstItem?.id ?? "");
+  const [chosen, setActive] = useState(defaultTabId ?? firstItem?.id ?? "");
+  const active = items.some((item) => item.id === chosen) ? chosen : (firstItem?.id ?? "");
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   function focusTab(id: string) {

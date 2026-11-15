@@ -14,7 +14,7 @@
  * avoidance (default 2 days) therefore only exists on the client. The page
  * says so in one short line, only when the device changed something.
  *
- * The device is read once per result (keyed by the URL) and then frozen, so
+ * The device is read once per result (keyed by the URL and the spin) and then frozen, and read again when the page returns from the back-forward cache, so
  * tapping "Go with this" does not make the dish just chosen swap itself out
  * for avoiding the repeat.
  *
@@ -29,7 +29,7 @@
  */
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 
 import { useHydrated } from "@/components/hooks/use-hydrated";
 import { cx } from "@/components/ui/cx";
@@ -45,7 +45,8 @@ import "../fun.css";
 import { biasNeedsDevice, reelNames, reelPhase, toPickLock, vetoedDishes, type PickParams } from "./helpers";
 import { PickEmpty } from "./PickEmpty";
 import { PickResult } from "./PickResult";
-import { consumeSpin, SPIN_PENDING_ID, SPIN_PENDING_SCRIPT, SpinListener } from "./SpinListener";
+import { SPIN_PENDING_ID, SPIN_PENDING_SCRIPT, SpinListener } from "./SpinListener";
+import { useSpin } from "./use-spin";
 import { PICK, pickText } from "./strings";
 
 interface RandomiserProps {
@@ -103,29 +104,9 @@ function Confetti() {
   );
 }
 
-let consumedFor: { key: string; spun: boolean } = { key: "", spun: false };
-
-/** Reads and clears the spin flag once per result, so every later read of the same key agrees. */
-function spunFor(key: string): boolean {
-  if (consumedFor.key !== key) consumedFor = { key, spun: consumeSpin() };
-  return consumedFor.spun;
-}
-
-const subscribeNever = () => () => {};
-
-let frozen: { key: string; snapshot: DeviceSnapshot } | null = null;
-
-/** Reads the device once per `key`, then returns the same object until the key changes. */
-function readDevice(key: string): DeviceSnapshot {
-  if (frozen?.key === key) return frozen.snapshot;
-  const snapshot: DeviceSnapshot = {
-    history: device.getHistory(),
-    favourites: device.getFavourites(),
-    dislikes: device.getDislikes(),
-    now: new Date(),
-  };
-  frozen = { key, snapshot };
-  return snapshot;
+/** Reads the device. */
+function readDevice(): DeviceSnapshot {
+  return { history: device.getHistory(), favourites: device.getFavourites(), dislikes: device.getDislikes(), now: new Date() };
 }
 
 function subscribeReducedMotion(onChange: () => void): () => void {
@@ -139,7 +120,26 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
 export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, reel, announce, children }: RandomiserProps) {
   const hydrated = useHydrated();
   const reduced = useSyncExternalStore(subscribeReducedMotion, reducedMotion, () => false);
-  const snapshot = useSyncExternalStore(subscribeNever, () => readDevice(pickKey), () => null);
+  const spin = useSpin(pickKey);
+  const { done } = spin;
+  const spinNonce = spin.state.status === "idle" ? null : spin.state.nonce;
+  const [snapshot, setSnapshot] = useState<DeviceSnapshot | null>(null);
+  const snapshotFor = useRef<string | null>(null);
+
+  useLayoutEffect(() => {
+    const token = `${pickKey}|${spinNonce ?? ""}`;
+    if (snapshotFor.current === token) return;
+    snapshotFor.current = token;
+    setSnapshot(readDevice());
+  }, [pickKey, spinNonce]);
+
+  useEffect(() => {
+    function onShow(event: PageTransitionEvent) {
+      if (event.persisted) setSnapshot(readDevice());
+    }
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, []);
 
   const hasDeviceData = snapshot !== null && (snapshot.history.length > 0 || snapshot.favourites.length > 0 || snapshot.dislikes.length > 0);
   const useDevice = snapshot !== null && params.mode !== "meal" && (biasNeedsDevice(params.bias) || hasDeviceData);
@@ -177,10 +177,8 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
         : pickText.announce(locale, eat.dishAtStall(locale, localised(outcome.dish.name, locale), eat.stallFull(locale, outcome.stall.number, localised(outcome.stall.name, locale))))
       : announce;
 
-  // The reel plays only for a result the user spun for, until `doneKey` catches up with its key.
-  const [doneKey, setDoneKey] = useState<string | null>(null);
-  const spun = useSyncExternalStore(subscribeNever, () => spunFor(pickKey), () => false);
-  const phase = reelPhase({ hydrated, spun, reducedMotion: reduced, nameCount: names.length, doneKey, pickKey });
+  // The reel plays only for a result the user spun for, and settles once.
+  const phase = reelPhase({ hydrated, spin: spin.state, reducedMotion: reduced, nameCount: names.length });
   const playing = phase === "playing";
   const celebrate = phase === "celebrating";
   const strip = useMemo(() => reelStrip(names), [names]);
@@ -191,9 +189,9 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
 
   useEffect(() => {
     if (!playing) return;
-    const stop = window.setTimeout(() => setDoneKey(pickKey), REEL_MS + 400);
+    const stop = window.setTimeout(done, REEL_MS + 400);
     return () => window.clearTimeout(stop);
-  }, [playing, pickKey]);
+  }, [playing, done]);
 
   let content: ReactNode = children;
   if (outcome && snapshot) {
@@ -227,7 +225,7 @@ export function Randomiser({ locale, data, filters, params, nextSeed, pickKey, r
           <div aria-hidden="true" className="pointer-events-none z-10 [grid-area:1/1]">
             <div className="fun-reel" style={{ "--last": strip.length - 1, "--fun-ms": `${REEL_MS}ms` } as CSSProperties}>
               <div className="fun-reel-line" />
-              <div key={pickKey} className="fun-reel-strip" onAnimationEnd={() => setDoneKey(pickKey)}>
+              <div key={pickKey} className="fun-reel-strip" onAnimationEnd={done}>
                 {strip.map((name, index) => (
                   <p key={index} className="fun-reel-item m-0">
                     {name}
