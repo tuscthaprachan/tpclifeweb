@@ -101,6 +101,15 @@ Design: `docs/tusc-open-data-plan.md`. Approved mock-ups: `docs/mockups/open-dat
 
 Before production shows content: `npm run db:migrate` (0015) and `npm run db:seed` (imports the open data). Without them the pages render their empty states; nothing fails. Then optionally run `npm run open-data:mirror` with the storage credentials, and grant editors on the `tusc` organisation.
 
+## State machines (after phase 8)
+
+Every lifecycle with more than two states is now declared in a pure module with tests; see `CONTRIBUTING.md`, "State machines", and `docs/state-machines-plan.md`. No migrations. Behaviour that changed on purpose:
+
+- Lost and found: every case move keeps the public register in step (`lib/cases/hooks.ts`); accepting a claim on an item already promised, returned or withdrawn is refused; an undecided claim on such an item reads "Claim closed"; open found listings past their collect-by day become `unclaimed` in the retention job.
+- Complaints: escalation fires strictly after a target; a reopened complaint that misses its new target notifies again; the 30 day reopen window is a guard for every actor, staff included; auto-close starts strictly after the last reopen instant.
+- Public journeys share `lib/journeys`: locked saves, one route function, every earlier unanswered question redirects, the email link is sent once.
+- Staff: removing a person's last role ends their sessions and recovery links; content lists and the hub count scheduled and ended items; a failed cron run shows as failing on `/admin/health`; open data re-imports keep unpublished rows unpublished.
+
 ## Branch state
 
 - `main` (`108c15d`): phases 1 to 3 (Postgres content, content editing) with the earlier email-code sign-in; the passkey-only change is only on the branch. Production runs this.

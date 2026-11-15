@@ -81,10 +81,14 @@ Write only inside the directories you were given. If you need a file outside the
 Any lifecycle with more than two states is declared, not implied by a set of booleans.
 
 - Put the states, events and transitions in a pure module (`*-machine.ts`, or a pure function beside the data, such as `complaintClock` or `isLoanOverdue`). No React, DOM or database in it, and a unit test in `tests/unit` for every transition.
-- Case statuses live only in `lib/cases/services.ts`. Use `allowedTransitions`, `isTerminalStatus`, `isPublicStatus` and `usesOwnActions`; never a hand-written status list. Work that must follow every move of a service's cases goes in `lib/cases/hooks.ts`.
-- A rule that has a SQL twin (overdue, due, live) keeps both in one file with a parity test at the boundary instant.
-- Reuse the shared hooks: `components/hooks` (`useStatusMessage`, `useCopy`, `useHydrated`), `components/admin/hooks` (`useReveal`, `useCeremony`) and `components/admin/content/upload/use-image-upload.ts`.
+- Case statuses live only in `lib/cases/services.ts`. Use `allowedTransitions`, `isTerminalStatus`, `isPublicStatus` and `usesOwnActions`; never a hand-written status list. Conditions on a move (the reopen window) are `guards`; moves the system makes are `systemTo` and go through `systemTransition`. Work that must follow every move of a service's cases goes in `lib/cases/hooks.ts`. Public tracking pages read `availableActions`.
+- Public journeys use `lib/journeys`: `createJourneyStore` (locked `update`, never a blind save) and `defineJourney` (`route`, `afterSave`, `consumeFlash`). A service declares only its steps, validation, submit and copy.
+- Derived states have one function each: `tokenState` (invites, recovery and tracking links), `liveState` (content), `complaintClock`, `isLoanOverdue`, `claimStage`, `caseLifecycle`.
+- A rule that has a SQL twin (overdue, due, live, token pending) keeps both in one file with a parity test at the boundary instant.
+- Reuse the shared hooks: `components/hooks` (`useStatusMessage`, `useCopy`, `useHydrated`, `useUrlEcho`), `components/admin/hooks` (`useReveal`, `useCeremony`, `useRepeater`, `useScrollLock`) and `components/admin/content/upload/use-image-upload.ts`.
 - A form using `useActionState` returns the submitted `values` with an error, because React resets an uncontrolled form when its action ends.
+- Cron routes are wrapped in `withCronAuth`, which records both runs and failures.
+- Hooks and components are tested in jsdom with `tests/unit/support/dom.ts` (`render`, `renderHook`, `step`).
 
 ## Checks
 
