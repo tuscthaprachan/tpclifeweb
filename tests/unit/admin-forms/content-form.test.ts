@@ -10,13 +10,16 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push: () => {} }) }));
 
 function setup(action: (prev: ContentFormState, data: FormData) => Promise<ContentFormState>) {
   return render(
-    createElement(ContentForm, {
-      locale: "en",
-      action,
-      listHref: "/admin/content/news",
-      record: { id: "7", status: "draft", updatedAt: "2026-01-01T00:00:00Z" },
-      children: createElement("input", { name: "title", defaultValue: "old" }),
-    }),
+    createElement(
+      ContentForm,
+      {
+        locale: "en",
+        action,
+        listHref: "/admin/content/news",
+        record: { id: "7", status: "draft", updatedAt: "2026-01-01T00:00:00Z" },
+      },
+      createElement("input", { name: "title", defaultValue: "old" }),
+    ),
   );
 }
 
