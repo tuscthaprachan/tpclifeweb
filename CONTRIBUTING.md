@@ -76,6 +76,16 @@ The same applies to policy progress. A percentage renders only when an editor se
 
 Write only inside the directories you were given. If you need a file outside them, report what you needed and why rather than creating it. Two agents writing the same file is how a parallel build corrupts itself.
 
+## State machines
+
+Any lifecycle with more than two states is declared, not implied by a set of booleans.
+
+- Put the states, events and transitions in a pure module (`*-machine.ts`, or a pure function beside the data, such as `complaintClock` or `isLoanOverdue`). No React, DOM or database in it, and a unit test in `tests/unit` for every transition.
+- Case statuses live only in `lib/cases/services.ts`. Use `allowedTransitions`, `isTerminalStatus`, `isPublicStatus` and `usesOwnActions`; never a hand-written status list. Work that must follow every move of a service's cases goes in `lib/cases/hooks.ts`.
+- A rule that has a SQL twin (overdue, due, live) keeps both in one file with a parity test at the boundary instant.
+- Reuse the shared hooks: `components/hooks` (`useStatusMessage`, `useCopy`, `useHydrated`), `components/admin/hooks` (`useReveal`, `useCeremony`) and `components/admin/content/upload/use-image-upload.ts`.
+- A form using `useActionState` returns the submitted `values` with an error, because React resets an uncontrolled form when its action ends.
+
 ## Checks
 
 ```bash
