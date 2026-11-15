@@ -88,7 +88,7 @@ export async function openTracked(db: AuditExecutor, reference: string, token: s
       collectAt: request.collectAt,
       returnDueAt: request.returnDueAt,
       lines: rows.map((r) => ({ name: { th: r.nameTh, en: r.nameEn }, unit: { th: r.unitTh, en: r.unitEn }, quantity: r.quantity })),
-      canCancel: (CANCELLABLE_STATUSES as readonly string[]).includes(view.status) && allowedTransitions(view.service, view.kind, view.status, "public").includes("cancelled"),
+      canCancel: CANCELLABLE_STATUSES.includes(view.status) && allowedTransitions(view.service, view.kind, view.status, "public").includes("cancelled"),
     },
   };
 }
@@ -109,7 +109,7 @@ export async function cancelTracked(db: AuditExecutor, reference: string, token:
   if (found.state === "limited") return "limited";
   if (found.state === "none") return "none";
   const { tracked } = found;
-  if (!(CANCELLABLE_STATUSES as readonly string[]).includes(tracked.status)) return "not_allowed";
+  if (!CANCELLABLE_STATUSES.includes(tracked.status)) return "not_allowed";
   if (!allowedTransitions(tracked.service, tracked.kind, tracked.status, "public").includes("cancelled")) return "not_allowed";
   try {
     await transition(db, tracked.id, "cancelled", publicActor(ctx), { expectedFrom: tracked.status, now });

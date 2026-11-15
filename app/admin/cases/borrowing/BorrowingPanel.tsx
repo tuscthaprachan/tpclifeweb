@@ -5,7 +5,7 @@ import { DataTable, Heading, StatusTag, SummaryList, Timestamp, type DataTableCo
 import { overlappingCases } from "@/lib/borrowing/availability";
 import { readLoanFacts, type LoanFacts, type LoanLineFact } from "@/lib/borrowing/workflow";
 import { requireStaff } from "@/lib/auth/session";
-import { SERVICES, statusLabel } from "@/lib/cases/services";
+import { SERVICES, isTerminalStatus, statusLabel } from "@/lib/cases/services";
 import { staffActorFor } from "@/lib/cases/staff";
 import { getDb } from "@/lib/db";
 import { a, type AdminKey } from "@/lib/i18n/admin";
@@ -118,7 +118,7 @@ export async function BorrowingPanel(props: CasePanelProps) {
               <SettleForm {...base} depositHeld={depositHeld} />
             </Step>
           ) : null}
-          {!["requested", "approved", "on_loan", "compensation_due"].includes(status) ? <p className="m-0 text-ink-600">{a("brNoMoreSteps", locale)}</p> : null}
+          {isTerminalStatus("borrowing", "loan", status) ? <p className="m-0 text-ink-600">{a("brNoMoreSteps", locale)}</p> : null}
         </div>
       </SectionCard>
     </>

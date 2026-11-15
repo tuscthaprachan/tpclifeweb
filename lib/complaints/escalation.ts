@@ -14,14 +14,15 @@
  * is logged and the rest go on; the next run tries it again.
  */
 
-import { and, eq, isNull, lte, or, sql } from "drizzle-orm";
+import { and, eq, isNull, lt, or } from "drizzle-orm";
 import { addOneYear, appendEvent, lockCase } from "@/lib/cases/internal";
-import { publicStatusLabel } from "@/lib/cases/services";
+import { isPublicStatus } from "@/lib/cases/services";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { caseAudience, createNotifications } from "@/lib/notifications/create";
 import { cases } from "@/lib/db/schema/cases";
 import { complaintCases, complaintCategories } from "@/lib/db/schema/complaints";
 import { REOPEN_WINDOW_DAYS } from "./constants";
+import { acknowledgeMissedSql, complaintClock, resolveMissedSql, type EscalationReason } from "./overdue";
 import type { EscalatedItem } from "./notify";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -34,7 +35,7 @@ export async function closeLapsedResolutions(db: AuditExecutor, now: Date): Prom
     .select({ caseId: complaintCases.caseId })
     .from(complaintCases)
     .innerJoin(cases, eq(cases.id, complaintCases.caseId))
-    .where(and(eq(cases.status, "resolved"), lte(complaintCases.resolvedAt, cutoff)))
+    .where(and(eq(cases.status, "resolved"), lt(complaintCases.resolvedAt, cutoff)))
     .limit(500);
   const closed: string[] = [];
   for (const { caseId } of due) {
@@ -45,7 +46,7 @@ export async function closeLapsedResolutions(db: AuditExecutor, now: Date): Prom
         await tx.update(cases).set({ status: "closed", closedAt: now, piiDeleteAfter: addOneYear(now), updatedAt: now }).where(eq(cases.id, caseId));
         await appendEvent(tx, caseId, SYSTEM, now, {
           type: "status_changed",
-          visibility: publicStatusLabel("complaint", "complaint", "closed") ? "public" : "internal",
+          visibility: isPublicStatus("complaint", "complaint", "closed") ? "public" : "internal",
           fromStatus: "resolved",
           toStatus: "closed",
           metadata: { auto: true },
@@ -61,17 +62,21 @@ export async function closeLapsedResolutions(db: AuditExecutor, now: Date): Prom
   return closed;
 }
 
+/** One notification per case, reason and reopen round: a reopened complaint that misses its new target tells staff again, while a rerun in the same round does not. */
+export function escalationDedupeKey(caseId: string, reason: EscalationReason, reopenCount: number): string {
+  return reopenCount > 0 ? `escalated:${caseId}:${reason}:r${reopenCount}` : `escalated:${caseId}:${reason}`;
+}
+
 /** Flags complaints that missed a target. Returns what was newly escalated, for the notification. */
 export async function escalateOverdue(db: AuditExecutor, now: Date): Promise<EscalatedItem[]> {
-  const ackMissed = and(isNull(complaintCases.acknowledgedAt), lte(complaintCases.acknowledgeDueAt, now), isNull(complaintCases.escalatedReason));
-  const resolveMissed = and(lte(complaintCases.resolveDueAt, now), or(isNull(complaintCases.escalatedReason), eq(complaintCases.escalatedReason, "acknowledge")));
+  const ackMissed = and(acknowledgeMissedSql(now), isNull(complaintCases.escalatedReason));
+  const resolveMissed = and(resolveMissedSql(now), or(isNull(complaintCases.escalatedReason), eq(complaintCases.escalatedReason, "acknowledge")));
   const candidates = await db
     .select({
       caseId: complaintCases.caseId,
       categoryId: complaintCases.categoryId,
       reference: cases.reference,
       restricted: complaintCategories.restricted,
-      resolveMissed: sql<boolean>`${complaintCases.resolveDueAt} <= ${now.toISOString()}::timestamptz`,
     })
     .from(complaintCases)
     .innerJoin(cases, eq(cases.id, complaintCases.caseId))
@@ -81,38 +86,39 @@ export async function escalateOverdue(db: AuditExecutor, now: Date): Promise<Esc
 
   const escalated: EscalatedItem[] = [];
   for (const c of candidates) {
-    const reason = c.resolveMissed ? "resolve" : "acknowledge";
     try {
-      const done = await withAudit(db, { actorUserId: null }, async (tx, audit) => {
+      const reason = await withAudit(db, { actorUserId: null }, async (tx, audit) => {
         const row = await lockCase(tx, c.caseId);
-        if (row.closedAt) return false;
+        if (row.closedAt) return null;
         const [cc] = await tx.select().from(complaintCases).where(eq(complaintCases.caseId, c.caseId)).for("update");
-        if (!cc || (cc.escalatedReason === "resolve") || (cc.escalatedReason === "acknowledge" && reason === "acknowledge")) return false;
+        if (!cc) return null;
+        const due = complaintClock({ ...cc, closedAt: row.closedAt }, now).escalation;
+        if (!due) return null;
         await tx
           .update(complaintCases)
-          .set({ escalatedAt: cc.escalatedAt ?? now, escalatedReason: reason })
+          .set({ escalatedAt: cc.escalatedAt ?? now, escalatedReason: due })
           .where(eq(complaintCases.caseId, c.caseId));
         await appendEvent(tx, c.caseId, SYSTEM, now, {
           type: "escalated",
-          metadata: { reason, dueAt: (reason === "resolve" ? cc.resolveDueAt : cc.acknowledgeDueAt).toISOString() },
+          metadata: { reason: due, dueAt: (due === "resolve" ? cc.resolveDueAt : cc.acknowledgeDueAt).toISOString() },
         });
-        await audit({ action: "complaint.escalate", entityType: "case", entityId: c.caseId, after: { reason, reference: row.reference } });
+        await audit({ action: "complaint.escalate", entityType: "case", entityId: c.caseId, after: { reason: due, reference: row.reference } });
         await createNotifications(
           tx,
           (await caseAudience(tx, c.caseId, "complaint")).map((userId) => ({
             userId,
             kind: "complaint_escalated" as const,
-            params: { reference: row.reference, reason },
+            params: { reference: row.reference, reason: due },
             href: `/admin/cases/${c.caseId}`,
             entityType: "case",
             entityId: c.caseId,
-            dedupeKey: `escalated:${c.caseId}:${reason}`,
+            dedupeKey: escalationDedupeKey(c.caseId, due, cc.reopenCount),
           })),
           now,
         );
-        return true;
+        return due;
       });
-      if (done) escalated.push({ caseId: c.caseId, reference: c.reference, categoryId: c.categoryId, restricted: c.restricted, reason });
+      if (reason) escalated.push({ caseId: c.caseId, reference: c.reference, categoryId: c.categoryId, restricted: c.restricted, reason });
     } catch (error) {
       console.error(`[complaints] could not escalate ${c.reference}`, error instanceof Error ? error.message : error);
     }

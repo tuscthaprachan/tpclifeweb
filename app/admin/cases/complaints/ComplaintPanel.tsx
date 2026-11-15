@@ -8,6 +8,7 @@ import { listCategories } from "@/lib/complaints/categories";
 import { readFacultiesWithOrganisations } from "@/lib/content/faculties";
 import { loadRedirectTarget, type RedirectTarget } from "@/lib/complaints/redirect";
 import { getComplaintFacts, type ComplaintFacts } from "@/lib/complaints/details";
+import { isTerminalStatus } from "@/lib/cases/services";
 import { getDb } from "@/lib/db";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { pick, type Locale } from "@/lib/i18n/config";
@@ -33,7 +34,7 @@ export async function ComplaintPanel(props: CasePanelProps) {
   const redirectFaculties = WORKING.has(status) ? await readFacultiesWithOrganisations(db) : [];
   const redirected = status === "redirected" ? await loadRedirectTarget(db, caseId) : null;
   const base = { locale, caseId, orgId: actor.organisationId };
-  const piiGone = facts.hasText === false && facts.evidenceCount === 0 && ["resolved", "closed", "withdrawn", "redirected"].includes(status);
+  const piiGone = facts.hasText === false && facts.evidenceCount === 0 && isTerminalStatus("complaint", "complaint", status);
 
   return (
     <>

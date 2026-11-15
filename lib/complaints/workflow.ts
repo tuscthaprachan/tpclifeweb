@@ -34,11 +34,12 @@ async function lockComplaint(tx: AuditExecutor, caseId: string): Promise<Complai
   return row;
 }
 
-/** True while a resolved complaint may still be reopened by the person. */
+/** True while a resolved complaint may still be reopened by the person: up to and including the end of the window. The daily job closes it only strictly after that instant, so the two never overlap. */
 export function canReopenNow(resolvedAt: Date | null, status: string, now: Date): boolean {
   return status === "resolved" && resolvedAt !== null && now.getTime() <= resolvedAt.getTime() + REOPEN_WINDOW_DAYS * DAY_MS;
 }
 
+/** The last instant the person may reopen. */
 export function reopenWindowEnds(resolvedAt: Date): Date {
   return new Date(resolvedAt.getTime() + REOPEN_WINDOW_DAYS * DAY_MS);
 }

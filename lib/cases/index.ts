@@ -7,6 +7,7 @@
  *   contacts.ts   addContact, readContacts (logged), listContactSummaries
  *   tracking.ts   issueTrackingLink, resolveTrackingLink, revokeTrackingLinks
  *   timeline.ts   publicTimeline, publicCaseView
+ *   lifecycle.ts  caseLifecycle (open, closed, purged)
  *   retention.ts  purgeExpiredPii
  *   restrictions.ts  restricted complaint categories: assertCaseAccess, caseVisibleTo
  */
@@ -14,6 +15,7 @@
 export * from "./access";
 export * from "./contacts";
 export * from "./engine";
+export * from "./lifecycle";
 export * from "./restrictions";
 export * from "./retention";
 export * from "./services";

@@ -3,11 +3,19 @@
  * longest loan are assumptions until the TUSU desk confirms them (handoff.md).
  */
 
+import { allowedTransitions, getMachine } from "@/lib/cases/services";
+
+const STATUSES = getMachine("borrowing", "loan")?.statuses ?? {};
+const LOAN_STATUSES = Object.keys(STATUSES);
+
 /** Statuses during which the equipment is promised or out, so it counts against availability. */
 export const HOLDING_STATUSES = ["requested", "approved", "on_loan"] as const;
 
-/** Statuses a borrower may still cancel from (before collection). */
-export const CANCELLABLE_STATUSES = ["requested", "approved"] as const;
+/** Statuses a loan may be in while it still needs the desk to act: every status of the machine that is not terminal. */
+export const OPEN_LOAN_STATUSES: readonly string[] = LOAN_STATUSES.filter((status) => !STATUSES[status]!.terminal);
+
+/** Statuses a borrower may still cancel from (before collection), taken from the loan machine's public transitions. */
+export const CANCELLABLE_STATUSES: readonly string[] = LOAN_STATUSES.filter((status) => allowedTransitions("borrowing", "loan", status, "public").includes("cancelled"));
 
 /** Collection and return times offered, Bangkok, every half hour within desk hours. */
 export const DESK_OPENS = "09:00";

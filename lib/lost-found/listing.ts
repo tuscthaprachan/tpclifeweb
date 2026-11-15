@@ -9,7 +9,7 @@
  * lowercased reference, so one number works for the case and the page.
  */
 
-import { asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, ne, sql } from "drizzle-orm";
 import type { ContentActor } from "@/lib/admin/content/access";
 import { saveContent } from "@/lib/admin/content/save";
 import { revalidateFor } from "@/lib/content/revalidate";
@@ -17,8 +17,9 @@ import type { AuditExecutor } from "@/lib/db/audit";
 import { lostFoundItemPhotos, lostFoundItems } from "@/lib/db/schema";
 import type { ContentStatus, OWNERS } from "@/lib/db/schema/content/enums";
 import type { LOST_FOUND_CATEGORIES, LOST_FOUND_STATUSES } from "@/lib/db/schema/content/enums";
-import type { StaffActor } from "@/lib/cases/types";
+import type { CaseActor, StaffActor } from "@/lib/cases/types";
 import { auditedLostFoundItems } from "./audited-item";
+import { listingRegisterFor, resolvedAtFor } from "./register";
 
 type Category = (typeof LOST_FOUND_CATEGORIES)[number];
 type Owner = (typeof OWNERS)[number];
@@ -236,12 +237,12 @@ export async function publishListingForCase(tx: AuditExecutor, caseId: string, a
 
 /**
  * Sets the register status (open, matched, returned...) of a case's listing.
- * `returned` also stamps `resolved_at`; `open` clears it. A no-op without a listing.
+ * `returned` and `withdrawn` also stamp `resolved_at`; `open` clears it. A no-op without a listing.
  */
 export async function setListingRegisterStatus(tx: AuditExecutor, caseId: string, registerStatus: RegisterStatus, actor: ContentActor, now: Date): Promise<void> {
   const [row] = await tx.select({ id: lostFoundItems.id, registerStatus: lostFoundItems.registerStatus }).from(lostFoundItems).where(eq(lostFoundItems.caseId, caseId));
   if (!row || row.registerStatus === registerStatus) return;
-  const resolvedAt = registerStatus === "returned" ? now : registerStatus === "open" ? null : undefined;
+  const resolvedAt = resolvedAtFor(registerStatus, now);
   await saveContent({
     entityType: "lostFoundItem",
     table: auditedLostFoundItems,
@@ -251,6 +252,23 @@ export async function setListingRegisterStatus(tx: AuditExecutor, caseId: string
     values: { registerStatus, ...(resolvedAt !== undefined ? { resolvedAt } : {}) },
     now,
   });
+}
+
+/**
+ * Puts the listing of a case in step with its case status (`listingRegisterFor`),
+ * inside the caller's transaction. Staff writes go through `saveContent`; a
+ * person on a public journey has no content actor, so the row is updated
+ * directly. A no-op without a listing or for a status the table does not know.
+ */
+export async function syncListingRegister(tx: AuditExecutor, caseId: string, kind: string, status: string, actor: CaseActor, now: Date): Promise<void> {
+  const register = listingRegisterFor(kind, status);
+  if (!register) return;
+  if (actor.kind === "staff") return setListingRegisterStatus(tx, caseId, register, contentActorOf(actor), now);
+  const resolvedAt = resolvedAtFor(register, now);
+  await tx
+    .update(lostFoundItems)
+    .set({ registerStatus: register, ...(resolvedAt !== undefined ? { resolvedAt } : {}), updatedAt: now })
+    .where(and(eq(lostFoundItems.caseId, caseId), ne(lostFoundItems.registerStatus, register)));
 }
 
 /** Expires the public caches for a case's listing. Call after the transaction commits. */

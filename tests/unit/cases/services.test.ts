@@ -5,10 +5,13 @@ import {
   canAccessService,
   canTransition,
   canUseCaseInbox,
+  caseLifecycle,
+  isPublicStatus,
   isTerminalStatus,
   publicStatusLabel,
   resolveActingOrganisation,
   SERVICES,
+  usesOwnActions,
 } from "@/lib/cases";
 
 describe("state machines", () => {
@@ -91,5 +94,40 @@ describe("role access", () => {
     expect(resolveActingOrganisation([1, 2], 3)).toBe(1);
     expect(resolveActingOrganisation([2])).toBe(2);
     expect(resolveActingOrganisation([])).toBeNull();
+  });
+});
+
+describe("isPublicStatus", () => {
+  it("is true only for a status with a public label, with no fallback", () => {
+    expect(isPublicStatus("lost_found", "found", "logged")).toBe(false);
+    expect(isPublicStatus("lost_found", "found", "listed")).toBe(true);
+    expect(isPublicStatus("complaint", "complaint", "closed")).toBe(true);
+    expect(isPublicStatus("lost_found", "found", "nonsense")).toBe(false);
+    expect(isPublicStatus("lost_found", "nokind", "logged")).toBe(false);
+  });
+
+  it("agrees with the declared labels for every status", () => {
+    for (const def of Object.values(SERVICES)) {
+      for (const [kind, k] of Object.entries(def.kinds)) {
+        for (const [status, s] of Object.entries(k.machine.statuses)) expect(isPublicStatus(def.service, kind, status)).toBe(s.publicLabel !== null);
+      }
+    }
+  });
+});
+
+describe("statusMoves", () => {
+  it("names the services with their own action forms, each with a notice", () => {
+    expect(Object.values(SERVICES).filter((d) => usesOwnActions(d.service)).map((d) => d.service)).toEqual(["complaint", "borrowing"]);
+    for (const def of Object.values(SERVICES)) expect(Boolean(def.ownActionsNotice)).toBe(def.statusMoves === "own_actions");
+  });
+});
+
+describe("caseLifecycle", () => {
+  const at = new Date("2026-01-01T00:00:00Z");
+  it("is open, closed or purged from the two timestamps", () => {
+    expect(caseLifecycle({ closedAt: null, piiDeletedAt: null })).toBe("open");
+    expect(caseLifecycle({ closedAt: at, piiDeletedAt: null })).toBe("closed");
+    expect(caseLifecycle({ closedAt: at, piiDeletedAt: at })).toBe("purged");
+    expect(caseLifecycle({ closedAt: null, piiDeletedAt: at })).toBe("purged");
   });
 });

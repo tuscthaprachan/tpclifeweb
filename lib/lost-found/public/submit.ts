@@ -21,7 +21,8 @@
 
 import { and, eq } from "drizzle-orm";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
-import { addContact, createCase, issueTrackingLink, publicStatusLabel, type CaseActor, type ContactInput, type RequestContext } from "@/lib/cases";
+import { addContact, createCase, isPublicStatus, issueTrackingLink, type CaseActor, type ContactInput, type RequestContext } from "@/lib/cases";
+import { syncListingRegister } from "../listing";
 import { appendEvent, lockCase, touchCase } from "@/lib/cases/internal";
 import { consumeRateLimit, type RateResult, type RateRule } from "@/lib/auth/rate-limit";
 import { encryptPii, type PiiEnv } from "@/lib/crypto/pii";
@@ -226,7 +227,7 @@ export async function findClaimTarget(db: AuditExecutor, slug: string): Promise<
  * The found item case moves to `claim_pending` when it is `logged` or
  * `listed`. The engine's `transition` does not let a public actor do this
  * (FOUND.publicActorTo is empty), so the same writes are made here: lock,
- * status, public event, audit. A case already `ready_to_collect` for someone
+ * status, public event, listing register, audit. A case already `ready_to_collect` for someone
  * else is left alone, so a stranger cannot disturb a confirmed match; the
  * claim record is still there for staff.
  */
@@ -234,9 +235,10 @@ async function markClaimPending(tx: AuditExecutor, caseId: string, actor: CaseAc
   const row = await lockCase(tx, caseId);
   if (row.status !== "logged" && row.status !== "listed") return false;
   await touchCase(tx, caseId, actor, now, { status: "claim_pending" });
+  await syncListingRegister(tx, caseId, row.kind, "claim_pending", actor, now);
   await appendEvent(tx, caseId, actor, now, {
     type: "status_changed",
-    visibility: publicStatusLabel(row.service, row.kind, "claim_pending") ? "public" : "internal",
+    visibility: isPublicStatus(row.service, row.kind, "claim_pending") ? "public" : "internal",
     fromStatus: row.status,
     toStatus: "claim_pending",
   });

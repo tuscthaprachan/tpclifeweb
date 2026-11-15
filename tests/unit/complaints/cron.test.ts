@@ -1,11 +1,11 @@
 /** Escalation, auto-close and the cron route. */
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { eq } from "drizzle-orm";
-import { caseEvents, cases, complaintCases } from "@/lib/db/schema";
+import { caseEvents, cases, complaintCases, notifications } from "@/lib/db/schema";
 import { MemoryEmailSender } from "@/lib/email";
 import { closeLapsedResolutions, escalateOverdue } from "@/lib/complaints/escalation";
 import { escalationRecipients, sendEscalationDigests, decideComplainantNotice, notifyComplainant } from "@/lib/complaints/notify";
-import { acknowledgeComplaint, reopenComplaint, resolveComplaint } from "@/lib/complaints/workflow";
+import { acknowledgeComplaint, canReopenNow, reopenComplaint, reopenWindowEnds, resolveComplaint } from "@/lib/complaints/workflow";
 import { listCases } from "@/lib/cases";
 import { env, setupComplaints, NOW, type Ctx } from "./helpers";
 
@@ -60,6 +60,37 @@ describe("escalation", () => {
     expect((await escalateOverdue(t.db, new Date(NOW.getTime() + 3 * DAY))).map((e) => e.caseId)).not.toContain(c.caseId);
   });
 
+  it("notifies again when a reopened complaint misses its new target, but not on a rerun in the same round", async () => {
+    const c = await t.file();
+    const keys = async () =>
+      (await t.db.select().from(notifications).where(eq(notifications.entityId, c.caseId)))
+        .filter((n) => n.kind === "complaint_escalated")
+        .map((n) => n.dedupeKey)
+        .sort();
+    await escalateOverdue(t.db, new Date(NOW.getTime() + 20 * DAY));
+    const first = await keys();
+    expect(first.length).toBeGreaterThan(0);
+    expect(first.every((k) => k === `escalated:${c.caseId}:resolve`)).toBe(true);
+
+    await resolveComplaint(t.db, c.caseId, { outcome: { en: "ok" } }, t.handler, { now: new Date(NOW.getTime() + 21 * DAY) });
+    await reopenComplaint(t.db, c.caseId, {}, { kind: "public" }, { now: new Date(NOW.getTime() + 22 * DAY), env });
+    const again = new Date(NOW.getTime() + 40 * DAY);
+    expect((await escalateOverdue(t.db, again)).map((e) => e.caseId)).toContain(c.caseId);
+    const second = await keys();
+    expect(second.filter((k) => k === `escalated:${c.caseId}:resolve:r1`)).toHaveLength(first.length);
+    expect(second).toHaveLength(first.length * 2);
+
+    expect((await escalateOverdue(t.db, again)).map((e) => e.caseId)).not.toContain(c.caseId);
+    expect(await keys()).toEqual(second);
+  });
+
+  it("escalates strictly after a target, not at the instant it falls due", async () => {
+    const c = await t.file();
+    const { acknowledgeDueAt } = await cc(c.caseId);
+    expect((await escalateOverdue(t.db, acknowledgeDueAt)).map((e) => e.caseId)).not.toContain(c.caseId);
+    expect((await escalateOverdue(t.db, new Date(acknowledgeDueAt.getTime() + 1))).map((e) => e.caseId)).toContain(c.caseId);
+  });
+
   it("emails officers about ordinary complaints and only the named staff about restricted ones", async () => {
     const open = await t.file({ key: "other" });
     const secret = await t.file({ key: "harassment" });
@@ -98,6 +129,18 @@ describe("closing lapsed resolutions", () => {
     expect(r!.closedAt).toEqual(when);
     expect(r!.piiDeleteAfter!.getTime()).toBeGreaterThan(when.getTime() + 360 * DAY);
     expect(await closeLapsedResolutions(t.db, when)).not.toContain(c.reference);
+  });
+
+  it("closes only strictly after the last instant the person may reopen", async () => {
+    const c = await t.file();
+    await resolveComplaint(t.db, c.caseId, { outcome: { en: "ok" } }, t.handler, { now: NOW });
+    const resolvedAt = (await cc(c.caseId)).resolvedAt!;
+    const last = reopenWindowEnds(resolvedAt);
+    expect(canReopenNow(resolvedAt, "resolved", last)).toBe(true);
+    expect(await closeLapsedResolutions(t.db, last)).not.toContain(c.reference);
+    const after = new Date(last.getTime() + 1);
+    expect(canReopenNow(resolvedAt, "resolved", after)).toBe(false);
+    expect(await closeLapsedResolutions(t.db, after)).toContain(c.reference);
   });
 });
 

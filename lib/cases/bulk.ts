@@ -11,7 +11,9 @@
 import { inArray } from "drizzle-orm";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { cases } from "@/lib/db/schema/cases";
+import { expireListing } from "@/lib/lost-found/listing";
 import { assign, transition } from "./engine";
+import { usesOwnActions } from "./services";
 import { CaseError, type StaffActor } from "./types";
 
 export const CASE_BULK_LIMIT = 100;
@@ -70,8 +72,9 @@ export async function bulkTransition(db: AuditExecutor, ids: readonly string[], 
   return each(wanted, async (id) => {
     const s = service.get(id);
     if (!s) return "not_found";
-    if (s === "complaint" || s === "borrowing") return "use_actions";
+    if (usesOwnActions(s)) return "use_actions";
     await transition(db, id, to, actor, opts);
+    if (s === "lost_found") await expireListing(db, id);
     return null;
   });
 }

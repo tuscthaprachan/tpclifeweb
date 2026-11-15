@@ -11,6 +11,8 @@ import { getAdminLocale } from "@/lib/admin/locale";
 import { CASE_INBOX_ROLES } from "@/lib/cases/access";
 import { addNote, addPublicUpdate, assign, transition } from "@/lib/cases/engine";
 import { readContacts, type Contact } from "@/lib/cases/contacts";
+import { getServiceDef, usesOwnActions } from "@/lib/cases/services";
+import { expireListing } from "@/lib/lost-found/listing";
 import { staffActorForCase } from "@/lib/cases/staff";
 import { CaseError } from "@/lib/cases/types";
 import { eq } from "drizzle-orm";
@@ -81,11 +83,11 @@ export async function changeStatusAction(_prev: CaseFormState, formData: FormDat
   return run(formData, ["status"], async ({ locale, caseId, actor }) => {
     const to = text(formData, "status");
     if (!to) return { error: a("errCaseStatusRequired", locale) };
-    // Complaints and loans have their own actions (resolve needs an outcome, a handover records the deposit); a posted form must not bypass them.
+    // Services with their own action forms (a complaint's resolve needs an outcome, a handover records the deposit) must not be bypassed by a posted form.
     const [row] = await getDb().select({ service: cases.service }).from(cases).where(eq(cases.id, caseId));
-    if (row?.service === "complaint") return { error: a("errCaseUseComplaintActions", locale) };
-    if (row?.service === "borrowing") return { error: a("errCaseUseLoanActions", locale) };
+    if (row && usesOwnActions(row.service)) return { error: a(getServiceDef(row.service).ownActionsNotice!.error, locale) };
     await transition(getDb(), caseId, to, actor, { expectedFrom: text(formData, "from") || undefined });
+    if (row?.service === "lost_found") await expireListing(getDb(), caseId);
     return "caseSavedStatus";
   });
 }

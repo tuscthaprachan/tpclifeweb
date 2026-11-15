@@ -18,6 +18,7 @@
 
 import type { StaffRole } from "@/lib/db/schema/staff-roles";
 import type { CaseService } from "@/lib/db/schema/cases";
+import type { AdminKey } from "@/lib/i18n/admin";
 import type { LocaleString } from "@/lib/i18n/config";
 
 export type { CaseService };
@@ -57,6 +58,15 @@ export interface ServiceDef {
   /** Roles that may work these cases, for either organisation. */
   roles: readonly StaffRole[];
   kinds: Record<string, KindDef>;
+  /**
+   * How staff move a case between statuses. `generic` services use the shared
+   * status form and the inbox's bulk move. `own_actions` services have their own
+   * forms (resolve needs an outcome, a handover records a deposit), so the
+   * generic paths refuse and show `ownActionsNotice` instead.
+   */
+  statusMoves: "generic" | "own_actions";
+  /** The staff messages shown in place of the generic status form: `error` when one is posted anyway, `panel` on the case page. Set for `own_actions` services. */
+  ownActionsNotice?: { error: AdminKey; panel: AdminKey };
 }
 
 const s = (th: string, en: string): LocaleString => ({ th, en });
@@ -202,6 +212,7 @@ export const SERVICES: Record<CaseService, ServiceDef> = {
     prefix: "LF",
     label: s("ของหายและของที่พบ", "Lost and found"),
     roles: ["officer", "admin"],
+    statusMoves: "generic",
     kinds: {
       lost: { label: s("แจ้งของหาย", "Lost report"), machine: LOST },
       found: { label: s("ของที่พบ", "Found item"), machine: FOUND },
@@ -212,6 +223,8 @@ export const SERVICES: Record<CaseService, ServiceDef> = {
     prefix: "CP",
     label: s("ข้อร้องเรียน", "Complaints"),
     roles: ["officer", "admin"],
+    statusMoves: "own_actions",
+    ownActionsNotice: { error: "errCaseUseComplaintActions", panel: "cpcStatusUsePanel" },
     kinds: {
       complaint: { label: s("ข้อร้องเรียน", "Complaint"), machine: COMPLAINT },
     },
@@ -221,6 +234,8 @@ export const SERVICES: Record<CaseService, ServiceDef> = {
     prefix: "BR",
     label: s("ยืมอุปกรณ์", "Equipment loans"),
     roles: ["officer", "admin"],
+    statusMoves: "own_actions",
+    ownActionsNotice: { error: "errCaseUseLoanActions", panel: "brStatusUsePanel" },
     kinds: {
       loan: { label: s("คำขอยืมอุปกรณ์", "Loan request"), machine: LOAN },
     },
@@ -229,6 +244,11 @@ export const SERVICES: Record<CaseService, ServiceDef> = {
 
 export function getServiceDef(service: CaseService): ServiceDef {
   return SERVICES[service];
+}
+
+/** True when the service moves statuses through its own forms, so the generic status form and bulk move must refuse it. */
+export function usesOwnActions(service: CaseService): boolean {
+  return SERVICES[service].statusMoves === "own_actions";
 }
 
 /** The machine for a kind, or undefined for a kind the service does not have. */
@@ -269,6 +289,11 @@ export const IN_PROGRESS_LABEL: LocaleString = s("กำลังดำเนิ
 
 export function publicStatusLabel(service: CaseService, kind: string, status: string): LocaleString {
   return getStatusDef(service, kind, status)?.publicLabel ?? IN_PROGRESS_LABEL;
+}
+
+/** True when the status shows on the tracking page. Unlike `publicStatusLabel` it does not fall back to a generic label, so it is the test for "public or internal". */
+export function isPublicStatus(service: CaseService, kind: string, status: string): boolean {
+  return getStatusDef(service, kind, status)?.publicLabel != null;
 }
 
 /** Every status of a service across its kinds, deduplicated by key, for the inbox filter. */

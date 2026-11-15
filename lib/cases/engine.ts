@@ -20,13 +20,14 @@ import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { complaintEscalated, complaintOverdue } from "@/lib/complaints/overdue";
 import { accessibleServices } from "./access";
+import { AFTER_TRANSITION } from "./hooks";
 import { caseDueAt, dueState, type DueState } from "./due";
 import { DEFAULT_CASE_SORT, defaultCaseDir, type CaseSortDir, type CaseSortKey } from "./inbox-query";
 import { listMentionable, parseMentions } from "./mentions";
 import { assertCaseAccess, canSeeCase, caseVisibleTo } from "./restrictions";
 import { insertContact, type ContactInput } from "./contacts";
 import { addOneYear, appendEvent, assertStaff, auditContextOf, cleanText, lockCase, NOTE_MAX, touchCase } from "./internal";
-import { allowedTransitions, getServiceDef, getStatusDef, initialStatus, isTerminalStatus, isValidKind, SERVICES } from "./services";
+import { allowedTransitions, getServiceDef, getStatusDef, initialStatus, isPublicStatus, isTerminalStatus, isValidKind, SERVICES } from "./services";
 import { CaseError, type BilingualText, type CaseActor, type PublicUpdateText, type StaffActor } from "./types";
 import type { PiiEnv } from "@/lib/crypto/pii";
 
@@ -152,12 +153,13 @@ export async function transition(db: AuditExecutor, caseId: string, to: string, 
     await touchCase(tx, caseId, actor, now, set);
     await appendEvent(tx, caseId, actor, now, {
       type: "status_changed",
-      visibility: target.publicLabel ? "public" : "internal",
+      visibility: isPublicStatus(row.service, row.kind, to) ? "public" : "internal",
       fromStatus: row.status,
       toStatus: to,
       bodyTh: note?.th,
       bodyEn: note?.en,
     });
+    await AFTER_TRANSITION[row.service]?.(tx, { caseId, kind: row.kind, from: row.status, to, actor, now });
     await audit({
       action: "case.transition",
       entityType: "case",

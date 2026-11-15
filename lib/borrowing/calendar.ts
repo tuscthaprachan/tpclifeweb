@@ -13,6 +13,7 @@ import { borrowingLines, borrowingRequests, equipmentCategories, equipmentItems,
 import { cases } from "@/lib/db/schema/cases";
 import { availableOnDay, lendable, listInventory, loadHolds, peakHeld, type Hold } from "./availability";
 import { HOLDING_STATUSES } from "./constants";
+import { loanHoldEnd } from "./overdue";
 import { earliestFor } from "./rules";
 import { DAY_MS, dayKeyOf, dayStart, daysOfMonth, isDeskDay, weekdayOf } from "./time";
 
@@ -109,7 +110,7 @@ async function loadBookings(db: AuditExecutor, itemId: string, from: Date, to: D
     .where(and(eq(borrowingLines.itemId, itemId), inArray(cases.status, [...HOLDING_STATUSES]), lt(borrowingRequests.collectAt, to)))
     .orderBy(asc(borrowingRequests.collectAt));
   return rows
-    .map((r) => ({ ...r, returnDueAt: r.status === "on_loan" && r.returnDueAt.getTime() < now.getTime() ? now : r.returnDueAt }))
+    .map((r) => ({ ...r, returnDueAt: loanHoldEnd(r, now) }))
     .filter((r) => r.returnDueAt.getTime() > from.getTime());
 }
 

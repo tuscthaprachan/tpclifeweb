@@ -14,7 +14,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Button, Container, Heading, InsetText, NotificationBanner, Stack, StatusTag, SummaryList, Timestamp, type SummaryListRow } from "@/components/ui";
-import { getStatusDef, localisedBody } from "@/lib/cases";
+import { getStatusDef, isTerminalStatus, localisedBody } from "@/lib/cases";
 import { readTrackCookie, requestContext } from "@/lib/complaints/public/cookies";
 import { openTracked } from "@/lib/complaints/public/track";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
@@ -62,7 +62,7 @@ export default async function ComplaintStatusPage({ params, searchParams }: { pa
   const { view } = c;
 
   const tone = getStatusDef(view.service, view.kind, view.status)?.tone ?? "neutral";
-  const open = !["resolved", "closed", "withdrawn", "redirected"].includes(view.status);
+  const open = !isTerminalStatus(view.service, view.kind, view.status);
   const outcome = localisedBody(c.outcome, locale);
   const rows: SummaryListRow[] = [
     { key: UI.cpReference[locale], value: <span className="font-semibold">{view.reference}</span> },

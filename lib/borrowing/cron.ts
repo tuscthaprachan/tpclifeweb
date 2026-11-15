@@ -13,7 +13,7 @@
  * not set up, so a later run can still do it.
  */
 
-import { and, eq, exists, inArray, isNull, lt, lte, sql } from "drizzle-orm";
+import { and, eq, exists, inArray, isNull, lte, sql } from "drizzle-orm";
 import type { PiiEnv } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { borrowingJourneys, borrowingRequests } from "@/lib/db/schema/borrowing";
@@ -21,6 +21,7 @@ import { caseContacts, cases } from "@/lib/db/schema/cases";
 import { createNotifications, serviceStaffIds } from "@/lib/notifications/create";
 import { isEmailConfigured, type EmailSender } from "@/lib/email";
 import { notifyBorrower } from "./notify";
+import { loanOverdueSql } from "./overdue";
 import { addDays, dayKeyOf, isDeskDay } from "./time";
 
 export interface BorrowingDailyResult {
@@ -104,9 +105,8 @@ export async function runBorrowingDaily(db: AuditExecutor, now: Date, opts: Opts
       .where(
         and(
           eq(cases.service, "borrowing"),
-          eq(cases.status, "on_loan"),
+          loanOverdueSql(now),
           isNull(cases.piiDeletedAt),
-          lt(borrowingRequests.returnDueAt, now),
           isNull(borrowingRequests.overdueNotifiedAt),
           hasBorrowerEmail(),
         ),
@@ -125,7 +125,7 @@ export async function notifyOverdueToOfficers(db: AuditExecutor, now: Date): Pro
     .select({ id: cases.id, reference: cases.reference, returnDueAt: borrowingRequests.returnDueAt })
     .from(cases)
     .innerJoin(borrowingRequests, eq(borrowingRequests.caseId, cases.id))
-    .where(and(eq(cases.service, "borrowing"), eq(cases.status, "on_loan"), isNull(cases.piiDeletedAt), lt(borrowingRequests.returnDueAt, now)))
+    .where(and(eq(cases.service, "borrowing"), loanOverdueSql(now), isNull(cases.piiDeletedAt)))
     .limit(500);
   if (late.length === 0) return 0;
   const officers = await serviceStaffIds(db, "borrowing");

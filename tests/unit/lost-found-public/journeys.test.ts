@@ -6,7 +6,7 @@
  */
 
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { publicCaseView, readContacts, resolveTrackingLink, transition, createCase, type StaffActor } from "@/lib/cases";
 import { decryptPii, PiiUnavailableError } from "@/lib/crypto/pii";
 import { auditLog, caseContacts, caseEvents, cases, lostFoundClaims, lostFoundIdentifyingDetails, lostFoundItems, journeyMetrics, lostFoundJourneys, lostFoundPublic, places, referenceCounters } from "@/lib/db/schema";
@@ -23,6 +23,8 @@ import { KEY_A, KEY_B, setup } from "../cases/helpers";
 let t: Awaited<ReturnType<typeof setup>>;
 let officer: StaffActor;
 const env = { PII_ENCRYPTION_KEY: KEY_A, NODE_ENV: "test" };
+vi.mock("@/lib/content/revalidate", () => ({ revalidateFor: vi.fn() }));
+
 const NOW = new Date("2026-03-10T05:00:00Z");
 const ctx = { locale: "en" as const, ip: "203.0.113.7", userAgent: "vitest", requestId: "req-1" };
 let placeId: string;
@@ -319,10 +321,27 @@ describe("tracking and withdrawing", () => {
     expect(c!.piiDeleteAfter).toEqual(new Date("2027-03-10T05:00:00Z"));
     const [item] = await t.db.select().from(lostFoundItems).where(eq(lostFoundItems.caseId, out.caseId));
     expect(item!.registerStatus).toBe("withdrawn");
+    expect(item!.resolvedAt).toEqual(NOW);
     const view = await openTracked(t.db, out.reference, out.token, "198.51.100.3", NOW);
     expect(view).toMatchObject({ state: "ok", canWithdraw: false, view: { status: "withdrawn" } });
     // Withdrawing twice, or after the case is closed, is not allowed.
     expect(await withdrawTracked(t.db, out.reference, out.token, { ip: "198.51.100.2" }, NOW)).toBe("not_allowed");
+  });
+
+  it("leaves the case and the listing both as they were when the listing cannot be updated", async () => {
+    const out = await submitReport(t.db, "lost", lostValues(), ctx, { now: NOW, env });
+    await t.db.execute(sql`create function lf_refuse() returns trigger as $$ begin raise exception 'listing refused'; end $$ language plpgsql`);
+    await t.db.execute(sql`create trigger lf_refuse before update on lost_found_items for each row when (new.register_status = 'withdrawn') execute function lf_refuse()`);
+    try {
+      expect(await withdrawTracked(t.db, out.reference, out.token, { ip: "198.51.100.8" }, NOW)).toBe("not_allowed");
+    } finally {
+      await t.db.execute(sql`drop trigger lf_refuse on lost_found_items`);
+    }
+    const [c] = await t.db.select().from(cases).where(eq(cases.id, out.caseId));
+    expect(c).toMatchObject({ status: "submitted", closedAt: null });
+    const [item] = await t.db.select().from(lostFoundItems).where(eq(lostFoundItems.caseId, out.caseId));
+    expect(item!.registerStatus).toBe("open");
+    expect(await withdrawTracked(t.db, out.reference, out.token, { ip: "198.51.100.8" }, NOW)).toBe("withdrawn");
   });
 
   it("does not offer withdrawal on a found item case", async () => {
@@ -385,6 +404,8 @@ describe("claim", () => {
 
     const [c] = await t.db.select().from(cases).where(eq(cases.id, item.caseId!));
     expect(c!.status).toBe("claim_pending");
+    const [listing] = await t.db.select().from(lostFoundItems).where(eq(lostFoundItems.caseId, item.caseId!));
+    expect(listing!.registerStatus).toBe("matched");
     const events = await t.db.select().from(caseEvents).where(eq(caseEvents.caseId, item.caseId!));
     expect(events.find((e) => e.type === "status_changed" && e.toStatus === "claim_pending")).toMatchObject({ fromStatus: "listed", visibility: "public" });
     expect(JSON.stringify(events)).not.toContain("green library");

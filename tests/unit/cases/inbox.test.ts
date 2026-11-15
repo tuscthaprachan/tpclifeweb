@@ -12,6 +12,7 @@ import { auditLog, cases, complaintCases, savedCaseViews, user } from "@/lib/db/
 import { CSV_BOM } from "@/lib/admin/content/csv";
 import { setupComplaints, NOW, type Ctx } from "../complaints/helpers";
 
+vi.mock("@/lib/content/revalidate", () => ({ revalidateFor: vi.fn() }));
 vi.setConfig({ testTimeout: 60_000, hookTimeout: 60_000 });
 
 let t: Ctx;

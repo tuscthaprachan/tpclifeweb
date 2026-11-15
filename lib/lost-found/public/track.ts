@@ -6,12 +6,11 @@
  * same to the caller: `none`.
  */
 
-import { eq } from "drizzle-orm";
 import { claimTrackView, type ClaimTrackView } from "./claim-view";
 import { allowedTransitions, consumeTrackingAttempt, publicCaseView, resolveTrackingLink, transition, type CaseActor, type PublicCaseView, type TrackedCase } from "@/lib/cases";
 import type { AuditExecutor } from "@/lib/db/audit";
-import { lostFoundItems } from "@/lib/db/schema/content/lost-found";
 import { localePath, type Locale } from "@/lib/i18n/config";
+import { expireListing } from "../listing";
 import { SITE_URL } from "@/lib/site-url";
 
 const REFERENCE = /^LF-\d{4}-\d{4,}$/;
@@ -83,8 +82,10 @@ export type WithdrawOutcome = "withdrawn" | "none" | "not_allowed" | { state: "l
 
 /**
  * Withdraws a lost report for the person who holds the link, and takes its
- * listing off the register. The status check is the engine's, for a public
- * actor after the link resolved.
+ * listing off the register. The listing follows the case inside the
+ * transition's own transaction (`AFTER_TRANSITION`), so the two commit or fail
+ * together. The status check is the engine's, for a public actor after the
+ * link resolved.
  */
 export async function withdrawTracked(
   db: AuditExecutor,
@@ -105,6 +106,6 @@ export async function withdrawTracked(
   } catch {
     return "not_allowed";
   }
-  await db.update(lostFoundItems).set({ registerStatus: "withdrawn", resolvedAt: now }).where(eq(lostFoundItems.caseId, tracked.id));
+  await expireListing(db, tracked.id);
   return "withdrawn";
 }

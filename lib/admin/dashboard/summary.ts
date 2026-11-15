@@ -5,6 +5,7 @@ import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { countContentTypes } from "@/lib/admin/content/list";
 import { CONTENT_TYPES, type ContentTypeDef } from "@/lib/admin/content/types";
 import { accessibleServices } from "@/lib/cases/access";
+import { loanOverdueSql } from "@/lib/borrowing/overdue";
 import { addDays, dayKeyOf, dayStart } from "@/lib/borrowing/time";
 import { listCases } from "@/lib/cases/engine";
 import { caseVisibleTo } from "@/lib/cases/restrictions";
@@ -119,8 +120,8 @@ export async function loadBorrowingCounts(db: AuditExecutor, now = new Date()): 
   const [row] = await db
     .select({
       pending: sql<number>`count(*) filter (where ${cases.status} = 'requested')::int`,
-      dueToday: sql<number>`count(*) filter (where ${cases.status} = 'on_loan' and ${borrowingRequests.returnDueAt} >= ${now} and ${borrowingRequests.returnDueAt} < ${tomorrow})::int`,
-      overdue: sql<number>`count(*) filter (where ${cases.status} = 'on_loan' and ${borrowingRequests.returnDueAt} < ${now})::int`,
+      dueToday: sql<number>`count(*) filter (where ${cases.status} = 'on_loan' and not ${loanOverdueSql(now)} and ${borrowingRequests.returnDueAt} < ${tomorrow})::int`,
+      overdue: sql<number>`count(*) filter (where ${loanOverdueSql(now)})::int`,
     })
     .from(cases)
     .innerJoin(borrowingRequests, eq(borrowingRequests.caseId, cases.id))

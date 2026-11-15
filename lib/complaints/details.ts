@@ -17,6 +17,7 @@ import { caseAttachments, cases } from "@/lib/db/schema/cases";
 import { complaintCases, complaintCategories, complaintEvidence, type ComplaintCaseRow, type ComplaintCategoryRow } from "@/lib/db/schema/complaints";
 import type { Storage } from "@/lib/storage";
 import { complaintTextAad, evidenceNameAad } from "./aad";
+import { toEscalationReason, type EscalationReason } from "./overdue";
 
 export interface ComplaintFacts {
   caseId: string;
@@ -27,7 +28,7 @@ export interface ComplaintFacts {
   acknowledgedAt: Date | null;
   resolvedAt: Date | null;
   escalatedAt: Date | null;
-  escalatedReason: ComplaintCaseRow["escalatedReason"];
+  escalatedReason: EscalationReason | null;
   wellbeingRoutedAt: Date | null;
   reopenCount: number;
   evidenceCount: number;
@@ -65,7 +66,7 @@ export async function getComplaintFacts(db: AuditExecutor, caseId: string, actor
     acknowledgedAt: cc.acknowledgedAt,
     resolvedAt: cc.resolvedAt,
     escalatedAt: cc.escalatedAt,
-    escalatedReason: cc.escalatedReason,
+    escalatedReason: toEscalationReason(cc.escalatedReason),
     wellbeingRoutedAt: cc.wellbeingRoutedAt,
     reopenCount: cc.reopenCount,
     evidenceCount: evidence?.n ?? 0,

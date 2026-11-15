@@ -16,10 +16,18 @@
  * rejection, or collection details on acceptance) are public updates tagged
  * with the claim id, which keeps them off the item's general timeline.
  *
+ * An acceptance is refused (`invalid_transition`) once the found item is ready
+ * to collect for another claimant, returned or withdrawn, as `createClaim` is.
+ *
  * `createClaim` also accepts the `public` actor, which is how a public claim
- * journey records its submission here. Only staff can move the found item to
- * `claim_pending`, so a public claim leaves the status alone until an officer
- * starts the review (the decision does it if nobody has).
+ * journey records its submission here. A public claim through the listing moves
+ * the found item to `claim_pending` itself (lib/lost-found/public/submit.ts);
+ * one recorded here leaves the status alone until an officer starts the review
+ * (the decision does it if nobody has).
+ *
+ * Every status move keeps the listing's register status in step through the
+ * engine's after-transition hook, so the explicit register writes below only
+ * restate what the move already did.
  */
 
 import { and, asc, eq, isNull } from "drizzle-orm";
@@ -164,6 +172,9 @@ export async function decideClaim(db: AuditExecutor, input: DecideInput, actor: 
     assertStaff(actor, found.service);
     if (claim.decision) throw new CaseError("stale", "This claim has already been decided.");
     if (found.kind !== "found") throw new CaseError("invalid", "A claim is made on a found item.");
+    if (input.decision === "accepted" && (isTerminalStatus(found.service, found.kind, found.status) || found.status === "ready_to_collect")) {
+      throw new CaseError("invalid_transition", "This item can no longer be claimed.");
+    }
 
     // The claimant's lost report: the one named on the claim, else the linked one.
     let lostCaseId = claim.lostCaseId;

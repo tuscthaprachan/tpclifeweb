@@ -15,7 +15,7 @@ import { getComplaintFacts } from "@/lib/complaints/details";
 import { listContactSummaries } from "@/lib/cases/contacts";
 import { listAssignees, staffTimeline, type StaffTimelineEntry } from "@/lib/cases/engine";
 import { listMentionable, mentionNames, mentionedIds, splitMentions } from "@/lib/cases/mentions";
-import { allowedTransitions, getServiceDef, getStatusDef, SERVICES, statusLabel } from "@/lib/cases/services";
+import { allowedTransitions, getServiceDef, getStatusDef, SERVICES, statusLabel, usesOwnActions } from "@/lib/cases/services";
 import { staffActorFor } from "@/lib/cases/staff";
 import { CaseError } from "@/lib/cases/types";
 import { getDb } from "@/lib/db";
@@ -115,7 +115,7 @@ export default async function CasePage({ params, searchParams }: { params: Promi
   const aside = (
     <>
       <Card title={a("ckAsideReference", locale)} icon="cases" level={2}>
-        <CopyReference reference={row.reference} copyLabel={a("ckCopyReference", locale)} copiedLabel={a("ckCopied", locale)} />
+        <CopyReference reference={row.reference} copyLabel={a("ckCopyReference", locale)} copiedLabel={a("ckCopied", locale)} failedLabel={a("linkCopyFailed", locale)} />
       </Card>
 
       <SectionCard id="case-actions" icon={Workflow} title={a("caseStatusHeading", locale)}>
@@ -123,10 +123,8 @@ export default async function CasePage({ params, searchParams }: { params: Promi
           <span className="text-ink-600">{a("ckCurrentStatus", locale)}</span>
           {statusTag}
         </p>
-        {row.service === "complaint" ? (
-          <p className="m-0 text-ink-600">{a("cpcStatusUsePanel", locale)}</p>
-        ) : row.service === "borrowing" ? (
-          <p className="m-0 text-ink-600">{a("brStatusUsePanel", locale)}</p>
+        {usesOwnActions(row.service) ? (
+          <p className="m-0 text-ink-600">{a(service.ownActionsNotice!.panel, locale)}</p>
         ) : next.length > 0 ? (
           <>
             <p className="m-0 text-sm text-ink-600">{a("ckNextSteps", locale, { steps: next.map((n) => n.label).join(", ") })}</p>

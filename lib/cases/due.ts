@@ -22,9 +22,14 @@ export function caseDueAt(): SQL<Date | null> {
     else null end)`;
 }
 
+/** The one boundary every overdue rule shares: a date is past only strictly before `now`, so at the instant it falls due the case is still on time. */
+export function isPastDue(dueAt: Date, now: Date): boolean {
+  return dueAt.getTime() < now.getTime();
+}
+
 /** Past it is overdue; by the end of the next working day is due soon; otherwise on time. No date, no state. */
 export function dueState(dueAt: Date | null | undefined, now: Date): DueState | null {
   if (!dueAt) return null;
-  if (dueAt.getTime() < now.getTime()) return "overdue";
+  if (isPastDue(dueAt, now)) return "overdue";
   return dueAt.getTime() <= addWorkingDays(now, 1).getTime() ? "soon" : "on_time";
 }

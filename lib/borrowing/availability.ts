@@ -23,6 +23,7 @@ import type { AuditExecutor } from "@/lib/db/audit";
 import { borrowingLines, borrowingRequests, equipmentCategories, equipmentItems, type EquipmentCategoryRow, type EquipmentItemRow } from "@/lib/db/schema/borrowing";
 import { cases } from "@/lib/db/schema/cases";
 import { HOLDING_STATUSES } from "./constants";
+import { loanHoldEnd, loanHoldEndSql } from "./overdue";
 import { DAY_MS, dayStart } from "./time";
 
 export interface Hold {
@@ -80,7 +81,7 @@ export async function loadHolds(db: AuditExecutor, range: { from: Date; to: Date
     inArray(cases.status, [...HOLDING_STATUSES]),
     lt(borrowingRequests.collectAt, range.to),
     // An overdue loan is still out: its hold lasts until now.
-    sql`greatest(${borrowingRequests.returnDueAt}, case when ${cases.status} = 'on_loan' then ${now.toISOString()}::timestamptz else ${borrowingRequests.returnDueAt} end) > ${range.from.toISOString()}::timestamptz`,
+    sql`${loanHoldEndSql(now)} > ${range.from.toISOString()}::timestamptz`,
   ];
   if (opts.itemIds) {
     if (opts.itemIds.length === 0) return [];
@@ -104,7 +105,7 @@ export async function loadHolds(db: AuditExecutor, range: { from: Date; to: Date
     itemId: r.itemId,
     quantity: r.quantity,
     start: r.start,
-    end: r.status === "on_loan" && r.end.getTime() < now.getTime() ? now : r.end,
+    end: loanHoldEnd({ status: r.status, returnDueAt: r.end }, now),
   }));
 }
 

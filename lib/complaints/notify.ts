@@ -25,6 +25,7 @@ import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { getEmailSender, isEmailConfigured, type EmailSender } from "@/lib/email";
 import { complaintAcknowledged, complaintRedirected, complaintResolved, complaintsEscalated } from "@/lib/email/complaint-templates";
 import type { RenderedEmail } from "@/lib/email/templates";
+import type { EscalationReason } from "./overdue";
 import { loadRedirectTarget } from "./redirect";
 
 export type ComplainantNotice = "acknowledged" | "resolved" | "redirected";
@@ -103,7 +104,7 @@ export interface EscalatedItem {
   reference: string;
   categoryId: string;
   restricted: boolean;
-  reason: "acknowledge" | "resolve";
+  reason: EscalationReason;
 }
 
 /** Who should hear about an escalation: officers for ordinary categories, the named staff for a restricted one. */

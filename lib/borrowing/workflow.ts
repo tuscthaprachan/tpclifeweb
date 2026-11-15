@@ -28,6 +28,8 @@ import { cases, type CaseRow } from "@/lib/db/schema/cases";
 import { faculties } from "@/lib/db/schema/content";
 import { requestAad } from "./aad";
 import { availableOver, loadHolds, lockAndFindShortfalls } from "./availability";
+import { OPEN_LOAN_STATUSES } from "./constants";
+import { isLoanOverdue } from "./overdue";
 import { BorrowingError } from "./errors";
 import { addDays, dayKeyOf, dayStart } from "./time";
 
@@ -440,7 +442,7 @@ export async function readLoanFacts(db: AuditExecutor, caseId: string, actor: St
     compensationNote: request.compensationNote,
     settledAt: request.settledAt,
     settlement: request.settlement,
-    overdue: row.status === "on_loan" && request.returnDueAt.getTime() < now.getTime(),
+    overdue: isLoanOverdue({ status: row.status, returnDueAt: request.returnDueAt }, now),
     hasDetails: !row.piiDeletedAt && Boolean(request.studentIdEnc || request.affiliationEnc),
     lines: rows.map(({ line, item }) => ({
       lineId: line.id,
@@ -529,7 +531,7 @@ export async function listSchedule(db: AuditExecutor, actor: StaffActor, now: Da
     .select({ c: cases, r: borrowingRequests })
     .from(cases)
     .innerJoin(borrowingRequests, eq(borrowingRequests.caseId, cases.id))
-    .where(and(eq(cases.service, "borrowing"), inArray(cases.status, ["requested", "approved", "on_loan", "compensation_due"])));
+    .where(and(eq(cases.service, "borrowing"), inArray(cases.status, [...OPEN_LOAN_STATUSES])));
   const ids = open.map((o) => o.c.id);
   const lineRows = ids.length
     ? await db
@@ -570,7 +572,7 @@ export async function listSchedule(db: AuditExecutor, actor: StaffActor, now: Da
     collectionsMissed: pick("approved", "collectAt", 0, todayStart),
     returnsToday: pick("on_loan", "returnDueAt", nowMs, tomorrowStart),
     returnsNext7: pick("on_loan", "returnDueAt", tomorrowStart, weekEnd),
-    overdue: rows.filter((r) => r.status === "on_loan" && r.returnDueAt.getTime() < nowMs).sort(byTime("returnDueAt")),
+    overdue: rows.filter((r) => isLoanOverdue(r, now)).sort(byTime("returnDueAt")),
     compensationDue: rows.filter((r) => r.status === "compensation_due").sort(byTime("returnDueAt")),
   };
 }
