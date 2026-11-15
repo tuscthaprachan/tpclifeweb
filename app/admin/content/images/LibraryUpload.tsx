@@ -3,13 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useId, useRef, useState, useSyncExternalStore } from "react";
 import { uploadImageAction } from "@/app/admin/content/actions";
-import { compressInBrowser } from "@/components/admin/content/compress-image-browser";
+import { runUpload } from "@/components/admin/content/upload/run-upload";
+import { initialUpload, isUploadBusy, uploadError, uploadProgress, uploadReducer, type UploadEvent, type UploadState } from "@/components/admin/content/upload/upload-machine";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Button, TextInput } from "@/components/ui";
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
-
-type Status = "queued" | "compressing" | "uploading" | "done" | "failed";
 
 interface Item {
   key: number;
@@ -17,20 +16,17 @@ interface Item {
   altTh: string;
   altEn: string;
   decorative: boolean;
-  status: Status;
-  error?: string;
-  imageId?: string;
+  upload: UploadState<string>;
 }
 
 const STATUS_KEY = {
+  idle: "mlStatusQueued",
   queued: "mlStatusQueued",
   compressing: "mlStatusCompressing",
   uploading: "mlStatusUploading",
   done: "mlStatusDone",
   failed: "mlStatusFailed",
-} as const satisfies Record<Status, string>;
-
-const PROGRESS: Record<Status, number> = { queued: 0, compressing: 30, uploading: 65, done: 100, failed: 100 };
+} as const satisfies Record<UploadState["status"], string>;
 
 const isPicture = (file: File) => file.type.startsWith("image/") || /\.(jpe?g|png|webp|heic)$/i.test(file.name);
 
@@ -46,16 +42,18 @@ export function LibraryUpload({ locale }: { locale: Locale }) {
   const router = useRouter();
   const inputId = useId();
   const nextKey = useRef(0);
+  const nextRun = useRef(0);
   const ready = useSyncExternalStore(subscribe, () => true, () => false);
   const [items, setItems] = useState<Item[]>([]);
   const [over, setOver] = useState(false);
-  const [running, setRunning] = useState(false);
-  const [notes, setNotes] = useState<string[]>([]);
+    const [notes, setNotes] = useState<string[]>([]);
   const [summary, setSummary] = useState<string | null>(null);
 
   if (!ready) return null;
 
+  const running = items.some((item) => isUploadBusy(item.upload));
   const patch = (key: number, change: Partial<Item>) => setItems((list) => list.map((item) => (item.key === key ? { ...item, ...change } : item)));
+  const send = (key: number, event: UploadEvent<string>) => setItems((list) => list.map((item) => (item.key === key ? { ...item, upload: uploadReducer(item.upload, event) } : item)));
 
   function add(files: FileList | File[]) {
     const skipped: string[] = [];
@@ -65,58 +63,53 @@ export function LibraryUpload({ locale }: { locale: Locale }) {
         skipped.push(a("mlQueueSkipped", locale, { name: file.name }));
         continue;
       }
-      accepted.push({ key: nextKey.current++, file, altTh: "", altEn: "", decorative: false, status: "queued" });
+      accepted.push({ key: nextKey.current++, file, altTh: "", altEn: "", decorative: false, upload: initialUpload<string>() });
     }
     setNotes(skipped);
     setSummary(null);
-    setItems((list) => [...list.filter((i) => i.status !== "done"), ...accepted]);
+    setItems((list) => [...list.filter((i) => i.upload.status !== "done"), ...accepted]);
   }
 
   async function uploadAll() {
-    setRunning(true);
+    if (running) return;
     setSummary(null);
-    const queue = items.filter((i) => i.status !== "done");
+    const queue = items.filter((i) => i.upload.status !== "done");
+    const runs = new Map(queue.map((item, index) => [item.key, nextRun.current + index + 1]));
+    nextRun.current += queue.length;
+    for (const item of queue) send(item.key, { type: "queue", run: runs.get(item.key)! });
     let ok = 0;
     let failed = 0;
     for (const item of queue) {
+      const run = runs.get(item.key)!;
       if (!item.decorative && (!item.altTh.trim() || !item.altEn.trim())) {
-        patch(item.key, { status: "failed", error: a("mlQueueAltNeeded", locale) });
+        send(item.key, { type: "fail", run, reason: "invalid", message: a("mlQueueAltNeeded", locale) });
         failed++;
         continue;
       }
-      patch(item.key, { status: "compressing", error: undefined });
-      const compressed = await compressInBrowser(item.file);
-      if (compressed.status === "failed") {
-        patch(item.key, { status: "failed", error: a(compressed.reason === "decode" ? "errUploadCompressDecode" : "errUploadCompressStill", locale) });
-        failed++;
-        continue;
-      }
-      patch(item.key, { status: "uploading" });
-      const data = new FormData();
-      data.set("file", compressed.file);
-      data.set("altTh", item.altTh);
-      data.set("altEn", item.altEn);
-      if (item.decorative) data.set("isDecorative", "on");
-      try {
-        const result = await uploadImageAction(data);
-        if (result.ok) {
-          patch(item.key, { status: "done", imageId: result.image.id });
-          ok++;
-        } else {
-          patch(item.key, { status: "failed", error: result.error });
-          failed++;
-        }
-      } catch {
-        patch(item.key, { status: "failed", error: a("errUploadFailed", locale) });
-        failed++;
-      }
+      const outcome = await runUpload<string>({
+        run,
+        file: item.file,
+        locale,
+        emit: (event) => send(item.key, event),
+        isCurrent: () => true,
+        upload: async (sent) => {
+          const data = new FormData();
+          if (sent) data.set("file", sent);
+          data.set("altTh", item.altTh);
+          data.set("altEn", item.altEn);
+          if (item.decorative) data.set("isDecorative", "on");
+          const result = await uploadImageAction(data);
+          return result.ok ? { ok: true, result: result.image.id } : { ok: false, error: result.error };
+        },
+      });
+      if (outcome.status === "done") ok++;
+      else failed++;
     }
-    setRunning(false);
     setSummary(failed ? a("mlQueueSomeFailed", locale, { failed }) : a("mlQueueAllDone", locale, { ok }));
     if (ok) router.refresh();
   }
 
-  const waiting = items.filter((i) => i.status !== "done").length;
+  const waiting = items.filter((i) => i.upload.status !== "done").length;
 
   return (
     <section aria-labelledby={`${inputId}-title`} className="console-card flex flex-col gap-[var(--space-3)] p-[var(--space-4)]">
@@ -168,14 +161,16 @@ export function LibraryUpload({ locale }: { locale: Locale }) {
           <h3 className="m-0 text-base font-semibold">{a("mlQueueTitle", locale)}</h3>
           <ul className="m-0 flex list-none flex-col gap-[var(--space-4)] p-0">
             {items.map((item) => {
-              const locked = running || item.status === "done";
+              const status = item.upload.status;
+              const error = uploadError(item.upload);
+              const locked = running || status === "done";
               const progressId = `${inputId}-p-${item.key}`;
               return (
                 <li key={item.key} className="flex flex-col gap-[var(--space-2)] border-t border-line pt-[var(--space-3)]">
                   <div className="flex flex-wrap items-center justify-between gap-[var(--space-2)]">
                     <span className="min-w-0 break-all font-medium">{item.file.name}</span>
                     <span className="flex items-center gap-[var(--space-2)] text-sm">
-                      <span id={progressId}>{a(STATUS_KEY[item.status], locale)}</span>
+                      <span id={progressId}>{a(STATUS_KEY[status], locale)}</span>
                       {!locked ? (
                         <button type="button" className="inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center" onClick={() => setItems((list) => list.filter((i) => i.key !== item.key))}>
                           <ConsoleIcon name="close" size={16} />
@@ -184,8 +179,8 @@ export function LibraryUpload({ locale }: { locale: Locale }) {
                       ) : null}
                     </span>
                   </div>
-                  <progress max={100} value={PROGRESS[item.status]} aria-label={a("mlProgressLabel", locale, { name: item.file.name })} aria-describedby={progressId} className="h-2 w-full" />
-                  {item.status === "done" ? null : (
+                  <progress max={100} value={uploadProgress(item.upload)} aria-label={a("mlProgressLabel", locale, { name: item.file.name })} aria-describedby={progressId} className="h-2 w-full" />
+                  {status === "done" ? null : (
                     <>
                       <div className="grid gap-[var(--space-3)] md:grid-cols-2">
                         <TextInput id={`${inputId}-th-${item.key}`} lang="th" label={a("imageAltTh", locale)} autoComplete="off" disabled={locked || item.decorative} value={item.altTh} onChange={(e) => patch(item.key, { altTh: e.target.value })} />
@@ -197,9 +192,9 @@ export function LibraryUpload({ locale }: { locale: Locale }) {
                       </label>
                     </>
                   )}
-                  {item.error ? (
+                  {error ? (
                     <p role="alert" className="m-0 text-sm font-medium text-error">
-                      {item.error}
+                      {error}
                     </p>
                   ) : null}
                 </li>

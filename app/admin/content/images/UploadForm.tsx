@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { uploadImageAction } from "@/app/admin/content/actions";
-import { compressInBrowser } from "@/components/admin/content/compress-image-browser";
-import { formatMegabytes } from "@/components/admin/content/compress-image";
 import { FormSection } from "@/components/admin/content/FormSection";
+import { uploadError, uploadNote } from "@/components/admin/content/upload/upload-machine";
+import { useImageUpload } from "@/components/admin/content/upload/use-image-upload";
 import { UnsavedChangesGuard } from "@/components/admin/content/UnsavedChangesGuard";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { ActionBar } from "@/components/admin/ui";
@@ -21,8 +21,9 @@ import { UI } from "@/lib/i18n/strings";
  */
 export function UploadForm({ locale }: { locale: Locale }) {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [note, setNote] = useState<string | null>(null);
+  const upload = useImageUpload<string>(locale);
+  const error = uploadError(upload.state);
+  const note = uploadNote(upload.state);
   const [pending, startTransition] = useTransition();
   const [decorative, setDecorative] = useState(false);
   const [dirty, setDirty] = useState(false);
@@ -32,21 +33,15 @@ export function UploadForm({ locale }: { locale: Locale }) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const file = data.get("file");
-    setError(null);
-    setNote(null);
     startTransition(async () => {
-      if (file instanceof File && file.size > 0) {
-        const compressed = await compressInBrowser(file);
-        if (compressed.status === "failed") return setError(a(compressed.reason === "decode" ? "errUploadCompressDecode" : "errUploadCompressStill", locale));
-        if (compressed.status === "compressed") {
-          setNote(a("imageCompressed", locale, { from: formatMegabytes(compressed.originalBytes), to: formatMegabytes(compressed.compressedBytes) }));
-        }
-        data.set("file", compressed.file);
-      }
-      const result = await uploadImageAction(data);
-      if (!result.ok) return setError(result.error);
+      const outcome = await upload.start(file instanceof File ? file : null, async (sent) => {
+        if (sent) data.set("file", sent);
+        const result = await uploadImageAction(data);
+        return result.ok ? { ok: true, result: result.image.id } : { ok: false, error: result.error };
+      });
+      if (outcome.status !== "done") return;
       setDirty(false);
-      router.push(`/admin/content/images/${result.image.id}?uploaded=1`);
+      router.push(`/admin/content/images/${outcome.result}?uploaded=1`);
     });
   }
 

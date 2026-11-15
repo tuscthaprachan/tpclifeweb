@@ -1,13 +1,14 @@
 "use client";
 
-import { useId, useState, useTransition } from "react";
+import { useId, useState } from "react";
 import { uploadImageAction } from "@/app/admin/content/actions";
 import { Button, Checkboxes, ErrorMessage, NotificationBanner, TextInput } from "@/components/ui";
 import type { ImageChoice } from "@/lib/admin/content/images";
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
-import { compressInBrowser } from "../compress-image-browser";
 import { PortalDialog } from "../PortalDialog";
+import { uploadError } from "../upload/upload-machine";
+import { useImageUpload } from "../upload/use-image-upload";
 
 interface ImageUploadDialogProps {
   /** The picture that was pasted or dropped; null closes the dialog. */
@@ -24,28 +25,31 @@ export function ImageUploadDialog({ file, locale, storageConfigured, onClose, on
   const [altTh, setAltTh] = useState("");
   const [altEn, setAltEn] = useState("");
   const [decorative, setDecorative] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [working, start] = useTransition();
+  const upload = useImageUpload<ImageChoice>(locale);
+  const error = uploadError(upload.state);
+  const working = upload.busy;
 
-  function submit() {
+  async function submit() {
     if (!file) return;
-    setError(null);
-    start(async () => {
-      const compressed = await compressInBrowser(file);
-      if (compressed.status === "failed") return setError(a(compressed.reason === "decode" ? "errUploadCompressDecode" : "errUploadCompressStill", locale));
+    const outcome = await upload.start(file, async (sent) => {
       const data = new FormData();
-      data.set("file", compressed.file);
+      if (sent) data.set("file", sent);
       data.set("altTh", altTh);
       data.set("altEn", altEn);
       if (decorative) data.set("isDecorative", "on");
       const result = await uploadImageAction(data);
-      if (!result.ok) return setError(result.error);
-      onUploaded(result.image, { th: altTh.trim(), en: altEn.trim() });
+      return result.ok ? { ok: true, result: result.image } : { ok: false, error: result.error };
     });
+    if (outcome.status === "done") onUploaded(outcome.result, { th: altTh.trim(), en: altEn.trim() });
+  }
+
+  function close() {
+    upload.cancel();
+    onClose();
   }
 
   return (
-    <PortalDialog open={file !== null} onClose={onClose} title={a("edPasteTitle", locale)} headingLevel={2} locale={locale} className="w-[min(100vw-2rem,32rem)]">
+    <PortalDialog open={file !== null} onClose={close} title={a("edPasteTitle", locale)} headingLevel={2} locale={locale} className="w-[min(100vw-2rem,32rem)]">
       {file ? (
         <div className="flex flex-col gap-[var(--space-3)]">
           <p className="m-0 text-sm text-ink-600">
@@ -69,10 +73,10 @@ export function ImageUploadDialog({ file, locale, storageConfigured, onClose, on
               />
               {error ? <ErrorMessage id={`${uid}-error`}>{error}</ErrorMessage> : null}
               <div className="flex flex-wrap gap-[var(--space-3)]">
-                <Button type="button" onClick={submit} loading={working} loadingLabel={a("edPasteWorking", locale)}>
+                <Button type="button" onClick={() => void submit()} loading={working} loadingLabel={a("edPasteWorking", locale)}>
                   {a("edPasteAdd", locale)}
                 </Button>
-                <Button type="button" variant="quiet" onClick={onClose}>
+                <Button type="button" variant="quiet" onClick={close}>
                   {a("cancel", locale)}
                 </Button>
               </div>

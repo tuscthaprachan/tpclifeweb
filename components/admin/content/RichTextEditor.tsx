@@ -181,7 +181,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   const [findOpen, setFindOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [full, setFull] = useState(false);
-  const [pasted, setPasted] = useState<{ file: File; pos: number | null } | null>(null);
+  const [pasted, setPasted] = useState<File | null>(null);
   const [images, setImages] = useState<ImageChoice[]>(refs.images);
   const [live, setLive] = useState("");
   const mac = useSyncExternalStore(subscribe, isMac, () => false);
@@ -189,12 +189,18 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   const wrapRef = useRef<HTMLDivElement>(null);
   const mdLib = useRef<MarkdownModule | null>(null);
   const mdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mdRef = useRef("");
+  const jsonRef = useRef(json);
+  const pastePos = useRef<number | null>(null);
+  const hiddenRef = useRef<HTMLInputElement>(null);
   const [bridge] = useState(() => new EditorBridge());
 
   const liveRefs = useMemo<RichTextRefs>(() => ({ ...refs, images }), [refs, images]);
 
   const commit = useCallback((doc: RichTextDoc) => {
-    setJson(JSON.stringify(doc));
+    const next = JSON.stringify(doc);
+    jsonRef.current = next;
+    setJson(next);
     setPlain(richTextToPlainText(doc));
   }, []);
 
@@ -269,7 +275,9 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   const closeDialogs = useCallback(() => {
     setBlock(null);
     setLinkTarget(null);
+    setShortcutsOpen(false);
     setPasted(null);
+    pastePos.current = null;
     editor?.commands.focus();
   }, [editor]);
 
@@ -284,7 +292,11 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   const openFind = useCallback(() => setFindOpen(true), []);
 
   useEffect(() => {
-    bridge.update({ keys: { link: openLink, find: openFind, fullscreen: toggleFull }, onFile: (file, pos) => setPasted({ file, pos }) });
+    bridge.update({ keys: { link: openLink, find: openFind, fullscreen: toggleFull }, onFile: (file, pos) => {
+        pastePos.current = pos;
+        setPasted(file);
+      },
+    });
   }, [bridge, openLink, openFind, toggleFull]);
 
   useEffect(() => {
@@ -296,6 +308,17 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
       document.body.style.overflow = previous;
     };
   }, [full, editor]);
+
+  useEffect(() => {
+    if (!editor) return;
+    const follow = ({ transaction }: { transaction: { docChanged: boolean; mapping: { map: (pos: number) => number } } }) => {
+      if (pastePos.current !== null && transaction.docChanged) pastePos.current = transaction.mapping.map(pastePos.current);
+    };
+    editor.on("transaction", follow);
+    return () => {
+      editor.off("transaction", follow);
+    };
+  }, [editor]);
 
   const chain = () => editor!.chain().focus();
   const insertBlock = (type: BlockType) => setBlock({ type, mode: "insert", attrs: structuredClone(BLOCK_DEFAULTS[type]) as Raw });
@@ -381,15 +404,24 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
     [editor, commit],
   );
 
+  const setMarkdown = useCallback((value: string) => {
+    mdRef.current = value;
+    setMd(value);
+  }, []);
+
+  const failMarkdownImport = (e: unknown) => setLive(T("edMdError", { message: e instanceof Error ? e.message : String(e) }));
+
   async function showMarkdown() {
     if (!editor || mode === "markdown") return;
     setModeBusy(true);
     try {
       const lib = await loadMarkdown();
-      setMd(lib.docToMarkdown(normaliseEditorDoc(editor.getJSON())));
+      setMarkdown(lib.docToMarkdown(normaliseEditorDoc(editor.getJSON())));
       setMdError(null);
       setMode("markdown");
       setFindOpen(false);
+    } catch (e) {
+      failMarkdownImport(e);
     } finally {
       setModeBusy(false);
     }
@@ -400,51 +432,100 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
     setModeBusy(true);
     try {
       const lib = await loadMarkdown();
-      if (mdTimer.current) clearTimeout(mdTimer.current);
+      cancelMarkdownTimer();
       try {
-        applyDoc(lib.markdownToDoc(md), false);
+        applyDoc(lib.markdownToDoc(mdRef.current), false);
         setMdError(null);
         setMode("visual");
         requestAnimationFrame(() => editor.commands.focus());
       } catch (e) {
         setMdError(T("edMdError", { message: lib.markdownErrorMessage(e) }));
       }
+    } catch (e) {
+      failMarkdownImport(e);
     } finally {
       setModeBusy(false);
     }
   }
 
-  function parseMarkdown(value: string) {
+  function cancelMarkdownTimer() {
+    if (mdTimer.current) clearTimeout(mdTimer.current);
+    mdTimer.current = null;
+  }
+
+  function parseMarkdown(value: string): RichTextDoc | null {
     const lib = mdLib.current;
-    if (!lib) return;
+    if (!lib) return null;
     try {
-      commit(lib.markdownToDoc(value));
+      const doc = lib.markdownToDoc(value);
+      commit(doc);
       setMdError(null);
+      return doc;
     } catch (e) {
       setMdError(T("edMdError", { message: lib.markdownErrorMessage(e) }));
+      return null;
     }
   }
 
-  function onMarkdownChange(value: string) {
-    setMd(value);
-    markDirty();
-    if (mdTimer.current) clearTimeout(mdTimer.current);
-    mdTimer.current = setTimeout(() => parseMarkdown(value), 300);
+  /** Parses Markdown typed in the last 300 ms now. Returns the document as it stands afterwards: the new parse, or the last good one if the text does not parse. */
+  function flushMarkdown(): RichTextDoc {
+    if (mdTimer.current) {
+      cancelMarkdownTimer();
+      const doc = parseMarkdown(mdRef.current);
+      if (doc) return doc;
+    }
+    return JSON.parse(jsonRef.current) as RichTextDoc;
   }
+
+  function onMarkdownChange(value: string) {
+    setMarkdown(value);
+    markDirty();
+    cancelMarkdownTimer();
+    mdTimer.current = setTimeout(() => {
+      mdTimer.current = null;
+      parseMarkdown(value);
+    }, 300);
+  }
+
+  useEffect(() => cancelMarkdownTimer, []);
+
+  const flushRef = useRef(flushMarkdown);
+  useEffect(() => {
+    flushRef.current = flushMarkdown;
+  });
+
+  useEffect(() => {
+    const form = wrapRef.current?.closest("form");
+    if (!form) return;
+    const onFormData = (event: FormDataEvent) => {
+      if (mdTimer.current) event.formData.set(name, JSON.stringify(flushRef.current()));
+    };
+    const onSubmit = () => {
+      if (mdTimer.current && hiddenRef.current) hiddenRef.current.value = JSON.stringify(flushRef.current());
+    };
+    form.addEventListener("formdata", onFormData);
+    form.addEventListener("submit", onSubmit, true);
+    return () => {
+      form.removeEventListener("formdata", onFormData);
+      form.removeEventListener("submit", onSubmit, true);
+    };
+  }, [name]);
 
   useImperativeHandle(
     handleRef,
     () => ({
-      getDoc: () => (mode === "visual" && editor ? normaliseEditorDoc(editor.getJSON()) : (JSON.parse(json) as RichTextDoc)),
+      getDoc: () => (mode === "visual" && editor ? normaliseEditorDoc(editor.getJSON()) : flushMarkdown()),
       setDoc: (doc) => {
         applyDoc(doc, true);
         if (mode === "markdown" && mdLib.current) {
-          setMd(mdLib.current.docToMarkdown(doc));
+          cancelMarkdownTimer();
+          setMarkdown(mdLib.current.docToMarkdown(doc));
           setMdError(null);
         }
       },
     }),
-    [editor, mode, json, applyDoc],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [editor, mode, applyDoc],
   );
 
   /* ---------- Actions ---------- */
@@ -549,10 +630,11 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
     const decorative = image.isDecorative;
     const attrs = { imageId: image.id, isDecorative: decorative, alt: decorative ? null : alt, caption: null };
     setImages((cur) => (cur.some((i) => i.id === image.id) ? cur : [image, ...cur]));
-    const at = pasted.pos;
+    const at = pastePos.current;
     const chainWith = editor.chain().focus();
-    if (at !== null) chainWith.insertContentAt(at, { type: "image", attrs }).run();
+    if (at !== null && at >= 0 && at <= editor.state.doc.content.size) chainWith.insertContentAt(at, { type: "image", attrs }).run();
     else chainWith.insertContent({ type: "image", attrs }).run();
+    pastePos.current = null;
     setPasted(null);
     editor.commands.focus();
   }
@@ -620,7 +702,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           {hint}
         </p>
       ) : null}
-      <input type="hidden" name={name} value={json} />
+      <input ref={hiddenRef} type="hidden" name={name} value={json} />
       <div className={`flex min-h-0 flex-col rounded-control bg-surface ${full ? "flex-1" : ""} ${error ? "border-[length:var(--border-width-thick)] border-error" : "border border-line-strong"}`}>
         {visual ? (
           <>
@@ -747,8 +829,8 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
       {editor ? <LinkDialog key={linkTarget ? `${linkTarget.from}-${linkTarget.to}` : "closed"} editor={editor} target={linkTarget} lang={lang} locale={locale} onClose={closeDialogs} /> : null}
       <ShortcutsDialog open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} locale={locale} mac={mac} />
       <ImageUploadDialog
-        key={pasted ? pasted.file.name + pasted.file.size : "none"}
-        file={pasted?.file ?? null}
+        key={pasted ? pasted.name + pasted.size : "none"}
+        file={pasted}
         locale={locale}
         storageConfigured={refs.storageConfigured}
         onClose={closeDialogs}

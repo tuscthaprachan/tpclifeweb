@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useTransition } from "react";
+import { useRef, useState } from "react";
 import { uploadImageAction } from "@/app/admin/content/actions";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Button, ErrorMessage, NotificationBanner } from "@/components/ui";
@@ -11,9 +11,9 @@ import { ADMIN_UPLOAD_MAX_BYTES } from "@/lib/admin/content/upload-limit";
 import { a } from "@/lib/i18n/admin";
 import { pick } from "@/lib/i18n/config";
 import { useContentForm } from "./context";
-import { compressInBrowser } from "./compress-image-browser";
-import { formatMegabytes } from "./compress-image";
 import { PortalDialog } from "./PortalDialog";
+import { uploadError, uploadNote } from "./upload/upload-machine";
+import { useImageUpload } from "./upload/use-image-upload";
 
 interface ImagePickerProps {
   /** Form name. Posts one value per chosen picture (an image id), in order. */
@@ -58,14 +58,16 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
   const [library, setLibrary] = useState(initial);
   const [chosen, setChosen] = useState<string[]>(defaultValue);
   const [open, setOpen] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [uploadNote, setUploadNote] = useState<string | null>(null);
-  const [uploading, startUpload] = useTransition();
+  const upload = useImageUpload<ImageChoice>(locale);
+  const uploading = upload.busy;
+  const chosenRef = useRef(defaultValue);
   const byId = new Map(library.map((i) => [i.id, i]));
   const id = fieldId(name);
   const error = errors[name];
 
-  const update = (next: string[]) => {
+  const update = (change: string[] | ((current: string[]) => string[])) => {
+    const next = typeof change === "function" ? change(chosenRef.current) : change;
+    chosenRef.current = next;
     setChosen(next);
     markDirty();
     onChange?.(next);
@@ -74,45 +76,49 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
     if (!multiple) {
       update([imageId]);
       setOpen(false);
-    } else update(chosen.includes(imageId) ? chosen.filter((x) => x !== imageId) : [...chosen, imageId]);
+    } else update((current) => (current.includes(imageId) ? current.filter((x) => x !== imageId) : [...current, imageId]));
   };
   const move = (index: number, by: -1 | 1) => {
-    const next = [...chosen];
-    const [item] = next.splice(index, 1);
-    next.splice(index + by, 0, item!);
-    update(next);
+    update((current) => {
+      const next = [...current];
+      const [item] = next.splice(index, 1);
+      next.splice(index + by, 0, item!);
+      return next;
+    });
   };
   const altOf = (image: ImageChoice | undefined) =>
     image ? (image.isDecorative ? a("imageDecorative", locale) : pick({ th: image.altTh, en: image.altEn }, locale) || a("imageNoAlt", locale)) : a("imageMissing", locale);
 
-  function upload(form: HTMLElement) {
+  async function uploadPicture(form: HTMLElement) {
     const field = (n: string) => form.querySelector<HTMLInputElement>(`[data-upload="${n}"]`);
     const data = new FormData();
-    const file = field("file")?.files?.[0];
+    const fileInput = field("file");
+    const file = fileInput?.files?.[0];
     data.set("altTh", field("altTh")?.value ?? "");
     data.set("altEn", field("altEn")?.value ?? "");
     if (field("isDecorative")?.checked) data.set("isDecorative", "on");
-    setUploadError(null);
-    setUploadNote(null);
-    startUpload(async () => {
-      if (file) {
-        const compressed = await compressInBrowser(file);
-        if (compressed.status === "failed") return setUploadError(a(compressed.reason === "decode" ? "errUploadCompressDecode" : "errUploadCompressStill", locale));
-        if (compressed.status === "compressed") {
-          setUploadNote(a("imageCompressed", locale, { from: formatMegabytes(compressed.originalBytes), to: formatMegabytes(compressed.compressedBytes) }));
-        }
-        data.set("file", compressed.file);
-      }
+    const outcome = await upload.start(file, async (sent) => {
+      if (sent) data.set("file", sent);
       const result = await uploadImageAction(data);
-      if (!result.ok) return setUploadError(result.error);
-      setLibrary((current) => [result.image, ...current]);
-      onUploaded?.(result.image);
-      if (multiple) update([...chosen, result.image.id]);
-      else {
-        update([result.image.id]);
-        setOpen(false);
-      }
+      return result.ok ? { ok: true, result: result.image } : { ok: false, error: result.error };
     });
+    if (outcome.status !== "done") return;
+    const image = outcome.result;
+    setLibrary((current) => [image, ...current]);
+    onUploaded?.(image);
+    if (multiple) update((current) => [...current, image.id]);
+    else {
+      update([image.id]);
+      setOpen(false);
+    }
+    if (fileInput) fileInput.value = "";
+    for (const n of ["altTh", "altEn"]) {
+      const input = field(n);
+      if (input) input.value = "";
+    }
+    const decorative = field("isDecorative");
+    if (decorative) decorative.checked = false;
+    upload.reset();
   }
 
   return (
@@ -140,7 +146,7 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
                     <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
                   </Button>
                 ) : null}
-                <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="delete" />} onClick={() => update(chosen.filter((x) => x !== imageId))}>
+                <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="delete" />} onClick={() => update((current) => current.filter((x) => x !== imageId))}>
                   {a("remove", locale)}
                   <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
                 </Button>
@@ -219,19 +225,19 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
                   <input type="checkbox" data-upload="isDecorative" className="size-5" />
                   {a("imageDecorativeLabel", locale)}
                 </label>
-                {uploadNote ? (
+                {uploadNote(upload.state) ? (
                   <p role="status" className="m-0 text-sm text-ink-600">
-                    {uploadNote}
+                    {uploadNote(upload.state)}
                   </p>
                 ) : null}
-                {uploadError ? <ErrorMessage id={`${id}-upload-error`}>{uploadError}</ErrorMessage> : null}
+                {uploadError(upload.state) ? <ErrorMessage id={`${id}-upload-error`}>{uploadError(upload.state)}</ErrorMessage> : null}
                 <div>
                   <Button
                     type="button"
                     icon={<ConsoleIcon name="upload" />}
                     loading={uploading}
                     loadingLabel={a("imageUploading", locale)}
-                    onClick={(e) => upload(e.currentTarget.closest("[data-upload-form]") as HTMLElement)}
+                    onClick={(e) => void uploadPicture(e.currentTarget.closest("[data-upload-form]") as HTMLElement)}
                   >
                     {a("imageUpload", locale)}
                   </Button>

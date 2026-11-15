@@ -45,12 +45,16 @@ async function mount() {
       createElement(
         ContentFormProvider,
         { value: { locale: "en", errors: {}, pending: false, markDirty: () => {} } },
-        createElement(BilingualRichTextField, {
-          name: "body",
-          label: "Body",
-          defaultValue: { th: doc("สวัสดี"), en: doc("Hello") },
-          refs: { images: [], forms: [], storageConfigured: false },
-        }),
+        createElement(
+          "form",
+          null,
+          createElement(BilingualRichTextField, {
+            name: "body",
+            label: "Body",
+            defaultValue: { th: doc("สวัสดี"), en: doc("Hello") },
+            refs: { images: [], forms: [], storageConfigured: false },
+          }),
+        ),
       ),
     );
   });
@@ -138,5 +142,28 @@ describe("RichTextEditor", () => {
     expect(h.querySelector("textarea")).not.toBeNull();
     expect(h.textContent).toContain("Cannot go back to Visual yet");
     expect(JSON.parse(hidden(h, "body.en")).content[0].content[1].marks).toEqual([{ type: "bold" }]);
+  });
+
+  it("posts Markdown typed in the last 300 ms when the form is read straight away", async () => {
+    const h = await mount();
+    const toggle = [...h.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].filter((b) => b.textContent === "Markdown").at(-1)!;
+    await act(async () => {
+      toggle.click();
+      await new Promise((r) => setTimeout(r, 600));
+    });
+    const area = h.querySelector<HTMLTextAreaElement>("textarea")!;
+    const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!;
+    await act(async () => {
+      setter.call(area, "Quick **edit**\n");
+      area.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    expect(JSON.parse(hidden(h, "body.en")).content[0].content[0].text).toBe("Hello");
+    const form = h.querySelector("form")!;
+    form.addEventListener("submit", (e) => e.preventDefault());
+    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    const data = new FormData(form);
+    const posted = JSON.parse(String(data.get("body.en")));
+    expect(posted.content[0].content[0].text).toBe("Quick ");
+    expect(posted.content[0].content[1].marks).toEqual([{ type: "bold" }]);
   });
 });

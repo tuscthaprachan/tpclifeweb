@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { compressInBrowser } from "@/components/admin/content/compress-image-browser";
+import { useTransition } from "react";
+import { uploadError, uploadNote } from "@/components/admin/content/upload/upload-machine";
+import { useImageUpload } from "@/components/admin/content/upload/use-image-upload";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Button } from "@/components/ui";
 import { ADMIN_UPLOAD_MAX_BYTES } from "@/lib/admin/content/upload-limit";
@@ -15,21 +16,21 @@ import { replaceImageAction } from "./actions";
  */
 export function ReplaceForm({ id, locale }: { id: string; locale: Locale }) {
   const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const upload = useImageUpload<null>(locale);
+  const error = uploadError(upload.state);
+  const note = uploadNote(upload.state);
   const action = replaceImageAction.bind(null, id);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const file = data.get("file");
-    setError(null);
     startTransition(async () => {
-      if (file instanceof File && file.size > 0) {
-        const compressed = await compressInBrowser(file);
-        if (compressed.status === "failed") return setError(a(compressed.reason === "decode" ? "errUploadCompressDecode" : "errUploadCompressStill", locale));
-        data.set("file", compressed.file);
-      }
-      await action(data);
+      await upload.start(file instanceof File ? file : null, async (sent) => {
+        if (sent) data.set("file", sent);
+        await action(data);
+        return { ok: true, result: null };
+      });
     });
   }
 
@@ -42,6 +43,11 @@ export function ReplaceForm({ id, locale }: { id: string; locale: Locale }) {
         <span className="text-sm text-ink-600">{a("imageFileHint", locale, { mb: ADMIN_UPLOAD_MAX_BYTES / 1024 / 1024 })}</span>
         <input id="media-replace-file" name="file" type="file" required accept="image/jpeg,image/png,image/webp,image/heic" />
       </div>
+      {note ? (
+        <p role="status" className="m-0 text-sm text-ink-600">
+          {note}
+        </p>
+      ) : null}
       {error ? (
         <p role="alert" className="m-0 font-medium text-error">
           {error}
