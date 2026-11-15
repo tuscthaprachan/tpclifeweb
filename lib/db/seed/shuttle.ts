@@ -6,9 +6,8 @@ import { excludedSet, published, slugify, type Bi, type SeedDb } from "./util";
 /**
  * Shuttle routes, built from the harvested inventory.
  * Honesty decisions carried across unchanged: every stop's offset is 0 (the
- * timetable graphics publish no travel times; said in the route notes), the
- * term the timetable applies to is unknown (also in the notes), and nothing is
- * presented as live.
+ * timetable graphics publish no travel times; said in the route notes), and
+ * nothing is presented as live.
  */
 
 const OFFSET_UNKNOWN_NOTE: Bi = {
@@ -19,13 +18,13 @@ const LAST_BUS_NOTE: Bi = {
   th: "รถเที่ยวสุดท้ายออกจากธรรมศาสตร์ท่าพระจันทร์เวลา 21:30 น.",
   en: "The last bus of the day leaves Thammasat Tha Prachan at 21:30.",
 };
-const TERM_UNKNOWN_NOTE: Bi = {
-  th: "ตารางนี้ไม่ได้ระบุภาคการศึกษาหรือปีการศึกษาที่ใช้งาน ควรตรวจสอบกับ อมธ. ท่าพระจันทร์ก่อนถือว่าเป็นตารางปัจจุบัน",
-  en: "This timetable does not state which term or academic year it applies to. Confirm with TUSU Tha Prachan before treating it as current.",
+const EFFECTIVE_NOTE: Bi = {
+  th: "ตารางนี้ใช้ตั้งแต่วันที่ 30 กันยายน 2569 เหลือรถให้บริการ 1 คัน",
+  en: "This timetable applies from 30 September 2026. Only one bus is in service.",
 };
 const SOURCE_NOTE: Bi = {
-  th: "ถอดความจากภาพตารางเวลาอย่างเป็นทางการที่ อมธ. ท่าพระจันทร์จัดหาให้ 16 สิงหาคม 2569",
-  en: "Transcribed from the official timetable graphic supplied by TUSU Tha Prachan, 16 August 2026.",
+  th: "ถอดความจากภาพตารางเวลาอย่างเป็นทางการของ อมธ. และ สนท. ท่าพระจันทร์ ที่มีผลตั้งแต่ 30 กันยายน 2569",
+  en: "Transcribed from the official TUSU and TUSC Tha Prachan timetable graphic, in effect from 30 September 2026.",
 };
 
 function joinNotes(...parts: Bi[]): Bi {
@@ -56,10 +55,11 @@ function dormitoryNote(departures: ReadonlyArray<{ time: string; note: Bi }> | u
 export async function seedShuttle(db: SeedDb): Promise<void> {
   for (const route of SHUTTLE_ROUTES) {
     const notes = joinNotes(
+      route.notice ?? { th: "", en: "" },
       OFFSET_UNKNOWN_NOTE,
       dormitoryNote("dormitoryDepartures" in route ? route.dormitoryDepartures : undefined),
       LAST_BUS_NOTE,
-      TERM_UNKNOWN_NOTE,
+      EFFECTIVE_NOTE,
     );
     const [row] = await db
       .insert(shuttleRoutes)
@@ -71,13 +71,14 @@ export async function seedShuttle(db: SeedDb): Promise<void> {
         descriptionTh: route.description.th,
         descriptionEn: route.description.en,
         daysOfWeek: [...route.daysOfWeek],
+        validFrom: route.validFrom ?? null,
         departures: [...route.departures],
         notesTh: notes.th,
         notesEn: notes.en,
         isActive: true,
         sourceNoteTh: SOURCE_NOTE.th,
         sourceNoteEn: SOURCE_NOTE.en,
-        lastVerified: "2026-08-16",
+        lastVerified: "2026-11-15",
       })
       .onConflictDoUpdate({ target: shuttleRoutes.slug, set: excludedSet(shuttleRoutes) })
       .returning({ id: shuttleRoutes.id });

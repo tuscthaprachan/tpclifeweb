@@ -28,7 +28,8 @@
  * academic year the timetable applies to (so that is flagged too). See
  * SHUTTLE_ROUTES' own comment for the full account.
  *
- * Harvested 7 August 2026. Shuttle timetables added 16 August 2026.
+ * Harvested 7 August 2026. Shuttle timetables added 16 August 2026, replaced
+ * 15 November 2026 by the timetable in effect from 30 September 2026.
  */
 
 /* ------------------------------------------------------------------ *
@@ -375,9 +376,9 @@ export const TRANSPORT = {
       en: "Runs Monday to Friday. No service at weekends or public holidays. See the shuttle page for each route's timetable and stops",
     },
     needsVerification:
-      "Two official timetable graphics were transcribed 16 August 2026 into SHUTTLE_ROUTES; see that export's own " +
-      "comment for exactly what is and is not confirmed (per-stop travel time and the term/academic year the " +
-      "timetable applies to are both unknown). The 'show your student card when boarding' instruction, present on " +
+      "The official timetable graphic in effect from 30 September 2026 was transcribed 15 November 2026 into " +
+      "SHUTTLE_ROUTES; see that export's own comment for exactly what is and is not confirmed (per-stop travel " +
+      "time is unknown). The 'show your student card when boarding' instruction, present on " +
       "the old placeholder note above, was NOT on either timetable graphic and has been dropped rather than carried " +
       "forward unverified; confirm with TUSU whether it still applies.",
   },
@@ -388,11 +389,11 @@ export const TRANSPORT = {
 /* ------------------------------------------------------------------ *
  * Shuttle timetables
  *
- * Transcribed by hand from two official timetable graphics the site owner
- * supplied on 16 August 2026, one per route. This is the first genuine,
- * structured shuttle timetable this file has held; everything in
- * `departures` below is read directly off those graphics, not invented,
- * interpolated or estimated.
+ * Transcribed by hand from the official TUSU and TUSC timetable graphic the
+ * site owner supplied on 15 November 2026, covering both routes and in effect
+ * from 30 September 2026. Everything in `departures` and `stops` below is read
+ * directly off that graphic, not invented, interpolated or estimated. It
+ * replaced the timetables supplied on 16 August 2026.
  *
  * WHAT THE GRAPHICS DID NOT GIVE, AND WHAT WAS DONE ABOUT IT
  *   - Per-stop travel time. Neither graphic publishes how long it takes to
@@ -405,20 +406,11 @@ export const TRANSPORT = {
  *     measured time. A future editor who times the route by hand can update
  *     `offsetMinutes` per stop without changing anything else about the
  *     document shape.
- *   - Which term or academic year the timetable applies to. Neither graphic
- *     is dated. A stale timetable silently served to students as current is
- *     the single worst failure mode for a service like this, so
- *     `needsVerification` below says so explicitly, and the same caveat is
- *     repeated in each route's own `notes` field so it is visible to
- *     whoever reads the record in the admin console or, until an editor commits
- *     to a term, to a student reading the site itself.
  *
- * The Pinklao Line timetable graphic also marks four specific departures as
- * dormitory shuttle services (see `dormitoryDepartures` on that route). This
- * is real, published information a student needs, not a note about the data;
- * see the seed script for where it ends up, since neither `shuttleStop.note`
- * (a stop, not a departure time) nor a field of its own exists for a
- * per-departure tag in the shuttle tables.
+ * The graphic states the date it took effect (`validFrom`) and that only one
+ * bus is in service; both go into each route's notes. It marks no dormitory
+ * departures, so none are recorded. The Sanam Chai Line's `notice` (the BMTA
+ * M2 bus) was supplied by the site owner alongside the graphic.
  * ------------------------------------------------------------------ */
 
 interface ShuttleRouteSourceStop {
@@ -438,7 +430,11 @@ interface ShuttleRouteSource {
   daysOfWeek: number[];
   departures: string[];
   lastBus: string;
+  /** "YYYY-MM-DD", the date the timetable took effect. */
+  validFrom?: string;
   dormitoryDepartures?: DormitoryDeparture[];
+  /** Shown first in the route's notes. */
+  notice?: { th: string; en: string };
 }
 
 // The plain-language notes about unpublished per-stop offsets, the last bus
@@ -453,31 +449,38 @@ export const SHUTTLE_ROUTES: ShuttleRouteSource[] = [
     key: "sanamChai",
     name: { th: "รถเวียนสายสนามไชย", en: "Sanam Chai Line" },
     description: {
-      th: "รถเวียนสองจุดจอดระหว่างมหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ กับสถานีรถไฟฟ้ามหานครสนามไชย ทางออกมิวเซียมสยาม",
-      en: "A two-stop shuttle between Thammasat University Tha Prachan and MRT Sanam Chai Station, Museum Siam Exit.",
+      th: "รถเวียนวนรอบระหว่างมหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์ ท่าเตียน สนามไชย และท่าช้าง แล้ววนกลับมาที่ต้นทาง",
+      en: "A loop shuttle from Thammasat University Tha Prachan through Tha Tien, Sanam Chai and Tha Chang, then back to the origin.",
     },
     stops: [
       { name: { th: "มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์", en: "Thammasat University Tha Prachan" } },
-      { name: { th: "สถานีสนามไชย (ทางออกมิวเซียมสยาม)", en: "MRT Sanam Chai Station (Museum Siam Exit)" } },
+      { name: { th: "ท่าพระจันทร์", en: "Tha Prachan" } },
+      { name: { th: "ท่าเตียน", en: "Tha Tien" } },
+      { name: { th: "สนามไชย", en: "Sanam Chai" } },
+      { name: { th: "ท่าช้าง", en: "Tha Chang" } },
     ],
     daysOfWeek: [1, 2, 3, 4, 5],
     departures: [
-      "07:45",
-      "08:00", "08:15", "08:30", "08:45",
-      "09:00", "09:30", "09:45",
+      "07:00", "07:30",
+      "08:00", "08:30",
+      "09:00", "09:30",
       "10:00",
-      "12:00", "12:15", "12:30", "12:45",
-      "13:00", "13:15", "13:30",
-      "14:00",
-      "15:00",
-      "16:00", "16:15", "16:30", "16:45",
-      "17:00", "17:15", "17:30", "17:45",
-      "18:00", "18:15", "18:30",
-      "19:00",
-      "20:00", "20:30", "20:45",
+      "11:45",
+      "12:15", "12:45",
+      "13:15", "13:45",
+      "14:15",
+      "16:00", "16:30",
+      "17:00", "17:30",
+      "18:00", "18:30",
+      "20:00", "20:30",
       "21:00", "21:30",
     ],
     lastBus: "21:30",
+    validFrom: "2026-09-30",
+    notice: {
+      th: "รถ ขสมก. สาย M2 (สนามหลวง) ให้บริการด้วย จุดขึ้นรถอยู่ตรงข้ามตึกถาวรวัตถุ",
+      en: "The BMTA M2 Sanam Luang shuttle bus also runs. Board it opposite the Thawornwatthu Building.",
+    },
   },
   {
     key: "pinklao",
@@ -488,50 +491,32 @@ export const SHUTTLE_ROUTES: ShuttleRouteSource[] = [
     },
     stops: [
       { name: { th: "มหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์", en: "Thammasat University Tha Prachan" } },
-      { name: { th: "ก่อนสะพานปิ่นเกล้า", en: "Before Pinklao Bridge" } },
-      { name: { th: "พาต้าปิ่นเกล้า", en: "Pata Pinklao" } },
-      { name: { th: "เมเจอร์ปิ่นเกล้า", en: "Major Pinklao" } },
-      { name: { th: "ลุมพินีพาร์ค ปิ่นเกล้า", en: "Lumphini Park Pinklao" } },
-      { name: { th: "ลุมพินีเพลส ปิ่นเกล้า 2", en: "Lumphini Place Pinklao 2" } },
-      { name: { th: "เซ็นทรัลปิ่นเกล้า", en: "Central Pinklao" } },
+      { name: { th: "สะพานพระปิ่นเกล้า (ขาไป)", en: "Pinklao Bridge (outbound)" } },
       { name: { th: "ตรงข้ามพาต้าปิ่นเกล้า", en: "Opposite Pata Pinklao" } },
-      { name: { th: "หลังสะพานปิ่นเกล้า", en: "After Pinklao Bridge" } },
+      { name: { th: "เซ็นทรัลปิ่นเกล้า", en: "Central Pinklao" } },
+      { name: { th: "คอนโดลุมพินี เพลส 2", en: "Lumphini Place 2 condominium" } },
+      { name: { th: "คอนโดลุมพินี ปาร์ค", en: "Lumphini Park condominium" } },
+      { name: { th: "เมเจอร์ปิ่นเกล้า", en: "Major Pinklao" } },
+      { name: { th: "พาต้าปิ่นเกล้า", en: "Pata Pinklao" } },
+      { name: { th: "สะพานพระปิ่นเกล้า (ขากลับ)", en: "Pinklao Bridge (return)" } },
     ],
     daysOfWeek: [1, 2, 3, 4, 5],
     departures: [
-      "07:00", "07:20", "07:40",
-      "08:00", "08:20", "08:40",
-      "09:00", "09:30",
-      "11:00", "11:30",
+      "07:00",
+      "08:00",
+      "09:00",
+      "11:30",
       "12:00", "12:30",
       "13:00", "13:30",
-      "14:00", "14:30",
-      "16:00", "16:20", "16:40",
-      "17:00", "17:20", "17:40",
-      "18:00", "18:30",
-      "19:00", "19:30",
-      "20:00", "20:30",
+      "16:30",
+      "17:30",
+      "18:30",
+      "19:30",
+      "20:30",
       "21:00", "21:30",
     ],
     lastBus: "21:30",
-    dormitoryDepartures: [
-      {
-        time: "07:00",
-        note: { th: "บริการหอใน ขาเข้ารอบเช้า", en: "Morning TPC dormitory service" },
-      },
-      {
-        time: "09:00",
-        note: { th: "บริการหอใน ขาเข้ารอบเช้า", en: "Morning TPC dormitory service" },
-      },
-      {
-        time: "17:00",
-        note: { th: "บริการหอใน ขาออกรอบเย็น", en: "Evening TPC dormitory service" },
-      },
-      {
-        time: "19:00",
-        note: { th: "บริการหอใน ขาออกรอบเย็น", en: "Evening TPC dormitory service" },
-      },
-    ],
+    validFrom: "2026-09-30",
   },
 ];
 

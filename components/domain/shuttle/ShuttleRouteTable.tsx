@@ -80,6 +80,7 @@ export function ShuttleRouteTable({ locale, route, headingLevel, now = new Date(
       <Heading level={headingLevel} className="m-0">
         {routeName}
       </Heading>
+      {route.description ? <p className="m-0 max-w-[var(--measure-en)] text-ink-900">{pick(route.description, locale)}</p> : null}
       <RouteStatusLine locale={locale} status={status.kind} />
       <DataTable
         columns={columns}
@@ -89,6 +90,7 @@ export function ShuttleRouteTable({ locale, route, headingLevel, now = new Date(
       />
       {/* Visible near the table, not hidden in a tooltip or Details (CONTRIBUTING.md, Honesty). */}
       <p className="m-0 text-sm text-ink-600">{UI.scheduledExplainer[locale]}</p>
+      {route.notes ? <p className="m-0 max-w-[var(--measure-en)] text-sm text-ink-600">{pick(route.notes, locale)}</p> : null}
     </Stack>
   );
 }
