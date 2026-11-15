@@ -15,23 +15,14 @@
  * session alive), rather than assuming.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { Button, Dialog } from "@/components/ui";
 import { extendSession, signOutAction } from "@/app/admin/actions";
 import { a } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { TIMEOUT_WARNING_MS } from "@/lib/auth/session-policy";
-
-function formatRemaining(ms: number, locale: Locale): string {
-  const total = Math.max(0, Math.ceil(ms / 1000));
-  const minutes = Math.floor(total / 60);
-  const seconds = total % 60;
-  if (minutes >= 2) return a("timeoutMinutes", locale, { count: minutes });
-  if (minutes === 1 && seconds === 0) return a("timeoutMinute", locale, { count: 1 });
-  if (minutes === 1) return `${a("timeoutMinute", locale, { count: 1 })} ${a("timeoutSeconds", locale, { count: seconds })}`;
-  return a("timeoutSeconds", locale, { count: seconds });
-}
+import { formatRemaining, initialSessionTimeout, sessionDialogOpen, sessionTimeoutReducer, type SessionTimeoutEvent, type SessionTimeoutState } from "./hooks/session-timeout-machine";
 
 interface SessionTimeoutProps {
   /** When the session ends, ISO, from the server. */
@@ -42,39 +33,37 @@ interface SessionTimeoutProps {
 }
 
 export function SessionTimeout({ endsAt: initialEndsAt, serverNow, locale }: SessionTimeoutProps) {
-  const [endsAt, setEndsAt] = useState(() => new Date(initialEndsAt).getTime());
   // Server time minus device time, fixed when the page loads.
   const [skew] = useState(() => new Date(serverNow).getTime() - Date.now());
-  const [now, setNow] = useState(() => Date.now() + skew);
-  const [staying, setStaying] = useState(false);
+  const [state, dispatch] = useReducer(
+    (current: SessionTimeoutState, event: SessionTimeoutEvent) => sessionTimeoutReducer(current, event, TIMEOUT_WARNING_MS),
+    undefined,
+    () => initialSessionTimeout(new Date(initialEndsAt).getTime(), Date.now() + skew, TIMEOUT_WARNING_MS),
+  );
 
   // Tick once a second. The state update is the callback's, not the effect body's.
   useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now() + skew), 1000);
+    const id = window.setInterval(() => dispatch({ type: "tick", now: Date.now() + skew }), 1000);
     return () => window.clearInterval(id);
   }, [skew]);
 
-  const remaining = endsAt - now;
-  const open = remaining <= TIMEOUT_WARNING_MS && remaining > 0;
-
+  const expired = state.phase === "expired";
   useEffect(() => {
-    if (remaining <= 0) window.location.assign("/admin");
-  }, [remaining]);
+    if (expired) window.location.assign("/admin");
+  }, [expired]);
+
+  const open = sessionDialogOpen(state);
+  const staying = state.phase === "extending";
+  const remaining = state.endsAt - state.now;
 
   const stay = useCallback(async () => {
-    setStaying(true);
+    dispatch({ type: "extend" });
     try {
       const result = await extendSession();
-      if (result) {
-        setEndsAt(new Date(result.endsAt).getTime());
-        setNow(Date.now() + skew);
-      } else {
-        window.location.assign("/admin");
-      }
+      if (result) dispatch({ type: "extended", endsAt: new Date(result.endsAt).getTime(), now: Date.now() + skew });
+      else dispatch({ type: "extendFailed" });
     } catch {
-      window.location.assign("/admin");
-    } finally {
-      setStaying(false);
+      dispatch({ type: "extendFailed" });
     }
   }, [skew]);
 

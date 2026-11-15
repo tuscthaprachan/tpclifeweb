@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState, type ReactNode } from "react";
+import { useActionState, type ReactNode } from "react";
+import { useReveal } from "@/components/admin/hooks/use-reveal";
 import { Button, ErrorMessage, ErrorSummary, Fieldset, InsetText, NotificationBanner, Radios, Stack, SummaryList, TextInput, Textarea } from "@/components/ui";
 import type { LoanField } from "@/lib/borrowing/workflow";
 import { a, type AdminKey } from "@/lib/i18n/admin";
@@ -118,15 +119,19 @@ function Check({ id, name, label, defaultChecked, error }: { id: string; name: s
 
 /** The student number and affiliation stay out of the page until staff ask; showing them is logged. */
 export function DetailsReveal({ locale, caseId, orgId }: Base) {
-  const [state, run, pending] = useActionState<BrState, FormData>(revealDetailsAction, EMPTY);
-  const [hidden, setHidden] = useState(false);
-  const details = state.details;
+  const { state, pending, reveal, hide } = useReveal<BrState, Exclude<BrState["details"], undefined>>({
+    action: revealDetailsAction,
+    initial: EMPTY,
+    select: (s) => (s.error ? { error: s.error } : s.details !== undefined ? { value: s.details } : null),
+    failureMessage: a("csRevealFailed", locale),
+  });
+  const details = state.status === "shown" ? state.value : null;
   const none = <span className="text-ink-600">{a("caseNone", locale)}</span>;
   return (
     <div className="flex flex-col gap-[var(--space-3)]">
-      <Feedback state={{ error: state.error }} locale={locale} form="br-details-show" />
-      {state.details === null && !state.error ? <p className="m-0 text-ink-600">{a("brDetailsGone", locale)}</p> : null}
-      {details && !hidden ? (
+      <Feedback state={{ error: state.status === "error" ? state.message : undefined }} locale={locale} form="br-details-show" />
+      {state.status === "shown" && state.value === null ? <p className="m-0 text-ink-600">{a("brDetailsGone", locale)}</p> : null}
+      {details ? (
         <div className="flex flex-col gap-[var(--space-3)]" aria-live="polite">
           <SummaryList
             rows={[
@@ -136,18 +141,13 @@ export function DetailsReveal({ locale, caseId, orgId }: Base) {
             ]}
           />
           <div>
-            <Button variant="secondary" onClick={() => setHidden(true)}>
+            <Button variant="secondary" onClick={hide}>
               {a("brDetailsHide", locale)}
             </Button>
           </div>
         </div>
       ) : (
-        <form
-          action={(fd) => {
-            setHidden(false);
-            run(fd);
-          }}
-        >
+        <form action={reveal}>
           <Ids caseId={caseId} orgId={orgId} />
           <Button id="br-details-show" type="submit" variant="secondary" loading={pending} loadingLabel={a("caseSaving", locale)}>
             {a("brDetailsShow", locale)}

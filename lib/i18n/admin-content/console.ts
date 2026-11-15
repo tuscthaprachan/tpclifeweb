@@ -40,6 +40,8 @@ export const CONSOLE_STRINGS = {
   csPaletteResults: { th: "ผลการค้นหา", en: "Results" },
   csPaletteEmpty: { th: "ไม่พบรายการที่ตรงกับ \"{query}\"", en: "Nothing matches \"{query}\"" },
   csPaletteLoading: { th: "กำลังค้นหา", en: "Searching" },
+  csPaletteError: { th: "ค้นหาไม่สำเร็จ ลองอีกครั้ง", en: "The search did not work. Try again" },
+  csRevealFailed: { th: "แสดงข้อมูลไม่สำเร็จ ลองอีกครั้ง", en: "This could not be shown. Try again" },
   csPaletteCount: { th: "พบ {count} รายการ", en: "{count} results" },
   csPaletteKeys: { th: "ลูกศรขึ้นลงเพื่อเลือก Enter เพื่อเปิด Esc เพื่อปิด", en: "Up and down to choose, Enter to open, Esc to close" },
   csPaletteClose: { th: "ปิดการค้นหา", en: "Close search" },

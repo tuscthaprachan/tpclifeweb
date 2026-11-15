@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
+import { useReveal } from "@/components/admin/hooks/use-reveal";
 import { Button, ErrorSummary, InsetText, NotificationBanner, Select, Stack, SummaryList, Textarea } from "@/components/ui";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
@@ -212,17 +213,20 @@ export function RecategoriseForm({
 
 /** What the person wrote stays out of the page until staff ask; showing it is logged. */
 export function TextReveal({ locale, caseId, orgId }: Base) {
-  const [state, run, pending] = useActionState<CpState, FormData>(revealTextAction, EMPTY);
-  const [hidden, setHidden] = useState(false);
-  const shown = state.text && !hidden;
-  const text = state.text;
+  const { state, pending, reveal, hide } = useReveal<CpState, Exclude<CpState["text"], undefined>>({
+    action: revealTextAction,
+    initial: EMPTY,
+    select: (s) => (s.error ? { error: s.error } : s.text !== undefined ? { value: s.text } : null),
+    failureMessage: a("csRevealFailed", locale),
+  });
+  const text = state.status === "shown" ? state.value : null;
   const none = <span className="text-ink-600">{a("caseNone", locale)}</span>;
   const lines = (v: string | null | undefined) => (v ? <span className="whitespace-pre-line">{v}</span> : none);
   return (
     <div className="flex flex-col gap-[var(--space-3)]">
-      <Feedback state={state} locale={locale} anchor="cp-text-show" />
-      {state.text === null && !state.error ? <p className="m-0 text-ink-600">{a("cpcTextGone", locale)}</p> : null}
-      {shown && text ? (
+      <Feedback state={{ error: state.status === "error" ? state.message : undefined }} locale={locale} anchor="cp-text-show" />
+      {state.status === "shown" && state.value === null ? <p className="m-0 text-ink-600">{a("cpcTextGone", locale)}</p> : null}
+      {text ? (
         <div className="flex flex-col gap-[var(--space-3)]" aria-live="polite">
           <SummaryList
             rows={[
@@ -234,18 +238,13 @@ export function TextReveal({ locale, caseId, orgId }: Base) {
             ]}
           />
           <div>
-            <Button variant="secondary" onClick={() => setHidden(true)}>
+            <Button variant="secondary" onClick={hide}>
               {a("caseContactsHide", locale)}
             </Button>
           </div>
         </div>
       ) : (
-        <form
-          action={(fd) => {
-            setHidden(false);
-            run(fd);
-          }}
-        >
+        <form action={reveal}>
           <Ids caseId={caseId} orgId={orgId} />
           <Button id="cp-text-show" type="submit" variant="secondary" loading={pending} loadingLabel={a("caseSaving", locale)}>
             {a("cpcTextShow", locale)}
@@ -259,17 +258,20 @@ export function TextReveal({ locale, caseId, orgId }: Base) {
 
 /** Evidence files open through short-lived links, and only after a logged "Show". */
 export function EvidenceReveal({ locale, caseId, orgId, count }: Base & { count: number }) {
-  const [state, run, pending] = useActionState<CpState, FormData>(revealEvidenceAction, EMPTY);
-  const [hidden, setHidden] = useState(false);
-  const shown = state.evidence && !hidden;
+  const { state, pending, reveal, hide } = useReveal<CpState, NonNullable<CpState["evidence"]>>({
+    action: revealEvidenceAction,
+    initial: EMPTY,
+    select: (s) => (s.error ? { error: s.error } : s.evidence ? { value: s.evidence } : null),
+    failureMessage: a("csRevealFailed", locale),
+  });
   return (
     <div className="flex flex-col gap-[var(--space-3)]">
       <p className="m-0 text-ink-600">{count === 1 ? a("cpcEvidenceHeldOne", locale) : a("cpcEvidenceHeld", locale, { count })}</p>
-      <Feedback state={{ error: state.error }} locale={locale} anchor="cp-evidence-show" />
-      {shown ? (
+      <Feedback state={{ error: state.status === "error" ? state.message : undefined }} locale={locale} anchor="cp-evidence-show" />
+      {state.status === "shown" ? (
         <div className="flex flex-col gap-[var(--space-3)]" aria-live="polite">
           <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
-            {state.evidence!.map((file) => (
+            {state.value.map((file) => (
               <li key={file.id}>
                 {file.url ? (
                   <a href={file.url} target="_blank" rel="noreferrer" className="break-all">
@@ -285,18 +287,13 @@ export function EvidenceReveal({ locale, caseId, orgId, count }: Base & { count:
             ))}
           </ul>
           <div>
-            <Button variant="secondary" onClick={() => setHidden(true)}>
+            <Button variant="secondary" onClick={hide}>
               {a("caseContactsHide", locale)}
             </Button>
           </div>
         </div>
       ) : (
-        <form
-          action={(fd) => {
-            setHidden(false);
-            run(fd);
-          }}
-        >
+        <form action={reveal}>
           <Ids caseId={caseId} orgId={orgId} />
           <Button id="cp-evidence-show" type="submit" variant="secondary" loading={pending} loadingLabel={a("caseSaving", locale)}>
             {a("cpcEvidenceShow", locale)}

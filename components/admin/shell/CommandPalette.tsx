@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useReducer, useRef, useState } from "react";
 import { signOutAction, setAdminLocale } from "@/app/admin/actions";
 import { ConsoleIcon, type ConsoleIconName } from "@/components/admin/icons";
 import { applyThemeOnClient } from "@/components/layout/ThemeToggle";
@@ -10,6 +10,9 @@ import type { GoShortcut } from "@/lib/admin/shortcuts";
 import { LOCALE_LABEL, OTHER_LOCALE, type Locale } from "@/lib/i18n/config";
 import { fill } from "./fill";
 import type { ShellLabels } from "./labels";
+import { fuzzyScore, initialRemote, MIN_REMOTE_CHARS, remoteReducer, remoteView } from "./palette-machine";
+
+export { fuzzyScore };
 
 /** One row of the palette. */
 interface Entry {
@@ -47,7 +50,7 @@ export interface CommandPaletteProps {
   nav: ResolvedNav;
   labels: Pick<
     ShellLabels,
-    "paletteTitle" | "palettePlaceholder" | "paletteGoTo" | "paletteCreate" | "paletteResults" | "paletteEmpty" | "paletteLoading" | "paletteCount" | "paletteKeys" | "paletteClose" | "paletteActions" | "paletteMyCases" | "paletteToggleTheme" | "paletteSwitchLanguage" | "paletteSignOut" | "paletteShortcuts"
+    "paletteTitle" | "palettePlaceholder" | "paletteGoTo" | "paletteCreate" | "paletteResults" | "paletteEmpty" | "paletteLoading" | "paletteError" | "paletteCount" | "paletteKeys" | "paletteClose" | "paletteActions" | "paletteMyCases" | "paletteToggleTheme" | "paletteSwitchLanguage" | "paletteSignOut" | "paletteShortcuts"
   >;
   locale: Locale;
   shortcuts: GoShortcut[];
@@ -62,33 +65,7 @@ export interface CommandPaletteProps {
   searchEndpoint?: string;
 }
 
-const MIN_REMOTE_CHARS = 2;
 const DEBOUNCE_MS = 200;
-
-/** Case-insensitive fuzzy score of `query` in `text`; null when it does not match. Higher is better. */
-export function fuzzyScore(query: string, text: string): number | null {
-  const q = query.trim().toLowerCase();
-  if (!q) return 0;
-  const t = text.toLowerCase();
-  let total = 0;
-  for (const word of q.split(/\s+/)) {
-    const at = t.indexOf(word);
-    if (at >= 0) {
-      total += 100 - Math.min(at, 50) + (at === 0 || t[at - 1] === " " ? 20 : 0);
-      continue;
-    }
-    let cursor = -1;
-    let gaps = 0;
-    for (const ch of word) {
-      const next = t.indexOf(ch, cursor + 1);
-      if (next < 0) return null;
-      gaps += cursor < 0 ? 0 : next - cursor - 1;
-      cursor = next;
-    }
-    total += Math.max(1, 40 - gaps);
-  }
-  return total;
-}
 
 function filterEntries(entries: Entry[], query: string): Entry[] {
   if (!query.trim()) return entries;
@@ -119,6 +96,7 @@ export function CommandPalette({ nav, labels, locale, shortcuts, onShowShortcuts
     function onKey(event: KeyboardEvent) {
       const combo = (event.key === "k" || event.key === "K") && (event.metaKey || event.ctrlKey);
       const slash = event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey && !isTypingTarget(event.target);
+      if (event.defaultPrevented) return;
       if (combo || slash) {
         event.preventDefault();
         onOpenChange(true);
@@ -141,7 +119,7 @@ function PaletteDialog({ nav, labels, locale, shortcuts, onShowShortcuts, onClos
   const list = useRef<HTMLUListElement>(null);
   const [query, setQuery] = useState("");
   const [cursor, setCursor] = useState(0);
-  const [remote, setRemote] = useState<{ query: string; results: PaletteSearchResult[] } | null>(null);
+  const [remote, dispatchRemote] = useReducer(remoteReducer<PaletteSearchResult>, undefined, initialRemote<PaletteSearchResult>);
 
   const pages = useMemo<Entry[]>(() => {
     const hintFor = new Map(shortcuts.map((s) => [s.href, `g ${s.key}`]));
@@ -185,8 +163,10 @@ function PaletteDialog({ nav, labels, locale, shortcuts, onShowShortcuts, onClos
   );
 
   const trimmed = query.trim();
-  const wantsRemote = Boolean(searchEndpoint) && trimmed.length >= MIN_REMOTE_CHARS;
-  const loading = wantsRemote && remote?.query !== trimmed;
+  const hasEndpoint = Boolean(searchEndpoint);
+  const remoteNow = useMemo(() => remoteView(remote, trimmed, hasEndpoint), [remote, trimmed, hasEndpoint]);
+  const loading = remoteNow.status === "loading";
+  const failed = remoteNow.status === "error";
 
   const sections = useMemo<Section[]>(() => {
     const out: Section[] = [
@@ -194,16 +174,16 @@ function PaletteDialog({ nav, labels, locale, shortcuts, onShowShortcuts, onClos
       { id: "create", label: labels.paletteCreate, entries: filterEntries(creates, query) },
       { id: "actions", label: labels.paletteActions, entries: filterEntries(actions, query) },
     ];
-    if (wantsRemote && remote?.query === trimmed) {
+    if (remoteNow.status === "ok") {
       const byGroup = new Map<string, Entry[]>();
-      for (const r of remote.results) {
+      for (const r of remoteNow.results) {
         const entry: Entry = { id: `r-${r.id}`, title: r.title, subtitle: r.subtitle, href: r.href, icon: r.icon };
         byGroup.set(r.group, [...(byGroup.get(r.group) ?? []), entry]);
       }
       for (const [group, entries] of byGroup) out.push({ id: `remote-${group}`, label: group || labels.paletteResults, entries });
     }
     return out.filter((s) => s.entries.length > 0);
-  }, [pages, creates, actions, query, labels, remote, trimmed, wantsRemote]);
+  }, [pages, creates, actions, query, labels, remoteNow]);
 
   const flat = useMemo(() => sections.flatMap((s) => s.entries), [sections]);
   const active = flat.length === 0 ? -1 : Math.min(cursor, flat.length - 1);
@@ -212,13 +192,14 @@ function PaletteDialog({ nav, labels, locale, shortcuts, onShowShortcuts, onClos
     if (!searchEndpoint || trimmed.length < MIN_REMOTE_CHARS) return;
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
+      dispatchRemote({ type: "start", q: trimmed });
       try {
         const response = await fetch(`${searchEndpoint}?q=${encodeURIComponent(trimmed)}`, { signal: controller.signal, headers: { accept: "application/json" } });
         if (!response.ok) throw new Error(String(response.status));
         const body = (await response.json()) as { results?: PaletteSearchResult[] };
-        setRemote({ query: trimmed, results: Array.isArray(body.results) ? body.results : [] });
+        dispatchRemote({ type: "succeeded", q: trimmed, results: Array.isArray(body.results) ? body.results : [] });
       } catch {
-        if (!controller.signal.aborted) setRemote({ query: trimmed, results: [] });
+        if (!controller.signal.aborted) dispatchRemote({ type: "failed", q: trimmed });
       }
     }, DEBOUNCE_MS);
     return () => {
@@ -360,8 +341,8 @@ function PaletteDialog({ nav, labels, locale, shortcuts, onShowShortcuts, onClos
           ))}
         </ul>
 
-        <p role="status" className={flat.length === 0 && !loading ? "console-palette-empty" : "visually-hidden"}>
-          {loading ? labels.paletteLoading : flat.length === 0 ? fill(labels.paletteEmpty, { query: trimmed }) : fill(labels.paletteCount, { count: flat.length })}
+        <p role="status" className={(flat.length === 0 && !loading) || failed ? "console-palette-empty" : "visually-hidden"}>
+          {loading ? labels.paletteLoading : failed ? labels.paletteError : flat.length === 0 ? fill(labels.paletteEmpty, { query: trimmed }) : fill(labels.paletteCount, { count: flat.length })}
         </p>
         <p className="console-palette-keys" aria-hidden="true">
           {labels.paletteKeys}

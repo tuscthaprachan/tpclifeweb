@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { GO_TIMEOUT_MS, type GoShortcut } from "@/lib/admin/shortcuts";
+import { chordOutcome, chordReducer, IDLE_CHORD, type ChordEvent, type ChordState } from "./chord-machine";
 import type { ShellLabels } from "./labels";
 
 type Labels = Pick<
@@ -28,36 +29,26 @@ function dialogOpen(): boolean {
  */
 export function ShortcutKeys({ shortcuts, labels, onHelp, helpOpen }: { shortcuts: GoShortcut[]; labels: Pick<Labels, "shortcutsPending">; onHelp: () => void; helpOpen: boolean }) {
   const router = useRouter();
-  const [pending, setPending] = useState(false);
-  const timer = useRef<number | undefined>(undefined);
+  const [chord, setChord] = useState<ChordState>(IDLE_CHORD);
+  const chordRef = useRef<ChordState>(IDLE_CHORD);
+  const pending = chord.status === "awaiting";
+  const since = chord.status === "awaiting" ? chord.since : null;
 
   useEffect(() => {
-    const clear = () => {
-      window.clearTimeout(timer.current);
-      setPending(false);
-    };
-    let waiting = false;
+    function apply(event: ChordEvent) {
+      const next = chordReducer(chordRef.current, event);
+      chordRef.current = next;
+      setChord(next);
+    }
     function onKey(event: KeyboardEvent) {
       if (event.defaultPrevented || event.repeat || event.metaKey || event.ctrlKey || event.altKey) return;
       if (isTypingTarget(event.target) || helpOpen || dialogOpen()) return;
-      if (waiting) {
-        waiting = false;
-        clear();
-        const hit = shortcuts.find((s) => s.key === event.key.toLowerCase());
-        if (hit) {
-          event.preventDefault();
-          router.push(hit.href);
-        }
-        return;
-      }
-      if (event.key === "g" && shortcuts.length > 0) {
-        waiting = true;
-        setPending(true);
-        timer.current = window.setTimeout(() => {
-          waiting = false;
-          setPending(false);
-        }, GO_TIMEOUT_MS);
-      } else if (event.key === "?") {
+      const outcome = chordOutcome(chordRef.current, event.key, shortcuts);
+      apply({ type: "key", key: event.key, now: Date.now(), canStart: shortcuts.length > 0 });
+      if (outcome.kind === "go") {
+        event.preventDefault();
+        router.push(outcome.href);
+      } else if (outcome.kind === "help") {
         event.preventDefault();
         onHelp();
       }
@@ -65,9 +56,19 @@ export function ShortcutKeys({ shortcuts, labels, onHelp, helpOpen }: { shortcut
     document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("keydown", onKey);
-      window.clearTimeout(timer.current);
+      apply({ type: "reset" });
     };
   }, [shortcuts, router, onHelp, helpOpen]);
+
+  useEffect(() => {
+    if (since === null) return;
+    const timer = window.setTimeout(() => {
+      const next = chordReducer(chordRef.current, { type: "timeout", since });
+      chordRef.current = next;
+      setChord(next);
+    }, GO_TIMEOUT_MS);
+    return () => window.clearTimeout(timer);
+  }, [since]);
 
   return (
     <p role="status" className={pending ? "fixed bottom-[var(--space-4)] left-[var(--space-4)] z-50 m-0 rounded-control border border-line-strong bg-surface px-[var(--space-3)] py-[var(--space-2)] text-sm text-ink-900" : "visually-hidden"}>

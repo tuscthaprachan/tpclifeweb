@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState, useSyncExternalStore } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { AdminLanguageSwitch } from "@/components/admin/AdminLanguageSwitch";
 import { ConsoleIcon } from "@/components/admin/icons";
 import type { GoShortcut } from "@/lib/admin/shortcuts";
@@ -36,11 +36,12 @@ function useIsApple(): boolean {
 
 export function Topbar({ locale, theme, user, shortcuts, searchEndpoint, notifications }: TopbarProps) {
   const { nav, labels } = useConsoleNav();
-  const { openDrawer, menuButtonRef } = useShell();
-  const [paletteOpen, setPaletteOpen] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
-  const openHelp = useCallback(() => setHelpOpen(true), []);
-  const closeHelp = useCallback(() => setHelpOpen(false), []);
+  const { openDrawer, menuButtonRef, overlay, openOverlay, closeOverlay } = useShell();
+  const paletteOpen = overlay === "palette";
+  const helpOpen = overlay === "help";
+  const setPaletteOpen = useCallback((open: boolean) => (open ? openOverlay("palette") : closeOverlay("palette")), [openOverlay, closeOverlay]);
+  const openHelp = useCallback(() => openOverlay("help"), [openOverlay]);
+  const closeHelp = useCallback(() => closeOverlay("help"), [closeOverlay]);
   const apple = useIsApple();
 
   return (

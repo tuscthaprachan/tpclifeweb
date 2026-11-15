@@ -14,6 +14,8 @@
  */
 
 import { useState, useSyncExternalStore, type FormEvent } from "react";
+import type { CeremonyOutcome } from "./hooks/ceremony-machine";
+import { useCeremony } from "./hooks/use-ceremony";
 import { Button, ErrorSummary, NotificationBanner, Stack, TextInput } from "@/components/ui";
 import { authClient } from "@/lib/auth/client";
 import { encodeCeremonyContext, type CeremonyContext } from "@/lib/auth/ceremony";
@@ -54,7 +56,7 @@ function failureKey(error: { code?: string | undefined; message?: string | undef
   return fallback;
 }
 
-type Outcome = { ok: true } | { ok: false; key: AdminKey };
+type Outcome = CeremonyOutcome<AdminKey>;
 
 async function register(context: CeremonyContext | null): Promise<Outcome> {
   try {
@@ -77,32 +79,23 @@ function Failure({ locale, messageKey }: { locale: Locale; messageKey: AdminKey 
 /** "Sign in with a passkey". Discoverable, so no email is typed. A full load afterwards, so the header sees the session. */
 export function SignInWithPasskey({ locale, next }: { locale: Locale; next: string }) {
   const supported = useWebAuthnSupport();
-  const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const ceremony = useCeremony<AdminKey>();
   if (!supported) return null;
 
-  async function run() {
-    setBusy(true);
-    setFailed(false);
+  async function signIn(): Promise<Outcome> {
     try {
       const result = await authClient.signIn.passkey();
-      if (result?.error) {
-        setFailed(true);
-        return;
-      }
-      window.location.assign(next);
+      return result?.error ? { ok: false, key: "signInFailed" } : { ok: true };
     } catch {
-      setFailed(true);
-    } finally {
-      setBusy(false);
+      return { ok: false, key: "signInFailed" };
     }
   }
 
   return (
     <Stack space={4}>
-      {failed ? <Failure locale={locale} messageKey="signInFailed" /> : null}
+      {ceremony.failure ? <Failure locale={locale} messageKey={ceremony.failure} /> : null}
       <div>
-        <Button type="button" onClick={() => void run()} loading={busy} loadingLabel={a("signInButton", locale)}>
+        <Button type="button" onClick={() => void ceremony.run(signIn, () => window.location.assign(next))} loading={ceremony.locked} loadingLabel={a("signInButton", locale)}>
           {a("signInButton", locale)}
         </Button>
       </div>
@@ -113,24 +106,14 @@ export function SignInWithPasskey({ locale, next }: { locale: Locale; next: stri
 /** Adds a passkey to the signed-in person's own account. */
 export function AddPasskeyButton({ locale }: { locale: Locale }) {
   const supported = useWebAuthnSupport();
-  const [busy, setBusy] = useState(false);
-  const [failure, setFailure] = useState<AdminKey | null>(null);
+  const ceremony = useCeremony<AdminKey>();
   if (!supported) return null;
-
-  async function run() {
-    setBusy(true);
-    setFailure(null);
-    const outcome = await register(null);
-    setBusy(false);
-    if (outcome.ok) window.location.assign("/admin/security?notice=added");
-    else setFailure(outcome.key);
-  }
 
   return (
     <Stack space={4}>
-      {failure ? <Failure locale={locale} messageKey={failure} /> : null}
+      {ceremony.failure ? <Failure locale={locale} messageKey={ceremony.failure} /> : null}
       <div>
-        <Button type="button" onClick={() => void run()} loading={busy} loadingLabel={a("addPasskeyButton", locale)}>
+        <Button type="button" onClick={() => void ceremony.run(() => register(null), () => window.location.assign("/admin/security?notice=added"))} loading={ceremony.locked} loadingLabel={a("addPasskeyButton", locale)}>
           {a("addPasskeyButton", locale)}
         </Button>
       </div>
@@ -143,31 +126,26 @@ export function CreateAccountForm({ locale, token }: { locale: Locale; token: st
   const supported = useWebAuthnSupport();
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState<string | undefined>();
-  const [busy, setBusy] = useState(false);
-  const [failure, setFailure] = useState<AdminKey | null>(null);
+  const ceremony = useCeremony<AdminKey>();
   if (!supported) return null;
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    setFailure(null);
     const trimmed = name.trim();
     if (!trimmed || trimmed.length > 100) {
+      ceremony.reset();
       setNameError(a("errNameRequired", locale));
       return;
     }
     setNameError(undefined);
-    setBusy(true);
-    const outcome = await register({ kind: "invite", token, name: trimmed });
-    setBusy(false);
-    if (outcome.ok) window.location.assign("/admin");
-    else setFailure(outcome.key);
+    await ceremony.run(() => register({ kind: "invite", token, name: trimmed }), () => window.location.assign("/admin"));
   }
 
   return (
     <form onSubmit={(event) => void submit(event)} noValidate>
       <Stack space={6}>
         {nameError ? <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={[{ href: "#admin-invite-name", message: nameError }]} /> : null}
-        {failure ? <Failure locale={locale} messageKey={failure} /> : null}
+        {ceremony.failure ? <Failure locale={locale} messageKey={ceremony.failure} /> : null}
         <TextInput
           id="admin-invite-name"
           name="name"
@@ -181,7 +159,7 @@ export function CreateAccountForm({ locale, token }: { locale: Locale; token: st
           className="max-w-[28rem]"
         />
         <div>
-          <Button type="submit" loading={busy} loadingLabel={a("inviteCreateButton", locale)}>
+          <Button type="submit" loading={ceremony.locked} loadingLabel={a("inviteCreateButton", locale)}>
             {a("inviteCreateButton", locale)}
           </Button>
         </div>
@@ -193,24 +171,14 @@ export function CreateAccountForm({ locale, token }: { locale: Locale; token: st
 /** The recovery page: registers a new passkey on the existing account. */
 export function RecoverButton({ locale, token }: { locale: Locale; token: string }) {
   const supported = useWebAuthnSupport();
-  const [busy, setBusy] = useState(false);
-  const [failure, setFailure] = useState<AdminKey | null>(null);
+  const ceremony = useCeremony<AdminKey>();
   if (!supported) return null;
-
-  async function run() {
-    setBusy(true);
-    setFailure(null);
-    const outcome = await register({ kind: "recover", token });
-    setBusy(false);
-    if (outcome.ok) window.location.assign("/admin/security?notice=recovered");
-    else setFailure(outcome.key);
-  }
 
   return (
     <Stack space={4}>
-      {failure ? <Failure locale={locale} messageKey={failure} /> : null}
+      {ceremony.failure ? <Failure locale={locale} messageKey={ceremony.failure} /> : null}
       <div>
-        <Button type="button" onClick={() => void run()} loading={busy} loadingLabel={a("recoverButton", locale)}>
+        <Button type="button" onClick={() => void ceremony.run(() => register({ kind: "recover", token }), () => window.location.assign("/admin/security?notice=recovered"))} loading={ceremony.locked} loadingLabel={a("recoverButton", locale)}>
           {a("recoverButton", locale)}
         </Button>
       </div>

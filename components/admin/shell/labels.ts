@@ -21,6 +21,7 @@ export interface ShellLabels {
   paletteResults: string;
   paletteEmpty: string;
   paletteLoading: string;
+  paletteError: string;
   paletteCount: string;
   paletteKeys: string;
   paletteClose: string;
@@ -74,6 +75,7 @@ export function shellLabels(locale: Locale): ShellLabels {
     paletteResults: a("csPaletteResults", locale),
     paletteEmpty: a("csPaletteEmpty", locale),
     paletteLoading: a("csPaletteLoading", locale),
+    paletteError: a("csPaletteError", locale),
     paletteCount: a("csPaletteCount", locale),
     paletteKeys: a("csPaletteKeys", locale),
     paletteClose: a("csPaletteClose", locale),

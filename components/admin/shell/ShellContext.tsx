@@ -1,8 +1,9 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
+import { createContext, useCallback, useContext, useMemo, useReducer, useRef, type ReactNode, type RefObject } from "react";
 import type { ResolvedNav } from "@/lib/admin/nav-match";
 import type { ShellLabels } from "./labels";
+import { shellOverlayReducer, type ShellOverlay } from "./shell-overlay";
 import { useStoredString } from "./useStoredString";
 
 const SIDEBAR_KEY = "trytpc:console:sidebar";
@@ -18,6 +19,11 @@ interface ShellValue {
   drawerOpen: boolean;
   openDrawer: () => void;
   closeDrawer: () => void;
+  /** Which of the palette, shortcuts help and drawer is open; only one ever is. */
+  overlay: ShellOverlay;
+  openOverlay: (overlay: Exclude<ShellOverlay, "none">) => void;
+  /** Closes `overlay` only if it is the one open. */
+  closeOverlay: (overlay: Exclude<ShellOverlay, "none">) => void;
   /** The mobile menu button, so the drawer can hand focus back to it. */
   menuButtonRef: RefObject<HTMLButtonElement | null>;
 }
@@ -47,16 +53,19 @@ export function useShell(): ShellValue {
 export function ShellFrame({ nav, labels, children }: { nav: ResolvedNav; labels: ShellLabels; children: ReactNode }) {
   const [stored, setStored] = useStoredString(SIDEBAR_KEY);
   const collapsed = stored === "collapsed";
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [overlay, dispatch] = useReducer(shellOverlayReducer, "none");
+  const drawerOpen = overlay === "drawer";
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const toggleCollapsed = useCallback(() => setStored(collapsed ? "expanded" : "collapsed"), [collapsed, setStored]);
-  const openDrawer = useCallback(() => setDrawerOpen(true), []);
-  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+  const openOverlay = useCallback((next: Exclude<ShellOverlay, "none">) => dispatch({ type: "open", overlay: next }), []);
+  const closeOverlay = useCallback((next: Exclude<ShellOverlay, "none">) => dispatch({ type: "close", overlay: next }), []);
+  const openDrawer = useCallback(() => openOverlay("drawer"), [openOverlay]);
+  const closeDrawer = useCallback(() => closeOverlay("drawer"), [closeOverlay]);
 
   const shell = useMemo(
-    () => ({ collapsed, toggleCollapsed, drawerOpen, openDrawer, closeDrawer, menuButtonRef }),
-    [collapsed, toggleCollapsed, drawerOpen, openDrawer, closeDrawer],
+    () => ({ collapsed, toggleCollapsed, drawerOpen, openDrawer, closeDrawer, overlay, openOverlay, closeOverlay, menuButtonRef }),
+    [collapsed, toggleCollapsed, drawerOpen, openDrawer, closeDrawer, overlay, openOverlay, closeOverlay],
   );
   const navValue = useMemo(() => ({ nav, labels }), [nav, labels]);
 
