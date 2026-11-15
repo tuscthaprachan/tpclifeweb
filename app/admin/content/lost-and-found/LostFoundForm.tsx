@@ -4,14 +4,13 @@ import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, BilingualTextField, DateField, DateTimeField, EnumSelect, TextField } from "@/components/admin/content/fields";
 import { ImagePicker } from "@/components/admin/content/ImagePicker";
-import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
 import { kindLabel } from "@/components/domain/lostfound/kindLabel";
 import { statusLabel } from "@/components/domain/lostfound/statusLabel";
 import { InsetText, NotificationBanner } from "@/components/ui";
 import { formatBangkokDateTime } from "@/lib/admin/content/datetime";
 import { isStorageConfigured, listImageChoices } from "@/lib/admin/content/images";
-import { loadChoices, userNames } from "@/lib/admin/content/list";
+import { userNames } from "@/lib/admin/content/list";
 import { ownerOptions } from "@/lib/admin/content/options";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
 import { getDb } from "@/lib/db";
@@ -36,8 +35,7 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
 
   const [item] = id ? await db.select().from(lostFoundItems).where(eq(lostFoundItems.id, id)) : [];
   if (id && !item) notFound();
-  const [placeChoices, imageChoices, photos, names] = await Promise.all([
-    loadChoices(db, getContentType("places")!),
+  const [imageChoices, photos, names] = await Promise.all([
     listImageChoices(db),
     item ? db.select().from(lostFoundItemPhotos).where(eq(lostFoundItemPhotos.itemId, item.id)).orderBy(asc(lostFoundItemPhotos.position)) : [],
     item ? userNames(db, [item.updatedBy]) : new Map<string, string>(),
@@ -102,7 +100,6 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
         />
       </FormSection>
       <FormSection id="lf-where" icon="places" legend={L("cfSecLfWhere")}>
-        <ReferencePicker name="placeId" label={L("lfFieldPlace")} options={placeChoices} defaultValue={item?.placeId ?? null} emptyLabel={L("lfPlaceNone")} />
         <BilingualTextField
           name="locationNote"
           label={L("lfFieldLocationNote")}

@@ -61,7 +61,7 @@ export async function saveLostFoundItem(
         descriptionTh: data.description.th,
         descriptionEn: data.description.en,
         category: data.category,
-        placeId: data.placeId,
+        placeId: null,
         locationNoteTh: data.locationNote.th || null,
         locationNoteEn: data.locationNote.en || null,
         occurredOn: data.occurredOn,

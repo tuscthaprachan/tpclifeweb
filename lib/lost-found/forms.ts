@@ -30,7 +30,6 @@ export function parseDescription(formData: FormData, locale: Locale, now: Date =
     category: k.enumOf(L("fieldCategory"), LOST_FOUND_CATEGORIES),
     title: k.bilingual(L("fieldTitle"), { required: true, max: 200 }),
     description: k.bilingual(L("lfFieldDescription"), { required: true, max: 2000 }),
-    placeId: k.reference(L("lfFieldPlace")),
     locationNote: k.bilingual(L("lfFieldLocationNote"), { max: 300 }),
     occurredOn: k.date(L("lfFieldOccurredOn"), { required: true }),
   });
@@ -43,13 +42,13 @@ export function parseDescription(formData: FormData, locale: Locale, now: Date =
     for (const part of path) node = typeof node === "object" && node !== null ? (node as Record<string, unknown>)[part] : undefined;
     return typeof node === "string" ? node.trim() : "";
   };
-  if (!posted(["placeId"]) && !posted(["locationNote", "th"]) && !posted(["locationNote", "en"])) errors.placeId = L("lfErrLocation");
+  if (!posted(["locationNote", "th"]) && !posted(["locationNote", "en"])) errors["locationNote.th"] = L("lfErrLocation");
   if (parsed.ok && parsed.data.occurredOn && parsed.data.occurredOn > bangkokDateKey(now)) errors.occurredOn = a("lfcErrDateFuture", locale);
   if (!parsed.ok || Object.keys(errors).length > 0) return { ok: false, errors };
   const d = parsed.data;
   return {
     ok: true,
-    data: { category: d.category!, title: d.title, description: d.description, placeId: d.placeId, locationNote: d.locationNote, occurredOn: d.occurredOn! },
+    data: { category: d.category!, title: d.title, description: d.description, locationNote: d.locationNote, occurredOn: d.occurredOn! },
   };
 }
 

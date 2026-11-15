@@ -53,14 +53,14 @@ export interface ListingView {
 /** What stops a listing being published. Staff see these as a checklist. */
 export type ListingGap = "title_th" | "title_en" | "description_th" | "description_en" | "location";
 
-/** Published content needs Thai and English, and a place or a note about where. Drafts may be incomplete. */
-export function listingGaps(item: Pick<ListingView, "title" | "description" | "locationNote" | "placeId">): ListingGap[] {
+/** Published content needs Thai and English, and a note about where. Drafts may be incomplete. */
+export function listingGaps(item: Pick<ListingView, "title" | "description" | "locationNote">): ListingGap[] {
   const gaps: ListingGap[] = [];
   if (!item.title.th.trim()) gaps.push("title_th");
   if (!item.title.en.trim()) gaps.push("title_en");
   if (!item.description.th.trim()) gaps.push("description_th");
   if (!item.description.en.trim()) gaps.push("description_en");
-  if (!item.placeId && !item.locationNote.th.trim() && !item.locationNote.en.trim()) gaps.push("location");
+  if (!item.locationNote.th.trim() && !item.locationNote.en.trim()) gaps.push("location");
   return gaps;
 }
 

@@ -11,7 +11,6 @@ export const KEYS: ItemDescription = {
   category: "keys",
   title: { th: "พวงกุญแจสีแดง", en: "Red keyring" },
   description: { th: "กุญแจสามดอก", en: "Three keys on a red keyring" },
-  placeId: null,
   locationNote: { th: "หน้าห้องสมุด", en: "Outside the library" },
   occurredOn: "2026-10-18",
 };

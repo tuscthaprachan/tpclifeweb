@@ -20,7 +20,7 @@ import { intakeProgress, type IntakeTask } from "@/lib/lost-found/intake";
 import { getListingForCase, type ListingGap } from "@/lib/lost-found/listing";
 import { listPrivatePhotos } from "@/lib/lost-found/photos";
 import { getStorage } from "@/lib/storage";
-import { categoryOptions, deskOptions, placeOptions } from "../../../lost-found/data";
+import { categoryOptions, deskOptions } from "../../../lost-found/data";
 import { DescribeForm, FinderForm, PhotoUpload, PublishListingForm, StorageForm, VerificationForm } from "../../../lost-found/Forms";
 import { PrivatePhotos } from "../../../lost-found/PrivatePhotos";
 import { PublishWarnings } from "../../../lost-found/PublishWarnings";
@@ -54,7 +54,7 @@ const GAP: Record<ListingGap, AdminKey> = {
 /**
  * Found item intake as a task list (the GOV.UK pattern). Each task is a page
  * of its own (`?task=`), done in any order and left half done; "Publish to the
- * public list" opens when the listing has both languages and a place. The
+ * public list" opens when the listing has both languages and where it was found. The
  * storage location and the hidden detail are strongly recommended: the publish
  * step warns when they are missing but does not stop the officer.
  */
@@ -130,14 +130,12 @@ export default async function FoundIntakePage({ params, searchParams }: { params
           caseId={id}
           orgId={orgId}
           categories={categoryOptions(locale)}
-          places={await placeOptions(db, locale)}
           defaults={{
             category: listing.category,
             titleTh: listing.title.th,
             titleEn: listing.title.en,
             descriptionTh: listing.description.th,
             descriptionEn: listing.description.en,
-            placeId: listing.placeId,
             locationNoteTh: listing.locationNote.th,
             locationNoteEn: listing.locationNote.en,
             occurredOn: listing.occurredOn,

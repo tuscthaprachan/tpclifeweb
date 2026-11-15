@@ -28,7 +28,7 @@ import { listPrivatePhotos } from "@/lib/lost-found/photos";
 import { getStorage } from "@/lib/storage";
 import type { CasePanelProps } from "../panels";
 import { PublishWarnings } from "./PublishWarnings";
-import { caseRefs, categoryOptions, deskOptions, placeOptions } from "./data";
+import { caseRefs, categoryOptions, deskOptions } from "./data";
 import {
   AddClaimForm,
   ClaimAnswerReveal,
@@ -75,7 +75,7 @@ const GAP_KEY: Record<ListingGap, AdminKey> = {
 
 async function ListingSection({ caseId, locale, orgId, canEdit, found, status }: { caseId: string; locale: Locale; orgId: number; canEdit: boolean; found: boolean; status: string }) {
   const db = getDb();
-  const [listing, places] = await Promise.all([getListingForCase(db, caseId), placeOptions(db, locale)]);
+  const listing = await getListingForCase(db, caseId);
   if (!listing) return <p className="m-0 text-ink-600">{a("lfcListingNone", locale)}</p>;
   const gaps = listingGaps(listing);
   const published = listing.status === "published";
@@ -90,7 +90,6 @@ async function ListingSection({ caseId, locale, orgId, canEdit, found, status }:
           { key: a("lfFieldDescription", locale), value: <Bilingual th={listing.description.th} en={listing.description.en} locale={locale} /> },
           { key: a("fieldCategory", locale), value: categoryLabel(listing.category, locale) },
           { key: a("lfFieldOccurredOn", locale), value: listing.occurredOn },
-          { key: a("lfFieldPlace", locale), value: places.find((p) => p.value === listing.placeId)?.label ?? a("caseNone", locale) },
           { key: a("lfFieldLocationNote", locale), value: <Bilingual th={listing.locationNote.th} en={listing.locationNote.en} locale={locale} /> },
           { key: a("lfFieldProgress", locale), value: a(`lfcRegister_${listing.registerStatus}` as AdminKey, locale) },
         ]}
@@ -115,14 +114,12 @@ async function ListingSection({ caseId, locale, orgId, canEdit, found, status }:
             caseId={caseId}
             orgId={orgId}
             categories={categoryOptions(locale)}
-            places={places}
             defaults={{
               category: listing.category,
               titleTh: listing.title.th,
               titleEn: listing.title.en,
               descriptionTh: listing.description.th,
               descriptionEn: listing.description.en,
-              placeId: listing.placeId,
               locationNoteTh: listing.locationNote.th,
               locationNoteEn: listing.locationNote.en,
               occurredOn: listing.occurredOn,

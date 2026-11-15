@@ -17,13 +17,12 @@ interface CheckAnswersProps {
   locale: Locale;
   slug?: string;
   values: DraftValues;
-  placeName?: string;
 }
 
 const lines = (text: string): ReactNode => <span className="whitespace-pre-line">{text}</span>;
 
 /** The check your answers page: every answer, a change link for each, and the one button that sends it. */
-export function CheckAnswers({ kind, locale, slug, values, placeName }: CheckAnswersProps) {
+export function CheckAnswers({ kind, locale, slug, values }: CheckAnswersProps) {
   const change = (step: string, what: string): ReactNode => (
     <Link href={`${localePath(locale, stepPath(kind, step, slug))}?from=check`} className="text-action underline">
       {UI.lfpChange[locale]}
@@ -38,7 +37,7 @@ export function CheckAnswers({ kind, locale, slug, values, placeName }: CheckAns
     add(UI.category[locale], categoryLabel(values.category as LostFoundCategory, locale), "category");
     add(UI.lfpTitleLabel[locale], values.title, "describe");
     add(UI.lfpDescriptionLabel[locale], lines(values.description), "describe");
-    add((found ? UI.whereFound : UI.whereLost)[locale], [placeName, values.locationNote].filter(Boolean).join(", "), "where");
+    add((found ? UI.whereFound : UI.whereLost)[locale], values.locationNote, "where");
     const date = parseDate(values.day, values.month, values.year);
     add((found ? UI.dateFound : UI.dateLost)[locale], date ? formatDate(date, locale) : "", "when");
     if (kind === "lost") {

@@ -6,10 +6,10 @@
  */
 
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { publicCaseView, readContacts, resolveTrackingLink, transition, createCase, type StaffActor } from "@/lib/cases";
 import { decryptPii, PiiUnavailableError } from "@/lib/crypto/pii";
-import { auditLog, caseContacts, caseEvents, cases, lostFoundClaims, lostFoundIdentifyingDetails, lostFoundItems, journeyMetrics, lostFoundJourneys, lostFoundPublic, places, referenceCounters } from "@/lib/db/schema";
+import { auditLog, caseContacts, caseEvents, cases, lostFoundClaims, lostFoundIdentifyingDetails, lostFoundItems, journeyMetrics, lostFoundJourneys, lostFoundPublic, referenceCounters } from "@/lib/db/schema";
 import { claimAnswerAad, identifyingDetailAad } from "@/lib/lost-found/public/aad";
 import { trackingLinkEmail } from "@/lib/lost-found/public/email";
 import { finishJourney, JourneyTooFastError, MIN_JOURNEY_MS } from "@/lib/lost-found/public/journey";
@@ -25,7 +25,6 @@ let officer: StaffActor;
 const env = { PII_ENCRYPTION_KEY: KEY_A, NODE_ENV: "test" };
 const NOW = new Date("2026-03-10T05:00:00Z");
 const ctx = { locale: "en" as const, ip: "203.0.113.7", userAgent: "vitest", requestId: "req-1" };
-let placeId: string;
 
 const lostValues = (over: Partial<DraftValues> = {}): DraftValues => ({
   ...emptyValues(),
@@ -55,11 +54,20 @@ const foundValues = (over: Partial<DraftValues> = {}): DraftValues => ({
   ...over,
 });
 
+async function withFailingListingInsert(run: () => Promise<void>) {
+  await t.db.execute(sql`create function fail_listing() returns trigger language plpgsql as $$ begin raise exception 'listing insert failed'; end $$`);
+  await t.db.execute(sql`create trigger fail_listing before insert on lost_found_items for each row execute function fail_listing()`);
+  try {
+    await run();
+  } finally {
+    await t.db.execute(sql`drop trigger fail_listing on lost_found_items`);
+    await t.db.execute(sql`drop function fail_listing()`);
+  }
+}
+
 beforeAll(async () => {
   t = await setup();
   officer = await t.staff("Desk officer", "officer", "tusu");
-  const [place] = await t.db.insert(places).values({ slug: "library", nameEn: "Library", category: "welfare" }).returning();
-  placeId = place!.id;
 }, 60_000);
 
 async function counter() {
@@ -108,7 +116,7 @@ describe("lost report", () => {
   let token: string;
 
   it("creates the case, the encrypted contact, a linked draft listing and a tracking link", async () => {
-    const out = await submitReport(t.db, "lost", lostValues({ placeId }), ctx, { now: NOW, env });
+    const out = await submitReport(t.db, "lost", lostValues(), ctx, { now: NOW, env });
     ({ reference, caseId, token } = out);
     expect(reference).toBe("LF-2026-0001");
 
@@ -128,7 +136,7 @@ describe("lost report", () => {
       titleTh: "",
       descriptionEn: "Folding, blue, a bent rib",
       locationNoteEn: "Near the library steps",
-      placeId,
+      placeId: null,
       occurredOn: "2026-03-02",
     });
     // The legacy plaintext columns are never written, and the draft is not public.
@@ -162,7 +170,7 @@ describe("lost report", () => {
   });
 
   it("deletes the identifying detail with the contact, as retention does", async () => {
-    const out = await submitReport(t.db, "lost", lostValues({ placeId: "" }), ctx, { now: NOW, env });
+    const out = await submitReport(t.db, "lost", lostValues(), ctx, { now: NOW, env });
     expect(await t.db.select().from(lostFoundIdentifyingDetails).where(eq(lostFoundIdentifyingDetails.caseId, out.caseId))).toHaveLength(1);
     await t.db.delete(caseContacts).where(eq(caseContacts.caseId, out.caseId));
     expect(await t.db.select().from(lostFoundIdentifyingDetails).where(eq(lostFoundIdentifyingDetails.caseId, out.caseId))).toHaveLength(0);
@@ -203,11 +211,11 @@ describe("lost report", () => {
     expect(await t.db.select().from(lostFoundItems)).toHaveLength(items);
   });
 
-  it("rolls everything back, giving the reference back, when a place does not exist", async () => {
+  it("rolls everything back, giving the reference back, when the listing cannot be saved", async () => {
     const before = await counter();
     const items = (await t.db.select().from(lostFoundItems)).length;
     const cs = (await t.db.select().from(cases)).length;
-    await expect(submitReport(t.db, "lost", lostValues({ placeId: "00000000-0000-4000-8000-000000000000" }), ctx, { now: NOW, env })).rejects.toThrow();
+    await withFailingListingInsert(() => expect(submitReport(t.db, "lost", lostValues(), ctx, { now: NOW, env })).rejects.toThrow());
     expect(await counter()).toBe(before);
     expect(await t.db.select().from(lostFoundItems)).toHaveLength(items);
     expect(await t.db.select().from(cases)).toHaveLength(cs);
@@ -281,9 +289,9 @@ describe("finishing a journey", () => {
   });
 
   it("does not leave a result if the submission fails", async () => {
-    const id = await filled("found", foundValues({ placeId: "00000000-0000-4000-8000-000000000000" }), new Date(NOW.getTime() - 60_000));
+    const id = await filled("found", foundValues(), new Date(NOW.getTime() - 60_000));
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
-    await expect(finishJourney(t.db, id, ctx, { now: NOW, env })).rejects.toThrow();
+    await withFailingListingInsert(() => expect(finishJourney(t.db, id, ctx, { now: NOW, env })).rejects.toThrow());
     spy.mockRestore();
     const [row] = await t.db.select().from(lostFoundJourneys).where(eq(lostFoundJourneys.id, id));
     expect(JSON.parse(decryptPii(row!.dataEnc, `lost_found_journeys:data:${id}`, env)).result).toBeUndefined();

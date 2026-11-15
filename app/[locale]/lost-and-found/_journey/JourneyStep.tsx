@@ -12,11 +12,10 @@ import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { categoryLabel, LOST_FOUND_CATEGORIES } from "@/components/domain/lostfound";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Button, Checkboxes, Container, DateInput, ErrorSummary, Heading, InsetText, NotificationBanner, Radios, Select, Stack, Textarea, TextInput, type ErrorSummaryItem } from "@/components/ui";
-import { getPlaces } from "@/lib/content";
+import { Button, Checkboxes, Container, DateInput, ErrorSummary, Heading, InsetText, NotificationBanner, Radios, Stack, Textarea, TextInput, type ErrorSummaryItem } from "@/components/ui";
 import { isPiiAvailable } from "@/lib/crypto/pii";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
-import { isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
+import { isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { readJourneyToken } from "@/lib/lost-found/public/cookies";
 import { isStep, journeyBasePath, previousStep, stepPath, type DraftValues, type JourneyKind } from "@/lib/lost-found/public/steps";
@@ -98,8 +97,6 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
       await saveJourney(db, loaded.id, { ...data, flash: { step: problem.step, errors: problem.errors } });
       redirect(localePath(locale, stepPath(kind, problem.step, slug)));
     }
-    const places = await getPlaces();
-    const place = data.values.placeId ? places.find((p) => p._id === data.values.placeId) : undefined;
     return (
       <Container width="narrow">
         {crumbs}
@@ -110,7 +107,7 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
               {UI[flash.errors.form][locale]}
             </NotificationBanner>
           ) : null}
-          <CheckAnswers kind={kind} locale={locale} slug={slug} values={data.values} placeName={place ? pick(place.name, locale) : undefined} />
+          <CheckAnswers kind={kind} locale={locale} slug={slug} values={data.values} />
         </Stack>
       </Container>
     );
@@ -134,7 +131,6 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
 
   const title = stepTitle(kind, step, locale);
   const values = data.values;
-  const places = step === "where" ? await getPlaces() : [];
 
   return (
     <Container width="narrow">
@@ -165,15 +161,6 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
             {step === "where" ? (
               <>
                 <Question>{title}</Question>
-                <Select
-                  id="placeId"
-                  name="placeId"
-                  label={UI.lfpPlaceLabel[locale]}
-                  hint={UI.lfpPlaceHint[locale]}
-                  error={err("placeId")}
-                  defaultValue={values.placeId}
-                  options={[{ value: "", label: UI.lfpSomewhereElse[locale] }, ...places.map((p) => ({ value: p._id, label: pick(p.name, locale) }))]}
-                />
                 <TextInput id="locationNote" name="locationNote" label={UI.lfpPlaceNoteLabel[locale]} hint={UI.lfpPlaceNoteHint[locale]} error={err("locationNote")} defaultValue={values.locationNote} autoComplete="off" />
               </>
             ) : null}

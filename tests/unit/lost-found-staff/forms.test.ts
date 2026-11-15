@@ -14,10 +14,10 @@ describe("parseDescription", () => {
     const parsed = parseDescription(form(ITEM), "en", NOW);
     expect(parsed).toMatchObject({ ok: true, data: { category: "keys", title: { th: "", en: "Red keyring" }, description: { th: "กุญแจ", en: "" }, occurredOn: "2026-10-20" } });
   });
-  it("needs a title, a description, a category, a date and a place or note", () => {
+  it("needs a title, a description, a category, a date and where", () => {
     const parsed = parseDescription(form({}), "en", NOW);
     expect(parsed.ok).toBe(false);
-    if (!parsed.ok) expect(Object.keys(parsed.errors).sort()).toEqual(["category", "description.th", "occurredOn", "placeId", "title.th"]);
+    if (!parsed.ok) expect(Object.keys(parsed.errors).sort()).toEqual(["category", "description.th", "locationNote.th", "occurredOn", "title.th"]);
   });
   it("refuses a date in the future, in the staff member's language", () => {
     const en = parseDescription(form({ ...ITEM, occurredOn: "2026-10-30" }), "en", NOW);

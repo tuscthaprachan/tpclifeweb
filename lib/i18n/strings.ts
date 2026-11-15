@@ -466,16 +466,10 @@ export const UI = {
   },
   lfpQWhereLost: { th: "คุณทำของหายที่ไหน", en: "Where did you lose it?" },
   lfpQWhereFound: { th: "คุณเก็บของได้ที่ไหน", en: "Where did you find it?" },
-  lfpPlaceLabel: { th: "สถานที่ในมหาวิทยาลัย", en: "Place on campus" },
-  lfpPlaceHint: {
-    th: "เลือกจากรายการ ถ้าไม่แน่ใจหรือไม่มีในรายการ ให้เลือก ที่อื่น แล้วอธิบายด้านล่าง",
-    en: "Choose from the list. If you are not sure, or it is not listed, choose Somewhere else and say where below",
-  },
-  lfpSomewhereElse: { th: "ที่อื่น หรือไม่แน่ใจ", en: "Somewhere else, or not sure" },
-  lfpPlaceNoteLabel: { th: "อธิบายสถานที่เพิ่มเติม", en: "Say more about where" },
+  lfpPlaceNoteLabel: { th: "สถานที่", en: "Where" },
   lfpPlaceNoteHint: {
-    th: "เช่น ชั้นไหน โต๊ะไหน หรือใกล้จุดใด ไม่เกิน 200 ตัวอักษร",
-    en: "For example which floor, table or nearby landmark. Up to 200 characters",
+    th: "เช่น อาคาร ชั้น ห้อง หรือใกล้จุดใด ถ้าไม่แน่ใจ ให้บอกที่ที่คิดว่าน่าจะเป็น ไม่เกิน 200 ตัวอักษร",
+    en: "For example the building, floor, room or a nearby landmark. If you are not sure, say where you think it was. Up to 200 characters",
   },
   lfpQWhenLost: { th: "คุณทำของหายเมื่อไร", en: "When did you lose it?" },
   lfpQWhenFound: { th: "คุณเก็บของได้เมื่อไร", en: "When did you find it?" },
@@ -697,11 +691,7 @@ export const UI = {
   lfpErrTitleLong: { th: "ชื่อสิ่งของต้องไม่เกิน 80 ตัวอักษร", en: "The item name must be 80 characters or fewer" },
   lfpErrDescription: { th: "กรอกลักษณะของสิ่งของ", en: "Describe what the item looks like" },
   lfpErrDescriptionLong: { th: "ลักษณะของสิ่งของต้องไม่เกิน 600 ตัวอักษร", en: "The description must be 600 characters or fewer" },
-  lfpErrPlace: { th: "เลือกสถานที่จากรายการ", en: "Choose a place from the list" },
-  lfpErrWhere: {
-    th: "เลือกสถานที่จากรายการ หรืออธิบายว่าเกิดที่ใด",
-    en: "Choose a place from the list, or say where it was",
-  },
+  lfpErrWhere: { th: "บอกว่าอยู่ที่ไหน", en: "Say where it was" },
   lfpErrWhereLong: { th: "คำอธิบายสถานที่ต้องไม่เกิน 200 ตัวอักษร", en: "The place description must be 200 characters or fewer" },
   lfpErrDetail: {
     th: "กรอกรายละเอียดหนึ่งอย่างที่มีแต่คุณที่รู้",

@@ -28,7 +28,6 @@ const VALID: Record<string, string> = {
   endsAt: "2026-11-01T16:00",
   "location.th": "",
   "location.en": "",
-  place: "",
   owner: "tusu",
   category: "",
   cover: "",
@@ -102,22 +101,21 @@ describe("validateEventForm", () => {
     expect((await validate(form(), { id: existing!.id })).ok).toBe(true);
   });
 
-  it("checks the cover, place, related form and registration link", async () => {
+  it("checks the cover, related form and registration link", async () => {
     const [bare] = await db.insert(images).values({ storageKey: "content/images/b.jpg" }).returning();
     const missing = "00000000-0000-4000-8000-000000000000";
     expect(await validate(form({ cover: bare!.id }, "save"))).toMatchObject({ ok: true });
     expect(await validate(form({ cover: bare!.id }, "publish"))).toMatchObject({ ok: false, errors: { cover: expect.stringContaining("no description") } });
-    expect(await validate(form({ cover: missing, place: missing, relatedForm: missing }))).toMatchObject({
+    expect(await validate(form({ cover: missing, relatedForm: missing }))).toMatchObject({
       ok: false,
-      errors: { cover: expect.any(String), place: expect.any(String), relatedForm: expect.any(String) },
+      errors: { cover: expect.any(String), relatedForm: expect.any(String) },
     });
     expect(await validate(form({ registrationUrl: "ftp://x" }))).toMatchObject({ ok: false, errors: { registrationUrl: expect.any(String) } });
   });
 
   it("saves a published edit that the public read returns", async () => {
-    const [place] = await db.insert(places).values({ slug: "hall", nameTh: "ห้อง", nameEn: "Hall", category: "activity", status: "published" }).returning();
     const checked = await validate(
-      form({ "body.th": doc("เนื้อหา"), "body.en": doc("Body"), "location.th": "ห้องใหญ่", "location.en": "Main hall", place: place!.id, endsAt: "" }, "publish"),
+      form({ "body.th": doc("เนื้อหา"), "body.en": doc("Body"), "location.th": "ห้องใหญ่", "location.en": "Main hall", endsAt: "" }, "publish"),
     );
     if (!checked.ok) throw new Error(JSON.stringify(checked.errors));
     const { id } = await saveContent({ entityType: "event", table: events, actor: actor(), db, status: checked.status, values: eventValues(checked.data) });
@@ -129,7 +127,7 @@ describe("validateEventForm", () => {
       startsAt: "2026-11-01T03:00:00.000Z",
       endsAt: undefined,
       location: { th: "ห้องใหญ่", en: "Main hall" },
-      place: { slug: { current: "hall" } },
+      place: undefined,
       isCancelled: false,
     });
 

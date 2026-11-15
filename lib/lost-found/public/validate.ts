@@ -18,7 +18,6 @@ export type FieldErrors = Partial<Record<string, UiKey>>;
 
 export const LIMITS = { title: 80, description: 600, locationNote: 200, detail: 500, proof: 1000, name: 100, email: 254, phone: 20, lineId: 40 } as const;
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 
 export function emptyValues(): DraftValues {
@@ -26,7 +25,6 @@ export function emptyValues(): DraftValues {
     category: "",
     title: "",
     description: "",
-    placeId: "",
     locationNote: "",
     day: "",
     month: "",
@@ -63,7 +61,7 @@ export function readStepValues(step: string, form: FormData): Partial<DraftValue
     case "describe":
       return { title: clean(form.get("title")), description: clean(form.get("description"), true) };
     case "where":
-      return { placeId: clean(form.get("placeId")), locationNote: clean(form.get("locationNote")) };
+      return { locationNote: clean(form.get("locationNote")) };
     case "when":
       return { day: clean(form.get("when-day")), month: clean(form.get("when-month")), year: clean(form.get("when-year")) };
     case "detail":
@@ -159,9 +157,8 @@ export function validateStep(kind: JourneyKind, step: string, v: DraftValues, no
       else if (size(v.description) > LIMITS.description) errors.description = "lfpErrDescriptionLong";
       break;
     case "where":
-      if (v.placeId && !UUID.test(v.placeId)) errors.placeId = "lfpErrPlace";
-      else if (!v.placeId && !v.locationNote) errors.placeId = "lfpErrWhere";
-      if (size(v.locationNote) > LIMITS.locationNote) errors.locationNote = "lfpErrWhereLong";
+      if (!v.locationNote) errors.locationNote = "lfpErrWhere";
+      else if (size(v.locationNote) > LIMITS.locationNote) errors.locationNote = "lfpErrWhereLong";
       break;
     case "when":
       if (!parseDate(v.day, v.month, v.year, now)) errors.when = "errorInvalidDate";

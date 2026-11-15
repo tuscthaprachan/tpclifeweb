@@ -152,7 +152,7 @@ export async function submitReport(
         descriptionTh: description.th,
         descriptionEn: description.en,
         category,
-        placeId: values.placeId || null,
+        placeId: null,
         locationNoteTh: values.locationNote ? note.th : null,
         locationNoteEn: values.locationNote ? note.en : null,
         occurredOn,

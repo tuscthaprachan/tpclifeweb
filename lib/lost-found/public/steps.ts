@@ -21,7 +21,7 @@ export const STEPS: Record<JourneyKind, readonly string[]> = {
 export const STEP_FIELDS: Record<string, readonly string[]> = {
   category: ["category"],
   describe: ["title", "description"],
-  where: ["placeId", "locationNote"],
+  where: ["locationNote"],
   when: ["when-day", "when-month", "when-year"],
   detail: ["detail"],
   now: ["whereNow"],
@@ -34,7 +34,6 @@ export interface DraftValues {
   category: string;
   title: string;
   description: string;
-  placeId: string;
   locationNote: string;
   day: string;
   month: string;

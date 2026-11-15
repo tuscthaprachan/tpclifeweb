@@ -1,6 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { validateLostFoundForm } from "@/app/admin/content/lost-and-found/validate";
-import { images, places } from "@/lib/db/schema";
+import { images } from "@/lib/db/schema";
 import { createTestDb } from "../db/harness";
 
 type Db = Awaited<ReturnType<typeof createTestDb>>["db"];
@@ -13,7 +13,6 @@ const VALID: Record<string, string> = {
   "description.th": "พวงกุญแจสีแดง",
   "description.en": "A red keyring",
   category: "keys",
-  placeId: "",
   "locationNote.th": "หน้าห้องสมุด",
   "locationNote.en": "Outside the library",
   occurredOn: "2026-10-20",
@@ -67,13 +66,11 @@ describe("validateLostFoundForm", () => {
     });
   });
 
-  it("needs a place or a written location to publish, not to save", async () => {
+  it("needs a written location to publish, not to save", async () => {
     const none = { "locationNote.th": "", "locationNote.en": "" };
     expect((await validate(form(none))).ok).toBe(true);
-    expect(await validate(form(none, "publish"))).toMatchObject({ ok: false, errors: { placeId: expect.stringContaining("Choose a place") } });
-    const [place] = await db.insert(places).values({ slug: "library", nameTh: "ห้องสมุด", nameEn: "Library", category: "welfare" }).onConflictDoNothing().returning({ id: places.id });
-    expect((await validate(form({ ...none, placeId: place!.id }, "publish"))).ok).toBe(true);
-    expect(await validate(form({ placeId: "00000000-0000-4000-8000-000000000000" }))).toMatchObject({ ok: false, errors: { placeId: expect.any(String) } });
+    expect(await validate(form(none, "publish"))).toMatchObject({ ok: false, errors: { "locationNote.th": expect.stringContaining("Say where") } });
+    expect((await validate(form({}, "publish"))).ok).toBe(true);
   });
 
   it("checks the choices and the date", async () => {

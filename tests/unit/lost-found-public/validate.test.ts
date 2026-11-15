@@ -6,7 +6,6 @@ import type { DraftValues } from "@/lib/lost-found/public/steps";
 
 const NOW = new Date("2026-03-10T05:00:00Z");
 const v = (over: Partial<DraftValues> = {}): DraftValues => ({ ...emptyValues(), ...over });
-const PLACE = "11111111-2222-4333-8444-555555555555";
 
 describe("question pages", () => {
   it("each journey ends with check then confirmation, and steps chain", () => {
@@ -38,12 +37,10 @@ describe("validateStep", () => {
     expect(validateStep("lost", "describe", v({ title: "a", description: "b".repeat(601) }))).toEqual({ description: "lfpErrDescriptionLong" });
   });
 
-  it("where needs a real place id or a description", () => {
-    expect(validateStep("lost", "where", v())).toEqual({ placeId: "lfpErrWhere" });
-    expect(validateStep("lost", "where", v({ placeId: PLACE }))).toEqual({});
+  it("where needs a description", () => {
+    expect(validateStep("lost", "where", v())).toEqual({ locationNote: "lfpErrWhere" });
     expect(validateStep("lost", "where", v({ locationNote: "Library steps" }))).toEqual({});
-    expect(validateStep("lost", "where", v({ placeId: "'; drop table x; --" }))).toEqual({ placeId: "lfpErrPlace" });
-    expect(validateStep("lost", "where", v({ placeId: PLACE, locationNote: "x".repeat(201) }))).toEqual({ locationNote: "lfpErrWhereLong" });
+    expect(validateStep("lost", "where", v({ locationNote: "x".repeat(201) }))).toEqual({ locationNote: "lfpErrWhereLong" });
   });
 
   it("when accepts real past dates, Buddhist years, and rejects the rest", () => {

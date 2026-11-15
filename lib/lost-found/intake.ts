@@ -36,18 +36,17 @@ export interface ItemDescription {
   category: Category;
   title: Bilingual;
   description: Bilingual;
-  placeId: string | null;
   locationNote: Bilingual;
   /** The Asia/Bangkok calendar date, "YYYY-MM-DD". */
   occurredOn: string;
 }
 
 /** Either language may be filled first; at least one of the title and one of the description is needed to save. */
-export function descriptionProblems(input: Pick<ItemDescription, "title" | "description" | "placeId" | "locationNote">): Array<"title" | "description" | "location"> {
+export function descriptionProblems(input: Pick<ItemDescription, "title" | "description" | "locationNote">): Array<"title" | "description" | "location"> {
   const problems: Array<"title" | "description" | "location"> = [];
   if (!input.title.th.trim() && !input.title.en.trim()) problems.push("title");
   if (!input.description.th.trim() && !input.description.en.trim()) problems.push("description");
-  if (!input.placeId && !input.locationNote.th.trim() && !input.locationNote.en.trim()) problems.push("location");
+  if (!input.locationNote.th.trim() && !input.locationNote.en.trim()) problems.push("location");
   return problems;
 }
 
@@ -89,7 +88,7 @@ export async function logFoundItem(db: AuditExecutor, input: ItemDescription, ac
         category: input.category,
         title: input.title,
         description: input.description,
-        placeId: input.placeId,
+        placeId: null,
         locationNote: input.locationNote,
         occurredOn: input.occurredOn,
         owner: await ownerFor(tx, actor.organisationId),
@@ -224,7 +223,7 @@ export async function logWalkInLostReport(db: AuditExecutor, input: WalkInLost, 
         category: input.category,
         title: input.title,
         description: input.description,
-        placeId: input.placeId,
+        placeId: null,
         locationNote: input.locationNote,
         occurredOn: input.occurredOn,
         owner: await ownerFor(tx, actor.organisationId),

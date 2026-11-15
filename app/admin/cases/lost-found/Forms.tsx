@@ -112,13 +112,12 @@ export interface DescribeDefaults {
   titleEn?: string;
   descriptionTh?: string;
   descriptionEn?: string;
-  placeId?: string | null;
   locationNoteTh?: string;
   locationNoteEn?: string;
   occurredOn?: string;
 }
 
-function DescribeFields({ locale, prefix, errors, defaults, categories, places }: { locale: Locale; prefix: string; errors: Record<string, string>; defaults: DescribeDefaults; categories: Option[]; places: Option[] }) {
+function DescribeFields({ locale, prefix, errors, defaults, categories }: { locale: Locale; prefix: string; errors: Record<string, string>; defaults: DescribeDefaults; categories: Option[] }) {
   const field = (name: string) => ({ id: control(prefix, name), name, error: errors[name] });
   return (
     <>
@@ -132,7 +131,6 @@ function DescribeFields({ locale, prefix, errors, defaults, categories, places }
         <Textarea {...field("description.th")} lang="th" label={`${L("lfFieldDescription", locale)} (${L("langThai", locale)})`} hint={L("lfcDescribeHint", locale)} defaultValue={defaults.descriptionTh ?? ""} rows={4} maxLength={2000} />
         <Textarea {...field("description.en")} lang="en" label={`${L("lfFieldDescription", locale)} (${L("langEnglish", locale)})`} hint={L("lfcDescribeHint", locale)} defaultValue={defaults.descriptionEn ?? ""} rows={4} maxLength={2000} />
       </div>
-      <Select {...field("placeId")} label={L("lfFieldPlace", locale)} options={[{ value: "", label: L("lfPlaceNone", locale) }, ...places]} defaultValue={defaults.placeId ?? ""} className="max-w-[32rem]" />
       <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
         <TextInput {...field("locationNote.th")} lang="th" label={`${L("lfFieldLocationNote", locale)} (${L("langThai", locale)})`} hint={L("lfFieldLocationNoteHint", locale)} defaultValue={defaults.locationNoteTh ?? ""} maxLength={300} />
         <TextInput {...field("locationNote.en")} lang="en" label={`${L("lfFieldLocationNote", locale)} (${L("langEnglish", locale)})`} hint={L("lfFieldLocationNoteHint", locale)} defaultValue={defaults.locationNoteEn ?? ""} maxLength={300} />
@@ -145,7 +143,7 @@ function DescribeFields({ locale, prefix, errors, defaults, categories, places }
 type DescribeMode = "start" | "describe" | "panel";
 
 /** Describe the item: the first task of the found item intake, and the quick edit on the case page. */
-export function DescribeForm({ locale, mode, caseId, orgId, defaults, categories, places }: { locale: Locale; mode: DescribeMode; caseId?: string; orgId: number; defaults: DescribeDefaults; categories: Option[]; places: Option[] }) {
+export function DescribeForm({ locale, mode, caseId, orgId, defaults, categories }: { locale: Locale; mode: DescribeMode; caseId?: string; orgId: number; defaults: DescribeDefaults; categories: Option[] }) {
   const action = mode === "start" ? startFoundAction : mode === "describe" ? describeFoundAction : updateListingAction;
   const [state, run, pending] = useActionState<LfState, FormData>(action, EMPTY);
   const prefix = useId().replace(/:/g, "");
@@ -153,14 +151,14 @@ export function DescribeForm({ locale, mode, caseId, orgId, defaults, categories
     <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]">
       <Feedback state={state} locale={locale} prefix={prefix} />
       <HiddenIds caseId={caseId} orgId={orgId} />
-      <DescribeFields locale={locale} prefix={prefix} errors={state.errors ?? {}} defaults={defaults} categories={categories} places={places} />
+      <DescribeFields locale={locale} prefix={prefix} errors={state.errors ?? {}} defaults={defaults} categories={categories} />
       <SaveButton locale={locale} pending={pending} variant={mode === "panel" ? "secondary" : "primary"} label={L(mode === "start" ? "lfcStartSave" : "lfcDescribeSave", locale)} />
     </form>
   );
 }
 
 /** A lost report taken at the desk on someone's behalf. */
-export function WalkInLostForm({ locale, orgId, categories, places }: { locale: Locale; orgId: number; categories: Option[]; places: Option[] }) {
+export function WalkInLostForm({ locale, orgId, categories }: { locale: Locale; orgId: number; categories: Option[] }) {
   const [state, run, pending] = useActionState<LfState, FormData>(logLostAction, EMPTY);
   const prefix = useId().replace(/:/g, "");
   const errors = state.errors ?? {};
@@ -173,7 +171,7 @@ export function WalkInLostForm({ locale, orgId, categories, places }: { locale: 
         <h2 id={`${prefix}-item`} className="m-0 text-xl font-semibold">
           {L("lfcWalkInItem", locale)}
         </h2>
-        <DescribeFields locale={locale} prefix={prefix} errors={errors} defaults={{}} categories={categories} places={places} />
+        <DescribeFields locale={locale} prefix={prefix} errors={errors} defaults={{}} categories={categories} />
       </section>
       <section aria-labelledby={`${prefix}-person`} className="flex flex-col gap-[var(--space-4)]">
         <h2 id={`${prefix}-person`} className="m-0 text-xl font-semibold">

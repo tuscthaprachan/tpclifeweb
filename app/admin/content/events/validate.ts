@@ -5,7 +5,7 @@ import { resolveIntent, type FieldErrors, type ResolvedIntent } from "@/lib/admi
 import { checkImages } from "@/lib/admin/content/images";
 import { isSlugTaken } from "@/lib/admin/content/slug";
 import type { AuditExecutor } from "@/lib/db/audit";
-import { events, forms, places } from "@/lib/db/schema";
+import { events, forms } from "@/lib/db/schema";
 import { CATEGORIES, OWNERS, type ContentStatus } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
@@ -33,7 +33,6 @@ export async function validateEventForm(
     endsAt: k.dateTime(L("eventsFieldEndsAt")),
     isAllDay: k.checkbox(),
     location: k.bilingual(L("eventsFieldLocation"), { max: 200 }),
-    place: k.reference(L("eventsFieldPlace")),
     owner: k.enumOf(L("fieldOwner"), OWNERS),
     category: k.enumOf(L("fieldCategory"), CATEGORIES, { required: false }),
     cover: k.reference(L("fieldCoverImage")),
@@ -64,10 +63,6 @@ export async function validateEventForm(
       if (images.missing.includes(data.cover)) errors.cover = a("errSelectField", locale, { field: L("fieldCoverImage") });
       else if (publishing && images.undescribed.includes(data.cover)) errors.cover = L("errImageUndescribed");
     }
-    if (data.place) {
-      const found = await db.select({ id: places.id }).from(places).where(inArray(places.id, [data.place]));
-      if (found.length === 0) errors.place = a("errSelectField", locale, { field: L("eventsFieldPlace") });
-    }
     if (data.relatedForm) {
       const found = await db.select({ id: forms.id }).from(forms).where(inArray(forms.id, [data.relatedForm]));
       if (found.length === 0) errors.relatedForm = a("errSelectField", locale, { field: L("eventsFieldRelatedForm") });
@@ -97,7 +92,7 @@ export function eventValues(data: Extract<Awaited<ReturnType<typeof validateEven
     isAllDay: data.isAllDay,
     locationTh: location?.th ?? null,
     locationEn: location?.en ?? null,
-    placeId: data.place,
+    placeId: null,
     owner: data.owner,
     category: data.category,
     coverImageId: data.cover,

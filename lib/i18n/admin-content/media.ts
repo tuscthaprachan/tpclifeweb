@@ -99,11 +99,10 @@ export const MEDIA_STRINGS = {
     th: "บอกลักษณะที่ช่วยให้เจ้าของจำได้ อย่าใส่ข้อมูลที่มีแต่เจ้าของเท่านั้นที่รู้ ให้ใส่ในช่องข้อมูลส่วนตัวด้านล่าง",
     en: "Describe what helps the owner recognise it. Leave out anything only the owner would know; put that in the private section below",
   },
-  lfFieldPlace: { th: "สถานที่", en: "Place" },
   lfFieldLocationNote: { th: "สถานที่โดยละเอียด", en: "Where it was lost or found" },
   lfFieldLocationNoteHint: {
-    th: "แสดงเมื่อไม่ได้เลือกสถานที่จากรายการด้านบน",
-    en: "Shown when no place is chosen from the list above",
+    th: "เช่น อาคาร ชั้น ห้อง หรือใกล้จุดใด",
+    en: "For example the building, floor, room or a nearby landmark",
   },
   lfFieldOccurredOn: { th: "วันที่ทำหายหรือพบ", en: "Date lost or found" },
   lfFieldProgress: { th: "ความคืบหน้า", en: "Progress" },
@@ -143,10 +142,9 @@ export const MEDIA_STRINGS = {
     th: "สิ่งที่มีแต่เจ้าของตัวจริงที่รู้ ใช้ถามเมื่อมีผู้มาขอรับของ",
     en: "Something only the true owner would know, to ask when someone comes to claim the item",
   },
-  lfPlaceNone: { th: "ไม่ได้เลือกสถานที่", en: "No place chosen" },
   lfErrLocation: {
-    th: "เลือกสถานที่ หรือกรอกสถานที่โดยละเอียด",
-    en: "Choose a place, or say where it was lost or found",
+    th: "กรอกสถานที่ที่ทำหายหรือพบ",
+    en: "Say where it was lost or found",
   },
   lfErrClaimIncomplete: {
     th: "กรอกช่องทางติดต่อให้ครบ: ชื่อช่องทางทั้งสองภาษา ประเภท และรายละเอียด",

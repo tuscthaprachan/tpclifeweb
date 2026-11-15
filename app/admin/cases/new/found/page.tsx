@@ -9,9 +9,8 @@ import { isAuthConfigured } from "@/lib/auth";
 import { requireStaff } from "@/lib/auth/session";
 import { canAccessService, CASE_INBOX_ROLES } from "@/lib/cases/access";
 import { staffActorFor } from "@/lib/cases/staff";
-import { getDb } from "@/lib/db";
 import { a } from "@/lib/i18n/admin";
-import { categoryOptions, placeOptions } from "../../lost-found/data";
+import { categoryOptions } from "../../lost-found/data";
 import { DescribeForm } from "../../lost-found/Forms";
 import { TaskList } from "../../lost-found/TaskList";
 
@@ -33,7 +32,6 @@ export default async function NewFoundItemPage({ searchParams }: { searchParams:
   if (!canAccessService(staff.roles, "lost_found")) notFound();
   const { as } = await searchParams;
   const actor = await staffActorFor(staff, "lost_found", Number(as) || null);
-  const places = await placeOptions(getDb(), locale);
 
   return (
     <ConsolePage width="content">
@@ -53,7 +51,7 @@ export default async function NewFoundItemPage({ searchParams }: { searchParams:
       </Card>
       <div id="task-describe" tabIndex={-1}>
       <Card title={a("lfcTaskDescribe", locale)} icon="edit">
-        <DescribeForm locale={locale} mode="start" orgId={actor.organisationId} defaults={{}} categories={categoryOptions(locale)} places={places} />
+        <DescribeForm locale={locale} mode="start" orgId={actor.organisationId} defaults={{}} categories={categoryOptions(locale)} />
       </Card>
       </div>
     </ConsolePage>

@@ -66,11 +66,6 @@ export const PUBLISHING_STRINGS = {
     th: "เช่น ห้องประชุมใหญ่ อาคารกิจกรรมนักศึกษา ไม่บังคับ",
     en: "For example, Main Hall, Student Activities Building. Optional",
   },
-  eventsFieldPlace: { th: "สถานที่บนแผนที่", en: "Place on the campus map" },
-  eventsHintPlace: {
-    th: "เลือกถ้ามีสถานที่นี้ในแผนที่มหาวิทยาลัย เพื่อให้ผู้อ่านเปิดดูแผนที่ได้",
-    en: "Choose it if the place is on the campus map, so readers can open the map",
-  },
   eventsFieldBody: { th: "รายละเอียด", en: "Details" },
   eventsHintSummary: {
     th: "ประโยคหรือสองประโยคที่แสดงในรายการกิจกรรม",

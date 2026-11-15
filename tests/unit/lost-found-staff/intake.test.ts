@@ -37,7 +37,7 @@ describe("logFoundItem", () => {
     const thaiOnly = await logFoundItem(t.db, { ...KEYS, title: { th: "กุญแจ", en: "" }, description: { th: "สีแดง", en: "" } }, t.officer, { now: NOW });
     const listing = (await getListingForCase(t.db, thaiOnly.caseId))!;
     expect(listingGaps(listing)).toEqual(["title_en", "description_en"]);
-    expect(descriptionProblems({ ...KEYS, title: { th: "", en: "" }, description: { th: "", en: "" }, locationNote: { th: "", en: "" }, placeId: null })).toEqual(["title", "description", "location"]);
+    expect(descriptionProblems({ ...KEYS, title: { th: "", en: "" }, description: { th: "", en: "" }, locationNote: { th: "", en: "" } })).toEqual(["title", "description", "location"]);
     await expect(logFoundItem(t.db, { ...KEYS, title: { th: "", en: "" } }, t.officer, { now: NOW })).rejects.toMatchObject({ code: "invalid" });
   });
 

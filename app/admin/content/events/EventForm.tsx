@@ -8,7 +8,7 @@ import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
 import { Stack } from "@/components/ui";
 import { formatBangkokDateTime } from "@/lib/admin/content/datetime";
-import { loadChoices, userNames } from "@/lib/admin/content/list";
+import { userNames } from "@/lib/admin/content/list";
 import { categoryOptions, ownerOptions } from "@/lib/admin/content/options";
 import { loadRichTextRefs } from "@/lib/admin/content/refs";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
@@ -22,7 +22,7 @@ import { deleteEvent, saveEvent } from "./actions";
 export async function EventForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
   const db = getDb();
   const def = getContentType("events")!;
-  const [refs, placeChoices] = await Promise.all([loadRichTextRefs(db), loadChoices(db, getContentType("places")!)]);
+  const refs = await loadRichTextRefs(db);
 
   const [event] = id ? await db.select().from(events).where(eq(events.id, id)) : [];
   if (id && !event) notFound();
@@ -80,7 +80,6 @@ export async function EventForm({ locale, id, saved }: { locale: Locale; id?: st
       <FormSection icon="places" legend={L("eventsGroupWhere")} id="g-where">
         <Stack space={4}>
           <BilingualTextField name="location" label={L("eventsFieldLocation")} hint={L("eventsHintLocation")} maxLength={200} defaultValue={{ th: event?.locationTh, en: event?.locationEn }} />
-          <ReferencePicker name="place" label={L("eventsFieldPlace")} hint={L("eventsHintPlace")} options={placeChoices} defaultValue={event?.placeId} />
         </Stack>
       </FormSection>
 

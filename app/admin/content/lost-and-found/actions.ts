@@ -37,7 +37,7 @@ export async function saveLostFound(id: string | null, _prev: ContentFormState, 
     saved = await saveLostFoundItem(db, { actor: await contentActor(staff), id: id ?? undefined, status, data });
   } catch (error) {
     if (error instanceof ContentNotFoundError) return { errors: {}, formError: L("errNotFound") };
-    if (error instanceof ContentConflictError || error instanceof ContentInUseError) return { errors: {}, formError: a("errSelectField", locale, { field: L("lfFieldPlace") }) };
+    if (error instanceof ContentConflictError || error instanceof ContentInUseError) return { errors: {}, formError: a("errSelectField", locale, { field: L("lfFieldPhotos") }) };
     throw error;
   }
   const notice = intent === "publish" ? "published" : intent === "unpublish" ? "unpublished" : existing?.status === "published" ? "updated" : "saved";

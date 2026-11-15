@@ -1,10 +1,8 @@
-import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { fieldKit, formDataToObject, parseForm } from "@/lib/admin/content/fields";
 import { resolveIntent, type FieldErrors, type ResolvedIntent } from "@/lib/admin/content/form-state";
 import { checkImages } from "@/lib/admin/content/images";
 import type { AuditExecutor } from "@/lib/db/audit";
-import { places } from "@/lib/db/schema";
 import type { HelpContactJson } from "@/lib/db/schema/content/common";
 import { OWNERS, LOST_FOUND_CATEGORIES, LOST_FOUND_KINDS, LOST_FOUND_STATUSES, type ContentStatus } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
@@ -38,7 +36,6 @@ export async function validateLostFoundForm(
     title: k.bilingual(L("fieldTitle"), { required: true, max: 200 }),
     description: k.bilingual(L("lfFieldDescription"), { required: true, max: 2000 }),
     category: k.enumOf(L("fieldCategory"), LOST_FOUND_CATEGORIES),
-    placeId: k.reference(L("lfFieldPlace")),
     locationNote: k.bilingual(L("lfFieldLocationNote"), { max: 300 }),
     occurredOn: k.date(L("lfFieldOccurredOn"), { required: true }),
     registerStatus: k.enumOf(L("lfFieldProgress"), LOST_FOUND_STATUSES),
@@ -61,11 +58,7 @@ export async function validateLostFoundForm(
   if (parsed.ok) {
     const data = parsed.data;
 
-    if (data.placeId) {
-      const [place] = await db.select({ id: places.id }).from(places).where(eq(places.id, data.placeId));
-      if (!place) errors.placeId = a("errSelectField", locale, { field: L("lfFieldPlace") });
-    }
-    if (publishing && !data.placeId && !data.locationNote.th && !data.locationNote.en) errors.placeId = L("lfErrLocation");
+    if (publishing && !data.locationNote.th && !data.locationNote.en) errors["locationNote.th"] = L("lfErrLocation");
 
     if (data.claimChannel === "url") {
       const url = parseForm(z.object({ v: k.url(L("blockContactValue")) }), { v: data.claimValue });
@@ -92,7 +85,6 @@ export async function validateLostFoundForm(
     title: d.title,
     description: d.description,
     category: d.category!,
-    placeId: d.placeId,
     locationNote: d.locationNote,
     occurredOn: d.occurredOn!,
     registerStatus: d.registerStatus!,
