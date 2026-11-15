@@ -81,7 +81,7 @@ function localeBlock(th: BlockSpec[], en: BlockSpec[]) {
 }
 
 /** One `openingHours` array entry. */
-function hours(daysOfWeek: number[], opens: string, closes: string, note?: Bilingual) {
+function hours(daysOfWeek: number[], opens: string, closes: string, note?: Bilingual, range?: { from: string; until: string }) {
   return {
     _type: "openingHours" as const,
     _key: key(),
@@ -89,6 +89,7 @@ function hours(daysOfWeek: number[], opens: string, closes: string, note?: Bilin
     opens,
     closes,
     ...(note ? { note: localeString(note.th, note.en) } : {}),
+    ...(range ? { validFrom: range.from, validUntil: range.until } : {}),
   };
 }
 
@@ -96,6 +97,14 @@ const MON_FRI = [1, 2, 3, 4, 5];
 const MON_SAT = [1, 2, 3, 4, 5, 6];
 const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
 const WEEKEND = [0, 6];
+const SAT = [6];
+
+/** Exam period hours, TU Library notice for November 2026. */
+const EXAM_PRIDI_LATE = { from: "2026-11-16", until: "2026-11-22" };
+const EXAM_PRIDI_EVENING = { from: "2026-11-23", until: "2026-11-30" };
+const EXAM_SANGWIAN_WEEK_1 = { from: "2026-11-16", until: "2026-11-20" };
+const EXAM_SANGWIAN_WEEK_2 = { from: "2026-11-23", until: "2026-11-27" };
+const EXAM_PUEY = { from: "2026-11-18", until: "2026-12-04" };
 
 /** Shared note: nearly every TU service closes on public holidays. */
 const CLOSED_PUBLIC_HOLIDAYS: Bilingual = {
@@ -1188,21 +1197,23 @@ const GUIDE_PAGES: ContentPageSpec[] = [
       { li: "มีห้อง Performative room สำหรับจัดกิจกรรม" },
       { li: "มี AI TOOLs Services ตรวจการคัดลอกเนื้อหาและ AI ฟรี" },
       { li: "เปิดบริการทุกวัน เวลา 08.30 - 21.30 น. ยกเว้นวันหยุดนักขัตฤกษ์" },
+      { li: "ช่วงสอบ 16 - 22 พ.ย. เปิด 08.30 - 06.00 น. ของวันถัดไป" },
+      { li: "ช่วงสอบ 23 - 30 พ.ย. เปิด 08.30 - 23.00 น." },
       { h: "ห้องสมุดคณะ" },
       {
         li: "ห้องสมุดสัญญา ธรรมศักดิ์ ชั้น 1-3 คณะนิติศาสตร์ เปิดวันจันทร์ - ศุกร์ 08.30 - 21.30 น. วันเสาร์ 09.00 - 19.00 น. ปิดวันอาทิตย์และวันหยุดนักขัตฤกษ์",
       },
       {
-        li: "ห้องสมุด ศ.ดิเรก ชัยนาม ชั้น 5 คณะรัฐศาสตร์ เปิดวันจันทร์ - ศุกร์ 08.30 - 19.00 น. ปิดวันเสาร์ วันอาทิตย์ และวันหยุดนักขัตฤกษ์",
+        li: "ห้องสมุด ศ.ดิเรก ชัยนาม ชั้น 5 คณะรัฐศาสตร์ เปิดวันจันทร์ - ศุกร์ 08.00 - 19.00 น. ปิดวันเสาร์ วันอาทิตย์ และวันหยุดนักขัตฤกษ์",
       },
       {
-        li: "ห้องสมุดป๋วย อึ๊งภากรณ์ ชั้น 3 คณะเศรษฐศาสตร์ เปิดวันจันทร์ - เสาร์ 08.00 - 16.00 น. ปิดวันอาทิตย์และวันหยุดนักขัตฤกษ์",
+        li: "ห้องสมุดป๋วย อึ๊งภากรณ์ ชั้น 3 คณะเศรษฐศาสตร์ เปิดวันจันทร์ - เสาร์ 08.00 - 16.00 น. ปิดวันอาทิตย์และวันหยุดนักขัตฤกษ์ ช่วงสอบ 18 พ.ย. - 4 ธ.ค. เปิดวันจันทร์ - ศุกร์ 08.00 - 18.00 น. วันเสาร์ 08.00 - 16.00 น.",
       },
       {
-        li: "ห้องสมุด ศ.สังเวียน อินทรวิชัย ชั้น 4 คณะพาณิชยศาสตร์และการบัญชี เปิดวันจันทร์ - ศุกร์ 08.00 - 20.00 น. วันเสาร์ - อาทิตย์ 08.30 - 18.00 น. ปิดวันหยุดนักขัตฤกษ์",
+        li: "ห้องสมุด ศ.สังเวียน อินทรวิชัย ชั้น 4 คณะพาณิชยศาสตร์และการบัญชี เปิดวันจันทร์ - ศุกร์ 08.00 - 20.00 น. วันเสาร์ - อาทิตย์ 08.30 - 18.00 น. ปิดวันหยุดนักขัตฤกษ์ ช่วงสอบ 16 - 20 และ 23 - 27 พ.ย. เปิด 08.00 - 21.00 น.",
       },
       {
-        li: "ห้องสมุดคณะวารสารศาสตร์และสื่อสารมวลชน เปิดวันจันทร์ - ศุกร์ 08.00 - 16.00 น. วันเสาร์ - อาทิตย์ 09.00 - 17.00 น. ปิดวันหยุดนักขัตฤกษ์",
+        li: "ห้องสมุดคณะวารสารศาสตร์และสื่อสารมวลชน เปิดวันจันทร์ - ศุกร์ 08.00 - 16.00 น. วันเสาร์ 09.00 - 17.00 น. ปิดวันอาทิตย์และวันหยุดนักขัตฤกษ์",
       },
       { h: "วิธีจองห้องผ่าน LINE" },
       { ol: "เพิ่มเพื่อน LINE @Lifeonline หรือสแกน QR Code" },
@@ -1223,21 +1234,23 @@ const GUIDE_PAGES: ContentPageSpec[] = [
       {
         li: "Open every day, 08:30 to 21:30, except public holidays",
       },
+      { li: "Exams, 16 to 22 November: open 08:30 to 06:00 the following day" },
+      { li: "Exams, 23 to 30 November: open 08:30 to 23:00" },
       { h: "Faculty libraries" },
       {
         li: "Sanya Dharmasakti Library, floors 1-3, Faculty of Law: Monday to Friday 08:30 to 21:30, Saturday 09:00 to 19:00, closed Sunday and public holidays",
       },
       {
-        li: "Prof. Direk Jayanama Library, 5th floor, Faculty of Political Science: Monday to Friday 08:30 to 19:00, closed at weekends and on public holidays",
+        li: "Prof. Direk Jayanama Library, 5th floor, Faculty of Political Science: Monday to Friday 08:00 to 19:00, closed at weekends and on public holidays",
       },
       {
-        li: "Puey Ungphakorn Library, 3rd floor, Faculty of Economics: Monday to Saturday 08:00 to 16:00, closed Sunday and public holidays",
+        li: "Puey Ungphakorn Library, 3rd floor, Faculty of Economics: Monday to Saturday 08:00 to 16:00, closed Sunday and public holidays. Exams, 18 November to 4 December: Monday to Friday 08:00 to 18:00, Saturday 08:00 to 16:00",
       },
       {
-        li: "Prof. Sangwian Indaravijaya Library, 4th floor, Faculty of Commerce and Accountancy: Monday to Friday 08:00 to 20:00, weekends 08:30 to 18:00, closed on public holidays",
+        li: "Prof. Sangwian Indaravijaya Library, 4th floor, Faculty of Commerce and Accountancy: Monday to Friday 08:00 to 20:00, weekends 08:30 to 18:00, closed on public holidays. Exams, 16 to 20 and 23 to 27 November: 08:00 to 21:00",
       },
       {
-        li: "Faculty of Journalism and Mass Communication Library: Monday to Friday 08:00 to 16:00, weekends 09:00 to 17:00, closed on public holidays",
+        li: "Faculty of Journalism and Mass Communication Library: Monday to Friday 08:00 to 16:00, Saturday 09:00 to 17:00, closed Sunday and public holidays",
       },
       { h: "Booking a room over LINE" },
       { ol: "Add the LINE account @Lifeonline as a friend, or scan the QR code" },
@@ -1358,7 +1371,11 @@ const PLACES: PlaceSpec[] = [
       th: "หอสมุดกลางของธรรมศาสตร์ท่าพระจันทร์ มีห้อง Study room ห้อง Co-learning space ห้อง Performative room ปลั๊กไฟ ผ้าห่มให้ยืม บอร์ดเกม และโควตาพรินต์ฟรีที่ชั้น U2",
       en: "The main Thammasat Tha Prachan library: study rooms, a co-learning space, a performative room, power sockets, blankets to borrow, board games, and the free printing quota on level U2.",
     },
-    openingHours: [hours(EVERY_DAY, "08:30", "21:30", CLOSED_PUBLIC_HOLIDAYS)],
+    openingHours: [
+      hours(EVERY_DAY, "08:30", "21:30", CLOSED_PUBLIC_HOLIDAYS),
+      hours(EVERY_DAY, "08:30", "06:00", { th: "ช่วงสอบ ปิด 06.00 น. ของวันถัดไป", en: "Exam hours, closes 06:00 the following day" }, EXAM_PRIDI_LATE),
+      hours(EVERY_DAY, "08:30", "23:00", { th: "ช่วงสอบ", en: "Exam hours" }, EXAM_PRIDI_EVENING),
+    ],
     isKeyLocation: true,
   },
   {
@@ -1383,7 +1400,7 @@ const PLACES: PlaceSpec[] = [
       en: "5th floor, Faculty of Political Science",
     },
     openingHours: [
-      hours(MON_FRI, "08:30", "19:00", {
+      hours(MON_FRI, "08:00", "19:00", {
         th: "ปิดวันเสาร์ วันอาทิตย์ และวันหยุดนักขัตฤกษ์",
         en: "Closed at weekends and on public holidays",
       }),
@@ -1402,6 +1419,8 @@ const PLACES: PlaceSpec[] = [
         th: "ปิดวันอาทิตย์และวันหยุดนักขัตฤกษ์",
         en: "Closed Sunday and on public holidays",
       }),
+      hours(MON_FRI, "08:00", "18:00", { th: "ช่วงสอบ", en: "Exam hours" }, EXAM_PUEY),
+      hours(SAT, "08:00", "16:00", { th: "ช่วงสอบ", en: "Exam hours" }, EXAM_PUEY),
     ],
   },
   {
@@ -1418,6 +1437,8 @@ const PLACES: PlaceSpec[] = [
     openingHours: [
       hours(MON_FRI, "08:00", "20:00"),
       hours(WEEKEND, "08:30", "18:00", CLOSED_PUBLIC_HOLIDAYS),
+      hours(MON_FRI, "08:00", "21:00", { th: "ช่วงสอบ", en: "Exam hours" }, EXAM_SANGWIAN_WEEK_1),
+      hours(MON_FRI, "08:00", "21:00", { th: "ช่วงสอบ", en: "Exam hours" }, EXAM_SANGWIAN_WEEK_2),
     ],
   },
   {
@@ -1429,7 +1450,10 @@ const PLACES: PlaceSpec[] = [
     },
     openingHours: [
       hours(MON_FRI, "08:00", "16:00"),
-      hours(WEEKEND, "09:00", "17:00", CLOSED_PUBLIC_HOLIDAYS),
+      hours(SAT, "09:00", "17:00", {
+        th: "ปิดวันอาทิตย์และวันหยุดนักขัตฤกษ์",
+        en: "Closed Sunday and on public holidays",
+      }),
     ],
   },
 

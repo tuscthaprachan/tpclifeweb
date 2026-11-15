@@ -77,6 +77,8 @@ export async function seedHandbook(db: SeedDb): Promise<void> {
         opens: h.opens as string,
         closes: h.closes as string,
         ...(h.note ? { note: bi(h.note) } : {}),
+        ...(h.validFrom ? { validFrom: h.validFrom as string } : {}),
+        ...(h.validUntil ? { validUntil: h.validUntil as string } : {}),
       }),
     );
     await db

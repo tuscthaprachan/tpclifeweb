@@ -395,8 +395,12 @@ export interface OpeningHours {
   /** 0 = Sunday through 6 = Saturday. */
   daysOfWeek: number[];
   opens: string;
+  /** Earlier than or equal to `opens` means it closes after midnight. */
   closes: string;
   note?: LocaleString;
+  /** Inclusive "YYYY-MM-DD". A dated row replaces the undated ones on the dates it covers. */
+  validFrom?: string;
+  validUntil?: string;
 }
 
 export interface CampusPlace extends DocumentMeta {

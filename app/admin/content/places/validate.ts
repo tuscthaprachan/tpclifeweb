@@ -18,9 +18,12 @@ function hoursRow(k: FieldKit, x: ReturnType<typeof extraKit>, locale: Locale) {
       opens: x.time(L("placesFieldOpens")),
       closes: x.time(L("placesFieldCloses")),
       note: k.bilingual(L("placesFieldHoursNote"), { max: 200 }),
+      validFrom: k.date(L("placesFieldValidFrom")),
+      validUntil: k.date(L("placesFieldValidUntil")),
     })
     .superRefine((row, ctx) => {
-      if (row.opens && row.closes && row.closes <= row.opens) ctx.addIssue({ code: "custom", path: ["closes"], message: L("placesErrCloseAfterOpen") });
+      if (row.opens && row.closes && row.closes === row.opens) ctx.addIssue({ code: "custom", path: ["closes"], message: L("placesErrCloseAfterOpen") });
+      if (row.validFrom && row.validUntil && row.validUntil < row.validFrom) ctx.addIssue({ code: "custom", path: ["validUntil"], message: L("placesErrUntilAfterFrom") });
     })
     .transform(
       (row): OpeningHoursJson => ({
@@ -28,6 +31,8 @@ function hoursRow(k: FieldKit, x: ReturnType<typeof extraKit>, locale: Locale) {
         opens: row.opens!,
         closes: row.closes!,
         ...(row.note.th || row.note.en ? { note: { th: row.note.th, en: row.note.en } } : {}),
+        ...(row.validFrom ? { validFrom: row.validFrom } : {}),
+        ...(row.validUntil ? { validUntil: row.validUntil } : {}),
       }),
     );
 }

@@ -50,10 +50,18 @@ describe("validatePlaceForm", () => {
     expect(result.ok && result.data.lat).toBe(13.7563);
   });
 
-  it("rejects missing days, bad times and closing before opening", async () => {
+  it("rejects missing days, bad times, equal times and reversed dates", async () => {
     expect(await validate(form({ "openingHours.0.days": [] }))).toMatchObject({ ok: false, errors: { "openingHours.0.days": "Select at least one day" } });
     expect(await validate(form({ "openingHours.0.opens": "25:00" }))).toMatchObject({ ok: false, errors: { "openingHours.0.opens": expect.stringContaining("08:30") } });
-    expect(await validate(form({ "openingHours.0.closes": "08:30" }))).toMatchObject({ ok: false, errors: { "openingHours.0.closes": expect.stringContaining("later") } });
+    expect(await validate(form({ "openingHours.0.closes": "08:30" }))).toMatchObject({ ok: false, errors: { "openingHours.0.closes": expect.stringContaining("differ") } });
+    expect(await validate(form({ "openingHours.0.validFrom": "2026-11-22", "openingHours.0.validUntil": "2026-11-16" }))).toMatchObject({ ok: false, errors: { "openingHours.0.validUntil": expect.any(String) } });
+  });
+
+  it("accepts overnight hours and a date range", async () => {
+    const result = await validate(form({ "openingHours.0.closes": "06:00", "openingHours.0.validFrom": "2026-11-16", "openingHours.0.validUntil": "2026-11-22" }));
+    expect(result.ok && result.data.openingHours).toEqual([
+      { daysOfWeek: [1, 2, 3, 4, 5], opens: "08:30", closes: "06:00", validFrom: "2026-11-16", validUntil: "2026-11-22" },
+    ]);
   });
 
   it("checks coordinates are numbers in range and come as a pair", async () => {

@@ -7,7 +7,7 @@ import { a } from "@/lib/i18n/admin";
 import { DaysField } from "../organisations/_shared/DaysField";
 import { RowList } from "../organisations/_shared/RowList";
 
-/** Opening periods of a place: which days, from when to when, with an optional note. */
+/** Opening periods of a place: which days, from when to when, optionally only between two dates, with an optional note. */
 export function HoursField({ defaultValue }: { defaultValue: OpeningHoursJson[] }) {
   const { locale } = useContentForm();
   const name = "openingHours";
@@ -28,6 +28,10 @@ export function HoursField({ defaultValue }: { defaultValue: OpeningHoursJson[] 
             <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
               <TextField name={`${path}.opens`} type="time" label={a("placesFieldOpens", locale)} defaultValue={row.opens} className="max-w-[12rem]" />
               <TextField name={`${path}.closes`} type="time" label={a("placesFieldCloses", locale)} defaultValue={row.closes} className="max-w-[12rem]" />
+            </div>
+            <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
+              <TextField name={`${path}.validFrom`} type="date" label={a("placesFieldValidFrom", locale)} defaultValue={row.validFrom} className="max-w-[12rem]" />
+              <TextField name={`${path}.validUntil`} type="date" label={a("placesFieldValidUntil", locale)} defaultValue={row.validUntil} className="max-w-[12rem]" />
             </div>
             <BilingualTextField
               name={`${path}.note`}
