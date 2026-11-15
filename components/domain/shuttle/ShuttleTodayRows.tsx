@@ -1,3 +1,5 @@
+"use client";
+
 import NextLink from "next/link";
 
 import { StatusTag, Tag, Timestamp } from "@/components/ui";
@@ -5,9 +7,9 @@ import { TODAY_LINK_CLASS, TodayRow } from "@/components/domain/home/TodayRow";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
-import { addDaysToDateKey, getShuttleStatus, originDepartures, type ShuttleStatus } from "@/lib/shuttle/schedule";
+import { addDaysToDateKey, originDepartures } from "@/lib/shuttle/schedule";
 import type { ShuttleRoute } from "@/lib/content/types";
-import { ShuttleCountdown } from "./ShuttleCountdown";
+import { useShuttleStatus } from "./useShuttleStatus";
 
 interface ShuttleTodayRowsProps {
   locale: Locale;
@@ -16,18 +18,18 @@ interface ShuttleTodayRowsProps {
 }
 
 /**
- * One row per route for the home page's Today list. Every time is computed on
- * the server from the published timetable, so each row is complete without
- * JavaScript, and every row carries the "Scheduled" tag: there is no vehicle
- * position behind any of it (CONTRIBUTING.md, Honesty).
+ * One row per route for the home page's Today list. The first render comes
+ * from the server's `now`, so each row is complete without JavaScript; with it,
+ * each row re-evaluates on the minute. Every row carries the "Scheduled" tag:
+ * there is no vehicle position behind any of it (CONTRIBUTING.md, Honesty).
  */
 export function ShuttleTodayRows({ locale, routes, now }: ShuttleTodayRowsProps) {
-  return routes.map((route) => (
-    <ShuttleRow key={route._id} locale={locale} route={route} status={getShuttleStatus(route, now, { count: 2 })} now={now} />
-  ));
+  const serverNowIso = now.toISOString();
+  return routes.map((route) => <ShuttleRow key={route._id} locale={locale} route={route} serverNowIso={serverNowIso} />);
 }
 
-function ShuttleRow({ locale, route, status, now }: { locale: Locale; route: ShuttleRoute; status: ShuttleStatus; now: Date }) {
+function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: ShuttleRoute; serverNowIso: string }) {
+  const { status, now } = useShuttleStatus(route, serverNowIso);
   const title = (
     <NextLink href={localePath(locale, "/getting-around")} className={TODAY_LINK_CLASS}>
       {pick(route.name, locale)}
@@ -50,7 +52,7 @@ function ShuttleRow({ locale, route, status, now }: { locale: Locale; route: Shu
           }
         >
           {scheduled}
-          <ShuttleCountdown locale={locale} targetStopMinutesOfDay={next.stopMinutesOfDay} initialMinutesUntil={next.minutesUntil} />
+          <span>{next.minutesUntil <= 0 ? UI.departingNow[locale] : `${UI.departsIn[locale]} ${next.minutesUntil} ${UI.minutes[locale]}`}</span>
           {rest[0] ? <span>{UI.homeThenDeparture[locale]} {rest[0].stopTime}</span> : null}
         </TodayRow>
       );

@@ -19,7 +19,7 @@
  */
 
 import Form from "next/form";
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useReducer, useRef, useState, type FocusEvent, type KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { liveRegionProps } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
@@ -27,6 +27,12 @@ import { UI } from "@/lib/i18n/strings";
 import { search as runSearch, type SearchResult } from "@/lib/search";
 import type { SearchIndex, SearchRecord } from "@/lib/content/types";
 import { Button, cx } from "@/components/ui";
+import { useStatusMessage } from "@/components/hooks/use-status-message";
+import {
+  initialSearchCombobox,
+  searchAnnouncement,
+  searchComboboxReducer,
+} from "./search-combobox-machine";
 
 interface SearchBarProps {
   locale: Locale;
@@ -52,15 +58,18 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
   const hintId = useId();
 
   const [query, setQuery] = useState(defaultValue);
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [open, setOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const [announcement, setAnnouncement] = useState("");
+  const [state, dispatch] = useReducer(searchComboboxReducer, initialSearchCombobox);
+  const status = useStatusMessage<string>();
+  const { show: showStatus, clear: clearStatus } = status;
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestIdRef = useRef(0);
   // Caches the in-flight (then resolved) index fetch so it happens exactly
   // once per page, no matter how many times focus/change handlers fire.
   const indexPromiseRef = useRef<Promise<SearchRecord[]> | null>(null);
+
+  const open = state.mode === "open";
+  const { results, active: activeIndex } = state;
 
   useEffect(() => {
     return () => {
@@ -88,35 +97,31 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
     return promise;
   }
 
-  function applyResults(value: string, next: SearchResult[]) {
-    setResults(next);
-    setActiveIndex(-1);
-    setOpen(next.length > 0);
-    if (value.trim().length === 0) {
-      setAnnouncement("");
-    } else if (next.length > 0) {
-      setAnnouncement(`${next.length} ${UI.searchResults[locale]}`);
-    } else {
-      setAnnouncement(UI.searchNoResults[locale]);
-    }
-  }
-
   function handleChange(value: string) {
     setQuery(value);
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
-    if (value.trim().length === 0) {
-      setResults([]);
-      setOpen(false);
-      setActiveIndex(-1);
-      setAnnouncement("");
+    const requestId = ++requestIdRef.current;
+    const blank = value.trim().length === 0;
+    dispatch({ type: "typed", requestId, blank });
+
+    if (blank) {
+      clearStatus();
       return;
     }
 
     debounceRef.current = setTimeout(() => {
       void loadIndex().then((records) => {
-        applyResults(value, runSearch(value, records, { limit: MAX_SUGGESTIONS }));
+        if (requestId !== requestIdRef.current) return;
+        const next = runSearch(value, records, { limit: MAX_SUGGESTIONS });
+        dispatch({ type: "resultsLoaded", requestId, results: next });
+        const announcement = searchAnnouncement(false, next.length);
+        showStatus(
+          announcement.kind === "count"
+            ? `${announcement.count} ${UI.searchResults[locale]}`
+            : UI.searchNoResults[locale],
+        );
       });
     }, DEBOUNCE_MS);
   }
@@ -125,13 +130,17 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
     void loadIndex();
   }
 
-  function closeList() {
-    setOpen(false);
-    setActiveIndex(-1);
+  function handleBlur(event: FocusEvent<HTMLDivElement>) {
+    const next = event.relatedTarget as Node | null;
+    const inside = next !== null && event.currentTarget.contains(next);
+    if (inside) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const requestId = ++requestIdRef.current;
+    dispatch({ type: "focusOut", requestId, inside });
   }
 
   function goToResult(result: SearchResult) {
-    closeList();
+    dispatch({ type: "select" });
     router.push(result.record.path[locale]);
   }
 
@@ -139,17 +148,15 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
     if (event.key === "ArrowDown") {
       if (results.length === 0) return;
       event.preventDefault();
-      setOpen(true);
-      setActiveIndex((index) => (index + 1) % results.length);
+      dispatch({ type: "move", direction: "next" });
     } else if (event.key === "ArrowUp") {
       if (results.length === 0) return;
       event.preventDefault();
-      setOpen(true);
-      setActiveIndex((index) => (index <= 0 ? results.length - 1 : index - 1));
+      dispatch({ type: "move", direction: "previous" });
     } else if (event.key === "Escape") {
       if (open) {
         event.preventDefault();
-        closeList();
+        dispatch({ type: "escape" });
       }
     } else if (event.key === "Enter") {
       if (open && activeIndex >= 0) {
@@ -182,7 +189,7 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
             "gap-[var(--space-1)] rounded-pill border-2 border-line-strong bg-surface p-[var(--space-1)]",
         )}
       >
-        <div className="relative min-w-0 flex-1">
+        <div className="relative min-w-0 flex-1" onBlur={handleBlur}>
           <input
             id={inputId}
             name="q"
@@ -249,7 +256,7 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
       </div>
 
       <p {...liveRegionProps("polite")} className="visually-hidden">
-        {announcement}
+        {status.value === null ? null : <span key={status.nonce}>{status.value}</span>}
       </p>
     </Form>
   );

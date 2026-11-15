@@ -40,7 +40,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef } from "react";
 import { cx } from "@/components/ui/cx";
 import { MenuIcon, SearchIcon } from "@/components/ui/icons";
 import { SearchBar } from "@/components/domain/search/SearchBar";
@@ -52,6 +52,7 @@ import { ServiceNavigation } from "./ServiceNavigation";
 import { ShellContainer } from "./ShellContainer";
 import { SiteLogo } from "./SiteLogo";
 import { ThemeToggle } from "./ThemeToggle";
+import { useDisclosure } from "./use-disclosure";
 
 /*
  * Nav switches to the desktop layout at `lg` (80rem / 1280px), not the
@@ -99,11 +100,10 @@ export function SiteHeader({
   navItems: NavItem[];
 }) {
   const headerRef = useRef<HTMLElement>(null);
-  const detailsRef = useRef<HTMLDetailsElement>(null);
-  const summaryRef = useRef<HTMLElement>(null);
-  const [open, setOpen] = useState(false);
   const menuId = useId();
-  const isHome = usePathname() === localePath(locale, "/");
+  const pathname = usePathname();
+  const isHome = pathname === localePath(locale, "/");
+  const { detailsRef, summaryRef, open, onToggle } = useDisclosure({ closeOnSubmit: true, closeOn: pathname });
 
   useEffect(() => {
     const el = headerRef.current;
@@ -118,34 +118,6 @@ export function SiteHeader({
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key !== "Escape" || !detailsRef.current?.open) return;
-      detailsRef.current.open = false;
-      summaryRef.current?.focus();
-    }
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, []);
-
-  // Closing the disclosure on navigation matters here specifically because
-  // the panel now covers the full viewport width and can run tall enough to
-  // scroll (point 3 above): without this, following a link inside it would
-  // leave a stale, open full-width sheet sitting over the next page until
-  // the reader happened to tap the summary again. Purely a nicety: with
-  // JavaScript off the browser navigates away and the disclosure's open
-  // state goes with it, so nothing here is load-bearing for correctness.
-  useEffect(() => {
-    if (!open || !detailsRef.current) return;
-    const panel = detailsRef.current;
-    function onPanelClick(event: MouseEvent) {
-      const target = event.target as HTMLElement;
-      if (target.closest("a")) panel.open = false;
-    }
-    panel.addEventListener("click", onPanelClick);
-    return () => panel.removeEventListener("click", onPanelClick);
-  }, [open]);
 
   const navLabel = UI.mainMenu[locale];
 
@@ -200,7 +172,7 @@ export function SiteHeader({
 
           {/* Native disclosure. Works fully without JavaScript; see the
               file-level comment for how the open panel becomes full-width. */}
-          <details ref={detailsRef} onToggle={(event) => setOpen(event.currentTarget.open)}>
+          <details ref={detailsRef} onToggle={onToggle}>
             <summary
               ref={summaryRef}
               aria-expanded={open}

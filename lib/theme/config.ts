@@ -39,7 +39,17 @@ export const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 export const THEME_BOOT_SCRIPT = `(function(){try{var m=document.cookie.match(/(?:^|; )(?:${THEME_COOKIE}|${LEGACY_THEME_COOKIE})=(light|dark)(?:;|$)/);if(m){var r=document.documentElement;r.setAttribute("data-theme",m[1]);r.style.colorScheme=m[1]}}catch(e){}})()`;
 
+/** The choice a `data-theme` attribute value represents: "light" or "dark" when forced, otherwise "system". */
+export function resolveTheme(attribute: string | null | undefined): ThemeChoice {
+  return isStoredTheme(attribute) ? attribute : "system";
+}
+
+/** The colour scheme actually shown for a choice, given whether the system prefers dark. */
+export function resolveScheme(choice: ThemeChoice, systemPrefersDark: boolean): StoredTheme {
+  if (choice === "system") return systemPrefersDark ? "dark" : "light";
+  return choice;
+}
+
 export function readAppliedTheme(): ThemeChoice {
-  const value = document.documentElement.getAttribute("data-theme");
-  return isStoredTheme(value) ? value : "system";
+  return resolveTheme(document.documentElement.getAttribute("data-theme"));
 }

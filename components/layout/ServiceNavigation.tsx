@@ -14,12 +14,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId } from "react";
 import { cx } from "@/components/ui/cx";
 import { UI } from "@/lib/i18n/strings";
 import { localePath, pick, stripLocale, type Locale } from "@/lib/i18n/config";
 import type { NavItem } from "@/lib/content/types";
 import { splitPrimaryNav } from "./nav-groups";
+import { useDisclosure } from "./use-disclosure";
 
 /*
  * How the list of links lays itself out. "responsive" is the original
@@ -121,52 +122,15 @@ export function ServiceNavigation({
  * by the underline alone.
  */
 function MoreMenu({ locale, items, currentPath }: { locale: Locale; items: NavItem[]; currentPath: string }) {
-  const detailsRef = useRef<HTMLDetailsElement>(null);
-  const summaryRef = useRef<HTMLElement>(null);
-  const [open, setOpen] = useState(false);
+  const { detailsRef, summaryRef, open, onToggle } = useDisclosure({ closeOnOutsidePointer: true, closeOnFocusOut: true });
   const menuId = useId();
 
   const containsCurrent = items.some(
     (item) => currentPath === item.path || (item.path !== "/" && currentPath.startsWith(`${item.path}/`)),
   );
 
-  useEffect(() => {
-    if (!open) return;
-    const details = detailsRef.current;
-    if (!details) return;
-
-    function close(returnFocus: boolean) {
-      if (!details) return;
-      details.open = false;
-      if (returnFocus) summaryRef.current?.focus();
-    }
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") close(true);
-    }
-    function onPointerDown(event: PointerEvent) {
-      if (!details?.contains(event.target as Node)) close(false);
-    }
-    function onFocusOut(event: FocusEvent) {
-      const next = event.relatedTarget as Node | null;
-      if (next && !details?.contains(next)) close(false);
-    }
-    function onClick(event: MouseEvent) {
-      if ((event.target as HTMLElement).closest("a")) close(false);
-    }
-    document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("pointerdown", onPointerDown);
-    details.addEventListener("focusout", onFocusOut);
-    details.addEventListener("click", onClick);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("pointerdown", onPointerDown);
-      details.removeEventListener("focusout", onFocusOut);
-      details.removeEventListener("click", onClick);
-    };
-  }, [open]);
-
   return (
-    <details ref={detailsRef} className="relative" onToggle={(event) => setOpen(event.currentTarget.open)}>
+    <details ref={detailsRef} className="relative" onToggle={onToggle}>
       <summary
         ref={summaryRef}
         aria-expanded={open}
