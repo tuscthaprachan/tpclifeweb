@@ -43,13 +43,13 @@ export default async function RecoverPage({ params }: { params: Promise<{ token:
         ? a("recoverExpired", locale)
         : status === "revoked"
           ? a("recoverRevoked", locale)
-          : status === "used"
+          : status === "accepted"
             ? a("recoverUsed", locale)
             : a("recoverNotFound", locale);
     return (
       <AuthCard icon="lifeBuoy" title={a("recoverBadTitle", locale)}>
         <p className="m-0 text-ink-600">{message}</p>
-        {status === "used" ? (
+        {status === "accepted" ? (
           <div>
             <Button href="/admin/sign-in">{a("signInAgain", locale)}</Button>
           </div>

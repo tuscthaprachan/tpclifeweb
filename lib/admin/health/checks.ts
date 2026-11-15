@@ -5,7 +5,7 @@
  * environment is a parameter so every branch is testable.
  */
 
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import vercel from "@/vercel.json";
 import journal from "@/lib/db/migrations/meta/_journal.json";
 import { isPiiAvailable } from "@/lib/crypto/pii";
@@ -93,20 +93,22 @@ export interface CronRun {
   name: string;
   at: Date | null;
   counts: Record<string, unknown> | null;
+  /** The latest entry was a failure, not a run. */
+  failed: boolean;
 }
 
-/** The latest `cron.run` entry for each job. */
+/** The latest `cron.run` or `cron.fail` entry for each job. */
 export async function loadCronRuns(db: AuditExecutor): Promise<CronRun[]> {
   return Promise.all(
     CRON_JOBS.map(async (job): Promise<CronRun> => {
       const [row] = await db
-        .select({ at: auditLog.occurredAt, after: auditLog.after })
+        .select({ at: auditLog.occurredAt, after: auditLog.after, action: auditLog.action })
         .from(auditLog)
-        .where(and(eq(auditLog.action, "cron.run"), eq(auditLog.entityType, "cron"), eq(auditLog.entityId, job.name)))
+        .where(and(inArray(auditLog.action, ["cron.run", "cron.fail"]), eq(auditLog.entityType, "cron"), eq(auditLog.entityId, job.name)))
         .orderBy(desc(auditLog.occurredAt))
         .limit(1);
       const counts = row?.after && typeof row.after === "object" && !Array.isArray(row.after) ? (row.after as Record<string, unknown>) : null;
-      return { name: job.name, at: row?.at ?? null, counts };
+      return { name: job.name, at: row?.at ?? null, counts, failed: row?.action === "cron.fail" };
     }),
   );
 }
@@ -114,6 +116,7 @@ export async function loadCronRuns(db: AuditExecutor): Promise<CronRun[]> {
 export function cronCheck(job: CronSchedule, run: CronRun | undefined, now: Date): HealthCheck {
   const id = `cron:${job.name}` as const;
   if (!run?.at) return { id, status: "warning", detail: "cronNever" };
+  if (run.failed) return { id, status: "error", detail: "cronFailing" };
   const hours = (now.getTime() - run.at.getTime()) / 3_600_000;
   return hours > job.lateAfterHours ? { id, status: "warning", detail: "cronLate" } : { id, status: "ok", detail: "cronRecent" };
 }

@@ -17,6 +17,16 @@ import { organisations } from "@/lib/db/schema/organisations";
 import { staffInvites, type StaffInvite } from "@/lib/db/schema/staff-invites";
 import { staffMemberships } from "@/lib/db/schema/staff-memberships";
 import { staffRoles, STAFF_ROLES, type StaffRole } from "@/lib/db/schema/staff-roles";
+import { revokePendingRecoveryLinks } from "./recovery";
+import { tokenPending } from "./token-state";
+
+export type MemberState = "active" | "suspended" | "none";
+
+/** Active with a role, suspended with a body but no role, none with neither. */
+export function memberState(facts: { roleCount: number; organisationCount: number }): MemberState {
+  if (facts.roleCount > 0) return "active";
+  return facts.organisationCount > 0 ? "suspended" : "none";
+}
 
 export interface StaffMember {
   userId: string;
@@ -49,13 +59,14 @@ async function loadMembers(db: AuditExecutor, only?: string): Promise<StaffMembe
   return people.map((p) => {
     const roles = roleRows.filter((r) => r.userId === p.id).map((r) => ({ id: r.id, role: r.role, grantedAt: r.grantedAt }));
     roles.sort((x, y) => STAFF_ROLES.indexOf(x.role) - STAFF_ROLES.indexOf(y.role));
+    const orgIds = membershipRows.filter((m) => m.userId === p.id).map((m) => m.organisationId);
     return {
       userId: p.id,
       name: p.name,
       email: p.email,
       roles,
-      organisationIds: membershipRows.filter((m) => m.userId === p.id).map((m) => m.organisationId),
-      suspended: roles.length === 0,
+      organisationIds: orgIds,
+      suspended: memberState({ roleCount: roles.length, organisationCount: orgIds.length }) === "suspended",
     };
   });
 }
@@ -113,7 +124,7 @@ export async function listPendingInvites(db: AuditExecutor, now: Date = new Date
   return db
     .select()
     .from(staffInvites)
-    .where(and(isNull(staffInvites.acceptedAt), isNull(staffInvites.revokedAt), sql`${staffInvites.expiresAt} > ${now}`))
+    .where(tokenPending({ consumedAt: staffInvites.acceptedAt, revokedAt: staffInvites.revokedAt, expiresAt: staffInvites.expiresAt }, now))
     .orderBy(desc(staffInvites.createdAt));
 }
 
@@ -130,6 +141,13 @@ async function lockActiveAdmins(tx: AuditExecutor): Promise<string[]> {
     .orderBy(asc(staffRoles.id))
     .for("update");
   return rows.map((r) => r.userId);
+}
+
+/** Ends every session and revokes pending recovery links for a person who no longer holds a role. */
+async function endAccess(tx: AuditExecutor, userId: string, now: Date): Promise<{ endedSessions: number; revokedRecoveryLinks: number }> {
+  const ended = await tx.delete(session).where(eq(session.userId, userId)).returning({ id: session.id });
+  const links = await revokePendingRecoveryLinks(tx, userId, now);
+  return { endedSessions: ended.length, revokedRecoveryLinks: links.length };
 }
 
 export type RevokeRoleResult = "revoked" | "not_found" | "last_admin";
@@ -155,12 +173,18 @@ export async function revokeRole(
     if (grant.role === "admin" && admins.filter((id) => id !== grant.userId).length === 0) return "last_admin";
 
     await tx.update(staffRoles).set({ revokedAt: now }).where(eq(staffRoles.id, grant.id));
+    const [remaining] = await tx
+      .select({ id: staffRoles.id })
+      .from(staffRoles)
+      .where(and(eq(staffRoles.userId, grant.userId), isNull(staffRoles.revokedAt)))
+      .limit(1);
+    const ending = remaining ? null : await endAccess(tx, grant.userId, now);
     await audit({
       action: "staff_role.revoke",
       entityType: "staff_role",
       entityId: grant.id,
       before: { userId: grant.userId, role: grant.role },
-      after: { revokedAt: now },
+      after: { revokedAt: now, ...(ending ?? {}) },
     });
     return "revoked";
   });
@@ -305,13 +329,13 @@ export async function suspendMember(
     if (before.roles.includes("admin") && admins.filter((id) => id !== input.userId).length === 0) return "last_admin";
 
     await tx.update(staffRoles).set({ revokedAt: now }).where(inArray(staffRoles.id, before.grants.map((g) => g.id)));
-    const ended = await tx.delete(session).where(eq(session.userId, input.userId)).returning({ id: session.id });
+    const ending = await endAccess(tx, input.userId, now);
     await audit({
       action: "staff_member.suspend",
       entityType: "staff_member",
       entityId: input.userId,
       before: { roles: before.roles, organisationIds: before.organisationIds },
-      after: { roles: [], organisationIds: before.organisationIds, endedSessions: ended.length },
+      after: { roles: [], organisationIds: before.organisationIds, ...ending },
     });
     return "suspended";
   });

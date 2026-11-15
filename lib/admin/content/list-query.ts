@@ -7,7 +7,7 @@
 export const SORT_KEYS = ["title", "updated", "status", "date"] as const;
 export type SortKey = (typeof SORT_KEYS)[number];
 export type SortDir = "asc" | "desc";
-export type ListStatus = "published" | "draft";
+export type ListStatus = "published" | "draft" | "scheduled" | "expired";
 export type ListWithin = "7d" | "30d";
 
 export const DEFAULT_SORT: { sort: SortKey; dir: SortDir } = { sort: "updated", dir: "desc" };
@@ -31,7 +31,7 @@ const one = (value: string | string[] | undefined): string | undefined => (Array
 
 /** Reads `?status=`; anything else is "all" (undefined). */
 export function parseListStatus(value: string | undefined): ListStatus | undefined {
-  return value === "published" || value === "draft" ? value : undefined;
+  return value === "published" || value === "draft" || value === "scheduled" || value === "expired" ? value : undefined;
 }
 
 export function parseWithin(value: string | undefined): ListWithin | undefined {

@@ -172,6 +172,19 @@ describe("import", () => {
     expect(revalidateFor).toHaveBeenCalledWith("openDataFund");
   });
 
+  it("keeps an unpublished row unpublished when it is imported again", async () => {
+    await importBudgetCsv({ db, actor, owner: "tusu", text: budgetCsv(LINE) });
+    await db.update(openDataBudgetLines).set({ status: "draft" });
+    const changed = await importBudgetCsv({ db, actor, owner: "tusu", text: budgetCsv("2569,organisation,สภา,สภาฯ,[not applicable],[not applicable],1.00,5") });
+    expect(changed).toMatchObject({ ok: true, updated: 1 });
+    expect(await db.select({ status: openDataBudgetLines.status, amount: openDataBudgetLines.amount }).from(openDataBudgetLines)).toEqual([{ status: "draft", amount: "1.00" }]);
+
+    await importFundsCsv({ db, actor, owner: "tusc", text: fundsCsv("1,t,42001,ทุน ก,") });
+    await db.update(openDataFunds).set({ status: "draft" });
+    expect(await importFundsCsv({ db, actor, owner: "tusc", text: fundsCsv("1,t,42001,ทุน ข,") })).toMatchObject({ ok: true, updated: 1 });
+    expect((await db.select().from(openDataFunds)).map((r) => r.status)).toEqual(["draft"]);
+  });
+
   it("saves no funds when a row is invalid", async () => {
     const result = await importFundsCsv({ db, actor, owner: "tusc", text: fundsCsv("1,t,c,n,", "1,t,c,n,") });
     expect(result).toMatchObject({ ok: false, reason: "rows" });

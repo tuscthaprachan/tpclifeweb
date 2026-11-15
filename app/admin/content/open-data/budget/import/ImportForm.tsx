@@ -19,7 +19,7 @@ interface Props {
 
 /** One CSV upload. The whole file is checked on the server; either every row is saved or none and each problem row is listed. */
 export function ImportForm({ locale, kind, columns, owners }: Props) {
-  const [state, formAction, pending] = useActionState<ImportView, FormData>(async (_previous, formData) => importView(await importCsv(kind, {}, formData), importValues(formData)), IMPORT_IDLE);
+  const [state, formAction, pending] = useActionState<ImportView, FormData>(async (_previous, formData) => importView(await importCsv(kind, null, formData), importValues(formData)), IMPORT_IDLE);
   const failure = state.status === "failure" ? state.failure : null;
   const values = state.status === "error" || state.status === "failure" ? state.values : null;
   const id = `import-${kind}`;

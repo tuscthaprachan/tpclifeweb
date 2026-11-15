@@ -6,14 +6,14 @@ import { ConsolePage, EmptyPanel, FilterChips, FilterDisclosure, PageHeader, Sea
 import { BulkBar, SelectAllCheckbox } from "@/components/admin/content/BulkControls";
 import { ContentTable, type ContentTableColumn } from "@/components/admin/content/ContentTable";
 import { RowMenu } from "@/components/admin/content/RowMenu";
-import { StatusBadge } from "@/components/admin/content/StatusBadge";
+import { StatusBadge, STATUS_BADGES } from "@/components/admin/content/StatusBadge";
 import { scheduleState } from "@/lib/admin/content/schedule";
 import { contentPlacement } from "@/app/admin/content/_list/placement";
 import { bulkContentAction } from "@/app/admin/content/bulk/actions";
 import { queryString, ResultCount, RowAction } from "@/app/admin/content/_list/parts";
 import type { BulkFailure } from "@/lib/admin/content/bulk";
 import { contentPath, type ContentTypeDef } from "@/lib/admin/content/types";
-import { LIST_PAGE_SIZE, type ContentListRow } from "@/lib/admin/content/list";
+import { LIST_PAGE_SIZE, type ContentListRow, type StatusCounts } from "@/lib/admin/content/list";
 import type { ListExtras } from "@/lib/admin/content/list-extras";
 import { activeFilters, listHref, listParams, nextSort, withoutFilter, type ListQuery, type ListWithin, type SortKey } from "@/lib/admin/content/list-query";
 import { a, type AdminKey } from "@/lib/i18n/admin";
@@ -39,7 +39,7 @@ interface ContentListProps {
   /** The parsed `?q=&status=&sort=&dir=&by=&within=&facet=&page=`. */
   query: ListQuery;
   /** Rows per status for the chips; leave out for a type with no status. */
-  counts?: { all: number; published: number; draft: number };
+  counts?: StatusCounts;
   /** Staff who have edited this type, for the "edited by" filter. */
   editors?: { id: string; name: string }[];
   /** The type's date column and facet, from `listExtras`. */
@@ -95,7 +95,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
   const facet = extras.facet;
   const editorName = editors.find((e) => e.id === query.by)?.name ?? query.by;
 
-  const liveHref = (row: ContentListRow) => (def.viewPath && row.slug && row.status === "published" ? localePath(locale, `${def.viewPath}/${row.slug}`) : null);
+  const liveHref = (row: ContentListRow) => (def.viewPath && row.slug && listStatus(row) === "published" ? localePath(locale, `${def.viewPath}/${row.slug}`) : null);
 
   const columns: ContentTableColumn<ContentListRow>[] = [
     ...(bulk
@@ -196,6 +196,9 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
         { id: "all", label: a("ccFilterAll", locale), href: hrefTo({ status: undefined }), count: counts.all },
         { id: "published", label: a("statusPublished", locale), href: hrefTo({ status: "published" }), count: counts.published },
         { id: "draft", label: a("statusDraft", locale), href: hrefTo({ status: "draft" }), count: counts.draft },
+        ...(["scheduled", "expired"] as const)
+          .filter((state) => counts[state] > 0 || status === state)
+          .map((state) => ({ id: state, label: a(STATUS_BADGES[state]!.labelKey, locale), href: hrefTo({ status: state }), count: counts[state] })),
       ]
     : [];
 
@@ -204,7 +207,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
       filter === "q"
         ? a("clChipSearch", locale, { value: q ?? "" })
         : filter === "status"
-          ? a("clChipStatus", locale, { value: a(status === "published" ? "statusPublished" : "statusDraft", locale) })
+          ? a("clChipStatus", locale, { value: a(STATUS_BADGES[status === "published" ? "published" : status!]!.labelKey, locale) })
           : filter === "by"
             ? a("clChipBy", locale, { value: editorName ?? "" })
             : filter === "within"

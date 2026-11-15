@@ -70,6 +70,7 @@ const SENTENCES: Record<string, ActionSentence> = {
   "auth.session_revoke_others": { key: "opActSessionRevokeOthers", icon: "security" },
   "audit.export": { key: "opActAuditExport", icon: "audit" },
   "cron.run": { key: "opActCronRun", icon: "health" },
+  "cron.fail": { key: "opActCronFail", icon: "health" },
 };
 
 const CONTENT_VERBS: Record<string, ActionSentence> = {

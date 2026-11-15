@@ -13,7 +13,8 @@ import { parseBudgetCsv, parseFundsCsv, type CsvFailure } from "./csv-import";
  * first; the rows are then written in one transaction with one audit entry, so
  * a failure leaves nothing behind. A row that matches an existing one by its
  * natural key (budget year, view, organisation, project and category; fund
- * number) updates it; the rest are added.
+ * number) updates it, leaving its published or unpublished state as it was;
+ * the rest are added as published.
  */
 
 const CHUNK = 100;
@@ -100,15 +101,14 @@ export async function importBudgetCsv(input: ImportInput & { sourceDocumentNumbe
         Number(found.amount) === Number(values.amount) &&
         (found.sourceDocumentId ?? null) === values.sourceDocumentId &&
         found.sourcePage === values.sourcePage &&
-        found.position === values.position &&
-        found.status === "published";
+        found.position === values.position;
       if (same) {
         unchanged++;
         continue;
       }
       await tx
         .update(openDataBudgetLines)
-        .set({ ...values, status: "published", publishedAt: found.publishedAt ?? now, updatedBy: actor.userId, updatedAt: now })
+        .set({ ...values, updatedBy: actor.userId, updatedAt: now })
         .where(eq(openDataBudgetLines.id, found.id));
       updated++;
     }
@@ -149,14 +149,14 @@ export async function importFundsCsv(input: ImportInput): Promise<CsvImportOutco
         continue;
       }
       const same =
-        found.type === values.type && found.code === values.code && found.name === values.name && found.annotation === values.annotation && found.status === "published";
+        found.type === values.type && found.code === values.code && found.name === values.name && found.annotation === values.annotation;
       if (same) {
         unchanged++;
         continue;
       }
       await tx
         .update(openDataFunds)
-        .set({ ...values, status: "published", publishedAt: found.publishedAt ?? now, updatedBy: actor.userId, updatedAt: now })
+        .set({ ...values, updatedBy: actor.userId, updatedAt: now })
         .where(eq(openDataFunds.id, found.id));
       updated++;
     }

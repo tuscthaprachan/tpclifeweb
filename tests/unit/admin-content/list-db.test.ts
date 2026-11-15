@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { events, newsPosts } from "@/lib/db/schema";
 import { createTestDb, makeUser } from "../db/harness";
@@ -82,8 +83,19 @@ describe("listContentRows filtering", () => {
   });
 
   it("counts by status under the other filters", async () => {
-    expect(await countByStatus(db, news, { by: ploy })).toEqual({ all: 2, published: 1, draft: 1 });
-    expect(await countByStatus(db, news, { by: ploy, status: "draft" })).toEqual({ all: 2, published: 1, draft: 1 });
+    expect(await countByStatus(db, news, { by: ploy })).toEqual({ all: 2, published: 1, draft: 1, scheduled: 0, expired: 0 });
+    expect(await countByStatus(db, news, { by: ploy, status: "draft" })).toEqual({ all: 2, published: 1, draft: 1, scheduled: 0, expired: 0 });
+  });
+
+  it("counts and filters expired and scheduled items apart from live ones", async () => {
+    const day = 86_400_000;
+    await db.update(newsPosts).set({ unpublishAt: new Date(Date.now() - day) }).where(sql`${newsPosts.slug} = 'cherry'`);
+    await db.update(newsPosts).set({ publishAt: new Date(Date.now() + day) }).where(sql`${newsPosts.slug} = 'apple'`);
+    expect(await countByStatus(db, news)).toEqual({ all: 3, published: 0, draft: 1, scheduled: 1, expired: 1 });
+    expect(await slugs({ status: "expired" })).toEqual(["cherry"]);
+    expect(await slugs({ status: "scheduled" })).toEqual(["apple"]);
+    expect(await slugs({ status: "published" })).toEqual([]);
+    await db.update(newsPosts).set({ publishAt: null, unpublishAt: null });
   });
 
   it("lists the editors who have touched the type", async () => {

@@ -1,7 +1,8 @@
 import "server-only";
 
-import { and, count, desc, eq, getTableColumns, gte, inArray, isNull, lte, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, inArray, isNull, sql } from "drizzle-orm";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
+import { alertWindow } from "@/lib/content/window";
 import { countContentTypes } from "@/lib/admin/content/list";
 import { CONTENT_TYPES, type ContentTypeDef } from "@/lib/admin/content/types";
 import { accessibleServices } from "@/lib/cases/access";
@@ -55,18 +56,24 @@ export async function loadCaseCounts(db: AuditExecutor, actor: StaffActor): Prom
 
 export interface EditorCounts {
   drafts: number;
+  /** Published items whose end date has passed, across every type with a window. */
+  expired: number;
   liveAlerts: number;
 }
 
 export async function loadEditorCounts(db: AuditExecutor, now = new Date()): Promise<EditorCounts> {
   const counts = await countContentTypes(db, CONTENT_TYPES.filter((d) => d.available && d.columns.status));
   let drafts = 0;
-  for (const c of counts.values()) drafts += c.total - c.published;
+  let expired = 0;
+  for (const c of counts.values()) {
+    drafts += c.total - c.published;
+    expired += c.expired;
+  }
   const [alerts] = await db
     .select({ n: count() })
     .from(serviceAlerts)
-    .where(and(eq(serviceAlerts.status, "published"), lte(serviceAlerts.startsAt, now), or(isNull(serviceAlerts.endsAt), gte(serviceAlerts.endsAt, now))));
-  return { drafts, liveAlerts: alerts?.n ?? 0 };
+    .where(alertWindow(now));
+  return { drafts, expired, liveAlerts: alerts?.n ?? 0 };
 }
 
 export interface RecentItem {

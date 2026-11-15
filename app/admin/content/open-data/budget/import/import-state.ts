@@ -6,15 +6,11 @@ export interface ImportValues {
   sourceDocument: string;
 }
 
-type Failure = NonNullable<CsvImportState["failure"]>;
-type Done = NonNullable<CsvImportState["done"]>;
-
-/** What the import form shows: exactly one of these at a time. */
+/** What the import form shows: exactly one of these at a time. A refusal keeps the typed fields, a successful import clears them. */
 export type ImportView =
   | { status: "idle" }
-  | { status: "error"; message: string; values: ImportValues }
-  | { status: "failure"; failure: Failure; values: ImportValues }
-  | { status: "done"; done: Done };
+  | Extract<CsvImportState, { status: "done" }>
+  | (Extract<CsvImportState, { status: "error" | "failure" }> & { values: ImportValues });
 
 /** The start state, before anything was submitted. */
 export const IMPORT_IDLE: ImportView = { status: "idle" };
@@ -28,14 +24,7 @@ export function importValues(formData: FormData): ImportValues {
   return { owner: read("owner"), sourceDocument: read("sourceDocument") };
 }
 
-/**
- * Turns the action's loose result into one view. A problem wins over a
- * success, so a stale `done` can never sit beside an error; a refusal keeps
- * the typed fields, a successful import clears them.
- */
+/** Pairs the action's result with the typed fields it should keep. */
 export function importView(result: CsvImportState, values: ImportValues): ImportView {
-  if (result.error) return { status: "error", message: result.error, values };
-  if (result.failure) return { status: "failure", failure: result.failure, values };
-  if (result.done) return { status: "done", done: result.done };
-  return IMPORT_IDLE;
+  return result.status === "done" ? result : { ...result, values };
 }

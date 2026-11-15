@@ -14,7 +14,7 @@ import {
   migrationCheck,
   runHealthChecks,
 } from "@/lib/admin/health/checks";
-import { recordCronRun } from "@/lib/admin/health/cron-run";
+import { recordCronRun, runRecordedCron } from "@/lib/admin/health/cron-run";
 import { createTestDb } from "../db/harness";
 
 const KEY = Buffer.alloc(32, 7).toString("base64");
@@ -90,5 +90,22 @@ describe("cron runs", () => {
     expect(run.counts).toEqual({ purged: 3, failed: 0 });
     expect(cronCheck(job, run, now)).toMatchObject({ status: "ok", detail: "cronRecent" });
     expect(cronCheck(job, run, new Date(now.getTime() + 40 * 3_600_000))).toMatchObject({ status: "warning", detail: "cronLate" });
+  });
+});
+
+describe("failed cron runs", () => {
+  it("records a thrown job and shows it failing until the next success", async () => {
+    const job = CRON_JOBS.find((j) => j.name === "complaints")!;
+    const now = new Date();
+    await recordCronRun(db, "complaints", { closed: 1 });
+    await expect(runRecordedCron(db, "complaints", async () => { throw new Error("boom"); })).rejects.toThrow("boom");
+    const failed = (await loadCronRuns(db)).find((r) => r.name === "complaints")!;
+    expect(failed).toMatchObject({ failed: true, counts: { error: "boom" } });
+    expect(cronCheck(job, failed, now)).toMatchObject({ status: "error", detail: "cronFailing" });
+
+    await expect(runRecordedCron(db, "complaints", async () => ({ closed: 2 }))).resolves.toEqual({ closed: 2 });
+    const ok = (await loadCronRuns(db)).find((r) => r.name === "complaints")!;
+    expect(ok.failed).toBe(false);
+    expect(cronCheck(job, ok, now).status).toBe("ok");
   });
 });

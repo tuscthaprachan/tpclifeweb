@@ -45,6 +45,7 @@ const DETAIL: Record<string, AdminKey> = {
   cronRecent: "opHealthCronRecent",
   cronLate: "opHealthCronLate",
   cronNever: "opHealthCronNever",
+  cronFailing: "opHealthCronFailing",
 };
 
 export default async function HealthPage() {

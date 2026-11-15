@@ -4,33 +4,13 @@
  * (`lib/content/window.ts`).
  */
 
-export type ScheduleState = "draft" | "scheduled" | "live" | "expired";
+import { liveState, type LiveRow, type LiveState } from "@/lib/content/live-state";
 
-export interface ScheduleRow {
-  status: string | null;
-  publishAt?: Date | string | null;
-  unpublishAt?: Date | string | null;
-}
+export type ScheduleState = LiveState;
+export type ScheduleRow = LiveRow;
 
-const time = (value: Date | string | null | undefined): number | null => {
-  if (value === null || value === undefined || value === "") return null;
-  const t = new Date(value).getTime();
-  return Number.isNaN(t) ? null : t;
-};
-
-/**
- * `draft` when not published; `scheduled` when published but `publishAt` is
- * still ahead; `expired` once `unpublishAt` has passed; otherwise `live`.
- */
-export function scheduleState(row: ScheduleRow, now: Date = new Date()): ScheduleState {
-  if (row.status !== "published") return "draft";
-  const at = now.getTime();
-  const start = time(row.publishAt);
-  const end = time(row.unpublishAt);
-  if (end !== null && end <= at) return "expired";
-  if (start !== null && start > at) return "scheduled";
-  return "live";
-}
+/** A row's place in its publication window (see `liveState`). */
+export const scheduleState = liveState;
 
 /** True when the row is publicly visible at `now`. */
 export function isLive(row: ScheduleRow, now: Date = new Date()): boolean {

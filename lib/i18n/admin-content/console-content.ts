@@ -5,6 +5,8 @@ export const CONSOLE_CONTENT_STRINGS = {
   /* Hub */
   ccHubPublished: { th: "เผยแพร่แล้ว {n}", en: "{n} published" },
   ccHubDrafts: { th: "ฉบับร่าง {n}", en: "{n} drafts" },
+  ccHubScheduled: { th: "ตั้งเวลาเผยแพร่ {n}", en: "{n} scheduled" },
+  ccHubExpired: { th: "หมดเวลาเผยแพร่ {n}", en: "{n} ended" },
   ccHubSingle: { th: "หน้าเดียว", en: "Single page" },
   ccHubEditPage: { th: "แก้ไขหน้านี้", en: "Edit this page" },
   /* Lists */

@@ -353,26 +353,25 @@ export async function deleteFund(id: string): Promise<void> {
 export type CsvImportKind = "budget" | "funds";
 
 /** What the import form shows afterwards. Plain data, so it can cross to the client. */
-export interface CsvImportState {
-  done?: { kind: CsvImportKind; created: number; updated: number; unchanged: number; total: number };
-  failure?: CsvFailure | { ok: false; reason: "source" };
+export type CsvImportState =
+  | { status: "done"; done: { kind: CsvImportKind; created: number; updated: number; unchanged: number; total: number } }
+  | { status: "failure"; failure: CsvFailure | { ok: false; reason: "source" } }
   /** A problem with the file or the form, in words. */
-  error?: string;
-}
+  | { status: "error"; message: string };
 
 /** Imports a budget line or fund CSV: every row is checked first and nothing is written unless all pass. Bound with `.bind(null, kind)`. */
-export async function importCsv(kind: CsvImportKind, _prev: CsvImportState, formData: FormData): Promise<CsvImportState> {
+export async function importCsv(kind: CsvImportKind, _prev: CsvImportState | null, formData: FormData): Promise<CsvImportState> {
   const locale = await getAdminLocale();
   const { staff, owners } = await requireOpenDataEditor();
 
   const owner = String(formData.get("owner") ?? "");
-  if (!canEditOwner(owners, owner)) return { error: a("odmErrScope", locale) };
+  if (!canEditOwner(owners, owner)) return { status: "error", message: a("odmErrScope", locale) };
   const file = formData.get("file");
-  if (!(file instanceof File) || file.size === 0) return { error: a("odmErrCsvChoose", locale) };
-  if (file.size > ADMIN_UPLOAD_MAX_BYTES) return { error: a("odmErrFileTooLarge", locale, { mb: ADMIN_UPLOAD_MAX_BYTES / 1024 / 1024 }) };
+  if (!(file instanceof File) || file.size === 0) return { status: "error", message: a("odmErrCsvChoose", locale) };
+  if (file.size > ADMIN_UPLOAD_MAX_BYTES) return { status: "error", message: a("odmErrFileTooLarge", locale, { mb: ADMIN_UPLOAD_MAX_BYTES / 1024 / 1024 }) };
   const bytes = new Uint8Array(await file.arrayBuffer());
   const check = validateUpload(bytes, "document");
-  if (!check.ok || check.contentType !== "text/csv") return { error: a("odmErrCsvType", locale) };
+  if (!check.ok || check.contentType !== "text/csv") return { status: "error", message: a("odmErrCsvType", locale) };
   const text = new TextDecoder("utf-8").decode(bytes);
 
   const actor = await openDataActor(staff, owner);
@@ -380,7 +379,7 @@ export async function importCsv(kind: CsvImportKind, _prev: CsvImportState, form
     kind === "budget"
       ? await importBudgetCsv({ actor, owner, text, sourceDocumentNumber: String(formData.get("sourceDocument") ?? "") })
       : await importFundsCsv({ actor, owner, text });
-  if (!outcome.ok) return { failure: outcome };
+  if (!outcome.ok) return { status: "failure", failure: outcome };
   const { created, updated, unchanged, total } = outcome;
-  return { done: { kind, created, updated, unchanged, total } };
+  return { status: "done", done: { kind, created, updated, unchanged, total } };
 }

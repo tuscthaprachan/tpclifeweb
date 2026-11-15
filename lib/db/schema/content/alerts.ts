@@ -5,7 +5,7 @@ import { alertSeverityEnum, alertSurfaceEnum } from "./enums";
 
 /**
  * Service alerts. Active window query:
- *   status = 'published' and starts_at <= $now and (ends_at is null or ends_at >= $now)
+ *   status = 'published' and starts_at <= $now and (ends_at is null or ends_at > $now)
  * ordered by severity desc (enum order is info < warning < critical), starts_at desc.
  */
 export const serviceAlerts = pgTable(

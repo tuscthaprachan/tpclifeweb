@@ -16,11 +16,12 @@
  * `npm run auth:bootstrap -- --recover <email>`, see lib/auth/bootstrap.ts).
  */
 
-import { and, eq, gt, inArray, isNull, ne, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, ne } from "drizzle-orm";
 import { withAudit, type AuditContext, type AuditExecutor } from "@/lib/db/audit";
 import { session as sessionTable, user, type User } from "@/lib/db/schema/auth";
 import { staffRecoveryLinks, type StaffRecoveryLink } from "@/lib/db/schema/staff-recovery";
 import { staffRoles } from "@/lib/db/schema/staff-roles";
+import { tokenPending, tokenState, type TokenState } from "./token-state";
 import { generateToken, hashToken } from "./tokens";
 
 export const RECOVERY_TTL_HOURS = 24;
@@ -43,13 +44,23 @@ export class RecoveryError extends Error {
   }
 }
 
-export type RecoveryStatus = "pending" | "used" | "revoked" | "expired";
+export type RecoveryStatus = TokenState;
 
+/** A recovery link's lifecycle state at `now`; `accepted` means it was used. */
 export function recoveryStatus(link: Pick<StaffRecoveryLink, "usedAt" | "revokedAt" | "expiresAt">, now: Date): RecoveryStatus {
-  if (link.usedAt) return "used";
-  if (link.revokedAt) return "revoked";
-  if (link.expiresAt <= now) return "expired";
-  return "pending";
+  return tokenState({ consumedAt: link.usedAt, revokedAt: link.revokedAt, expiresAt: link.expiresAt }, now);
+}
+
+const recoveryColumns = { consumedAt: staffRecoveryLinks.usedAt, revokedAt: staffRecoveryLinks.revokedAt, expiresAt: staffRecoveryLinks.expiresAt };
+
+/** Revokes every pending recovery link for a person; returns the ids revoked. Spent and expired links are left as they are. */
+export async function revokePendingRecoveryLinks(tx: AuditExecutor, userId: string, now: Date): Promise<number[]> {
+  const rows = await tx
+    .update(staffRecoveryLinks)
+    .set({ revokedAt: now })
+    .where(and(eq(staffRecoveryLinks.userId, userId), tokenPending(recoveryColumns, now)))
+    .returning({ id: staffRecoveryLinks.id });
+  return rows.map((r) => r.id);
 }
 
 /** True when someone other than `userId` holds an active admin role. */
@@ -96,13 +107,8 @@ export async function issueRecoveryLink(
     if (input.requireAdmin && !roles.some((r) => r.role === "admin")) throw new RecoveryError("not_admin");
     if (input.issuedBy === person.id && !(await hasOtherActiveAdmin(tx, person.id))) throw new RecoveryError("last_admin");
 
-    const superseded = await tx
-      .update(staffRecoveryLinks)
-      .set({ revokedAt: now })
-      .where(and(eq(staffRecoveryLinks.userId, person.id), isNull(staffRecoveryLinks.usedAt), isNull(staffRecoveryLinks.revokedAt)))
-      .returning({ id: staffRecoveryLinks.id });
-    for (const row of superseded) {
-      await audit({ action: "staff_recovery.supersede", entityType: "staff_recovery", entityId: row.id });
+    for (const id of await revokePendingRecoveryLinks(tx, person.id, now)) {
+      await audit({ action: "staff_recovery.supersede", entityType: "staff_recovery", entityId: id });
     }
 
     const [link] = await tx
@@ -153,7 +159,7 @@ export async function claimRecoveryLink(
   const found = await findRecoveryByToken(db, input.token);
   if (!found) throw new RecoveryError("not_found");
   const status = recoveryStatus(found.link, now);
-  if (status === "used") throw new RecoveryError("already_used");
+  if (status === "accepted") throw new RecoveryError("already_used");
   if (status === "revoked") throw new RecoveryError("revoked");
   if (status === "expired") throw new RecoveryError("expired");
 
@@ -164,13 +170,15 @@ export async function claimRecoveryLink(
       .where(
         and(
           eq(staffRecoveryLinks.id, found.link.id),
-          isNull(staffRecoveryLinks.usedAt),
-          isNull(staffRecoveryLinks.revokedAt),
-          gt(staffRecoveryLinks.expiresAt, now),
+          tokenPending(recoveryColumns, now),
         ),
       )
       .returning({ id: staffRecoveryLinks.id });
-    if (claimed.length === 0) throw new RecoveryError("already_used");
+    if (claimed.length === 0) {
+      const [current] = await tx.select().from(staffRecoveryLinks).where(eq(staffRecoveryLinks.id, found.link.id));
+      const state = current ? recoveryStatus(current, now) : "accepted";
+      throw new RecoveryError(state === "revoked" ? "revoked" : state === "expired" ? "expired" : "already_used");
+    }
 
     const ended = await tx.delete(sessionTable).where(eq(sessionTable.userId, found.person.id)).returning({ id: sessionTable.id });
     await audit({
@@ -189,13 +197,6 @@ export async function listPendingRecoveryUserIds(db: AuditExecutor, userIds: rea
   const rows = await db
     .select({ userId: staffRecoveryLinks.userId })
     .from(staffRecoveryLinks)
-    .where(
-      and(
-        inArray(staffRecoveryLinks.userId, [...userIds]),
-        isNull(staffRecoveryLinks.usedAt),
-        isNull(staffRecoveryLinks.revokedAt),
-        sql`${staffRecoveryLinks.expiresAt} > ${now}`,
-      ),
-    );
+    .where(and(inArray(staffRecoveryLinks.userId, [...userIds]), tokenPending(recoveryColumns, now)));
   return new Set(rows.map((r) => r.userId));
 }

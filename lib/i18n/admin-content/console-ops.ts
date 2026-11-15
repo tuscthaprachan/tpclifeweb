@@ -109,6 +109,7 @@ export const CONSOLE_OPS_STRINGS = {
   opActSessionRevoke: { th: "{actor} ออกจากระบบอุปกรณ์อื่น", en: "{actor} signed out another device" },
   opActSessionRevokeOthers: { th: "{actor} ออกจากระบบทุกอุปกรณ์อื่น", en: "{actor} signed out all other devices" },
   opActAuditExport: { th: "{actor} ดาวน์โหลดบันทึกการดำเนินการ", en: "{actor} downloaded the audit log" },
+  opActCronFail: { th: "งานตามกำหนด {entity} ล้มเหลว", en: "The scheduled job {entity} failed" },
   opActCronRun: { th: "ระบบรันงานตามกำหนด {entity}", en: "The scheduled job {entity} ran" },
 
   /* Dashboard */
@@ -212,5 +213,6 @@ export const CONSOLE_OPS_STRINGS = {
   opHealthMigrationsUnknown: { th: "อ่านประวัติการย้ายฐานข้อมูลไม่ได้", en: "The migration history could not be read." },
   opHealthCronRecent: { th: "รันตามกำหนด", en: "Running on schedule." },
   opHealthCronLate: { th: "ไม่ได้รันตามกำหนด", en: "Has not run when expected." },
+  opHealthCronFailing: { th: "การรันล่าสุดล้มเหลว", en: "The last run failed." },
   opHealthCronNever: { th: "ยังไม่มีบันทึกการรัน", en: "No run has been recorded yet." },
 } as const satisfies Record<string, LocaleString>;

@@ -45,7 +45,8 @@ export default async function OpenDataDocumentsPage({ searchParams }: { searchPa
   const def = contentTypeBySegment("open-data");
   const place = contentPlacement(def);
   const owner = parseOwner(ownerParam, owners);
-  const status = parseListStatus(statusParam);
+  const parsedStatus = parseListStatus(statusParam);
+  const status = parsedStatus === "published" || parsedStatus === "draft" ? parsedStatus : undefined;
   const page = parsePage(pageParam);
   const term = q?.trim();
 

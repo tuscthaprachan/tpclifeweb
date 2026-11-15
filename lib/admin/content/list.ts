@@ -5,6 +5,7 @@ import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { user } from "@/lib/db/schema/auth";
 import type { ContentStatus } from "@/lib/db/schema/content/enums";
+import { liveStateSql } from "@/lib/content/window";
 import { listExtras } from "./list-extras";
 import { parseListStatus, type ListStatus, type ListWithin, type SortDir, type SortKey } from "./list-query";
 import type { ContentTypeDef } from "./types";
@@ -49,13 +50,23 @@ export interface ListFilters {
 
 const WITHIN_DAYS: Record<ListWithin, number> = { "7d": 7, "30d": 30 };
 
+/** The SQL `liveState` of a type's rows; types with no window are `live` once published. */
+function stateSql(def: ContentTypeDef, now: Date): SQL<string> {
+  const columns = getTableColumns(def.table) as Record<string, AnyPgColumn>;
+  return liveStateSql({ status: def.columns.status!, publishAt: columns.publishAt, unpublishAt: columns.unpublishAt }, now);
+}
+
 function listWhere(def: ContentTypeDef, filters: ListFilters, now: Date = new Date()): SQL | undefined {
   const { title, status: statusColumn, updatedAt } = def.columns;
   const term = filters.q?.trim();
   const search =
     term && title ? or(ilike(title[0], `%${escapeLike(term)}%`), ilike(title[1], `%${escapeLike(term)}%`)) : undefined;
   const byStatus =
-    filters.status && statusColumn ? (filters.status === "published" ? eq(statusColumn, "published") : sql`${statusColumn} <> 'published'`) : undefined;
+    filters.status && statusColumn
+      ? filters.status === "draft"
+        ? sql`${statusColumn} <> 'published'`
+        : sql`${stateSql(def, now)} = ${filters.status === "published" ? "live" : filters.status}`
+      : undefined;
   const editor = filters.by ? (getTableColumns(def.table) as Record<string, AnyPgColumn>).updatedBy : undefined;
   const byEditor = filters.by && editor ? eq(editor, filters.by) : undefined;
   const since = filters.within ? gte(updatedAt, new Date(now.getTime() - WITHIN_DAYS[filters.within] * 86_400_000)) : undefined;
@@ -165,42 +176,69 @@ export async function recentEditsBy(
   return perType.flat().sort((x, y) => y.row.updatedAt.getTime() - x.row.updatedAt.getTime()).slice(0, limit);
 }
 
+export interface StatusCounts {
+  all: number;
+  /** Rows that are live now. */
+  published: number;
+  /** Rows not published at all. */
+  draft: number;
+  /** Published rows whose start is still ahead. */
+  scheduled: number;
+  /** Published rows whose end has passed. */
+  expired: number;
+}
+
 /** Rows per status for a list's filter chips, honouring every filter except status. */
-export async function countByStatus(db: AuditExecutor, def: ContentTypeDef, filters: ListFilters | string = {}): Promise<{ all: number; published: number; draft: number }> {
+export async function countByStatus(
+  db: AuditExecutor,
+  def: ContentTypeDef,
+  filters: ListFilters | string = {},
+  now: Date = new Date(),
+): Promise<StatusCounts> {
   const status = def.columns.status;
+  const state = status ? stateSql(def, now) : null;
+  const when = (name: string) => (state ? sql<number>`count(*) filter (where ${state} = ${name})`.mapWith(Number) : sql<number>`0`.mapWith(Number));
   const [row] = await db
-    .select({
-      all: count(),
-      published: status ? sql<number>`count(*) filter (where ${status} = 'published')`.mapWith(Number) : count(),
-    })
+    .select({ all: count(), published: state ? when("live") : count(), scheduled: when("scheduled"), expired: when("expired") })
     .from(def.table)
-    .where(listWhere(def, { ...(typeof filters === "string" ? { q: filters } : filters), status: undefined }));
+    .where(listWhere(def, { ...(typeof filters === "string" ? { q: filters } : filters), status: undefined }, now));
   const all = row?.all ?? 0;
   const published = row?.published ?? 0;
-  return { all, published, draft: all - published };
+  const scheduled = row?.scheduled ?? 0;
+  const expired = row?.expired ?? 0;
+  return { all, published, draft: all - published - scheduled - expired, scheduled, expired };
 }
 
 export interface ContentCount {
   total: number;
-  /** Rows that are live; equals `total` for types with no status. */
+  /** Rows with status published, whatever their window; equals `total` for types with no status. */
   published: number;
+  /** Rows that are live now. */
+  live: number;
+  scheduled: number;
+  expired: number;
 }
 
 /** Row counts per registry key, for the hub. One query per type, run together. */
-export async function countContentTypes(db: AuditExecutor, defs: readonly ContentTypeDef[]): Promise<Map<string, ContentCount>> {
+export async function countContentTypes(db: AuditExecutor, defs: readonly ContentTypeDef[], now: Date = new Date()): Promise<Map<string, ContentCount>> {
   const entries = await Promise.all(
     defs
       .filter((d) => d.kind === "collection")
       .map(async (def): Promise<[string, ContentCount]> => {
         const status = def.columns.status;
+        const state = status ? stateSql(def, now) : null;
+        const when = (name: string) => (state ? sql<number>`count(*) filter (where ${state} = ${name})`.mapWith(Number) : sql<number>`0`.mapWith(Number));
         const [row] = await db
           .select({
             total: count(),
             published: status ? sql<number>`count(*) filter (where ${status} = 'published')`.mapWith(Number) : count(),
+            live: state ? when("live") : count(),
+            scheduled: when("scheduled"),
+            expired: when("expired"),
           })
           .from(def.table)
           .where(def.where as SQL | undefined);
-        return [def.key, { total: row?.total ?? 0, published: row?.published ?? 0 }];
+        return [def.key, { total: row?.total ?? 0, published: row?.published ?? 0, live: row?.live ?? 0, scheduled: row?.scheduled ?? 0, expired: row?.expired ?? 0 }];
       }),
   );
   return new Map(entries);

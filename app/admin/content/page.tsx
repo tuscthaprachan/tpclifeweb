@@ -92,8 +92,20 @@ export default async function ContentHubPage() {
             <>
               <span className={meta}>
                 <ConsoleIcon name="publish" size={14} />
-                {a("ccHubPublished", locale, { n: count.published })}
+                {a("ccHubPublished", locale, { n: count.live })}
               </span>
+              {count.scheduled > 0 ? (
+                <span className={meta}>
+                  <ConsoleIcon name="publish" size={14} />
+                  {a("ccHubScheduled", locale, { n: count.scheduled })}
+                </span>
+              ) : null}
+              {count.expired > 0 ? (
+                <span className={meta}>
+                  <ConsoleIcon name="publish" size={14} />
+                  {a("ccHubExpired", locale, { n: count.expired })}
+                </span>
+              ) : null}
               <span className={meta}>
                 <ConsoleIcon name="draft" size={14} />
                 {a("ccHubDrafts", locale, { n: count.total - count.published })}

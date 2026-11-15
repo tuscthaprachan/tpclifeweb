@@ -1,10 +1,11 @@
 import "server-only";
 
-import { and, desc, eq, gte, isNull, lte, or } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { serviceAlerts, siteSettings } from "@/lib/db/schema";
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
+import { alertWindow } from "./window";
 import { iso, isoOrUndefined, ls, lsOpt, opt } from "./map";
 import { safeFetch } from "./safe-fetch";
 import type { ServiceAlert, SiteSettings } from "./types";
@@ -46,8 +47,8 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
  * ------------------------------------------------------------------ */
 
 /**
- * Alerts that are live at `now`: started, and either never ends or ends in
- * the future. Critical first (the severity enum is declared least to most
+ * Alerts that are live at `now`: started, and either never ends or whose end
+ * is still ahead (the end is exclusive, as for every publication window). Critical first (the severity enum is declared least to most
  * severe), then newest.
  */
 export async function readActiveServiceAlerts(db: AuditExecutor, now: string): Promise<ServiceAlert[]> {
@@ -55,13 +56,7 @@ export async function readActiveServiceAlerts(db: AuditExecutor, now: string): P
   const rows = await db
     .select()
     .from(serviceAlerts)
-    .where(
-      and(
-        eq(serviceAlerts.status, "published"),
-        lte(serviceAlerts.startsAt, at),
-        or(isNull(serviceAlerts.endsAt), gte(serviceAlerts.endsAt, at)),
-      ),
-    )
+    .where(alertWindow(at))
     .orderBy(desc(serviceAlerts.severity), desc(serviceAlerts.startsAt), serviceAlerts.id);
   return rows.map((row) => ({
     _id: row.id,

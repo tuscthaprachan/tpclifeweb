@@ -14,7 +14,7 @@
  * transaction (`withAudit`).
  */
 
-import { and, asc, eq, gt, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { withAudit, type AuditContext, type AuditExecutor } from "@/lib/db/audit";
 import { user } from "@/lib/db/schema/auth";
 import { organisations, type Organisation } from "@/lib/db/schema/organisations";
@@ -23,6 +23,7 @@ import { staffInvites, type StaffInvite } from "@/lib/db/schema/staff-invites";
 import { staffMemberships } from "@/lib/db/schema/staff-memberships";
 import { staffRoles, STAFF_ROLES, type StaffRole } from "@/lib/db/schema/staff-roles";
 import { isPlausibleEmail, normaliseEmail } from "./email-address";
+import { tokenPending, tokenState, type TokenState } from "./token-state";
 import { generateToken, hashToken } from "./tokens";
 
 export const INVITE_TTL_DAYS = 7;
@@ -49,14 +50,14 @@ export class InviteError extends Error {
   }
 }
 
-export type InviteStatus = "pending" | "accepted" | "revoked" | "expired";
+export type InviteStatus = TokenState;
 
+/** An invite's lifecycle state at `now`. */
 export function inviteStatus(invite: Pick<StaffInvite, "acceptedAt" | "revokedAt" | "expiresAt">, now: Date): InviteStatus {
-  if (invite.acceptedAt) return "accepted";
-  if (invite.revokedAt) return "revoked";
-  if (invite.expiresAt <= now) return "expired";
-  return "pending";
+  return tokenState({ consumedAt: invite.acceptedAt, revokedAt: invite.revokedAt, expiresAt: invite.expiresAt }, now);
 }
+
+const inviteColumns = { consumedAt: staffInvites.acceptedAt, revokedAt: staffInvites.revokedAt, expiresAt: staffInvites.expiresAt };
 
 export interface CreateInviteInput {
   email: string;
@@ -103,13 +104,7 @@ export async function createInvite(
       const superseded = await tx
         .update(staffInvites)
         .set({ revokedAt: now })
-        .where(
-          and(
-            eq(staffInvites.email, email),
-            isNull(staffInvites.acceptedAt),
-            isNull(staffInvites.revokedAt),
-          ),
-        )
+        .where(and(eq(staffInvites.email, email), tokenPending(inviteColumns, now)))
         .returning({ id: staffInvites.id });
       for (const row of superseded) {
         await audit({ action: "staff_invite.supersede", entityType: "staff_invite", entityId: row.id });
@@ -138,6 +133,13 @@ export async function createInvite(
       return { invite, token, organisations: found };
     },
   );
+}
+
+/** The error for a claim that lost a race, from the state the row is really in. */
+function lostRaceCode(state: InviteStatus): InviteErrorCode {
+  if (state === "revoked") return "revoked";
+  if (state === "expired") return "expired";
+  return "already_accepted";
 }
 
 /** Looks an invite up by the raw token from the link. Null when no such invite exists. */
@@ -187,16 +189,12 @@ export async function acceptInvite(
       const claimed = await tx
         .update(staffInvites)
         .set({ acceptedAt: now })
-        .where(
-          and(
-            eq(staffInvites.id, invite.id),
-            isNull(staffInvites.acceptedAt),
-            isNull(staffInvites.revokedAt),
-            gt(staffInvites.expiresAt, now),
-          ),
-        )
+        .where(and(eq(staffInvites.id, invite.id), tokenPending(inviteColumns, now)))
         .returning({ id: staffInvites.id });
-      if (claimed.length === 0) throw new InviteError("already_accepted");
+      if (claimed.length === 0) {
+        const [current] = await tx.select().from(staffInvites).where(eq(staffInvites.id, invite.id));
+        throw new InviteError(lostRaceCode(current ? inviteStatus(current, now) : "accepted"));
+      }
       await audit({ action: "staff_invite.accept", entityType: "staff_invite", entityId: invite.id });
 
       // A bootstrap invite has no inviter, so the new admin is recorded as granting it.

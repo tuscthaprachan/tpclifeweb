@@ -18,21 +18,17 @@ describe("importValues", () => {
 });
 
 describe("importView", () => {
-  it("is idle with nothing to report", () => {
-    expect(importView({}, VALUES)).toEqual(IMPORT_IDLE);
-  });
   it("keeps the typed fields on an error (the source document is not wiped)", () => {
-    expect(importView({ error: "Choose a file" }, VALUES)).toEqual({ status: "error", message: "Choose a file", values: VALUES });
+    expect(importView({ status: "error", message: "Choose a file" }, VALUES)).toEqual({ status: "error", message: "Choose a file", values: VALUES });
   });
   it("keeps the typed fields on a failure", () => {
-    expect(importView({ failure: { ok: false, reason: "source" } }, VALUES)).toEqual({ status: "failure", failure: { ok: false, reason: "source" }, values: VALUES });
+    expect(importView({ status: "failure", failure: { ok: false, reason: "source" } }, VALUES)).toEqual({ status: "failure", failure: { ok: false, reason: "source" }, values: VALUES });
   });
   it("clears the fields on success", () => {
-    expect(importView({ done: DONE }, VALUES)).toEqual({ status: "done", done: DONE });
+    expect(importView({ status: "done", done: DONE }, VALUES)).toEqual({ status: "done", done: DONE });
   });
-  it("never reports done beside a problem", () => {
-    expect(importView({ done: DONE, failure: { ok: false, reason: "empty" } }, VALUES).status).toBe("failure");
-    expect(importView({ done: DONE, error: "x" }, VALUES).status).toBe("error");
+  it("starts idle", () => {
+    expect(IMPORT_IDLE).toEqual({ status: "idle" });
   });
 });
 
