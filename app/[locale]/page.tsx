@@ -25,9 +25,8 @@ import { Container, Heading } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { closesAt as canteenClosesAt } from "@/lib/canteen/derive";
+import { WEATHER_SOURCE_URL, getCampusWeather } from "@/lib/weather/read";
 import {
-  getCanteenData,
   getActiveServiceAlerts,
   getActiveShuttleRoutes,
   getKeyPlaces,
@@ -69,7 +68,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const now = new Date();
   const settings = await getSiteSettings();
 
-  const [alerts, routes, keyPlaces, allPlaces, events, newsPage, policies, canteenData] = await Promise.all([
+  const [alerts, routes, keyPlaces, allPlaces, events, newsPage, policies, weather] = await Promise.all([
     getActiveServiceAlerts(),
     getActiveShuttleRoutes(),
     getKeyPlaces(),
@@ -77,13 +76,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getUpcomingEvents(),
     getNewsPage(1, NEWS_FETCH_COUNT),
     getPolicies(),
-    getCanteenData(),
+    getCampusWeather(),
   ]);
-
-  // The canteen row only appears once the canteen has been surveyed. The
-  // closing time is the scheduled one, and is left out when it is unknown.
-  const canteen =
-    canteenData.dishes.length > 0 ? { closesAt: canteenClosesAt(canteenData.settings, undefined, now) } : null;
 
   const { banner, rows: alertRows } = splitAlerts(alerts);
   const libraries = allPlaces.filter(isLibrary);
@@ -114,7 +108,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         {banner ? <ServiceAlert locale={locale} alert={banner} announce={false} /> : null}
 
         <div className="grid items-start gap-[var(--space-6)] sm:grid-cols-2 sm:gap-x-[var(--space-8)]">
-          <TodayList locale={locale} alerts={alertRows} routes={routes} places={otherKeyPlaces} libraries={libraries} canteen={canteen} now={now} />
+          <TodayList locale={locale} alerts={alertRows} routes={routes} places={otherKeyPlaces} libraries={libraries} weather={weather} weatherSourceUrl={WEATHER_SOURCE_URL} now={now} />
           <PopularTasks locale={locale} tasks={settings.homeTasks} />
         </div>
 

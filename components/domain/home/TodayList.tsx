@@ -1,18 +1,34 @@
 import NextLink from "next/link";
 
-import { EAT, eat, t } from "@/components/domain/canteen/strings";
 import { fillText } from "@/components/domain/open-data/fill";
 import { ShuttleTodayRows } from "@/components/domain/shuttle/ShuttleTodayRows";
 import { Link as UiLink, StatusTag, Tag, type StatusTone } from "@/components/ui";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI, type UiKey } from "@/lib/i18n/strings";
 import type { AlertSeverity, CampusPlace, ServiceAlert, ShuttleRoute } from "@/lib/content/types";
+import { HEAT_TONE, PM25_TONE, heatLevel, pm25Level, type HeatLevel, type Pm25Level } from "@/lib/weather/levels";
+import type { CampusWeather } from "@/lib/weather/read";
 import { getPlaceHoursStatus, summariseLibraries, type PlaceHoursStatus } from "./openingHours";
 import { SectionBar } from "./SectionBar";
 import { TODAY_LINK_CLASS, TodayRow } from "./TodayRow";
 
 const HEADING_ID = "home-today-heading";
 const LIBRARY_GUIDE_PATH = "/guide/tu-library";
+
+const HEAT_LABEL: Record<HeatLevel, UiKey> = {
+  normal: "homeHeatNormal",
+  watch: "homeHeatWatch",
+  warning: "homeHeatWarning",
+  danger: "homeHeatDanger",
+  extremeDanger: "homeHeatExtremeDanger",
+};
+const PM25_LABEL: Record<Pm25Level, UiKey> = {
+  veryGood: "homePm25VeryGood",
+  good: "homePm25Good",
+  moderate: "homePm25Moderate",
+  startingToAffect: "homePm25StartingToAffect",
+  affectsHealth: "homePm25AffectsHealth",
+};
 
 const SEVERITY_TONE: Record<AlertSeverity, StatusTone> = { info: "info", warning: "warning", critical: "error" };
 const SEVERITY_LABEL: Record<AlertSeverity, UiKey> = {
@@ -28,17 +44,18 @@ interface TodayListProps {
   /** Key places that are not libraries. */
   places: CampusPlace[];
   libraries: CampusPlace[];
-  canteen: { closesAt: string | null } | null;
+  weather: CampusWeather;
+  weatherSourceUrl: string;
   now: Date;
 }
 
 /**
  * Shuttles first, with any alert about them straight after; then the
- * libraries as one row, the other key places, the canteen, and any remaining
- * alert. The "Scheduled" tag sits once in the heading bar, with its
+ * libraries as one row, the other key places, the heat index and PM2.5 as
+ * one row, and any remaining alert. The "Scheduled" tag sits once in the heading bar, with its
  * explainer under the list.
  */
-export function TodayList({ locale, alerts, routes, places, libraries, canteen, now }: TodayListProps) {
+export function TodayList({ locale, alerts, routes, places, libraries, weather, weatherSourceUrl, now }: TodayListProps) {
   const shuttleAlerts = alerts.filter((alert) => alert.affects?.includes("shuttle"));
   const otherAlerts = alerts.filter((alert) => !alert.affects?.includes("shuttle"));
   const nothingWithHours = places.length === 0 && libraries.length === 0;
@@ -72,21 +89,7 @@ export function TodayList({ locale, alerts, routes, places, libraries, canteen, 
           </TodayRow>
         ) : null}
 
-        {canteen ? (
-          <TodayRow
-            title={
-              <NextLink href={localePath(locale, "/eat")} className={TODAY_LINK_CLASS}>
-                {t(EAT.title, locale)}
-              </NextLink>
-            }
-            status={canteen.closesAt ? <StatusTag tone="success" label={UI.openNow[locale]} /> : undefined}
-          >
-            {canteen.closesAt ? <span>{eat.openUntil(locale, canteen.closesAt)}</span> : null}
-            <NextLink href={localePath(locale, "/eat/pick")} className="font-semibold">
-              {t(EAT.decideButton, locale)}
-            </NextLink>
-          </TodayRow>
-        ) : null}
+        <WeatherRows locale={locale} weather={weather} />
 
         {otherAlerts.map((alert) => (
           <AlertRow key={alert._id} locale={locale} alert={alert} />
@@ -98,6 +101,9 @@ export function TodayList({ locale, alerts, routes, places, libraries, canteen, 
           {UI.scheduled[locale]}: {UI.scheduledExplainer[locale]}
         </p>
       ) : null}
+      {weather.heat || weather.pm25 ? (
+        <WeatherSource locale={locale} url={weatherSourceUrl} time={weather.heat?.time || weather.pm25?.time || ""} />
+      ) : null}
       <NextLink
         href={localePath(locale, "/getting-around")}
         className="inline-flex min-h-[var(--target-min)] items-center font-semibold"
@@ -105,6 +111,52 @@ export function TodayList({ locale, alerts, routes, places, libraries, canteen, 
         {UI.homeFullTimetable[locale]}
       </NextLink>
     </section>
+  );
+}
+
+function WeatherRows({ locale, weather }: { locale: Locale; weather: CampusWeather }) {
+  const { heat, pm25 } = weather;
+  if (!heat && !pm25) return null;
+  const heatAt = heat ? heatLevel(heat.index) : null;
+  const pmAt = pm25 ? pm25Level(pm25.value) : null;
+  const advice: string[] = [];
+  if (heat && heat.index >= 42) advice.push(UI.homeHeatAdvice[locale]);
+  if (pm25 && pm25.value > 37.5) advice.push(UI.homePm25Advice[locale]);
+  return (
+    <TodayRow title={UI.homeWeather[locale]}>
+      {heat && heatAt ? (
+        <span className="inline-flex flex-wrap items-baseline gap-x-[var(--space-2)]">
+          <span>
+            {UI.homeHeatIndex[locale]} <strong className="text-ink-900">{Math.round(heat.index)}°C</strong>
+          </span>
+          <StatusTag tone={HEAT_TONE[heatAt]} label={UI[HEAT_LABEL[heatAt]][locale]} />
+        </span>
+      ) : null}
+      {pm25 && pmAt ? (
+        <span className="inline-flex flex-wrap items-baseline gap-x-[var(--space-2)]">
+          <span>
+            {UI.homePm25[locale]} <strong className="text-ink-900">{Math.round(pm25.value)}</strong> {UI.homePm25Unit[locale]}
+          </span>
+          <StatusTag tone={PM25_TONE[pmAt]} label={UI[PM25_LABEL[pmAt]][locale]} />
+        </span>
+      ) : null}
+      {advice.map((line) => (
+        <span key={line}>{line}</span>
+      ))}
+    </TodayRow>
+  );
+}
+
+function WeatherSource({ locale, url, time }: { locale: Locale; url: string; time: string }) {
+  const [before, after] = fillText(UI.homeWeatherSource[locale], { time }).split("{source}");
+  return (
+    <p className="mb-0 mt-[var(--space-1)] text-[length:var(--text-sm)] text-ink-600">
+      {before}
+      <UiLink href={url} locale={locale}>
+        Open-Meteo
+      </UiLink>
+      {after}
+    </p>
   );
 }
 
