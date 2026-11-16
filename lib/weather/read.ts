@@ -7,8 +7,6 @@ const CAMPUS = { latitude: 13.7565, longitude: 100.4903 };
 const REVALIDATE_SECONDS = 1800;
 const TIMEOUT_MS = 4000;
 
-export const WEATHER_SOURCE_URL = "https://open-meteo.com/";
-
 export interface CampusWeather {
   heat: { index: number; temperature: number; humidity: number; time: string } | null;
   pm25: { value: number; time: string } | null;

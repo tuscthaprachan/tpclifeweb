@@ -45,17 +45,16 @@ interface TodayListProps {
   places: CampusPlace[];
   libraries: CampusPlace[];
   weather: CampusWeather;
-  weatherSourceUrl: string;
   now: Date;
 }
 
 /**
  * Shuttles first, with any alert about them straight after; then the
  * libraries as one row, the other key places, the heat index and PM2.5 as
- * one row, and any remaining alert. The "Scheduled" tag sits once in the heading bar, with its
- * explainer under the list.
+ * one row, and any remaining alert. The "Scheduled" tag sits once in the
+ * heading bar.
  */
-export function TodayList({ locale, alerts, routes, places, libraries, weather, weatherSourceUrl, now }: TodayListProps) {
+export function TodayList({ locale, alerts, routes, places, libraries, weather, now }: TodayListProps) {
   const shuttleAlerts = alerts.filter((alert) => alert.affects?.includes("shuttle"));
   const otherAlerts = alerts.filter((alert) => !alert.affects?.includes("shuttle"));
   const nothingWithHours = places.length === 0 && libraries.length === 0;
@@ -96,17 +95,9 @@ export function TodayList({ locale, alerts, routes, places, libraries, weather, 
         ))}
       </dl>
 
-      {routes.length > 0 ? (
-        <p className="mb-0 mt-[var(--space-3)] text-[length:var(--text-sm)] text-ink-600">
-          {UI.scheduled[locale]}: {UI.scheduledExplainer[locale]}
-        </p>
-      ) : null}
-      {weather.heat || weather.pm25 ? (
-        <WeatherSource locale={locale} url={weatherSourceUrl} time={weather.heat?.time || weather.pm25?.time || ""} />
-      ) : null}
       <NextLink
         href={localePath(locale, "/getting-around")}
-        className="inline-flex min-h-[var(--target-min)] items-center font-semibold"
+        className="mt-[var(--space-2)] inline-flex min-h-[var(--target-min)] items-center font-semibold"
       >
         {UI.homeFullTimetable[locale]}
       </NextLink>
@@ -144,19 +135,6 @@ function WeatherRows({ locale, weather }: { locale: Locale; weather: CampusWeath
         <span key={line}>{line}</span>
       ))}
     </TodayRow>
-  );
-}
-
-function WeatherSource({ locale, url, time }: { locale: Locale; url: string; time: string }) {
-  const [before, after] = fillText(UI.homeWeatherSource[locale], { time }).split("{source}");
-  return (
-    <p className="mb-0 mt-[var(--space-1)] text-[length:var(--text-sm)] text-ink-600">
-      {before}
-      <UiLink href={url} locale={locale}>
-        Open-Meteo
-      </UiLink>
-      {after}
-    </p>
   );
 }
 

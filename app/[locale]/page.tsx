@@ -25,7 +25,7 @@ import { Container, Heading } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { WEATHER_SOURCE_URL, getCampusWeather } from "@/lib/weather/read";
+import { getCampusWeather } from "@/lib/weather/read";
 import {
   getActiveServiceAlerts,
   getActiveShuttleRoutes,
@@ -108,7 +108,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         {banner ? <ServiceAlert locale={locale} alert={banner} announce={false} /> : null}
 
         <div className="grid items-start gap-[var(--space-6)] sm:grid-cols-2 sm:gap-x-[var(--space-8)]">
-          <TodayList locale={locale} alerts={alertRows} routes={routes} places={otherKeyPlaces} libraries={libraries} weather={weather} weatherSourceUrl={WEATHER_SOURCE_URL} now={now} />
+          <TodayList locale={locale} alerts={alertRows} routes={routes} places={otherKeyPlaces} libraries={libraries} weather={weather} now={now} />
           <PopularTasks locale={locale} tasks={settings.homeTasks} />
         </div>
 

@@ -1290,10 +1290,6 @@ export const UI = {
   homePm25StartingToAffect: { th: "เริ่มมีผลต่อสุขภาพ", en: "Starting to affect health" },
   homePm25AffectsHealth: { th: "มีผลต่อสุขภาพ", en: "Affects health" },
   homePm25Advice: { th: "สวมหน้ากากเมื่ออยู่นอกอาคาร", en: "Wear a mask outdoors" },
-  homeWeatherSource: {
-    th: "อากาศ: ค่าประมาณจากแบบจำลอง {source} เวลา {time} น.",
-    en: "Weather: model estimate from {source} for {time}, not a station reading",
-  },
   homeLibrariesNext: { th: "แห่งแรกที่เปิด: {name} เวลา {time}", en: "First to open: {name} at {time}" },
 
   keyHoursTitle: { th: "เวลาทำการสถานที่สำคัญวันนี้", en: "Key opening hours today" },
