@@ -1,16 +1,18 @@
 import NextLink from "next/link";
 
 import { EAT, eat, t } from "@/components/domain/canteen/strings";
+import { fillText } from "@/components/domain/open-data/fill";
 import { ShuttleTodayRows } from "@/components/domain/shuttle/ShuttleTodayRows";
-import { Link as UiLink, StatusTag, type StatusTone } from "@/components/ui";
+import { Link as UiLink, StatusTag, Tag, type StatusTone } from "@/components/ui";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI, type UiKey } from "@/lib/i18n/strings";
 import type { AlertSeverity, CampusPlace, ServiceAlert, ShuttleRoute } from "@/lib/content/types";
-import { getPlaceHoursStatus, type PlaceHoursStatus } from "./openingHours";
+import { getPlaceHoursStatus, summariseLibraries, type PlaceHoursStatus } from "./openingHours";
 import { SectionBar } from "./SectionBar";
 import { TODAY_LINK_CLASS, TodayRow } from "./TodayRow";
 
 const HEADING_ID = "home-today-heading";
+const LIBRARY_GUIDE_PATH = "/guide/tu-library";
 
 const SEVERITY_TONE: Record<AlertSeverity, StatusTone> = { info: "info", warning: "warning", critical: "error" };
 const SEVERITY_LABEL: Record<AlertSeverity, UiKey> = {
@@ -23,53 +25,52 @@ interface TodayListProps {
   locale: Locale;
   alerts: ServiceAlert[];
   routes: ShuttleRoute[];
+  /** Key places that are not libraries. */
   places: CampusPlace[];
+  libraries: CampusPlace[];
   canteen: { closesAt: string | null } | null;
   now: Date;
 }
 
-export function TodayList({ locale, alerts, routes, places, canteen, now }: TodayListProps) {
+/**
+ * Shuttles first, with any alert about them straight after; then the
+ * libraries as one row, the other key places, the canteen, and any remaining
+ * alert. The "Scheduled" tag sits once in the heading bar, with its
+ * explainer under the list.
+ */
+export function TodayList({ locale, alerts, routes, places, libraries, canteen, now }: TodayListProps) {
+  const shuttleAlerts = alerts.filter((alert) => alert.affects?.includes("shuttle"));
+  const otherAlerts = alerts.filter((alert) => !alert.affects?.includes("shuttle"));
+  const nothingWithHours = places.length === 0 && libraries.length === 0;
+
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="transport">
+      <SectionBar id={HEADING_ID} tone="transport" aside={routes.length > 0 ? <Tag tone="neutral">{UI.scheduled[locale]}</Tag> : undefined}>
         {UI.homeToday[locale]}
       </SectionBar>
 
       <dl className="m-0 mt-[var(--space-2)]">
         <ShuttleTodayRows locale={locale} routes={routes} now={now} />
-
-        {alerts.map((alert) => (
-          <TodayRow
-            key={alert._id}
-            title={
-              alert.moreInfoUrl ? (
-                <UiLink href={alert.moreInfoUrl} locale={locale} className={TODAY_LINK_CLASS}>
-                  {pick(alert.title, locale)}
-                </UiLink>
-              ) : (
-                pick(alert.title, locale)
-              )
-            }
-            status={<StatusTag tone={SEVERITY_TONE[alert.severity]} label={UI[SEVERITY_LABEL[alert.severity]][locale]} />}
-          >
-            <span>{pick(alert.body, locale)}</span>
-          </TodayRow>
+        {shuttleAlerts.map((alert) => (
+          <AlertRow key={alert._id} locale={locale} alert={alert} />
         ))}
 
-        {places.length === 0 ? (
+        {libraries.length > 0 ? <LibrariesRow locale={locale} libraries={libraries} now={now} /> : null}
+
+        {places.map((place) => (
+          <PlaceRow
+            key={place._id}
+            locale={locale}
+            place={place}
+            status={place.closureNote ? { kind: "closed", note: place.closureNote } : getPlaceHoursStatus(place, now)}
+          />
+        ))}
+
+        {nothingWithHours ? (
           <TodayRow title={UI.keyHoursTitle[locale]}>
             <span>{UI.keyHoursNotPublished[locale]}</span>
           </TodayRow>
-        ) : (
-          places.map((place) => (
-            <PlaceRow
-              key={place._id}
-              locale={locale}
-              place={place}
-              status={place.closureNote ? { kind: "closed", note: place.closureNote } : getPlaceHoursStatus(place, now)}
-            />
-          ))
-        )}
+        ) : null}
 
         {canteen ? (
           <TodayRow
@@ -86,9 +87,17 @@ export function TodayList({ locale, alerts, routes, places, canteen, now }: Toda
             </NextLink>
           </TodayRow>
         ) : null}
+
+        {otherAlerts.map((alert) => (
+          <AlertRow key={alert._id} locale={locale} alert={alert} />
+        ))}
       </dl>
 
-      <p className="mb-0 mt-[var(--space-3)] text-[length:var(--text-sm)] text-ink-600">{UI.scheduledExplainer[locale]}</p>
+      {routes.length > 0 ? (
+        <p className="mb-0 mt-[var(--space-3)] text-[length:var(--text-sm)] text-ink-600">
+          {UI.scheduled[locale]}: {UI.scheduledExplainer[locale]}
+        </p>
+      ) : null}
       <NextLink
         href={localePath(locale, "/getting-around")}
         className="inline-flex min-h-[var(--target-min)] items-center font-semibold"
@@ -99,19 +108,78 @@ export function TodayList({ locale, alerts, routes, places, canteen, now }: Toda
   );
 }
 
-function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlace; status: PlaceHoursStatus }) {
+function AlertRow({ locale, alert }: { locale: Locale; alert: ServiceAlert }) {
+  return (
+    <TodayRow
+      title={
+        alert.moreInfoUrl ? (
+          <UiLink href={alert.moreInfoUrl} locale={locale} className={TODAY_LINK_CLASS}>
+            {pick(alert.title, locale)}
+          </UiLink>
+        ) : (
+          pick(alert.title, locale)
+        )
+      }
+      status={<StatusTag tone={SEVERITY_TONE[alert.severity]} label={UI[SEVERITY_LABEL[alert.severity]][locale]} />}
+    >
+      <span>{pick(alert.body, locale)}</span>
+    </TodayRow>
+  );
+}
+
+function LibrariesRow({ locale, libraries, now }: { locale: Locale; libraries: CampusPlace[]; now: Date }) {
+  const summary = summariseLibraries(libraries, now);
   const title = (
-    <NextLink href={localePath(locale, "/directory")} className={TODAY_LINK_CLASS}>
-      {pick(place.name, locale)}
+    <NextLink href={localePath(locale, LIBRARY_GUIDE_PATH)} className={TODAY_LINK_CLASS}>
+      {UI.homeLibraries[locale]}
     </NextLink>
   );
+
+  if (summary.total === 0) {
+    return (
+      <TodayRow title={title}>
+        <span>{UI.keyHoursNotPublished[locale]}</span>
+      </TodayRow>
+    );
+  }
+
+  const status =
+    summary.open > 0 ? (
+      <StatusTag tone="success" label={fillText(UI.homeLibrariesOpen[locale], { open: summary.open, total: summary.total })} />
+    ) : (
+      <StatusTag tone="neutral" label={UI.homeLibrariesAllClosed[locale]} />
+    );
+
+  return (
+    <TodayRow title={title} status={status}>
+      {summary.latest ? (
+        <span>
+          {fillText(UI[summary.latest.closesNextDay ? "homeLibrariesLatestTomorrow" : "homeLibrariesLatest"][locale], {
+            name: pick(summary.latest.place.name, locale),
+            time: summary.latest.closes,
+          })}
+        </span>
+      ) : null}
+      {summary.nextOpening ? (
+        <span>
+          {fillText(UI.homeLibrariesNext[locale], { name: pick(summary.nextOpening.place.name, locale), time: summary.nextOpening.opens })}
+        </span>
+      ) : null}
+    </TodayRow>
+  );
+}
+
+function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlace; status: PlaceHoursStatus }) {
+  const title = pick(place.name, locale);
 
   switch (status.kind) {
     case "open":
       return (
         <TodayRow title={title} status={<StatusTag tone="success" label={UI.openNow[locale]} />}>
           <span>
-            {UI.closesAt[locale]} {status.closes}
+            {status.closesNextDay
+              ? fillText(UI.homeClosesTomorrow[locale], { time: status.closes })
+              : `${UI.closesAt[locale]} ${status.closes}`}
           </span>
           {status.note ? <span>{pick(status.note, locale)}</span> : null}
         </TodayRow>

@@ -14,14 +14,28 @@ interface SectionBarProps {
   id: string;
   tone: SectionBarTone;
   children: ReactNode;
+  /** Shown at the end of the bar, outside the heading. */
+  aside?: ReactNode;
 }
 
-export function SectionBar({ id, tone, children }: SectionBarProps) {
+const BAR_CLASS = "rounded-[var(--radius-block)] px-[var(--space-4)] py-[var(--space-2)]";
+
+export function SectionBar({ id, tone, children, aside }: SectionBarProps) {
+  if (aside) {
+    return (
+      <div className={cx("flex flex-wrap items-center justify-between gap-x-[var(--space-3)] gap-y-[var(--space-1)]", BAR_CLASS, TONE_CLASS[tone])}>
+        <Heading level={2} id={id} className={cx("m-0 font-bold", TONE_CLASS[tone])}>
+          {children}
+        </Heading>
+        {aside}
+      </div>
+    );
+  }
   return (
     <Heading
       level={2}
       id={id}
-      className={cx("m-0 rounded-[var(--radius-block)] px-[var(--space-4)] py-[var(--space-2)] font-bold", TONE_CLASS[tone])}
+      className={cx("m-0 font-bold", BAR_CLASS, TONE_CLASS[tone])}
     >
       {children}
     </Heading>

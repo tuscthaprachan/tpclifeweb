@@ -18,7 +18,7 @@ import { bangkokDateKey, bangkokDayOfWeek, bangkokMinutesOfDay, formatClockTime,
 import type { CampusPlace, LocaleString, OpeningHours } from "@/lib/content/types";
 
 export type PlaceHoursStatus =
-  | { kind: "open"; closes: string; note?: LocaleString }
+  | { kind: "open"; closes: string; closesNextDay: boolean; note?: LocaleString }
   | { kind: "closed"; opensNext?: string; note?: LocaleString }
   | { kind: "noHours" };
 
@@ -66,7 +66,7 @@ export function getPlaceHoursStatus(place: CampusPlace, now: Date): PlaceHoursSt
   const yesterday = entryForDay(place.openingHours, new Date(now.getTime() - DAY_MS));
   const carried = yesterday ? span(yesterday) : null;
   if (yesterday && carried && carried.closes > 1440 && nowMinutes < carried.closes - 1440) {
-    return { kind: "open", closes: formatClockTime(carried.closes), note: yesterday.note };
+    return { kind: "open", closes: formatClockTime(carried.closes), closesNextDay: false, note: yesterday.note };
   }
 
   const entry = entryForDay(place.openingHours, now);
@@ -76,11 +76,52 @@ export function getPlaceHoursStatus(place: CampusPlace, now: Date): PlaceHoursSt
   if (!today) return { kind: "closed", note: entry.note };
 
   if (nowMinutes >= today.opens && nowMinutes < today.closes) {
-    return { kind: "open", closes: formatClockTime(today.closes), note: entry.note };
+    return { kind: "open", closes: formatClockTime(today.closes), closesNextDay: today.closes > 1440, note: entry.note };
   }
   return {
     kind: "closed",
     opensNext: nowMinutes < today.opens ? formatClockTime(today.opens) : undefined,
     note: entry.note,
   };
+}
+
+/** Libraries are the places whose slug names them one. */
+export function isLibrary(place: CampusPlace): boolean {
+  return /(^|-)library(-|$)/.test(place.slug.current);
+}
+
+export type LibrariesSummary = {
+  total: number;
+  open: number;
+  /** The open library that stays open longest. */
+  latest?: { place: CampusPlace; closes: string; closesNextDay: boolean };
+  /** With none open: the next to open today. */
+  nextOpening?: { place: CampusPlace; opens: string };
+};
+
+/** How many of `libraries` are open now, and which closes last. */
+export function summariseLibraries(libraries: CampusPlace[], now: Date): LibrariesSummary {
+  const withHours = libraries.filter((place) => place.openingHours && place.openingHours.length > 0);
+  const summary: LibrariesSummary = { total: withHours.length, open: 0 };
+  let latestMinutes = -1;
+  let nextMinutes = Infinity;
+  for (const place of withHours) {
+    const status: PlaceHoursStatus = place.closureNote ? { kind: "closed" } : getPlaceHoursStatus(place, now);
+    if (status.kind === "open") {
+      summary.open += 1;
+      const minutes = (parseClockTime(status.closes) ?? 0) + (status.closesNextDay ? 1440 : 0);
+      if (minutes > latestMinutes) {
+        latestMinutes = minutes;
+        summary.latest = { place, closes: status.closes, closesNextDay: status.closesNextDay };
+      }
+    } else if (status.kind === "closed" && status.opensNext) {
+      const minutes = parseClockTime(status.opensNext) ?? Infinity;
+      if (minutes < nextMinutes) {
+        nextMinutes = minutes;
+        summary.nextOpening = { place, opens: status.opensNext };
+      }
+    }
+  }
+  if (summary.open > 0) delete summary.nextOpening;
+  return summary;
 }

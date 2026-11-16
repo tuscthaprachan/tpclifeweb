@@ -2,7 +2,8 @@
 
 import NextLink from "next/link";
 
-import { StatusTag, Tag, Timestamp } from "@/components/ui";
+import { StatusTag, Timestamp } from "@/components/ui";
+import { fillText } from "@/components/domain/open-data/fill";
 import { TODAY_LINK_CLASS, TodayRow } from "@/components/domain/home/TodayRow";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { bangkokDateKey } from "@/lib/i18n/format";
@@ -20,8 +21,9 @@ interface ShuttleTodayRowsProps {
 /**
  * One row per route for the home page's Today list. The first render comes
  * from the server's `now`, so each row is complete without JavaScript; with it,
- * each row re-evaluates on the minute. Every row carries the "Scheduled" tag:
- * there is no vehicle position behind any of it (CONTRIBUTING.md, Honesty).
+ * each row re-evaluates on the minute. There is no vehicle position behind any
+ * of it, so the Today list carries the "Scheduled" tag and its explainer once,
+ * above these rows (CONTRIBUTING.md, Honesty).
  */
 export function ShuttleTodayRows({ locale, routes, now }: ShuttleTodayRowsProps) {
   const serverNowIso = now.toISOString();
@@ -35,7 +37,6 @@ function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: Sh
       {pick(route.name, locale)}
     </NextLink>
   );
-  const scheduled = <Tag tone="transport">{UI.scheduled[locale]}</Tag>;
 
   switch (status.kind) {
     case "running": {
@@ -51,8 +52,7 @@ function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: Sh
             </span>
           }
         >
-          {scheduled}
-          <span>{next.minutesUntil <= 0 ? UI.departingNow[locale] : `${UI.departsIn[locale]} ${next.minutesUntil} ${UI.minutes[locale]}`}</span>
+          <span>{next.minutesUntil <= 0 ? UI.departingNow[locale] : fillText(UI.homeInMinutes[locale], { n: next.minutesUntil })}</span>
           {rest[0] ? <span>{UI.homeThenDeparture[locale]} {rest[0].stopTime}</span> : null}
         </TodayRow>
       );
@@ -61,7 +61,6 @@ function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: Sh
     case "finishedForToday":
       return (
         <TodayRow title={title} status={<StatusTag tone="neutral" label={UI.lastDeparted[locale]} />}>
-          {scheduled}
           <NextServiceNote locale={locale} route={route} nextServiceDate={status.nextServiceDate} now={now} />
         </TodayRow>
       );
@@ -69,7 +68,6 @@ function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: Sh
     case "notToday":
       return (
         <TodayRow title={title} status={<StatusTag tone="neutral" label={UI.noServiceToday[locale]} />}>
-          {scheduled}
           <NextServiceNote locale={locale} route={route} nextServiceDate={status.nextServiceDate} now={now} />
         </TodayRow>
       );

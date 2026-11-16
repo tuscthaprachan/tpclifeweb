@@ -16,7 +16,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ActivityFeed } from "@/components/domain/activity";
-import { PopularTasks, TodayList, WHATS_ON_NEWS, WhatsOn, splitAlerts } from "@/components/domain/home";
+import { PopularTasks, TodayList, WHATS_ON_NEWS, WhatsOn, isLibrary, splitAlerts } from "@/components/domain/home";
 import { SearchBar } from "@/components/domain/search/SearchBar";
 import { ServiceAlert } from "@/components/domain/ServiceAlert";
 import { getSiteSettings } from "@/components/layout/site-settings";
@@ -32,6 +32,7 @@ import {
   getActiveShuttleRoutes,
   getKeyPlaces,
   getNewsPage,
+  getPlaces,
   getPolicies,
   getUpcomingEvents,
 } from "@/lib/content";
@@ -68,10 +69,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const now = new Date();
   const settings = await getSiteSettings();
 
-  const [alerts, routes, keyPlaces, events, newsPage, policies, canteenData] = await Promise.all([
+  const [alerts, routes, keyPlaces, allPlaces, events, newsPage, policies, canteenData] = await Promise.all([
     getActiveServiceAlerts(),
     getActiveShuttleRoutes(),
     getKeyPlaces(),
+    getPlaces(),
     getUpcomingEvents(),
     getNewsPage(1, NEWS_FETCH_COUNT),
     getPolicies(),
@@ -84,6 +86,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     canteenData.dishes.length > 0 ? { closesAt: canteenClosesAt(canteenData.settings, undefined, now) } : null;
 
   const { banner, rows: alertRows } = splitAlerts(alerts);
+  const libraries = allPlaces.filter(isLibrary);
+  const otherKeyPlaces = keyPlaces.filter((place) => !isLibrary(place));
   const shownNewsIds = newsPage.items.slice(0, WHATS_ON_NEWS).map((post) => post._id);
 
   return (
@@ -110,7 +114,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         {banner ? <ServiceAlert locale={locale} alert={banner} announce={false} /> : null}
 
         <div className="grid items-start gap-[var(--space-6)] sm:grid-cols-2 sm:gap-x-[var(--space-8)]">
-          <TodayList locale={locale} alerts={alertRows} routes={routes} places={keyPlaces} canteen={canteen} now={now} />
+          <TodayList locale={locale} alerts={alertRows} routes={routes} places={otherKeyPlaces} libraries={libraries} canteen={canteen} now={now} />
           <PopularTasks locale={locale} tasks={settings.homeTasks} />
         </div>
 

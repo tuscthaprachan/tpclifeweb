@@ -1267,6 +1267,14 @@ export const UI = {
   phaseNewService: { th: "บริการใหม่", en: "A new service." },
   phaseWhatThisMeans: { th: "ดูรายละเอียด", en: "What this means" },
   homeThenDeparture: { th: "รอบต่อไป", en: "then" },
+  homeInMinutes: { th: "อีกประมาณ {n} นาที", en: "in about {n} min" },
+  homeClosesTomorrow: { th: "ปิดพรุ่งนี้ {time}", en: "Closes {time} tomorrow" },
+  homeLibraries: { th: "ห้องสมุด", en: "Libraries" },
+  homeLibrariesOpen: { th: "เปิดอยู่ {open} จาก {total} แห่ง", en: "{open} of {total} open" },
+  homeLibrariesAllClosed: { th: "ปิดทั้งหมด", en: "All closed" },
+  homeLibrariesLatest: { th: "เปิดถึงดึกสุด: {name} ถึง {time}", en: "Open latest: {name}, until {time}" },
+  homeLibrariesLatestTomorrow: { th: "เปิดถึงดึกสุด: {name} ถึงพรุ่งนี้ {time}", en: "Open latest: {name}, until {time} tomorrow" },
+  homeLibrariesNext: { th: "แห่งแรกที่เปิด: {name} เวลา {time}", en: "First to open: {name} at {time}" },
 
   keyHoursTitle: { th: "เวลาทำการสถานที่สำคัญวันนี้", en: "Key opening hours today" },
   keyHoursNotPublished: {
