@@ -1276,6 +1276,11 @@ export const UI = {
   homeLibrariesLatestTomorrow: { th: "เปิดถึงดึกสุด: {name} ถึงพรุ่งนี้ {time}", en: "Open latest: {name}, until {time} tomorrow" },
   homeHeatIndex: { th: "ดัชนีความร้อน", en: "Heat index" },
   homeWeather: { th: "อากาศ", en: "Weather" },
+  aboutCredits: { th: "แหล่งข้อมูล", en: "Credits" },
+  aboutWeatherCredit: {
+    th: "ดัชนีความร้อนและค่าฝุ่น PM2.5 ในหน้าแรกเป็นค่าประมาณจากแบบจำลองของ",
+    en: "The heat index and PM2.5 on the home page are model estimates from",
+  },
   homeHeatNormal: { th: "ปกติ", en: "Normal" },
   homeHeatWatch: { th: "เฝ้าระวัง", en: "Caution" },
   homeHeatWarning: { th: "เตือนภัย", en: "Warning" },

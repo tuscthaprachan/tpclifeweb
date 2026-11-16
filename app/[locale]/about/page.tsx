@@ -67,6 +67,22 @@ export default async function AboutIndexPage({
             {UI.odAboutLink[locale]}
           </Link>
         </p>
+        <section aria-labelledby="about-credits" className="flex flex-col gap-[var(--space-2)]">
+          <Heading level={2} id="about-credits">
+            {UI.aboutCredits[locale]}
+          </Heading>
+          <p className="m-0">
+            {UI.aboutWeatherCredit[locale]}{" "}
+            <a href="https://open-meteo.com/" className="font-medium text-action underline">
+              Open-Meteo
+            </a>{" "}
+            (
+            <a href="https://creativecommons.org/licenses/by/4.0/" className="font-medium text-action underline">
+              CC BY 4.0
+            </a>
+            )
+          </p>
+        </section>
       </Stack>
     </Container>
   );
