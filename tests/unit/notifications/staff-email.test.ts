@@ -17,7 +17,7 @@ describe("staffNotification template", () => {
     for (const kind of kinds) {
       const mail = staffNotification({ kind, reference: "TPC-1234", url: `${BASE}/admin/notifications/open/abc` });
       expect(mail.text.indexOf("เปิดในคอนโซล")).toBeLessThan(mail.text.indexOf("Open in the console"));
-      expect(mail.subject + mail.text + mail.html).not.toContain("—");
+      expect(mail.subject + mail.text + mail.html).not.toContain(String.fromCharCode(0x2014));
       expect(mail.html).toContain(`href="${BASE}/admin/notifications/open/abc"`);
     }
     expect(() => staffNotification({ kind: "case_assigned", url: "http://insecure.example.test/x" })).toThrow();

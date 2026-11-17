@@ -6,8 +6,8 @@
  * admin may manage everyone, in either organisation.
  *
  * Invitation and recovery links are returned to the page to show on screen
- * (once; the database keeps only a hash). If email is configured they are also
- * sent, but a failed email never undoes the link.
+ * (once; the database keeps only a hash). They are also emailed, but a failed
+ * email never undoes the link.
  */
 
 import { redirect } from "next/navigation";
@@ -20,20 +20,15 @@ import { STAFF_ROLES, type StaffRole } from "@/lib/auth/roles";
 import { auditContextFor, requireStaff } from "@/lib/auth/session";
 import { findStaffByEmail, grantToStaffMember, listOrganisations, suspendMember, updateStaffMember } from "@/lib/auth/staff";
 import { getDb } from "@/lib/db";
-import { getEmailSender, isEmailConfigured, staffInvite, staffRecovery, type RenderedEmail } from "@/lib/email";
+import { isEmailConfigured, sendEmail, staffInvite, staffRecovery, type RenderedEmail } from "@/lib/email";
 import type { EmailOutcome } from "@/components/admin/LinkReady";
 import { a } from "@/lib/i18n/admin";
 
-/** Sends `message` when email is configured. Never throws: the link on screen is the delivery that counts. */
-async function sendIfConfigured(to: string, message: () => RenderedEmail): Promise<EmailOutcome> {
+/** Sends `message`. Never throws: the link on screen is the delivery that counts. */
+async function sendLink(to: string, category: "staff_invite" | "staff_recovery", message: () => RenderedEmail): Promise<EmailOutcome> {
   if (!isEmailConfigured()) return "not_configured";
-  try {
-    await getEmailSender().send({ to, ...message() });
-    return "sent";
-  } catch (error) {
-    console.error("[staff] could not send email", error);
-    return "failed";
-  }
+  const result = await sendEmail({ to, ...message(), tags: [{ name: "category", value: category }] });
+  return result.ok ? "sent" : "failed";
 }
 
 export interface InviteFormState {
@@ -92,7 +87,7 @@ export async function createStaffInvite(_prev: InviteFormState, formData: FormDa
   }
 
   const link = `${getAuthBaseUrl() ?? ""}/admin/invite/${created.token}`;
-  const emailed = await sendIfConfigured(created.invite.email, () =>
+  const emailed = await sendLink(created.invite.email, "staff_invite", () =>
     staffInvite({
       inviterName: actor.user.name || actor.user.email,
       organisation: {
@@ -142,7 +137,7 @@ export async function issueRecovery(_prev: RecoveryFormState, formData: FormData
 
   const link = `${getAuthBaseUrl() ?? ""}/admin/recover/${issued.token}`;
   const organisation = staff.organisations[0];
-  const emailed = await sendIfConfigured(issued.person.email, () =>
+  const emailed = await sendLink(issued.person.email, "staff_recovery", () =>
     staffRecovery({
       organisation: { th: organisation?.nameTh ?? "", en: organisation?.nameEn ?? "" },
       recoverUrl: link,

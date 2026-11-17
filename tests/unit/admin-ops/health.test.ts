@@ -51,6 +51,8 @@ describe("migration check", () => {
 describe("configuration checks never expose values", () => {
   it("email", () => {
     expect(checkEmail({ RESEND_API_KEY: "re_secret", EMAIL_FROM: "a@b.test" })).toMatchObject({ status: "ok", detail: "emailSending" });
+    expect(checkEmail({ RESEND_API_KEY: "re_secret", EMAIL_FROM: "no-domain" })).toMatchObject({ status: "warning", detail: "emailMissing" });
+    expect(checkEmail({ RESEND_API_KEY: "re_secret", EMAIL_FROM: "TryTPC <no-reply@mail.example.org>" })).toMatchObject({ status: "ok" });
     expect(checkEmail({ EMAIL_LOG_ONLY: "1" })).toMatchObject({ status: "warning", detail: "emailLogOnly" });
     expect(checkEmail({ RESEND_API_KEY: "re_secret" })).toMatchObject({ status: "warning", detail: "emailMissing" });
   });

@@ -62,7 +62,7 @@ Before production: `npm run db:migrate` (0017 and 0018). Without 0018 the bell s
 
 ### Emails (`lib/email`)
 
-Resend behind an interface (`RESEND_API_KEY` and `EMAIL_FROM`; `EMAIL_LOG_ONLY=1` prints instead of sending). Templates are bilingual and live in code: staff invite and recovery (`templates.ts`), lost and found status mails (`lost-found-templates.ts`), complaint acknowledged, resolved and the escalation digest to officers (`complaint-templates.ts`). A failed email never blocks a case action or an invitation. LINE is not built.
+Resend is live in production and required there, behind an interface (`RESEND_API_KEY` and `EMAIL_FROM`, optional `EMAIL_REPLY_TO`; `EMAIL_LOG_ONLY=1` prints instead of sending). `sendEmail` in `lib/email` never throws, retries rate limits and server errors twice, and logs only a code and message. Templates are bilingual and live in code: staff invite and recovery (`templates.ts`), lost and found status mails (`lost-found-templates.ts`), complaint acknowledged, resolved and the escalation digest to officers (`complaint-templates.ts`). A failed email never blocks a case action or an invitation. LINE is not built.
 
 ### Crons (`vercel.json`)
 
@@ -136,8 +136,9 @@ Every lifecycle with more than two states is now declared in a pure module with 
 | `PII_ENCRYPTION_KEY` | Required in production: encrypts contacts, complaint text, evidence names, survey comments. Losing it loses that data. `PII_ENCRYPTION_KEY_PREVIOUS` is for rotation (decrypt only). |
 | `CRON_SECRET` | Both crons. |
 | `BLOB_READ_WRITE_TOKEN` or `BLOB_STORE_ID` | Private item photos and complaint evidence (OIDC with the store id on Vercel). |
-| `RESEND_API_KEY`, `EMAIL_FROM` | Notification emails. Optional for sign-in; without them status mails are not sent. |
-| `EMAIL_LOG_ONLY` | Print emails to the log instead. |
+| `RESEND_API_KEY`, `EMAIL_FROM` | Notification emails through Resend. Live and required in production; sign-in itself does not use email. Without them status mails are not sent. |
+| `EMAIL_REPLY_TO` | Optional reply-to address. |
+| `EMAIL_LOG_ONLY` | Print emails to the log instead. Leave unset in production (the health page warns). |
 
 ## Running checks locally
 
@@ -156,7 +157,7 @@ Use `next start`, not `next dev`, for Playwright. Never run `playwright install`
 ## Outstanding items for the user
 
 - Production: run migrations 0004 to 0011 and `npm run db:seed`, set `PII_ENCRYPTION_KEY` and `CRON_SECRET`, then ask for the merge.
-- Resend: account, verified sending domain (SPF, DKIM, DMARC), `RESEND_API_KEY` and `EMAIL_FROM`. Until then the people who gave an email get no status mail, and invitation and recovery links are shown on screen.
+- Resend is live: keep the verified sending domain (SPF, DKIM, DMARC), `RESEND_API_KEY` and `EMAIL_FROM` set in production. Invitation and recovery links are emailed and also shown on screen once.
 - `BETTER_AUTH_SECRET` is set for Production only; add a separate Preview value. Check Neon preview branching is on so previews do not share the production database.
 - Desks must confirm the wellbeing centre contact details in `lib/complaints/constants.ts`, and the complaint category names, hints and targets at `/admin/complaints/categories`.
 - Name the staff on each restricted category (harassment, safety).

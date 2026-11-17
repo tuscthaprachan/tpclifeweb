@@ -1,5 +1,5 @@
 import { ConsoleEmailSender, ResendSender } from "./senders";
-import { EmailError, type EmailSender } from "./types";
+import { EmailError, type EmailMessage, type EmailSender } from "./types";
 
 export * from "./types";
 export * from "./templates";
@@ -33,7 +33,7 @@ export function getEmailSender(): EmailSender {
   if (process.env.EMAIL_LOG_ONLY === "1") {
     cached = new ConsoleEmailSender();
   } else if (apiKey && from) {
-    cached = new ResendSender(apiKey, from);
+    cached = new ResendSender(apiKey, from, { replyTo: process.env.EMAIL_REPLY_TO?.trim() || undefined });
   } else if (process.env.NODE_ENV === "production") {
     throw new EmailError("not_configured", "Email is not configured. Set RESEND_API_KEY and EMAIL_FROM.");
   } else {
@@ -45,4 +45,28 @@ export function getEmailSender(): EmailSender {
 /** Tests only: replace or clear the cached sender. */
 export function setEmailSenderForTests(sender: EmailSender | undefined): void {
   cached = sender;
+}
+
+export type SendEmailResult = { ok: true; id: string } | { ok: false; error: string };
+
+/**
+ * Sends one message and never throws. Failures are logged as a code and
+ * message only, never the recipient or the body. Returns `ok: false` when
+ * email is not configured.
+ */
+export async function sendEmail(message: EmailMessage, opts: { sender?: EmailSender } = {}): Promise<SendEmailResult> {
+  try {
+    if (!opts.sender && !isEmailConfigured()) {
+      console.warn("[email] not sent: not_configured Email is not configured.");
+      return { ok: false, error: "not_configured" };
+    }
+    const sender = opts.sender ?? getEmailSender();
+    const { id } = await sender.send(message);
+    return { ok: true, id };
+  } catch (error) {
+    const code = error instanceof EmailError ? error.code : "unknown";
+    const reason = error instanceof Error ? error.message : "Unknown error.";
+    console.error(`[email] not sent: ${code} ${reason}`);
+    return { ok: false, error: code };
+  }
 }

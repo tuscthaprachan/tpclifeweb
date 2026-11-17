@@ -254,8 +254,8 @@ export const A = {
   cancelInviteFor: { th: "ยกเลิกคำเชิญของ {email}", en: "Cancel the invitation for {email}" },
   inviteHeading: { th: "เชิญเจ้าหน้าที่", en: "Invite a member of staff" },
   inviteIntro: {
-    th: "เราจะสร้างลิงก์คำเชิญให้คุณส่งต่อ ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ 7 วัน อีเมลใช้ระบุบัญชี จะเป็นอีเมลของมหาวิทยาลัยหรืออีเมลอื่นก็ได้ หากตั้งค่าอีเมลไว้ เราจะส่งลิงก์ไปให้ด้วย",
-    en: "We will make an invitation link for you to pass on. It works once and for 7 days. The email address names the account; it can be a university address or any other. If email is set up, we also send the link",
+    th: "เราจะสร้างลิงก์คำเชิญและส่งไปให้ทางอีเมล ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ 7 วัน อีเมลใช้ระบุบัญชี จะเป็นอีเมลของมหาวิทยาลัยหรืออีเมลอื่นก็ได้ เราจะแสดงลิงก์ไว้บนหน้านี้ด้วยหนึ่งครั้ง เผื่ออีเมลไปไม่ถึง",
+    en: "We will make an invitation link and email it to them. It works once and for 7 days. The email address names the account; it can be a university address or any other. We also show the link here once, in case the email does not arrive",
   },
   inviteOrgLegend: { th: "เชิญเข้าหน่วยงานใด", en: "Which organisations are they joining?" },
   inviteRolesLegend: { th: "บทบาท", en: "Roles" },
@@ -274,12 +274,18 @@ export const A = {
   copyLink: { th: "คัดลอกลิงก์", en: "Copy link" },
   linkCopied: { th: "คัดลอกลิงก์แล้ว", en: "Link copied" },
   linkCopyFailed: { th: "คัดลอกไม่ได้ ให้เลือกลิงก์ในช่องแล้วคัดลอกเอง", en: "We could not copy it. Select the link in the box and copy it yourself" },
-  emailSentNote: { th: "เราส่งลิงก์ไปที่ {email} ทางอีเมลด้วยแล้ว", en: "We have also emailed the link to {email}" },
+  emailSentNote: {
+    th: "เราส่งลิงก์ไปที่ {email} ทางอีเมลแล้ว และแสดงลิงก์ไว้ที่นี่ด้วยหนึ่งครั้ง เผื่ออีเมลไปไม่ถึง",
+    en: "We have emailed the link to {email}. It is also shown here once, in case the email does not arrive",
+  },
   emailFailedNote: {
     th: "ส่งอีเมลไม่สำเร็จ ให้ส่งลิงก์ด้วยตัวเอง ลิงก์ยังใช้งานได้ตามปกติ",
     en: "We could not email it, so send the link yourself. The link still works",
   },
-  emailOffNote: { th: "ยังไม่ได้ตั้งค่าอีเมล จึงต้องส่งลิงก์ด้วยตัวเอง", en: "Email is not set up, so you need to send the link yourself" },
+  emailOffNote: {
+    th: "ระบบนี้ยังไม่ได้ส่งอีเมลจริง (โหมดพัฒนา) จึงต้องส่งลิงก์ด้วยตัวเอง",
+    en: "This environment does not send real email (development), so you need to send the link yourself",
+  },
   inviteCancelledBody: {
     th: "ลิงก์ในคำเชิญนั้นใช้ไม่ได้อีกแล้ว",
     en: "The link in that invitation no longer works",

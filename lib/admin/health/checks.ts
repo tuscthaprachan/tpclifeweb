@@ -29,7 +29,12 @@ type Env = Record<string, string | undefined>;
 const set = (env: Env, name: string) => Boolean(env[name]?.trim());
 
 export function checkEmail(env: Env): HealthCheck {
-  if (set(env, "RESEND_API_KEY") && set(env, "EMAIL_FROM")) return { id: "email", status: env.EMAIL_LOG_ONLY === "1" ? "warning" : "ok", detail: env.EMAIL_LOG_ONLY === "1" ? "emailLogOnly" : "emailSending" };
+  const from = env.EMAIL_FROM?.trim() ?? "";
+  if (set(env, "RESEND_API_KEY") && from) {
+    if (env.EMAIL_LOG_ONLY === "1") return { id: "email", status: "warning", detail: "emailLogOnly" };
+    if (!/@[^\s@<>]+\.[^\s@<>]+>?$/.test(from)) return { id: "email", status: "warning", detail: "emailMissing" };
+    return { id: "email", status: "ok", detail: "emailSending" };
+  }
   if (env.EMAIL_LOG_ONLY === "1") return { id: "email", status: "warning", detail: "emailLogOnly" };
   return { id: "email", status: "warning", detail: "emailMissing" };
 }
