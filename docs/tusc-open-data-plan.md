@@ -174,7 +174,7 @@ CSV is UTF-8 with a byte order mark (Thai opens correctly in Excel), one header 
 
 ## Presenting numbers (from ONS, adapted for Thai)
 
-- Tables: caption on every table; first column as row headers (`th scope="row"`); numbers right-aligned with tabular figures and the same decimals down a column; totals in a `tfoot`; source line and numbered footnotes ("[note 1]") under the table; stacked layout on a phone (existing `DataTable`); server-side sort and paging for long lists.
+- Tables: caption on every table; first column as row headers (`th scope="row"`); numbers right-aligned with tabular figures and the same decimals down a column; totals in a `tfoot`; source line and numbered footnotes ("[note 1]") under the table; sideways scroll with edge shadows on a phone (existing `DataTable`); server-side sort and paging for long lists.
 - Charts: static SVG rendered on the server, no JavaScript and no animation. Horizontal bars for categories, sorted by value, "Other" last, axis from zero, values labelled on the bars, one colour plus a highlight, at most 5 colours. Columns for a short series over time. No pie, no dual axis, no dashboard. Title states the finding in 15 words or fewer; subtitle gives measure, body and period; alternative text "A bar chart showing that ..." (100 to 200 characters); the table follows every chart.
 - Key figures: 2 or 3 tiles, figure up to 14 characters, label with the period.
 - Words and numbers: "up 17,623.74 baht (0.9%) from FY 2568"; "to" for ranges; percentages as "58.9%"; percentage points spelled out; in prose round for the reader ("about 2 million baht") and keep full precision in tables and CSV.

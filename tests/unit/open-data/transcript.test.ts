@@ -104,9 +104,10 @@ describe("Transcript: a regulation (file 15)", () => {
 describe("Transcript: minutes (file 40)", () => {
   const out = html(body("40"));
 
-  it("renders the attendance tables with the site table and stacked cells", () => {
+  it("renders the attendance tables with the site table in a sideways scroller", () => {
     expect(out).toContain("<table");
-    expect(out).toContain('data-label="ชื่อ"');
+    expect(out).toContain("overflow-x-auto");
+    expect(out).toMatch(/<th scope="col"[^>]*>ชื่อ<\/th>/);
     expect(out).toContain("Table 1 in the text");
   });
 

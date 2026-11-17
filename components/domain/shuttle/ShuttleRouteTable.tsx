@@ -28,21 +28,8 @@ interface ShuttleRouteTableProps {
  * The full timetable for one route: every configured departure, arrival time
  * at every stop, with the next departure marked.
  *
- * Mobile behaviour, decided deliberately rather than defaulting to
- * DataTable's usual stacked variant or reaching for a scroll region:
- *
- * Rows are departures (potentially many across a service day), columns are
- * stops (typically two to four: the origin plus a handful of pickup
- * points). DataTable's default stacked-below-`sm` layout turns each
- * departure into its own short list of "stop name: time" pairs, one line per
- * stop. With only a few stops that stays perfectly readable; it does not
- * turn into the "maze of repeated labels with no shared axis to scan"
- * CONTRIBUTING.md warns a wide table can become. So this deliberately keeps
- * DataTable's default stacking rather than invoking the horizontal-scroll
- * exception: there is no genuine wide grid here to protect. If a future
- * route ever needs many stops as columns, that decision should be
- * revisited, at which point the scroll-region exception is the documented
- * fallback.
+ * Rows are departures and columns are stops. Like every DataTable it stays a
+ * real grid on phones and scrolls sideways when the stops do not fit.
  */
 export function ShuttleRouteTable({ locale, route, headingLevel, now = new Date() }: ShuttleRouteTableProps) {
   const departures = originDepartures(route);

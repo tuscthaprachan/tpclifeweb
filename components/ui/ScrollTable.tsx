@@ -5,7 +5,17 @@ import { cx } from "./cx";
 
 const EDGE = "pointer-events-none absolute inset-y-0 z-10 w-[var(--space-2)] bg-[var(--scroll-shadow)] transition-opacity duration-150 motion-reduce:transition-none";
 
-export function ScrollTable({ children, label, className }: { children: ReactNode; label: string; className?: string }) {
+export function ScrollTable({
+  children,
+  label,
+  labelledBy,
+  className,
+}: {
+  children: ReactNode;
+  label?: string;
+  labelledBy?: string;
+  className?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [edges, setEdges] = useState({ start: false, end: false });
 
@@ -39,7 +49,8 @@ export function ScrollTable({ children, label, className }: { children: ReactNod
         ref={ref}
         tabIndex={scrollable ? 0 : undefined}
         role={scrollable ? "region" : undefined}
-        aria-label={scrollable ? label : undefined}
+        aria-label={scrollable && !labelledBy ? label : undefined}
+        aria-labelledby={scrollable ? labelledBy : undefined}
         className="overflow-x-auto overscroll-x-contain"
       >
         {children}
