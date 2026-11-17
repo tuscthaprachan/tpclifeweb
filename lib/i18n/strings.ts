@@ -123,6 +123,7 @@ export const UI = {
   noUpcomingEvents: { th: "ยังไม่มีกิจกรรมที่กำหนดไว้", en: "No events scheduled" },
   eventCancelled: { th: "ยกเลิกแล้ว", en: "Cancelled" },
   allDay: { th: "ตลอดวัน", en: "All day" },
+  scrollableTable: { th: "ตาราง เลื่อนไปทางข้างได้", en: "Table, scrolls sideways" },
   location: { th: "สถานที่", en: "Location" },
   publishedOn: { th: "เผยแพร่เมื่อ", en: "Published" },
   morePictures: { th: "ภาพเพิ่มเติม", en: "More pictures" },

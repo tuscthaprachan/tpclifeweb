@@ -60,7 +60,7 @@ WCAG 2.2 AA is a build gate. The parts that catch people out:
 - **2.5.8 Target Size**: interactive controls are at least 24x24 CSS px, 44px on touch. Handled by `globals.css`, do not override it smaller.
 - **2.4.11 Focus Not Obscured**: the header is sticky, so `scroll-margin-top` is set globally. Do not increase the header height without updating `--header-height`.
 - **1.4.1 Use of Colour**: every status is an icon plus a word plus a colour. A `StatusTag` with no text is a bug.
-- **1.4.10 Reflow**: nothing may scroll horizontally at 320 CSS px. Wide tables get a stacked mobile variant, not a scroll container, unless the table genuinely is a grid of times.
+- **1.4.10 Reflow**: nothing may scroll horizontally at 320 CSS px. Data tables built with `DataTable` get a stacked mobile variant. Tables written in rich text stay real tables inside `ScrollTable`, which scrolls sideways when the table is wider than the screen and shows a hard shadow on each side that has more to scroll to.
 - **3.2.6 Consistent Help**: the help block sits in the same place on every page. It comes from `siteSettings`, do not hand-place it.
 - **Progressive enhancement**: search, filtering and pagination must work with JavaScript off, driven by query parameters. JavaScript upgrades them, it does not enable them.
 

@@ -107,17 +107,11 @@ describe("new formatting rendered", () => {
     expect(html).toMatch(/<hr[^>]*\/?>/);
   });
 
-  it("keeps a narrow table as a plain table at every width", () => {
+  it("renders every table as a real table with header cells, never stacked", () => {
     expect(html).toMatch(/<th scope="col"[^>]*>Name<\/th>/);
     expect(html).not.toContain("data-label");
     expect(html).not.toContain("sm:table");
-  });
-
-  it("stacks a wide table on phones with a label on every body cell", () => {
-    const heads = ["A", "B", "C", "D"];
-    const out = render(parseRichTextDoc(wrap({ type: "table", content: [row(...heads.map((h) => cell("tableHeader", h))), row(...heads.map((h) => cell("tableCell", h.toLowerCase())))] })));
-    expect(out).toMatch(/<th scope="col"[^>]*>A<\/th>/);
-    for (const h of heads) expect(out).toMatch(new RegExp(`<td data-label="${h}"[^>]*>`));
+    expect(html).toContain("overflow-x-auto");
   });
 
   it("renders a table with no header row without labels", () => {

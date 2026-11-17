@@ -16,6 +16,7 @@ export * from "./Heading";
 export * from "./Prose";
 export * from "./SummaryList";
 export * from "./DataTable";
+export * from "./ScrollTable";
 export * from "./Tag";
 export * from "./StatusTag";
 export * from "./InsetText";
