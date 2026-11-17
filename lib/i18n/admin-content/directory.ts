@@ -114,7 +114,7 @@ export const DIRECTORY_STRINGS = {
   facHintOfficeNote: { th: "ข้อความอิสระ เช่น เวลาทำการ หรือช่องทางที่ควรใช้ก่อน", en: "Free text, for example opening hours or the best way to reach them first" },
   facInUseTitle: { th: "ลบคณะนี้ไม่ได้", en: "This faculty cannot be deleted" },
   facInUseBody: {
-    th: "คณะนี้ยังถูกใช้อยู่ ให้เอาคณะนี้ออกจากรายการเหล่านี้ก่อน แล้วลองลบอีกครั้ง: {uses}",
+    th: "ยังมีรายการที่ใช้คณะนี้อยู่ ให้เอาคณะนี้ออกจากรายการเหล่านี้ก่อน แล้วลองลบอีกครั้ง: {uses}",
     en: "This faculty is still in use. Remove it from these first, then try deleting again: {uses}",
   },
   facUseOrganisations: { th: "คณะกรรมการนักศึกษา {n} รายการ", en: "student committees: {n}" },
@@ -155,7 +155,7 @@ export const DIRECTORY_STRINGS = {
   placesErrCloseAfterOpen: { th: "เวลาปิดต้องต่างจากเวลาเปิด", en: "The closing time must differ from the opening time" },
   placesInUseTitle: { th: "ลบสถานที่นี้ไม่ได้", en: "This place cannot be deleted" },
   placesInUseBody: {
-    th: "สถานที่นี้ยังถูกใช้อยู่ ให้เอาสถานที่นี้ออกจากรายการเหล่านี้ก่อน แล้วลองลบอีกครั้ง: {uses}",
+    th: "ยังมีรายการที่ใช้สถานที่นี้อยู่ ให้เอาสถานที่นี้ออกจากรายการเหล่านี้ก่อน แล้วลองลบอีกครั้ง: {uses}",
     en: "This place is still in use. Remove it from these first, then try deleting again: {uses}",
   },
   placesUseEvents: { th: "กิจกรรม {n} รายการ", en: "events: {n}" },

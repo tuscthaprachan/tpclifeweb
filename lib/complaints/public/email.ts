@@ -14,10 +14,10 @@ export { isEmailConfigured };
 
 export function trackingLinkEmail(reference: string, link: string): Omit<EmailMessage, "to"> {
   const th = {
-    heading: "ลิงก์ส่วนตัวสำหรับติดตามเรื่องร้องเรียนของคุณ",
-    lines: [`เลขอ้างอิงของคุณคือ ${reference}`, "ใช้ลิงก์ด้านล่างเพื่อดูความคืบหน้า ใครมีลิงก์นี้ก็ดูเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น"],
-    linkLabel: "ลิงก์ส่วนตัวของคุณ",
-    after: ["หากคุณไม่ได้ส่งเรื่องนี้ ข้ามอีเมลฉบับนี้ไปได้เลย"],
+    heading: "ลิงก์ส่วนตัวสำหรับติดตามเรื่องร้องเรียน",
+    lines: [`เลขอ้างอิงคือ ${reference}`, "ใช้ลิงก์ด้านล่างเพื่อดูความคืบหน้า ใครมีลิงก์นี้ก็ดูเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น"],
+    linkLabel: "ลิงก์ส่วนตัว",
+    after: ["หากไม่ได้ส่งเรื่องนี้ ข้ามอีเมลฉบับนี้ไปได้เลย"],
   };
   const en = {
     heading: "Your private link to track your complaint",

@@ -75,15 +75,15 @@ export const MEDIA_LIBRARY_STRINGS = {
 
   /* Bulk delete page */
   mlDeleteTitle: { th: "ลบรูปภาพ", en: "Delete pictures" },
-  mlDeleteBody: { th: "รูปต่อไปนี้ไม่มีการใช้งานและจะถูกลบถาวร ย้อนกลับไม่ได้", en: "These pictures are not used anywhere and will be deleted for good. This cannot be undone." },
+  mlDeleteBody: { th: "รูปต่อไปนี้ไม่มีการใช้งานและจะลบถาวร ย้อนกลับไม่ได้", en: "These pictures are not used anywhere and will be deleted for good. This cannot be undone." },
   mlDeleteButton: { th: "ลบ {count} รูป", en: "Delete {count} pictures" },
-  mlDeleteRefusedIntro: { th: "รูปต่อไปนี้ลบไม่ได้ เพราะยังถูกใช้อยู่ ให้เอารูปออกจากรายการเหล่านั้นก่อน", en: "These pictures cannot be deleted because they are still used. Take them out of those items first" },
+  mlDeleteRefusedIntro: { th: "รูปต่อไปนี้ลบไม่ได้ เพราะยังใช้อยู่ ให้เอารูปออกจากรายการเหล่านั้นก่อน", en: "These pictures cannot be deleted because they are still used. Take them out of those items first" },
   mlDeleteNothing: { th: "ไม่มีรูปที่ลบได้ในรายการที่เลือก", en: "None of the selected pictures can be deleted." },
-  mlReasonInUse: { th: "ยังถูกใช้ใน {where}", en: "Still used in {where}" },
-  mlReasonNotFound: { th: "ไม่พบรูปนี้ อาจถูกลบไปแล้ว", en: "Not found. It may already have been deleted" },
+  mlReasonInUse: { th: "ยังใช้ใน {where}", en: "Still used in {where}" },
+  mlReasonNotFound: { th: "ไม่พบรูปนี้ อาจลบไปแล้ว", en: "Not found. It may already have been deleted" },
 
   /* Usage */
-  mlUsageTitle: { th: "รูปนี้ถูกใช้ที่ไหนบ้าง", en: "Where this picture is used" },
+  mlUsageTitle: { th: "รูปนี้ใช้ที่ไหนบ้าง", en: "Where this picture is used" },
   mlUsageCount: { th: "ใช้ใน {count} รายการ", en: "Used in {count} items" },
   mlUsageEdit: { th: "แก้ไข {title}", en: "Edit {title}" },
   mlRoleSettings: { th: "ในการตั้งค่าเว็บไซต์", en: "In the site settings" },
@@ -113,7 +113,7 @@ export const MEDIA_LIBRARY_STRINGS = {
   mlReplaceButton: { th: "เปลี่ยนไฟล์", en: "Replace file" },
   mlReplacing: { th: "กำลังเปลี่ยนไฟล์", en: "Replacing the file" },
   mlReplaced: { th: "เปลี่ยนไฟล์แล้ว", en: "File replaced" },
-  mlReplacedNote: { th: "ทุกที่ที่ใช้รูปนี้จะแสดงไฟล์ใหม่ ไฟล์เดิมถูกลบแล้ว", en: "Everywhere this picture is used now shows the new file. The old file was deleted" },
+  mlReplacedNote: { th: "ทุกที่ที่ใช้รูปนี้จะแสดงไฟล์ใหม่ ลบไฟล์เดิมแล้ว", en: "Everywhere this picture is used now shows the new file. The old file was deleted" },
 
   /* Drag and drop upload */
   mlDropTitle: { th: "อัปโหลดหลายรูปพร้อมกัน", en: "Upload several pictures" },

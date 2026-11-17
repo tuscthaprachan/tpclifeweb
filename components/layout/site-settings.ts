@@ -37,7 +37,7 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
 
   phase: "alpha",
   phaseNote: {
-    th: "นี่คือบริการใหม่ที่ยังอยู่ระหว่างทดลอง ข้อมูลบางส่วนอาจยังไม่ครบ",
+    th: "บริการใหม่นี้ยังอยู่ระหว่างทดลอง ข้อมูลบางส่วนอาจยังไม่ครบ",
     en: "This is a new service still being tested. Some information may be incomplete",
   },
 

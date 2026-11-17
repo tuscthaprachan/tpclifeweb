@@ -83,7 +83,7 @@ export const PUBLISHING_STRINGS = {
   },
   eventsFieldRegistrationUrl: { th: "ลิงก์ลงทะเบียน", en: "Sign-up link" },
   eventsHintRegistrationUrl: { th: "ไม่บังคับ ต้องขึ้นต้นด้วย https://", en: "Optional. Start with https://" },
-  eventsFieldCancelled: { th: "กิจกรรมนี้ถูกยกเลิก", en: "This event is cancelled" },
+  eventsFieldCancelled: { th: "กิจกรรมนี้ยกเลิกแล้ว", en: "This event is cancelled" },
   eventsHintCancelled: {
     th: "เว็บไซต์จะยังแสดงกิจกรรมนี้ พร้อมป้ายว่ายกเลิกแล้ว",
     en: "The website will still list the event, marked as cancelled",
@@ -150,7 +150,7 @@ export const PUBLISHING_STRINGS = {
     en: "The completion date must not be before the start date",
   },
   policiesErrOversightSelf: {
-    th: "นโยบายไม่สามารถตรวจสอบตัวเองได้ เลือกนโยบายอื่น",
+    th: "นโยบายตรวจสอบตัวเองไม่ได้ เลือกนโยบายอื่น",
     en: "A policy cannot scrutinise itself. Choose a different policy",
   },
 } as const satisfies Record<string, LocaleString>;

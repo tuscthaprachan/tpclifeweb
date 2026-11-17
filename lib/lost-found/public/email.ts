@@ -18,11 +18,11 @@ export function trackingLinkEmail(kind: JourneyKind, reference: string, link: st
   const th = {
     heading: claim ? "ลิงก์ส่วนตัวสำหรับติดตามคำขอรับของ" : "ลิงก์ส่วนตัวสำหรับติดตามเรื่องที่คุณแจ้ง",
     lines: [
-      `เลขอ้างอิงของคุณคือ ${reference}`,
+      `เลขอ้างอิงคือ ${reference}`,
       "ใช้ลิงก์ด้านล่างเพื่อดูความคืบหน้า ใครมีลิงก์นี้ก็ดูความคืบหน้าได้ จึงไม่ควรส่งต่อให้ผู้อื่น",
     ],
-    linkLabel: "ลิงก์ส่วนตัวของคุณ",
-    after: ["หากคุณไม่ได้ส่งเรื่องนี้ ข้ามอีเมลฉบับนี้ไปได้เลย"],
+    linkLabel: "ลิงก์ส่วนตัว",
+    after: ["หากไม่ได้ส่งเรื่องนี้ ข้ามอีเมลฉบับนี้ไปได้เลย"],
   };
   const en = {
     heading: claim ? "Your private link to track your claim" : "Your private link to track your report",

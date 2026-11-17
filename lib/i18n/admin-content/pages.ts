@@ -36,7 +36,7 @@ export const PAGES_STRINGS = {
   pagesFieldLinkLabel: { th: "ชื่อลิงก์", en: "Link name" },
   pagesFieldLinkUrl: { th: "ที่อยู่เว็บ", en: "Web address" },
   pagesFieldLinkDescription: { th: "คำอธิบายสั้น (ไม่บังคับ)", en: "Short description (optional)" },
-  pagesErrRelatedSelf: { th: "หน้าหนึ่งไม่สามารถเกี่ยวข้องกับตัวเองได้", en: "A page cannot be related to itself" },
+  pagesErrRelatedSelf: { th: "หน้าหนึ่งเกี่ยวข้องกับตัวเองไม่ได้", en: "A page cannot be related to itself" },
 
   /* FAQs */
   faqsFieldQuestion: { th: "คำถาม", en: "Question" },
@@ -117,7 +117,7 @@ export const PAGES_STRINGS = {
   formsFieldContactValue: { th: "เบอร์โทร อีเมล หรือที่อยู่", en: "Phone, email or address" },
   formsFieldIsActive: { th: "เปิดให้ใช้งานอยู่", en: "Open for use" },
   formsHintIsActive: {
-    th: "เอาติ๊กออกเมื่อแบบฟอร์มปิดแล้ว แบบฟอร์มจะหายจากรายการ แต่หน้าของมันยังอยู่และแจ้งว่าไม่เปิดใช้งาน",
+    th: "เอาติ๊กออกเมื่อแบบฟอร์มปิดแล้ว แบบฟอร์มจะหายจากรายการ แต่หน้าแบบฟอร์มยังอยู่และแจ้งว่าไม่เปิดใช้งาน",
     en: "Untick when the form has closed. It leaves the forms list, but its page stays online and says it is no longer in use",
   },
   formsFieldIsPriority: { th: "แสดงเป็นอันดับแรก", en: "Show first" },
@@ -128,7 +128,7 @@ export const PAGES_STRINGS = {
   formsErrDestinationEmail: { th: "กรอกอีเมลให้ถูกต้อง เช่น name@example.com", en: "Enter a real email address, like name@example.com" },
   formsInUseTitle: { th: "ลบแบบฟอร์มนี้ไม่ได้", en: "This form cannot be deleted" },
   formsInUseBody: {
-    th: "แบบฟอร์มนี้ยังถูกใช้ในรายการด้านล่าง นำออกจากที่เหล่านั้นก่อนจึงจะลบได้ หากแบบฟอร์มปิดแล้ว ให้เอาติ๊ก \"เปิดให้ใช้งานอยู่\" ออกแทนการลบ",
+    th: "แบบฟอร์มนี้ยังใช้อยู่ในรายการด้านล่าง นำออกจากที่เหล่านั้นก่อนจึงจะลบได้ หากแบบฟอร์มปิดแล้ว ให้เอาติ๊ก \"เปิดให้ใช้งานอยู่\" ออกแทนการลบ",
     en: "This form is still used in the places below. Remove it from them first, then delete it. If the form has closed, untick \"Open for use\" instead of deleting it",
   },
   formsUseNews: { th: "ข่าว", en: "News post" },

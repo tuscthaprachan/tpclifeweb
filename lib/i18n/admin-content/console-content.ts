@@ -64,7 +64,7 @@ export const CONSOLE_CONTENT_STRINGS = {
   rpRemoved: { th: "ลบ{item} {n} แล้ว", en: "{item} {n} removed" },
   rpMoved: { th: "ย้าย{item}ไปลำดับที่ {n} จาก {total}", en: "{item} moved to position {n} of {total}" },
   cfEditedDuringSave: {
-    th: "ระหว่างบันทึก คุณแก้ไขต่อ การแก้ไขช่วงนั้นไม่ได้ถูกบันทึก และใส่กลับในแบบฟอร์มแล้ว โปรดตรวจและบันทึกอีกครั้ง",
+    th: "ระหว่างบันทึก คุณแก้ไขต่อ การแก้ไขช่วงนั้นไม่ได้บันทึก และใส่กลับในแบบฟอร์มแล้ว โปรดตรวจและบันทึกอีกครั้ง",
     en: "You kept editing while the save ran. Those later edits were not saved and are back in the form. Check them and save again.",
   },
   cfDeleting: { th: "กำลังลบ", en: "Deleting" },

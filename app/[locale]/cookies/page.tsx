@@ -23,8 +23,8 @@ import { alternatesFor } from "@/lib/i18n/metadata";
 // CONTRIBUTING.md's own instruction for a missing shared string, reported in
 // the harden agent's final report.
 const INTRO: LocaleString = {
-  th: "หน้านี้อธิบายตรงไปตรงมาว่าเว็บไซต์ #ท้ายท่าพระจันทร์ เก็บอะไรไว้ในเบราว์เซอร์ของคุณบ้าง และเก็บไว้เพื่ออะไร ไม่มีคุกกี้โฆษณา และไม่มีการติดตามข้ามเว็บไซต์",
-  en: "This page states plainly what #trytpc stores in your browser, and why. There are no advertising cookies and no cross-site tracking.",
+  th: "หน้านี้บอกว่า #ท้ายท่าพระจันทร์ เก็บอะไรไว้ในเบราว์เซอร์ของคุณ และเก็บไว้เพื่ออะไร ไม่มีคุกกี้โฆษณาและไม่มีการติดตามข้ามเว็บไซต์",
+  en: "This page lists what #trytpc stores in your browser, and why. There are no advertising cookies and no cross-site tracking.",
 };
 
 const WHAT_HEADING: LocaleString = { th: "สิ่งที่จัดเก็บ", en: "What is stored" };
@@ -45,7 +45,7 @@ const LOCALE_COOKIE_ROW = {
 
 const LF_JOURNEY_ROW = {
   purpose: {
-    th: "จดจำแบบฟอร์มแจ้งของหายหรือของที่พบ หรือแบบฟอร์มขอรับของ ที่คุณกำลังกรอกอยู่ เพื่อให้กรอกต่อทีละหน้าได้ คุกกี้เก็บเพียงรหัสสุ่ม คำตอบของคุณถูกเข้ารหัสไว้ที่เซิร์ฟเวอร์",
+    th: "จดจำแบบฟอร์มแจ้งของหายหรือของที่พบ หรือแบบฟอร์มขอรับของ ที่คุณกำลังกรอกอยู่ เพื่อให้กรอกต่อทีละหน้าได้ คุกกี้เก็บเพียงรหัสสุ่ม ส่วนคำตอบเก็บแบบเข้ารหัสไว้ที่เซิร์ฟเวอร์",
     en: "Remembers the lost, found or claim form you are filling in, so you can move between its pages. It holds only a random code; your answers are kept encrypted on our server.",
   } satisfies LocaleString,
   duration: { th: "2 ชั่วโมง", en: "2 hours" } satisfies LocaleString,
@@ -61,8 +61,8 @@ const LF_TRACK_ROW = {
 
 const NECESSARY_HEADING: LocaleString = { th: "เหตุใดจึงไม่มีแบนเนอร์ขอความยินยอม", en: "Why there is no consent banner" };
 const NECESSARY_BODY: LocaleString = {
-  th: "คุกกี้ทั้งหมดข้างต้นเป็นคุกกี้ที่จำเป็นอย่างยิ่ง (strictly necessary) ต่อการทำงานพื้นฐานของเว็บไซต์ กฎหมายคุ้มครองข้อมูลส่วนบุคคลไม่กำหนดให้ต้องขอความยินยอมสำหรับคุกกี้ประเภทนี้ เว็บไซต์นี้จึงไม่แสดงแบนเนอร์ขอความยินยอมคุกกี้ เพราะเป็นการแสดงผลที่ไม่มีความหมายจริง ไม่ใช่การให้ข้อมูลที่เป็นประโยชน์",
-  en: "The cookies above are strictly necessary for the site's basic operation. Data protection law does not require consent for this category of cookie, so this site does not show a cookie consent banner: doing so over an exempt cookie would be theatre, not useful information.",
+  th: "คุกกี้ทั้งหมดข้างต้นเป็นคุกกี้ที่จำเป็นอย่างยิ่ง (strictly necessary) ต่อการทำงานพื้นฐานของเว็บไซต์ กฎหมายคุ้มครองข้อมูลส่วนบุคคลไม่กำหนดให้ต้องขอความยินยอมสำหรับคุกกี้ประเภทนี้ เว็บไซต์นี้จึงไม่แสดงแบนเนอร์ขอความยินยอมคุกกี้",
+  en: "The cookies above are strictly necessary for the site's basic operation. Data protection law does not require consent for this category of cookie, so this site does not show a cookie consent banner.",
 };
 
 const ANALYTICS_HEADING: LocaleString = { th: "การวิเคราะห์การใช้งาน", en: "Analytics" };
@@ -71,21 +71,21 @@ const ANALYTICS_BODY: LocaleString = {
   en: "Where enabled, this site uses Vercel Web Analytics to count page views in aggregate only. It does not use cookies, does not store your full IP address, does not create an identifier that tracks you across visits or across other sites, and is never used for advertising.",
 };
 
-const NO_ADS_HEADING: LocaleString = { th: "สิ่งที่ไม่มี", en: "What is not here" };
+const NO_ADS_HEADING: LocaleString = { th: "คุกกี้และการติดตามที่ไม่ใช้", en: "Cookies and tracking not used" };
 const NO_ADS_BODY: LocaleString = {
   th: "ไม่มีคุกกี้โฆษณา ไม่มีคุกกี้ติดตามจากบุคคลที่สามเพื่อการตลาด และไม่มีการขายหรือแบ่งปันข้อมูลการใช้งานของคุณให้บุคคลภายนอก",
   en: "No advertising cookies, no third-party marketing trackers, and your usage data is never sold or shared with anyone outside this service.",
 };
 
-const CONTROL_HEADING: LocaleString = { th: "การควบคุมของคุณ", en: "Your control" };
+const CONTROL_HEADING: LocaleString = { th: "การลบคุกกี้", en: "Deleting cookies" };
 const CONTROL_BODY: LocaleString = {
-  th: "คุณสามารถลบคุกกี้ภาษาได้ทุกเมื่อผ่านการตั้งค่าเบราว์เซอร์ของคุณ การลบคุกกี้นี้จะไม่ทำให้ฟีเจอร์อื่นของเว็บไซต์เสียหาย เว็บไซต์จะเพียงเลือกภาษาให้ใหม่ตามภาษาของเบราว์เซอร์คุณในครั้งถัดไป",
-  en: "You can delete the language cookie at any time through your browser settings. Doing so does not break anything else on the site: it will simply choose a language again from your browser's language settings on your next visit.",
+  th: "ลบคุกกี้ภาษาได้ทุกเมื่อในการตั้งค่าเบราว์เซอร์ การลบไม่กระทบส่วนอื่นของเว็บไซต์ ครั้งถัดไปเว็บไซต์จะเลือกภาษาให้ใหม่ตามภาษาของเบราว์เซอร์",
+  en: "You can delete the language cookie at any time through your browser settings. Nothing else on the site is affected. On your next visit it chooses a language again from your browser's language settings.",
 };
 
-const EAT_STORAGE_HEADING: LocaleString = { th: "ข้อมูลในเครื่องของคุณ จาก \"กินอะไรดี\"", en: "Data kept on your device by What to eat" };
+const EAT_STORAGE_HEADING: LocaleString = { th: "ข้อมูลที่เก็บไว้ในเครื่องจาก \"กินอะไรดี\"", en: "Data kept on your device by What to eat" };
 const EAT_STORAGE_BODY: LocaleString = {
-  th: "ส่วน \"กินอะไรดี\" เก็บข้อมูลส่วนตัวไว้ในหน่วยความจำของเบราว์เซอร์ (localStorage) เท่านั้น ใช้ชื่อที่ขึ้นต้นด้วย trytpc.eat.v1. ได้แก่ เมนูโปรด เมนูที่ไม่เอา ประวัติที่คุณกด \"กินมื้อนี้\" พร้อมราคา ณ ตอนกด ตัวกรองที่ตั้งไว้ และแผนสัปดาห์ที่เก็บไว้ ไม่มีการส่งไปที่ไหนและไม่มีบัญชี ลบได้ทุกเมื่อด้วยปุ่ม \"ล้างทุกอย่าง\" ในหน้า ของฉัน (/eat/mine) หรือด้วยการล้างข้อมูลเว็บไซต์ในเบราว์เซอร์",
+  th: "ส่วน \"กินอะไรดี\" เก็บข้อมูลส่วนตัวไว้ในหน่วยความจำของเบราว์เซอร์ (localStorage) เท่านั้น ใช้ชื่อที่ขึ้นต้นด้วย trytpc.eat.v1. ได้แก่ เมนูโปรด เมนูที่ไม่เอา ประวัติที่คุณกด \"กินมื้อนี้\" พร้อมราคา ณ ตอนกด ตัวกรองที่ตั้งไว้ และแผนสัปดาห์ที่เก็บไว้ ไม่ส่งข้อมูลไปที่ไหนและไม่มีบัญชีผู้ใช้ ลบได้ทุกเมื่อด้วยปุ่ม \"ล้างทุกอย่าง\" ในหน้า ของฉัน (/eat/mine) หรือด้วยการล้างข้อมูลเว็บไซต์ในเบราว์เซอร์",
   en: "The What to eat section keeps personal data only in your browser's own storage (localStorage), under names that start with trytpc.eat.v1. That is your favourites, dishes you never want suggested, what you tapped \"I'll eat this\" for with the price at that moment, your saved filters and a saved week plan. None of it is sent anywhere and there is no account. Clear it any time with the \"Clear everything\" button on Your stuff (/eat/mine), or by clearing this site's data in your browser.",
 };
 

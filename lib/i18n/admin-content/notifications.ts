@@ -28,7 +28,7 @@ export const NOTIFICATION_STRINGS = {
   ntKindCaseMention: { th: "มีการกล่าวถึงคุณในบันทึก", en: "You were mentioned in a note" },
   ntKindComplaintEscalated: { th: "ส่งต่อข้อร้องเรียน", en: "Complaint escalated" },
   ntKindBorrowingOverdue: { th: "อุปกรณ์เกินกำหนดคืน", en: "Equipment return overdue" },
-  ntKindInviteAccepted: { th: "คำเชิญได้รับการตอบรับ", en: "Invitation accepted" },
+  ntKindInviteAccepted: { th: "มีผู้ตอบรับคำเชิญ", en: "Invitation accepted" },
   ntKindOther: { th: "การแจ้งเตือน", en: "Notification" },
 
   ntBodyCaseAssigned: { th: "{actor} มอบหมายเรื่อง {reference} ให้คุณ", en: "{actor} assigned {reference} to you." },

@@ -184,7 +184,7 @@ export const EAT = {
     th: "ยังไม่มีเมนูของแผงนี้",
     en: "No menu is listed for this stall yet.",
   },
-  stallMatches: { th: "ตรงกับตัวกรองของคุณ", en: "match your filters" },
+  stallMatches: { th: "ตรงกับตัวกรอง", en: "match your filters" },
   viewStall: { th: "ดูเมนูร้านนี้", en: "See this stall's menu" },
 
   /* ---- Favourite toggle ---- */
@@ -321,7 +321,7 @@ export const eat = {
   /** "5 of 12 dishes match your filters". */
   stallMatchCount(locale: Locale, matching: number, total: number): string {
     return locale === "th"
-      ? `${n(matching, locale)} จาก ${n(total, locale)} เมนูตรงกับตัวกรองของคุณ`
+      ? `${n(matching, locale)} จาก ${n(total, locale)} เมนูตรงกับตัวกรอง`
       : `${n(matching, locale)} of ${n(total, locale)} ${total === 1 ? "dish matches" : "dishes match"} your filters`;
   },
 

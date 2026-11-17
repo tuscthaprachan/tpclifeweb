@@ -77,20 +77,20 @@ export const CONTENT_LIFECYCLE_STRINGS = {
   /* Restore */
   clcRestoreTitle: { th: "คืนค่าเวอร์ชันนี้", en: "Restore this version" },
   clcRestoreHint: {
-    th: "ค่าในทุกช่องจะกลับเป็นของเวอร์ชันที่เลือก และบันทึกเป็นเวอร์ชันใหม่ กำหนดเวลาเผยแพร่จะถูกล้าง",
+    th: "ค่าในทุกช่องจะกลับเป็นของเวอร์ชันที่เลือก และบันทึกเป็นเวอร์ชันใหม่ ระบบจะล้างกำหนดเวลาเผยแพร่",
     en: "Every field goes back to the selected version and is saved as a new version. The publication schedule is cleared.",
   },
   clcRestoreDraft: { th: "คืนค่าเป็นฉบับร่าง", en: "Restore as draft" },
   clcRestorePublish: { th: "คืนค่าและเผยแพร่", en: "Restore and publish" },
   clcRestoreUnavailable: { th: "ประเภทเนื้อหานี้ยังไม่รองรับการคืนค่า", en: "This type of content cannot be restored." },
-  clcErrRestoreSlug: { th: "ชื่อในที่อยู่เว็บของเวอร์ชันนี้ถูกรายการอื่นใช้อยู่แล้ว แก้ชื่อนั้นก่อนแล้วลองใหม่", en: "The web address name in that version is now used by another item. Change that item first, then try again." },
-  clcErrRestoreInUse: { th: "เวอร์ชันนี้อ้างถึงรายการที่ถูกลบไปแล้ว จึงคืนค่าไม่ได้", en: "That version refers to an item that has since been deleted, so it cannot be restored." },
+  clcErrRestoreSlug: { th: "ชื่อในที่อยู่เว็บของเวอร์ชันนี้มีรายการอื่นใช้อยู่แล้ว แก้ชื่อนั้นก่อนแล้วลองใหม่", en: "The web address name in that version is now used by another item. Change that item first, then try again." },
+  clcErrRestoreInUse: { th: "เวอร์ชันนี้อ้างถึงรายการที่ลบไปแล้ว จึงคืนค่าไม่ได้", en: "That version refers to an item that has since been deleted, so it cannot be restored." },
   clcErrRestoreGone: { th: "ไม่พบเวอร์ชันนี้หรือรายการนี้", en: "That version or item could not be found." },
 
   /* Preview banner (shown on the public page to signed-in editors) */
   clcPreviewBanner: { th: "ตัวอย่าง", en: "Preview" },
   clcPreviewBannerBody: {
-    th: "คุณกำลังดูตัวอย่างที่ผู้อ่านทั่วไปยังไม่เห็น หน้านี้ไม่ถูกจัดทำดัชนีโดยเครื่องมือค้นหา",
+    th: "คุณกำลังดูตัวอย่างที่ผู้อ่านทั่วไปยังไม่เห็น เครื่องมือค้นหาจะไม่จัดทำดัชนีหน้านี้",
     en: "You are looking at a preview that readers cannot see yet. Search engines are told not to index this page.",
   },
   clcPreviewStatus: { th: "สถานะ: {status}", en: "Status: {status}" },

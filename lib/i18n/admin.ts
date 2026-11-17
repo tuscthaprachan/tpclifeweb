@@ -85,7 +85,7 @@ export const A = {
     en: "Creating a passkey needs JavaScript and a recent browser, such as Chrome, Edge, Safari or Firefox",
   },
   passkeyErrLinkUnusable: {
-    th: "ลิงก์นี้ใช้ไม่ได้แล้ว อาจหมดอายุ ถูกใช้ไปแล้ว หรือถูกยกเลิก ขอลิงก์ใหม่จากผู้ดูแลระบบ",
+    th: "ลิงก์นี้ใช้ไม่ได้แล้ว อาจหมดอายุ ใช้ไปแล้ว หรือยกเลิกไปแล้ว ขอลิงก์ใหม่จากผู้ดูแลระบบ",
     en: "This link can no longer be used. It may have expired, been used already or been cancelled. Ask an administrator for a new one",
   },
   passkeyErrTooMany: {
@@ -121,7 +121,7 @@ export const A = {
   securityLink: { th: "ความปลอดภัยของฉัน", en: "My security" },
   securityTitle: { th: "ความปลอดภัยของฉัน", en: "My security" },
   securityIntro: {
-    th: "คุณเข้าสู่ระบบด้วยพาสคีย์เท่านั้น เพิ่มพาสคีย์ในทุกอุปกรณ์ที่คุณใช้ เช่น โทรศัพท์และแล็ปท็อป เพื่อไม่ให้ถูกล็อกออกเมื่ออุปกรณ์หาย",
+    th: "คุณเข้าสู่ระบบด้วยพาสคีย์เท่านั้น เพิ่มพาสคีย์ในทุกอุปกรณ์ที่คุณใช้ เช่น โทรศัพท์และแล็ปท็อป เพื่อไม่ให้เข้าสู่ระบบไม่ได้เมื่ออุปกรณ์หาย",
     en: "You sign in with passkeys only. Add one on each device you use, such as your phone and your laptop, so that losing a device does not lock you out",
   },
   passkeysHeading: { th: "พาสคีย์ของคุณ", en: "Your passkeys" },
@@ -152,17 +152,17 @@ export const A = {
   passkeyRenamedBody: { th: "ชื่อใหม่แสดงในรายการด้านล่างแล้ว", en: "The new name shows in the list below" },
   passkeyRemovedTitle: { th: "เอาพาสคีย์ออกแล้ว", en: "Passkey removed" },
   passkeyRemovedBody: {
-    th: "พาสคีย์นั้นใช้เข้าสู่ระบบไม่ได้อีก การเปลี่ยนแปลงถูกบันทึกไว้แล้ว",
+    th: "พาสคีย์นั้นใช้เข้าสู่ระบบไม่ได้อีก เราบันทึกการเปลี่ยนแปลงไว้แล้ว",
     en: "It can no longer sign in. The change has been recorded",
   },
   errPasskeyName: { th: "กรอกชื่อพาสคีย์ไม่เกิน 60 ตัวอักษร", en: "Enter a passkey name of up to 60 characters" },
   errLastPasskey: {
-    th: "เอาพาสคีย์สุดท้ายออกไม่ได้ ไม่เช่นนั้นคุณจะเข้าสู่ระบบไม่ได้ เพิ่มพาสคีย์อีกอันก่อน",
+    th: "เอาพาสคีย์สุดท้ายออกไม่ได้ ไม่เช่นนั้นจะเข้าสู่ระบบไม่ได้ เพิ่มพาสคีย์อีกอันก่อน",
     en: "You cannot remove your last passkey, or you could not sign in. Add another one first",
   },
   removePasskeyTitle: { th: "คุณต้องการเอาพาสคีย์นี้ออกหรือไม่", en: "Are you sure you want to remove this passkey?" },
   removePasskeyBody: {
-    th: "พาสคีย์ {name} จะใช้เข้าสู่ระบบไม่ได้อีก การเปลี่ยนแปลงนี้จะถูกบันทึกไว้",
+    th: "พาสคีย์ {name} จะใช้เข้าสู่ระบบไม่ได้อีก เราจะบันทึกการเปลี่ยนแปลงนี้ไว้",
     en: "The passkey {name} will no longer sign you in. This change is recorded",
   },
   removePasskeyButton: { th: "เอาพาสคีย์ออก", en: "Remove passkey" },
@@ -181,7 +181,7 @@ export const A = {
   /* Dashboard */
   dashTitle: { th: "คอนโซลเจ้าหน้าที่", en: "Staff console" },
   dashIntro: {
-    th: "หน้านี้ยังเป็นหน้าเริ่มต้น เครื่องมือสำหรับงานของคุณจะทยอยเพิ่มเข้ามา",
+    th: "หน้านี้ยังเป็นหน้าเริ่มต้น เครื่องมือสำหรับงานจะทยอยเพิ่มเข้ามา",
     en: "This is a starting page. The tools for your work will be added here",
   },
   yourDetails: { th: "ข้อมูลของคุณ", en: "Your details" },
@@ -224,7 +224,7 @@ export const A = {
   signInAgain: { th: "เข้าสู่ระบบอีกครั้ง", en: "Sign in again" },
 
   /* Session timeout warning */
-  timeoutTitle: { th: "คุณกำลังจะถูกออกจากระบบ", en: "You are about to be signed out" },
+  timeoutTitle: { th: "ใกล้ถึงเวลาออกจากระบบ", en: "You are about to be signed out" },
   timeoutBody: {
     th: "เพื่อความปลอดภัย เราจะออกจากระบบให้คุณใน {time} ข้อมูลที่ยังไม่ได้บันทึกจะหายไป",
     en: "For your security, we will sign you out in {time}. Anything you have not saved will be lost",
@@ -308,7 +308,7 @@ export const A = {
   recoveryLinkFor: { th: "สร้างลิงก์กู้คืนบัญชีของ {person}", en: "Make an account recovery link for {person}" },
   recoveryTitle: { th: "สร้างลิงก์กู้คืนบัญชีให้ {person}", en: "Make a recovery link for {person}" },
   recoveryIntro: {
-    th: "ใช้เมื่อ {person} ทำพาสคีย์หายทุกอัน ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ 24 ชั่วโมง เมื่อใช้แล้วจะออกจากระบบทุกอุปกรณ์ของ {person} และให้สร้างพาสคีย์ใหม่ การสร้างลิงก์นี้ถูกบันทึกไว้",
+    th: "ใช้เมื่อ {person} ทำพาสคีย์หายทุกอัน ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ 24 ชั่วโมง เมื่อใช้แล้ว {person} จะออกจากระบบทุกอุปกรณ์และต้องสร้างพาสคีย์ใหม่ เราบันทึกการสร้างลิงก์นี้ไว้",
     en: "Use this when {person} has lost every passkey. The link works once and for 24 hours. When it is used, {person} is signed out everywhere and registers a new passkey. Making this link is recorded",
   },
   recoveryWarning: {
@@ -327,7 +327,7 @@ export const A = {
     en: "You can only make recovery links for staff who currently hold a role",
   },
   errRecoverySelf: {
-    th: "คุณสร้างลิงก์กู้คืนให้ตัวเองไม่ได้ขณะที่เป็นผู้ดูแลระบบคนเดียว หากเข้าสู่ระบบอยู่ ให้เพิ่มพาสคีย์ในหน้าความปลอดภัยของฉัน หากถูกล็อกออก ให้ผู้ดูแลฐานข้อมูลใช้คำสั่งกู้คืน",
+    th: "คุณสร้างลิงก์กู้คืนให้ตัวเองไม่ได้ขณะที่เป็นผู้ดูแลระบบคนเดียว หากเข้าสู่ระบบอยู่ ให้เพิ่มพาสคีย์ในหน้าความปลอดภัยของฉัน หากเข้าสู่ระบบไม่ได้ ให้ผู้ดูแลฐานข้อมูลใช้คำสั่งกู้คืน",
     en: "You cannot make a recovery link for yourself while you are the only administrator. While signed in, add a passkey on My security instead. If you are locked out, ask whoever looks after the database to run the recovery command",
   },
   recoveryPendingNote: { th: "มีลิงก์กู้คืนที่ยังใช้ได้", en: "A recovery link is waiting" },
@@ -340,7 +340,7 @@ export const A = {
   },
   inviteNameLabel: { th: "ชื่อของคุณ", en: "Your name" },
   inviteNameHint: { th: "ชื่อที่เจ้าหน้าที่คนอื่นจะเห็น", en: "The name other staff will see" },
-  errNameRequired: { th: "กรอกชื่อของคุณ ไม่เกิน 100 ตัวอักษร", en: "Enter your name, up to 100 characters" },
+  errNameRequired: { th: "กรอกชื่อ ไม่เกิน 100 ตัวอักษร", en: "Enter your name, up to 100 characters" },
   inviteCreateButton: { th: "สร้างบัญชีด้วยพาสคีย์", en: "Create account with a passkey" },
   inviteExistingTitle: { th: "คุณมีบัญชีอยู่แล้ว", en: "You already have an account" },
   inviteExistingBody: {
@@ -368,11 +368,11 @@ export const A = {
     en: "This invitation has expired. Ask an administrator to make you a new one",
   },
   inviteRevoked: {
-    th: "คำเชิญนี้ถูกยกเลิกแล้ว หากคิดว่าเกิดความผิดพลาด ให้ติดต่อผู้ดูแลระบบ",
+    th: "คำเชิญนี้ยกเลิกไปแล้ว หากคิดว่าเกิดความผิดพลาด ให้ติดต่อผู้ดูแลระบบ",
     en: "This invitation was cancelled. If you think that is a mistake, contact an administrator",
   },
   inviteAccepted: {
-    th: "คำเชิญนี้ถูกใช้ไปแล้ว หากเป็นคุณ ให้เข้าสู่ระบบด้วยพาสคีย์ตามปกติ",
+    th: "คำเชิญนี้ใช้ไปแล้ว หากเป็นคุณ ให้เข้าสู่ระบบด้วยพาสคีย์ตามปกติ",
     en: "This invitation has already been used. If that was you, sign in with your passkey as usual",
   },
   recoverTitle: { th: "กู้คืนบัญชีของคุณ", en: "Recover your account" },
@@ -391,11 +391,11 @@ export const A = {
     en: "This recovery link has expired. Ask an administrator to make a new one",
   },
   recoverRevoked: {
-    th: "ลิงก์กู้คืนนี้ถูกแทนที่ด้วยลิงก์ใหม่กว่า ใช้ลิงก์ล่าสุดที่ได้รับ",
+    th: "มีลิงก์กู้คืนใหม่กว่าแทนที่ลิงก์นี้แล้ว ใช้ลิงก์ล่าสุดที่ได้รับ",
     en: "This recovery link was replaced by a newer one. Use the latest link you were sent",
   },
   recoverUsed: {
-    th: "ลิงก์กู้คืนนี้ถูกใช้ไปแล้ว หากเป็นคุณ ให้เข้าสู่ระบบด้วยพาสคีย์ใหม่",
+    th: "ลิงก์กู้คืนนี้ใช้ไปแล้ว หากเป็นคุณ ให้เข้าสู่ระบบด้วยพาสคีย์ใหม่",
     en: "This recovery link has already been used. If that was you, sign in with your new passkey",
   },
 
@@ -569,13 +569,13 @@ export const A = {
     th: "ใช้ตัวอักษรภาษาอังกฤษพิมพ์เล็ก ตัวเลข และขีดกลางเท่านั้น เช่น freshers-week-2026",
     en: "Use lower case letters, numbers and hyphens only, like freshers-week-2026",
   },
-  errSlugTaken: { th: "ชื่อนี้ถูกใช้แล้ว ลองชื่ออื่น", en: "That web address name is already used. Try another" },
+  errSlugTaken: { th: "ชื่อนี้มีคนใช้แล้ว ลองชื่ออื่น", en: "That web address name is already used. Try another" },
   errRichTextInvalid: { th: "{field}มีเนื้อหาที่บันทึกไม่ได้: {detail}", en: "The {field} has content that cannot be saved: {detail}" },
   errImageUndescribed: {
     th: "รูปนี้ยังไม่มีคำอธิบายภาพทั้งสองภาษา เพิ่มคำอธิบายในคลังรูปภาพก่อนเผยแพร่",
     en: "This picture has no description in both languages. Add one in the image library before publishing",
   },
-  errNotFound: { th: "ไม่พบรายการนี้ อาจถูกลบไปแล้ว", en: "We could not find this item. It may have been deleted" },
+  errNotFound: { th: "ไม่พบรายการนี้ อาจลบไปแล้ว", en: "We could not find this item. It may have been deleted" },
   errLinkUnsafe: {
     th: "ลิงก์ไม่ถูกต้อง ใช้ที่อยู่ที่ขึ้นต้นด้วย https:// อีเมล หรือลิงก์ภายในเว็บไซต์ที่ขึ้นต้นด้วย /",
     en: "That link is not valid. Use an address starting https://, an email address, or a path on this site starting /",

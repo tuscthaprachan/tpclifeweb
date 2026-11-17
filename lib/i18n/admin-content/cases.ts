@@ -64,7 +64,7 @@ export const CASES_STRINGS = {
   caseContactsHeldOne: { th: "มีข้อมูลติดต่อ 1 รายการ ซ่อนไว้จนกว่าจะกดแสดง", en: "1 contact record is held. It stays hidden until you choose to show it" },
   caseContactsShow: { th: "แสดงข้อมูลติดต่อ", en: "Show contact details" },
   caseContactsHide: { th: "ซ่อนข้อมูลติดต่อ", en: "Hide contact details" },
-  caseContactsLogged: { th: "การดูข้อมูลส่วนบุคคลทุกครั้งถูกบันทึกไว้พร้อมชื่อของคุณ", en: "Every time personal details are shown, it is recorded with your name" },
+  caseContactsLogged: { th: "ระบบบันทึกชื่อคุณไว้ทุกครั้งที่เปิดดูข้อมูลส่วนบุคคล", en: "Every time personal details are shown, it is recorded with your name" },
   contactName: { th: "ชื่อ", en: "Name" },
   contactEmail: { th: "อีเมล", en: "Email address" },
   contactPhone: { th: "โทรศัพท์", en: "Phone" },

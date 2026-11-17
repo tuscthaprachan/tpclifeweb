@@ -13,8 +13,8 @@ const n = (value: number, locale: Locale) => formatNumber(value, locale);
 export const GROUP = {
   pageTitle: { th: "กินเป็นกลุ่ม", en: "Eat as a group" } satisfies Bilingual,
   pageIntro: {
-    th: "หลายคน หลายข้อจำกัด บอกว่าแต่ละคนกินอะไรได้ แล้วเราจะหาร้านให้ ไม่ต้องเถียงกันหน้าโรงอาหาร",
-    en: "Lots of people, lots of rules. Tell us what each person can eat and we will find where to go, so nobody argues in front of the canteen.",
+    th: "บอกว่าแต่ละคนกินอะไรได้ แล้วเราจะหาร้านให้ ไม่ต้องเถียงกันหน้าโรงอาหาร",
+    en: "Tell us what each person can eat and we will find where to go, so nobody argues in front of the canteen.",
   } satisfies Bilingual,
   emptyTitle: { th: "ยังไม่มีข้อมูลโรงอาหาร", en: "No canteen data yet" } satisfies Bilingual,
   emptyBody: {
@@ -52,10 +52,10 @@ export const GROUP = {
   showResults: { th: "ดูผลลัพธ์", en: "Show results" } satisfies Bilingual,
   limitReached: {
     th: "ครบ 8 คนแล้ว เอาคนออกก่อนถึงจะเพิ่มอีกคนได้",
-    en: "That is the limit: 8 people. Remove someone to add another.",
+    en: "A group can have up to 8 people. Remove someone to add another.",
   } satisfies Bilingual,
   dirtyNote: {
-    th: "คุณแก้กลุ่มแล้ว กด \"ดูผลลัพธ์\" เพื่ออัปเดตร้านด้านล่าง",
+    th: "แก้กลุ่มแล้ว กด \"ดูผลลัพธ์\" เพื่ออัปเดตร้านด้านล่าง",
     en: "You changed the group. Press Show results to update the stalls below.",
   } satisfies Bilingual,
 
@@ -93,7 +93,7 @@ export const GROUP = {
   } satisfies Bilingual,
   randomIntro: {
     th: "ทุกคนได้เมนูที่สุ่มมา ใครไม่ถูกใจกดสุ่มใหม่เฉพาะคนนั้นได้ หรือสุ่มใหม่ให้ทุกคน",
-    en: "A surprise for everyone. Spin again for just one person if they are not feeling it, or for everyone.",
+    en: "Everyone gets a random dish. If someone does not like theirs, spin again for just that person, or for everyone.",
   } satisfies Bilingual,
   reroll: { th: "สุ่มใหม่ให้คนนี้", en: "Spin again for this person" } satisfies Bilingual,
   spinAgain: { th: "สุ่มใหม่ให้ทุกคน", en: "Spin again for everyone" } satisfies Bilingual,

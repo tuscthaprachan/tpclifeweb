@@ -63,8 +63,8 @@ export const CONSOLE_CASES_STRINGS = {
   ckBulkSummaryAssign: { th: "มอบหมายแล้ว {ok} เรื่อง ไม่สำเร็จ {failed} เรื่อง", en: "{ok} assigned, {failed} not assigned." },
   ckBulkSummaryTransition: { th: "เปลี่ยนสถานะแล้ว {ok} เรื่อง ไม่สำเร็จ {failed} เรื่อง", en: "{ok} moved, {failed} not moved." },
   ckBulkFailureItem: { th: "{reference}: {reason}", en: "{reference}: {reason}" },
-  ckBulkUnknownCase: { th: "เรื่องที่คุณมองไม่เห็น", en: "A case you cannot see" },
-  ckReasonForbidden: { th: "คุณไม่มีสิทธิ์ดำเนินการกับเรื่องนี้", en: "you do not have access to this case" },
+  ckBulkUnknownCase: { th: "เรื่องที่ไม่มีสิทธิ์เข้าถึง", en: "A case you cannot see" },
+  ckReasonForbidden: { th: "ไม่มีสิทธิ์ดำเนินการกับเรื่องนี้", en: "you do not have access to this case" },
   ckReasonNotFound: { th: "ไม่พบเรื่องนี้", en: "case not found" },
   ckReasonInvalidTransition: { th: "สถานะปัจจุบันเปลี่ยนไปสถานะนี้ไม่ได้", en: "its current status cannot move to that status" },
   ckReasonStale: { th: "เรื่องนี้เพิ่งมีการเปลี่ยนแปลง", en: "the case has just changed" },
@@ -110,7 +110,7 @@ export const CONSOLE_CASES_STRINGS = {
 
   /* Mentions */
   ckMentionHint: {
-    th: "พิมพ์ @ แล้วเลือกชื่อเพื่อกล่าวถึงเจ้าหน้าที่ที่เห็นเรื่องนี้ได้ ผู้ถูกกล่าวถึงจะได้รับการแจ้งเตือน",
+    th: "พิมพ์ @ แล้วเลือกชื่อเพื่อกล่าวถึงเจ้าหน้าที่ที่เห็นเรื่องนี้ได้ ผู้ที่ถูกกล่าวถึงจะได้รับแจ้งเตือน",
     en: "Type @ and choose a name to mention a member of staff who can see this case. They get a notification.",
   },
   ckMentionList: { th: "เจ้าหน้าที่ที่กล่าวถึงได้", en: "Staff you can mention" },

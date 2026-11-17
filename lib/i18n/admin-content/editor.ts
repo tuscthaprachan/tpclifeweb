@@ -43,7 +43,7 @@ export const EDITOR_STRINGS = {
     en: "Use **bold**, *italic*, ++underline++ and ~~strikethrough~~. Custom blocks go on one line, such as ::callout{...}. The text is checked when you go back to Visual",
   },
   edMdError: { th: "สลับไปโหมดภาพไม่ได้ เพราะ Markdown ยังไม่ถูกต้อง: {message}", en: "Cannot go back to Visual yet. The Markdown has a problem: {message}" },
-  edMdUnsaved: { th: "การแก้ไขล่าสุดจะยังไม่ถูกบันทึกจนกว่าจะแก้ให้ถูกต้อง", en: "Your latest changes will not be saved until this is fixed" },
+  edMdUnsaved: { th: "การแก้ไขล่าสุดจะยังไม่บันทึกจนกว่าจะแก้ Markdown ให้ถูกต้อง", en: "Your latest changes will not be saved until this is fixed" },
   edMdLoading: { th: "กำลังเตรียม Markdown", en: "Preparing Markdown" },
 
   edStatusLabel: { th: "สถิติของ {label}", en: "Statistics for {label}" },

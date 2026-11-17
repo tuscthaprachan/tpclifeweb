@@ -138,7 +138,7 @@ export function ContentSection({ headingLevel, locale }: { headingLevel: Heading
         name="InsetText"
         headingLevel={headingLevel}
         purpose="A quoted or supplementary passage set off from the surrounding copy: a quote from a policy document, a worked example."
-        whenNotToUse="For a warning, where WarningText carries the icon that a plain inset does not. Inset text is a grey rule and indented text: no fill and no colour."
+        whenNotToUse="For a warning, where WarningText carries the icon that a plain inset does not. Inset text has a grey rule and indented text, with no fill and no colour."
       >
         <InsetText>A quoted passage sits here, indented and set off from the paragraph before it.</InsetText>
       </ComponentDoc>
@@ -162,7 +162,7 @@ export function ContentSection({ headingLevel, locale }: { headingLevel: Heading
         name="Details"
         headingLevel={headingLevel}
         purpose="Extra detail that most readers do not need: a definition, a longer explanation, an FAQ answer."
-        whenNotToUse="For anything that must be visible on first load, or for a tooltip. This is the accessible replacement for a tooltip, not an addition to one (1.4.13)."
+        whenNotToUse="For anything that must be visible on first load, or for a tooltip. Use it in place of a tooltip, not alongside one (1.4.13)."
       >
         <Details summary="What counts as a welfare emergency?">
           <p className="m-0">Anything that puts a student&apos;s health, safety or ability to continue studying at immediate risk.</p>
@@ -189,9 +189,9 @@ export function ContentSection({ headingLevel, locale }: { headingLevel: Heading
         name="No tinted accent boxes"
         headingLevel={headingLevel}
         purpose="Setting something apart from the text around it. This site uses the GOV.UK patterns: inset text for a quotation or supporting passage, warning text for something the reader must not miss, a notification banner for a page-level message, an error summary for a failed form, a phase banner for the service stage, and a summary card, a heading with a rule or a plain list for grouped information."
-        whenNotToUse="A coloured or tinted background panel with a coloured left or top stripe, a coloured border, or both: a callout box, alert box or soft-tinted card. These are not used anywhere, public site or admin. Structure comes from headings, spacing, rules and bold text, and colour never carries the meaning on its own."
+        whenNotToUse="A coloured or tinted background panel with a coloured left or top stripe, a coloured border, or both: a callout box, alert box or soft-tinted card. Do not use them on the public site or in the admin console. Use headings, spacing, rules and bold text for structure, and never let colour carry the meaning on its own."
         a11yNotes={[
-          "Tags and status tags are labels, not boxes, so a small tinted fill behind a word is allowed there (and the word and icon always come with it).",
+          "A small tinted fill behind a word is allowed on tags and status tags, which are labels, and the word and icon always come with it.",
           "scripts/check-no-accent-boxes.mjs runs in npm run check and fails on a class list that pairs a coloured thick border with a tinted background, and on bg-*-soft outside the tag components.",
           "Rich text callout blocks keep their stored tones: info renders as inset text, warning and critical as warning text. Service alerts render as notification banners, critical with warning text inside.",
         ]}
@@ -218,7 +218,7 @@ export function ContentSection({ headingLevel, locale }: { headingLevel: Heading
         name="Panel"
         headingLevel={headingLevel}
         purpose="A prominent confirmation panel at the end of a completed task, such as a submitted form."
-        whenNotToUse="Anywhere higher up a page than the very end of a completed flow. It is deliberately loud."
+        whenNotToUse="Anywhere higher up a page than the very end of a completed flow, because it is deliberately prominent."
       >
         <Panel headingLevel={4} title="Report submitted" tone="success">
           Your reference number is WF-2031.
@@ -255,7 +255,7 @@ export function ContentSection({ headingLevel, locale }: { headingLevel: Heading
         name="River"
         headingLevel={headingLevel}
         purpose="The small campus scene (sun, river and ferry) used in EmptyState, the not-found pages and the error page. Under 2 KB, coloured with fill and surface tokens so it follows the theme."
-        whenNotToUse="As the only signal of a state, or anywhere it would repeat on the same page: it is decoration and carries no meaning."
+        whenNotToUse="As the only signal of a state, or anywhere it would repeat on the same page. It is decoration and has no meaning of its own."
         a11yNotes={["Renders aria-hidden and not focusable. Size it with className, for example h-[84px] w-[120px]."]}
       >
         <River className="h-[84px] w-[120px]" />

@@ -12,7 +12,7 @@ import { DataTable, type DataTableColumn, EmptyState, Heading, Stack, Tag } from
  * neither file owns the other; both report the same gap.
  */
 const NO_TIMETABLE_NOTE: LocaleString = {
-  th: "ยังไม่มีการเผยแพร่ตารางเวลาสำหรับเส้นทางนี้",
+  th: "ยังไม่ได้เผยแพร่ตารางเวลาของเส้นทางนี้",
   en: "A timetable for this route has not been published yet",
 };
 

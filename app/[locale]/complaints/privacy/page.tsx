@@ -65,7 +65,7 @@ const WHAT: Array<{ what: LocaleString; why: LocaleString }> = [
   {
     what: s("ที่อยู่ไอพีและชนิดของเบราว์เซอร์", "Your IP address and browser type"),
     why: s(
-      "เพื่อความปลอดภัย จำกัดการใช้งานเกินปกติ และตรวจสอบย้อนหลังว่าใครทำอะไรกับเรื่องนี้ บันทึกไว้ในบันทึกตรวจสอบ ไม่ใช้เพื่อติดตามคุณ แม้คุณจะไม่ระบุตัวตนก็ตาม",
+      "เพื่อความปลอดภัย จำกัดการใช้งานเกินปกติ และตรวจสอบย้อนหลังว่าใครทำอะไรกับเรื่องนี้ บันทึกไว้ในบันทึกตรวจสอบ ไม่ใช้ติดตามตัวคุณ แม้จะไม่ระบุตัวตน",
       "For security, to limit abuse, and to keep a record of who did what on a complaint. They are kept in the audit log and are not used to track you, even if you stay anonymous",
     ),
   },

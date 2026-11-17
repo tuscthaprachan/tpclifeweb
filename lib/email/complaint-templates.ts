@@ -72,10 +72,10 @@ export function complaintAcknowledged({ reference }: ComplaintEmailParams): Rend
       lang: "th",
       heading: "เจ้าหน้าที่รับเรื่องร้องเรียนของคุณแล้ว",
       paragraphs: [
-        `เจ้าหน้าที่ของ${SERVICE.th}ได้รับเรื่องร้องเรียนของคุณและกำลังดูแลอยู่`,
+        `เจ้าหน้าที่ของ${SERVICE.th}ได้รับเรื่องร้องเรียนแล้วและกำลังดำเนินการ`,
         "ดูความคืบหน้าและวันที่เราตั้งเป้าแจ้งผลได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง",
       ],
-      reference: { label: "เลขอ้างอิงของคุณ", value: reference },
+      reference: { label: "เลขอ้างอิง", value: reference },
       after: ["ใครมีลิงก์ส่วนตัวก็ดูเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น"],
     },
     {
@@ -99,10 +99,10 @@ export function complaintResolved({ reference }: ComplaintEmailParams): Rendered
       lang: "th",
       heading: "เรื่องร้องเรียนของคุณมีผลแล้ว",
       paragraphs: [
-        "เปิดลิงก์ส่วนตัวของคุณเพื่ออ่านผลที่เจ้าหน้าที่แจ้ง และบอกเราว่าพอใจกับการดำเนินการหรือไม่",
-        `หากคุณคิดว่าเรื่องยังไม่จบ คุณขอเปิดเรื่องอีกครั้งได้ภายใน ${REOPEN_WINDOW_DAYS} วัน จากหน้าเดียวกัน`,
+        "เปิดลิงก์ส่วนตัวเพื่ออ่านผลที่เจ้าหน้าที่แจ้ง และบอกเราว่าพอใจกับการดำเนินการหรือไม่",
+        `หากเห็นว่าเรื่องยังไม่จบ ขอเปิดเรื่องอีกครั้งได้ภายใน ${REOPEN_WINDOW_DAYS} วัน จากหน้าเดียวกัน`,
       ],
-      reference: { label: "เลขอ้างอิงของคุณ", value: reference },
+      reference: { label: "เลขอ้างอิง", value: reference },
       after: ["ใครมีลิงก์ส่วนตัวก็ดูเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น"],
     },
     {
@@ -142,7 +142,7 @@ function redirectParagraphs({ level, faculty, bodies }: RedirectTarget, lang: "t
   const out: string[] = [];
   if (level === "course") {
     out.push(th ? "เรื่องนี้เป็นเรื่องของรายวิชา ผู้สอนเป็นผู้ตัดสินขั้นสุดท้าย กรุณาเสนอเรื่องกับผู้สอนก่อน" : "This is a matter for your course. The lecturer has the final say, so please raise it with them first.");
-    out.push(th ? "หากไม่สามารถเสนอเรื่องกับผู้สอนได้ ให้ติดต่อสำนักงานคณะ" : "If you cannot raise it with the lecturer, contact your faculty office.");
+    out.push(th ? "หากเสนอเรื่องกับผู้สอนไม่ได้ ให้ติดต่อสำนักงานคณะ" : "If you cannot raise it with the lecturer, contact your faculty office.");
   } else {
     out.push(
       th
@@ -161,7 +161,7 @@ function redirectParagraphs({ level, faculty, bodies }: RedirectTarget, lang: "t
     if (lines.length > 0) out.push(...lines);
     else out.push(th ? "เรายังไม่มีข้อมูลติดต่อสำนักงานนี้ ลองสอบถามที่คณะหรือค้นหาในเว็บไซต์ของคณะ" : "We do not have this office's contact details yet. Ask at the faculty, or look on its website.");
   } else {
-    out.push(th ? "สอบถามรายละเอียดได้ที่คณะของคุณ" : "Please ask at your faculty for the details.");
+    out.push(th ? "สอบถามรายละเอียดได้ที่คณะ" : "Please ask at your faculty for the details.");
   }
   return out;
 }
@@ -174,7 +174,7 @@ export function complaintRedirected({ reference, target }: RedirectedEmailParams
       lang: "th",
       heading: "เรื่องของคุณต้องติดต่อหน่วยงานอื่น",
       paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}อ่านเรื่องร้องเรียนของคุณแล้ว พบว่าเป็นเรื่องที่อยู่นอกขอบเขตของเรา จึงปิดเรื่องนี้`, ...redirectParagraphs(target, "th")],
-      reference: { label: "เลขอ้างอิงของคุณ", value: reference },
+      reference: { label: "เลขอ้างอิง", value: reference },
       after: ["ดูข้อมูลนี้อีกครั้งได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง ใครมีลิงก์ก็ดูเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น"],
     },
     {

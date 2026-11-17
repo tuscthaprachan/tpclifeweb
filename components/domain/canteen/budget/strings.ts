@@ -90,12 +90,12 @@ export const BUDGET = {
   replacesWeek: { th: "จะแทนที่สัปดาห์ที่เก็บไว้ก่อนหน้า", en: "This replaces the week you saved before." },
   openMine: { th: "ดูของฉัน", en: "Open Your stuff" },
   failNoDays: {
-    th: "ยังไม่ได้เลือกวัน ติ๊กอย่างน้อยหนึ่งวันที่คุณอยู่ที่มหาวิทยาลัย",
+    th: "ยังไม่ได้เลือกวัน ติ๊กอย่างน้อยหนึ่งวันที่มามหาวิทยาลัย",
     en: "No days chosen. Tick at least one day you are on campus.",
   },
   failBadDays: { th: "วันที่เลือกไม่ถูกต้อง เลือกวันใหม่จากแบบฟอร์ม", en: "Those days are not valid. Choose the days again in the form." },
   failUnknownLock: {
-    th: "เมนูที่ล็อกไว้ไม่อยู่ในรายการแล้ว อาจถูกเอาออกจากเมนู ปลดล็อกทุกวันแล้วจัดใหม่",
+    th: "เมนูที่ล็อกไว้ไม่อยู่ในรายการแล้ว อาจเอาออกจากเมนูไปแล้ว ปลดล็อกทุกวันแล้วจัดใหม่",
     en: "A day you locked is no longer on the menu. Unlock every day and plan again.",
   },
   failLockConflict: {
@@ -130,7 +130,7 @@ export const BUDGET = {
   /* ---- Mine ---- */
   mineTitle: { th: "ของฉัน", en: "Your stuff" },
   mineIntro: {
-    th: "เมนูโปรด ประวัติ และแผนสัปดาห์ของคุณ เก็บในเครื่องนี้เท่านั้น ไม่ส่งไปที่ไหน",
+    th: "เมนูโปรด ประวัติ และแผนสัปดาห์ เก็บในเครื่องนี้เท่านั้น ไม่ส่งไปที่ไหน",
     en: "Your favourites, history and week. They stay on this device and are not sent anywhere.",
   },
   mineNoJsTitle: { th: "ต้องเปิด JavaScript", en: "JavaScript is off" },
@@ -138,7 +138,7 @@ export const BUDGET = {
     th: "เปิด JavaScript เพื่อดูหน้านี้",
     en: "Turn on JavaScript to see this page.",
   },
-  mineLoading: { th: "กำลังอ่านจากเครื่องของคุณ", en: "Reading from your device" },
+  mineLoading: { th: "กำลังอ่านข้อมูลจากเครื่องนี้", en: "Reading from your device" },
   mineNoStorageTitle: { th: "เครื่องนี้เก็บข้อมูลให้ไม่ได้", en: "This device cannot keep data" },
   mineNoStorageBody: {
     th: "เบราว์เซอร์ไม่ยอมให้เก็บข้อมูล อาจเป็นเพราะโหมดส่วนตัว จึงยังไม่มีอะไรให้แสดง",
@@ -259,11 +259,11 @@ export const budget = {
   /** "You've logged 230 of 400 baht this week". */
   logged(locale: Locale, spent: number, target: number): string {
     return locale === "th"
-      ? `สัปดาห์นี้คุณบันทึกไว้ ${n(spent, locale)} จาก ${n(target, locale)} บาท`
+      ? `สัปดาห์นี้บันทึกไว้ ${n(spent, locale)} จาก ${n(target, locale)} บาท`
       : `You've logged ${n(spent, locale)} of ${n(target, locale)} baht this week`;
   },
   loggedTotal(locale: Locale, spent: number): string {
-    return locale === "th" ? `สัปดาห์นี้คุณบันทึกไว้ ${n(spent, locale)} บาท` : `You've logged ${n(spent, locale)} baht this week`;
+    return locale === "th" ? `สัปดาห์นี้บันทึกไว้ ${n(spent, locale)} บาท` : `You've logged ${n(spent, locale)} baht this week`;
   },
   overTarget(locale: Locale, over: number): string {
     return locale === "th" ? `เกินงบ ${n(over, locale)} บาท` : `${n(over, locale)} baht over`;

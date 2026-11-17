@@ -15,7 +15,7 @@ export const PERFORMANCE_STRINGS = {
   pfPublicLink: { th: "ดูหน้าที่เผยแพร่ต่อสาธารณะ", en: "See the public page" },
   pfOpsHeading: { th: "การทำงานตอนนี้", en: "Right now" },
   pfOpsIntro: {
-    th: "นับสดจากระบบ ไม่ซ่อนตัวเลขที่น้อย ข้อร้องเรียนในหมวดที่จำกัดการเข้าถึงนับให้เฉพาะเจ้าหน้าที่ที่ได้รับมอบหมายในหมวดนั้น ดังนั้นตัวเลขของคุณอาจต่างจากของคนอื่น",
+    th: "นับสดจากระบบ ไม่ซ่อนตัวเลขที่น้อย ข้อร้องเรียนในหมวดที่จำกัดการเข้าถึงนับให้เฉพาะเจ้าหน้าที่ที่ได้รับมอบหมายในหมวดนั้น ตัวเลขที่คุณเห็นจึงอาจต่างจากของคนอื่น",
     en: "Counted live from the system, with no hiding of small numbers. Complaints in restricted categories are counted only for staff named on that category, so your numbers may differ from someone else's",
   },
   pfOpenHeading: { th: "เรื่องที่ยังเปิดอยู่ตามสถานะ", en: "Open cases by status" },
@@ -45,8 +45,8 @@ export const PERFORMANCE_STRINGS = {
   pfColHandled: { th: "ดำเนินการล่าสุดโดยห้องนี้", en: "Last handled by this desk" },
   pfNoDesk: { th: "ยังไม่ระบุห้อง", en: "No desk yet" },
   pfDesksNote: {
-    th: "“ที่ถืออยู่” คือเรื่องของหายและของที่พบที่ห้องนั้นเก็บของไว้ “ดำเนินการล่าสุด” คือเรื่องทุกบริการที่เจ้าหน้าที่ของห้องนั้นดำเนินการล่าสุด ข้อร้องเรียนใช้คิวร่วมกันจึงไม่มีห้องที่ถือเรื่อง",
-    en: "“Held” is lost and found cases whose item is at that desk. “Last handled” is cases of any service whose latest action was by that desk's staff. Complaints share one queue, so no desk holds them",
+    th: "คอลัมน์ “ของที่ถืออยู่” นับเรื่องของหายและของที่พบที่ห้องนั้นเก็บของไว้ คอลัมน์ “ดำเนินการล่าสุด” นับเรื่องทุกบริการที่เจ้าหน้าที่ของห้องนั้นดำเนินการล่าสุด ข้อร้องเรียนใช้คิวร่วมกันจึงไม่มีห้องที่ถือเรื่อง",
+    en: "The Held column counts lost and found cases whose item is at that desk. The Last handled column counts cases of any service whose latest action was by that desk's staff. Complaints share one queue, so no desk holds them",
   },
   pfFiguresHeading: { th: "ตัวเลขที่เผยแพร่", en: "Published figures" },
   pfFiguresIntro: {

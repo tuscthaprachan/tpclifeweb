@@ -65,7 +65,7 @@ export const BORROWING_STRINGS = {
   brDetailsHeading: { th: "ข้อมูลส่วนบุคคลของผู้ยืม", en: "Borrower's details" },
   brDetailsShow: { th: "แสดงรหัสนักศึกษา", en: "Show student number" },
   brDetailsHide: { th: "ซ่อนข้อมูล", en: "Hide details" },
-  brDetailsLogged: { th: "ระบบบันทึกทุกครั้งที่เปิดดู ชื่อและเบอร์โทรอยู่ในส่วนข้อมูลติดต่อด้านขวา", en: "Each time you show this it is logged. The name and phone number are under contact details at the side" },
+  brDetailsLogged: { th: "ระบบบันทึกทุกครั้งที่เปิดดู ชื่อและเบอร์โทรอยู่ในส่วนข้อมูลติดต่อด้านขวา", en: "Each time you show this, it is logged. The name and phone number are under contact details at the side" },
   brDetailsGone: { th: "ไม่มีข้อมูลนี้แล้ว อาจไม่เคยมี หรือถูกลบตามกำหนดเก็บข้อมูลหนึ่งปี", en: "This is no longer held. It was either never given or was deleted after the one year retention period" },
   brRowStudentNumber: { th: "รหัสนักศึกษา", en: "Student number" },
   brRowFaculty: { th: "คณะ", en: "Faculty" },
@@ -191,7 +191,7 @@ export const BORROWING_STRINGS = {
 
   /* Inventory */
   brInvTitle: { th: "รายการอุปกรณ์ให้ยืม", en: "Equipment inventory" },
-  brInvIntro: { th: "หมวด จำนวนที่มี และกติกาของอุปกรณ์แต่ละชนิด จำนวนที่แสดงให้ผู้ยืมคิดจากช่องนี้ ไม่ลบรายการ ให้ปิดการใช้งานแทน เพื่อให้คำขอเก่ายังอ้างถึงได้", en: "Categories, how many the desk holds and the rules for each. What borrowers are told is free comes from here. Items are never deleted: switch them off, so old requests still refer to them" },
+  brInvIntro: { th: "หมวด จำนวนที่มี และกติกาของอุปกรณ์แต่ละชนิด จำนวนที่แสดงให้ผู้ยืมคิดจากช่องนี้ ไม่ลบรายการ ให้ปิดการใช้งานแทน เพื่อให้คำขอเก่ายังอ้างถึงได้", en: "Set the categories, how many the desk holds and the rules for each. The free stock shown to borrowers is calculated from these figures. Items are never deleted. Switch them off instead, so old requests can still refer to them" },
   brInvAddItem: { th: "เพิ่มอุปกรณ์", en: "Add an item" },
   brInvAddItemTo: { th: "เพิ่มอุปกรณ์ในหมวดนี้", en: "Add an item to this category" },
   brInvAddItemIntro: { th: "เพิ่มอุปกรณ์ชนิดใหม่ในหมวดที่มีอยู่", en: "Add a new kind of item to an existing category" },
@@ -199,7 +199,7 @@ export const BORROWING_STRINGS = {
   brInvEditItemIntro: { th: "แก้ไขชื่อ หน่วย จำนวน และกติกาของอุปกรณ์ชนิดนี้", en: "Change the names, unit, quantities and limit for this item" },
   brInvBack: { th: "กลับไปที่รายการอุปกรณ์", en: "Back to the inventory" },
   brInvEditCategory: { th: "แก้ไขหมวดนี้", en: "Edit this category" },
-  brInvCategorySummary: { th: "ขอล่วงหน้า {notice} วันทำการ, หลักประกัน {cards} ใบ", en: "{notice} working days' notice, {cards} deposit card(s)" },
+  brInvCategorySummary: { th: "ขอล่วงหน้า {notice} วันทำการ หลักประกัน {cards} ใบ", en: "{notice} working days' notice, {cards} deposit card(s)" },
   brInvCategoryCap: { th: "ไม่เกิน {max} ชิ้นต่อคำขอ", en: "Up to {max} per request" },
   brInvInactive: { th: "ปิดใช้งาน", en: "Switched off" },
   brInvNoItems: { th: "หมวดนี้ยังไม่มีอุปกรณ์", en: "This category has no items yet" },
