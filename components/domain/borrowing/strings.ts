@@ -33,7 +33,7 @@ export const AVAIL = {
   chooserSubmit: { th: "ดูวันที่ว่าง", en: "Show availability" },
   dayFormLabel: { th: "หรือดูทุกรายการในวันเดียว", en: "Or see every item on one day" },
   dayFormInput: { th: "วันที่", en: "Date" },
-  dayFormSubmit: { th: "ดูวันนี้", en: "Show this day" },
+  dayFormSubmit: { th: "ดูวันที่เลือก", en: "Show this day" },
 
   /* Month */
   monthNav: { th: "เลื่อนเดือน", en: "Change month" },

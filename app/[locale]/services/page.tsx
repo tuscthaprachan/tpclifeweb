@@ -25,7 +25,17 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
   const locale: Locale = rawLocale;
 
   const settings = await getSiteSettings();
-  const descriptions = new Map(settings.homeTasks.map((task) => [task.path, pick(task.description, locale)]));
+  const navLabels = new Map(settings.primaryNav.map((item) => [item.path, item.label]));
+  const fromTasks = settings.homeTasks.map((task) => ({
+    path: task.path,
+    label: navLabels.get(task.path) ?? task.label,
+    description: pick(task.description, locale),
+  }));
+  const taskPaths = new Set(fromTasks.map((item) => item.path));
+  const items = [
+    ...fromTasks,
+    ...settings.primaryNav.filter((item) => !taskPaths.has(item.path)).map((item) => ({ path: item.path, label: item.label, description: "" })),
+  ];
 
   return (
     <Container>
@@ -37,8 +47,8 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
         </Stack>
 
         <ul className="m-0 grid list-none gap-[var(--space-2)] p-0">
-          {settings.primaryNav.map((item) => {
-            const description = descriptions.get(item.path);
+          {items.map((item) => {
+            const description = item.description;
             return (
               <li key={item.path}>
                 <NextLink

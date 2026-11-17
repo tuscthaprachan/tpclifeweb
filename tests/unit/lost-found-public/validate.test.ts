@@ -55,7 +55,9 @@ describe("validateStep", () => {
     expect(parseDate("", "3", "2026", NOW)).toBeNull();
     expect(parseDate("1", "3", "26", NOW)).toBeNull();
     expect(parseDate("1", "3", "1999", NOW)).toBeNull();
-    expect(validateStep("lost", "when", v({ day: "40", month: "1", year: "2026" }), NOW)).toEqual({ when: "errorInvalidDate" });
+    expect(validateStep("lost", "when", v({ day: "40", month: "1", year: "2026" }), NOW)).toEqual({ when: "lfpErrWhenInvalid" });
+    expect(validateStep("lost", "when", v({ day: "11", month: "3", year: "2026" }), NOW)).toEqual({ when: "lfpErrWhenFuture" });
+    expect(validateStep("lost", "when", v(), NOW)).toEqual({ when: "lfpErrWhenMissing" });
     expect(validateStep("lost", "when", v({ day: "2", month: "1", year: "2026" }), NOW)).toEqual({});
   });
 

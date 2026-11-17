@@ -9,6 +9,7 @@ import { localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { continueToTusu } from "./actions";
 import { BackLink } from "./BackLink";
+import { signpostTitle } from "./copy";
 import { ExitThisPage } from "./ExitThisPage";
 import { BodiesSection, OfficeSection } from "./RedirectSignpost";
 import { WellbeingBox } from "./WellbeingBox";
@@ -31,7 +32,6 @@ export function Signpost({ locale, crumbs, backHref, values, faculty }: { locale
   const sensitive = course && values.lecturer === "harassment";
   const chosen = values.programme && values.programme !== NO_PROGRAMME ? values.programme : null;
   const bodies = faculty ? bodiesFor(faculty, course ? null : chosen) : [];
-  const title = !course ? UI.cpSignFacultyTitle : sensitive ? UI.cpSignSafetyTitle : values.lecturer === "yes" ? UI.cpSignLecturerTitle : UI.cpSignOtherTitle;
   const body = !course ? UI.cpSignFacultyBody : sensitive ? UI.cpSignSafetyBody : values.lecturer === "yes" ? UI.cpSignLecturerBody : UI.cpSignOtherBody;
   const how = [UI.cpSignHow1, UI.cpSignHow2, UI.cpSignHow3, UI.cpSignHow4];
 
@@ -42,7 +42,7 @@ export function Signpost({ locale, crumbs, backHref, values, faculty }: { locale
         {sensitive ? <ExitThisPage label={UI.cpExitPage[locale]} /> : null}
         <BackLink href={backHref} locale={locale} />
         <Stack space={2}>
-          <Heading level={1}>{title[locale]}</Heading>
+          <Heading level={1}>{signpostTitle(values, locale)}</Heading>
           <p className="m-0 text-ink-900">{body[locale]}</p>
         </Stack>
 
@@ -65,8 +65,8 @@ export function Signpost({ locale, crumbs, backHref, values, faculty }: { locale
 
         {sensitive ? <WellbeingBox locale={locale} /> : null}
 
-        {faculty ? <BodiesSection faculty={faculty} bodies={bodies} locale={locale} /> : null}
-        <OfficeSection faculty={faculty} locale={locale} />
+        {faculty ? <BodiesSection faculty={faculty} bodies={bodies} locale={locale} level={2} /> : null}
+        <OfficeSection faculty={faculty} locale={locale} level={2} />
 
         {sensitive ? (
           <Stack space={2} as="section">

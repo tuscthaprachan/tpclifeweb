@@ -37,7 +37,7 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
 
   phase: "alpha",
   phaseNote: {
-    th: "บริการใหม่นี้ยังอยู่ระหว่างทดลอง ข้อมูลบางส่วนอาจยังไม่ครบ",
+    th: "บริการนี้เป็นบริการใหม่และยังอยู่ระหว่างทดลอง ข้อมูลบางส่วนอาจยังไม่ครบ",
     en: "This is a new service still being tested. Some information may be incomplete",
   },
 
@@ -57,7 +57,7 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
     { label: { th: "คำถามที่พบบ่อย", en: "Common questions" }, path: "/faq" },
     { label: { th: "เกี่ยวกับ", en: "About" }, path: "/about" },
     { label: { th: "ข้อมูลเปิด", en: "Open data" }, path: "/about/open-data" },
-    { label: { th: "การเข้าถึง", en: "Accessibility" }, path: "/accessibility" },
+    { label: { th: "การเข้าถึงเว็บไซต์", en: "Accessibility" }, path: "/accessibility" },
     { label: { th: "คุกกี้", en: "Cookies" }, path: "/cookies" },
     { label: { th: "ผลการดำเนินงาน", en: "Performance" }, path: "/performance" },
   ],

@@ -29,14 +29,15 @@ export async function openTracking(form: FormData): Promise<void> {
   const referenceRaw = text(form, "reference");
   const linkRaw = text(form, "link");
   if (!referenceRaw.trim()) redirect(trackPath(locale, "?problem=ref"));
-  if (!linkRaw.trim()) redirect(trackPath(locale, "?problem=link"));
+  if (!linkRaw.trim()) redirect(trackPath(locale, `?problem=link&ref=${encodeURIComponent(referenceRaw.trim().slice(0, 30))}`));
+  const kept = `&ref=${encodeURIComponent(referenceRaw.trim().slice(0, 30))}`;
   const parsed = parseTrackingInput(referenceRaw, linkRaw);
-  if (!parsed || !isDatabaseConfigured()) redirect(trackPath(locale, "?problem=1"));
+  if (!parsed || !isDatabaseConfigured()) redirect(trackPath(locale, `?problem=1${kept}`));
 
   const meta = await requestContext();
   const found = await lookupTracked(getDb(), parsed.reference, parsed.token, meta.ip);
   if (found.state === "limited") redirect(trackPath(locale, limitedQuery(found.retryAfterSeconds)));
-  if (found.state === "none") redirect(trackPath(locale, "?problem=1"));
+  if (found.state === "none") redirect(trackPath(locale, `?problem=1${kept}`));
   await writeTrackCookie({ reference: parsed.reference, token: parsed.token });
   redirect(localePath(locale, "/lost-and-found/track/status"));
 }

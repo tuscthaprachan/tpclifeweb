@@ -22,7 +22,7 @@ import { UI } from "@/lib/i18n/strings";
 
 const s = (th: string, en: string): LocaleString => ({ th, en });
 
-const TITLE = s("ประกาศความเป็นส่วนตัว ข้อร้องเรียน", "Privacy notice for complaints");
+const TITLE = s("ประกาศความเป็นส่วนตัวของบริการข้อร้องเรียน", "Privacy notice for complaints");
 const INTRO = s(
   "บริการข้อร้องเรียนดำเนินการร่วมกันโดย อมธ. และ สภานักศึกษา ท่าพระจันทร์ หน้านี้บอกว่าเราเก็บข้อมูลอะไร เพราะอะไร ใครเห็นได้ และเก็บนานเท่าใด",
   "Complaints are handled jointly by TUSU and TUSC at Tha Prachan. This page says what we collect, why, who can see it and how long we keep it",
@@ -47,7 +47,7 @@ const WHAT: Array<{ what: LocaleString; why: LocaleString }> = [
   {
     what: s("ชื่อ อีเมล เบอร์โทรศัพท์ หรือไอดีไลน์ (เฉพาะเมื่อคุณเลือกให้ข้อมูล)", "Your name, email address, phone number or LINE ID (only if you choose to give them)"),
     why: s(
-      "เพื่อแจ้งความคืบหน้าและถามข้อมูลเพิ่ม เข้ารหัสไว้ หากคุณไม่ระบุตัวตน เราไม่เก็บข้อมูลเหล่านี้เลย หากคุณเลือกไม่เปิดเผยชื่อ ชื่อของคุณจะเห็นเฉพาะเจ้าหน้าที่ดำเนินการเรื่องร้องเรียนและผู้ดูแลระบบเมื่อจำเป็น",
+      "เพื่อแจ้งความคืบหน้าและถามข้อมูลเพิ่ม เข้ารหัสไว้ หากคุณไม่ระบุตัวตน เราไม่เก็บข้อมูลเหล่านี้เลย หากคุณเลือกไม่เปิดเผยชื่อ ชื่อของคุณจะเห็นเฉพาะเจ้าหน้าที่ดำเนินการข้อร้องเรียนและผู้ดูแลระบบเมื่อจำเป็น",
       "So we can tell you how it is going and ask for more. Encrypted. If you stay anonymous we hold none of these. If you keep your name back, only complaints officers and administrators can see it, if it is needed",
     ),
   },
@@ -56,7 +56,7 @@ const WHAT: Array<{ what: LocaleString; why: LocaleString }> = [
     why: s("เพื่อบันทึกว่าคุณอนุญาตให้ติดต่อ และเมื่อใด", "To record that you said we may contact you, and when"),
   },
   {
-    what: s("คะแนนความพึงพอใจ และความเห็น (ไม่บังคับ) หลังเรื่องมีผล", "Your satisfaction score, and a comment (optional), after an outcome"),
+    what: s("คะแนนความพึงพอใจ และความเห็น (ไม่บังคับ) หลังเราแจ้งผลการดำเนินการ", "Your satisfaction score, and a comment (optional), after an outcome"),
     why: s(
       "เพื่อปรับปรุงบริการ ความเห็นเข้ารหัสไว้ คะแนนไม่มีข้อมูลส่วนตัวและเราเก็บไว้เพื่อรายงานผลการดำเนินงาน",
       "To improve the service. The comment is encrypted. The score holds no personal data and is kept for performance reporting",
@@ -130,7 +130,7 @@ const KEEP = [
     "The confirmation page that shows your private link: kept for 30 minutes only, then deleted. We cannot show the link again later",
   ),
   s(
-    `ข้อมูลส่วนบุคคลในเรื่องที่แจ้ง: ลบหลังเรื่องปิดครบ 1 ปี เรื่องมีผลแล้วจะปิดโดยอัตโนมัติเมื่อพ้น ${REOPEN_WINDOW_DAYS} วัน หากคุณเปิดเรื่องอีกครั้ง การนับเวลาจะหยุดไว้`,
+    `ข้อมูลส่วนบุคคลในเรื่องที่แจ้ง: ลบหลังเรื่องปิดครบ 1 ปี เรื่องที่แจ้งผลแล้วจะปิดโดยอัตโนมัติเมื่อพ้น ${REOPEN_WINDOW_DAYS} วัน หากคุณเปิดเรื่องอีกครั้ง การนับเวลาจะหยุดไว้`,
     `Personal data in a complaint: deleted one year after it closes. A resolved complaint closes by itself after ${REOPEN_WINDOW_DAYS} days; if you reopen it the clock stops`,
   ),
   s(
@@ -141,7 +141,7 @@ const KEEP = [
 
 const RIGHTS_HEADING = s("สิทธิ์ของคุณ", "Your rights");
 const RIGHTS = s(
-  "คุณขอดู แก้ไข หรือลบข้อมูลของคุณได้ หรือถอนความยินยอมได้ทุกเมื่อ ติดต่อเจ้าหน้าที่ตามช่องทางด้านล่างของหน้านี้ และแจ้งเลขอ้างอิง คุณยกเลิกเรื่องร้องเรียนด้วยตนเองได้ในหน้าติดตามเรื่อง",
+  "คุณขอดู แก้ไข หรือลบข้อมูลของคุณได้ หรือถอนความยินยอมได้ทุกเมื่อ ติดต่อเจ้าหน้าที่ตามช่องทางด้านล่างของหน้านี้ และแจ้งเลขอ้างอิง คุณถอนข้อร้องเรียนด้วยตนเองได้ในหน้าติดตามเรื่อง",
   "You can ask to see, correct or delete your data, or withdraw your consent, at any time. Contact the desk using the details at the bottom of this page and quote your reference number. You can withdraw a complaint yourself on the tracking page",
 );
 

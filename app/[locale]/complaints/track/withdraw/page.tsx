@@ -16,6 +16,7 @@ import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
+import { BackLink } from "../../_journey/BackLink";
 import { withdrawComplaint } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -61,6 +62,7 @@ export default async function WithdrawComplaintPage({ params, searchParams }: { 
         ]}
       />
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
+        <BackLink href={status} locale={locale} />
         <Heading level={1}>{UI.cpWithdrawTitle[locale]}</Heading>
         {failed ? (
           <NotificationBanner variant="warning" title={UI.errorTitle[locale]}>

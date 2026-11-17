@@ -22,12 +22,13 @@ export const dynamic = "force-dynamic";
 type SearchParams = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<SearchParams> }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
+  const problem = first((await searchParams).problem);
   return {
     alternates: alternatesFor(locale, "/lost-and-found/track"),
-    title: UI.lfpTrackTitle[locale],
+    title: `${problem ? UI.lfpErrorTitlePrefix[locale] : ""}${UI.lfpTrackTitle[locale]}`,
     description: UI.lfpTrackIntro[locale],
     referrer: "same-origin",
   };
@@ -39,6 +40,7 @@ export default async function TrackPage({ params, searchParams }: { params: Prom
   const locale: Locale = rawLocale;
   const query = await searchParams;
   const problem = first(query.problem);
+  const keptReference = (first(query.ref) ?? "").match(/^[A-Za-z0-9-]{1,30}$/)?.[0] ?? "";
   const wait = parseWaitMinutes(first(query.wait));
   const limited = wait === null ? UI.lfpTrackLimited[locale] : wait === 1 ? UI.lfpTrackLimitedInOne[locale] : UI.lfpTrackLimitedIn[locale].replace("{n}", String(wait));
 
@@ -79,6 +81,7 @@ export default async function TrackPage({ params, searchParams }: { params: Prom
                 label={UI.lfpTrackRefLabel[locale]}
                 hint={UI.lfpTrackRefHint[locale]}
                 error={problem === "ref" ? UI.lfpErrTrackRef[locale] : undefined}
+                defaultValue={keptReference}
                 autoComplete="off"
                 autoCapitalize="characters"
                 spellCheck={false}

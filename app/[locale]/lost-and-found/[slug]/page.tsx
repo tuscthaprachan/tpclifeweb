@@ -75,8 +75,12 @@ export default async function LostFoundDetailPage({
           <Heading level={1}>{title}</Heading>
           <p className="m-0 text-sm text-ink-600">
             {UI.lostFoundReference[locale]}: <span className="font-medium text-ink-900">{item.reference}</span>
-            {" "}
-            <span className="text-ink-600">({UI.lostFoundReferenceHint[locale]})</span>
+            {isFound ? (
+              <>
+                {" "}
+                <span className="text-ink-600">({UI.lostFoundReferenceHint[locale]})</span>
+              </>
+            ) : null}
           </p>
         </Stack>
 
@@ -113,6 +117,17 @@ export default async function LostFoundDetailPage({
           ) : null}
         </dl>
 
+        {!isFound && item.status !== "returned" && item.status !== "withdrawn" ? (
+          <Stack space={3} as="section" className="rounded-panel border border-line px-[var(--space-4)] py-[var(--space-4)]">
+            <p className="m-0 text-ink-900">{UI.lfpFoundThisItem[locale]}</p>
+            <div>
+              <Button href={localePath(locale, "/lost-and-found/found")} variant="secondary">
+                {UI.reportFoundItem[locale]}
+              </Button>
+            </div>
+          </Stack>
+        ) : null}
+
         {isFound && item.status !== "returned" && item.status !== "withdrawn" ? (
           <Stack space={3} as="section" className="rounded-panel border border-line px-[var(--space-4)] py-[var(--space-4)]">
             <Heading level={2} visualLevel={3}>
@@ -132,7 +147,7 @@ export default async function LostFoundDetailPage({
             <InsetText>{UI.claimCheckNote[locale]}</InsetText>
             {item.status === "open" || item.status === "matched" ? (
               <div>
-                <Button href={localePath(locale, `/lost-and-found/${item.slug.current}/claim`)}>{UI.lfpThisIsMine[locale]}</Button>
+                <Button href={localePath(locale, `/lost-and-found/${item.slug.current}/claim`)}>{UI.lfpClaimTitle[locale]}</Button>
               </div>
             ) : null}
           </Stack>

@@ -114,7 +114,7 @@ const KEEP = [
     "The confirmation page that shows your private link: kept for 30 minutes only, then deleted. We cannot show the link again later",
   ),
   s(
-    "ข้อมูลส่วนบุคคลในเรื่องที่แจ้ง: ลบหลังเรื่องปิดครบ 1 ปี เรื่องจะปิดเมื่อคืนของให้เจ้าของแล้ว ปิดโดยไม่พบของ หรือยกเลิก ของที่เก็บได้จะอยู่ในรายการจนกว่าจะมีผู้รับคืน เรื่องจึงยังเปิดอยู่และเรายังเก็บข้อมูลไว้ จนกว่าเรื่องจะปิด",
+    "ข้อมูลส่วนบุคคลในเรื่องที่แจ้ง: ลบหลังเรื่องปิดครบ 1 ปี เรื่องจะปิดเมื่อคืนของให้เจ้าของแล้ว ปิดโดยไม่พบของ หรือยกเลิก ของที่เก็บได้จะอยู่ในรายการจนกว่าจะมีผู้มารับคืน เรื่องจึงยังไม่ปิด และเรายังเก็บข้อมูลไว้จนกว่าเรื่องจะปิด",
     "Personal data in a case: deleted one year after the case closes. A case closes when the item is returned, closed without being found, or withdrawn. Found items stay listed until they are claimed, so that case stays open and we keep its data until it closes",
   ),
   s(

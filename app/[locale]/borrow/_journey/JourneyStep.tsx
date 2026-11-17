@@ -29,6 +29,7 @@ import { BackLink } from "./BackLink";
 import { CheckAnswers } from "./CheckAnswers";
 import { Confirmation } from "./Confirmation";
 import { errorAnchor, errorMessage, stepTitle } from "./copy";
+import { ErrorTitle } from "./ErrorTitle";
 import { DatesStep } from "./DatesStep";
 import { ItemsStep } from "./ItemsStep";
 import { Question } from "./Question";
@@ -91,6 +92,7 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
               {errorMessage(flash.errors.form, locale)}
             </NotificationBanner>
           ) : null}
+          {flash?.errors.form ? <ErrorTitle prefix={UI.brErrorPrefix[locale]} /> : null}
           <CheckAnswers locale={locale} values={values} inventory={ctx.inventory} facultyName={faculty ? pick(faculty.name, locale) : undefined} />
         </Stack>
       </Container>
@@ -115,6 +117,7 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
       {crumbs}
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <BackLink href={backHref} locale={locale} />
+        {items.length > 0 ? <ErrorTitle prefix={UI.brErrorPrefix[locale]} /> : null}
         <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={items} />
         <form action={saveStep} noValidate>
           <input type="hidden" name="step" value={step} />

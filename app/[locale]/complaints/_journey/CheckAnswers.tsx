@@ -93,10 +93,10 @@ export function CheckAnswers({ locale, values, category, fileNames }: CheckAnswe
           <input id="cp-website" type="text" name="website" tabIndex={-1} autoComplete="off" />
         </div>
         <Stack space={4}>
-          <p className="m-0 text-ink-900">
-            {UI.cpCheckPrivacy[locale]}{" "}
+          <p className="m-0 text-ink-900">{UI.cpCheckPrivacy[locale]}</p>
+          <p className="m-0">
             <Link href={localePath(locale, "/complaints/privacy")} className="text-action underline">
-              {UI.cpPrivacyLink[locale]}
+              {UI.cpCheckPrivacyLink[locale]}
             </Link>
           </p>
           <div>

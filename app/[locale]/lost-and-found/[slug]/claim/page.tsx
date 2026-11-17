@@ -74,9 +74,12 @@ export default async function ClaimStartPage({ params, searchParams }: { params:
               {item.claimContact ? <LostFoundClaimContact contact={item.claimContact} locale={locale} /> : null}
             </>
           ) : (
-            <NotificationBanner variant="info" title={UI.lfpClaimTitle[locale]}>
-              {UI.lfpClaimClosed[locale]}
-            </NotificationBanner>
+            <>
+              <NotificationBanner variant="info" title={UI.lfpClaimClosedTitle[locale]}>
+                {UI.lfpClaimClosed[locale]}
+              </NotificationBanner>
+              {item.claimContact ? <LostFoundClaimContact contact={item.claimContact} locale={locale} /> : null}
+            </>
           )}
         </Stack>
       </Container>

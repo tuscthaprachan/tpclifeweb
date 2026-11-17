@@ -158,8 +158,10 @@ function StartAction({ form, locale }: { form: FormRecord; locale: Locale }): Re
   const suffix = externalLinkSuffix(locale, external);
   const label = destinationType === "line" ? pick(LINE_START_LABEL, locale) : UI.startForm[locale];
 
+  const href = destinationUrl.startsWith("/") && !destinationUrl.startsWith("//") ? localePath(locale, destinationUrl) : destinationUrl;
+
   return (
-    <Button href={destinationUrl} {...externalLinkProps(external)}>
+    <Button href={href} {...externalLinkProps(external)}>
       {label}
       {suffix ? <span className="visually-hidden">{suffix}</span> : null}
     </Button>

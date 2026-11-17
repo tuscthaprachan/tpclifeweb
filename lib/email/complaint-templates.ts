@@ -50,12 +50,12 @@ export interface ComplaintEmailParams {
 /** Staff have acknowledged the complaint. */
 export function complaintAcknowledged({ reference }: ComplaintEmailParams): RenderedEmail {
   return render(
-    `เจ้าหน้าที่รับเรื่องร้องเรียนของคุณแล้ว ${reference} / We have acknowledged your complaint ${reference}`,
+    `เจ้าหน้าที่รับข้อร้องเรียนของคุณแล้ว ${reference} / We have acknowledged your complaint ${reference}`,
     {
       lang: "th",
-      heading: "เจ้าหน้าที่รับเรื่องร้องเรียนของคุณแล้ว",
+      heading: "เจ้าหน้าที่รับข้อร้องเรียนของคุณแล้ว",
       paragraphs: [
-        `เจ้าหน้าที่ของ${SERVICE.th}ได้รับเรื่องร้องเรียนแล้วและกำลังดำเนินการ`,
+        `เจ้าหน้าที่ของ${SERVICE.th}ได้รับข้อร้องเรียนแล้วและกำลังดำเนินการ`,
         "ดูความคืบหน้าและวันที่คาดว่าจะแจ้งผลได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง",
       ],
       reference: { label: "เลขอ้างอิง", value: reference },
@@ -77,10 +77,10 @@ export function complaintAcknowledged({ reference }: ComplaintEmailParams): Rend
 /** The complaint has been resolved; the person is asked to look and to say how it went. */
 export function complaintResolved({ reference }: ComplaintEmailParams): RenderedEmail {
   return render(
-    `เจ้าหน้าที่แจ้งผลเรื่องร้องเรียนของคุณแล้ว ${reference} / There is an outcome to your complaint ${reference}`,
+    `เจ้าหน้าที่แจ้งผลข้อร้องเรียนของคุณแล้ว ${reference} / There is an outcome to your complaint ${reference}`,
     {
       lang: "th",
-      heading: "เจ้าหน้าที่แจ้งผลเรื่องร้องเรียนของคุณแล้ว",
+      heading: "เจ้าหน้าที่แจ้งผลข้อร้องเรียนของคุณแล้ว",
       paragraphs: [
         "เปิดลิงก์ส่วนตัวเพื่ออ่านผลที่เจ้าหน้าที่แจ้ง และบอกเราว่าพอใจกับการดำเนินการหรือไม่",
         `หากเห็นว่าเรื่องยังไม่จบ ขอเปิดเรื่องอีกครั้งได้ภายใน ${REOPEN_WINDOW_DAYS} วัน จากหน้าเดียวกัน`,
@@ -152,11 +152,11 @@ function redirectParagraphs({ level, faculty, bodies }: RedirectTarget, lang: "t
 /** The complaint is outside the union's remit and has been closed as redirected; says who to contact instead. */
 export function complaintRedirected({ reference, target }: RedirectedEmailParams): RenderedEmail {
   return render(
-    `เรื่องร้องเรียนของคุณไม่อยู่ในความรับผิดชอบของเรา ${reference} / Your complaint is outside our remit ${reference}`,
+    `ข้อร้องเรียนของคุณไม่อยู่ในความรับผิดชอบของเรา ${reference} / Your complaint is outside our remit ${reference}`,
     {
       lang: "th",
       heading: "เรื่องนี้ต้องติดต่อหน่วยงานอื่น",
-      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}อ่านเรื่องร้องเรียนของคุณแล้ว พบว่าไม่อยู่ในความรับผิดชอบของเรา จึงขอปิดเรื่อง`, ...redirectParagraphs(target, "th")],
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}อ่านข้อร้องเรียนของคุณแล้ว พบว่าไม่อยู่ในความรับผิดชอบของเรา จึงขอปิดเรื่อง`, ...redirectParagraphs(target, "th")],
       reference: { label: "เลขอ้างอิง", value: reference },
       after: ["ดูข้อมูลนี้อีกครั้งได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง ใครมีลิงก์ก็ดูเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น"],
     },
@@ -181,12 +181,12 @@ export interface EscalationEmailParams {
 export function complaintsEscalated({ items, inboxUrl }: EscalationEmailParams): RenderedEmail {
   const th = items.map((i) => `${i.reference}: ${i.reason === "acknowledge" ? "รับเรื่องไม่ทันกำหนด" : "แก้ไขไม่ทันกำหนด"}`);
   const en = items.map((i) => `${i.reference}: ${i.reason === "acknowledge" ? "not acknowledged in time" : "not resolved in time"}`);
-  const subject = `มีเรื่องร้องเรียนเกินกำหนด ${items.length} เรื่อง / ${items.length} complaint${items.length === 1 ? "" : "s"} past target`;
+  const subject = `มีข้อร้องเรียนเกินกำหนด ${items.length} เรื่อง / ${items.length} complaint${items.length === 1 ? "" : "s"} past target`;
   const part = (lang: "th" | "en", title: string, intro: string, lines: string[], link: string) => ({
     text: [title, "", intro, "", ...lines.map((l) => `- ${l}`), "", link, inboxUrl].join("\n"),
     html: section(lang, [heading(lang, title), paragraph(lang, intro), list(lang, lines), button(lang, link, inboxUrl)]),
   });
-  const a = part("th", "มีเรื่องร้องเรียนเกินกำหนด", "เรื่องร้องเรียนต่อไปนี้ยังไม่มีผู้รับเรื่องหรือยังแก้ไขไม่เสร็จภายในเวลาที่กำหนด เปิดคิวเรื่องเพื่อดูรายละเอียด", th, "เปิดคิวเรื่อง");
+  const a = part("th", "มีข้อร้องเรียนเกินกำหนด", "ข้อร้องเรียนต่อไปนี้ยังไม่มีผู้รับเรื่องหรือยังแก้ไขไม่เสร็จภายในเวลาที่กำหนด เปิดคิวเรื่องเพื่อดูรายละเอียด", th, "เปิดคิวเรื่อง");
   const b = part("en", "Complaints past their target", "These complaints have not been acknowledged or resolved within their target. Open the queue to see them.", en, "Open the queue");
   return {
     subject,
@@ -201,12 +201,12 @@ const PRIVATE_LINK_EN = "Anyone with the private link can see this complaint, so
 /** The complaint has been closed, by staff or once the time to reopen it ran out. */
 export function complaintClosed({ reference }: ComplaintEmailParams): RenderedEmail {
   return render(
-    `ปิดเรื่องร้องเรียนของคุณแล้ว ${reference} / Your complaint is closed ${reference}`,
+    `ปิดข้อร้องเรียนของคุณแล้ว ${reference} / Your complaint is closed ${reference}`,
     {
       lang: "th",
-      heading: "ปิดเรื่องร้องเรียนของคุณแล้ว",
+      heading: "ปิดข้อร้องเรียนของคุณแล้ว",
       paragraphs: [
-        `เจ้าหน้าที่ของ${SERVICE.th}ปิดเรื่องร้องเรียนนี้แล้ว ดูผลที่เจ้าหน้าที่แจ้งได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง`,
+        `เจ้าหน้าที่ของ${SERVICE.th}ปิดข้อร้องเรียนนี้แล้ว ดูผลที่เจ้าหน้าที่แจ้งได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง`,
         "หากยังไม่ได้บอกเราว่าพอใจกับการดำเนินการหรือไม่ ทำแบบสอบถามสั้น ๆ ได้จากหน้าเดียวกัน",
       ],
       reference: { label: "เลขอ้างอิง", value: reference },
@@ -228,11 +228,11 @@ export function complaintClosed({ reference }: ComplaintEmailParams): RenderedEm
 /** The complaint has been reopened. */
 export function complaintReopened({ reference }: ComplaintEmailParams): RenderedEmail {
   return render(
-    `เปิดเรื่องร้องเรียนของคุณอีกครั้งแล้ว ${reference} / Your complaint is reopened ${reference}`,
+    `เปิดข้อร้องเรียนของคุณอีกครั้งแล้ว ${reference} / Your complaint is reopened ${reference}`,
     {
       lang: "th",
-      heading: "เปิดเรื่องร้องเรียนของคุณอีกครั้งแล้ว",
-      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}เปิดเรื่องร้องเรียนนี้อีกครั้งและกำลังดำเนินการ`, "ดูความคืบหน้าได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง"],
+      heading: "เปิดข้อร้องเรียนของคุณอีกครั้งแล้ว",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}เปิดข้อร้องเรียนนี้อีกครั้งและกำลังดำเนินการ`, "ดูความคืบหน้าได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง"],
       reference: { label: "เลขอ้างอิง", value: reference },
       after: [PRIVATE_LINK_TH],
     },
@@ -249,11 +249,11 @@ export function complaintReopened({ reference }: ComplaintEmailParams): Rendered
 /** The complaint is recorded as withdrawn. */
 export function complaintWithdrawn({ reference }: ComplaintEmailParams): RenderedEmail {
   return render(
-    `ถอนเรื่องร้องเรียนของคุณแล้ว ${reference} / Your complaint is withdrawn ${reference}`,
+    `ถอนข้อร้องเรียนของคุณแล้ว ${reference} / Your complaint is withdrawn ${reference}`,
     {
       lang: "th",
-      heading: "ถอนเรื่องร้องเรียนของคุณแล้ว",
-      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}บันทึกการถอนเรื่องร้องเรียนนี้แล้ว และจะไม่ดำเนินการต่อ`, "หากคุณไม่ได้ขอให้ถอนเรื่อง โปรดติดต่อเจ้าหน้าที่โดยเร็ว และแจ้งเลขอ้างอิงด้านล่าง"],
+      heading: "ถอนข้อร้องเรียนของคุณแล้ว",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}บันทึกการถอนข้อร้องเรียนนี้แล้ว และจะไม่ดำเนินการต่อ`, "หากคุณไม่ได้ขอให้ถอนเรื่อง โปรดติดต่อเจ้าหน้าที่โดยเร็ว และแจ้งเลขอ้างอิงด้านล่าง"],
       reference: { label: "เลขอ้างอิง", value: reference },
       after: [PRIVATE_LINK_TH],
     },

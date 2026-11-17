@@ -21,12 +21,13 @@ export const dynamic = "force-dynamic";
 type SearchParams = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<SearchParams> }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
+  const problem = first((await searchParams).problem);
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   return {
     alternates: alternatesFor(locale, "/complaints/track"),
-    title: UI.cpTrackTitle[locale],
+    title: `${problem ? UI.cpTitleErrorPrefix[locale] : ""}${UI.cpTrackTitle[locale]}`,
     description: UI.cpTrackIntro[locale],
     referrer: "same-origin",
   };

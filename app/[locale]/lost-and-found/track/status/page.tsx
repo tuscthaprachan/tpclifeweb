@@ -151,7 +151,7 @@ export default async function TrackStatusPage({ params, searchParams }: { params
   const { view, actions } = tracked;
 
   const tone = getStatusDef(view.service, view.kind, view.status)?.tone ?? "neutral";
-  const title = view.kind === "lost" ? UI.lfpStatusTitleReport[locale] : UI.lfpStatusTitleItem[locale];
+  const title = UI.lfpStatusTitleReport[locale];
 
   return (
     <Container width="narrow">

@@ -101,7 +101,12 @@ export function readStepValues(step: string, form: FormData, current: DraftValue
     case "items": {
       const ids = form.getAll("items").flatMap((v) => (typeof v === "string" && v.length <= 40 ? [v] : []));
       const items = [...new Set(ids)];
-      return { items, quantities: Object.fromEntries(Object.entries(current.quantities).filter(([id]) => items.includes(id))) };
+      const unchanged = items.length === current.items.length && items.every((id) => current.items.includes(id));
+      return {
+        items,
+        quantities: Object.fromEntries(Object.entries(current.quantities).filter(([id]) => items.includes(id))),
+        ...(unchanged ? {} : { terms: "" }),
+      };
     }
     case "quantities":
       return { quantities: Object.fromEntries(current.items.map((id) => [id, clean(form.get(quantityField(id)))])) };

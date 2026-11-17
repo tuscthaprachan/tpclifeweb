@@ -23,12 +23,13 @@ export const dynamic = "force-dynamic";
 type SearchParams = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<SearchParams> }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
+  const failed = first((await searchParams).problem) === "1";
   return {
     alternates: alternatesFor(locale, "/lost-and-found/track/withdraw"),
-    title: UI.lfpWithdrawTitle[locale],
+    title: `${failed ? UI.lfpErrorTitlePrefix[locale] : ""}${UI.lfpWithdrawTitle[locale]}`,
     robots: { index: false, follow: false },
     referrer: "same-origin",
   };

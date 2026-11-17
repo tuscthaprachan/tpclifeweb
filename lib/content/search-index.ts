@@ -20,6 +20,7 @@ import { richTextToPlainText } from "@/lib/rich-text/text";
 import { readDocuments, readFunds, readMeetings } from "@/lib/open-data/read";
 import { openDataDocumentRecords, openDataSectionRecords } from "@/lib/open-data/search";
 import { canteenSearchRecords } from "@/lib/search/canteen";
+import { serviceSearchRecords } from "@/lib/search/services";
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { readCanteenData } from "./canteen";
 import { readPlacesByIds } from "./directory";
@@ -101,6 +102,7 @@ export async function readSearchIndex(db: AuditExecutor): Promise<SearchIndex> {
   const lostFoundPlaces = await readPlacesByIds(db, lostFoundRows.map((item) => item.placeId));
 
   const records: SearchRecord[] = [
+    ...serviceSearchRecords(),
     ...formRows.map((f) =>
       record(
         f.id,

@@ -35,7 +35,7 @@ export function CheckAnswers({ kind, locale, slug, values, placeName }: CheckAns
   const add = (key: string, value: ReactNode, step: string) => rows.push({ key, value, actions: change(step, key) });
 
   if (kind !== "claim") {
-    add(UI.category[locale], categoryLabel(values.category as LostFoundCategory, locale), "category");
+    add(UI.lfpRowCategory[locale], categoryLabel(values.category as LostFoundCategory, locale), "category");
     add(UI.lfpTitleLabel[locale], values.title, "describe");
     add(UI.lfpDescriptionLabel[locale], lines(values.description), "describe");
     add((found ? UI.whereFound : UI.whereLost)[locale], [placeName, values.locationNote].filter(Boolean).join(", "), "where");

@@ -34,7 +34,7 @@ describe("seed", () => {
     const rows = await ctx.db.select().from(faculties);
     expect(rows).toHaveLength(10);
     expect(rows.map((r) => r.nameEn).sort()).toEqual(buildFaculties().map((f) => f.name.en).sort());
-    expect(rows.find((r) => r.slug === "social-administration")!.nameTh).toBe("คณะสังคมสงเคราะห์ศาษตร์");
+    expect(rows.find((r) => r.slug === "social-administration")!.nameTh).toBe("คณะสังคมสงเคราะห์ศาสตร์");
     for (const row of rows) {
       expect(row.status).toBe("published");
       expect([row.officeLocationTh, row.officeLocationEn, row.officePhone, row.officeEmail, row.officeWebsite, row.officeNoteTh, row.officeNoteEn]).toEqual(Array(7).fill(null));

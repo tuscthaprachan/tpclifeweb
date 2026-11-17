@@ -114,7 +114,7 @@ export function LostFoundResults({ locale, items: allItems, query }: LostFoundRe
 
       {items.length === 0 ? (
         <EmptyState
-          title={UI.noLostFoundItems[locale]}
+          title={(hasActiveFilters || allItems.length > 0 ? UI.noLostFoundItems : UI.noLostFoundItemsYet)[locale]}
           action={
             hasActiveFilters ? (
               <Link href={localePath(locale, "/lost-and-found")} className="text-action underline">

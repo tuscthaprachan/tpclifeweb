@@ -106,6 +106,13 @@ export function parseDate(day: string, month: string, year: string, now: Date = 
   return iso;
 }
 
+/** Why a date was refused: nothing entered, not a real date, or a day that has not happened yet. */
+function whenError(v: Pick<DraftValues, "day" | "month" | "year">, now: Date): UiKey {
+  if (!v.day && !v.month && !v.year) return "lfpErrWhenMissing";
+  const asIfFuture = parseDate(v.day, v.month, v.year, new Date("2100-12-31T12:00:00Z"));
+  return asIfFuture && asIfFuture > bangkokDateKey(now) ? "lfpErrWhenFuture" : "lfpErrWhenInvalid";
+}
+
 /** Digits in a phone number, ignoring spacing and punctuation. */
 function phoneDigits(phone: string): number {
   return phone.replace(/\D/g, "").length;
@@ -165,7 +172,7 @@ export function validateStep(kind: JourneyKind, step: string, v: DraftValues, no
       if (size(v.locationNote) > LIMITS.locationNote) errors.locationNote = "lfpErrWhereLong";
       break;
     case "when":
-      if (!parseDate(v.day, v.month, v.year, now)) errors.when = "errorInvalidDate";
+      if (!parseDate(v.day, v.month, v.year, now)) errors.when = whenError(v, now);
       break;
     case "detail":
       if (!v.detail) errors.detail = "lfpErrDetail";

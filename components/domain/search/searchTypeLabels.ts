@@ -21,6 +21,7 @@ import type { SearchableType } from "@/lib/content/types";
 
 export const SEARCH_TYPE_LABEL: Record<SearchableType, LocaleString> = {
   form: UI.forms,
+  service: UI.searchTypeService,
   welfarePage: UI.welfare,
   guidePage: UI.guide,
   faq: UI.faq,

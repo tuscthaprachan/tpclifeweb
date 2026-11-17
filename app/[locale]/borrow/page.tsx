@@ -84,7 +84,7 @@ export default async function BorrowStartPage({ params, searchParams }: { params
                     <span className="font-semibold">{pick({ th: c.nameTh, en: c.nameEn }, locale)}</span>
                     {hint ? <span className="block text-ink-900">{hint}</span> : null}
                     <span className="block text-sm text-ink-600">
-                      {UI.brCategoryRules[locale].replace("{n}", String(c.noticeWorkingDays)).replace("{cards}", String(c.depositCards))}
+                      {(c.depositCards === 1 ? UI.brCategoryRulesOne : UI.brCategoryRules)[locale].replace("{n}", String(c.noticeWorkingDays)).replace("{cards}", String(c.depositCards))}
                       {c.maxPerRequest != null ? ` ${UI.brCategoryMax[locale].replace("{max}", String(c.maxPerRequest))}` : ""}
                     </span>
                   </li>

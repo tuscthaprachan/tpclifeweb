@@ -17,6 +17,7 @@ import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/co
 import { formatDate } from "@/lib/i18n/format";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
+import { BackLink } from "../../_journey/BackLink";
 import { reopenComplaintAction } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -24,12 +25,13 @@ export const dynamic = "force-dynamic";
 type SearchParams = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<SearchParams> }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
+  const problem = first((await searchParams).problem);
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   return {
     alternates: alternatesFor(locale, "/complaints/track/reopen"),
-    title: UI.cpReopenTitle[locale],
+    title: `${problem ? UI.cpTitleErrorPrefix[locale] : ""}${UI.cpReopenTitle[locale]}`,
     robots: { index: false, follow: false },
     referrer: "same-origin",
   };
@@ -65,6 +67,7 @@ export default async function ReopenComplaintPage({ params, searchParams }: { pa
         ]}
       />
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
+        <BackLink href={status} locale={locale} />
         <Heading level={1}>{UI.cpReopenTitle[locale]}</Heading>
         <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={items} />
         <p className="m-0 text-ink-900">

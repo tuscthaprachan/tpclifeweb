@@ -84,7 +84,7 @@ export const COMPLAINT_CATEGORY_SEED: readonly Seed[] = [
     key: "harassment",
     nameTh: "การคุกคามหรือการเลือกปฏิบัติ (อ่อนไหว)",
     nameEn: "Harassment or discrimination (sensitive)",
-    hintTh: "เจ้าหน้าที่ที่ได้รับมอบหมายเท่านั้นที่เห็นเรื่องประเภทนี้ และเราจะเสนอช่องทางสุขภาวะให้คุณ",
+    hintTh: "เจ้าหน้าที่ที่ได้รับมอบหมายเท่านั้นที่เห็นเรื่องประเภทนี้ และเราจะแนะนำช่องทางขอความช่วยเหลือด้านจิตใจให้คุณ",
     hintEn: "Only named staff can see these. We will also show you where to find support",
     acknowledgeDays: 1,
     resolveDays: 15,

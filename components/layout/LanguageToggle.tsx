@@ -67,7 +67,7 @@ function LanguageLink({ locale, query, className }: { locale: Locale; query: str
       {/* Context for assistive tech, appended rather than replacing the
           visible label (2.5.3 Label in Name). Same pattern as
           externalLinkSuffix in lib/a11y. */}
-      <span className="visually-hidden"> ({UI.changeLanguage[locale]})</span>
+      <span lang={locale} className="visually-hidden"> ({UI.changeLanguage[locale]})</span>
     </Link>
   );
 }

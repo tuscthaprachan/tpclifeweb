@@ -565,6 +565,7 @@ export interface SearchRecord {
 
 export type SearchableType =
   | "form"
+  | "service"
   | "shuttleRoute"
   | "welfarePage"
   | "guidePage"

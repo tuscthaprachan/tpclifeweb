@@ -1,3 +1,4 @@
+import type { DraftValues } from "@/lib/complaints/public/steps";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 
@@ -37,6 +38,13 @@ export function stepTitle(step: string, locale: Locale): string {
     default:
       return UI.cpDoneTitle[locale];
   }
+}
+
+/** The heading of the signpost page, which depends on where the answers led. */
+export function signpostTitle(values: Pick<DraftValues, "level" | "lecturer">, locale: Locale): string {
+  if (values.level !== "course") return UI.cpSignFacultyTitle[locale];
+  if (values.lecturer === "harassment") return UI.cpSignSafetyTitle[locale];
+  return (values.lecturer === "yes" ? UI.cpSignLecturerTitle : UI.cpSignOtherTitle)[locale];
 }
 
 /** The element a field error links to. */

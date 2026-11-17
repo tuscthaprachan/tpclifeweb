@@ -27,6 +27,7 @@ import { saveStep } from "./actions";
 import { CheckAnswers } from "./CheckAnswers";
 import { Confirmation } from "./Confirmation";
 import { errorAnchor, journeyName, stepTitle } from "./copy";
+import { ErrorTitle } from "./ErrorTitle";
 import { Unavailable } from "./Unavailable";
 
 interface JourneyStepProps {
@@ -100,9 +101,12 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
         <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
           <BackLink href={localePath(locale, stepPath(kind, lostFoundJourney.previous(data.values, "check", { kind })!, slug))} locale={locale} />
           {flash?.errors.form ? (
-            <NotificationBanner variant="warning" title={UI.lfpSubmitProblemTitle[locale]}>
-              {UI[flash.errors.form][locale]}
-            </NotificationBanner>
+            <>
+              <ErrorTitle prefix={UI.lfpErrorTitlePrefix[locale]} />
+              <NotificationBanner variant="warning" title={UI.lfpSubmitProblemTitle[locale]}>
+                {UI[flash.errors.form][locale]}
+              </NotificationBanner>
+            </>
           ) : null}
           <CheckAnswers kind={kind} locale={locale} slug={slug} values={data.values} placeName={place ? pick(place.name, locale) : undefined} />
         </Stack>
@@ -136,6 +140,7 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <BackLink href={backHref} locale={locale} />
         <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={items} />
+        {items.length > 0 ? <ErrorTitle prefix={UI.lfpErrorTitlePrefix[locale]} /> : null}
         <form action={saveStep} noValidate>
           <input type="hidden" name="journey" value={kind} />
           <input type="hidden" name="step" value={step} />

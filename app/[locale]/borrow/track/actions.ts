@@ -29,6 +29,7 @@ export async function openTracking(form: FormData): Promise<void> {
   const locale = localeOf(form);
   const referenceRaw = text(form, "reference");
   const linkRaw = text(form, "link");
+  if (!referenceRaw.trim() && !linkRaw.trim()) redirect(trackPath(locale, "?problem=both"));
   if (!referenceRaw.trim()) redirect(trackPath(locale, "?problem=ref"));
   if (!linkRaw.trim()) redirect(trackPath(locale, "?problem=link"));
   const parsed = parseTrackingInput(referenceRaw, linkRaw);

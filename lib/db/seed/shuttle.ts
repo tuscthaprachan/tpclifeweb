@@ -19,7 +19,7 @@ const LAST_BUS_NOTE: Bi = {
   en: "The last bus of the day leaves Thammasat Tha Prachan at 21:30.",
 };
 const EFFECTIVE_NOTE: Bi = {
-  th: "ตารางนี้ใช้ตั้งแต่วันที่ 30 กันยายน 2569 เหลือรถให้บริการ 1 คัน",
+  th: "ตารางนี้ใช้ตั้งแต่วันที่ 30 กันยายน 2569 ขณะนี้มีรถให้บริการ 1 คัน",
   en: "This timetable applies from 30 September 2026. Only one bus is in service.",
 };
 const SOURCE_NOTE: Bi = {

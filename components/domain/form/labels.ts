@@ -23,14 +23,14 @@ export const OWNER_LABEL_KEY = {
   joint: "ownerJoint",
 } as const satisfies Record<Owner, UiKey>;
 
-export const SIGN_IN_ON_FORM: LocaleString = { th: "เข้าสู่ระบบในแบบฟอร์ม", en: "Sign in on the form" };
+export const SIGN_IN_ON_FORM: LocaleString = { th: "ต้องเข้าสู่ระบบ", en: "Sign in required" };
 
 export const SIGN_IN_ON_FORM_TU: LocaleString = {
-  th: "เข้าสู่ระบบในแบบฟอร์ม (บัญชี TU)",
-  en: "Sign in on the form (TU account)",
+  th: "ต้องเข้าสู่ระบบด้วยบัญชี TU",
+  en: "Sign in required (TU account)",
 };
 
-export const NO_SIGN_IN_ON_FORM: LocaleString = { th: "ไม่ต้องเข้าสู่ระบบในแบบฟอร์ม", en: "No sign in on the form" };
+export const NO_SIGN_IN_ON_FORM: LocaleString = { th: "ไม่ต้องเข้าสู่ระบบ", en: "No sign in needed" };
 
 export function signInBadgeLabel(signInType: FormRecord["signInType"], locale: Locale): string {
   return (signInType === "google" || signInType === "tuAccount" ? SIGN_IN_ON_FORM_TU : SIGN_IN_ON_FORM)[locale];

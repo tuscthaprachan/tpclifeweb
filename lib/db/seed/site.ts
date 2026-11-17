@@ -37,7 +37,7 @@ export async function seedSiteSettings(db: SeedDb): Promise<void> {
       nav("คำถามที่พบบ่อย", "Common questions", "/faq"),
       nav("เกี่ยวกับ", "About", "/about"),
       nav("ข้อมูลเปิด", "Open data", "/about/open-data"),
-      nav("การเข้าถึง", "Accessibility", "/accessibility"),
+      nav("การเข้าถึงเว็บไซต์", "Accessibility", "/accessibility"),
       nav("คุกกี้", "Cookies", "/cookies"),
       nav("ผลการดำเนินงาน", "Performance", "/performance"),
     ],

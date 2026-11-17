@@ -178,7 +178,7 @@ const COMPLAINT: MachineDef = {
     resolved: { label: s("แก้ไขแล้ว", "Resolved"), publicLabel: s("แก้ไขแล้ว", "Resolved"), tone: "success", terminal: true },
     redirected: { label: s("ส่งต่อให้คณะหรือผู้สอน", "Redirected"), publicLabel: s("แนะนำหน่วยงานที่รับผิดชอบแล้ว", "Redirected to the right people"), tone: "neutral", terminal: true },
     closed: { label: s("ปิดเรื่องแล้ว", "Closed"), publicLabel: s("ปิดเรื่องแล้ว", "Closed"), tone: "neutral", terminal: true },
-    withdrawn: { label: s("ผู้แจ้งยกเลิก", "Withdrawn"), publicLabel: s("ยกเลิกเรื่องแล้ว", "Withdrawn"), tone: "neutral", terminal: true },
+    withdrawn: { label: s("ผู้แจ้งยกเลิก", "Withdrawn"), publicLabel: s("ถอนข้อร้องเรียนแล้ว", "Withdrawn"), tone: "neutral", terminal: true },
   },
   transitions: {
     received: ["acknowledged", "in_progress", "resolved", "redirected", "withdrawn"],

@@ -36,7 +36,9 @@ export function PerformanceResults({ locale, reports, query }: PerformanceResult
             <p className="m-0">{report.from ? UI.perfCoversFrom[locale].replace("{from}", formatDate(report.from, locale)) : UI.perfCoversAll[locale]}</p>
             {period === "12m" ? <p className="m-0">{UI.perfPeriod12mNote[locale]}</p> : null}
             <p className="m-0">
-              {UI.perfUpdated[locale]}: <Timestamp value={report.generatedAt} locale={locale} format="datetime" />. {UI.perfRefreshNote[locale]}
+              {UI.perfUpdated[locale]}: <Timestamp value={report.generatedAt} locale={locale} format="datetime" />
+              {locale === "th" ? " " : ". "}
+              {UI.perfRefreshNote[locale]}
             </p>
           </div>
         ) : null}

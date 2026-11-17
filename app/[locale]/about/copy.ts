@@ -24,7 +24,7 @@ export const HOW_THEY_RELATE_LABEL: LocaleString = { th: "ความสัม�
 
 // TODO: add to UI strings.
 export const RELATION_TEXT: LocaleString = {
-  th: "อมธ. ท่าพระจันทร์เป็นฝ่ายบริหาร จัดสรรงบประมาณและดำเนินกิจกรรมของนักศึกษา ส่วนสภานักศึกษา ท่าพระจันทร์เป็นฝ่ายนิติบัญญัติและตรวจสอบ พิจารณาอนุมัติระเบียบและตรวจสอบการดำเนินงาน นโยบาย และงบประมาณของ อมธ. ทั้งสององค์กรแยกจากกันและทำงานคู่กัน",
+  th: "อมธ. ท่าพระจันทร์เป็นฝ่ายบริหาร จัดสรรงบประมาณและดำเนินกิจกรรมของนักศึกษา ส่วนสภานักศึกษา ท่าพระจันทร์ เป็นฝ่ายนิติบัญญัติและตรวจสอบ ทำหน้าที่พิจารณาอนุมัติระเบียบ และตรวจสอบการดำเนินงาน นโยบาย และงบประมาณของ อมธ. ทั้งสององค์กรแยกจากกันและทำงานคู่กัน",
   en: "TUSU Tha Prachan is the executive body: it allocates budget and runs student activities. TUSC Tha Prachan is the legislative and scrutiny body: it approves the rules TUSU works under and scrutinises TUSU's decisions, policies and budget. The two are separate bodies that work alongside each other.",
 };
 
@@ -39,7 +39,7 @@ export const CAMPUS_REFORM_LABEL: LocaleString = { th: "สภานักศึ
 
 // TODO: add to UI strings.
 export const CAMPUS_REFORM_TEXT: LocaleString = {
-  th: "ตั้งแต่ พ.ศ. 2563 แต่ละศูนย์การศึกษาของมหาวิทยาลัยธรรมศาสตร์มีสภานักศึกษาของตนเอง ดูแลกิจการเฉพาะของศูนย์การศึกษานั้น สภานักศึกษา ท่าพระจันทร์ในหน้านี้จึงหมายถึงสภาประจำธรรมศาสตร์ท่าพระจันทร์โดยเฉพาะ ไม่ใช่สภานักศึกษาส่วนกลางของมหาวิทยาลัย",
+  th: "ตั้งแต่ พ.ศ. 2563 ศูนย์การศึกษาแต่ละแห่งของมหาวิทยาลัยธรรมศาสตร์มีสภานักศึกษาของตนเอง ดูแลเรื่องเฉพาะของศูนย์นั้น ดังนั้นในเว็บไซต์นี้ สภานักศึกษา ท่าพระจันทร์ จึงหมายถึงสภานักศึกษาประจำธรรมศาสตร์ท่าพระจันทร์โดยเฉพาะ ไม่ใช่สภานักศึกษาส่วนกลางของมหาวิทยาลัย",
   en: "Since 2020 each Thammasat University campus has had its own elected student council covering that campus's own affairs. TUSC Tha Prachan, referred to throughout this site, is specifically the Thammasat Tha Prachan campus council, not the university's central student council.",
 };
 

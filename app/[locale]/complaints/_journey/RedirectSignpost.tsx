@@ -32,10 +32,10 @@ function BodyItem({ body, locale }: { body: FacultyBody; locale: Locale }) {
 }
 
 /** The student bodies to contact, or a line saying we list none for the faculty. */
-export function BodiesSection({ faculty, bodies, locale }: { faculty: Faculty; bodies: FacultyBody[]; locale: Locale }) {
+export function BodiesSection({ faculty, bodies, locale, level = 3 }: { faculty: Faculty; bodies: FacultyBody[]; locale: Locale; level?: 2 | 3 }) {
   return (
     <Stack space={2}>
-      <Heading level={3}>{UI.cpRedirectBodiesHeading[locale]}</Heading>
+      <Heading level={level}>{UI.cpRedirectBodiesHeading[locale]}</Heading>
       {bodies.length > 0 ? (
         <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">
           {bodies.map((body) => (
@@ -50,7 +50,7 @@ export function BodiesSection({ faculty, bodies, locale }: { faculty: Faculty; b
 }
 
 /** The faculty office with whatever an editor has filled in, or a line saying we have no details yet. */
-export function OfficeSection({ faculty, locale }: { faculty: Faculty | null; locale: Locale }) {
+export function OfficeSection({ faculty, locale, level = 3 }: { faculty: Faculty | null; locale: Locale; level?: 2 | 3 }) {
   const office = faculty?.office;
   const rows: SummaryListRow[] = office
     ? ([
@@ -63,7 +63,7 @@ export function OfficeSection({ faculty, locale }: { faculty: Faculty | null; lo
     : [];
   return faculty ? (
     <Stack space={2}>
-      <Heading level={3}>
+      <Heading level={level}>
         {UI.cpRedirectOfficeHeading[locale]}: {pick(faculty.name, locale)}
       </Heading>
       {rows.length > 0 ? <SummaryList rows={rows} /> : <p className="m-0 text-ink-900">{UI.cpRedirectOfficeNone[locale]}</p>}

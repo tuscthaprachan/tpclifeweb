@@ -14,7 +14,7 @@ export function WellbeingBox({ locale }: { locale: Locale }) {
         <li>
           {UI.cpWellbeingPhone[locale]}:{" "}
           <a href={WELLBEING_CONTACT.phone.tel} className="font-semibold text-action underline">
-            {WELLBEING_CONTACT.phone.display}
+            {WELLBEING_CONTACT.phone.display[locale]}
           </a>
         </li>
         {WELLBEING_CONTACT.line.map((line) => (

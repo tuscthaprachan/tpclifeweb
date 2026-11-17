@@ -14,6 +14,7 @@ import { isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
+import { ErrorTitle } from "../_journey/ErrorTitle";
 import { openTracking } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -39,15 +40,22 @@ export default async function TrackBorrowPage({ params, searchParams }: { params
   const problem = first((await searchParams).problem);
 
   const items: ErrorSummaryItem[] =
-    problem === "ref"
-      ? [{ href: "#reference", message: UI.brErrTrackRef[locale] }]
-      : problem === "link"
-        ? [{ href: "#link", message: UI.brErrTrackLink[locale] }]
-        : problem === "limited"
-          ? [{ href: "#reference", message: UI.brTrackLimited[locale] }]
-          : problem
-            ? [{ href: "#reference", message: UI.brTrackProblem[locale] }]
-            : [];
+    problem === "both"
+      ? [
+          { href: "#reference", message: UI.brErrTrackRef[locale] },
+          { href: "#link", message: UI.brErrTrackLink[locale] },
+        ]
+      : problem === "ref"
+        ? [{ href: "#reference", message: UI.brErrTrackRef[locale] }]
+        : problem === "link"
+          ? [{ href: "#link", message: UI.brErrTrackLink[locale] }]
+          : problem === "limited"
+            ? [{ href: "#reference", message: UI.brTrackLimited[locale] }]
+            : problem
+              ? [{ href: "#reference", message: UI.brTrackProblem[locale] }]
+              : [];
+  const refError = problem === "ref" || problem === "both" ? UI.brErrTrackRef[locale] : undefined;
+  const linkError = problem === "link" || problem === "both" ? UI.brErrTrackLink[locale] : undefined;
 
   return (
     <Container width="narrow">
@@ -60,11 +68,12 @@ export default async function TrackBorrowPage({ params, searchParams }: { params
         ]}
       />
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
+        {items.length > 0 ? <ErrorTitle prefix={UI.brErrorPrefix[locale]} /> : null}
+        <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={items} />
         <Stack space={2}>
           <Heading level={1}>{UI.brTrackTitle[locale]}</Heading>
           <p className="m-0 text-ink-900">{UI.brTrackIntro[locale]}</p>
         </Stack>
-        <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={items} />
         {isDatabaseConfigured() ? (
           <form action={openTracking} noValidate>
             <input type="hidden" name="locale" value={locale} />
@@ -74,12 +83,12 @@ export default async function TrackBorrowPage({ params, searchParams }: { params
                 name="reference"
                 label={UI.brTrackRefLabel[locale]}
                 hint={UI.brTrackRefHint[locale]}
-                error={problem === "ref" ? UI.brErrTrackRef[locale] : undefined}
+                error={refError}
                 autoComplete="off"
                 autoCapitalize="characters"
                 spellCheck={false}
               />
-              <TextInput id="link" name="link" label={UI.brTrackLinkLabel[locale]} hint={UI.brTrackLinkHint[locale]} error={problem === "link" ? UI.brErrTrackLink[locale] : undefined} autoComplete="off" spellCheck={false} />
+              <TextInput id="link" name="link" label={UI.brTrackLinkLabel[locale]} hint={UI.brTrackLinkHint[locale]} error={linkError} autoComplete="off" spellCheck={false} />
               <div>
                 <Button type="submit">{UI.brTrackSubmit[locale]}</Button>
               </div>

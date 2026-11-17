@@ -20,7 +20,7 @@ export const COMPLAINT_LIMITS = { description: 3000, when: 200, where: 300, reme
  * confirm them before launch, see data/harvested-inventory.ts.
  */
 export const WELLBEING_CONTACT = {
-  phone: { display: "02-026-2345 (press 2)", tel: "tel:020262345,2" },
+  phone: { display: { th: "02-026-2345 กด 2", en: "02-026-2345 (press 2)" }, tel: "tel:020262345,2" },
   line: [
     { id: "@754xjgcn", url: "https://line.me/R/ti/p/@754xjgcn" },
     { id: "@460rxhfi", url: "https://line.me/R/ti/p/@460rxhfi" },

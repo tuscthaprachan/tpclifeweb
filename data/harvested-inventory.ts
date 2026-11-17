@@ -300,15 +300,7 @@ export const ORGANISATIONS = [
   { name: "LL.B. Student Committee", handle: "llbthammasat_sc", type: "facultyCommittee", faculty: { th: "คณะนิติศาสตร์", en: "Faculty of Law" } },
 
   // Faculty of Social Administration
-  //
-  // The Thai faculty name below is spelled exactly as it appears as a
-  // section header on linktr.ee/tpc.contact.info: "คณะสังคมสงเคราะห์ศาษตร์".
-  // The correct spelling of the word "ศาสตร์" (field of study) has ส before
-  // ต; the source page has ษ instead, which is very likely an unintentional
-  // typo on the faculty's own committee's page, not a different word. It is
-  // kept verbatim rather than silently corrected; see FACULTY_NAME_SPELLING
-  // below and the console summary this seed prints.
-  { name: "SPD Inter Student Council", handle: "spdstudentc", type: "facultyCommittee", faculty: { th: "คณะสังคมสงเคราะห์ศาษตร์", en: "Faculty of Social Administration" } },
+  { name: "SPD Inter Student Council", handle: "spdstudentc", type: "facultyCommittee", faculty: { th: "คณะสังคมสงเคราะห์ศาสตร์", en: "Faculty of Social Administration" } },
 
   // Faculty of Journalism and Mass Communication
   { name: "BJM TPC Student Council", handle: "bjm.tpc", type: "facultyCommittee", faculty: { th: "คณะวารสารศาสตร์และสื่อสารมวลชน", en: "Faculty of Journalism and Mass Communication" } },
@@ -329,16 +321,6 @@ export const ORGANISATIONS = [
   // The two student bodies themselves
   { name: "TUSU Tha Prachan", handle: "tusu.tpc", type: "studentBody", nameTh: "องค์การนักศึกษามหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์" },
 ] as const;
-
-/**
- * See the comment above the SPD Inter Student Council entry in ORGANISATIONS.
- * Printed in the seed script's end-of-run summary so a human sees it without
- * having to read this file.
- */
-export const FACULTY_NAME_SPELLING_NOTE =
-  "The Faculty of Social Administration's Thai name is recorded verbatim as \"คณะสังคมสงเคราะห์ศาษตร์\", " +
-  "spelled exactly as printed on linktr.ee/tpc.contact.info. The standard spelling ends \"ศาสตร์\", not \"ศาษตร์\". " +
-  "Ask the faculty committee which spelling they actually want before treating this as a typo to fix.";
 
 /* ------------------------------------------------------------------ *
  * Getting to Thammasat Tha Prachan
@@ -372,8 +354,8 @@ export const TRANSPORT = {
       { th: "รถเวียนสายปิ่นเกล้า", en: "Pinklao Line" },
     ],
     note: {
-      th: "ให้บริการวันจันทร์ถึงศุกร์ ไม่ให้บริการวันเสาร์ อาทิตย์ และวันหยุดนักขัตฤกษ์ ดูตารางเวลาและจุดจอดแต่ละเส้นทางได้ที่หน้ารถรับส่ง",
-      en: "Runs Monday to Friday. No service at weekends or public holidays. See the shuttle page for each route's timetable and stops",
+      th: "ให้บริการวันจันทร์ถึงวันศุกร์ ไม่มีบริการวันเสาร์ วันอาทิตย์ และวันหยุดนักขัตฤกษ์ ตารางเวลาและจุดจอดของแต่ละเส้นทางอยู่ด้านล่าง",
+      en: "Runs Monday to Friday. No service at weekends or public holidays. The timetable and stops for each route are below.",
     },
     needsVerification:
       "The official timetable graphic in effect from 30 September 2026 was transcribed 15 November 2026 into " +

@@ -87,6 +87,7 @@ export function CheckAnswers({ locale, values, inventory, facultyName }: CheckAn
           <input id="br-website" type="text" name="website" tabIndex={-1} autoComplete="off" />
         </div>
         <Stack space={4}>
+          <Heading level={2}>{UI.brSendHeading[locale]}</Heading>
           <p className="m-0 text-ink-900">
             {UI.brCheckPrivacy[locale]}{" "}
             <Link href={localePath(locale, "/borrow/privacy")} className="text-action underline">

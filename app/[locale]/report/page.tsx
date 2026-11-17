@@ -39,20 +39,22 @@ if (tuWellBeing.key !== "tuWellBeing") {
 // reusable vocabulary. Hardcoded and reported rather than stretched from
 // something that means something adjacent but different.
 const PAGE_INTRO: LocaleString = {
-  th: "เลือกช่องทางที่ตรงกับเรื่องที่ต้องการแจ้ง มีสามช่องทางแยกกันตามประเภทของเรื่อง",
-  en: "Pick the route that matches what you need to report. There are three, sorted by what kind of problem it is",
+  th: "เลือกช่องทางที่ตรงกับเรื่องที่ต้องการแจ้ง มีสามช่องทาง แยกตามประเภทของเรื่อง",
+  en: "Choose the option that matches what you need to report. There are three, depending on the kind of problem",
 }; // TODO: add to UI strings
 const ROUTE_1_USE_WHEN: LocaleString = {
-  th: "ใช้ช่องทางนี้เมื่อมีปัญหาเกี่ยวกับรายวิชา คณะ หรือมหาวิทยาลัย หรือต้องการร้องเรียน อมธ. และสภานักศึกษา หากมีใครตกอยู่ในอันตราย โทร 191 หรือ 1669",
-  en: "Use this for a problem with a course, your faculty or the university, or to complain about TUSU or TUSC. If anyone is in danger, call 191 or 1669",
+  th: "ใช้ช่องทางนี้เมื่อมีปัญหาเรื่องรายวิชา คณะ หรือมหาวิทยาลัย หรือต้องการร้องเรียน อมธ. และสภานักศึกษา หากมีใครตกอยู่ในอันตราย ให้โทร 191 หรือ 1669",
+  en: "Use this for a problem with a course, your faculty or the university, or to complain about TUSU or TUSC. If anyone is in danger, call 191 or 1669.",
 }; // TODO: add to UI strings
 const ROUTE_2_USE_WHEN: LocaleString = {
   th: "ใช้ช่องทางนี้เมื่อพบปัญหาสภาพแวดล้อมหรือสิ่งอำนวยความสะดวกในมหาวิทยาลัย เช่น ไฟดับ น้ำรั่ว หรือทางเดินชำรุด",
   en: "Use this for a fault with campus facilities or the physical environment, such as broken lighting, a leak, or a damaged walkway",
 }; // TODO: add to UI strings
+const ROUTE_1_LINK: LocaleString = { th: "เริ่มแจ้งปัญหา", en: "Report an issue" };
+const ROUTE_2_LINK: LocaleString = { th: "ไปที่ Traffy Fondue เพื่อแจ้งปัญหา", en: "Go to Traffy Fondue to report a problem" };
 const ROUTE_3_HEADING: LocaleString = { th: "ความเป็นอยู่และสุขภาพใจ", en: "Your own wellbeing" }; // TODO: add to UI strings
 const ROUTE_3_USE_WHEN: LocaleString = {
-  th: "ใช้ช่องทางนี้เมื่อมีเรื่องส่วนตัว ความเครียด หรือปัญหาสุขภาพจิตที่ส่งผลกับตัวเอง",
+  th: "ใช้ช่องทางนี้เมื่อมีเรื่องส่วนตัว ความเครียด หรือปัญหาสุขภาพใจที่กระทบกับตัวคุณเอง",
   en: "Use this for a personal difficulty, stress, or a mental health concern that affects you specifically",
 }; // TODO: add to UI strings
 
@@ -83,7 +85,7 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
           <StatusTag tone="neutral" label={UI.noSignInNeeded[locale]} />
           <p className="m-0">
             <Link href="/complaints" locale={locale} className="font-semibold text-action">
-              {UI.startForm[locale]}
+              {pick(ROUTE_1_LINK, locale)}
             </Link>
           </p>
         </Stack>
@@ -95,7 +97,7 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
           <StatusTag tone="neutral" label={UI.noSignInNeeded[locale]} />
           <p className="m-0">
             <Link href={traffyFondue.url} locale={locale} className="font-semibold text-action">
-              {UI.startForm[locale]}
+              {pick(ROUTE_2_LINK, locale)}
             </Link>
           </p>
         </Stack>
