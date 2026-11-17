@@ -16,6 +16,7 @@ import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getEventBySlug, getEventPreview, getUpcomingEvents, resolveRichTextRefs } from "@/lib/content";
 
+export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
