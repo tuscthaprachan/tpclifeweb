@@ -36,7 +36,7 @@ export const PICK = {
   biasCheap: { th: "เน้นราคาถูก", en: "Lean cheap" },
   biasUsual: { th: "เมนูโปรดของฉัน", en: "My usual" },
   biasHint: {
-    th: "ใช้สิ่งที่คุณเคยเลือกไว้ในเครื่องนี้",
+    th: "ใช้สิ่งที่เคยเลือกไว้ในเครื่องนี้",
     en: "Uses what you've picked before on this phone.",
   },
   budgetLabel: { th: "งบรวมทั้งมื้อ (บาท)", en: "Budget for the whole meal (baht)" },
@@ -68,10 +68,10 @@ export const PICK = {
     en: "Nothing else fit what you kept, so we let the lock go.",
   },
   relaxedVeto: {
-    th: "ที่เหลือเคยถูกกดผ่านไปหมดแล้ว เลยเอากลับมาให้อีกรอบ",
+    th: "ที่เหลือเคยกดผ่านไปหมดแล้ว เลยเอากลับมาให้อีกรอบ",
     en: "Everything left had already been passed over, so we brought one back.",
   },
-  relaxedFilters: { th: "ตัวกรองของคุณไม่ได้ถูกแตะเลย", en: "Your filters were not touched." },
+  relaxedFilters: { th: "ตัวกรองยังเหมือนเดิม", en: "Your filters are unchanged." },
   stallPickTitle: { th: "ร้านที่สุ่มได้", en: "Your stall" },
   stallDishes: { th: "เมนูที่ตรงตัวกรองที่ร้านนี้", en: "Dishes here that match your filters" },
   mealPickTitle: { th: "ชุดอาหารที่สุ่มได้", en: "Your meal" },

@@ -43,16 +43,16 @@ const PAGE_INTRO: LocaleString = {
   en: "Pick the route that matches what you need to report. There are three, sorted by what kind of problem it is",
 }; // TODO: add to UI strings
 const ROUTE_1_USE_WHEN: LocaleString = {
-  th: "ใช้ช่องทางนี้เมื่อมีปัญหาเกี่ยวกับรายวิชา คณะ หรือมหาวิทยาลัย หรือต้องการร้องเรียน อมธ. และ สภานักศึกษา หากมีใครตกอยู่ในอันตราย โทร 191 หรือ 1669",
+  th: "ใช้ช่องทางนี้เมื่อมีปัญหาเกี่ยวกับรายวิชา คณะ หรือมหาวิทยาลัย หรือต้องการร้องเรียน อมธ. และสภานักศึกษา หากมีใครตกอยู่ในอันตราย โทร 191 หรือ 1669",
   en: "Use this for a problem with a course, your faculty or the university, or to complain about TUSU or TUSC. If anyone is in danger, call 191 or 1669",
 }; // TODO: add to UI strings
 const ROUTE_2_USE_WHEN: LocaleString = {
   th: "ใช้ช่องทางนี้เมื่อพบปัญหาสภาพแวดล้อมหรือสิ่งอำนวยความสะดวกในมหาวิทยาลัย เช่น ไฟดับ น้ำรั่ว หรือทางเดินชำรุด",
   en: "Use this for a fault with campus facilities or the physical environment, such as broken lighting, a leak, or a damaged walkway",
 }; // TODO: add to UI strings
-const ROUTE_3_HEADING: LocaleString = { th: "ความเป็นอยู่และสุขภาพใจของคุณ", en: "Your own wellbeing" }; // TODO: add to UI strings
+const ROUTE_3_HEADING: LocaleString = { th: "ความเป็นอยู่และสุขภาพใจ", en: "Your own wellbeing" }; // TODO: add to UI strings
 const ROUTE_3_USE_WHEN: LocaleString = {
-  th: "ใช้ช่องทางนี้เมื่อมีเรื่องส่วนตัว ความเครียด หรือปัญหาสุขภาพจิตที่ส่งผลกับตัวคุณเอง",
+  th: "ใช้ช่องทางนี้เมื่อมีเรื่องส่วนตัว ความเครียด หรือปัญหาสุขภาพจิตที่ส่งผลกับตัวเอง",
   en: "Use this for a personal difficulty, stress, or a mental health concern that affects you specifically",
 }; // TODO: add to UI strings
 

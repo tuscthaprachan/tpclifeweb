@@ -62,7 +62,7 @@ function render(subject: { th: string; en: string }, th: Section, en: Section, f
 }
 
 const SERVICE = UI.serviceName;
-const REFERENCE = { th: "เลขอ้างอิงของคุณ", en: "Your reference" };
+const REFERENCE = { th: "เลขอ้างอิง", en: "Your reference" };
 const PRIVATE_TH = "ใครมีลิงก์ส่วนตัวก็ดูคำขอนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น";
 const PRIVATE_EN = "Anyone with the private link can see this request, so do not share it.";
 const HOURS = `${DESK_OPENS} - ${DESK_CLOSES}`;
@@ -86,11 +86,11 @@ export function loanApproved({ reference, locale, collectAt, returnDueAt, cards 
     { th: `อนุมัติคำขอยืมอุปกรณ์แล้ว ${reference}`, en: `Your equipment request is approved ${reference}` },
     {
       lang: "th",
-      heading: "อนุมัติคำขอยืมอุปกรณ์ของคุณแล้ว",
+      heading: "อนุมัติคำขอยืมอุปกรณ์แล้ว",
       paragraphs: [
-        `เจ้าหน้าที่ของ${SERVICE.th}อนุมัติคำขอของคุณแล้ว มารับอุปกรณ์ได้ในวันที่ ${formatDateTime(collectAt, "th")} และคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")}`,
+        `เจ้าหน้าที่ของ${SERVICE.th}อนุมัติคำขอแล้ว มารับอุปกรณ์ได้ในวันที่ ${formatDateTime(collectAt, "th")} และคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")}`,
         cards > 0 ? `วันรับอุปกรณ์ ให้นำบัตรนักศึกษาหรือบัตรประจำตัวประชาชนตัวจริง ${cards} ใบ มาวางเป็นหลักประกัน และรับบัตรคืนเมื่อคืนอุปกรณ์ครบ` : "วันรับอุปกรณ์ ให้นำบัตรนักศึกษาหรือบัตรประจำตัวประชาชนตัวจริงมาแสดง",
-        `เคาน์เตอร์เปิดวันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. ดูจำนวนและข้อความจากเจ้าหน้าที่ได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งคำขอ`,
+        `เคาน์เตอร์เปิดวันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. ดูจำนวนและข้อความจากเจ้าหน้าที่ได้จากลิงก์ส่วนตัวที่ได้รับตอนส่งคำขอ`,
       ],
       reference: { label: REFERENCE.th, value: reference },
       after: [PRIVATE_TH],
@@ -125,8 +125,8 @@ export function loanDeclined({ reference, locale, reason }: LoanDeclinedParams):
     { th: `ไม่อนุมัติคำขอยืมอุปกรณ์ ${reference}`, en: `Your equipment request was not approved ${reference}` },
     {
       lang: "th",
-      heading: "ไม่อนุมัติคำขอยืมอุปกรณ์ของคุณ",
-      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}ไม่สามารถอนุมัติคำขอของคุณได้ ด้วยเหตุผลนี้`, th, "คุณส่งคำขอใหม่ได้ โดยเลือกวันหรือรายการอุปกรณ์ที่ว่างอยู่"],
+      heading: "ไม่อนุมัติคำขอยืมอุปกรณ์",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}ไม่อนุมัติคำขอนี้ เหตุผลมีดังนี้`, th, "ส่งคำขอใหม่ได้ โดยเลือกวันหรือรายการอุปกรณ์ที่ว่างอยู่"],
       reference: { label: REFERENCE.th, value: reference },
       after: [PRIVATE_TH],
     },
@@ -152,7 +152,7 @@ export function loanReminder({ reference, locale, returnDueAt }: LoanDueParams):
     {
       lang: "th",
       heading: "ใกล้ถึงกำหนดคืนอุปกรณ์",
-      paragraphs: [`อุปกรณ์ที่คุณยืมต้องคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")}`, `คืนได้ที่เคาน์เตอร์ วันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. หากคืนไม่ทัน ให้ติดต่อเจ้าหน้าที่ล่วงหน้า`],
+      paragraphs: [`อุปกรณ์ที่ยืมไปต้องคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")}`, `คืนได้ที่เคาน์เตอร์ วันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. หากคืนไม่ทัน ให้ติดต่อเจ้าหน้าที่ล่วงหน้า`],
       reference: { label: REFERENCE.th, value: reference },
       after: [PRIVATE_TH],
     },
@@ -175,8 +175,8 @@ export function loanOverdue({ reference, locale, returnDueAt }: LoanDueParams): 
       lang: "th",
       heading: "เลยกำหนดคืนอุปกรณ์แล้ว",
       paragraphs: [
-        `อุปกรณ์ที่คุณยืมต้องคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")} แต่เรายังไม่ได้รับคืน`,
-        `กรุณานำมาคืนที่เคาน์เตอร์โดยเร็ว วันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. หากมีปัญหา ให้ติดต่อเจ้าหน้าที่ เพื่อไม่ให้คนถัดไปที่จองไว้ได้รับผลกระทบ`,
+        `อุปกรณ์ที่ยืมไปต้องคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")} แต่เรายังไม่ได้รับคืน`,
+        `โปรดนำมาคืนที่เคาน์เตอร์โดยเร็ว วันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. หากมีปัญหา ให้ติดต่อเจ้าหน้าที่ เพื่อไม่ให้คนถัดไปที่จองไว้ได้รับผลกระทบ`,
       ],
       reference: { label: REFERENCE.th, value: reference },
       after: [PRIVATE_TH],

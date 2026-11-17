@@ -44,7 +44,7 @@ export function acknowledgementText(resolveBy: Date): { th: string; en: string }
   const th = new Intl.DateTimeFormat("th-TH", { dateStyle: "long", timeZone: "Asia/Bangkok" }).format(resolveBy);
   const en = new Intl.DateTimeFormat("en-GB", { dateStyle: "long", timeZone: "Asia/Bangkok" }).format(resolveBy);
   return {
-    th: `เจ้าหน้าที่ได้รับเรื่องของคุณแล้วและกำลังดูแลอยู่ เราตั้งเป้าแจ้งผลภายในวันที่ ${th}`,
+    th: `เจ้าหน้าที่ได้รับเรื่องแล้วและกำลังดำเนินการ เราตั้งเป้าแจ้งผลภายในวันที่ ${th}`,
     en: `A member of staff has seen your complaint and is looking after it. We aim to give you an answer by ${en}.`,
   };
 }

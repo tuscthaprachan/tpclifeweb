@@ -28,13 +28,13 @@ import { alternatesFor } from "@/lib/i18n/metadata";
  * agent's final report rather than invented as a synonym of something else.
  */
 const INTRO: LocaleString = {
-  th: "เว็บไซต์ #ท้ายท่าพระจันทร์ (#trytpc) มีเป้าหมายให้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA นี่คือแถลงการณ์ที่ตรงไปตรงมาว่าส่วนใดเป็นไปตามมาตรฐานแล้ว ส่วนใดยังไม่เป็น และเหตุใด บริการนี้ยังอยู่ในระยะทดลอง เนื้อหาและฟังก์ชันบางส่วนจึงยังไม่สมบูรณ์",
-  en: "#trytpc aims to meet WCAG 2.2 level AA. This is a plain account of what already conforms, what does not yet, and why. The service is still in an early phase, so some content and functionality remain incomplete.",
+  th: "เว็บไซต์ #ท้ายท่าพระจันทร์ (#trytpc) มีเป้าหมายให้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA แถลงการณ์นี้ระบุส่วนที่เป็นไปตามมาตรฐานแล้ว ส่วนที่ยังไม่เป็น และเหตุผล บริการยังอยู่ในระยะทดลอง เนื้อหาและฟังก์ชันบางส่วนจึงยังไม่สมบูรณ์",
+  en: "#trytpc aims to meet WCAG 2.2 level AA. This statement sets out what already conforms, what does not yet, and why. The service is still in an early phase, so some content and functionality remain incomplete.",
 };
 
 const CONFORMANCE_HEADING: LocaleString = { th: "สถานะการปฏิบัติตามมาตรฐาน", en: "Conformance status" };
 const CONFORMANCE_BODY: LocaleString = {
-  th: "เนื้อหาส่วนใหญ่ของเว็บไซต์นี้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA บางส่วนแต่ไม่ทั้งหมด (partially conformant) เนื่องจากมีข้อยกเว้นที่ระบุไว้ด้านล่าง",
+  th: "เว็บไซต์นี้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA บางส่วน (partially conformant) คือเนื้อหาบางส่วนยังไม่เป็นไปตามมาตรฐานทั้งหมด ตามรายการด้านล่าง",
   en: "This site is partially conformant with WCAG 2.2 level AA. Partially conformant means some parts of the content do not fully conform to the accessibility standard, as listed below.",
 };
 
@@ -45,7 +45,7 @@ const WORKS_ITEMS: LocaleString[] = [
     en: "Every page has a skip link, a correct heading structure, exactly one h1, and single main, header and footer landmarks.",
   },
   {
-    th: "สี ทุกคู่สีที่ใช้แสดงข้อความและตัวควบคุมผ่านการตรวจสอบอัตราส่วนความคมชัดอัตโนมัติกว่า 110 คู่ทุกครั้งที่มีการ build สีสามสีของแบรนด์ (ส้ม ชมพู ม่วงอ่อน) ใช้เป็นพื้นหลังเท่านั้น ไม่เคยใช้เป็นสีตัวอักษรบนพื้นสว่าง",
+    th: "สี ทุกคู่สีที่ใช้แสดงข้อความและตัวควบคุมผ่านการตรวจอัตราส่วนความต่างของสีอัตโนมัติกว่า 110 รายการทุกครั้งที่ build สีสามสีของแบรนด์ (ส้ม ชมพู ม่วงอ่อน) ใช้เป็นพื้นหลังเท่านั้น ไม่เคยใช้เป็นสีตัวอักษรบนพื้นสว่าง",
     en: "Colour. Every text and control colour pair is checked automatically against 110 WCAG contrast assertions on every build. The three brand pastels (orange, pink, lilac) are used only as fills, never as text on a light surface.",
   },
   {
@@ -61,7 +61,7 @@ const WORKS_ITEMS: LocaleString[] = [
     en: "Progressive enhancement. Search, filtering and pagination all work with JavaScript switched off, because every one of them is driven by a real GET form or a plain link, not a script.",
   },
   {
-    th: "การเคลื่อนไหว เว็บไซต์เคารพการตั้งค่า “ลดการเคลื่อนไหว” ของระบบ และรองรับโหมดสีแบบบังคับ (forced colours) ของระบบปฏิบัติการ",
+    th: "การเคลื่อนไหว เว็บไซต์ทำตามการตั้งค่า “ลดการเคลื่อนไหว” ของระบบ และรองรับโหมดสีแบบบังคับ (forced colours) ของระบบปฏิบัติการ",
     en: "Motion. The site respects the operating system's \"reduce motion\" setting, and supports forced-colours mode.",
   },
   {
@@ -74,15 +74,15 @@ const GAPS_HEADING: LocaleString = { th: "สิ่งที่ยังไม�
 const GAPS_ITEMS: LocaleString[] = [
   {
     th: "คู่มือนักศึกษา TU91: เนื้อหาต้นฉบับเป็นภาพสแกนจากเอกสารตัวเล่ม ทีมงานกำลังพิมพ์และจัดโครงสร้างเนื้อหาใหม่ทีละส่วน ระหว่างนี้บางหน้าของคู่มืออาจยังไม่มี หรือมีแต่ยังไม่ผ่านการตรวจสอบโครงสร้างหัวข้อและข้อความทางเลือกอย่างสมบูรณ์",
-    en: "The TU91 student handbook. Its source material is scanned images of a printed book. Content is being re-typed and re-structured section by section; until that finishes, some handbook pages are missing or have not yet had their heading structure and alt text fully checked.",
+    en: "The TU91 student handbook is being re-typed and re-structured section by section from scanned images of the printed book. Until that finishes, some handbook pages are missing or have not yet had their heading structure and alt text fully checked.",
   },
   {
-    th: "แบบฟอร์มปลายทางบางฉบับอยู่บนระบบของหน่วยงานภายนอก (เช่น Google Forms หรือระบบของมหาวิทยาลัย) เว็บไซต์นี้ระบุไว้อย่างชัดเจนก่อนออกจากหน้าเว็บ แต่ไม่สามารถควบคุมหรือรับประกันการเข้าถึงของระบบปลายทางเหล่านั้นได้",
-    en: "Some destination forms are hosted on third-party systems (for example Google Forms, or a university system). This site labels the link clearly before you leave it, but does not control, and cannot guarantee, the accessibility of those third-party destinations.",
+    th: "แบบฟอร์มปลายทางบางฉบับอยู่บนระบบของหน่วยงานภายนอก (เช่น Google Forms หรือระบบของมหาวิทยาลัย) เว็บไซต์ระบุไว้ชัดเจนก่อนออกจากหน้านี้ แต่ควบคุมหรือรับประกันการเข้าถึงของระบบปลายทางเหล่านั้นไม่ได้",
+    en: "Some destination forms are hosted on third-party systems (for example Google Forms, or a university system). This site labels the link clearly before you leave it, but it cannot control or guarantee the accessibility of those third-party destinations.",
   },
   {
     th: "รูปภาพและเอกสารแนบที่นำเข้าจากแหล่งข้อมูลเดิม (เช่น โพสต์ Instagram ของ อมธ./สภานักศึกษา) อาจมีคำอธิบายภาพ (alt text) ที่ยังไม่ครบทุกภาพในระยะแรกของการนำเข้าข้อมูล",
-    en: "Images and attachments carried over from source material (for example TUSU or TUSC's own Instagram posts) may not all have alt text checked yet, this early in bringing that material in.",
+    en: "Images and attachments carried over from source material (for example TUSU or TUSC's own Instagram posts) may not all have had their alt text checked yet, because the material is still being brought in.",
   },
   {
     th: "เนื้อหาบางส่วนยังอยู่ระหว่างทดลอง (alpha) ตามที่ระบุไว้ในแถบแจ้งเตือนด้านบนของทุกหน้า ข้อมูลบางรายการอาจยังไม่ครบถ้วน",
@@ -90,7 +90,7 @@ const GAPS_ITEMS: LocaleString[] = [
   },
 ];
 
-const REPORT_HEADING: LocaleString = { th: "การแจ้งปัญหาการเข้าถึง", en: "Reporting an accessibility problem" };
+const REPORT_HEADING: LocaleString = { th: "แจ้งปัญหาการเข้าถึง", en: "Reporting an accessibility problem" };
 const REPORT_BODY: LocaleString = {
   th: "หากพบปัญหาการเข้าถึงในเว็บไซต์นี้ ไม่ว่าจะเป็นส่วนที่ระบุไว้ข้างต้นหรือไม่ก็ตาม โปรดติดต่อ อมธ. ท่าพระจันทร์ หรือสภานักศึกษา ท่าพระจันทร์ ผ่านช่องทางที่ระบุไว้ในหัวข้อ “ต้องการความช่วยเหลือ” ท้ายทุกหน้าของเว็บไซต์",
   en: "If you find an accessibility problem on this site, whether or not it is listed above, contact TUSU Tha Prachan or TUSC Tha Prachan through the channels under \"Need help\" at the bottom of every page.",

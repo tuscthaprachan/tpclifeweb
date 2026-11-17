@@ -24,8 +24,8 @@ export const HOW_THEY_RELATE_LABEL: LocaleString = { th: "ความสัม�
 
 // TODO: add to UI strings.
 export const RELATION_TEXT: LocaleString = {
-  th: "อมธ. ท่าพระจันทร์เป็นฝ่ายบริหาร จัดสรรงบประมาณและดำเนินกิจกรรมของนักศึกษา ส่วนสภานักศึกษา ท่าพระจันทร์เป็นฝ่ายนิติบัญญัติและตรวจสอบ พิจารณาอนุมัติระเบียบและตรวจสอบการดำเนินงาน นโยบาย และงบประมาณของ อมธ. ทั้งสององค์กรจึงทำงานคู่กัน ไม่ใช่องค์กรเดียวกัน",
-  en: "TUSU Tha Prachan is the executive body: it allocates budget and runs student activities. TUSC Tha Prachan is the legislative and scrutiny body: it approves the rules TUSU works under and scrutinises TUSU's decisions, policies and budget. The two work alongside each other, not as one body.",
+  th: "อมธ. ท่าพระจันทร์เป็นฝ่ายบริหาร จัดสรรงบประมาณและดำเนินกิจกรรมของนักศึกษา ส่วนสภานักศึกษา ท่าพระจันทร์เป็นฝ่ายนิติบัญญัติและตรวจสอบ พิจารณาอนุมัติระเบียบและตรวจสอบการดำเนินงาน นโยบาย และงบประมาณของ อมธ. ทั้งสององค์กรแยกจากกันและทำงานคู่กัน",
+  en: "TUSU Tha Prachan is the executive body: it allocates budget and runs student activities. TUSC Tha Prachan is the legislative and scrutiny body: it approves the rules TUSU works under and scrutinises TUSU's decisions, policies and budget. The two are separate bodies that work alongside each other.",
 };
 
 // TODO: add to UI strings.

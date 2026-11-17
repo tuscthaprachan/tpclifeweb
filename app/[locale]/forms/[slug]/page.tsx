@@ -43,16 +43,16 @@ import type { FormRecord, HelpContact } from "@/lib/content/types";
 // TODO: add to UI strings.
 const SIGN_IN_ACCOUNT_NOTE: Record<"google" | "tuAccount" | "other", LocaleString> = {
   google: {
-    th: "การเข้าสู่ระบบทำในแบบฟอร์มภายนอก ไม่ใช่บนเว็บไซต์นี้ ใช้บัญชี Google ของมหาวิทยาลัยธรรมศาสตร์ (บัญชี TU) ก่อนกรอก",
-    en: "Signing in happens on the external form, not on this website. Use your Thammasat (TU) Google account before filling it in",
+    th: "เข้าสู่ระบบที่แบบฟอร์มภายนอก ใช้บัญชี Google ของมหาวิทยาลัยธรรมศาสตร์ (บัญชี TU) ก่อนกรอก",
+    en: "Sign in on the external form. Use your Thammasat (TU) Google account before filling it in",
   },
   tuAccount: {
-    th: "การเข้าสู่ระบบทำในแบบฟอร์มภายนอก ไม่ใช่บนเว็บไซต์นี้ ใช้บัญชีมหาวิทยาลัยธรรมศาสตร์ (บัญชี TU) ก่อนกรอก",
-    en: "Signing in happens on the external form, not on this website. Use your Thammasat (TU) account before filling it in",
+    th: "เข้าสู่ระบบที่แบบฟอร์มภายนอก ใช้บัญชีมหาวิทยาลัยธรรมศาสตร์ (บัญชี TU) ก่อนกรอก",
+    en: "Sign in on the external form. Use your Thammasat (TU) account before filling it in",
   },
   other: {
-    th: "การเข้าสู่ระบบทำในแบบฟอร์มภายนอก ไม่ใช่บนเว็บไซต์นี้ โปรดตรวจสอบบัญชีที่ต้องใช้กับผู้รับผิดชอบด้านล่าง",
-    en: "Signing in happens on the external form, not on this website. Check which account you need with the contact below",
+    th: "เข้าสู่ระบบที่แบบฟอร์มภายนอก สอบถามผู้รับผิดชอบด้านล่างว่าต้องใช้บัญชีใด",
+    en: "Sign in on the external form. Check which account you need with the contact below",
   },
 };
 // TODO: add to UI strings.
@@ -66,7 +66,7 @@ const IN_PERSON_NOTE: LocaleString = {
 };
 // TODO: add to UI strings.
 const NO_DESTINATION_NOTE: LocaleString = {
-  th: "ยังไม่มีลิงก์ที่บันทึกไว้สำหรับแบบฟอร์มนี้ โปรดติดต่อผู้รับผิดชอบด้านล่าง",
+  th: "ยังไม่มีลิงก์สำหรับแบบฟอร์มนี้ ติดต่อผู้รับผิดชอบด้านล่าง",
   en: "No link has been recorded for this form yet. Contact the responsible body below",
 };
 
