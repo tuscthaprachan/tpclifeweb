@@ -17,7 +17,6 @@ const C = {
   action: "#613f87",
   actionInk: "#ffffff",
   accent: "#843a01",
-  sunk: "#f1eff5",
   bandFrom: "#fbe4d7",
   bandTo: "#f0e4f9",
 };
@@ -52,11 +51,8 @@ export function paragraph(lang: EmailLang, value: string, opts: { preLine?: bool
 
 export function reference(lang: EmailLang, label: string, value: string): string {
   return [
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px;border-collapse:separate">`,
-    `<tr><td bgcolor="${C.sunk}" style="background:${C.sunk};border-radius:12px;border-left:4px solid ${C.action};padding:16px 20px">`,
-    `<p style="margin:0 0 4px;${text(lang, 14, C.ink2)};font-weight:500">${esc(label)}</p>`,
-    `<p style="margin:0;font-family:${MONO};font-size:28px;line-height:1.3;letter-spacing:2px;font-weight:700;color:${C.ink}">${esc(value)}</p>`,
-    `</td></tr></table>`,
+    `<p style="margin:8px 0 4px;${text(lang, 15, C.ink2)};font-weight:500">${esc(label)}</p>`,
+    `<p style="margin:0 0 24px;font-family:${MONO};font-size:30px;line-height:1.3;letter-spacing:2px;font-weight:700;color:${C.ink}">${esc(value)}</p>`,
   ].join("");
 }
 
@@ -85,7 +81,7 @@ export function list(lang: EmailLang, items: string[]): string {
 export function section(lang: EmailLang, parts: string[]): string {
   return [
     `<div lang="${lang}" style="${text(lang, 17)}">`,
-    `<p style="margin:0 0 12px"><span style="display:inline-block;padding:2px 10px;border-radius:999px;background:${C.bandTo};${text(lang, 12, C.action)};line-height:1.6;font-weight:600;letter-spacing:0.5px">${LANG_NAME[lang]}</span></p>`,
+    `<p style="margin:0 0 8px;${text(lang, 13, C.ink2)};font-weight:600;letter-spacing:0.5px">${LANG_NAME[lang]}</p>`,
     ...parts,
     `</div>`,
   ].join("\n");
