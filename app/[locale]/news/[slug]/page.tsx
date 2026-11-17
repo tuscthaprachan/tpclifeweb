@@ -6,6 +6,7 @@ import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
 
 import { categoryLabel, ownerLabel } from "@/components/domain/news";
+import { ProportionalImage } from "@/components/domain/media/ProportionalImage";
 import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Grid, Heading, Stack, Tag, Timestamp } from "@/components/ui";
@@ -13,12 +14,6 @@ import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getNewsPage, getNewsPostBySlug, getNewsPostPreview, resolveRichTextRefs } from "@/lib/content";
 import type { ContentImage } from "@/lib/content/types";
-
-// Cover and gallery images are cropped to a fixed ratio with `fill` and
-// `object-cover`, the same way ImageBlock crops images embedded in the body, so
-// a picture of any shape fits its frame without distorting. The gallery is 4:3
-// rather than the cover's 16:9, so it reads as a distinct, denser strip of
-// thumbnails under the article.
 
 // getNewsPage is the only news-listing read, so static params come from one
 // large page rather than a dedicated "all slugs" query. A site with more than
@@ -90,16 +85,13 @@ export default async function NewsDetailPage({
         </Stack>
 
         {post.cover ? (
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-panel bg-surface-sunk">
-            <Image
-              src={post.cover.url}
-              alt={post.cover.isDecorative ? "" : pick(post.cover.alt, locale)}
-              fill
-              sizes="(min-width: 768px) 720px, 100vw"
-              className="object-cover"
-              priority
-            />
-          </div>
+          <ProportionalImage
+            src={post.cover.url}
+            alt={post.cover.isDecorative ? "" : pick(post.cover.alt, locale)}
+            width={post.cover.width}
+            height={post.cover.height}
+            priority
+          />
         ) : null}
 
         <RichText value={post.body[locale]} locale={locale} headingLevel={2} resolved={resolved} />

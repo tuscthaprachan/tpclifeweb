@@ -632,7 +632,7 @@ describe("rich text references", () => {
     ]);
     expect([...(resolved.forms?.keys() ?? [])]).toEqual([published!.id]);
     expect(resolved.forms?.get(published!.id)).toMatchObject({ id: published!.id, slug: published!.slug, isActive: true });
-    expect(resolved.images?.get(image!.id)).toEqual({ url: "memory://public/news/cover.jpg" });
+    expect(resolved.images?.get(image!.id)).toEqual({ url: "memory://public/news/cover.jpg", width: 1200, height: 675 });
   });
 
   it("does no work for documents with no references", async () => {

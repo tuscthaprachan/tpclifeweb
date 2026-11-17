@@ -58,7 +58,7 @@ export async function readFormSummaries(ids: readonly string[]): Promise<Record<
 
 export async function readImageInfos(ids: readonly string[]): Promise<Record<string, ImageInfo>> {
   const found = await loadImages(getDb(), ids);
-  return Object.fromEntries([...found].map(([id, image]) => [id, { url: image.url }]));
+  return Object.fromEntries([...found].map(([id, image]) => [id, { url: image.url, width: image.width, height: image.height }]));
 }
 
 // Plain objects, not Maps: the data cache stores JSON. Ids are sorted so the same set always hits the same entry.

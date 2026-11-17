@@ -15,6 +15,8 @@ export interface FormSummary {
 export interface ImageInfo {
   /** Public URL of the stored file (must be allowed by `images.remotePatterns` in next.config). */
   url: string;
+  width?: number;
+  height?: number;
 }
 
 /**

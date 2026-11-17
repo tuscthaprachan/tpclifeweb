@@ -9,6 +9,7 @@ import { EventSchedule, ownerLabel, categoryLabel } from "@/components/domain/ev
 // already resolves `relatedForm` to a full record, so no extra fetch is
 // needed here, only the import.
 import { FormCallout } from "@/components/domain/form";
+import { ProportionalImage } from "@/components/domain/media/ProportionalImage";
 import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, Link, NotificationBanner, Stack, StatusTag, Tag } from "@/components/ui";
@@ -94,6 +95,16 @@ export default async function EventDetailPage({
           <NotificationBanner variant="warning" title={UI.eventCancelled[locale]}>
             {event.cancellationNote ? pick(event.cancellationNote, locale) : UI.eventCancelled[locale]}
           </NotificationBanner>
+        ) : null}
+
+        {event.cover ? (
+          <ProportionalImage
+            src={event.cover.url}
+            alt={event.cover.isDecorative ? "" : pick(event.cover.alt, locale)}
+            width={event.cover.width}
+            height={event.cover.height}
+            priority
+          />
         ) : null}
 
         {event.body ? <RichText value={event.body[locale]} locale={locale} headingLevel={2} resolved={resolved} /> : null}
