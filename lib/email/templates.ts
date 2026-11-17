@@ -7,12 +7,13 @@
  * reader needs (link, reference) set out on its own line, and short
  * sentences. Thai is written as Thai, not translated from the English.
  *
- * HTML is minimal on purpose: headings, paragraphs, one link, inline styles
- * only, system fonts, `lang` on each half so screen readers switch voice.
+ * HTML comes from ./layout: inline styles only, Sarabun for Thai and Lexend
+ * for English, `lang` on each half so screen readers switch voice.
  */
 
 import { UI } from "@/lib/i18n/strings";
 import type { LocaleString } from "@/lib/i18n/config";
+import { button, emailDocument, heading, paragraph, reference, section } from "./layout";
 
 export interface RenderedEmail {
   subject: string;
@@ -30,14 +31,6 @@ interface Section {
 }
 
 const SERVICE: LocaleString = UI.serviceName;
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
 
 function assertHttpUrl(url: string): void {
   let parsed: URL;
@@ -59,40 +52,22 @@ function sectionText(s: Section): string {
 }
 
 function sectionHtml(s: Section): string {
-  const p = (t: string) => `<p style="margin:0 0 16px">${escapeHtml(t)}</p>`;
-  const value = s.highlight
-    ? s.highlight.isLink
-      ? `<a href="${escapeHtml(s.highlight.value)}" style="color:#1d70b8;word-break:break-all">${escapeHtml(s.highlight.value)}</a>`
-      : `<strong style="font-size:32px;letter-spacing:4px;font-family:monospace">${escapeHtml(s.highlight.value)}</strong>`
-    : "";
   const highlight = s.highlight
-    ? `<p style="margin:0 0 4px">${escapeHtml(s.highlight.label)}</p><p style="margin:0 0 24px">${value}</p>`
+    ? s.highlight.isLink
+      ? button(s.lang, s.highlight.label, s.highlight.value)
+      : reference(s.lang, s.highlight.label, s.highlight.value)
     : "";
-  return [
-    `<div lang="${s.lang}">`,
-    `<h2 style="font-size:20px;margin:0 0 16px">${escapeHtml(s.heading)}</h2>`,
-    ...s.paragraphs.map(p),
+  return section(s.lang, [
+    heading(s.lang, s.heading),
+    ...s.paragraphs.map((t) => paragraph(s.lang, t)),
     highlight,
-    ...s.after.map(p),
-    `</div>`,
-  ].join("\n");
+    ...s.after.map((t) => paragraph(s.lang, t)),
+  ]);
 }
 
 function render(subject: string, th: Section, en: Section): RenderedEmail {
   const text = `${sectionText(th)}\n\n---\n\n${sectionText(en)}\n`;
-  const html = [
-    `<!doctype html>`,
-    `<html lang="th">`,
-    `<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(subject)}</title></head>`,
-    `<body style="margin:0;padding:24px 16px;background:#ffffff;color:#0b0c0c;font-family:Helvetica,Arial,'Noto Sans Thai',sans-serif;font-size:19px;line-height:1.5">`,
-    `<div style="max-width:600px;margin:0 auto">`,
-    sectionHtml(th),
-    `<hr style="border:0;border-top:1px solid #b1b4b6;margin:32px 0">`,
-    sectionHtml(en),
-    `</div>`,
-    `</body>`,
-    `</html>`,
-  ].join("\n");
+  const html = emailDocument({ title: subject, lang: "th", sections: [sectionHtml(th), sectionHtml(en)], preheader: th.paragraphs[0] });
   return { subject, text, html };
 }
 

@@ -11,6 +11,7 @@ import { REOPEN_WINDOW_DAYS } from "@/lib/complaints/constants";
 import type { RedirectTarget } from "@/lib/complaints/redirect";
 import type { FacultyBody, FacultyOffice } from "@/lib/content/faculties";
 import { UI } from "@/lib/i18n/strings";
+import { button, emailDocument, heading, list, paragraph, reference, section } from "./layout";
 import type { RenderedEmail } from "./templates";
 
 interface Section {
@@ -21,40 +22,22 @@ interface Section {
   after: string[];
 }
 
-const esc = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-
 function sectionText(s: Section): string {
   return [s.heading, "", ...s.paragraphs.flatMap((p) => [p, ""]), s.reference.label, s.reference.value, "", ...s.after.flatMap((p) => [p, ""])].join("\n").trimEnd();
 }
 
 function sectionHtml(s: Section): string {
-  const p = (t: string) => `<p style="margin:0 0 16px">${esc(t)}</p>`;
-  return [
-    `<div lang="${s.lang}">`,
-    `<h2 style="font-size:20px;margin:0 0 16px">${esc(s.heading)}</h2>`,
-    ...s.paragraphs.map(p),
-    `<p style="margin:0 0 4px">${esc(s.reference.label)}</p>`,
-    `<p style="margin:0 0 24px"><strong style="font-size:28px;letter-spacing:2px;font-family:monospace">${esc(s.reference.value)}</strong></p>`,
-    ...s.after.map(p),
-    `</div>`,
-  ].join("\n");
+  return section(s.lang, [
+    heading(s.lang, s.heading),
+    ...s.paragraphs.map((t) => paragraph(s.lang, t)),
+    reference(s.lang, s.reference.label, s.reference.value),
+    ...s.after.map((t) => paragraph(s.lang, t)),
+  ]);
 }
 
 function render(subject: string, th: Section, en: Section): RenderedEmail {
   const text = `${sectionText(th)}\n\n---\n\n${sectionText(en)}\n`;
-  const html = [
-    `<!doctype html>`,
-    `<html lang="th">`,
-    `<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(subject)}</title></head>`,
-    `<body style="margin:0;padding:24px 16px;background:#ffffff;color:#0b0c0c;font-family:Helvetica,Arial,'Noto Sans Thai',sans-serif;font-size:19px;line-height:1.5">`,
-    `<div style="max-width:600px;margin:0 auto">`,
-    sectionHtml(th),
-    `<hr style="border:0;border-top:1px solid #b1b4b6;margin:32px 0">`,
-    sectionHtml(en),
-    `</div>`,
-    `</body>`,
-    `</html>`,
-  ].join("\n");
+  const html = emailDocument({ title: subject, lang: "th", sections: [sectionHtml(th), sectionHtml(en)], preheader: th.paragraphs[0] });
   return { subject, text, html };
 }
 
@@ -199,16 +182,16 @@ export function complaintsEscalated({ items, inboxUrl }: EscalationEmailParams):
   const th = items.map((i) => `${i.reference}: ${i.reason === "acknowledge" ? "เกินเวลาที่ตั้งไว้ในการรับเรื่อง" : "เกินเวลาที่ตั้งไว้ในการแก้ไข"}`);
   const en = items.map((i) => `${i.reference}: ${i.reason === "acknowledge" ? "not acknowledged in time" : "not resolved in time"}`);
   const subject = `มีเรื่องร้องเรียนเกินกำหนด ${items.length} เรื่อง / ${items.length} complaint${items.length === 1 ? "" : "s"} past target`;
-  const section = (lang: "th" | "en", heading: string, intro: string, lines: string[], link: string) => ({
-    text: [heading, "", intro, "", ...lines.map((l) => `- ${l}`), "", link, inboxUrl].join("\n"),
-    html: `<div lang="${lang}"><h2 style="font-size:20px;margin:0 0 16px">${esc(heading)}</h2><p style="margin:0 0 16px">${esc(intro)}</p><ul style="margin:0 0 16px;padding-left:24px">${lines.map((l) => `<li>${esc(l)}</li>`).join("")}</ul><p style="margin:0 0 24px"><a href="${esc(inboxUrl)}" style="color:#1d70b8">${esc(link)}</a></p></div>`,
+  const part = (lang: "th" | "en", title: string, intro: string, lines: string[], link: string) => ({
+    text: [title, "", intro, "", ...lines.map((l) => `- ${l}`), "", link, inboxUrl].join("\n"),
+    html: section(lang, [heading(lang, title), paragraph(lang, intro), list(lang, lines), button(lang, link, inboxUrl)]),
   });
-  const a = section("th", "มีเรื่องร้องเรียนเกินกำหนด", "เรื่องต่อไปนี้ยังไม่ได้รับเรื่องหรือยังไม่ได้แก้ไขภายในเวลาที่ตั้งไว้ เปิดคิวเรื่องเพื่อดู", th, "เปิดคิวเรื่อง");
-  const b = section("en", "Complaints past their target", "These complaints have not been acknowledged or resolved within their target. Open the queue to see them.", en, "Open the queue");
+  const a = part("th", "มีเรื่องร้องเรียนเกินกำหนด", "เรื่องต่อไปนี้ยังไม่ได้รับเรื่องหรือยังไม่ได้แก้ไขภายในเวลาที่ตั้งไว้ เปิดคิวเรื่องเพื่อดู", th, "เปิดคิวเรื่อง");
+  const b = part("en", "Complaints past their target", "These complaints have not been acknowledged or resolved within their target. Open the queue to see them.", en, "Open the queue");
   return {
     subject,
     text: `${a.text}\n\n---\n\n${b.text}\n`,
-    html: `<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(subject)}</title></head><body style="margin:0;padding:24px 16px;background:#ffffff;color:#0b0c0c;font-family:Helvetica,Arial,'Noto Sans Thai',sans-serif;font-size:19px;line-height:1.5"><div style="max-width:600px;margin:0 auto">${a.html}<hr style="border:0;border-top:1px solid #b1b4b6;margin:32px 0">${b.html}</div></body></html>`,
+    html: emailDocument({ title: subject, lang: "th", sections: [a.html, b.html] }),
   };
 }
 

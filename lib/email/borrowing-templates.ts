@@ -7,9 +7,8 @@
  */
 
 import { UI } from "@/lib/i18n/strings";
+import { button, emailDocument, heading, paragraph, section } from "./layout";
 import type { RenderedEmail } from "./templates";
-
-const esc = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 interface Section {
   lang: "th" | "en";
@@ -42,9 +41,8 @@ export function borrowingTrackingLink({ reference, link }: BorrowingTrackingLink
   };
   const subject = `${UI.brServiceName.th}: ${reference} / ${UI.brServiceName.en}: ${reference}`;
   const text = [th, en].map((s) => [s.heading, "", ...s.lines.flatMap((l) => [l, ""]), s.linkLabel, link, "", ...s.after].join("\n")).join("\n\n---\n\n");
-  const p = (t: string) => `<p style="margin:0 0 16px">${esc(t)}</p>`;
-  const section = (s: Section) =>
-    `<div lang="${s.lang}"><h2 style="font-size:20px;margin:0 0 16px">${esc(s.heading)}</h2>${s.lines.map(p).join("")}<p style="margin:0 0 4px">${esc(s.linkLabel)}</p><p style="margin:0 0 24px"><a href="${esc(link)}" style="color:#1d70b8;word-break:break-all">${esc(link)}</a></p>${s.after.map(p).join("")}</div>`;
-  const html = `<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(subject)}</title></head><body style="margin:0;padding:24px 16px;background:#ffffff;color:#0b0c0c;font-family:Helvetica,Arial,'Noto Sans Thai',sans-serif;font-size:19px;line-height:1.5"><div style="max-width:600px;margin:0 auto">${section(th)}<hr style="border:0;border-top:1px solid #b1b4b6;margin:32px 0">${section(en)}</div></body></html>`;
+  const render = (s: Section) =>
+    section(s.lang, [heading(s.lang, s.heading), ...s.lines.map((t) => paragraph(s.lang, t)), button(s.lang, s.linkLabel, link), ...s.after.map((t) => paragraph(s.lang, t))]);
+  const html = emailDocument({ title: subject, lang: "th", sections: [render(th), render(en)], preheader: th.lines[0] });
   return { subject, text, html };
 }

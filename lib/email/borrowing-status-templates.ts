@@ -11,6 +11,7 @@ import { DESK_CLOSES, DESK_OPENS } from "@/lib/borrowing/constants";
 import type { Locale } from "@/lib/i18n/config";
 import { formatDateTime } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
+import { emailDocument, heading, paragraph, reference, section } from "./layout";
 import type { RenderedEmail } from "./templates";
 
 interface Section {
@@ -21,23 +22,13 @@ interface Section {
   after: string[];
 }
 
-const esc = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-
 function sectionText(s: Section): string {
   return [s.heading, "", ...s.paragraphs.flatMap((p) => [p, ""]), s.reference.label, s.reference.value, "", ...s.after.flatMap((p) => [p, ""])].join("\n").trimEnd();
 }
 
 function sectionHtml(s: Section): string {
-  const p = (t: string) => `<p style="margin:0 0 16px;white-space:pre-line">${esc(t)}</p>`;
-  return [
-    `<div lang="${s.lang}">`,
-    `<h2 style="font-size:20px;margin:0 0 16px">${esc(s.heading)}</h2>`,
-    ...s.paragraphs.map(p),
-    `<p style="margin:0 0 4px">${esc(s.reference.label)}</p>`,
-    `<p style="margin:0 0 24px"><strong style="font-size:28px;letter-spacing:2px;font-family:monospace">${esc(s.reference.value)}</strong></p>`,
-    ...s.after.map(p),
-    `</div>`,
-  ].join("\n");
+  const p = (t: string) => paragraph(s.lang, t, { preLine: true });
+  return section(s.lang, [heading(s.lang, s.heading), ...s.paragraphs.map(p), reference(s.lang, s.reference.label, s.reference.value), ...s.after.map(p)]);
 }
 
 /** Renders the two halves, the borrower's language first. */
@@ -45,19 +36,7 @@ function render(subject: { th: string; en: string }, th: Section, en: Section, f
   const [one, two] = first === "en" ? [en, th] : [th, en];
   const title = first === "en" ? `${subject.en} / ${subject.th}` : `${subject.th} / ${subject.en}`;
   const text = `${sectionText(one)}\n\n---\n\n${sectionText(two)}\n`;
-  const html = [
-    `<!doctype html>`,
-    `<html lang="${first}">`,
-    `<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)}</title></head>`,
-    `<body style="margin:0;padding:24px 16px;background:#ffffff;color:#0b0c0c;font-family:Helvetica,Arial,'Noto Sans Thai',sans-serif;font-size:19px;line-height:1.5">`,
-    `<div style="max-width:600px;margin:0 auto">`,
-    sectionHtml(one),
-    `<hr style="border:0;border-top:1px solid #b1b4b6;margin:32px 0">`,
-    sectionHtml(two),
-    `</div>`,
-    `</body>`,
-    `</html>`,
-  ].join("\n");
+  const html = emailDocument({ title, lang: first, sections: [sectionHtml(one), sectionHtml(two)], preheader: one.paragraphs[0] });
   return { subject: title, text, html };
 }
 

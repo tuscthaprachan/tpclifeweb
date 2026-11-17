@@ -6,6 +6,7 @@
  */
 
 import { UI } from "@/lib/i18n/strings";
+import { button, emailDocument, heading as h, paragraph, section } from "./layout";
 import type { RenderedEmail } from "./templates";
 
 export interface StaffNotificationParams {
@@ -52,10 +53,6 @@ const FALLBACK: Entry = {
   line: () => ({ th: "มีการแจ้งเตือนใหม่ในคอนโซลเจ้าหน้าที่", en: "You have a new notification in the staff console." }),
 };
 
-function escapeHtml(value: string): string {
-  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
 function assertHttps(url: string): void {
   let parsed: URL;
   try {
@@ -70,16 +67,9 @@ function cleanReference(reference: string | null | undefined): string {
   return typeof reference === "string" && /^[A-Za-z0-9-]{1,40}$/.test(reference) ? reference : "";
 }
 
-function block(lang: "th" | "en", heading: string, line: string, label: string, url: string): { text: string; html: string } {
-  const text = [heading, "", line, "", label, url].join("\n");
-  const html = [
-    `<div lang="${lang}">`,
-    `<h2 style="font-size:20px;margin:0 0 16px">${escapeHtml(heading)}</h2>`,
-    `<p style="margin:0 0 16px">${escapeHtml(line)}</p>`,
-    `<p style="margin:0 0 4px">${escapeHtml(label)}</p>`,
-    `<p style="margin:0 0 24px"><a href="${escapeHtml(url)}" style="color:#1d70b8;word-break:break-all">${escapeHtml(url)}</a></p>`,
-    `</div>`,
-  ].join("\n");
+function block(lang: "th" | "en", title: string, line: string, label: string, url: string): { text: string; html: string } {
+  const text = [title, "", line, "", label, url].join("\n");
+  const html = section(lang, [h(lang, title), paragraph(lang, line), button(lang, label, url)]);
   return { text, html };
 }
 
@@ -91,18 +81,6 @@ export function staffNotification({ kind, reference, url }: StaffNotificationPar
   const th = block("th", entry.title.th, `${line.th} บน${UI.serviceName.th}`, "เปิดในคอนโซล", url);
   const en = block("en", entry.title.en, `${line.en} On ${UI.serviceName.en}.`, "Open in the console", url);
   const text = `${th.text}\n\n---\n\n${en.text}\n`;
-  const html = [
-    `<!doctype html>`,
-    `<html lang="th">`,
-    `<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escapeHtml(subject)}</title></head>`,
-    `<body style="margin:0;padding:24px 16px;background:#ffffff;color:#0b0c0c;font-family:Helvetica,Arial,'Noto Sans Thai',sans-serif;font-size:19px;line-height:1.5">`,
-    `<div style="max-width:600px;margin:0 auto">`,
-    th.html,
-    `<hr style="border:0;border-top:1px solid #b1b4b6;margin:32px 0">`,
-    en.html,
-    `</div>`,
-    `</body>`,
-    `</html>`,
-  ].join("\n");
+  const html = emailDocument({ title: subject, lang: "th", sections: [th.html, en.html], preheader: line.th });
   return { subject, text, html };
 }
