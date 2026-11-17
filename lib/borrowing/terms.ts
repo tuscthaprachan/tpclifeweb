@@ -22,7 +22,7 @@ export const SHARED_TERMS: readonly LocaleString[] = [
     en: "If anything is damaged or lost, you pay for it at its current price",
   },
   {
-    th: "คืนอุปกรณ์ภายในวันเวลาที่นัดไว้ หากคืนช้าอาจถูกดำเนินการทางวินัยและกฎหมาย",
+    th: "คืนอุปกรณ์ภายในวันเวลาที่นัดไว้ หากคืนช้าอาจมีการดำเนินการทางวินัยและกฎหมาย",
     en: "Return the equipment by the time you booked. Late returns can lead to disciplinary or legal action",
   },
   {

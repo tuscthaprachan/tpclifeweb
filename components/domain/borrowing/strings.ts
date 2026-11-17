@@ -19,13 +19,13 @@ export const AVAIL = {
   breadcrumbBorrow: { th: "ยืมอุปกรณ์", en: "Borrow equipment" },
   breadcrumbSelf: { th: "ตรวจสอบอุปกรณ์ว่าง", en: "Availability" },
   guideNote: {
-    th: "จำนวนที่แสดงคำนวณจากการจองที่มีอยู่แล้ว เป็นเพียงแนวทาง และคำขอยืมจะเป็นผู้ยืนยันจำนวนอีกครั้ง",
-    en: "These counts are worked out from bookings already made. They are a guide, and your request confirms them.",
+    th: "จำนวนที่แสดงคำนวณจากการจองที่มีอยู่แล้ว ใช้เป็นแนวทางเท่านั้น จำนวนที่แน่นอนจะยืนยันอีกครั้งเมื่อส่งคำขอยืม",
+    en: "These counts are worked out from bookings already made, so use them as a guide. We confirm the exact number when you send your request.",
   },
   startRequest: { th: "เริ่มส่งคำขอยืม", en: "Start a request" },
   unavailableTitle: { th: "ใช้บริการนี้ไม่ได้ในขณะนี้", en: "This service is not available right now" },
-  unavailableBody: { th: "ยังดูอุปกรณ์ว่างไม่ได้ในขณะนี้ โปรดลองใหม่ภายหลัง", en: "Availability cannot be shown at the moment. Please try again later." },
-  notFound: { th: "ไม่พบอุปกรณ์ที่เลือก โปรดเลือกรายการจากรายชื่อ", en: "We could not find that item. Choose one from the list." },
+  unavailableBody: { th: "ยังดูอุปกรณ์ว่างไม่ได้ในขณะนี้ ลองใหม่ภายหลัง", en: "Availability cannot be shown at the moment. Please try again later." },
+  notFound: { th: "ไม่พบอุปกรณ์ที่เลือก เลือกรายการจากรายชื่อ", en: "We could not find that item. Choose one from the list." },
 
   /* Chooser */
   chooserLabel: { th: "เลือกอุปกรณ์", en: "Choose an item" },
@@ -54,7 +54,7 @@ export const AVAIL = {
   closed: { th: "ปิดทำการ", en: "Closed" },
   tooSoon: { th: "ยังจองไม่ได้ ต้องขอล่วงหน้า", en: "Too soon to book" },
   past: { th: "ผ่านไปแล้ว", en: "Past" },
-  booked: { th: "ถูกจอง {count}", en: "{count} booked" },
+  booked: { th: "จองแล้ว {count}", en: "{count} booked" },
 
   /* Legend */
   legend: { th: "คำอธิบาย", en: "Key" },
