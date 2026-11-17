@@ -19,7 +19,8 @@ import { and, eq, isNull, lt, or } from "drizzle-orm";
 import { systemTransition } from "@/lib/cases/engine";
 import { appendEvent, lockCase } from "@/lib/cases/internal";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
-import { caseAudience, createNotifications } from "@/lib/notifications/create";
+import { caseAudience, insertNotifications } from "@/lib/notifications/create";
+import { deliverNotificationEmails } from "@/lib/notifications/email";
 import { cases } from "@/lib/db/schema/cases";
 import { complaintCases, complaintCategories } from "@/lib/db/schema/complaints";
 import { REOPEN_WINDOW_DAYS } from "./constants";
@@ -80,6 +81,7 @@ export async function escalateOverdue(db: AuditExecutor, now: Date): Promise<Esc
   const escalated: EscalatedItem[] = [];
   for (const c of candidates) {
     try {
+      let notified: string[] = [];
       const reason = await withAudit(db, { actorUserId: null }, async (tx, audit) => {
         const row = await lockCase(tx, c.caseId);
         if (row.closedAt) return null;
@@ -96,7 +98,7 @@ export async function escalateOverdue(db: AuditExecutor, now: Date): Promise<Esc
           metadata: { reason: due, dueAt: (due === "resolve" ? cc.resolveDueAt : cc.acknowledgeDueAt).toISOString() },
         });
         await audit({ action: "complaint.escalate", entityType: "case", entityId: c.caseId, after: { reason: due, reference: row.reference } });
-        await createNotifications(
+        notified = await insertNotifications(
           tx,
           (await caseAudience(tx, c.caseId, "complaint")).map((userId) => ({
             userId,
@@ -111,6 +113,7 @@ export async function escalateOverdue(db: AuditExecutor, now: Date): Promise<Esc
         );
         return due;
       });
+      await deliverNotificationEmails(db, notified);
       if (reason) escalated.push({ caseId: c.caseId, reference: c.reference, categoryId: c.categoryId, restricted: c.restricted, reason });
     } catch (error) {
       console.error(`[complaints] could not escalate ${c.reference}`, error instanceof Error ? error.message : error);

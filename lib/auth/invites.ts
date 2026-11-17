@@ -18,7 +18,8 @@ import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { withAudit, type AuditContext, type AuditExecutor } from "@/lib/db/audit";
 import { user } from "@/lib/db/schema/auth";
 import { organisations, type Organisation } from "@/lib/db/schema/organisations";
-import { createNotification } from "@/lib/notifications/create";
+import { insertNotifications } from "@/lib/notifications/create";
+import { deliverNotificationEmails } from "@/lib/notifications/email";
 import { staffInvites, type StaffInvite } from "@/lib/db/schema/staff-invites";
 import { staffMemberships } from "@/lib/db/schema/staff-memberships";
 import { staffRoles, STAFF_ROLES, type StaffRole } from "@/lib/db/schema/staff-roles";
@@ -182,7 +183,8 @@ export async function acceptInvite(
   if (status === "expired") throw new InviteError("expired");
   if (normaliseEmail(input.userEmail) !== invite.email) throw new InviteError("email_mismatch");
 
-  return withAudit(
+  let notified: string[] = [];
+  const accepted = await withAudit(
     db,
     { ...input.context, actorUserId: input.userId, actorOrganisationId: invite.organisationIds[0] ?? null },
     async (tx, audit) => {
@@ -236,9 +238,9 @@ export async function acceptInvite(
       }
       if (invite.invitedBy && invite.invitedBy !== input.userId) {
         const [person] = await tx.select({ name: user.name }).from(user).where(eq(user.id, input.userId));
-        await createNotification(
+        notified = await insertNotifications(
           tx,
-          {
+          [{
             userId: invite.invitedBy,
             kind: "invite_accepted",
             params: { name: person?.name?.trim() || invite.email },
@@ -246,13 +248,15 @@ export async function acceptInvite(
             entityType: "staff_invite",
             entityId: String(invite.id),
             dedupeKey: `invite:${invite.id}`,
-          },
+          }],
           now,
         );
       }
       return { organisationIds: [...invite.organisationIds], roles: [...invite.roles] };
     },
   );
+  await deliverNotificationEmails(db, notified);
+  return accepted;
 }
 
 /** Revokes a pending invite. Returns false when it was not pending. */

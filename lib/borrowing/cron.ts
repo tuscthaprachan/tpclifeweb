@@ -19,7 +19,8 @@ import type { AuditExecutor } from "@/lib/db/audit";
 import { borrowingJourneys, borrowingRequests } from "@/lib/db/schema/borrowing";
 import { caseContacts, cases } from "@/lib/db/schema/cases";
 import { notifications } from "@/lib/db/schema/notifications";
-import { createNotifications, serviceStaffIds } from "@/lib/notifications/create";
+import { insertNotifications, serviceStaffIds } from "@/lib/notifications/create";
+import { deliverNotificationEmails } from "@/lib/notifications/email";
 import { isEmailConfigured, type EmailSender } from "@/lib/email";
 import { notifyBorrower } from "./notify";
 import { loanOverdueSql } from "./overdue";
@@ -146,9 +147,9 @@ export async function notifyOverdueToOfficers(db: AuditExecutor, now: Date): Pro
     .limit(500);
   if (late.length === 0) return 0;
   const officers = await serviceStaffIds(db, "borrowing");
-  let added = 0;
+  const ids: string[] = [];
   for (const loan of late) {
-    added += await createNotifications(
+    const added = await insertNotifications(
       db,
       officers.map((userId) => ({
         userId,
@@ -161,6 +162,8 @@ export async function notifyOverdueToOfficers(db: AuditExecutor, now: Date): Pro
       })),
       now,
     );
+    ids.push(...added);
   }
-  return added;
+  await deliverNotificationEmails(db, ids);
+  return ids.length;
 }

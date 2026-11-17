@@ -26,9 +26,9 @@ export interface NewNotification {
   dedupeKey?: string;
 }
 
-/** Inserts the notifications, skipping any whose (user, dedupe key) already exists. Returns how many were added. */
-export async function createNotifications(tx: AuditExecutor, items: readonly NewNotification[], now: Date = new Date()): Promise<number> {
-  if (items.length === 0) return 0;
+/** Inserts the notifications, skipping any whose (user, dedupe key) already exists. Returns the ids added. */
+export async function insertNotifications(tx: AuditExecutor, items: readonly NewNotification[], now: Date = new Date()): Promise<string[]> {
+  if (items.length === 0) return [];
   const rows = await tx
     .insert(notifications)
     .values(
@@ -45,7 +45,12 @@ export async function createNotifications(tx: AuditExecutor, items: readonly New
     )
     .onConflictDoNothing()
     .returning({ id: notifications.id });
-  return rows.length;
+  return rows.map((r) => r.id);
+}
+
+/** As `insertNotifications`, returning only how many were added. */
+export async function createNotifications(tx: AuditExecutor, items: readonly NewNotification[], now: Date = new Date()): Promise<number> {
+  return (await insertNotifications(tx, items, now)).length;
 }
 
 export async function createNotification(tx: AuditExecutor, item: NewNotification, now: Date = new Date()): Promise<boolean> {

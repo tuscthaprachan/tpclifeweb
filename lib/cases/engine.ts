@@ -15,7 +15,8 @@ import { user } from "@/lib/db/schema/auth";
 import { caseEvents, cases, type CaseEventRow, type CaseRow, type CaseService } from "@/lib/db/schema/cases";
 import { borrowingRequests } from "@/lib/db/schema/borrowing";
 import { complaintCases, complaintCategories } from "@/lib/db/schema/complaints";
-import { createNotification, createNotifications } from "@/lib/notifications/create";
+import { insertNotifications } from "@/lib/notifications/create";
+import { deliverNotificationEmails } from "@/lib/notifications/email";
 import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { complaintEscalated, complaintOverdue } from "@/lib/complaints/overdue";
@@ -240,7 +241,8 @@ export async function systemTransition(db: AuditExecutor, caseId: string, to: st
 export async function addNote(db: AuditExecutor, caseId: string, body: string, actor: CaseActor, opts: { now?: Date; mentionIds?: readonly string[] } = {}): Promise<string> {
   const now = opts.now ?? new Date();
   const text = cleanText(body, NOTE_MAX, "Note");
-  return withAudit(db, auditContextOf(actor), async (tx, audit) => {
+  let notified: string[] = [];
+  const noteId = await withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
     await assertCaseAccess(tx, row, actor);
     const mentions = text.includes("@") ? parseMentions(text, await listMentionable(tx, caseId, row.service), opts.mentionIds ?? []) : { text, ids: [] };
@@ -248,7 +250,7 @@ export async function addNote(db: AuditExecutor, caseId: string, body: string, a
     await touchCase(tx, caseId, actor, now);
     await audit({ action: "case.note", entityType: "case", entityId: caseId, after: { eventId: id, ...(mentions.ids.length > 0 ? { mentions: mentions.ids } : {}) } });
     const actorName = actor.kind === "staff" ? await staffName(tx, actor.userId) : "";
-    await createNotifications(
+    notified = await insertNotifications(
       tx,
       mentions.ids
         .filter((userId) => actor.kind !== "staff" || userId !== actor.userId)
@@ -257,6 +259,8 @@ export async function addNote(db: AuditExecutor, caseId: string, body: string, a
     );
     return id;
   });
+  await deliverNotificationEmails(db, notified);
+  return noteId;
 }
 
 async function staffName(tx: AuditExecutor, userId: string): Promise<string> {
@@ -292,7 +296,8 @@ export async function addPublicUpdate(
 /** Assigns the case to a member of staff, or clears it with null. The assignee must hold a role for the service. */
 export async function assign(db: AuditExecutor, caseId: string, assigneeUserId: string | null, actor: CaseActor, opts: { now?: Date } = {}): Promise<void> {
   const now = opts.now ?? new Date();
-  return withAudit(db, auditContextOf(actor), async (tx, audit) => {
+  let notified: string[] = [];
+  await withAudit(db, auditContextOf(actor), async (tx, audit) => {
     const row = await lockCase(tx, caseId);
     await assertCaseAccess(tx, row, actor);
     if (assigneeUserId !== null && !((await canWorkService(tx, assigneeUserId, row.service)) && (await canSeeCase(tx, caseId, assigneeUserId)))) {
@@ -303,13 +308,14 @@ export async function assign(db: AuditExecutor, caseId: string, assigneeUserId: 
     await appendEvent(tx, caseId, actor, now, { type: "assigned", metadata: { from: row.assignedTo, to: assigneeUserId } });
     await audit({ action: "case.assign", entityType: "case", entityId: caseId, before: { assignedTo: row.assignedTo }, after: { assignedTo: assigneeUserId } });
     if (assigneeUserId !== null && actor.kind === "staff" && assigneeUserId !== actor.userId) {
-      await createNotification(
+      notified = await insertNotifications(
         tx,
-        { userId: assigneeUserId, kind: "case_assigned", params: { actor: await staffName(tx, actor.userId), reference: row.reference }, href: `/admin/cases/${caseId}`, entityType: "case", entityId: caseId, dedupeKey: `assigned:${caseId}:${now.getTime()}` },
+        [{ userId: assigneeUserId, kind: "case_assigned", params: { actor: await staffName(tx, actor.userId), reference: row.reference }, href: `/admin/cases/${caseId}`, entityType: "case", entityId: caseId, dedupeKey: `assigned:${caseId}:${now.getTime()}` }],
         now,
       );
     }
   });
+  await deliverNotificationEmails(db, notified);
 }
 
 async function canWorkService(tx: AuditExecutor, userId: string, service: CaseService): Promise<boolean> {
