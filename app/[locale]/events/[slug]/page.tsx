@@ -16,10 +16,8 @@ import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getEventBySlug, getEventPreview, getUpcomingEvents, resolveRichTextRefs } from "@/lib/content";
 
-// getUpcomingEvents only covers events that have not yet ended, so a past
-// event's slug will not be pre-rendered here. It still resolves fine on
-// request: dynamicParams is not overridden at this route, only at the
-// [locale] segment above it, so Next renders it on demand instead of 404ing.
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   const events = await getUpcomingEvents();
   return slugParams(events.map((event) => event.slug.current));
