@@ -1,5 +1,5 @@
 /**
- * The optional "email me the link" button of a finished journey. The address
+ * The emailing of the private link of a finished journey, sent once at submission, with a button to retry. The address
  * is held only in the journey result, and the link is sent at most once: the
  * result is marked as emailed inside the row lock before sending, so a double
  * click or a second tab finds it claimed. A failed send releases the claim so

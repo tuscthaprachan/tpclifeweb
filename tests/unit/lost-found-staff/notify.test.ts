@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { MemoryEmailSender } from "@/lib/email";
-import { lostReportPossibleMatch, lostReportReadyToCollect, lostReportReturned } from "@/lib/email/lost-found-templates";
+import { claimAccepted, claimDeclined, lostReportClaimDeclined, lostReportPossibleMatch, lostReportReadyToCollect, lostReportReturned } from "@/lib/email/lost-found-templates";
 import { decideReporterNotice, notifyLostReporter } from "@/lib/lost-found/notify";
 import { lfSetup } from "./helpers";
 
@@ -101,5 +101,25 @@ describe("lost report email templates", () => {
     const mail = lostReportReturned({ reference: "<b>x</b>" });
     expect(mail.html).not.toContain("<b>x</b>");
     expect(mail.html).toContain("&lt;b&gt;");
+  });
+});
+
+describe("claim templates", () => {
+  const all = [lostReportClaimDeclined({ reference: "LF-2026-0001" }), claimAccepted({ reference: "LF-2026-0002" }), claimDeclined({ reference: "LF-2026-0002", desk: { th: "อมธ.", en: "TUSU" } })];
+  it("carry the reference in both languages with no em dash", () => {
+    for (const m of all) {
+      expect(m.text).toMatch(/LF-2026-000[12]/);
+      expect(m.html).toContain('lang="th"');
+      expect(m.html).toContain('lang="en"');
+      expect(m.text + m.html + m.subject).not.toContain("\u2014");
+      expect(m.html).not.toContain("http://");
+    }
+  });
+  it("sends the reporter a declined notice and notes it", async () => {
+    const lost = await t.lostReport(t.officer, {}, { email: "somchai@example.test" });
+    const sender = new MemoryEmailSender();
+    expect(await notifyLostReporter(t.db, lost.caseId, "claim_declined", t.officer, { sender, emailConfigured: true })).toEqual({ result: "sent" });
+    expect(sender.outbox[0]!.text).toContain(lost.reference);
+    expect((await t.events(lost.caseId)).filter((e) => e.type === "internal_note").at(-1)!.body).toContain("claim was not accepted");
   });
 });

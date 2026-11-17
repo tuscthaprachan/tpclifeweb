@@ -22,11 +22,11 @@ import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { borrowingLines, borrowingRequests, equipmentCategories, equipmentItems } from "@/lib/db/schema/borrowing";
 import { caseContacts, cases } from "@/lib/db/schema/cases";
 import { getEmailSender, isEmailConfigured, type EmailSender } from "@/lib/email";
-import { loanApproved, loanDeclined, loanOverdue, loanReminder } from "@/lib/email/borrowing-status-templates";
+import { loanApproved, loanCancelled, loanDeclined, loanNotCollected, loanOverdue, loanReminder, loanReturned, loanSettled } from "@/lib/email/borrowing-status-templates";
 import type { RenderedEmail } from "@/lib/email/templates";
 import type { Locale } from "@/lib/i18n/config";
 
-export type BorrowerNotice = "approved" | "declined" | "reminder" | "overdue";
+export type BorrowerNotice = "approved" | "declined" | "reminder" | "overdue" | "returned" | "settled" | "not_collected" | "cancelled";
 
 export type ReminderReason = "no_contact" | "no_email" | "email_not_configured" | "send_failed";
 
@@ -47,6 +47,10 @@ const NOTE: Record<BorrowerNotice, { sent: string; failed: string }> = {
   declined: { sent: "Emailed the borrower that the request was not approved.", failed: "Could not email the borrower that the request was not approved." },
   reminder: { sent: "Emailed the borrower a reminder to return the equipment.", failed: "Could not email the borrower a reminder to return the equipment." },
   overdue: { sent: "Emailed the borrower that the equipment is overdue.", failed: "Could not email the borrower that the equipment is overdue." },
+  returned: { sent: "Emailed the borrower that the equipment is returned.", failed: "Could not email the borrower that the equipment is returned." },
+  settled: { sent: "Emailed the borrower that the loan is settled.", failed: "Could not email the borrower that the loan is settled." },
+  not_collected: { sent: "Emailed the borrower that the request was closed as not collected.", failed: "Could not email the borrower that the request was closed as not collected." },
+  cancelled: { sent: "Emailed the borrower that the request was cancelled.", failed: "Could not email the borrower that the request was cancelled." },
 };
 
 export interface NotifyOpts {
@@ -54,7 +58,7 @@ export interface NotifyOpts {
   emailConfigured?: boolean;
   now?: Date;
   env?: PiiEnv;
-  /** For `declined`: the reason staff gave, as the borrower reads it. */
+  /** For `declined` and `cancelled`: the reason staff gave, as the borrower reads it. */
   reason?: PublicUpdateText;
 }
 
@@ -115,19 +119,22 @@ export async function notifyBorrower(db: AuditExecutor, caseId: string, kind: Bo
     if (!to) return { result: "remind", reason: "no_email" };
     const locale = (facts.locale as Locale | null) ?? null;
     const base = { reference: facts.reference, locale };
-    const mail: RenderedEmail =
-      kind === "approved"
-        ? loanApproved({ ...base, collectAt: facts.collectAt, returnDueAt: facts.returnDueAt, cards: facts.cards })
-        : kind === "declined"
-          ? loanDeclined({ ...base, reason: opts.reason ?? {} })
-          : kind === "reminder"
-            ? loanReminder({ ...base, returnDueAt: facts.returnDueAt })
-            : loanOverdue({ ...base, returnDueAt: facts.returnDueAt });
+    const reason = opts.reason ?? {};
+    const mail: RenderedEmail = {
+      approved: () => loanApproved({ ...base, collectAt: facts.collectAt, returnDueAt: facts.returnDueAt, cards: facts.cards }),
+      declined: () => loanDeclined({ ...base, reason }),
+      reminder: () => loanReminder({ ...base, returnDueAt: facts.returnDueAt }),
+      overdue: () => loanOverdue({ ...base, returnDueAt: facts.returnDueAt }),
+      returned: () => loanReturned(base),
+      settled: () => loanSettled(base),
+      not_collected: () => loanNotCollected(base),
+      cancelled: () => loanCancelled({ ...base, reason }),
+    }[kind]();
     await (opts.sender ?? getEmailSender()).send({ to, ...mail });
     await record(db, caseId, actor, now, event(NOTE[kind].sent));
     return { result: "sent" };
   } catch (error) {
-    console.error("[borrowing] could not email the borrower", error instanceof Error ? error.name : "error");
+    console.error("[borrowing] could not email the borrower", error instanceof Error ? `${error.name}: ${error.message}` : "error");
     await record(db, caseId, actor, now, event(NOTE[kind].failed)).catch(() => undefined);
     return { result: "remind", reason: "send_failed" };
   }

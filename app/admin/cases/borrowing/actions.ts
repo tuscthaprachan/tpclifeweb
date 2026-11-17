@@ -19,7 +19,7 @@ import { SERVICES } from "@/lib/cases/services";
 import { staffActorForCase } from "@/lib/cases/staff";
 import { CaseError, type StaffActor } from "@/lib/cases/types";
 import { BorrowingError } from "@/lib/borrowing/errors";
-import { notifyBorrower, type NoticeOutcome } from "@/lib/borrowing/notify";
+import { notifyBorrower, type BorrowerNotice, type NoticeOutcome } from "@/lib/borrowing/notify";
 import {
   approveLoan,
   cancelByStaff,
@@ -48,7 +48,7 @@ export interface BrState {
   errors?: Partial<Record<LoanField, string>>;
   saved?: AdminKey;
   /** What happened when the borrower was told by email, or the reminder to do it by hand. */
-  notice?: NoticeOutcome & { kind: "approved" | "declined" };
+  notice?: NoticeOutcome & { kind: BorrowerNotice };
   /** Decrypted for this response only; the client clears it on "Hide". */
   details?: BorrowerDetails | null;
   /** What was typed, so a failed save keeps it. */
@@ -195,8 +195,10 @@ export async function returnAction(_prev: BrState, fd: FormData): Promise<BrStat
     for (const id of Object.keys(good)) lines[id] = { good: good[id]!, damaged: damaged[id] ?? 0, lost: lost[id] ?? 0 };
     const problem = Object.values(lines).some((l) => l.damaged + l.lost > 0);
     const baht = text(fd, "compensationBaht").trim();
+    const db = getDb();
+    let outcome: Awaited<ReturnType<typeof recordReturn>>;
     try {
-      await recordReturn(getDb(), caseId, actor, {
+      outcome = await recordReturn(db, caseId, actor, {
         lines,
         depositReturned: text(fd, "depositReturned") === "yes",
         compensationBaht: baht === "" ? null : Number(baht),
@@ -208,31 +210,40 @@ export async function returnAction(_prev: BrState, fd: FormData): Promise<BrStat
       if (error instanceof LoanInputError && error.field === "compensation" && !problem) return { errors: { compensation: a("brErrCompensationNone", locale) } };
       throw error;
     }
-    return { saved: "brSavedReturn" };
+    if (outcome.status !== "returned") return { saved: "brSavedReturn" };
+    const notice = await notifyBorrower(db, caseId, "returned", actor);
+    return { saved: "brSavedReturn", notice: { ...notice, kind: "returned" } };
   });
 }
 
 export async function settleAction(_prev: BrState, fd: FormData): Promise<BrState> {
   return onCase(fd, ["settlement", "note"], async ({ caseId, actor }) => {
-    await settleLoan(getDb(), caseId, actor, {
+    const db = getDb();
+    await settleLoan(db, caseId, actor, {
       settlement: text(fd, "settlement") as "paid" | "replaced" | "waived",
       note: text(fd, "note"),
       depositReturned: text(fd, "depositReturned") === "yes",
     });
-    return { saved: "brSavedSettled" };
+    const notice = await notifyBorrower(db, caseId, "settled", actor);
+    return { saved: "brSavedSettled", notice: { ...notice, kind: "settled" } };
   });
 }
 
 export async function notCollectedAction(_prev: BrState, fd: FormData): Promise<BrState> {
   return onCase(fd, [], async ({ caseId, actor }) => {
-    await markNotCollected(getDb(), caseId, actor);
-    return { saved: "brSavedNotCollected" };
+    const db = getDb();
+    await markNotCollected(db, caseId, actor);
+    const notice = await notifyBorrower(db, caseId, "not_collected", actor);
+    return { saved: "brSavedNotCollected", notice: { ...notice, kind: "not_collected" } };
   });
 }
 
 export async function cancelAction(_prev: BrState, fd: FormData): Promise<BrState> {
   return onCase(fd, ["th", "en"], async ({ caseId, actor }) => {
-    await cancelByStaff(getDb(), caseId, actor, { reason: { th: text(fd, "th"), en: text(fd, "en") } });
-    return { saved: "brSavedCancelled" };
+    const reason = { th: text(fd, "th"), en: text(fd, "en") };
+    const db = getDb();
+    await cancelByStaff(db, caseId, actor, { reason });
+    const notice = await notifyBorrower(db, caseId, "cancelled", actor, { reason });
+    return { saved: "brSavedCancelled", notice: { ...notice, kind: "cancelled" } };
   });
 }

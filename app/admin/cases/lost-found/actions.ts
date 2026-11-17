@@ -30,7 +30,7 @@ import { recordHandover } from "@/lib/lost-found/handover";
 import { logFoundItem, logWalkInLostReport, publishFoundItem, updateItemDescription } from "@/lib/lost-found/intake";
 import { markPossibleMatch } from "@/lib/lost-found/links";
 import { appendListingPhoto, contentActorOf, expireListing, getListingForCase, ListingIncompleteError, publishListingForCase } from "@/lib/lost-found/listing";
-import { notifyLostReporter, type NoticeKind } from "@/lib/lost-found/notify";
+import { notifyClaimant, notifyLostReporter, type NoticeKind } from "@/lib/lost-found/notify";
 import { addPrivatePhoto } from "@/lib/lost-found/photos";
 import { readIdentifyingDetail } from "@/lib/lost-found/identifying";
 import { getStorage } from "@/lib/storage";
@@ -127,6 +127,11 @@ export async function publishFoundAction(_prev: LfState, fd: FormData): Promise<
 
 async function tell(db: ReturnType<typeof getDb>, lostCaseId: string, kind: NoticeKind, actor: StaffActor, deskOrganisationId: number | null): Promise<LfNotice> {
   const outcome = await notifyLostReporter(db, lostCaseId, kind, actor, { deskOrganisationId });
+  return outcome.result === "sent" ? { result: "sent" } : { result: "remind", reason: outcome.reason, preferred: outcome.preferred };
+}
+
+async function tellClaimant(db: ReturnType<typeof getDb>, claimId: string, decision: "accepted" | "rejected", actor: StaffActor, deskOrganisationId: number | null): Promise<LfNotice> {
+  const outcome = await notifyClaimant(db, claimId, decision, actor, { deskOrganisationId });
   return outcome.result === "sent" ? { result: "sent" } : { result: "remind", reason: outcome.reason, preferred: outcome.preferred };
 }
 
@@ -268,7 +273,10 @@ export async function decideClaimAction(_prev: LfState, fd: FormData): Promise<L
     const db = getDb();
     const result = await decideClaim(db, { claimId, decision, message, collectionNote }, actor);
     refresh(result.lostCaseId, caseId);
-    const notice = decision === "accepted" && result.lostCaseId ? await tell(db, result.lostCaseId, "ready_to_collect", actor, await deskOf(db, caseId)) : undefined;
+    const desk = await deskOf(db, caseId);
+    const notice = result.lostCaseId
+      ? await tell(db, result.lostCaseId, decision === "accepted" ? "ready_to_collect" : "claim_declined", actor, desk)
+      : await tellClaimant(db, claimId, decision, actor, desk);
     return lfSaved(decision === "accepted" ? "lfcSavedAccepted" : "lfcSavedRejected", notice);
   });
 }

@@ -194,3 +194,93 @@ export function loanOverdue({ reference, locale, returnDueAt }: LoanDueParams): 
     locale ?? "th",
   );
 }
+
+/** Everything came back and the loan is closed. */
+export function loanReturned({ reference, locale }: LoanEmailParams): RenderedEmail {
+  return render(
+    { th: `รับคืนอุปกรณ์เรียบร้อยแล้ว ${reference}`, en: `Your equipment has been returned ${reference}` },
+    {
+      lang: "th",
+      heading: "รับคืนอุปกรณ์เรียบร้อยแล้ว",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}บันทึกแล้วว่าได้รับอุปกรณ์คืน การยืมครั้งนี้จึงสิ้นสุดลง ขอบคุณที่ใช้บริการ`, "หากมีบัตรที่วางไว้เป็นหลักประกัน เจ้าหน้าที่จะคืนให้ตามที่บันทึกไว้"],
+      reference: { label: REFERENCE.th, value: reference },
+      after: [PRIVATE_TH],
+    },
+    {
+      lang: "en",
+      heading: "Your equipment has been returned",
+      paragraphs: [`Staff at ${SERVICE.en} have recorded that the equipment is back, so this loan is now closed. Thank you.`, "If you left a card as a deposit, staff will give it back as recorded."],
+      reference: { label: REFERENCE.en, value: reference },
+      after: [PRIVATE_EN],
+    },
+    locale ?? "th",
+  );
+}
+
+/** A loan that had a problem on return has been settled and closed. */
+export function loanSettled({ reference, locale }: LoanEmailParams): RenderedEmail {
+  return render(
+    { th: `ปิดเรื่องการยืมอุปกรณ์แล้ว ${reference}`, en: `Your equipment loan is settled ${reference}` },
+    {
+      lang: "th",
+      heading: "ปิดเรื่องการยืมอุปกรณ์แล้ว",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}ดำเนินการเรื่องอุปกรณ์ที่ยืมเสร็จสิ้นแล้ว การยืมครั้งนี้จึงสิ้นสุดลง`, "ดูรายละเอียดที่เจ้าหน้าที่บันทึกไว้ได้จากลิงก์ส่วนตัวที่ได้รับตอนส่งคำขอ"],
+      reference: { label: REFERENCE.th, value: reference },
+      after: [PRIVATE_TH],
+    },
+    {
+      lang: "en",
+      heading: "Your equipment loan is settled",
+      paragraphs: [`Staff at ${SERVICE.en} have finished dealing with the equipment you borrowed, so this loan is now closed.`, "You can see what staff recorded on the private link you were given when you sent the request."],
+      reference: { label: REFERENCE.en, value: reference },
+      after: [PRIVATE_EN],
+    },
+    locale ?? "th",
+  );
+}
+
+/** The request was approved but the equipment was not collected, so it was closed. */
+export function loanNotCollected({ reference, locale }: LoanEmailParams): RenderedEmail {
+  return render(
+    { th: `ปิดคำขอยืมอุปกรณ์เพราะไม่ได้มารับ ${reference}`, en: `Your equipment request was closed, not collected ${reference}` },
+    {
+      lang: "th",
+      heading: "ปิดคำขอยืมอุปกรณ์เพราะไม่ได้มารับ",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}บันทึกว่าไม่ได้มารับอุปกรณ์ตามวันที่กำหนด จึงปิดคำขอนี้เพื่อให้คนอื่นยืมได้`, "ส่งคำขอใหม่ได้ โดยเลือกวันหรือรายการอุปกรณ์ที่ว่างอยู่"],
+      reference: { label: REFERENCE.th, value: reference },
+      after: [PRIVATE_TH],
+    },
+    {
+      lang: "en",
+      heading: "Your equipment request was closed, not collected",
+      paragraphs: [`Staff at ${SERVICE.en} recorded that the equipment was not collected when it was due, so this request is closed and others can borrow it.`, "You can make a new request, choosing dates or items that are free."],
+      reference: { label: REFERENCE.en, value: reference },
+      after: [PRIVATE_EN],
+    },
+    locale ?? "th",
+  );
+}
+
+/** Staff cancelled the request, with the reason. */
+export function loanCancelled({ reference, locale, reason }: LoanDeclinedParams): RenderedEmail {
+  const th = reason.th?.trim() || reason.en?.trim() || "";
+  const en = reason.en?.trim() || reason.th?.trim() || "";
+  return render(
+    { th: `ยกเลิกคำขอยืมอุปกรณ์ ${reference}`, en: `Your equipment request was cancelled ${reference}` },
+    {
+      lang: "th",
+      heading: "ยกเลิกคำขอยืมอุปกรณ์",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}ยกเลิกคำขอนี้ เหตุผลมีดังนี้`, th, "ส่งคำขอใหม่ได้ โดยเลือกวันหรือรายการอุปกรณ์ที่ว่างอยู่"],
+      reference: { label: REFERENCE.th, value: reference },
+      after: [PRIVATE_TH],
+    },
+    {
+      lang: "en",
+      heading: "Your equipment request was cancelled",
+      paragraphs: [`Staff at ${SERVICE.en} have cancelled your request. This is the reason.`, en, "You can make a new request, choosing dates or items that are free."],
+      reference: { label: REFERENCE.en, value: reference },
+      after: [PRIVATE_EN],
+    },
+    locale ?? "th",
+  );
+}

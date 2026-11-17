@@ -22,7 +22,7 @@ import { consumeSubmitAttempt, JourneyInvalidError, loadContext } from "@/lib/bo
 import { trackingLinkUrl } from "@/lib/borrowing/public/track";
 import { borrowJourney, firstProblem, readStepValues, validateStep } from "@/lib/borrowing/public/validate";
 import { isPiiAvailable, PiiUnavailableError } from "@/lib/crypto/pii";
-import { emailResultOnce } from "@/lib/journeys/email";
+import { type EmailOutcome, emailResultOnce } from "@/lib/journeys/email";
 import { recordAnswers, recordFlash } from "@/lib/journeys/machine";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
@@ -123,7 +123,14 @@ export async function sendJourney(form: FormData): Promise<void> {
     }
   }
   if (!done) return fail("brSubmitFailed");
-  redirect(pathTo(locale, "confirmation"));
+  let outcome: EmailOutcome = "failed";
+  try {
+    const origin = await siteOrigin();
+    outcome = await emailResultOnce(borrowingStore, db, draft.id, (result) => sendTrackingLinkEmail(result.email!, result.reference, trackingLinkUrl(locale, result.reference, result.token, origin)));
+  } catch (error) {
+    console.error("[borrowing] tracking email not sent", error instanceof Error ? error.message : error);
+  }
+  redirect(pathTo(locale, "confirmation", outcome === "failed" ? "?email=failed" : ""));
 }
 
 /** Emails the private link once, to the address given in the journey. Never required, never fatal. */

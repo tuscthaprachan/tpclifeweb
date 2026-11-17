@@ -15,7 +15,7 @@
 
 import { redirect } from "next/navigation";
 import { isPiiAvailable, PiiUnavailableError } from "@/lib/crypto/pii";
-import { emailResultOnce } from "@/lib/journeys/email";
+import { type EmailOutcome, emailResultOnce } from "@/lib/journeys/email";
 import { recordAnswers, recordFlash } from "@/lib/journeys/machine";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
@@ -145,7 +145,14 @@ export async function sendJourney(form: FormData): Promise<void> {
     }
   }
   if (!done) return fail("lfpSubmitFailed");
-  redirect(pathTo(t, "confirmation"));
+  let outcome: EmailOutcome = "failed";
+  try {
+    const origin = await siteOrigin();
+    outcome = await emailResultOnce(lostFoundStore, db, draft.id, (result) => sendTrackingLinkEmail(result.email!, t.kind, result.reference, trackingLinkUrl(t.locale, result.reference, result.token, origin)));
+  } catch (error) {
+    console.error("[lost-found] tracking email not sent", error instanceof Error ? error.message : error);
+  }
+  redirect(pathTo(t, "confirmation", outcome === "failed" ? "?email=failed" : ""));
 }
 
 /** Emails the private link once, to the address given in the journey. Never required, never fatal. */

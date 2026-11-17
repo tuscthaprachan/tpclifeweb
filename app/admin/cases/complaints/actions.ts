@@ -19,7 +19,7 @@ import { staffActorForCase } from "@/lib/cases/staff";
 import { CaseError, type StaffActor } from "@/lib/cases/types";
 import { ComplaintError } from "@/lib/complaints/errors";
 import { readComplaintText, readEvidence, type ComplaintText, type EvidenceItem } from "@/lib/complaints/details";
-import { notifyComplainant, notifyRedirected, type NoticeOutcome } from "@/lib/complaints/notify";
+import { notifyComplainant, notifyRedirected, type ComplainantNotice, type NoticeOutcome } from "@/lib/complaints/notify";
 import { acknowledgeComplaint, closeComplaint, recategoriseComplaint, redirectComplaint, reopenComplaint, resolveComplaint, routeToWellbeing, startComplaint } from "@/lib/complaints/workflow";
 import { COMPLAINT_REDIRECT_LEVELS, type ComplaintRedirectLevel } from "@/lib/db/schema/complaints";
 import { PiiUnavailableError } from "@/lib/crypto/pii";
@@ -33,7 +33,7 @@ export interface CpState {
   error?: string;
   saved?: AdminKey;
   /** What happened when the person was told by email, or the reminder to do it by hand. */
-  notice?: NoticeOutcome & { kind: "acknowledged" | "resolved" | "redirected" };
+  notice?: NoticeOutcome & { kind: ComplainantNotice };
   /** Decrypted for this response only; the client clears it on "Hide". */
   text?: ComplaintText | null;
   evidence?: EvidenceItem[];
@@ -145,22 +145,28 @@ export async function resolveAction(_prev: CpState, fd: FormData): Promise<CpSta
 
 export async function closeAction(_prev: CpState, fd: FormData): Promise<CpState> {
   return onCase(fd, [], async ({ caseId, actor }) => {
-    await closeComplaint(getDb(), caseId, actor);
-    return { saved: "cpcSavedClosed" };
+    const db = getDb();
+    await closeComplaint(db, caseId, actor);
+    const notice = await notifyComplainant(db, caseId, "closed", actor);
+    return { saved: "cpcSavedClosed", notice: { ...notice, kind: "closed" } };
   });
 }
 
 export async function reopenAction(_prev: CpState, fd: FormData): Promise<CpState> {
   return onCase(fd, [], async ({ caseId, actor }) => {
-    await reopenComplaint(getDb(), caseId, {}, actor);
-    return { saved: "cpcSavedReopened" };
+    const db = getDb();
+    await reopenComplaint(db, caseId, {}, actor);
+    const notice = await notifyComplainant(db, caseId, "reopened", actor);
+    return { saved: "cpcSavedReopened", notice: { ...notice, kind: "reopened" } };
   });
 }
 
 export async function withdrawAction(_prev: CpState, fd: FormData): Promise<CpState> {
   return onCase(fd, [], async ({ caseId, actor }) => {
-    await transition(getDb(), caseId, "withdrawn", actor, { expectedFrom: text(fd, "from") || undefined });
-    return { saved: "cpcSavedWithdrawn" };
+    const db = getDb();
+    await transition(db, caseId, "withdrawn", actor, { expectedFrom: text(fd, "from") || undefined });
+    const notice = await notifyComplainant(db, caseId, "withdrawn", actor);
+    return { saved: "cpcSavedWithdrawn", notice: { ...notice, kind: "withdrawn" } };
   });
 }
 

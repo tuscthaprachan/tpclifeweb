@@ -15,20 +15,22 @@
  */
 
 import { and, asc, eq, inArray, isNull } from "drizzle-orm";
-import { addNote, listContactSummaries, readContacts, type StaffActor } from "@/lib/cases";
-import type { PiiEnv } from "@/lib/crypto/pii";
-import type { AuditExecutor } from "@/lib/db/audit";
+import { addNote, listContactSummaries, readContacts, type CaseActor, type StaffActor } from "@/lib/cases";
+import { contactAad } from "@/lib/cases/contacts";
+import { appendEvent, auditContextOf, lockCase } from "@/lib/cases/internal";
+import { decryptOptionalPii, type PiiEnv } from "@/lib/crypto/pii";
+import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { user } from "@/lib/db/schema/auth";
-import { cases } from "@/lib/db/schema/cases";
+import { caseContacts, cases } from "@/lib/db/schema/cases";
 import { complaintCategoryAccess } from "@/lib/db/schema/complaints";
 import { staffRoles } from "@/lib/db/schema/staff-roles";
 import { getEmailSender, isEmailConfigured, type EmailSender } from "@/lib/email";
-import { complaintAcknowledged, complaintRedirected, complaintResolved, complaintsEscalated } from "@/lib/email/complaint-templates";
+import { complaintAcknowledged, complaintClosed, complaintRedirected, complaintReopened, complaintResolved, complaintsEscalated, complaintWithdrawn } from "@/lib/email/complaint-templates";
 import type { RenderedEmail } from "@/lib/email/templates";
 import type { EscalationReason } from "./overdue";
 import { loadRedirectTarget } from "./redirect";
 
-export type ComplainantNotice = "acknowledged" | "resolved" | "redirected";
+export type ComplainantNotice = "acknowledged" | "resolved" | "redirected" | "closed" | "reopened" | "withdrawn";
 
 export type ReminderReason = "no_contact" | "no_consent" | "no_email" | "email_not_configured" | "send_failed";
 
@@ -49,13 +51,28 @@ const NOTE: Record<ComplainantNotice, { sent: string; failed: string }> = {
   acknowledged: { sent: "Emailed the complainant the acknowledgement.", failed: "Could not email the complainant the acknowledgement." },
   resolved: { sent: "Emailed the complainant that there is an outcome.", failed: "Could not email the complainant that there is an outcome." },
   redirected: { sent: "Emailed the complainant who to contact instead.", failed: "Could not email the complainant who to contact instead." },
+  closed: { sent: "Emailed the complainant that the complaint is closed.", failed: "Could not email the complainant that the complaint is closed." },
+  reopened: { sent: "Emailed the complainant that the complaint is reopened.", failed: "Could not email the complainant that the complaint is reopened." },
+  withdrawn: { sent: "Emailed the complainant that the complaint is withdrawn.", failed: "Could not email the complainant that the complaint is withdrawn." },
 };
 
-type NotifyOpts = { sender?: EmailSender; emailConfigured?: boolean; now?: Date; env?: PiiEnv };
+export type NotifyOpts = { sender?: EmailSender; emailConfigured?: boolean; now?: Date; env?: PiiEnv };
 
-/** Tells the complainant by email when they agreed to it. Never throws for a delivery problem; the staff member is shown a reminder instead. */
-export async function notifyComplainant(db: AuditExecutor, caseId: string, kind: Exclude<ComplainantNotice, "redirected">, actor: StaffActor, opts: NotifyOpts = {}): Promise<NoticeOutcome> {
-  return send(db, caseId, kind, actor, opts, async (reference) => (kind === "acknowledged" ? complaintAcknowledged({ reference }) : complaintResolved({ reference })));
+const SIMPLE = {
+  acknowledged: complaintAcknowledged,
+  resolved: complaintResolved,
+  closed: complaintClosed,
+  reopened: complaintReopened,
+  withdrawn: complaintWithdrawn,
+} as const;
+
+/**
+ * Tells the complainant by email when they agreed to it. Never throws for a
+ * delivery problem; the staff member is shown a reminder instead. The daily
+ * job passes `{ kind: "system" }` to say a resolution has closed by itself.
+ */
+export async function notifyComplainant(db: AuditExecutor, caseId: string, kind: keyof typeof SIMPLE, actor: CaseActor, opts: NotifyOpts = {}): Promise<NoticeOutcome> {
+  return send(db, caseId, kind, actor, opts, async (reference) => SIMPLE[kind]({ reference }));
 }
 
 /**
@@ -73,8 +90,47 @@ export async function notifyRedirected(db: AuditExecutor, caseId: string, actor:
   });
 }
 
-async function send(db: AuditExecutor, caseId: string, kind: ComplainantNotice, actor: StaffActor, opts: NotifyOpts, render: (reference: string) => Promise<RenderedEmail>): Promise<NoticeOutcome> {
-  const summaries = await listContactSummaries(db, caseId, actor);
+type Summary = Awaited<ReturnType<typeof listContactSummaries>>[number];
+
+/** Staff go through the engine's access check; the daily job reads the same facts directly, still without decrypting. */
+async function summariesOf(db: AuditExecutor, caseId: string, actor: CaseActor): Promise<Summary[]> {
+  if (actor.kind === "staff") return listContactSummaries(db, caseId, actor);
+  const rows = await db.select().from(caseContacts).where(eq(caseContacts.caseId, caseId)).orderBy(asc(caseContacts.createdAt));
+  return rows.map((r) => ({
+    id: r.id,
+    role: r.role as Summary["role"],
+    has: { name: Boolean(r.nameEnc), email: Boolean(r.emailEnc), phone: Boolean(r.phoneEnc), lineId: Boolean(r.lineIdEnc) },
+    preferredContact: r.preferredContact as Summary["preferredContact"],
+    consentContact: r.consentContact,
+    consentShare: r.consentShare,
+  }));
+}
+
+/** Decrypts one address, logging the view like every other read of a contact, whoever asked. */
+async function emailOf(db: AuditExecutor, caseId: string, contactId: string, actor: CaseActor, opts: NotifyOpts): Promise<string | null> {
+  if (actor.kind === "staff") return (await readContacts(db, caseId, actor, { now: opts.now, env: opts.env })).find((c) => c.id === contactId)?.email ?? null;
+  const now = opts.now ?? new Date();
+  return withAudit(db, auditContextOf(actor), async (tx, audit) => {
+    const row = await lockCase(tx, caseId);
+    const [contact] = await tx.select().from(caseContacts).where(and(eq(caseContacts.id, contactId), eq(caseContacts.caseId, caseId)));
+    if (!contact?.emailEnc) return null;
+    const email = decryptOptionalPii(contact.emailEnc, contactAad(contact.id, "email"), opts.env);
+    await appendEvent(tx, caseId, actor, now, { type: "contact_viewed", metadata: { contactIds: [contact.id], purpose: "email" } });
+    await audit({ action: "case_contact.view", entityType: "case", entityId: caseId, after: { contactIds: [contact.id], reference: row.reference, purpose: "email" } });
+    return email;
+  });
+}
+
+async function noteOn(db: AuditExecutor, caseId: string, body: string, actor: CaseActor, now?: Date): Promise<void> {
+  if (actor.kind === "staff") {
+    await addNote(db, caseId, body, actor, { now });
+    return;
+  }
+  await db.transaction((tx) => appendEvent(tx, caseId, actor, now ?? new Date(), { type: "internal_note", body }));
+}
+
+async function send(db: AuditExecutor, caseId: string, kind: ComplainantNotice, actor: CaseActor, opts: NotifyOpts, render: (reference: string) => Promise<RenderedEmail>): Promise<NoticeOutcome> {
+  const summaries = await summariesOf(db, caseId, actor);
   const person = summaries.find((c) => c.role === "reporter") ?? summaries[0];
   const decision = decideComplainantNotice({
     hasContact: Boolean(person),
@@ -86,15 +142,14 @@ async function send(db: AuditExecutor, caseId: string, kind: ComplainantNotice, 
 
   const [row] = await db.select({ reference: cases.reference }).from(cases).where(eq(cases.id, caseId));
   try {
-    const contacts = await readContacts(db, caseId, actor, { now: opts.now, env: opts.env });
-    const to = contacts.find((c) => c.id === person!.id)?.email;
+    const to = await emailOf(db, caseId, person!.id, actor, opts);
     if (!to) return { result: "remind", reason: "no_email" };
     await (opts.sender ?? getEmailSender()).send({ to, ...(await render(row!.reference)) });
-    await addNote(db, caseId, NOTE[kind].sent, actor, { now: opts.now });
+    await noteOn(db, caseId, NOTE[kind].sent, actor, opts.now);
     return { result: "sent" };
   } catch (error) {
-    console.error("[complaints] could not email the complainant", error instanceof Error ? error.name : "error");
-    await addNote(db, caseId, NOTE[kind].failed, actor, { now: opts.now }).catch(() => undefined);
+    console.error("[complaints] could not email the complainant", error instanceof Error ? `${error.name}: ${error.message}` : "error");
+    await noteOn(db, caseId, NOTE[kind].failed, actor, opts.now).catch(() => undefined);
     return { result: "remind", reason: "send_failed" };
   }
 }
@@ -139,18 +194,27 @@ export async function sendEscalationDigests(
   db: AuditExecutor,
   items: EscalatedItem[],
   inboxUrl: string,
-  opts: { sender?: EmailSender; emailConfigured?: boolean } = {},
+  opts: { sender?: EmailSender; emailConfigured?: boolean; gapMs?: number } = {},
 ): Promise<number> {
   if (items.length === 0 || !(opts.emailConfigured ?? isEmailConfigured())) return 0;
   const recipients = await escalationRecipients(db, items);
+  const sender = opts.sender ?? getEmailSender();
   let sent = 0;
+  let first = true;
   for (const [email, list] of recipients) {
+    if (!first) await pause(opts.gapMs ?? DIGEST_GAP_MS);
+    first = false;
     try {
-      await (opts.sender ?? getEmailSender()).send({ to: email, ...complaintsEscalated({ items: list.map((i) => ({ reference: i.reference, reason: i.reason })), inboxUrl }) });
+      await sender.send({ to: email, ...complaintsEscalated({ items: list.map((i) => ({ reference: i.reference, reason: i.reason })), inboxUrl }) });
       sent += 1;
     } catch (error) {
-      console.error("[complaints] could not email an escalation digest", error instanceof Error ? error.name : "error");
+      console.error("[complaints] could not email an escalation digest", error instanceof Error ? `${error.name}: ${error.message}` : "error");
     }
   }
   return sent;
 }
+
+/** Resend allows about two requests a second; digests go one at a time with this gap. */
+const DIGEST_GAP_MS = 600;
+
+const pause = (ms: number) => (ms > 0 ? new Promise<void>((resolve) => setTimeout(resolve, ms)) : Promise.resolve());

@@ -144,3 +144,90 @@ export function lostReportReturned({ reference }: LostReportEmailParams): Render
     },
   );
 }
+
+/** The claim on the found item that matched the reporter's report was not accepted. */
+export function lostReportClaimDeclined({ reference, desk }: LostReportEmailParams): RenderedEmail {
+  return render(
+    `ยังไม่สามารถคืนของตามที่คุณแจ้งได้ ${reference} / Your claim was not accepted ${reference}`,
+    {
+      lang: "th",
+      heading: "ยังไม่สามารถคืนของตามที่คุณแจ้งได้",
+      paragraphs: [
+        `เจ้าหน้าที่ตรวจสอบการขอรับของที่เกี่ยวกับเรื่องที่คุณแจ้งไว้กับ${SERVICE.th}แล้ว แต่ยังยืนยันไม่ได้ว่าเป็นของคุณ จึงยังไม่คืนของ`,
+        `เรื่องที่คุณแจ้งยังเปิดอยู่ และเราจะแจ้งอีกครั้งหากพบของที่ตรงกัน หากมีข้อมูลเพิ่มเติม โปรดติดต่อเจ้าหน้าที่ ${deskTh(desk)} และแจ้งเลขอ้างอิงด้านล่าง`,
+      ],
+      reference: { label: "เลขอ้างอิงของคุณ", value: reference },
+      after: ["อย่าส่งต่ออีเมลนี้ให้ผู้อื่น และเราจะไม่ขอรหัสผ่านหรือเลขบัตรทางอีเมล"],
+    },
+    {
+      lang: "en",
+      heading: "Your claim was not accepted",
+      paragraphs: [
+        `Staff have checked a claim linked to your report on ${SERVICE.en}, but could not confirm the item is yours, so it has not been handed over.`,
+        `Your report is still open and we will tell you if we find a match. If you have more to tell us, please contact staff ${deskEn(desk)} and give them the reference below.`,
+      ],
+      reference: { label: "Your reference", value: reference },
+      after: ["Do not forward this email. We will never ask for a password or an ID number by email."],
+    },
+  );
+}
+
+export interface ClaimEmailParams {
+  /** The found item's reference, which the claimant was given when they made the claim. */
+  reference: string;
+  desk?: LocaleString | null;
+}
+
+/** The claimant's claim was accepted and the item waits at the desk. */
+export function claimAccepted({ reference, desk }: ClaimEmailParams): RenderedEmail {
+  return render(
+    `ยอมรับการขอรับของแล้ว ${reference} / Your claim was accepted ${reference}`,
+    {
+      lang: "th",
+      heading: "ยอมรับการขอรับของแล้ว",
+      paragraphs: [
+        `เจ้าหน้าที่ของ${SERVICE.th}ตรวจสอบแล้วและพร้อมคืนของให้คุณ มารับได้ ${deskTh(desk)} ในเวลาทำการ`,
+        "โปรดนำบัตรนักศึกษาหรือบัตรประจำตัวที่มีรูปถ่ายมาด้วย เจ้าหน้าที่จะตรวจดูบัตรแต่ไม่จดเลขบัตร",
+      ],
+      reference: { label: "เลขอ้างอิง", value: reference },
+      after: ["หากมารับเองไม่ได้ โปรดติดต่อเจ้าหน้าที่ก่อน"],
+    },
+    {
+      lang: "en",
+      heading: "Your claim was accepted",
+      paragraphs: [
+        `Staff at ${SERVICE.en} have checked and we are ready to give the item back. You can collect it ${deskEn(desk)} during opening hours.`,
+        "Please bring your student card or another photo ID. Staff will look at it but will not write down the number.",
+      ],
+      reference: { label: "Reference", value: reference },
+      after: ["If you cannot come yourself, please contact staff first."],
+    },
+  );
+}
+
+/** The claimant's claim was not accepted. */
+export function claimDeclined({ reference, desk }: ClaimEmailParams): RenderedEmail {
+  return render(
+    `ยังไม่ยอมรับการขอรับของ ${reference} / Your claim was not accepted ${reference}`,
+    {
+      lang: "th",
+      heading: "ยังไม่ยอมรับการขอรับของ",
+      paragraphs: [
+        `เจ้าหน้าที่ของ${SERVICE.th}ตรวจสอบการขอรับของแล้ว แต่ยังยืนยันไม่ได้ว่าเป็นของคุณ จึงยังไม่คืนของ`,
+        `หากมีข้อมูลเพิ่มเติม โปรดติดต่อเจ้าหน้าที่ ${deskTh(desk)} และแจ้งเลขอ้างอิงด้านล่าง`,
+      ],
+      reference: { label: "เลขอ้างอิง", value: reference },
+      after: ["อย่าส่งต่ออีเมลนี้ให้ผู้อื่น และเราจะไม่ขอรหัสผ่านหรือเลขบัตรทางอีเมล"],
+    },
+    {
+      lang: "en",
+      heading: "Your claim was not accepted",
+      paragraphs: [
+        `Staff at ${SERVICE.en} have checked your claim but could not confirm the item is yours, so it has not been handed over.`,
+        `If you have more to tell us, please contact staff ${deskEn(desk)} and give them the reference below.`,
+      ],
+      reference: { label: "Reference", value: reference },
+      after: ["Do not forward this email. We will never ask for a password or an ID number by email."],
+    },
+  );
+}

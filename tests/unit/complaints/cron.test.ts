@@ -107,7 +107,7 @@ describe("escalation", () => {
     expect(openMails).not.toContain(email(t.admin));
 
     const sender = new MemoryEmailSender();
-    const sent = await sendEscalationDigests(t.db, mine, "https://example.test/admin/cases?overdue=1", { sender, emailConfigured: true });
+    const sent = await sendEscalationDigests(t.db, mine, "https://example.test/admin/cases?overdue=1", { sender, emailConfigured: true, gapMs: 0 });
     expect(sent).toBe(recipients.size);
     for (const m of sender.outbox) {
       expect(m.text).not.toMatch(/tap|room|Somchai/);
@@ -163,6 +163,39 @@ describe("email to the complainant", () => {
     expect(types).toContain("contact_viewed");
     const anon = await t.file({ identity: "anonymous", contact: null });
     expect(await notifyComplainant(t.db, anon.caseId, "resolved", t.handler, { sender, emailConfigured: true, env })).toEqual({ result: "remind", reason: "no_contact" });
+  });
+});
+
+describe("complainant lifecycle emails", () => {
+  it("emails closed, reopened and withdrawn to a consenting complainant, and the daily job can send as the system", async () => {
+    const sender = new MemoryEmailSender();
+    const c = await t.file();
+    for (const kind of ["closed", "reopened", "withdrawn"] as const) {
+      expect(await notifyComplainant(t.db, c.caseId, kind, t.handler, { sender, emailConfigured: true, env, now: NOW })).toEqual({ result: "sent" });
+    }
+    expect(sender.outbox).toHaveLength(3);
+    for (const m of sender.outbox) {
+      expect(m.to).toBe("somchai@example.com");
+      expect(m.text).toContain(c.reference);
+      expect(m.text + m.html + m.subject).not.toContain("\u2014");
+      expect(m.text).not.toMatch(/tap|room 301/);
+    }
+    const bySystem = await notifyComplainant(t.db, c.caseId, "closed", { kind: "system" }, { sender, emailConfigured: true, env, now: NOW });
+    expect(bySystem).toEqual({ result: "sent" });
+    const events = await t.db.select().from(caseEvents).where(eq(caseEvents.caseId, c.caseId));
+    expect(events.some((e) => e.type === "internal_note" && e.body?.includes("closed"))).toBe(true);
+    const anon = await t.file({ identity: "anonymous", contact: null });
+    expect(await notifyComplainant(t.db, anon.caseId, "closed", { kind: "system" }, { sender, emailConfigured: true, env })).toEqual({ result: "remind", reason: "no_contact" });
+    expect(await notifyComplainant(t.db, c.caseId, "closed", { kind: "system" }, { sender, emailConfigured: false, env })).toEqual({ result: "remind", reason: "email_not_configured" });
+  });
+
+  it("logs the message of a send failure", async () => {
+    const c = await t.file();
+    const quiet = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const failing = { send: async () => { throw new Error("rate limited"); } };
+    expect(await notifyComplainant(t.db, c.caseId, "closed", t.handler, { sender: failing, emailConfigured: true, env })).toEqual({ result: "remind", reason: "send_failed" });
+    expect(quiet.mock.calls[0]!.join(" ")).toContain("rate limited");
+    quiet.mockRestore();
   });
 });
 

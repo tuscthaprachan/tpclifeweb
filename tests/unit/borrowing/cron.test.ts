@@ -186,6 +186,23 @@ describe("emails to the borrower", () => {
     quiet.mockRestore();
   });
 
+  it("emails returned, settled, not collected and cancelled, with the reason when cancelled", async () => {
+    const item = await t.item("football");
+    const c = await t.request({ lines: [{ itemId: item.id, quantity: 1 }], locale: "en" });
+    const sender = new MemoryEmailSender();
+    const reason = { en: "The event was moved." };
+    for (const kind of ["returned", "settled", "not_collected", "cancelled"] as const) {
+      expect(await notifyBorrower(t.db, c.caseId, kind, t.officer, { sender, emailConfigured: true, env, now: NOW, reason })).toEqual({ result: "sent" });
+    }
+    expect(sender.outbox).toHaveLength(4);
+    for (const m of sender.outbox) {
+      expect(m.text).toContain(c.reference);
+      expect(m.text + m.html + m.subject).not.toContain("\u2014");
+    }
+    expect(sender.outbox[3]!.text).toContain("The event was moved.");
+    expect(await notifyBorrower(t.db, c.caseId, "returned", t.officer, { sender, emailConfigured: false, env })).toEqual({ result: "remind", reason: "email_not_configured" });
+  });
+
   it("reminds staff when the borrower gave no address", async () => {
     const item = await t.item("football");
     const c = await t.request({ lines: [{ itemId: item.id, quantity: 1 }], contact: { role: "borrower", name: "No Mail", phone: "0800000000", preferredContact: "phone", consentContact: true } });

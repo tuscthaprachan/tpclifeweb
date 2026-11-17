@@ -211,3 +211,75 @@ export function complaintsEscalated({ items, inboxUrl }: EscalationEmailParams):
     html: `<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(subject)}</title></head><body style="margin:0;padding:24px 16px;background:#ffffff;color:#0b0c0c;font-family:Helvetica,Arial,'Noto Sans Thai',sans-serif;font-size:19px;line-height:1.5"><div style="max-width:600px;margin:0 auto">${a.html}<hr style="border:0;border-top:1px solid #b1b4b6;margin:32px 0">${b.html}</div></body></html>`,
   };
 }
+
+const PRIVATE_LINK_TH = "ใครมีลิงก์ส่วนตัวก็ดูเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น";
+const PRIVATE_LINK_EN = "Anyone with the private link can see this complaint, so do not share it.";
+
+/** The complaint has been closed, by staff or once the time to reopen it ran out. */
+export function complaintClosed({ reference }: ComplaintEmailParams): RenderedEmail {
+  return render(
+    `ปิดเรื่องร้องเรียนของคุณแล้ว ${reference} / Your complaint is closed ${reference}`,
+    {
+      lang: "th",
+      heading: "ปิดเรื่องร้องเรียนของคุณแล้ว",
+      paragraphs: [
+        `เจ้าหน้าที่ของ${SERVICE.th}ปิดเรื่องร้องเรียนนี้แล้ว ดูผลที่เจ้าหน้าที่แจ้งได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง`,
+        "หากยังไม่ได้บอกเราว่าพอใจกับการดำเนินการหรือไม่ ทำแบบสอบถามสั้นๆ ได้จากหน้าเดียวกัน",
+      ],
+      reference: { label: "เลขอ้างอิง", value: reference },
+      after: [PRIVATE_LINK_TH],
+    },
+    {
+      lang: "en",
+      heading: "Your complaint is closed",
+      paragraphs: [
+        `Staff at ${SERVICE.en} have closed this complaint. You can read the outcome on the private link you were given when you sent it.`,
+        "If you have not yet told us how we did, you can answer a short survey from the same page.",
+      ],
+      reference: { label: "Your reference", value: reference },
+      after: [PRIVATE_LINK_EN],
+    },
+  );
+}
+
+/** The complaint has been reopened. */
+export function complaintReopened({ reference }: ComplaintEmailParams): RenderedEmail {
+  return render(
+    `เปิดเรื่องร้องเรียนของคุณอีกครั้ง ${reference} / Your complaint is reopened ${reference}`,
+    {
+      lang: "th",
+      heading: "เปิดเรื่องร้องเรียนของคุณอีกครั้ง",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}เปิดเรื่องร้องเรียนนี้อีกครั้งและกำลังดำเนินการ`, "ดูความคืบหน้าได้จากลิงก์ส่วนตัวที่คุณได้รับตอนส่งเรื่อง"],
+      reference: { label: "เลขอ้างอิง", value: reference },
+      after: [PRIVATE_LINK_TH],
+    },
+    {
+      lang: "en",
+      heading: "Your complaint is reopened",
+      paragraphs: [`Staff at ${SERVICE.en} have reopened this complaint and are looking after it.`, "You can see how it is going from the private link you were given when you sent it."],
+      reference: { label: "Your reference", value: reference },
+      after: [PRIVATE_LINK_EN],
+    },
+  );
+}
+
+/** The complaint is recorded as withdrawn. */
+export function complaintWithdrawn({ reference }: ComplaintEmailParams): RenderedEmail {
+  return render(
+    `ถอนเรื่องร้องเรียนของคุณแล้ว ${reference} / Your complaint is withdrawn ${reference}`,
+    {
+      lang: "th",
+      heading: "ถอนเรื่องร้องเรียนของคุณแล้ว",
+      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}บันทึกแล้วว่าเรื่องร้องเรียนนี้ถูกถอน เราจะไม่ดำเนินการต่อ`, "หากคุณไม่ได้ขอให้ถอนเรื่อง โปรดติดต่อเจ้าหน้าที่โดยเร็ว และแจ้งเลขอ้างอิงด้านล่าง"],
+      reference: { label: "เลขอ้างอิง", value: reference },
+      after: [PRIVATE_LINK_TH],
+    },
+    {
+      lang: "en",
+      heading: "Your complaint is withdrawn",
+      paragraphs: [`Staff at ${SERVICE.en} have recorded that this complaint is withdrawn, so we will not take it further.`, "If you did not ask for it to be withdrawn, please contact staff straight away and give them the reference below."],
+      reference: { label: "Your reference", value: reference },
+      after: [PRIVATE_LINK_EN],
+    },
+  );
+}
