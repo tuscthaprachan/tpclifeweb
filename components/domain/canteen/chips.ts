@@ -125,7 +125,7 @@ export function activeChips(filters: CanteenFilters, locale: Locale, stallName?:
 const SUMMARY_LABELS = 3;
 
 /**
- * "No pork · under 50 baht · Noodles · 3 filters". Joined with a middle dot,
+ * "No pork · up to 50 baht · Noodles · 3 filters". Joined with a middle dot,
  * never a dash. With more than three, the first three are named and the
  * count says the rest. With none: "Showing everything".
  */

@@ -135,7 +135,6 @@ export default async function StaffMemberPage({
         <Card title={a("smRecoveryHeading", locale)} icon="security" description={a("smRecoveryIntro", locale)}>
           <Button href={`/admin/staff/recovery/${encodeURIComponent(member.userId)}`} variant="secondary" icon={<PeopleIcon name="lifeBuoy" />}>
             {a("recoveryLinkVisible", locale)}
-            <span className="visually-hidden"> {a("recoveryLinkFor", locale, { person })}</span>
           </Button>
         </Card>
       ) : null}

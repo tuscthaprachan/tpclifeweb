@@ -133,7 +133,7 @@ export default async function SecurityPage({ searchParams }: { searchParams: Pro
                     {onlyOne ? null : (
                       <Button href={`/admin/security/passkeys/${encodeURIComponent(key.id)}/remove`} variant="secondary" icon={<PeopleIcon name="trash" />}>
                         {a("removePasskeyVisible", locale)}
-                        <span className="visually-hidden"> {a("removePasskeyFor", locale, { name: label })}</span>
+                        <span className="visually-hidden"> {label}</span>
                       </Button>
                     )}
                   </form>

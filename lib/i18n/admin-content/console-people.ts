@@ -4,7 +4,7 @@ import type { LocaleString } from "../config";
 export const CONSOLE_PEOPLE_STRINGS = {
   cpInviteStaff: { th: "เชิญเจ้าหน้าที่", en: "Invite staff" },
   cpPeopleDesc: { th: "ทุกคนที่มีบทบาทหรือเป็นสมาชิกของ อมธ. หรือสภานักศึกษา", en: "Everyone who holds a role or belongs to TUSU or TUSC." },
-  cpPeopleCount: { th: "{count} คน", en: "{count} people" },
+  cpPeopleCount: { th: "{count} คน", en: "{count} {count:person|people}" },
   cpPendingDesc: { th: "คำเชิญที่ยังไม่มีใครรับ ลิงก์จะหมดอายุเองตามวันที่ที่แสดง", en: "Invitations nobody has accepted yet. Each link stops working on the date shown." },
   cpColActions: { th: "การดำเนินการ", en: "Actions" },
   cpPasskeysDesc: {

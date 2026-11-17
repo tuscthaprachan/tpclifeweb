@@ -243,9 +243,9 @@ export const eat = {
     return locale === "th" ? `เพิ่ม ${n(amount, locale)} บาท` : `+${n(amount, locale)} baht`;
   },
 
-  /** "under 50 baht". */
+  /** "up to 50 baht". */
   underBaht(locale: Locale, amount: number): string {
-    return locale === "th" ? `ไม่เกิน ${n(amount, locale)} บาท` : `under ${n(amount, locale)} baht`;
+    return locale === "th" ? `ไม่เกิน ${n(amount, locale)} บาท` : `up to ${n(amount, locale)} baht`;
   },
 
   /** "23 dishes at 9 stalls". Announced politely when it changes. */
@@ -280,21 +280,21 @@ export const eat = {
   /** "Raise your budget to 60 baht for 8 dishes". */
   relaxRaise(locale: Locale, budget: number, count: number): string {
     return locale === "th"
-      ? `เพิ่มงบเป็น ${n(budget, locale)} บาท ได้ ${n(count, locale)} เมนู`
+      ? `เพิ่มงบเป็น ${n(budget, locale)} บาท จะได้ ${n(count, locale)} เมนู`
       : `Raise your budget to ${n(budget, locale)} baht for ${n(count, locale)} ${count === 1 ? "dish" : "dishes"}`;
   },
 
   /** `Drop "cold" for 5 dishes`. */
   relaxDrop(locale: Locale, label: string, count: number): string {
     return locale === "th"
-      ? `เอา "${label}" ออก ได้ ${n(count, locale)} เมนู`
+      ? `เอา "${label}" ออก จะได้ ${n(count, locale)} เมนู`
       : `Drop "${label}" for ${n(count, locale)} ${count === 1 ? "dish" : "dishes"}`;
   },
 
   /** A relax suggestion with no named value, for example the budget. */
   relaxGeneric(locale: Locale, action: string, count: number): string {
     return locale === "th"
-      ? `${action} ได้ ${n(count, locale)} เมนู`
+      ? `${action} จะได้ ${n(count, locale)} เมนู`
       : `${action} for ${n(count, locale)} ${count === 1 ? "dish" : "dishes"}`;
   },
 
@@ -366,7 +366,7 @@ export const eat = {
   /** `Clear the search "noodle" for 752 dishes`. */
   relaxSearch(locale: Locale, query: string, count: number): string {
     return locale === "th"
-      ? `ล้างคำค้น "${query}" ได้ ${n(count, locale)} เมนู`
+      ? `ล้างคำค้น "${query}" จะได้ ${n(count, locale)} เมนู`
       : `Clear the search "${query}" for ${n(count, locale)} ${count === 1 ? "dish" : "dishes"}`;
   },
 

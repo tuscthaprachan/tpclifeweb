@@ -92,8 +92,8 @@ export function DecisionResults({ locale, decisions, meetings, tableNumber, quer
         labelledBy="od-find"
       />
 
-      <p {...liveRegionProps("polite")} className="m-0 text-ink-900">
-        {fillText(UI.odDcShowing[locale], { from: n(page.from), to: n(page.to), total: n(page.total) })}
+      <p {...liveRegionProps("polite")} className={page.total === 0 ? "visually-hidden" : "m-0 text-ink-900"}>
+        {page.total === 0 ? UI.odDcNone[locale] : fillText(UI.odDcShowing[locale], { from: n(page.from), to: n(page.to), total: n(page.total) })}
       </p>
 
       {page.rows.length === 0 ? (

@@ -47,8 +47,8 @@ export const EDITOR_STRINGS = {
   edMdLoading: { th: "กำลังเตรียม Markdown", en: "Preparing Markdown" },
 
   edStatusLabel: { th: "สถิติของ {label}", en: "Statistics for {label}" },
-  edWords: { th: "{count} คำ", en: "{count} words" },
-  edChars: { th: "{count} ตัวอักษร", en: "{count} characters" },
+  edWords: { th: "{count} คำ", en: "{count} {count:word|words}" },
+  edChars: { th: "{count} ตัวอักษร", en: "{count} {count:character|characters}" },
   edReading: { th: "อ่านประมาณ {minutes} นาที", en: "About {minutes} min read" },
 
   edFindQuery: { th: "ค้นหา", en: "Find" },
@@ -78,7 +78,7 @@ export const EDITOR_STRINGS = {
 
   edSlashLabel: { th: "แทรกเนื้อหา", en: "Insert content" },
   edSlashNone: { th: "ไม่พบรายการที่ตรงกัน", en: "Nothing matches" },
-  edSlashCount: { th: "พบ {count} รายการ", en: "{count} results" },
+  edSlashCount: { th: "พบ {count} รายการ", en: "{count} {count:result|results}" },
 
   edTableBar: { th: "แก้ไขตาราง", en: "Edit table" },
   edRowBefore: { th: "เพิ่มแถวด้านบน", en: "Add row above" },
@@ -106,7 +106,7 @@ export const EDITOR_STRINGS = {
   edLinkPageSearch: { th: "ค้นหาหน้า", en: "Search pages" },
   edLinkPageHint: { th: "พิมพ์อย่างน้อย 2 ตัวอักษร", en: "Type at least 2 characters" },
   edLinkPageNone: { th: "ไม่พบหน้าที่ตรงกัน", en: "No pages match" },
-  edLinkPageCount: { th: "พบ {count} หน้า", en: "{count} pages" },
+  edLinkPageCount: { th: "พบ {count} หน้า", en: "{count} {count:page|pages}" },
   edLinkPageUse: { th: "ใช้หน้านี้", en: "Use this page" },
   edLinkPageFailed: { th: "ค้นหาหน้าไม่สำเร็จ ลองอีกครั้ง", en: "The search did not work. Try again" },
 

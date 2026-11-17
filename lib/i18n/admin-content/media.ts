@@ -39,7 +39,7 @@ export const MEDIA_STRINGS = {
   },
   mediaDecorativeHint: {
     th: "ถ้าเลือก ระบบจะลบคำอธิบายภาพที่กรอกไว้",
-    en: "If ticked, any description you typed is cleared",
+    en: "If selected, any description you typed is cleared",
   },
 
   /* Picture library: where it is used, and deleting */
@@ -108,8 +108,8 @@ export const MEDIA_STRINGS = {
   lfFieldOccurredOn: { th: "วันที่ทำหายหรือพบ", en: "Date lost or found" },
   lfFieldProgress: { th: "ความคืบหน้า", en: "Progress" },
   lfFieldProgressHint: {
-    th: "แสดงบนเว็บไซต์ ระบบไม่เปลี่ยนให้เอง ต้องเลือกด้วยตนเอง",
-    en: "Shown on the website. It never changes by itself; you set it by hand",
+    th: "แสดงบนเว็บไซต์ ระบบจะเปลี่ยนให้เมื่อเจ้าหน้าที่ดำเนินการกับเรื่องที่เกี่ยวข้อง และคุณเลือกเองที่นี่ได้เช่นกัน",
+    en: "Shown on the website. It changes when staff move the related case, and you can also set it here",
   },
   lfFieldHeldAt: { th: "สถานที่เก็บของ", en: "Where the item is kept" },
   lfFieldHeldAtHint: {

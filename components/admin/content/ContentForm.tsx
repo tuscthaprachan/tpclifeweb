@@ -118,9 +118,9 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
 
   const items: ErrorSummaryItem[] = Object.entries(state.errors).map(([path, message]) => ({ href: `#${fieldId(path)}`, message }));
   const status = record?.status ?? null;
-  const savedKey = saved && saved in SAVED_KEY ? SAVED_KEY[saved as keyof typeof SAVED_KEY] : null;
   const segment = listHref.split("/").filter(Boolean).pop() ?? "";
   const phase = record ? scheduleState({ status, publishAt: record.publishAt, unpublishAt: record.unpublishAt }) : "draft";
+  const savedKey = saved && saved in SAVED_KEY ? (saved === "published" && phase === "scheduled" ? "clcSavedPublishScheduled" : SAVED_KEY[saved as keyof typeof SAVED_KEY]) : null;
   const live = phase === "live" && record?.viewHref;
   const whenText = (iso: string | null | undefined) => (iso ? new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Bangkok" }).format(new Date(iso)) : "");
 
@@ -192,6 +192,10 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
                     {a("formViewOnSite", locale)}
                     <span className="visually-hidden"> ({UI.opensInNewTab[locale]})</span>
                   </a>
+                ) : phase === "scheduled" ? (
+                  a("clcScheduledNote", locale, { when: whenText(record?.publishAt) })
+                ) : phase === "expired" ? (
+                  a("clcExpiredNote", locale, { when: whenText(record?.unpublishAt) })
                 ) : (
                   a(status === "published" ? "formSavedLiveNote" : "formSavedNote", locale)
                 )}

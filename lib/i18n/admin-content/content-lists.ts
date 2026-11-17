@@ -61,7 +61,7 @@ export const CONTENT_LIST_STRINGS = {
   clReasonNotFound: { th: "ไม่พบรายการนี้แล้ว", en: "This item no longer exists" },
   clReasonInUse: { th: "ยังมีรายการอื่นอ้างอิงอยู่ จึงลบไม่ได้", en: "Something else still uses it, so it cannot be deleted" },
   clReasonError: { th: "เกิดข้อผิดพลาด ลองอีกครั้ง", en: "Something went wrong. Try again" },
-  clConfirmTitle: { th: "ลบ {count} รายการ", en: "Delete {count} items" },
+  clConfirmTitle: { th: "ลบ {count} รายการ", en: "Delete {count} {count:item|items}" },
   clConfirmBody: { th: "รายการต่อไปนี้จะลบถาวร และย้อนกลับไม่ได้", en: "These items will be deleted for good. This cannot be undone." },
   clConfirmDelete: { th: "ลบ {count} รายการ", en: "Delete {count} items" },
   clConfirmCancel: { th: "ยกเลิกและกลับไปที่รายการ", en: "Cancel and go back to the list" },
@@ -85,6 +85,6 @@ export const CONTENT_LIST_STRINGS = {
   clHubMine: { th: "ที่ฉันแก้ไขล่าสุด", en: "Recently edited by me" },
   clHubMineEmpty: { th: "ยังไม่ได้แก้ไขเนื้อหาใด", en: "You have not edited any content yet." },
   clHubMineWhen: { th: "แก้ไข {when}", en: "Edited {when}" },
-  clHubCount: { th: "{n} รายการ", en: "{n} items" },
+  clHubCount: { th: "{n} รายการ", en: "{n} {n:item|items}" },
   clHubDraftsLink: { th: "ดูฉบับร่าง", en: "View drafts" },
 } as const satisfies Record<string, LocaleString>;

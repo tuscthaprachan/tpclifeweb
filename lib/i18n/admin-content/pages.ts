@@ -69,7 +69,7 @@ export const PAGES_STRINGS = {
   formsFieldAudience: { th: "ผู้ที่ใช้ได้ (ไม่บังคับ)", en: "Audience (optional)" },
   formsHintAudience: { th: "เช่น นักศึกษาปริญญาตรีที่ลงทะเบียนเรียนอยู่", en: "For example, registered undergraduate students" },
   formsFieldPrerequisites: { th: "สิ่งที่ต้องเตรียม", en: "What to have ready" },
-  formsHintPrerequisites: { th: "แสดงเป็นรายการให้ติ๊กตรวจก่อนเริ่มกรอก", en: "Shown as a checklist before people start" },
+  formsHintPrerequisites: { th: "แสดงเป็นรายการตรวจสอบก่อนเริ่มกรอก", en: "Shown as a checklist before people start" },
   formsFieldPrerequisite: { th: "รายการ", en: "Item" },
   formsFieldPrerequisiteLabel: { th: "สิ่งที่ต้องเตรียม", en: "What is needed" },
   formsFieldPrerequisiteDetail: { th: "รายละเอียด (ไม่บังคับ)", en: "Detail (optional)" },
@@ -86,8 +86,8 @@ export const PAGES_STRINGS = {
   },
   formsFieldRequiresSignIn: { th: "ต้องเข้าสู่ระบบก่อนกรอก", en: "Students must sign in first" },
   formsHintRequiresSignIn: {
-    th: "ติ๊กหากแบบฟอร์มปลายทางไม่รับผู้ที่ยังไม่ได้เข้าสู่ระบบ เว็บไซต์จะแจ้งให้นักศึกษาทราบก่อนกดเริ่ม",
-    en: "Tick this if the form will not accept anyone who is not signed in. The website tells students before they start",
+    th: "เลือกหากแบบฟอร์มปลายทางไม่รับผู้ที่ยังไม่ได้เข้าสู่ระบบ เว็บไซต์จะแจ้งให้นักศึกษาทราบก่อนกดเริ่ม",
+    en: "Select this if the form will not accept anyone who is not signed in. The website tells students before they start",
   },
   formsFieldSignInType: { th: "ประเภทบัญชี", en: "Account type" },
   formsSignIn_google: { th: "บัญชี Google", en: "Google account" },
@@ -95,8 +95,8 @@ export const PAGES_STRINGS = {
   formsSignIn_other: { th: "บัญชีอื่น", en: "Another account" },
   formsFieldSignInNote: { th: "หมายเหตุเรื่องการเข้าสู่ระบบ (ไม่บังคับ)", en: "Note about signing in (optional)" },
   formsHintSignIn: {
-    th: "ใช้เฉพาะเมื่อติ๊กว่าต้องเข้าสู่ระบบ หากไม่ติ๊ก ระบบจะไม่เก็บข้อมูลส่วนนี้",
-    en: "Used only when sign in is required. If it is not ticked, this part is not kept",
+    th: "ใช้เฉพาะเมื่อเลือกว่าต้องเข้าสู่ระบบ หากไม่เลือก ระบบจะไม่เก็บข้อมูลส่วนนี้",
+    en: "Used only when sign in is required. If it is not selected, this part is not kept",
   },
   formsFieldMinutes: { th: "เวลาที่ใช้โดยประมาณ (นาที)", en: "Estimated time (minutes)" },
   formsHintMinutes: { th: "ระบุตามจริง ไม่ต้องลดเวลา", en: "Be realistic. Do not shorten it" },
@@ -117,8 +117,8 @@ export const PAGES_STRINGS = {
   formsFieldContactValue: { th: "เบอร์โทร อีเมล หรือที่อยู่", en: "Phone, email or address" },
   formsFieldIsActive: { th: "เปิดให้ใช้งานอยู่", en: "Open for use" },
   formsHintIsActive: {
-    th: "เอาติ๊กออกเมื่อแบบฟอร์มปิดแล้ว แบบฟอร์มจะหายจากรายการ แต่หน้าแบบฟอร์มยังอยู่และแจ้งว่าไม่เปิดใช้งาน",
-    en: "Untick when the form has closed. It leaves the forms list, but its page stays online and says it is no longer in use",
+    th: "ยกเลิกการเลือกเมื่อแบบฟอร์มปิดแล้ว แบบฟอร์มจะหายจากรายการ แต่หน้าแบบฟอร์มยังอยู่และแจ้งว่าไม่เปิดใช้งาน",
+    en: "Clear this when the form has closed. It leaves the forms list, but its page stays online and says it is no longer in use",
   },
   formsFieldIsPriority: { th: "แสดงเป็นอันดับแรก", en: "Show first" },
   formsHintIsPriority: {
@@ -128,8 +128,8 @@ export const PAGES_STRINGS = {
   formsErrDestinationEmail: { th: "กรอกอีเมลให้ถูกต้อง เช่น name@example.com", en: "Enter a real email address, like name@example.com" },
   formsInUseTitle: { th: "ลบแบบฟอร์มนี้ไม่ได้", en: "This form cannot be deleted" },
   formsInUseBody: {
-    th: "แบบฟอร์มนี้ยังใช้อยู่ในรายการด้านล่าง นำออกจากที่เหล่านั้นก่อนจึงจะลบได้ หากแบบฟอร์มปิดแล้ว ให้เอาติ๊ก \"เปิดให้ใช้งานอยู่\" ออกแทนการลบ",
-    en: "This form is still used in the places below. Remove it from them first, then delete it. If the form has closed, untick \"Open for use\" instead of deleting it",
+    th: "แบบฟอร์มนี้ยังใช้อยู่ในรายการด้านล่าง นำออกจากที่เหล่านั้นก่อนจึงจะลบได้ หากแบบฟอร์มปิดแล้ว ให้เอาเลือก \"เปิดให้ใช้งานอยู่\" ออกแทนการลบ",
+    en: "This form is still used in the places below. Remove it from them first, then delete it. If the form has closed, clear \"Open for use\" instead of deleting it",
   },
   formsUseNews: { th: "ข่าว", en: "News post" },
   formsUseEvent: { th: "กิจกรรม", en: "Event" },

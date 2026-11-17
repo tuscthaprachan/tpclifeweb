@@ -4,9 +4,9 @@ import type { LocaleString } from "../config";
 export const CONSOLE_CONTENT_STRINGS = {
   /* Hub */
   ccHubPublished: { th: "เผยแพร่แล้ว {n}", en: "{n} published" },
-  ccHubDrafts: { th: "ฉบับร่าง {n}", en: "{n} drafts" },
+  ccHubDrafts: { th: "ฉบับร่าง {n}", en: "{n} {n:draft|drafts}" },
   ccHubScheduled: { th: "ตั้งเวลาเผยแพร่ {n}", en: "{n} scheduled" },
-  ccHubExpired: { th: "หมดเวลาเผยแพร่ {n}", en: "{n} ended" },
+  ccHubExpired: { th: "หมดเวลาแสดง {n}", en: "{n} expired" },
   ccHubSingle: { th: "หน้าเดียว", en: "Single page" },
   ccHubEditPage: { th: "แก้ไขหน้านี้", en: "Edit this page" },
   /* Lists */
@@ -29,7 +29,7 @@ export const CONSOLE_CONTENT_STRINGS = {
   cfNew: { th: "รายการใหม่", en: "New" },
   cfNotSavedYet: { th: "ยังไม่ได้บันทึก", en: "Not saved yet" },
   cfSavedBy: { th: "บันทึกโดย", en: "Saved by" },
-  cfDanger: { th: "การดำเนินการที่ย้อนกลับไม่ได้", en: "Danger zone" },
+  cfDanger: { th: "ลบรายการนี้", en: "Delete this item" },
   cfDangerHint: { th: "การลบจะเอารายการนี้ออกถาวรและย้อนกลับไม่ได้", en: "Deleting removes this item for good and cannot be undone." },
   cfLeaveTitle: { th: "ออกจากหน้านี้หรือไม่", en: "Leave this page?" },
   cfLeaveBody: { th: "คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก หากออกตอนนี้ การเปลี่ยนแปลงจะหายไป", en: "You have unsaved changes. If you leave now, they will be lost." },
@@ -64,7 +64,7 @@ export const CONSOLE_CONTENT_STRINGS = {
   rpRemoved: { th: "ลบ{item} {n} แล้ว", en: "{item} {n} removed" },
   rpMoved: { th: "ย้าย{item}ไปลำดับที่ {n} จาก {total}", en: "{item} moved to position {n} of {total}" },
   cfEditedDuringSave: {
-    th: "ระหว่างบันทึก คุณแก้ไขต่อ การแก้ไขช่วงนั้นไม่ได้บันทึก และใส่กลับในแบบฟอร์มแล้ว โปรดตรวจและบันทึกอีกครั้ง",
+    th: "ขณะที่กำลังบันทึก คุณยังแก้ไขต่อ ส่วนที่แก้ไขหลังจากนั้นยังไม่ได้บันทึก และเรานำกลับมาใส่ในแบบฟอร์มให้แล้ว ตรวจสอบแล้วบันทึกอีกครั้ง",
     en: "You kept editing while the save ran. Those later edits were not saved and are back in the form. Check them and save again.",
   },
   cfDeleting: { th: "กำลังลบ", en: "Deleting" },

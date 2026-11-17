@@ -15,7 +15,7 @@ export const LOST_FOUND_CASES_STRINGS = {
 
   /* Timeline events added by lost and found */
   caseEvent_verification_viewed: { th: "เปิดดูรายละเอียดที่ปกปิด", en: "Hidden detail viewed" },
-  caseEvent_claim_viewed: { th: "เปิดดูคำตอบของผู้อ้างสิทธิ์", en: "Claimant's answer viewed" },
+  caseEvent_claim_viewed: { th: "เปิดดูคำตอบของผู้ขอรับของ", en: "Claimant's answer viewed" },
 
   /* Found item intake */
   lfcFoundTitle: { th: "บันทึกของที่พบ", en: "Log a found item" },
@@ -50,11 +50,11 @@ export const LOST_FOUND_CASES_STRINGS = {
     en: "You have not recorded where the item is stored. Whoever comes to collect it may have to wait while staff look for it",
   },
   lfcPublishWarnVerification: {
-    th: "ยังไม่ได้ระบุรายละเอียดที่ปกปิดไว้ตรวจสอบเจ้าของ จะตรวจสอบผู้อ้างสิทธิ์ได้ยากขึ้น",
+    th: "ยังไม่ได้ระบุรายละเอียดที่ปกปิดไว้ตรวจสอบเจ้าของ จะตรวจสอบผู้ขอรับของได้ยากขึ้น",
     en: "You have not added the hidden verification detail. Claims will be harder to check",
   },
   lfcPublishIntro: {
-    th: "เมื่อประกาศ สถานะจะเปลี่ยนเป็น ประกาศในรายการของที่พบ และรายการนี้จะแสดงบนเว็บไซต์สาธารณะ ส่วนรายละเอียดที่ปกปิด ที่เก็บของส่วนชั้นหรือกล่อง และข้อมูลติดต่อจะไม่แสดง",
+    th: "เมื่อประกาศ สถานะจะเปลี่ยนเป็น ประกาศในรายการของที่พบ และรายการนี้จะแสดงบนเว็บไซต์สาธารณะ ส่วนรายละเอียดที่ปกปิด ชั้นหรือกล่องที่เก็บของ และข้อมูลติดต่อจะไม่แสดง",
     en: "Publishing moves the item to Listed and puts the listing on the public site. The hidden detail, the shelf or box and any contact details are never shown",
   },
   lfcStartSave: { th: "บันทึกและไปต่อ", en: "Save and continue" },
@@ -123,7 +123,7 @@ export const LOST_FOUND_CASES_STRINGS = {
   lfcSavedListing: { th: "บันทึกรายละเอียดแล้ว", en: "Description saved" },
   lfcSavedPublished: { th: "ประกาศรายการแล้ว", en: "Listing published" },
   lfcRegister_open: { th: "เปิดอยู่", en: "Open" },
-  lfcRegister_matched: { th: "มีผู้อาจเป็นเจ้าของ", en: "Possible match" },
+  lfcRegister_matched: { th: "อาจมีเจ้าของมาแจ้งไว้", en: "Possible match" },
   lfcRegister_returned: { th: "คืนแล้ว", en: "Returned" },
   lfcRegister_unclaimed: { th: "ยังไม่มีผู้มารับ", en: "Unclaimed" },
   lfcRegister_withdrawn: { th: "ถอนออกแล้ว", en: "Withdrawn" },
@@ -243,14 +243,14 @@ export const LOST_FOUND_CASES_STRINGS = {
   lfcSavedFinder: { th: "บันทึกข้อมูลผู้พบแล้ว", en: "Finder's details saved" },
 
   /* Claims */
-  lfcClaimsTitle: { th: "ผู้อ้างสิทธิ์", en: "Claims" },
-  lfcClaimsNone: { th: "ยังไม่มีผู้อ้างสิทธิ์", en: "No claims yet" },
-  lfcClaimsNote: { th: "เทียบคำตอบของผู้อ้างสิทธิ์กับรายละเอียดที่ปกปิด แล้วบันทึกว่ายอมรับหรือปฏิเสธ", en: "Compare the claimant's answer with the hidden detail, then record whether you accept or reject it" },
+  lfcClaimsTitle: { th: "คำขอรับของ", en: "Claims" },
+  lfcClaimsNone: { th: "ยังไม่มีคำขอรับของ", en: "No claims yet" },
+  lfcClaimsNote: { th: "เทียบคำตอบของผู้ขอรับของกับรายละเอียดที่ปกปิด แล้วบันทึกว่ายอมรับหรือปฏิเสธ", en: "Compare the claimant's answer with the hidden detail, then record whether you accept or reject it" },
   lfcClaimN: { th: "คำขอรับของ {n}", en: "Claim {n}" },
   lfcClaimLostReport: { th: "เรื่องแจ้งของหาย", en: "Lost report" },
   lfcClaimCompare: { th: "กดแสดงทั้งสองรายการเพื่อเทียบกัน ระบบบันทึกการเปิดดูแต่ละครั้ง", en: "Show both to compare them. Each view is logged" },
-  lfcClaimShow: { th: "แสดงคำตอบของผู้อ้างสิทธิ์", en: "Show the claimant's answer" },
-  lfcClaimAnswerTitle: { th: "คำตอบของผู้อ้างสิทธิ์", en: "Claimant's answer" },
+  lfcClaimShow: { th: "แสดงคำตอบของผู้ขอรับของ", en: "Show the claimant's answer" },
+  lfcClaimAnswerTitle: { th: "คำตอบของผู้ขอรับของ", en: "Claimant's answer" },
   lfcClaimEmpty: { th: "ไม่มีคำตอบ หรือข้อมูลลบตามกำหนดแล้ว", en: "There is no answer, or it has been deleted under retention" },
   lfcClaimLogged: { th: "ระบบบันทึกทุกครั้งที่เปิดดู ว่าใครเปิดและเมื่อไร", en: "Every view is logged with who opened it and when" },
   lfcDecision_pending: { th: "รอตัดสิน", en: "Waiting for a decision" },
@@ -261,27 +261,27 @@ export const LOST_FOUND_CASES_STRINGS = {
   lfcRejectConfirm: { th: "ปฏิเสธและส่งข้อความ", en: "Reject and send the message" },
   lfcCancel: { th: "ยกเลิก", en: "Cancel" },
   lfcRejectHint: {
-    th: "ข้อความนี้แสดงต่อผู้อ้างสิทธิ์ในหน้าติดตามเรื่อง เขียนให้สุภาพและไม่เปิดเผยรายละเอียดที่ปกปิด ของจะกลับไปอยู่ในรายการของที่พบ",
+    th: "ข้อความนี้แสดงต่อผู้ขอรับของในหน้าติดตามเรื่อง เขียนให้สุภาพและไม่เปิดเผยรายละเอียดที่ปกปิด ของจะกลับไปอยู่ในรายการของที่พบ",
     en: "The person sees this message when they track the case. Keep it polite and do not reveal the hidden detail. The item goes back to the public list",
   },
   lfcCollectionHint: {
-    th: "ไม่บังคับ: บอกผู้อ้างสิทธิ์ว่าจะมารับของที่ไหนและเมื่อไร ข้อความนี้แสดงเฉพาะผู้อ้างสิทธิ์รายนี้ในหน้าติดตามเรื่อง เขียนเป็นภาษาไทย ภาษาอังกฤษ หรือทั้งสองภาษาก็ได้",
+    th: "ไม่บังคับ: บอกผู้ขอรับของว่าจะมารับของที่ไหนและเมื่อไร ข้อความนี้แสดงเฉพาะผู้ขอรับของรายนี้ในหน้าติดตามเรื่อง เขียนเป็นภาษาไทย ภาษาอังกฤษ หรือทั้งสองภาษาก็ได้",
     en: "Optional: tell the claimant where and when to collect. Only this claimant sees it, on their tracking page. Write in Thai, English or both",
   },
   lfcFieldCollectionNote: { th: "รายละเอียดการมารับของ", en: "Collection details" },
-  lfcFieldRejectMessage: { th: "ข้อความถึงผู้อ้างสิทธิ์", en: "Message to the claimant" },
+  lfcFieldRejectMessage: { th: "ข้อความถึงผู้ขอรับของ", en: "Message to the claimant" },
   lfcDecisionNote: { th: "ยอมรับ: ของพร้อมให้มารับ ปฏิเสธ: ของกลับไปอยู่ในรายการของที่พบ", en: "Accept: the item is ready to collect. Reject: it goes back to Listed" },
   lfcDecisionNoteLost: {
     th: "ยอมรับ: ของและเรื่องแจ้งของหายพร้อมให้มารับ และแจ้งผู้แจ้งทางอีเมลถ้าทำได้ ปฏิเสธ: ของกลับไปอยู่ในรายการของที่พบ และเรื่องแจ้งของหายกลับไปค้นหาต่อ",
     en: "Accept: the item and the lost report become ready to collect, and the person is emailed if possible. Reject: the item goes back to Listed and the lost report goes back to Searching",
   },
-  lfcClaimRecord: { th: "บันทึกผู้มาอ้างสิทธิ์ที่เคาน์เตอร์", en: "Record a claim made at the desk" },
+  lfcClaimRecord: { th: "บันทึกผู้มาขอรับของที่เคาน์เตอร์", en: "Record a claim made at the desk" },
   lfcClaimAdd: { th: "บันทึกคำขอรับของ", en: "Save the claim" },
-  lfcFieldClaimAnswer: { th: "สิ่งที่ผู้อ้างสิทธิ์บอกเกี่ยวกับของชิ้นนี้", en: "What the claimant said about the item" },
+  lfcFieldClaimAnswer: { th: "สิ่งที่ผู้ขอรับของบอกเกี่ยวกับของชิ้นนี้", en: "What the claimant said about the item" },
   lfcFieldClaimAnswerHint: { th: "จดคำตอบตามที่ได้ยินโดยไม่ชี้นำ เข้ารหัสไว้และลบตามกำหนดเมื่อปิดเรื่อง", en: "Write down their own words, without prompting. Stored encrypted and deleted when the case is closed" },
   lfcSavedClaim: { th: "บันทึกคำขอรับของแล้ว", en: "Claim recorded" },
   lfcSavedAccepted: { th: "ยอมรับคำขอแล้ว ของพร้อมให้มารับ", en: "Claim accepted. The item is ready to collect" },
-  lfcSavedRejected: { th: "ปฏิเสธคำขอแล้ว ส่งข้อความถึงผู้อ้างสิทธิ์แล้ว", en: "Claim rejected and the message recorded for the claimant" },
+  lfcSavedRejected: { th: "ปฏิเสธคำขอแล้ว ส่งข้อความถึงผู้ขอรับของแล้ว", en: "Claim rejected and the message recorded for the claimant" },
   lfcFieldLostReport: { th: "เรื่องแจ้งของหายที่เกี่ยวข้อง", en: "Related lost report" },
 
   /* Handover */
@@ -290,7 +290,7 @@ export const LOST_FOUND_CASES_STRINGS = {
   lfcHandoverSave: { th: "บันทึกว่าคืนของแล้ว", en: "Record that it was returned" },
   lfcFieldCollector: { th: "ชื่อผู้มารับของ", en: "Name of the person collecting" },
   lfcFieldCollectorHint: { th: "เก็บไว้เป็นข้อมูลติดต่อที่เข้ารหัสในเรื่องนี้", en: "Kept as an encrypted contact on this case" },
-  lfcFieldCollectorKnown: { th: "เว้นว่างได้ถ้าเรื่องนี้มีชื่อผู้อ้างสิทธิ์อยู่แล้ว", en: "You can leave this empty if the case already holds the claimant's name" },
+  lfcFieldCollectorKnown: { th: "เว้นว่างได้ถ้าเรื่องนี้มีชื่อผู้ขอรับของอยู่แล้ว", en: "You can leave this empty if the case already holds the claimant's name" },
   lfcFieldIdCheck: { th: "บัตรที่ตรวจดู", en: "ID checked" },
   lfcFieldIdCheckHint: { th: "เลือกชนิดบัตรที่ดู ไม่ต้องจดเลขบัตร ระบบไม่มีช่องสำหรับเลขบัตร", en: "Choose the type of ID you looked at. Do not write down the number; there is no field for it" },
   lfcIdCheck_student_card: { th: "บัตรนักศึกษา", en: "Student card" },

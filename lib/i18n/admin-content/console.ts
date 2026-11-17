@@ -14,7 +14,7 @@ export const CONSOLE_STRINGS = {
 
   /* Sidebar items not covered by existing keys */
   csNavStaff: { th: "เจ้าหน้าที่", en: "Staff" },
-  csNavSecurity: { th: "ความปลอดภัย", en: "Security" },
+  csNavSecurity: { th: "ความปลอดภัยของฉัน", en: "My security" },
 
   /* Sidebar and top bar controls */
   csOpenMenu: { th: "เปิดเมนู", en: "Open menu" },
@@ -28,7 +28,7 @@ export const CONSOLE_STRINGS = {
   csAccountMenu: { th: "บัญชีของฉัน", en: "My account" },
   csSignedInAs: { th: "เข้าสู่ระบบในชื่อ", en: "Signed in as" },
   csRolesHeading: { th: "บทบาท", en: "Roles" },
-  csAccountSecurity: { th: "ความปลอดภัยของบัญชี", en: "Account security" },
+  csAccountSecurity: { th: "ความปลอดภัยของฉัน", en: "My security" },
 
   /* Command palette */
   csSearchButton: { th: "ค้นหา", en: "Search" },
@@ -42,7 +42,7 @@ export const CONSOLE_STRINGS = {
   csPaletteLoading: { th: "กำลังค้นหา", en: "Searching" },
   csPaletteError: { th: "ค้นหาไม่สำเร็จ ลองอีกครั้ง", en: "The search did not work. Try again" },
   csRevealFailed: { th: "แสดงข้อมูลไม่สำเร็จ ลองอีกครั้ง", en: "This could not be shown. Try again" },
-  csPaletteCount: { th: "พบ {count} รายการ", en: "{count} results" },
+  csPaletteCount: { th: "พบ {count} รายการ", en: "{count} {count:result|results}" },
   csPaletteKeys: { th: "ลูกศรขึ้นลงเพื่อเลือก Enter เพื่อเปิด Esc เพื่อปิด", en: "Up and down to choose, Enter to open, Esc to close" },
   csPaletteClose: { th: "ปิดการค้นหา", en: "Close search" },
 
@@ -53,5 +53,5 @@ export const CONSOLE_STRINGS = {
   csFilters: { th: "ตัวกรอง", en: "Filters" },
   csSearchField: { th: "ค้นหา", en: "Search" },
   csActions: { th: "การดำเนินการ", en: "Actions" },
-  csCount: { th: "{count} รายการ", en: "{count} items" },
+  csCount: { th: "{count} รายการ", en: "{count} {count:item|items}" },
 } as const satisfies Record<string, LocaleString>;

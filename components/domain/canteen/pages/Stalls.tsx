@@ -10,7 +10,7 @@ import { EatFilteredLayout } from "../EatFilteredLayout";
 import { EatTabs } from "../EatTabs";
 import { readFilters } from "../query";
 import { StallCard } from "../StallCard";
-import { eat } from "../strings";
+import { EAT, eat, t } from "../strings";
 
 export const STALLS_ROUTE = "/eat/stalls";
 
@@ -35,7 +35,7 @@ export function StallsResults({ locale, data, query, now }: StallsResultsProps &
     <>
       <EatTabs locale={locale} current="stalls" filters={filters} />
 
-      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={STALLS_ROUTE} display="none">
+      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={STALLS_ROUTE} display="none" hide={["stall"]} submitLabel={t(EAT.applyShort, locale)}>
         <Stack space={4}>
           <p role="status" aria-live="polite" aria-atomic="true" className="m-0 text-base font-medium text-ink-900">
             {eat.stallsShown(locale, withMatches, rows.length, filtered)}

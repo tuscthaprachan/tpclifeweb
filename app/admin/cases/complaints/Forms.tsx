@@ -78,7 +78,7 @@ function Notice({ notice, locale }: { notice: NonNullable<CpState["notice"]>; lo
 }
 
 /** A single button that does one thing to the complaint. */
-function Act({ locale, caseId, orgId, action, label, variant = "secondary", extra }: Base & { action: (prev: CpState, fd: FormData) => Promise<CpState>; label: AdminKey; variant?: "primary" | "secondary" | "destructive"; extra?: Record<string, string> }) {
+function Act({ locale, caseId, orgId, action, label, variant = "secondary", extra, confirmLabel }: Base & { action: (prev: CpState, fd: FormData) => Promise<CpState>; label: AdminKey; variant?: "primary" | "secondary" | "destructive"; extra?: Record<string, string>; confirmLabel?: AdminKey }) {
   const [state, run, pending] = useActionState<CpState, FormData>(action, EMPTY);
   return (
     <form action={run} noValidate>
@@ -88,6 +88,12 @@ function Act({ locale, caseId, orgId, action, label, variant = "secondary", extr
         {Object.entries(extra ?? {}).map(([k, v]) => (
           <input key={k} type="hidden" name={k} value={v} />
         ))}
+        {confirmLabel ? (
+          <label className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
+            <input type="checkbox" name="confirm" value="yes" className="size-5" />
+            {a(confirmLabel, locale)}
+          </label>
+        ) : null}
         <div>
           <Button id={`cp-act-${label}`} type="submit" variant={variant} loading={pending} loadingLabel={a("caseSaving", locale)}>
             {a(label, locale)}
@@ -102,7 +108,7 @@ export function StartButton(props: Base) {
   return <Act {...props} action={startAction} label="cpcStart" />;
 }
 export function CloseButton(props: Base) {
-  return <Act {...props} action={closeAction} label="cpcClose" />;
+  return <Act {...props} action={closeAction} label="cpcClose" confirmLabel="cpcConfirmClose" />;
 }
 export function ReopenButton(props: Base) {
   return <Act {...props} action={reopenAction} label="cpcReopen" />;
@@ -111,7 +117,7 @@ export function WellbeingButton(props: Base) {
   return <Act {...props} action={wellbeingAction} label="cpcWellbeingRoute" />;
 }
 export function WithdrawButton(props: Base & { from: string }) {
-  return <Act {...props} action={withdrawAction} label="cpcWithdraw" variant="destructive" extra={{ from: props.from }} />;
+  return <Act {...props} action={withdrawAction} label="cpcWithdraw" variant="destructive" extra={{ from: props.from }} confirmLabel="cpcConfirmWithdraw" />;
 }
 
 /** Acknowledge: the standard message goes out as it is; staff may add a few words in either language. */

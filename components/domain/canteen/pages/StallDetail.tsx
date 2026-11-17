@@ -53,7 +53,7 @@ export function StallDetail({ locale, data, stall, query, now }: StallDetailProp
         </p>
         <Heading level={1} className="text-3xl leading-tight">{pick(stall.name, locale)}</Heading>
         <ul className="m-0 flex list-none flex-wrap gap-[var(--space-2)] p-0">
-          {stall.cuisine.map((cuisine) => (
+          {stall.cuisine.filter((cuisine) => CUISINE_LABEL[cuisine][locale] !== pick(stall.name, locale)).map((cuisine) => (
             <li key={cuisine}>
               <Tag tone="neutral">{CUISINE_LABEL[cuisine][locale]}</Tag>
             </li>

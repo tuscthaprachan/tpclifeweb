@@ -43,7 +43,7 @@ export const DIRECTORY_STRINGS = {
   dirFieldActive: { th: "แสดงในสารบัญ", en: "Show in the directory" },
   dirHintActive: {
     th: "เอาเครื่องหมายออกเมื่อกลุ่มนี้หยุดดำเนินงาน รายการจะยังอยู่ที่นี่แต่ผู้อ่านจะไม่เห็น",
-    en: "Untick when the group has stopped running. It stays here but readers will not see it",
+    en: "Clear this when the group has stopped running. It stays here but readers will not see it",
   },
   dirGroupAbout: { th: "ข้อมูลทั่วไป", en: "About the group" },
   dirGroupContacts: { th: "ช่องทางติดต่อ", en: "Contact channels" },
@@ -126,7 +126,7 @@ export const DIRECTORY_STRINGS = {
   placesHintCategory: { th: "กำหนดสีที่ใช้แสดงสถานที่นี้บนเว็บไซต์", en: "Decides the colour used for this place on the site" },
   placesFieldKey: { th: "สถานที่สำคัญ", en: "Key place" },
   placesLabelKey: { th: "แสดงในแผงสถานที่สำคัญ", en: "Show on the key places panel" },
-  placesHintKey: { th: "เลือกเฉพาะสถานที่ที่นักศึกษาต้องใช้บ่อย", en: "Tick only places students often need" },
+  placesHintKey: { th: "เลือกเฉพาะสถานที่ที่นักศึกษาต้องใช้บ่อย", en: "Select only places students often need" },
   placesGroupAbout: { th: "ข้อมูลสถานที่", en: "About the place" },
   placesGroupHours: { th: "เวลาทำการ", en: "Opening times" },
   placesGroupMap: { th: "ตำแหน่งบนแผนที่", en: "Map position" },
@@ -137,7 +137,7 @@ export const DIRECTORY_STRINGS = {
   placesFieldHours: { th: "ช่วงเวลาเปิดทำการ", en: "Opening hours" },
   placesHintHours: {
     th: "เพิ่มทีละกลุ่มวันที่เปิดปิดเวลาเดียวกัน วันที่ไม่ได้เลือกถือว่าปิด หากเวลาปิดก่อนเวลาเปิดหมายถึงปิดหลังเที่ยงคืน ใส่ช่วงวันที่สำหรับเวลาพิเศษ เช่น ช่วงสอบ ในวันดังกล่าวจะใช้เฉพาะแถวที่มีวันที่",
-    en: "Add one row for each set of days with the same hours. Days you do not tick count as closed. A closing time earlier than the opening time means it closes after midnight. Give dates for special hours, such as exams: on those dates only the dated rows apply",
+    en: "Add one row for each set of days with the same hours. Days you do not select count as closed. A closing time earlier than the opening time means it closes after midnight. Give dates for special hours, such as exams: on those dates only the dated rows apply",
   },
   placesFieldHoursItem: { th: "ช่วงเวลา", en: "Period" },
   placesFieldDays: { th: "วันที่เปิด", en: "Days open" },
@@ -172,7 +172,7 @@ export const DIRECTORY_STRINGS = {
   shuttleLabelActive: { th: "สายนี้กำลังให้บริการ", en: "This route is running" },
   shuttleHintActive: {
     th: "เอาเครื่องหมายออกเมื่อสายนี้หยุดให้บริการ เช่น ช่วงปิดภาคเรียน สายจะไม่แสดงต่อผู้อ่าน",
-    en: "Untick when the route stops running, for example in a term break. Readers will not see it",
+    en: "Clear this when the route stops running, for example in a term break. Readers will not see it",
   },
   shuttleFieldDays: { th: "วันที่รถวิ่งในแต่ละสัปดาห์", en: "Days of the week it runs" },
   shuttleFieldValidFrom: { th: "ใช้ตารางนี้ตั้งแต่", en: "Timetable starts on" },
@@ -290,6 +290,6 @@ export const DIRECTORY_STRINGS = {
   siteFieldLinkSignIn: { th: "ต้องเข้าสู่ระบบก่อนใช้งาน", en: "Needs a sign-in" },
   siteHintLinkSignIn: {
     th: "เลือกเมื่อปลายทางต้องใช้บัญชีที่นักศึกษาอาจไม่มี",
-    en: "Tick when the destination needs an account the student may not have",
+    en: "Select when the destination needs an account the student may not have",
   },
 } as const satisfies Record<string, LocaleString>;

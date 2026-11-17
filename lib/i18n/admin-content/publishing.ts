@@ -21,7 +21,7 @@ export const PUBLISHING_STRINGS = {
   alertsFieldAffects: { th: "หน้าที่แสดงประกาศ", en: "Where it shows" },
   alertsHintAffects: {
     th: "ถ้าไม่เลือกข้อใดเลย ประกาศจะแสดงทั่วทั้งเว็บไซต์",
-    en: "If you tick nothing, the alert shows across the whole website",
+    en: "If you select nothing, the alert shows across the whole website",
   },
   alertsSurfaceShuttle: { th: "รถรับส่ง", en: "Shuttle" },
   alertsSurfaceCampus: { th: "แผนที่และสถานที่ในมหาวิทยาลัย", en: "Campus map and places" },
@@ -58,8 +58,8 @@ export const PUBLISHING_STRINGS = {
   },
   eventsFieldAllDay: { th: "กิจกรรมตลอดทั้งวัน", en: "All day event" },
   eventsHintAllDay: {
-    th: "ติ๊กถ้ากิจกรรมไม่มีเวลาเริ่มที่แน่นอน เว็บไซต์จะแสดงเฉพาะวันที่",
-    en: "Tick if the event has no set start time. The website will show only the date",
+    th: "เลือกถ้ากิจกรรมไม่มีเวลาเริ่มที่แน่นอน เว็บไซต์จะแสดงเฉพาะวันที่",
+    en: "Select if the event has no set start time. The website will show only the date",
   },
   eventsFieldLocation: { th: "ชื่อสถานที่", en: "Location name" },
   eventsHintLocation: {

@@ -1,7 +1,4 @@
-"use client";
-
 import Form from "next/form";
-import { useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { Cluster } from "@/components/ui/Cluster";
 import { Select, type SelectOption } from "@/components/ui/Select";
@@ -29,10 +26,9 @@ function count(decisions: readonly DecisionRow[], pick: (decision: DecisionRow) 
 
 /**
  * A real `<form method="get">` with three selects and a submit button, so the filters work with JavaScript off.
- * The script only submits the form when a select changes.
+ * Nothing is submitted until the button is pressed, so choosing from a select never moves the page.
  */
 export function DecisionFilters({ locale, decisions, meetings, value, hasActiveFilters, labelledBy }: DecisionFiltersProps) {
-  const formRef = useRef<HTMLFormElement>(null);
   const total = decisions.length;
   const option = (label: string, n: number) => fillText(UI.odDcOption[locale], { label, n });
 
@@ -56,18 +52,14 @@ export function DecisionFilters({ locale, decisions, meetings, value, hasActiveF
     })),
   ];
 
-  function submitOnChange() {
-    formRef.current?.requestSubmit();
-  }
-
   const action = localePath(locale, `${TUSC_PATH}/decisions`);
 
   return (
-    <Form ref={formRef} action={action} aria-labelledby={labelledBy} key={`${value.topic}|${value.outcome}|${value.meeting}`}>
+    <Form action={action} aria-labelledby={labelledBy} key={`${value.topic}|${value.outcome}|${value.meeting}`}>
       <Cluster space={4} align="end">
-        <Select id="od-filter-topic" name="topic" label={UI.odDcTopic[locale]} options={topicOptions} defaultValue={value.topic} onChange={submitOnChange} />
-        <Select id="od-filter-outcome" name="outcome" label={UI.odDcOutcome[locale]} options={outcomeOptions} defaultValue={value.outcome} onChange={submitOnChange} />
-        <Select id="od-filter-meeting" name="meeting" label={UI.odDcMeeting[locale]} options={meetingSelectOptions} defaultValue={value.meeting} onChange={submitOnChange} />
+        <Select id="od-filter-topic" name="topic" label={UI.odDcTopic[locale]} options={topicOptions} defaultValue={value.topic} />
+        <Select id="od-filter-outcome" name="outcome" label={UI.odDcOutcome[locale]} options={outcomeOptions} defaultValue={value.outcome} />
+        <Select id="od-filter-meeting" name="meeting" label={UI.odDcMeeting[locale]} options={meetingSelectOptions} defaultValue={value.meeting} />
         <Button type="submit">{UI.applyFilters[locale]}</Button>
         {hasActiveFilters ? (
           <Button href={action} variant="quiet">

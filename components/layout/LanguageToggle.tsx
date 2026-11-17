@@ -16,7 +16,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import {
   LEGACY_LOCALE_COOKIE,
   LOCALE_COOKIE,
@@ -27,13 +28,29 @@ import {
   stripLocale,
   type Locale,
 } from "@/lib/i18n/config";
+import { isQueryRoute } from "@/lib/query-routes";
 import { UI } from "@/lib/i18n/strings";
 
 export function LanguageToggle({ locale, className = "" }: { locale: Locale; className?: string }) {
+  return (
+    <Suspense fallback={<LanguageLink locale={locale} query="" className={className} />}>
+      <LanguageToggleWithQuery locale={locale} className={className} />
+    </Suspense>
+  );
+}
+
+function LanguageToggleWithQuery({ locale, className }: { locale: Locale; className: string }) {
+  const searchParams = useSearchParams();
+  const query = new URLSearchParams(searchParams);
+  query.delete("_rsc");
+  return <LanguageLink locale={locale} query={query.toString()} className={className} />;
+}
+
+function LanguageLink({ locale, query, className }: { locale: Locale; query: string; className: string }) {
   const pathname = usePathname();
   const { path } = stripLocale(pathname);
   const target = OTHER_LOCALE[locale];
-  const href = localePath(target, path);
+  const href = `${localePath(target, path)}${query && isQueryRoute(path) ? `?${query}` : ""}`;
 
   return (
     <Link

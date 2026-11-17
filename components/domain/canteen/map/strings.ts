@@ -7,8 +7,7 @@
 import type { Locale } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import type { CanteenCuisine } from "@/lib/content/types";
-
-type Pair = { th: string; en: string };
+import { CUISINE_LABEL } from "../labels";
 
 export const MAP_STRINGS = {
   pageTitle: { th: "ผังโรงอาหาร", en: "Canteen map" },
@@ -71,21 +70,8 @@ export const MAP_STRINGS = {
     th: "เมื่อสำรวจร้านและตำแหน่งแล้ว ผังจะแสดงที่นี่",
     en: "Once the stalls and their positions are surveyed, the plan will appear here.",
   },
-  cuisine: {
-    thaiRice: { th: "ข้าวจานเดียว", en: "Thai rice dishes" },
-    madeToOrder: { th: "อาหารตามสั่ง", en: "Made to order" },
-    noodles: { th: "ก๋วยเตี๋ยว", en: "Noodles" },
-    isan: { th: "อาหารอีสาน", en: "Isan food" },
-    chickenRice: { th: "ข้าวมันไก่", en: "Chicken rice" },
-    curryOverRice: { th: "ข้าวราดแกง", en: "Curry over rice" },
-    muslim: { th: "อาหารมุสลิม", en: "Muslim food" },
-    international: { th: "อาหารนานาชาติ", en: "International food" },
-    drinks: { th: "เครื่องดื่ม", en: "Drinks" },
-    desserts: { th: "ของหวาน", en: "Desserts" },
-    fruit: { th: "ผลไม้", en: "Fruit" },
-  } satisfies Record<CanteenCuisine, Pair>,
 } as const;
 
 export function cuisineLabel(cuisine: CanteenCuisine, locale: Locale): string {
-  return MAP_STRINGS.cuisine[cuisine]?.[locale] ?? "";
+  return CUISINE_LABEL[cuisine]?.[locale] ?? "";
 }

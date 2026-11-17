@@ -90,8 +90,8 @@ export const BUDGET = {
   replacesWeek: { th: "จะแทนที่สัปดาห์ที่เก็บไว้ก่อนหน้า", en: "This replaces the week you saved before." },
   openMine: { th: "ดูของฉัน", en: "Open Your stuff" },
   failNoDays: {
-    th: "ยังไม่ได้เลือกวัน ติ๊กอย่างน้อยหนึ่งวันที่มามหาวิทยาลัย",
-    en: "No days chosen. Tick at least one day you are on campus.",
+    th: "เลือกอย่างน้อยหนึ่งวันที่มามหาวิทยาลัย",
+    en: "Select at least one day you are on campus",
   },
   failBadDays: { th: "วันที่เลือกไม่ถูกต้อง เลือกวันใหม่จากแบบฟอร์ม", en: "Those days are not valid. Choose the days again in the form." },
   failUnknownLock: {

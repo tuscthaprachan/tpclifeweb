@@ -54,16 +54,22 @@ export function FormsResults({ locale, forms: allForms, query }: FormsResultsPro
   });
 
   const priorityForms = filtered.filter((form) => form.isPriority);
+  const otherForms = filtered.filter((form) => !form.isPriority);
+  const showFilters = allForms.length > 1;
 
   return (
     <>
-      <FormFilters key={`${category}|${owner}|${signIn}`} locale={locale} value={{ category, owner, signIn }} hasActiveFilters={hasActiveFilters} />
+      {showFilters ? (
+        <>
+          <FormFilters key={`${category}|${owner}|${signIn}`} locale={locale} value={{ category, owner, signIn }} hasActiveFilters={hasActiveFilters} />
 
-      {/* 4.1.3: the result count is announced politely whenever it changes. */}
-      <p {...liveRegionProps("polite")} className="m-0 text-sm text-ink-600">
-        {UI.showing[locale]} {formatNumber(filtered.length, locale)} {UI.of[locale]} {formatNumber(allForms.length, locale)}{" "}
-        {UI.results[locale]}
-      </p>
+          {/* 4.1.3: the result count is announced politely whenever it changes. */}
+          <p {...liveRegionProps("polite")} className="m-0 text-sm text-ink-600">
+            {UI.showing[locale]} {formatNumber(filtered.length, locale)} {UI.of[locale]} {formatNumber(allForms.length, locale)}{" "}
+            {UI.results[locale]}
+          </p>
+        </>
+      ) : null}
 
       {filtered.length === 0 ? (
         allForms.length === 0 ? (
@@ -99,7 +105,16 @@ export function FormsResults({ locale, forms: allForms, query }: FormsResultsPro
             </Stack>
           ) : null}
 
-          <FormList forms={filtered} locale={locale} headingLevel={2} />
+          {otherForms.length > 0 ? (
+            priorityForms.length > 0 ? (
+              <Stack space={4}>
+                <Heading level={2}>{UI.otherForms[locale]}</Heading>
+                <FormList forms={otherForms} locale={locale} headingLevel={3} />
+              </Stack>
+            ) : (
+              <FormList forms={otherForms} locale={locale} headingLevel={2} />
+            )
+          ) : null}
         </>
       )}
     </>

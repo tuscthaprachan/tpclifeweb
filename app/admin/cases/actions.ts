@@ -113,7 +113,8 @@ export async function addUpdateAction(_prev: CaseFormState, formData: FormData):
 
 export async function assignAction(_prev: CaseFormState, formData: FormData): Promise<CaseFormState> {
   return run(formData, ["assignee"], async ({ caseId, actor }) => {
-    const raw = text(formData, "assignee");
+    const chosen = formData.getAll("assignee").filter((v): v is string => typeof v === "string");
+    const raw = chosen.includes("me") ? "me" : (chosen[0] ?? "");
     await assign(getDb(), caseId, raw === "" ? null : raw === "me" ? actor.userId : raw, actor);
     return "caseSavedAssign";
   });

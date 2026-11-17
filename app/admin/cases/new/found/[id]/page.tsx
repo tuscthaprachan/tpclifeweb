@@ -28,9 +28,10 @@ import { TaskList, type TaskItem, type TaskState } from "../../../lost-found/Tas
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata() {
-  const locale = await getAdminLocale();
-  return { title: a("lfcFoundTitle", locale) };
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ task?: string }> }) {
+  const [locale, { task }] = await Promise.all([getAdminLocale(), searchParams]);
+  const key = TASKS.find((t) => t === task);
+  return { title: key ? `${a(TITLE[key], locale)} - ${a("lfcFoundTitle", locale)}` : a("lfcFoundTitle", locale) };
 }
 
 const TASKS: IntakeTask[] = ["describe", "photos", "storage", "verification", "finder", "publish"];

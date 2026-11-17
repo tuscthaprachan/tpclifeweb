@@ -10,7 +10,7 @@ export const NOTIFICATION_STRINGS = {
   ntLink: { th: "การแจ้งเตือน", en: "Notifications" },
   ntTitle: { th: "การแจ้งเตือน", en: "Notifications" },
   ntIntro: {
-    th: "เรื่องที่มอบหมายให้คุณ การกล่าวถึงคุณในบันทึก ข้อร้องเรียนที่ส่งต่อ อุปกรณ์ที่เกินกำหนดคืน และคำเชิญที่มีผู้ตอบรับ",
+    th: "เรื่องที่มอบหมายให้คุณ การกล่าวถึงคุณในบันทึก ข้อร้องเรียนที่ยกระดับ อุปกรณ์ที่เกินกำหนดคืน และคำเชิญที่มีผู้ตอบรับ",
     en: "Cases assigned to you, mentions in notes, escalated complaints, overdue equipment and accepted invitations.",
   },
   ntBellLabel: { th: "การแจ้งเตือน", en: "Notifications" },
@@ -26,7 +26,7 @@ export const NOTIFICATION_STRINGS = {
 
   ntKindCaseAssigned: { th: "มอบหมายเรื่องให้คุณ", en: "Case assigned to you" },
   ntKindCaseMention: { th: "มีการกล่าวถึงคุณในบันทึก", en: "You were mentioned in a note" },
-  ntKindComplaintEscalated: { th: "ส่งต่อข้อร้องเรียน", en: "Complaint escalated" },
+  ntKindComplaintEscalated: { th: "ยกระดับข้อร้องเรียน", en: "Complaint escalated" },
   ntKindBorrowingOverdue: { th: "อุปกรณ์เกินกำหนดคืน", en: "Equipment return overdue" },
   ntKindInviteAccepted: { th: "มีผู้ตอบรับคำเชิญ", en: "Invitation accepted" },
   ntKindOther: { th: "การแจ้งเตือน", en: "Notification" },

@@ -117,7 +117,7 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
                     <Link href={`/admin/staff/${encodeURIComponent(p.userId)}`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)]">
                       <PeopleIcon name="users" size={16} />
                       {a("smManage", locale)}
-                      <span className="visually-hidden"> {a("smManageFor", locale, { person: p.name || p.email })}</span>
+                      <span className="visually-hidden"> {p.name || p.email}</span>
                     </Link>
                     {withRecovery.has(p.userId) ? (
                       <span className="flex items-center gap-[var(--space-1)] text-sm text-ink-600">
@@ -172,7 +172,7 @@ export default async function StaffPage({ searchParams }: { searchParams: Promis
                   <Link href={`/admin/staff/invites/${i.id}/cancel`} className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-1)]">
                     <PeopleIcon name="cancel" size={16} />
                     {a("cancelInvite", locale)}
-                    <span className="visually-hidden"> {a("cancelInviteFor", locale, { email: i.email })}</span>
+                    <span className="visually-hidden"> {i.email}</span>
                   </Link>
                 ),
               },

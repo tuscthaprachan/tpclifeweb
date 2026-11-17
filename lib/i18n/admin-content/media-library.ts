@@ -29,7 +29,7 @@ export const MEDIA_LIBRARY_STRINGS = {
   mlClear: { th: "ล้างตัวกรอง", en: "Clear filters" },
   mlSummary: {
     th: "พบ {total} รูป ในคลังนี้มี {missing} รูปที่ยังไม่มีคำอธิบายภาพ และ {unused} รูปที่ยังไม่ได้ใช้",
-    en: "{total} pictures found. In this selection {missing} need a description and {unused} are not used",
+    en: "{total} {total:picture|pictures} found. In this selection {missing} {missing:needs|need} a description and {unused} {unused:is|are} not used",
   },
   mlGridCaption: { th: "รูปภาพ แสดง {shown} จาก {total} รูป", en: "Pictures, showing {shown} of {total}" },
 
@@ -49,16 +49,16 @@ export const MEDIA_LIBRARY_STRINGS = {
 
   /* Selection and bulk actions */
   mlBulkLabel: { th: "การดำเนินการกับรูปที่เลือก", en: "Actions for selected pictures" },
-  mlBulkHint: { th: "เลือกรูปที่ต้องการ แล้วเลือกการดำเนินการ", en: "Tick the pictures you want, then choose an action" },
+  mlBulkHint: { th: "เลือกรูปที่ต้องการ แล้วเลือกการดำเนินการ", en: "Select the pictures you want, then choose an action" },
   mlBulkEdit: { th: "แก้คำอธิบายภาพ", en: "Edit descriptions" },
   mlBulkDelete: { th: "ลบ", en: "Delete" },
   mlBulkNone: { th: "เลือกรูปอย่างน้อยหนึ่งรูปก่อนดำเนินการ", en: "Select at least one picture first." },
-  mlBulkEditDone: { th: "บันทึกคำอธิบายภาพแล้ว {ok} รูป", en: "Saved the description of {ok} pictures" },
+  mlBulkEditDone: { th: "บันทึกคำอธิบายภาพแล้ว {ok} รูป", en: "Saved the description of {ok} {ok:picture|pictures}" },
   mlBulkDeleteDone: { th: "ลบแล้ว {ok} รูป ลบไม่ได้ {refused} รูป", en: "Deleted {ok}. Could not delete {refused}" },
   mlBulkRefusedTitle: { th: "ลบไม่ได้ เพราะยังมีการใช้งาน", en: "Not deleted, because they are still used" },
 
   /* Bulk edit page */
-  mlEditTitle: { th: "แก้คำอธิบายภาพ {count} รูป", en: "Edit the description of {count} pictures" },
+  mlEditTitle: { th: "แก้คำอธิบายภาพ {count} รูป", en: "Edit the description of {count} {count:picture|pictures}" },
   mlEditIntro: {
     th: "กรอกคำอธิบายทั้งสองภาษาของแต่ละรูป หรือเลือกว่าเป็นรูปตกแต่ง",
     en: "Describe each picture in both languages, or mark it as decorative.",
@@ -76,7 +76,7 @@ export const MEDIA_LIBRARY_STRINGS = {
   /* Bulk delete page */
   mlDeleteTitle: { th: "ลบรูปภาพ", en: "Delete pictures" },
   mlDeleteBody: { th: "รูปต่อไปนี้ไม่มีการใช้งานและจะลบถาวร ย้อนกลับไม่ได้", en: "These pictures are not used anywhere and will be deleted for good. This cannot be undone." },
-  mlDeleteButton: { th: "ลบ {count} รูป", en: "Delete {count} pictures" },
+  mlDeleteButton: { th: "ลบ {count} รูป", en: "Delete {count} {count:picture|pictures}" },
   mlDeleteRefusedIntro: { th: "รูปต่อไปนี้ลบไม่ได้ เพราะยังใช้อยู่ ให้เอารูปออกจากรายการเหล่านั้นก่อน", en: "These pictures cannot be deleted because they are still used. Take them out of those items first" },
   mlDeleteNothing: { th: "ไม่มีรูปที่ลบได้ในรายการที่เลือก", en: "None of the selected pictures can be deleted." },
   mlReasonInUse: { th: "ยังใช้ใน {where}", en: "Still used in {where}" },
@@ -84,7 +84,7 @@ export const MEDIA_LIBRARY_STRINGS = {
 
   /* Usage */
   mlUsageTitle: { th: "รูปนี้ใช้ที่ไหนบ้าง", en: "Where this picture is used" },
-  mlUsageCount: { th: "ใช้ใน {count} รายการ", en: "Used in {count} items" },
+  mlUsageCount: { th: "ใช้ใน {count} รายการ", en: "Used in {count} {count:item|items}" },
   mlUsageEdit: { th: "แก้ไข {title}", en: "Edit {title}" },
   mlRoleSettings: { th: "ในการตั้งค่าเว็บไซต์", en: "In the site settings" },
   mlUsageUntitled: { th: "(ไม่มีชื่อ)", en: "(untitled)" },
@@ -121,7 +121,7 @@ export const MEDIA_LIBRARY_STRINGS = {
   mlDropChoose: { th: "เลือกไฟล์", en: "Choose files" },
   mlDropActive: { th: "ปล่อยไฟล์เพื่อเพิ่มในรายการ", en: "Drop the files to add them" },
   mlQueueTitle: { th: "รูปที่รออัปโหลด", en: "Pictures to upload" },
-  mlQueueUpload: { th: "อัปโหลด {count} รูป", en: "Upload {count} pictures" },
+  mlQueueUpload: { th: "อัปโหลด {count} รูป", en: "Upload {count} {count:picture|pictures}" },
   mlQueueRemove: { th: "เอา {name} ออก", en: "Remove {name}" },
   mlQueueSkipped: { th: "ข้าม {name}: ไฟล์ต้องเป็นรูปภาพ", en: "Skipped {name}: it is not a picture file" },
   mlStatusQueued: { th: "รออัปโหลด", en: "Waiting" },
@@ -130,8 +130,8 @@ export const MEDIA_LIBRARY_STRINGS = {
   mlStatusDone: { th: "อัปโหลดแล้ว", en: "Uploaded" },
   mlStatusFailed: { th: "ไม่สำเร็จ", en: "Failed" },
   mlProgressLabel: { th: "ความคืบหน้าของ {name}", en: "Progress of {name}" },
-  mlQueueAllDone: { th: "อัปโหลดเสร็จแล้ว {ok} รูป", en: "Uploaded {ok} pictures" },
-  mlQueueSomeFailed: { th: "อัปโหลดไม่สำเร็จ {failed} รูป แก้ไขแล้วลองอีกครั้ง", en: "{failed} pictures were not uploaded. Fix them and try again" },
+  mlQueueAllDone: { th: "อัปโหลดเสร็จแล้ว {ok} รูป", en: "Uploaded {ok} {ok:picture|pictures}" },
+  mlQueueSomeFailed: { th: "อัปโหลดไม่สำเร็จ {failed} รูป แก้ไขแล้วลองอีกครั้ง", en: "{failed} {failed:picture was|pictures were} not uploaded. Fix {failed:it|them} and try again" },
   mlQueueAltNeeded: { th: "กรอกคำอธิบายภาพทั้งสองภาษา หรือเลือกว่าเป็นรูปตกแต่ง", en: "Enter the description in both languages, or mark the picture as decorative" },
   mlLeaveBody: { th: "ภาพบางรายการยังไม่ได้อัปโหลด หากออกตอนนี้ ภาพเหล่านั้นจะหายไป", en: "Some pictures have not been uploaded. If you leave now, they will be lost." },
 } as const satisfies Record<string, LocaleString>;

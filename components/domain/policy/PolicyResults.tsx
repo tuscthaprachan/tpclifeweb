@@ -76,19 +76,23 @@ export function PolicyResults({ locale, policies: allPolicies, generatedAt, quer
     <>
       {allPolicies.length > 0 ? <PolicyStatusSummary policies={filtered} locale={locale} /> : null}
 
-      <PolicyFilters
-        key={`${owner}|${area}|${status}`}
-        locale={locale}
-        value={{ owner, area, status }}
-        areaOptions={areaOptions}
-        hasActiveFilters={hasActiveFilters}
-      />
+      {allPolicies.length > 0 ? (
+        <>
+          <PolicyFilters
+            key={`${owner}|${area}|${status}`}
+            locale={locale}
+            value={{ owner, area, status }}
+            areaOptions={areaOptions}
+            hasActiveFilters={hasActiveFilters}
+          />
 
-      {/* 4.1.3: the result count is announced politely whenever the filters change it. */}
-      <p {...liveRegionProps("polite")} className="m-0 text-sm text-ink-600">
-        {UI.showing[locale]} {formatNumber(filtered.length, locale)} {UI.of[locale]} {formatNumber(allPolicies.length, locale)}{" "}
-        {UI.results[locale]}
-      </p>
+          {/* 4.1.3: the result count is announced politely whenever the filters change it. */}
+          <p {...liveRegionProps("polite")} className="m-0 text-sm text-ink-600">
+            {UI.showing[locale]} {formatNumber(filtered.length, locale)} {UI.of[locale]} {formatNumber(allPolicies.length, locale)}{" "}
+            {allPolicies.length === 1 ? UI.resultOne[locale] : UI.results[locale]}
+          </p>
+        </>
+      ) : null}
 
       {filtered.length === 0 ? (
         allPolicies.length === 0 ? (

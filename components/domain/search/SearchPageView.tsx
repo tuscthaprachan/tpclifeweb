@@ -20,7 +20,7 @@ export function SearchPageView({ locale, query, results }: SearchPageViewProps) 
     <Container className="pb-8 pt-2">
       <Stack space={8}>
         <Stack space={4}>
-          <Heading level={1}>{UI.searchResults[locale]}</Heading>
+          <Heading level={1}>{hasQuery ? UI.searchResults[locale] : UI.search[locale]}</Heading>
           <SearchBar key={query} locale={locale} defaultValue={query} />
         </Stack>
 
@@ -29,7 +29,7 @@ export function SearchPageView({ locale, query, results }: SearchPageViewProps) 
         {!hasQuery || results === null ? null : results.length > 0 ? (
           <Stack space={4}>
             <p className="m-0 text-ink-600">
-              {results.length} {UI.results[locale]}
+              {results.length} {results.length === 1 ? UI.resultOne[locale] : UI.results[locale]}
             </p>
             <SearchResults results={results} locale={locale} groupHeadingLevel={2} />
           </Stack>

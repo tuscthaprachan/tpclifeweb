@@ -1,9 +1,11 @@
 import Form from "next/form";
 import { Button } from "@/components/ui/Button";
+import { ErrorSummary } from "@/components/ui/ErrorSummary";
 import { Heading } from "@/components/ui/Heading";
 import { TextInput } from "@/components/ui/TextInput";
 import { serialise, type CanteenFilters } from "@/lib/canteen/params";
 import { localePath, type Locale } from "@/lib/i18n/config";
+import { UI } from "@/lib/i18n/strings";
 
 import { ChoiceGroup } from "../ChoiceGroup";
 import { eat, t } from "../strings";
@@ -38,6 +40,14 @@ export function MealForm({ locale, filters, meal, sameStall, invalid }: MealForm
 
   return (
     <section aria-labelledby="meal-form-title" className="border-t border-line pt-[var(--space-6)]">
+      {invalid !== undefined ? (
+        <ErrorSummary
+          title={UI.errorSummaryTitle[locale]}
+          headingLevel={2}
+          items={[{ href: "#meal-other", message: t(BUDGET.mealInvalid, locale) }]}
+          className="mb-[var(--space-4)]"
+        />
+      ) : null}
       <Heading level={2} id="meal-form-title" className="m-0 mb-[var(--space-4)] text-xl">
         {t(BUDGET.mealFormTitle, locale)}
       </Heading>
@@ -53,7 +63,7 @@ export function MealForm({ locale, filters, meal, sameStall, invalid }: MealForm
           name="meal"
           kind="radio"
           layout="chips"
-          selected={[meal === undefined ? "" : custom ? "other" : String(meal)]}
+          selected={[custom ? "other" : meal === undefined ? "" : String(meal)]}
           choices={[
             ...MEAL_BUDGETS.map((amount) => ({ value: String(amount), label: eat.baht(locale, amount) })),
             { value: "other", label: t(BUDGET.budgetOtherChoice, locale) },

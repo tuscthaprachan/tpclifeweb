@@ -1,9 +1,11 @@
 import Form from "next/form";
 import { Button } from "@/components/ui/Button";
+import { ErrorSummary } from "@/components/ui/ErrorSummary";
 import { Heading } from "@/components/ui/Heading";
 import { TextInput } from "@/components/ui/TextInput";
 import type { CanteenFilters } from "@/lib/canteen/params";
 import { localePath, type Locale } from "@/lib/i18n/config";
+import { UI } from "@/lib/i18n/strings";
 
 import { ChoiceGroup } from "../ChoiceGroup";
 import { t } from "../strings";
@@ -16,6 +18,7 @@ interface WeekFormProps {
   filters: CanteenFilters;
   /** What was typed when it is not a valid budget, shown back with an error. */
   invalid?: string;
+  noDays?: boolean;
 }
 
 /**
@@ -24,13 +27,18 @@ interface WeekFormProps {
  * The seed, the pins and the filters ride along as hidden fields, so changing
  * the budget or the days keeps the plan as stable as the change allows.
  */
-export function WeekForm({ locale, request, filters, invalid }: WeekFormProps) {
+export function WeekForm({ locale, request, filters, invalid, noDays = false }: WeekFormProps) {
+  const errors = [
+    ...(invalid !== undefined ? [{ href: "#week-budget", message: t(BUDGET.weekBudgetInvalid, locale) }] : []),
+    ...(noDays ? [{ href: "#week-days", message: t(BUDGET.failNoDays, locale) }] : []),
+  ];
   const hidden = new URLSearchParams(weekQuery(request, filters));
   hidden.delete("budget");
   hidden.delete("days");
 
   return (
     <section aria-labelledby="week-form-title" className="no-print border-t border-line pt-[var(--space-6)]">
+      {errors.length > 0 ? <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={errors} className="mb-[var(--space-4)]" /> : null}
       <Heading level={2} id="week-form-title" className="m-0 mb-[var(--space-4)] text-xl">
         {t(BUDGET.weekFormTitle, locale)}
       </Heading>
@@ -60,6 +68,7 @@ export function WeekForm({ locale, request, filters, invalid }: WeekFormProps) {
           name="days"
           kind="checkbox"
           layout="chips"
+          error={noDays ? t(BUDGET.failNoDays, locale) : undefined}
           selected={request.days.map(String)}
           choices={MONDAY_FIRST.map((day) => ({ value: String(day), label: WEEKDAY_NAME[day]![locale] }))}
         />

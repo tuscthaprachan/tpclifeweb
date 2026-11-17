@@ -144,7 +144,8 @@ export async function resolveAction(_prev: CpState, fd: FormData): Promise<CpSta
 }
 
 export async function closeAction(_prev: CpState, fd: FormData): Promise<CpState> {
-  return onCase(fd, [], async ({ caseId, actor }) => {
+  return onCase(fd, [], async ({ locale, caseId, actor }) => {
+    if (text(fd, "confirm") !== "yes") return { error: a("errCpActConfirm", locale) };
     const db = getDb();
     await closeComplaint(db, caseId, actor);
     const notice = await notifyComplainant(db, caseId, "closed", actor);
@@ -162,7 +163,8 @@ export async function reopenAction(_prev: CpState, fd: FormData): Promise<CpStat
 }
 
 export async function withdrawAction(_prev: CpState, fd: FormData): Promise<CpState> {
-  return onCase(fd, [], async ({ caseId, actor }) => {
+  return onCase(fd, [], async ({ locale, caseId, actor }) => {
+    if (text(fd, "confirm") !== "yes") return { error: a("errCpActConfirm", locale) };
     const db = getDb();
     await transition(db, caseId, "withdrawn", actor, { expectedFrom: text(fd, "from") || undefined });
     const notice = await notifyComplainant(db, caseId, "withdrawn", actor);
@@ -176,7 +178,8 @@ export async function redirectAction(_prev: CpState, fd: FormData): Promise<CpSt
     const facultyId = text(fd, "faculty");
     const organisationId = text(fd, "body");
     const values = { level: text(fd, "level"), faculty: facultyId, body: organisationId };
-    if (!level || !isUuid(facultyId) || (organisationId && !isUuid(organisationId)) || text(fd, "confirm") !== "yes") return { error: a("errCpInvalid", locale), values };
+    if (!level || !isUuid(facultyId) || (organisationId && !isUuid(organisationId))) return { error: a("errCpInvalid", locale), values };
+    if (text(fd, "confirm") !== "yes") return { error: a("errCpRedirectConfirm", locale), values };
     const db = getDb();
     await redirectComplaint(db, caseId, { level, facultyId, organisationId: level === "faculty" ? organisationId || null : null }, actor);
     const notice = await notifyRedirected(db, caseId, actor);

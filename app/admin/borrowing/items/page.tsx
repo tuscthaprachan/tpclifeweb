@@ -46,6 +46,8 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
         </NotificationBanner>
       ) : null}
 
+      {inventory.length === 0 ? <p className="m-0 text-ink-600">{a("bcalNoItems", locale)}</p> : null}
+
       {inventory.map((category) => (
         <SectionCard key={category.id} id={`inv-${category.id}`} icon={Package} title={pick({ th: category.nameTh, en: category.nameEn }, locale)}>
           <p className="m-0 flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)] text-ink-600">

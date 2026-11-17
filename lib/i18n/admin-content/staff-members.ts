@@ -8,7 +8,6 @@ export const STAFF_MEMBER_STRINGS = {
     en: "Change this person's roles and organisations, suspend their access, or make a recovery link",
   },
   smManage: { th: "จัดการ", en: "Manage" },
-  smManageFor: { th: "จัดการเจ้าหน้าที่ {person}", en: "Manage staff member {person}" },
   smColOrganisations: { th: "หน่วยงาน", en: "Organisations" },
   smSuspendedTag: { th: "ระงับแล้ว", en: "Suspended" },
   smSummaryHeading: { th: "ข้อมูลโดยสรุป", en: "Summary" },

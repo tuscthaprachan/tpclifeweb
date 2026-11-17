@@ -28,72 +28,72 @@ import { alternatesFor } from "@/lib/i18n/metadata";
  * agent's final report rather than invented as a synonym of something else.
  */
 const INTRO: LocaleString = {
-  th: "เว็บไซต์ #ท้ายท่าพระจันทร์ (#trytpc) มีเป้าหมายให้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA แถลงการณ์นี้ระบุส่วนที่เป็นไปตามมาตรฐานแล้ว ส่วนที่ยังไม่เป็น และเหตุผล บริการยังอยู่ในระยะทดลอง เนื้อหาและฟังก์ชันบางส่วนจึงยังไม่สมบูรณ์",
-  en: "#trytpc aims to meet WCAG 2.2 level AA. This statement sets out what already conforms, what does not yet, and why. The service is still in an early phase, so some content and functionality remain incomplete.",
+  th: "เว็บไซต์ #ท้ายท่าพระจันทร์ (#trytpc) ตั้งเป้าให้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA หน้านี้บอกว่าส่วนใดเป็นไปตามมาตรฐานแล้ว ส่วนใดยังไม่เป็น และเพราะเหตุใด บริการนี้ยังอยู่ในช่วงทดลอง เนื้อหาและการใช้งานบางส่วนจึงยังไม่สมบูรณ์",
+  en: "#trytpc aims to meet WCAG 2.2 level AA. This page says what already meets the standard, what does not yet, and why. The service is still in an early phase, so some content and features are incomplete.",
 };
 
-const CONFORMANCE_HEADING: LocaleString = { th: "สถานะการปฏิบัติตามมาตรฐาน", en: "Conformance status" };
+const CONFORMANCE_HEADING: LocaleString = { th: "ผลการตรวจสอบตามมาตรฐาน", en: "How well the site meets the standard" };
 const CONFORMANCE_BODY: LocaleString = {
-  th: "เว็บไซต์นี้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA บางส่วน (partially conformant) คือเนื้อหาบางส่วนยังไม่เป็นไปตามมาตรฐานทั้งหมด ตามรายการด้านล่าง",
-  en: "This site is partially conformant with WCAG 2.2 level AA. Partially conformant means some parts of the content do not fully conform to the accessibility standard, as listed below.",
+  th: "เว็บไซต์นี้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA บางส่วน หมายความว่ามีบางส่วนของเนื้อหาที่ยังไม่เป็นไปตามมาตรฐานทั้งหมด ดังรายการด้านล่าง",
+  en: "This site partly meets WCAG 2.2 level AA. That means some content does not fully meet the standard yet, as listed below.",
 };
 
-const WORKS_HEADING: LocaleString = { th: "สิ่งที่เป็นไปตามมาตรฐานแล้ว", en: "What is known to conform" };
+const WORKS_HEADING: LocaleString = { th: "ส่วนที่เป็นไปตามมาตรฐานแล้ว", en: "What already meets the standard" };
 const WORKS_ITEMS: LocaleString[] = [
   {
-    th: "ทุกหน้ามีลิงก์ข้ามไปยังเนื้อหาหลัก โครงสร้างหัวข้อที่ถูกต้อง มี h1 เดียวต่อหน้า และมีจุดสังเกต (landmark) main, header และ footer อย่างละหนึ่ง",
-    en: "Every page has a skip link, a correct heading structure, exactly one h1, and single main, header and footer landmarks.",
+    th: "โครงสร้างหน้า ทุกหน้ามีลิงก์ข้ามไปยังเนื้อหาหลัก มีหัวข้อหลักหนึ่งหัวข้อ เรียงหัวข้อย่อยตามลำดับ และแบ่งส่วนส่วนหัว เนื้อหาหลัก และส่วนท้ายอย่างชัดเจน",
+    en: "Page structure. Every page has a link to skip to the main content, one main heading, subheadings in order, and a clearly separated header, main content and footer.",
   },
   {
-    th: "สี ทุกคู่สีที่ใช้แสดงข้อความและตัวควบคุมผ่านการตรวจอัตราส่วนความต่างของสีอัตโนมัติกว่า 110 รายการทุกครั้งที่ build สีสามสีของแบรนด์ (ส้ม ชมพู ม่วงอ่อน) ใช้เป็นพื้นหลังเท่านั้น ไม่เคยใช้เป็นสีตัวอักษรบนพื้นสว่าง",
-    en: "Colour. Every text and control colour pair is checked automatically against 110 WCAG contrast assertions on every build. The three brand pastels (orange, pink, lilac) are used only as fills, never as text on a light surface.",
+    th: "สี ทุกคู่สีของข้อความและปุ่มผ่านการตรวจอัตราส่วนความต่างของสีโดยอัตโนมัติทุกครั้งที่เผยแพร่เว็บไซต์ สีส้ม ชมพู และม่วงอ่อนของแบรนด์ใช้เป็นสีพื้นเท่านั้น ไม่ใช้เป็นสีตัวอักษรบนพื้นสว่าง",
+    en: "Colour. Every pair of text and button colours is checked automatically for contrast each time the site is published. The brand orange, pink and lilac are used only as backgrounds, never as text on a light background.",
   },
   {
-    th: "แป้นพิมพ์ ทุกฟังก์ชันใช้งานได้ด้วยแป้นพิมพ์เพียงอย่างเดียว ตัวชี้โฟกัส (focus indicator) มองเห็นได้ชัดเจนเสมอ และเมนูสำหรับมือถือปิดได้ด้วยปุ่ม Escape พร้อมคืนโฟกัสกลับไปยังปุ่มเปิดเมนู",
-    en: "Keyboard. Every function is operable by keyboard alone, the focus indicator is always visible, and the mobile menu closes on Escape and returns focus to the button that opened it.",
+    th: "แป้นพิมพ์ ทุกฟังก์ชันใช้งานได้ด้วยแป้นพิมพ์อย่างเดียว เห็นตำแหน่งโฟกัสชัดเจนเสมอ และเมนูบนมือถือปิดได้ด้วยปุ่ม Escape โดยโฟกัสกลับไปที่ปุ่มเปิดเมนู",
+    en: "Keyboard. Everything can be used with a keyboard alone, you can always see where the focus is, and the mobile menu closes with the Escape key and returns focus to the button that opened it.",
   },
   {
-    th: "ขนาดเป้าหมาย ปุ่มและลิงก์ที่ไม่ได้อยู่กลางประโยคมีขนาดอย่างน้อย 24x24 พิกเซล และ 44x44 พิกเซลบนอุปกรณ์สัมผัส",
-    en: "Target size. Buttons and links outside running text are at least 24 by 24 CSS pixels, and 44 by 44 on a touch pointer.",
+    th: "ขนาดปุ่มและลิงก์ ปุ่มและลิงก์ที่ไม่ได้อยู่ในประโยคมีขนาดอย่างน้อย 24x24 พิกเซล และ 44x44 พิกเซลบนหน้าจอสัมผัส",
+    en: "Size of buttons and links. Buttons and links that are not inside a sentence are at least 24 by 24 pixels, and 44 by 44 pixels on a touchscreen.",
   },
   {
-    th: "การเสริมความสามารถแบบก้าวหน้า (progressive enhancement) การค้นหา ตัวกรอง และการแบ่งหน้าทำงานได้แม้ปิดจาวาสคริปต์ เพราะทุกอย่างขับเคลื่อนด้วยแบบฟอร์ม GET และพารามิเตอร์ในลิงก์จริง",
-    en: "Progressive enhancement. Search, filtering and pagination all work with JavaScript switched off, because every one of them is driven by a real GET form or a plain link, not a script.",
+    th: "ใช้งานได้แม้ปิดจาวาสคริปต์ การค้นหา ตัวกรอง และการแบ่งหน้าทำงานได้โดยไม่ต้องใช้จาวาสคริปต์",
+    en: "Works without JavaScript. Search, filters and page numbers work without JavaScript.",
   },
   {
-    th: "การเคลื่อนไหว เว็บไซต์ทำตามการตั้งค่า “ลดการเคลื่อนไหว” ของระบบ และรองรับโหมดสีแบบบังคับ (forced colours) ของระบบปฏิบัติการ",
-    en: "Motion. The site respects the operating system's \"reduce motion\" setting, and supports forced-colours mode.",
+    th: "การเคลื่อนไหว เว็บไซต์ทำตามการตั้งค่าลดการเคลื่อนไหวของอุปกรณ์ และรองรับโหมดสีบังคับของระบบปฏิบัติการ",
+    en: "Motion. The site follows your device's reduce motion setting and supports forced colours mode.",
   },
   {
-    th: "ภาษา ทุกหน้ามีทั้งภาษาไทยและภาษาอังกฤษ แอตทริบิวต์ lang ของหน้าตรงกับภาษาที่แสดง และมีลิงก์ hreflang เชื่อมโยงไปกลับระหว่างสองภาษาเสมอ",
-    en: "Language. Every page exists in both Thai and English, the page's lang attribute matches what is shown, and reciprocal hreflang links connect the two versions.",
+    th: "ภาษา ทุกหน้ามีทั้งภาษาไทยและภาษาอังกฤษ และระบุภาษาของหน้าไว้ถูกต้อง เพื่อให้โปรแกรมอ่านหน้าจออ่านออกเสียงได้ตรงภาษา",
+    en: "Language. Every page is available in Thai and English, and each page states its language correctly so screen readers pronounce it properly.",
   },
 ];
 
-const GAPS_HEADING: LocaleString = { th: "สิ่งที่ยังไม่เป็นไปตามมาตรฐาน", en: "What does not conform yet" };
+const GAPS_HEADING: LocaleString = { th: "ส่วนที่ยังไม่เป็นไปตามมาตรฐาน", en: "What does not meet the standard yet" };
 const GAPS_ITEMS: LocaleString[] = [
   {
-    th: "คู่มือนักศึกษา TU91: เนื้อหาต้นฉบับเป็นภาพสแกนจากเอกสารตัวเล่ม ทีมงานกำลังพิมพ์และจัดโครงสร้างเนื้อหาใหม่ทีละส่วน ระหว่างนี้บางหน้าของคู่มืออาจยังไม่มี หรือมีแต่ยังไม่ผ่านการตรวจสอบโครงสร้างหัวข้อและข้อความทางเลือกอย่างสมบูรณ์",
-    en: "The TU91 student handbook is being re-typed and re-structured section by section from scanned images of the printed book. Until that finishes, some handbook pages are missing or have not yet had their heading structure and alt text fully checked.",
+    th: "คู่มือนักศึกษา TU91 ต้นฉบับเป็นภาพสแกนจากหนังสือเล่ม ทีมงานกำลังพิมพ์และจัดหน้าใหม่ทีละส่วน บางหน้าของคู่มือจึงยังไม่มี หรือยังตรวจหัวข้อและคำอธิบายภาพไม่ครบ",
+    en: "The TU91 student handbook was scanned from the printed book. We are retyping and laying it out again section by section, so some handbook pages are missing, or their headings and image descriptions have not been fully checked.",
   },
   {
-    th: "แบบฟอร์มปลายทางบางฉบับอยู่บนระบบของหน่วยงานภายนอก (เช่น Google Forms หรือระบบของมหาวิทยาลัย) เว็บไซต์ระบุไว้ชัดเจนก่อนออกจากหน้านี้ แต่ควบคุมหรือรับประกันการเข้าถึงของระบบปลายทางเหล่านั้นไม่ได้",
-    en: "Some destination forms are hosted on third-party systems (for example Google Forms, or a university system). This site labels the link clearly before you leave it, but it cannot control or guarantee the accessibility of those third-party destinations.",
+    th: "แบบฟอร์มบางฉบับอยู่บนระบบของหน่วยงานอื่น เช่น Google Forms หรือระบบของมหาวิทยาลัย เว็บไซต์นี้บอกไว้ก่อนที่คุณจะออกจากหน้านี้ แต่ตรวจสอบหรือรับรองการเข้าถึงของระบบเหล่านั้นไม่ได้",
+    en: "Some forms are on other organisations' systems, such as Google Forms or a university system. This site tells you before you leave it, but cannot check or guarantee how accessible those systems are.",
   },
   {
-    th: "รูปภาพและเอกสารแนบที่นำเข้าจากแหล่งข้อมูลเดิม (เช่น โพสต์ Instagram ของ อมธ./สภานักศึกษา) อาจมีคำอธิบายภาพ (alt text) ที่ยังไม่ครบทุกภาพในระยะแรกของการนำเข้าข้อมูล",
-    en: "Images and attachments carried over from source material (for example TUSU or TUSC's own Instagram posts) may not all have had their alt text checked yet, because the material is still being brought in.",
+    th: "รูปภาพและเอกสารที่นำมาจากแหล่งเดิม เช่น โพสต์ Instagram ของ อมธ. และสภานักศึกษา อาจยังไม่มีคำอธิบายภาพครบทุกภาพ เพราะยังอยู่ระหว่างนำข้อมูลเข้า",
+    en: "Images and files brought over from other sources, such as Instagram posts from TUSU and TUSC, may not all have image descriptions yet, because we are still adding this material.",
   },
   {
-    th: "เนื้อหาบางส่วนยังอยู่ระหว่างทดลอง (alpha) ตามที่ระบุไว้ในแถบแจ้งเตือนด้านบนของทุกหน้า ข้อมูลบางรายการอาจยังไม่ครบถ้วน",
-    en: "As the banner at the top of every page says, this service is still in an alpha phase and some information is incomplete.",
+    th: "บริการนี้ยังอยู่ในช่วงอัลฟา ตามที่แจ้งไว้ในแถบด้านบนของทุกหน้า ข้อมูลบางรายการจึงอาจยังไม่ครบ",
+    en: "This service is still in its alpha phase, as the banner at the top of every page says, so some information may be incomplete.",
   },
 ];
 
-const REPORT_HEADING: LocaleString = { th: "แจ้งปัญหาการเข้าถึง", en: "Reporting an accessibility problem" };
+const REPORT_HEADING: LocaleString = { th: "แจ้งปัญหาการเข้าถึง", en: "Tell us about an accessibility problem" };
 const REPORT_BODY: LocaleString = {
-  th: "หากพบปัญหาการเข้าถึงในเว็บไซต์นี้ ไม่ว่าจะเป็นส่วนที่ระบุไว้ข้างต้นหรือไม่ก็ตาม โปรดติดต่อ อมธ. ท่าพระจันทร์ หรือสภานักศึกษา ท่าพระจันทร์ ผ่านช่องทางที่ระบุไว้ในหัวข้อ “ต้องการความช่วยเหลือ” ท้ายทุกหน้าของเว็บไซต์",
-  en: "If you find an accessibility problem on this site, whether or not it is listed above, contact TUSU Tha Prachan or TUSC Tha Prachan through the channels under \"Need help\" at the bottom of every page.",
+  th: "หากพบปัญหาการเข้าถึงในเว็บไซต์นี้ ไม่ว่าจะอยู่ในรายการข้างต้นหรือไม่ โปรดติดต่อ อมธ. ท่าพระจันทร์ หรือสภานักศึกษา ท่าพระจันทร์ ตามช่องทางในส่วน “ต้องการความช่วยเหลือ” ที่ท้ายทุกหน้า หากต้องการข้อมูลในรูปแบบอื่น ก็แจ้งได้ทางช่องทางเดียวกัน",
+  en: "If you find an accessibility problem on this site, whether or not it is listed above, contact TUSU Tha Prachan or TUSC Tha Prachan using the details under \"Need help\" at the bottom of every page. If you need this information in another format, ask through the same channels.",
 };
 
 const PREPARED_LABEL: LocaleString = { th: "จัดทำแถลงการณ์นี้เมื่อ", en: "This statement was prepared on" };

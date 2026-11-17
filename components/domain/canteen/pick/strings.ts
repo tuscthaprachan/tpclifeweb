@@ -37,7 +37,7 @@ export const PICK = {
   biasUsual: { th: "เมนูโปรดของฉัน", en: "My usual" },
   biasHint: {
     th: "ใช้สิ่งที่เคยเลือกไว้ในเครื่องนี้",
-    en: "Uses what you've picked before on this phone.",
+    en: "Uses what you have picked before on this device.",
   },
   budgetLabel: { th: "งบรวมทั้งมื้อ (บาท)", en: "Budget for the whole meal (baht)" },
   spin: { th: "สุ่มเลย", en: "Spin" },

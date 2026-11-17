@@ -9,11 +9,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { getSiteSettings } from "@/components/layout/site-settings";
 import { Container } from "@/components/ui/Container";
 import { Heading } from "@/components/ui/Heading";
 import { Stack } from "@/components/ui/Stack";
 import { STUDENT_BODIES } from "@/data/harvested-inventory";
-import { DEFAULT_LOCALE, LOCALES, isLocale, localePath, type Locale } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, LOCALES, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
@@ -43,6 +44,15 @@ export default async function AboutIndexPage({
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
+  const settings = await getSiteSettings();
+  const phaseNote =
+    settings.phase === "live"
+      ? null
+      : settings.phaseNote
+        ? pick(settings.phaseNote, locale)
+        : settings.phase === "alpha"
+          ? UI.phaseAlphaNote[locale]
+          : UI.phaseBetaNote[locale];
 
   return (
     <Container width="narrow">
@@ -50,6 +60,16 @@ export default async function AboutIndexPage({
 
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
         <Heading level={1}>{UI.about[locale]}</Heading>
+        <section aria-labelledby="about-service" className="flex flex-col gap-[var(--space-2)]">
+          <Heading level={2} id="about-service">
+            {UI.aboutServiceHeading[locale]}
+          </Heading>
+          <p className="m-0">{pick(settings.tagline, locale)}</p>
+          {phaseNote ? <p className="m-0">{phaseNote}</p> : null}
+        </section>
+        <Heading level={2} id="about-bodies">
+          {UI.aboutStudentBodies[locale]}
+        </Heading>
         <ul className="m-0 flex flex-col gap-[var(--space-2)] pl-[var(--space-6)]">
           <li>
             <Link href={localePath(locale, "/about/tusu")} className="font-medium text-action underline">

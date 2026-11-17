@@ -31,12 +31,12 @@ describe("dishDietTags", () => {
 describe("chips and summary", () => {
   it("joins with a middle dot and counts the filters", () => {
     const filters = parse(new URLSearchParams("diet=nopork&max=50&type=noodles"));
-    expect(filterSummary(filters, "en")).toBe("No pork · under 50 baht · Noodles · 3 filters");
+    expect(filterSummary(filters, "en")).toBe("No pork · up to 50 baht · Noodles · 3 filters");
     expect(filterSummary(defaultFilters(), "en")).toBe("Showing everything");
   });
   it("names only the first three and keeps the total", () => {
     const filters = parse(new URLSearchParams("diet=nopork,halal&max=50&type=noodles"));
-    expect(filterSummary(filters, "en")).toBe("No pork · Halal · under 50 baht · 4 filters");
+    expect(filterSummary(filters, "en")).toBe("No pork · Halal · up to 50 baht · 4 filters");
   });
   it("each chip's without removes only that one", () => {
     const filters = parse(new URLSearchParams("diet=nopork,vegetarian&max=50"));

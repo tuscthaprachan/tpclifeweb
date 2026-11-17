@@ -6,8 +6,8 @@ export const CASES_STRINGS = {
   casesLink: { th: "เรื่องที่ได้รับ", en: "Cases" },
   casesTitle: { th: "เรื่องที่ได้รับ", en: "Cases" },
   casesIntro: {
-    th: "เรื่องของหายและของที่พบที่ อมธ. และสภาฯ ดูแลร่วมกัน ทุกคนเห็นคิวเดียวกัน และระบบบันทึกว่าฝ่ายใดดำเนินการล่าสุด",
-    en: "Lost and found cases that TUSU and TUSC handle together. Everyone sees the same queue, and each action records which organisation took it",
+    th: "เรื่องของหายและของที่พบ ข้อร้องเรียน และคำขอยืมอุปกรณ์ที่ อมธ. และสภานักศึกษาดูแลร่วมกัน ระบบบันทึกว่าองค์กรใดดำเนินการล่าสุด",
+    en: "Lost and found reports, complaints and equipment loans that TUSU and TUSC handle together. Each action records which organisation took it",
   },
   casesDashIntro: { th: "เปิดคิวเรื่องที่ต้องดูแล ตอบกลับ และเปลี่ยนสถานะ", en: "Open the queue to look into cases, reply and change their status" },
 
@@ -50,7 +50,7 @@ export const CASES_STRINGS = {
   caseRowClosed: { th: "ปิดเรื่องเมื่อ", en: "Closed" },
   caseRowActedBy: { th: "ดำเนินการล่าสุดโดย", en: "Last handled by" },
   caseRowDesk: { th: "ฝ่ายที่ดูแล", en: "Owning desk" },
-  caseRowPiiDue: { th: "ลบข้อมูลส่วนบุคคลภายใน", en: "Personal data deleted on" },
+  caseRowPiiDue: { th: "กำหนดลบข้อมูลส่วนบุคคล", en: "Personal data due to be deleted" },
   caseRowPiiGone: { th: "ลบข้อมูลส่วนบุคคลเมื่อ", en: "Personal data deleted" },
   caseNone: { th: "ไม่มี", en: "None" },
   caseActingFor: { th: "ดำเนินการในนามของ", en: "Acting for" },
@@ -77,7 +77,7 @@ export const CASES_STRINGS = {
   contactRole_reporter: { th: "ผู้แจ้ง", en: "Reporter" },
   contactRole_owner: { th: "เจ้าของ", en: "Owner" },
   contactRole_finder: { th: "ผู้พบ", en: "Finder" },
-  contactRole_claimant: { th: "ผู้อ้างสิทธิ์", en: "Claimant" },
+  contactRole_claimant: { th: "ผู้ขอรับของ", en: "Claimant" },
   contactPref_email: { th: "อีเมล", en: "Email" },
   contactPref_phone: { th: "โทรศัพท์", en: "Phone" },
   contactPref_line: { th: "LINE", en: "LINE" },
@@ -119,7 +119,7 @@ export const CASES_STRINGS = {
   caseNoteSave: { th: "เพิ่มบันทึก", en: "Add note" },
   caseUpdateHeading: { th: "ส่งข้อความถึงผู้แจ้ง", en: "Add an update for the person" },
   caseUpdateHint: {
-    th: "ผู้แจ้งเห็นข้อความนี้ในหน้าติดตาม เขียนเป็นภาษาไทย ภาษาอังกฤษ หรือทั้งสองภาษาก็ได้ ผู้อ่านจะเห็นภาษาของตนก่อน และอย่าใส่ข้อมูลส่วนบุคคลของผู้อื่น",
+    th: "ผู้แจ้งเห็นข้อความนี้ในหน้าติดตาม เขียนเป็นภาษาไทย ภาษาอังกฤษ หรือทั้งสองภาษาก็ได้ ผู้อ่านจะเห็นข้อความในภาษาของตนก่อน อย่าใส่ข้อมูลส่วนบุคคลของผู้อื่น",
     en: "The person sees this on their tracking page. Write in Thai, English or both. Readers see their own language first, and the other if that is all there is. Do not include anyone else's personal details",
   },
   caseUpdateTh: { th: "ข้อความภาษาไทย (ไม่บังคับ)", en: "Message in Thai (optional)" },

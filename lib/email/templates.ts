@@ -94,7 +94,7 @@ export function staffInvite({ inviterName, organisation, acceptUrl, expiresInDay
       highlight: { label: "ลิงก์รับคำเชิญ", value: acceptUrl, isLink: true },
       after: [
         `ลิงก์นี้ใช้ได้ ${n} วัน`,
-        "ห้ามส่งต่อลิงก์นี้ให้ผู้อื่น",
+        "โปรดอย่าส่งต่อลิงก์นี้ให้ผู้อื่น",
         "หากไม่รู้จักผู้เชิญ หรือไม่ได้รอคำเชิญนี้อยู่ ไม่ต้องทำอะไร ข้ามอีเมลฉบับนี้ไปได้เลย",
       ],
     },
@@ -137,8 +137,8 @@ export function staffRecovery({ organisation, recoverUrl, expiresInHours }: Staf
       highlight: { label: "ลิงก์กู้คืนบัญชี", value: recoverUrl, isLink: true },
       after: [
         `ลิงก์นี้ใช้ได้ ${n} ชั่วโมง และใช้ได้เพียงครั้งเดียว`,
-        "ห้ามส่งต่อลิงก์นี้ให้ผู้อื่น",
-        "หากไม่ได้ขอกู้คืนบัญชี อย่าเปิดลิงก์ และแจ้งผู้ดูแลระบบ",
+        "โปรดอย่าส่งต่อลิงก์นี้ให้ผู้อื่น",
+        "หากไม่ได้ขอกู้คืนบัญชี โปรดอย่าเปิดลิงก์ และแจ้งผู้ดูแลระบบ",
       ],
     },
     {

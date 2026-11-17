@@ -49,6 +49,7 @@ interface CanteenFiltersProps {
   hide?: ReadonlyArray<"max" | "stall" | "open">;
   /** True inside the phone Dialog: the submit button and a "Clear all" link stick to the bottom of its scroll area. */
   sticky?: boolean;
+  submitLabel?: string;
 }
 
 /** "Allergies and dislikes (2)": the section name with how many of its values are on. */
@@ -76,7 +77,7 @@ function withCount(label: string, count: number, locale: Locale): string {
  * never hidden, so the layout does not move. The "Leave out" group is labelled
  * as a preference, not an allergy tool.
  */
-export function CanteenFilters({ locale, filters, counts, stalls, action, idPrefix, display = "dishes", carry, hide = [], sticky = false }: CanteenFiltersProps) {
+export function CanteenFilters({ locale, filters, counts, stalls, action, idPrefix, display = "dishes", carry, hide = [], sticky = false, submitLabel }: CanteenFiltersProps) {
   const id = (name: string) => `${idPrefix}-${name}`;
   const shown = foldRetiredAvoid(filters.diet, filters.avoid);
   const maxIsChip = filters.max === undefined || BUDGET_STEPS.includes(filters.max);
@@ -97,7 +98,7 @@ export function CanteenFilters({ locale, filters, counts, stalls, action, idPref
       action={action}
       carry={carry}
       queryKey={serialise(filters)}
-      submitLabel={eat.showDishes(locale, counts.total)}
+      submitLabel={submitLabel ?? eat.showDishes(locale, counts.total)}
       footer={sticky ? "sticky" : "flow"}
       clear={clear}
     >

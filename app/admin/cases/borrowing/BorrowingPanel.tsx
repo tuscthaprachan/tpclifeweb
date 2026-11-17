@@ -45,7 +45,7 @@ export async function BorrowingPanel(props: CasePanelProps) {
         <Facts facts={facts} locale={locale} />
       </SectionCard>
 
-      <SectionCard id="br-lines" icon={Table2} title={a("brLinesHeading", locale)} description={holding ? a("brLinesFreeNote", locale) : undefined}>
+      <SectionCard id="br-lines" icon={Table2} title={a("brLinesHeading", locale)} description={status === "requested" ? a("brLinesFreeNote", locale) : undefined}>
         <Lines facts={facts} locale={locale} showFree={status === "requested"} />
       </SectionCard>
 

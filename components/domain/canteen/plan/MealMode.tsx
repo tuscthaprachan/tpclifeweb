@@ -162,7 +162,7 @@ export function MealMode({
   return (
     <Stack space={6}>
       <MealForm key={`${serialise(filters)}|${amount ?? ""}|${sameStall}|${invalidMealBudget(query) ?? ""}`} locale={locale} filters={filters} meal={amount} sameStall={sameStall} invalid={invalidMealBudget(query)} />
-      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry} hide={["max"]}>
+      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry} hide={["max"]} submitLabel={t(EAT.applyShort, locale)}>
         <Stack space={6}>
           {results}
         </Stack>

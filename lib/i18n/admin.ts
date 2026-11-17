@@ -132,7 +132,6 @@ export const A = {
   renameLabel: { th: "ชื่อพาสคีย์", en: "Passkey name" },
   renameSave: { th: "บันทึกชื่อ", en: "Save name" },
   removePasskeyVisible: { th: "เอาออก", en: "Remove" },
-  removePasskeyFor: { th: "เอาพาสคีย์ {name} ออก", en: "Remove the passkey {name}" },
   onlyPasskeyNote: {
     th: "นี่คือพาสคีย์เดียวของคุณ จึงเอาออกไม่ได้ เพิ่มพาสคีย์อีกอันก่อน",
     en: "This is your only passkey, so it cannot be removed. Add another first",
@@ -251,7 +250,6 @@ export const A = {
   colOrganisation: { th: "หน่วยงาน", en: "Organisation" },
   colExpires: { th: "หมดอายุ", en: "Expires" },
   cancelInvite: { th: "ยกเลิกคำเชิญ", en: "Cancel invitation" },
-  cancelInviteFor: { th: "ยกเลิกคำเชิญของ {email}", en: "Cancel the invitation for {email}" },
   inviteHeading: { th: "เชิญเจ้าหน้าที่", en: "Invite a member of staff" },
   inviteIntro: {
     th: "เราจะสร้างลิงก์คำเชิญและส่งไปให้ทางอีเมล ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ 7 วัน อีเมลใช้ระบุบัญชี จะเป็นอีเมลของมหาวิทยาลัยหรืออีเมลอื่นก็ได้ เราจะแสดงลิงก์ไว้บนหน้านี้ด้วยหนึ่งครั้ง เผื่ออีเมลไปไม่ถึง",
@@ -260,7 +258,7 @@ export const A = {
   inviteOrgLegend: { th: "เชิญเข้าหน่วยงานใด", en: "Which organisations are they joining?" },
   inviteRolesLegend: { th: "บทบาท", en: "Roles" },
   inviteRolesHint: { th: "เลือกได้หลายบทบาท", en: "Select all that apply" },
-  inviteSend: { th: "สร้างลิงก์คำเชิญ", en: "Make invitation link" },
+  inviteSend: { th: "ส่งคำเชิญ", en: "Send invitation" },
   errInviteEmailRequired: { th: "กรอกอีเมลของผู้ที่คุณต้องการเชิญ", en: "Enter the email address of the person you want to invite" },
   errInviteOrgRequired: { th: "เลือกอย่างน้อยหนึ่งหน่วยงาน", en: "Select at least one organisation" },
   errInviteRolesRequired: { th: "เลือกอย่างน้อยหนึ่งบทบาท", en: "Select at least one role" },
@@ -311,7 +309,6 @@ export const A = {
   backToStaff: { th: "กลับไปหน้าเจ้าหน้าที่", en: "Back to staff" },
   colAccount: { th: "บัญชี", en: "Account" },
   recoveryLinkVisible: { th: "สร้างลิงก์กู้คืน", en: "Make recovery link" },
-  recoveryLinkFor: { th: "สร้างลิงก์กู้คืนบัญชีของ {person}", en: "Make an account recovery link for {person}" },
   recoveryTitle: { th: "สร้างลิงก์กู้คืนบัญชีให้ {person}", en: "Make a recovery link for {person}" },
   recoveryIntro: {
     th: "ใช้เมื่อ {person} ทำพาสคีย์หายทุกอัน ลิงก์ใช้ได้ครั้งเดียวและใช้ได้ 24 ชั่วโมง เมื่อใช้แล้ว {person} จะออกจากระบบทุกอุปกรณ์และต้องสร้างพาสคีย์ใหม่ เราบันทึกการสร้างลิงก์นี้ไว้",
@@ -350,8 +347,8 @@ export const A = {
   inviteCreateButton: { th: "สร้างบัญชีด้วยพาสคีย์", en: "Create account with a passkey" },
   inviteExistingTitle: { th: "คุณมีบัญชีอยู่แล้ว", en: "You already have an account" },
   inviteExistingBody: {
-    th: "มีบัญชีสำหรับ {email} อยู่แล้ว เข้าสู่ระบบด้วยพาสคีย์ของคุณ แล้วกลับมาที่หน้านี้เพื่อรับคำเชิญ",
-    en: "There is already an account for {email}. Sign in with your passkey, then come back to this page to accept the invitation",
+    th: "มีบัญชีสำหรับ {email} อยู่แล้ว เข้าสู่ระบบด้วยพาสคีย์ของคุณ แล้วเราจะพากลับมาที่หน้านี้เพื่อรับคำเชิญ",
+    en: "There is already an account for {email}. Sign in with your passkey and we will bring you back to this page to accept the invitation",
   },
   inviteSignInToAccept: { th: "เข้าสู่ระบบเพื่อรับคำเชิญ", en: "Sign in to accept" },
   inviteAcceptTitle: { th: "รับคำเชิญ", en: "Accept the invitation" },
@@ -418,7 +415,7 @@ export const A = {
   hubSingleton: { th: "แก้ไขหน้าเดียว", en: "One page to edit" },
   hubCounts: {
     th: "ทั้งหมด {total} รายการ เผยแพร่แล้ว {published} ฉบับร่าง {drafts}",
-    en: "{total} in total, {published} published, {drafts} drafts",
+    en: "{total} in total, {published} published, {drafts} {drafts:draft|drafts}",
   },
 
   /* Content: types (plural label, singular for "Add ...", one-line description) */
@@ -461,7 +458,7 @@ export const A = {
   typeSiteSettings: { th: "ตั้งค่าเว็บไซต์", en: "Site settings" },
   typeSiteSettingsOne: { th: "ตั้งค่าเว็บไซต์", en: "site settings" },
   typeSiteSettingsDesc: { th: "ชื่อเว็บไซต์ เมนู ช่องทางติดต่อ และสถานะของบริการ", en: "The site name, menus, help contacts and service phase" },
-  typeLostFound: { th: "รายการของหาย-ของเจอ", en: "Lost and found listings" },
+  typeLostFound: { th: "รายการของเจอ", en: "Found item listings" },
   typeLostFoundOne: { th: "รายการของเจอ", en: "found item listing" },
   typeLostFoundDesc: { th: "รายการของที่เจอซึ่งแสดงต่อสาธารณะ", en: "Found items shown to the public" },
   typeCanteenSettings: { th: "ตั้งค่าโรงอาหาร", en: "Canteen settings" },
@@ -521,7 +518,7 @@ export const A = {
     th: "รายการนี้จะหายไปจากเว็บไซต์ทันที ประวัติการแก้ไขยังคงเก็บไว้ในระบบ",
     en: "It will disappear from the website straight away. Its edit history stays in the system",
   },
-  formDeleteConfirm: { th: "ลบรายการนี้", en: "Yes, delete it" },
+  formDeleteConfirm: { th: "ลบรายการนี้", en: "Delete this item" },
   formDeleteCancel: { th: "ไม่ลบ", en: "Keep it" },
   formViewOnSite: { th: "ดูบนเว็บไซต์", en: "View on the website" },
   formLastSaved: { th: "บันทึกล่าสุด", en: "Last saved" },
@@ -620,7 +617,7 @@ export const A = {
     en: "File storage is not set up in this environment. A developer needs to set BLOB_READ_WRITE_TOKEN or BLOB_STORE_ID before item photos can be added. You can carry on with the other tasks",
   },
   errUploadChoose: { th: "เลือกไฟล์รูปภาพ", en: "Choose a picture file" },
-  errUploadAlt: { th: "กรอกคำอธิบายภาพทั้งภาษาไทยและอังกฤษ หรือเลือกว่าเป็นรูปตกแต่ง", en: "Describe the picture in Thai and English, or tick that it is only decoration" },
+  errUploadAlt: { th: "กรอกคำอธิบายภาพทั้งภาษาไทยและอังกฤษ หรือเลือกว่าเป็นรูปตกแต่ง", en: "Describe the picture in Thai and English, or select that it is only decoration" },
   errUploadTooLarge: { th: "ไฟล์ใหญ่เกินไป ลดขนาดรูปให้ไม่เกิน 4 MB", en: "That file is too large. Reduce the picture to 4 MB or less" },
   errUploadCompressDecode: {
     th: "ไฟล์ใหญ่เกิน 4 MB และเบราว์เซอร์นี้ย่อไฟล์ให้ไม่ได้ แปลงเป็น JPEG หรือลดขนาดรูปก่อน",
@@ -641,8 +638,8 @@ export const A = {
   rteSmallHeading: { th: "หัวข้อย่อย", en: "Small heading" },
   rteBold: { th: "ตัวหนา", en: "Bold" },
   rteItalic: { th: "ตัวเอียง", en: "Italic" },
-  rteBullets: { th: "รายการหัวข้อย่อย", en: "Bullet list" },
-  rteNumbers: { th: "รายการลำดับเลข", en: "Numbered list" },
+  rteBullets: { th: "รายการแบบจุด", en: "Bullet list" },
+  rteNumbers: { th: "รายการแบบมีเลขลำดับ", en: "Numbered list" },
   rteQuote: { th: "คำพูดอ้างอิง", en: "Quote" },
   rteLink: { th: "ลิงก์", en: "Link" },
   rteLineBreak: { th: "ขึ้นบรรทัดใหม่", en: "Line break" },
@@ -666,7 +663,7 @@ export const A = {
   blockCallout: { th: "กล่องแจ้งเตือน", en: "Notice box" },
   blockSteps: { th: "รายการขั้นตอน", en: "Step list" },
   blockEmpty: { th: "(ยังไม่ได้กรอก)", en: "(nothing filled in yet)" },
-  blockStepCount: { th: "{count} ขั้นตอน", en: "{count} steps" },
+  blockStepCount: { th: "{count} ขั้นตอน", en: "{count} {count:step|steps}" },
   blockInsertTitle: { th: "แทรก{block}", en: "Insert {block}" },
   blockEditTitle: { th: "แก้ไข{block}", en: "Edit {block}" },
   blockInsert: { th: "แทรก", en: "Insert" },
@@ -746,9 +743,16 @@ export const A = {
 
 export type AdminKey = keyof typeof A;
 
-/** Fills `{name}` placeholders. Values are plain text; React escapes them on render. */
+/**
+ * Fills `{name}` placeholders. Values are plain text; React escapes them on render.
+ * `{count:item|items}` picks the first word when `count` is 1 and the second otherwise.
+ */
 export function fmt(template: string, values: Record<string, string | number>): string {
-  return template.replace(/\{(\w+)\}/g, (match, key: string) => (key in values ? String(values[key]) : match));
+  return template
+    .replace(/\{(\w+):([^|{}]*)\|([^|{}]*)\}/g, (match, key: string, one: string, other: string) =>
+      key in values ? (Number(String(values[key]).replace(/,/g, "")) === 1 ? one : other) : match,
+    )
+    .replace(/\{(\w+)\}/g, (match, key: string) => (key in values ? String(values[key]) : match));
 }
 
 /** Reads an admin string and fills its placeholders in one go. */

@@ -16,6 +16,7 @@ interface ChoiceGroupProps {
   id: string;
   legend: ReactNode;
   hint?: ReactNode;
+  error?: ReactNode;
   /** The form field name. */
   name: string;
   kind: "checkbox" | "radio";
@@ -37,11 +38,11 @@ interface ChoiceGroupProps {
  * click or a tap anywhere on it works, and the chip shows a tick when on,
  * so the state is never colour alone (1.4.1). Focus is drawn on the chip.
  */
-export function ChoiceGroup({ id, legend, hint, name, kind, choices, selected, layout = "list", className }: ChoiceGroupProps) {
+export function ChoiceGroup({ id, legend, hint, error, name, kind, choices, selected, layout = "list", className }: ChoiceGroupProps) {
   const on = new Set(selected);
 
   return (
-    <Fieldset legend={legend} hint={hint} id={id} className={className}>
+    <Fieldset legend={legend} hint={hint} error={error} id={id} className={className}>
       <div className={layout === "chips" ? "flex flex-wrap gap-[var(--space-2)]" : "flex flex-col gap-[var(--space-2)]"}>
         {choices.map((choice, index) => {
           const optionId = `${id}-${index}`;

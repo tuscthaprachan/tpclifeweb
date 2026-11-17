@@ -80,6 +80,8 @@ export function WeekMode({
   let body: React.ReactNode;
   if (result === null) {
     body = <EmptyState title={t(BUDGET.weekPromptTitle, locale)}>{t(BUDGET.weekPromptBody, locale)}</EmptyState>;
+  } else if (!result.ok && result.reason === "noDays") {
+    body = null;
   } else if (!result.ok) {
     body = (
       <FailureBlock
@@ -111,14 +113,14 @@ export function WeekMode({
 
   return (
     <Stack space={6}>
-      <WeekForm key={`${weekQuery(request, filters)}|${invalidWeekBudget(query) ?? ""}`} locale={locale} request={request} filters={filters} invalid={invalidWeekBudget(query)} />
+      <WeekForm key={`${weekQuery(request, filters)}|${invalidWeekBudget(query) ?? ""}`} locale={locale} request={request} filters={filters} invalid={invalidWeekBudget(query)} noDays={result !== null && !result.ok && result.reason === "noDays"} />
       <div className="no-print">
         <SpendThisWeek locale={locale} explain={false} />
         <p className="m-0 mt-[var(--space-2)] text-base">
           <Link href={localePath(locale, "/eat/mine")}>{t(BUDGET.mineTitle, locale)}</Link>
         </p>
       </div>
-      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry}>
+      <EatFilteredLayout locale={locale} data={data} filters={filters} counts={counts} route={ROUTE} display="none" carry={carry} submitLabel={t(EAT.applyShort, locale)}>
         <Stack space={6}>
           {body}
         </Stack>

@@ -135,7 +135,7 @@ const FOUND: MachineDef = {
   statuses: {
     logged: { label: s("บันทึกของแล้ว", "Logged"), publicLabel: null, tone: "info", terminal: false },
     listed: { label: s("ประกาศในรายการของที่พบ", "Listed"), publicLabel: s("อยู่ในรายการของที่พบ", "Listed as found"), tone: "info", terminal: false },
-    claim_pending: { label: s("มีผู้อ้างสิทธิ์ รอตรวจสอบ", "Claim pending"), publicLabel: s("กำลังตรวจสอบการอ้างสิทธิ์", "Checking a claim"), tone: "warning", terminal: false },
+    claim_pending: { label: s("มีผู้ขอรับของ รอตรวจสอบ", "Claim pending"), publicLabel: s("กำลังตรวจสอบการอ้างสิทธิ์", "Checking a claim"), tone: "warning", terminal: false },
     ready_to_collect: { label: READY, publicLabel: READY, tone: "success", terminal: false },
     returned: { label: RETURNED, publicLabel: RETURNED, tone: "success", terminal: true },
     withdrawn: { label: s("ถอนออกจากทะเบียน", "Removed from the register"), publicLabel: s("ถอนออกจากรายการแล้ว", "Removed from the register"), tone: "neutral", terminal: true },
@@ -177,7 +177,7 @@ const COMPLAINT: MachineDef = {
     reopened: { label: s("เปิดเรื่องอีกครั้ง", "Reopened"), publicLabel: s("เปิดเรื่องอีกครั้ง", "Reopened"), tone: "warning", terminal: false },
     resolved: { label: s("แก้ไขแล้ว", "Resolved"), publicLabel: s("แก้ไขแล้ว", "Resolved"), tone: "success", terminal: true },
     redirected: { label: s("ส่งต่อให้คณะหรือผู้สอน", "Redirected"), publicLabel: s("แนะนำหน่วยงานที่รับผิดชอบแล้ว", "Redirected to the right people"), tone: "neutral", terminal: true },
-    closed: { label: s("ปิดเรื่อง", "Closed"), publicLabel: s("ปิดเรื่องแล้ว", "Closed"), tone: "neutral", terminal: true },
+    closed: { label: s("ปิดเรื่องแล้ว", "Closed"), publicLabel: s("ปิดเรื่องแล้ว", "Closed"), tone: "neutral", terminal: true },
     withdrawn: { label: s("ผู้แจ้งยกเลิก", "Withdrawn"), publicLabel: s("ยกเลิกเรื่องแล้ว", "Withdrawn"), tone: "neutral", terminal: true },
   },
   transitions: {
@@ -215,7 +215,7 @@ const LOAN: MachineDef = {
     compensation_due: { label: s("ชำรุดหรือสูญหาย รอชดใช้", "Compensation due"), publicLabel: s("มีอุปกรณ์ชำรุดหรือสูญหาย รอชดใช้", "Damage or loss to put right"), tone: "error", terminal: false },
     settled: { label: s("ชดใช้เรียบร้อย", "Settled"), publicLabel: s("ชดใช้เรียบร้อยแล้ว", "Settled"), tone: "success", terminal: true },
     declined: { label: s("ไม่อนุมัติ", "Declined"), publicLabel: s("ไม่อนุมัติ", "Not approved"), tone: "neutral", terminal: true },
-    cancelled: { label: s("ยกเลิก", "Cancelled"), publicLabel: s("ยกเลิกแล้ว", "Cancelled"), tone: "neutral", terminal: true },
+    cancelled: { label: s("ยกเลิกแล้ว", "Cancelled"), publicLabel: s("ยกเลิกแล้ว", "Cancelled"), tone: "neutral", terminal: true },
     not_collected: { label: s("ไม่มารับ", "Not collected"), publicLabel: s("ไม่ได้มารับอุปกรณ์", "Not collected"), tone: "neutral", terminal: true },
   },
   transitions: {

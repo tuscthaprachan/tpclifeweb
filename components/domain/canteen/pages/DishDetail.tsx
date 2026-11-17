@@ -5,7 +5,7 @@ import { Grid } from "@/components/ui/Grid";
 import { Heading } from "@/components/ui/Heading";
 import { Stack } from "@/components/ui/Stack";
 import { addOnsFor, canonicalOf, dishesInCanonical, stallOf } from "@/lib/canteen/derive";
-import type { RawParams } from "@/lib/canteen/params";
+import { countActiveValues, type RawParams } from "@/lib/canteen/params";
 import { OTHER_LOCALE, pick, type Locale } from "@/lib/i18n/config";
 import type { CanteenData, CanteenDish } from "@/lib/content/types";
 
@@ -148,7 +148,7 @@ export function DishDetail({ locale, data, dish, query }: DishDetailProps & { qu
 
       <div className="flex flex-wrap items-center gap-[var(--space-4)]">
         <Link href={eatHref(locale, "/eat/pick", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
-          {t(EAT.decideWithThese, locale)}
+          {t(countActiveValues(filters) > 0 ? EAT.decideWithThese : EAT.decideButton, locale)}
         </Link>
         {canonical ? (
           <Link href={eatHref(locale, `/eat/what-is/${canonical.slug.current}`, filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
