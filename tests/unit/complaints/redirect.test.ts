@@ -159,7 +159,7 @@ describe("notifyRedirected", () => {
     expect(mail.to).toBe("somchai@example.com");
     expect(mail.subject).toContain(c.reference);
     expect(mail.text).toContain("outside our remit");
-    expect(mail.text).toContain("นอกขอบเขต");
+    expect(mail.text).toContain("ไม่อยู่ในความรับผิดชอบ");
     expect(mail.text).toContain("Instagram: @basthammasat");
     expect(mail.text).toContain("Phone: 02 111 1111");
     expect(mail.text).not.toMatch(/tap|room 301/);

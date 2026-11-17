@@ -131,7 +131,7 @@ export function emailDocument({ title, lang, sections, preheader }: EmailDocumen
     `</table>`,
     `</td></tr>`,
     `<tr><td class="pad" align="center" style="padding:24px 40px 0">`,
-    `<p lang="th" style="margin:0;font-family:${FONT.th};font-size:13px;line-height:1.6;color:${C.ink3}">อีเมลอัตโนมัติจาก #ท้ายท่าพระจันทร์</p>`,
+    `<p lang="th" style="margin:0;font-family:${FONT.th};font-size:13px;line-height:1.6;color:${C.ink3}">อีเมลฉบับนี้ส่งโดยอัตโนมัติจาก #ท้ายท่าพระจันทร์</p>`,
     `<p lang="en" style="margin:0;font-family:${FONT.en};font-size:13px;line-height:1.6;color:${C.ink3}">An automated email from #trytpc.</p>`,
     `</td></tr>`,
     `</table>`,

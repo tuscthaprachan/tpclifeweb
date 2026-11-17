@@ -63,7 +63,7 @@ export function lostReportPossibleMatch({ reference, desk }: LostReportEmailPara
         `โปรดติดต่อเจ้าหน้าที่ ${deskTh(desk)} และแจ้งเลขอ้างอิงด้านล่าง`,
       ],
       reference: { label: "เลขอ้างอิงของคุณ", value: reference },
-      after: ["อย่าส่งต่ออีเมลนี้ให้ผู้อื่น และเราจะไม่ขอรหัสผ่านหรือเลขบัตรทางอีเมล"],
+      after: ["อย่าส่งต่ออีเมลนี้ให้ผู้อื่น ทั้งนี้ เราไม่เคยขอรหัสผ่านหรือเลขบัตรทางอีเมล"],
     },
     {
       lang: "en",
@@ -81,10 +81,10 @@ export function lostReportPossibleMatch({ reference, desk }: LostReportEmailPara
 /** The match is confirmed and the item waits at the desk. */
 export function lostReportReadyToCollect({ reference, desk }: LostReportEmailParams): RenderedEmail {
   return render(
-    `พร้อมให้มารับของ ${reference} / Your item is ready to collect ${reference}`,
+    `มารับของคืนได้แล้ว ${reference} / Your item is ready to collect ${reference}`,
     {
       lang: "th",
-      heading: "ของของคุณพร้อมให้มารับแล้ว",
+      heading: "มารับของคืนได้แล้ว",
       paragraphs: [
         `เราตรวจสอบแล้วและพร้อมคืนของให้คุณ มารับได้ ${deskTh(desk)} ในเวลาทำการ`,
         "โปรดนำบัตรนักศึกษาหรือบัตรประจำตัวที่มีรูปถ่ายมาด้วย เจ้าหน้าที่จะตรวจดูบัตรแต่ไม่จดเลขบัตร",
@@ -112,7 +112,7 @@ export function lostReportReturned({ reference }: LostReportEmailParams): Render
     {
       lang: "th",
       heading: "คืนของเรียบร้อยแล้ว",
-      paragraphs: [`เจ้าหน้าที่บันทึกแล้วว่าคุณได้รับของคืน เรื่องที่คุณแจ้งกับ${SERVICE.th}จึงปิดลง ขอบคุณที่แจ้งให้เราทราบ`],
+      paragraphs: [`เจ้าหน้าที่บันทึกแล้วว่าคุณได้รับของคืน จึงขอปิดเรื่องที่คุณแจ้งไว้กับ${SERVICE.th} ขอบคุณที่แจ้งให้เราทราบ`],
       reference: { label: "เลขอ้างอิงของคุณ", value: reference },
       after: ["หากคุณยังไม่ได้รับของ โปรดติดต่อเจ้าหน้าที่ทันที"],
     },
@@ -129,16 +129,16 @@ export function lostReportReturned({ reference }: LostReportEmailParams): Render
 /** The claim on the found item that matched the reporter's report was not accepted. */
 export function lostReportClaimDeclined({ reference, desk }: LostReportEmailParams): RenderedEmail {
   return render(
-    `ยังไม่สามารถคืนของตามที่คุณแจ้งได้ ${reference} / Your claim was not accepted ${reference}`,
+    `ยังคืนของตามที่คุณแจ้งไม่ได้ ${reference} / Your claim was not accepted ${reference}`,
     {
       lang: "th",
-      heading: "ยังไม่สามารถคืนของตามที่คุณแจ้งได้",
+      heading: "ยังคืนของตามที่คุณแจ้งไม่ได้",
       paragraphs: [
-        `เจ้าหน้าที่ตรวจสอบการขอรับของที่เกี่ยวกับเรื่องที่คุณแจ้งไว้กับ${SERVICE.th}แล้ว แต่ยังยืนยันไม่ได้ว่าเป็นของคุณ จึงยังไม่คืนของ`,
-        `เรื่องที่คุณแจ้งยังเปิดอยู่ และเราจะแจ้งอีกครั้งหากพบของที่ตรงกัน หากมีข้อมูลเพิ่มเติม โปรดติดต่อเจ้าหน้าที่ ${deskTh(desk)} และแจ้งเลขอ้างอิงด้านล่าง`,
+        `เจ้าหน้าที่ตรวจสอบคำขอรับของคืนตามเรื่องที่คุณแจ้งไว้กับ${SERVICE.th}แล้ว แต่ยังยืนยันไม่ได้ว่าเป็นของคุณ จึงยังคืนของให้ไม่ได้`,
+        `เรื่องที่คุณแจ้งยังไม่ปิด หากพบของที่ตรงกัน เราจะแจ้งให้ทราบอีกครั้ง หากมีข้อมูลเพิ่มเติม โปรดติดต่อเจ้าหน้าที่ ${deskTh(desk)} และแจ้งเลขอ้างอิงด้านล่าง`,
       ],
       reference: { label: "เลขอ้างอิงของคุณ", value: reference },
-      after: ["อย่าส่งต่ออีเมลนี้ให้ผู้อื่น และเราจะไม่ขอรหัสผ่านหรือเลขบัตรทางอีเมล"],
+      after: ["อย่าส่งต่ออีเมลนี้ให้ผู้อื่น ทั้งนี้ เราไม่เคยขอรหัสผ่านหรือเลขบัตรทางอีเมล"],
     },
     {
       lang: "en",
@@ -162,10 +162,10 @@ export interface ClaimEmailParams {
 /** The claimant's claim was accepted and the item waits at the desk. */
 export function claimAccepted({ reference, desk }: ClaimEmailParams): RenderedEmail {
   return render(
-    `ยอมรับการขอรับของแล้ว ${reference} / Your claim was accepted ${reference}`,
+    `อนุมัติคำขอรับของคืนแล้ว ${reference} / Your claim was accepted ${reference}`,
     {
       lang: "th",
-      heading: "ยอมรับการขอรับของแล้ว",
+      heading: "อนุมัติคำขอรับของคืนแล้ว",
       paragraphs: [
         `เจ้าหน้าที่ของ${SERVICE.th}ตรวจสอบแล้วและพร้อมคืนของให้คุณ มารับได้ ${deskTh(desk)} ในเวลาทำการ`,
         "โปรดนำบัตรนักศึกษาหรือบัตรประจำตัวที่มีรูปถ่ายมาด้วย เจ้าหน้าที่จะตรวจดูบัตรแต่ไม่จดเลขบัตร",
@@ -189,16 +189,16 @@ export function claimAccepted({ reference, desk }: ClaimEmailParams): RenderedEm
 /** The claimant's claim was not accepted. */
 export function claimDeclined({ reference, desk }: ClaimEmailParams): RenderedEmail {
   return render(
-    `ยังไม่ยอมรับการขอรับของ ${reference} / Your claim was not accepted ${reference}`,
+    `ยังไม่อนุมัติคำขอรับของคืน ${reference} / Your claim was not accepted ${reference}`,
     {
       lang: "th",
-      heading: "ยังไม่ยอมรับการขอรับของ",
+      heading: "ยังไม่อนุมัติคำขอรับของคืน",
       paragraphs: [
-        `เจ้าหน้าที่ของ${SERVICE.th}ตรวจสอบการขอรับของแล้ว แต่ยังยืนยันไม่ได้ว่าเป็นของคุณ จึงยังไม่คืนของ`,
+        `เจ้าหน้าที่ของ${SERVICE.th}ตรวจสอบคำขอรับของคืนแล้ว แต่ยังยืนยันไม่ได้ว่าเป็นของคุณ จึงยังคืนของให้ไม่ได้`,
         `หากมีข้อมูลเพิ่มเติม โปรดติดต่อเจ้าหน้าที่ ${deskTh(desk)} และแจ้งเลขอ้างอิงด้านล่าง`,
       ],
       reference: { label: "เลขอ้างอิง", value: reference },
-      after: ["อย่าส่งต่ออีเมลนี้ให้ผู้อื่น และเราจะไม่ขอรหัสผ่านหรือเลขบัตรทางอีเมล"],
+      after: ["อย่าส่งต่ออีเมลนี้ให้ผู้อื่น ทั้งนี้ เราไม่เคยขอรหัสผ่านหรือเลขบัตรทางอีเมล"],
     },
     {
       lang: "en",

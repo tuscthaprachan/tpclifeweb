@@ -127,7 +127,7 @@ export interface LoanDueParams extends LoanEmailParams {
 /** The working day before the return is due. */
 export function loanReminder({ reference, locale, returnDueAt }: LoanDueParams): RenderedEmail {
   return render(
-    { th: `เตือนคืนอุปกรณ์ ${reference}`, en: `Reminder to return equipment ${reference}` },
+    { th: `แจ้งเตือนกำหนดคืนอุปกรณ์ ${reference}`, en: `Reminder to return equipment ${reference}` },
     {
       lang: "th",
       heading: "ใกล้ถึงกำหนดคืนอุปกรณ์",
@@ -155,7 +155,7 @@ export function loanOverdue({ reference, locale, returnDueAt }: LoanDueParams): 
       heading: "เลยกำหนดคืนอุปกรณ์แล้ว",
       paragraphs: [
         `อุปกรณ์ที่ยืมไปต้องคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")} แต่เรายังไม่ได้รับคืน`,
-        `โปรดนำมาคืนที่เคาน์เตอร์โดยเร็ว วันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. หากมีปัญหา ให้ติดต่อเจ้าหน้าที่ เพื่อไม่ให้คนถัดไปที่จองไว้ได้รับผลกระทบ`,
+        `โปรดนำมาคืนที่เคาน์เตอร์โดยเร็ว วันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. หากมีปัญหา ให้ติดต่อเจ้าหน้าที่ เพื่อไม่ให้กระทบผู้ที่จองยืมต่อ`,
       ],
       reference: { label: REFERENCE.th, value: reference },
       after: [PRIVATE_TH],

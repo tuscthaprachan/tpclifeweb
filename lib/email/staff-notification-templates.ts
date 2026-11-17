@@ -27,24 +27,24 @@ interface Entry {
 
 const KIND: Record<string, Entry> = {
   case_assigned: {
-    title: { th: "มีเคสมอบหมายให้คุณ", en: "A case has been assigned to you" },
-    line: (ref) => ({ th: ref ? `เคส ${ref} ถูกมอบหมายให้คุณ` : "มีเคสถูกมอบหมายให้คุณ", en: ref ? `Case ${ref} has been assigned to you.` : "A case has been assigned to you." }),
+    title: { th: "คุณได้รับมอบหมายเคสใหม่", en: "A case has been assigned to you" },
+    line: (ref) => ({ th: ref ? `คุณได้รับมอบหมายเคส ${ref}` : "คุณได้รับมอบหมายเคสใหม่", en: ref ? `Case ${ref} has been assigned to you.` : "A case has been assigned to you." }),
   },
   case_mention: {
-    title: { th: "มีการกล่าวถึงคุณในบันทึก", en: "You were mentioned in a note" },
-    line: (ref) => ({ th: ref ? `มีการกล่าวถึงคุณในบันทึกภายในของเคส ${ref}` : "มีการกล่าวถึงคุณในบันทึกภายในของเคส", en: ref ? `You were mentioned in an internal note on case ${ref}.` : "You were mentioned in an internal note on a case." }),
+    title: { th: "มีผู้กล่าวถึงคุณในบันทึก", en: "You were mentioned in a note" },
+    line: (ref) => ({ th: ref ? `มีผู้กล่าวถึงคุณในบันทึกภายในของเคส ${ref}` : "มีผู้กล่าวถึงคุณในบันทึกภายในของเคส", en: ref ? `You were mentioned in an internal note on case ${ref}.` : "You were mentioned in an internal note on a case." }),
   },
   complaint_escalated: {
-    title: { th: "เรื่องร้องเรียนถูกเลื่อนระดับ", en: "A complaint has been escalated" },
-    line: (ref) => ({ th: ref ? `เรื่องร้องเรียน ${ref} เกินกำหนดและถูกเลื่อนระดับ` : "มีเรื่องร้องเรียนเกินกำหนดและถูกเลื่อนระดับ", en: ref ? `Complaint ${ref} is overdue and has been escalated.` : "A complaint is overdue and has been escalated." }),
+    title: { th: "มีการยกระดับเรื่องร้องเรียน", en: "A complaint has been escalated" },
+    line: (ref) => ({ th: ref ? `เรื่องร้องเรียน ${ref} เกินกำหนด จึงยกระดับเรื่องแล้ว` : "มีเรื่องร้องเรียนเกินกำหนด จึงยกระดับเรื่องแล้ว", en: ref ? `Complaint ${ref} is overdue and has been escalated.` : "A complaint is overdue and has been escalated." }),
   },
   borrowing_overdue: {
     title: { th: "มีอุปกรณ์เกินกำหนดคืน", en: "Borrowed equipment is overdue" },
-    line: (ref) => ({ th: ref ? `การยืม ${ref} เกินกำหนดคืนแล้ว` : "มีการยืมที่เกินกำหนดคืนแล้ว", en: ref ? `Loan ${ref} is past its return time.` : "A loan is past its return time." }),
+    line: (ref) => ({ th: ref ? `การยืม ${ref} เกินกำหนดคืนแล้ว` : "มีรายการยืมที่เกินกำหนดคืน", en: ref ? `Loan ${ref} is past its return time.` : "A loan is past its return time." }),
   },
   invite_accepted: {
-    title: { th: "คำเชิญของคุณได้รับการตอบรับ", en: "Your invitation was accepted" },
-    line: () => ({ th: "มีผู้ตอบรับคำเชิญที่คุณส่งไว้", en: "Someone you invited has accepted and joined the team." }),
+    title: { th: "มีผู้ตอบรับคำเชิญของคุณแล้ว", en: "Your invitation was accepted" },
+    line: () => ({ th: "ผู้ที่คุณเชิญตอบรับและเข้าร่วมทีมแล้ว", en: "Someone you invited has accepted and joined the team." }),
   },
 };
 
