@@ -161,7 +161,7 @@ describe("emails to the borrower", () => {
     const mail = sender.outbox[0]!;
     expect(mail.to).toBe("somchai@example.com");
     expect(mail.subject.startsWith("Your equipment request is approved")).toBe(true);
-    expect(mail.text.indexOf("Your equipment request is approved")).toBeLessThan(mail.text.indexOf("อนุมัติคำขอยืมอุปกรณ์ของคุณแล้ว"));
+    expect(mail.text.indexOf("Your equipment request is approved")).toBeLessThan(mail.text.indexOf("อนุมัติคำขอยืมอุปกรณ์แล้ว"));
     expect(mail.text).toContain(c.reference);
     const log = await events(c.caseId);
     expect(log.filter((e) => e.type === "contact_viewed")).toHaveLength(1);

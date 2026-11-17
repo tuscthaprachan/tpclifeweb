@@ -35,8 +35,8 @@ export const GROUP = {
     en: "Add yourself, press Show results, then send the new, longer link on. Each friend who opens it sees everyone so far and adds themselves.",
   } satisfies Bilingual,
   privacyNote: {
-    th: "ทั้งกลุ่มอยู่ในลิงก์ ไม่เก็บบนเซิร์ฟเวอร์ ส่งให้เฉพาะคนที่จะไปกินด้วยกัน",
-    en: "The group lives in the link, not on a server. Only send it to the people you are eating with.",
+    th: "ข้อมูลกลุ่มเก็บไว้ในลิงก์เท่านั้น ไม่ได้เก็บบนเซิร์ฟเวอร์ ส่งลิงก์ให้เฉพาะคนที่จะไปกินด้วยกัน",
+    en: "The group is stored in the link only and is not saved on a server. Send the link only to the people you are eating with.",
   } satisfies Bilingual,
 
   /* ---- Builder ---- */
