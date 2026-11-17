@@ -95,16 +95,43 @@ function cellText(cell: RichTextNode): string {
   return parts.join("").replace(/\s+/g, " ").trim();
 }
 
-/**
- * Written tables get the same stacked mobile layout as DataTable: below `sm`
- * each cell becomes a row labelled by its column header (from `data-label`),
- * so nothing scrolls sideways at 320px. A table with no header row stacks
- * without labels.
- */
+const STACK_FROM_COLUMNS = 4;
+
 function renderTable(node: RichTextNode, ctx: Ctx, key: number): ReactNode {
   const rows = node.content ?? [];
   const head = rows[0]?.content?.[0]?.type === "tableHeader" ? rows[0] : undefined;
   const body = head ? rows.slice(1) : rows;
+  const columns = Math.max(0, ...rows.map((row) => row.content?.length ?? 0));
+  if (columns < STACK_FROM_COLUMNS) {
+    const cell = "px-[var(--space-2)] py-[var(--space-2)] align-top [overflow-wrap:break-word] sm:px-[var(--space-3)]";
+    const fit = (c: RichTextNode) => (cellText(c).length <= 16 ? " whitespace-nowrap" : "");
+    return (
+      <table key={key} className="w-full border-collapse text-left">
+        {head ? (
+          <thead>
+            <tr>
+              {head.content?.map((c, i) => (
+                <th key={i} scope="col" className={`${cell} border-b border-line-strong font-semibold text-ink-900`}>
+                  {renderInline(c.content?.[0]?.content, ctx)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+        ) : null}
+        <tbody>
+          {body.map((row, r) => (
+            <tr key={r}>
+              {row.content?.map((c, i) => (
+                <td key={i} className={`${cell}${fit(c)} border-t border-line text-ink-900`}>
+                  {renderInline(c.content?.[0]?.content, ctx)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
   const labels = head?.content?.map(cellText) ?? [];
   return (
     <table key={key} className="block w-full border-collapse text-left sm:table">
@@ -128,7 +155,7 @@ function renderTable(node: RichTextNode, ctx: Ctx, key: number): ReactNode {
                 data-label={labels[c] || undefined}
                 className={
                   labels[c]
-                    ? "flex items-baseline justify-between gap-[var(--space-4)] px-[var(--space-3)] py-[var(--space-1)] text-ink-900 before:font-semibold before:text-ink-600 before:content-[attr(data-label)] sm:table-cell sm:border-t sm:border-line sm:py-[var(--space-2)] sm:before:content-none"
+                    ? "grid grid-cols-[minmax(0,2fr)_minmax(0,5fr)] gap-[var(--space-3)] px-[var(--space-3)] py-[var(--space-1)] text-ink-900 before:font-semibold before:text-ink-600 before:content-[attr(data-label)] sm:table-cell sm:border-t sm:border-line sm:py-[var(--space-2)] sm:before:content-none"
                     : "block px-[var(--space-3)] py-[var(--space-1)] text-ink-900 sm:table-cell sm:border-t sm:border-line sm:py-[var(--space-2)]"
                 }
               >

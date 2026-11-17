@@ -107,10 +107,17 @@ describe("new formatting rendered", () => {
     expect(html).toMatch(/<hr[^>]*\/?>/);
   });
 
-  it("renders a table with real header cells and a label on every body cell", () => {
+  it("keeps a narrow table as a plain table at every width", () => {
     expect(html).toMatch(/<th scope="col"[^>]*>Name<\/th>/);
-    expect(html).toMatch(/<td data-label="Name"[^>]*>/);
-    expect(html).toMatch(/<td data-label="Hours"[^>]*>/);
+    expect(html).not.toContain("data-label");
+    expect(html).not.toContain("sm:table");
+  });
+
+  it("stacks a wide table on phones with a label on every body cell", () => {
+    const heads = ["A", "B", "C", "D"];
+    const out = render(parseRichTextDoc(wrap({ type: "table", content: [row(...heads.map((h) => cell("tableHeader", h))), row(...heads.map((h) => cell("tableCell", h.toLowerCase())))] })));
+    expect(out).toMatch(/<th scope="col"[^>]*>A<\/th>/);
+    for (const h of heads) expect(out).toMatch(new RegExp(`<td data-label="${h}"[^>]*>`));
   });
 
   it("renders a table with no header row without labels", () => {

@@ -83,12 +83,11 @@ export default async function EventDetailPage({
             {event.category ? <Tag tone={event.category}>{categoryLabel(event.category, locale)}</Tag> : null}
           </div>
           <Heading level={1}>{title}</Heading>
-          <div className="flex flex-wrap items-center gap-[var(--space-2)] text-sm text-ink-600">
+          <div className="flex flex-col gap-[var(--space-1)] text-ink-600">
             <EventSchedule event={event} locale={locale} />
-            <span aria-hidden="true">·</span>
-            <span>{ownerLabel(event.owner, locale)}</span>
+            {location ? <span>{location}</span> : null}
+            <span className="text-sm">{ownerLabel(event.owner, locale)}</span>
           </div>
-          {location ? <p className="m-0 text-ink-600">{location}</p> : null}
         </Stack>
 
         {event.isCancelled ? (
