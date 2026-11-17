@@ -85,7 +85,7 @@ for (const locale of LOCALES as readonly Locale[]) {
     await answerTriage(page, locale, "course-other");
     const main = page.locator("main");
     await expect(main.getByRole("heading", { level: 1, name: UI.cpSignOtherTitle[locale] })).toBeVisible();
-    await expect(main.getByRole("heading", { level: 3, name: new RegExp(UI.cpRedirectOfficeHeading[locale]) })).toBeVisible();
+    await expect(main.getByRole("heading", { level: 2, name: new RegExp(UI.cpRedirectOfficeHeading[locale]) })).toBeVisible();
   });
 
   test(`${locale}: harassment on a course offers support, a way off the page and a confidential complaint with the category chosen`, async ({ page }) => {

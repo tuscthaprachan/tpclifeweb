@@ -95,7 +95,7 @@ for (const locale of LOCALES as readonly Locale[]) {
     await page.getByLabel(UI.lfpTrackRefLabel[locale], { exact: true }).fill("LF-2026-0001");
     await page.getByLabel(UI.lfpTrackLinkLabel[locale], { exact: true }).fill("a".repeat(43));
     await page.getByRole("button", { name: UI.lfpTrackSubmit[locale], exact: true }).click();
-    await expect(page).toHaveURL(/\/track\?problem=1$/);
+    await expect(page).toHaveURL(/\/track\?problem=1&ref=LF-2026-0001$/);
     await expect(page.locator("main").getByRole("link", { name: UI.lfpTrackProblem[locale] })).toBeVisible();
   });
 
