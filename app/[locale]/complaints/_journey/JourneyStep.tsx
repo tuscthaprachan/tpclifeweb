@@ -30,7 +30,7 @@ import { removeEvidence, saveStep, uploadEvidence } from "./actions";
 import { BackLink } from "./BackLink";
 import { CheckAnswers } from "./CheckAnswers";
 import { Confirmation } from "./Confirmation";
-import { ErrorTitle } from "./ErrorTitle";
+import { ErrorTitle } from "@/components/ui/ErrorTitle";
 import { errorAnchor, stepTitle } from "./copy";
 import { Signpost } from "./Signpost";
 import { Unavailable } from "./Unavailable";
@@ -104,7 +104,7 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
               {UI[flash.errors.form][locale]}
             </NotificationBanner>
           ) : null}
-          {flash?.errors.form ? <ErrorTitle prefix={UI.cpTitleErrorPrefix[locale]} /> : null}
+          {flash?.errors.form ? <ErrorTitle prefix={UI.errorTitlePrefix[locale]} /> : null}
           <CheckAnswers locale={locale} values={data.values} category={category ? { name: pick({ th: category.nameTh, en: category.nameEn }, locale), restricted: category.restricted } : undefined} fileNames={files.map((f) => f.name ?? UI.cpFileUnnamed[locale])} />
         </Stack>
       </Container>
@@ -133,7 +133,7 @@ export async function JourneyStep({ locale: rawLocale, step, from, email }: Jour
       {crumbs}
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <BackLink href={backHref} locale={locale} />
-        {items.length > 0 ? <ErrorTitle prefix={UI.cpTitleErrorPrefix[locale]} /> : null}
+        {items.length > 0 ? <ErrorTitle prefix={UI.errorTitlePrefix[locale]} /> : null}
         <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={items} />
         {step === "evidence" ? (
           <EvidenceStep locale={locale} title={title} fromCheck={fromCheck} journeyId={loaded.id} err={err} />

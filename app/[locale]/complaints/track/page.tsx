@@ -27,7 +27,7 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   return {
     alternates: alternatesFor(locale, "/complaints/track"),
-    title: `${problem ? UI.cpTitleErrorPrefix[locale] : ""}${UI.cpTrackTitle[locale]}`,
+    title: `${problem ? UI.errorTitlePrefix[locale] : ""}${UI.cpTrackTitle[locale]}`,
     description: UI.cpTrackIntro[locale],
     referrer: "same-origin",
   };

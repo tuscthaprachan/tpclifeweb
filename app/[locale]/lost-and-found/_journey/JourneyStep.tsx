@@ -27,7 +27,7 @@ import { saveStep } from "./actions";
 import { CheckAnswers } from "./CheckAnswers";
 import { Confirmation } from "./Confirmation";
 import { errorAnchor, journeyName, stepTitle } from "./copy";
-import { ErrorTitle } from "./ErrorTitle";
+import { ErrorTitle } from "@/components/ui/ErrorTitle";
 import { Unavailable } from "./Unavailable";
 
 interface JourneyStepProps {
@@ -102,7 +102,7 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
           <BackLink href={localePath(locale, stepPath(kind, lostFoundJourney.previous(data.values, "check", { kind })!, slug))} locale={locale} />
           {flash?.errors.form ? (
             <>
-              <ErrorTitle prefix={UI.lfpErrorTitlePrefix[locale]} />
+              <ErrorTitle prefix={UI.errorTitlePrefix[locale]} />
               <NotificationBanner variant="warning" title={UI.lfpSubmitProblemTitle[locale]}>
                 {UI[flash.errors.form][locale]}
               </NotificationBanner>
@@ -140,7 +140,7 @@ export async function JourneyStep({ kind, locale: rawLocale, step, slug, from, e
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <BackLink href={backHref} locale={locale} />
         <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={items} />
-        {items.length > 0 ? <ErrorTitle prefix={UI.lfpErrorTitlePrefix[locale]} /> : null}
+        {items.length > 0 ? <ErrorTitle prefix={UI.errorTitlePrefix[locale]} /> : null}
         <form action={saveStep} noValidate>
           <input type="hidden" name="journey" value={kind} />
           <input type="hidden" name="step" value={step} />

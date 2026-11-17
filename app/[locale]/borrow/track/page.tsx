@@ -14,7 +14,7 @@ import { isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
-import { ErrorTitle } from "../_journey/ErrorTitle";
+import { ErrorTitle } from "@/components/ui/ErrorTitle";
 import { openTracking } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -68,7 +68,7 @@ export default async function TrackBorrowPage({ params, searchParams }: { params
         ]}
       />
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-        {items.length > 0 ? <ErrorTitle prefix={UI.brErrorPrefix[locale]} /> : null}
+        {items.length > 0 ? <ErrorTitle prefix={UI.errorTitlePrefix[locale]} /> : null}
         <ErrorSummary title={UI.errorSummaryTitle[locale]} headingLevel={2} items={items} />
         <Stack space={2}>
           <Heading level={1}>{UI.brTrackTitle[locale]}</Heading>

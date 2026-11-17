@@ -28,7 +28,7 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
   const problem = first((await searchParams).problem);
   return {
     alternates: alternatesFor(locale, "/lost-and-found/track"),
-    title: `${problem ? UI.lfpErrorTitlePrefix[locale] : ""}${UI.lfpTrackTitle[locale]}`,
+    title: `${problem ? UI.errorTitlePrefix[locale] : ""}${UI.lfpTrackTitle[locale]}`,
     description: UI.lfpTrackIntro[locale],
     referrer: "same-origin",
   };

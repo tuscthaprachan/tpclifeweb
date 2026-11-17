@@ -6,7 +6,6 @@
  */
 
 import { getEmailSender, isEmailConfigured, type EmailMessage } from "@/lib/email";
-import { UI } from "@/lib/i18n/strings";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 

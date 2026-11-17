@@ -31,7 +31,7 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   return {
     alternates: alternatesFor(locale, "/complaints/track/reopen"),
-    title: `${problem ? UI.cpTitleErrorPrefix[locale] : ""}${UI.cpReopenTitle[locale]}`,
+    title: `${problem ? UI.errorTitlePrefix[locale] : ""}${UI.cpReopenTitle[locale]}`,
     robots: { index: false, follow: false },
     referrer: "same-origin",
   };

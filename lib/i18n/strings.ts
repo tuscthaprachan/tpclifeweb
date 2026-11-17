@@ -740,7 +740,7 @@ export const UI = {
     th: "เลือกช่องนี้ เพื่อยินยอมให้เจ้าหน้าที่ติดต่อคุณ",
     en: "Select this box to agree that staff may contact you",
   },
-  lfpErrorTitlePrefix: { th: "ข้อผิดพลาด: ", en: "Error: " },
+  errorTitlePrefix: { th: "ข้อผิดพลาด: ", en: "Error: " },
   lfpErrWhenMissing: { th: "กรอกวันที่ เช่น 12 3 2569", en: "Enter the date, for example 12 3 2026" },
   lfpErrWhenInvalid: {
     th: "วันที่ไม่ถูกต้อง ตรวจวัน เดือน และปีอีกครั้ง",
@@ -821,7 +821,6 @@ export const UI = {
     th: "ส่งบ่อยเกินไปจากการเชื่อมต่อนี้ รอสักครู่แล้วลองใหม่",
     en: "Too many submissions from this connection. Wait a while and try again",
   },
-  cpTitleErrorPrefix: { th: "มีข้อผิดพลาด: ", en: "Error: " },
   cpSubmitProblemTitle: { th: "ส่งไม่สำเร็จ", en: "We could not send this" },
   cpContinue: { th: "ต่อไป", en: "Continue" },
   cpContinueWithout: { th: "ต่อไปโดยไม่แนบไฟล์", en: "Continue without a file" },
@@ -938,7 +937,7 @@ export const UI = {
   cpErrFileFailed: { th: "อัปโหลดไฟล์ไม่สำเร็จ ลองอีกครั้ง หรือข้ามขั้นตอนนี้", en: "We could not upload that. Try again, or skip this step" },
   cpQContact: { th: "เราจะติดต่อคุณได้อย่างไร", en: "How can we reach you?" },
   cpContactHintNamed: { th: "ให้ช่องทางอย่างน้อยหนึ่งอย่าง ข้อมูลเข้ารหัสไว้ และเฉพาะเจ้าหน้าที่ที่ได้รับมอบหมายเห็น", en: "Give at least one way. It is encrypted and seen only by the staff handling the complaint" },
-  cpContactHintPseudonymous: { th: "ให้ช่องทางอย่างน้อยหนึ่งอย่าง ชื่อที่คุณกรอกจะเห็นเฉพาะเจ้าหน้าที่ดำเนินการข้อร้องเรียนและผู้ดูแลระบบ", en: "Give at least one way. A name you give here is shown only to complaints officers and administrators" },
+  cpContactHintPseudonymous: { th: "กรอกช่องทางติดต่ออย่างน้อยหนึ่งช่องทาง ชื่อที่คุณกรอกจะเห็นเฉพาะเจ้าหน้าที่ดำเนินการข้อร้องเรียนและผู้ดูแลระบบ", en: "Give at least one way. A name you give here is shown only to complaints officers and administrators" },
   cpNameLabel: { th: "ชื่อ", en: "Your name" },
   cpNameLabelPseudonymous: { th: "ชื่อ (ไม่บังคับ)", en: "Your name (optional)" },
   cpNameHintPseudonymous: { th: "เฉพาะเจ้าหน้าที่ดำเนินการข้อร้องเรียนและผู้ดูแลระบบที่เห็นได้เมื่อจำเป็น", en: "Only complaints officers and administrators can see it, if it is needed" },
@@ -1437,7 +1436,6 @@ export const UI = {
   brAgreed: { th: "ยอมรับแล้ว", en: "Agreed" },
   brCheckPrivacy: { th: "เมื่อคุณส่งคำขอ เจ้าหน้าที่จะเห็นข้อมูลเหล่านี้เพื่อพิจารณาคำขอ", en: "When you send this request, staff see these details to decide on it." },
   brSendHeading: { th: "ส่งคำขอของคุณ", en: "Now send your request" },
-  brErrorPrefix: { th: "ข้อผิดพลาด: ", en: "Error: " },
   brSend: { th: "ส่งคำขอ", en: "Send request" },
   brSaveAndCheck: { th: "บันทึกและกลับไปตรวจคำตอบ", en: "Save and check your answers" },
   brContinue: { th: "ต่อไป", en: "Continue" },
@@ -1527,7 +1525,7 @@ export const UI = {
   brErrPhoneMissing: { th: "กรอกเบอร์โทรศัพท์มือถือ", en: "Enter your mobile number" },
   brErrPhone: { th: "เบอร์โทรศัพท์มือถือต้องเป็นตัวเลข 10 หลักขึ้นต้นด้วย 0 เช่น 081 234 5678", en: "Mobile number must be 10 digits starting with 0, for example 081 234 5678" },
   brErrEmail: { th: "กรอกอีเมลให้ถูกรูปแบบ เช่น name@example.com", en: "Enter an email address in the correct format, like name@example.com" },
-  brErrTerms: { th: "เลือกช่องเพื่อยอมรับเงื่อนไข", en: "Tick the box to agree to the terms" },
+  brErrTerms: { th: "เลือกช่องเพื่อยอมรับเงื่อนไข", en: "Select the box to agree to the terms" },
 
   /* Open data pages: meetings and decisions */
   odDcPeriodValue: { th: "{from} ถึง {to} {year}", en: "{from} to {to}, {year}" },

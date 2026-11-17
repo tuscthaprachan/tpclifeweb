@@ -29,7 +29,7 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
   const failed = first((await searchParams).problem) === "1";
   return {
     alternates: alternatesFor(locale, "/lost-and-found/track/withdraw"),
-    title: `${failed ? UI.lfpErrorTitlePrefix[locale] : ""}${UI.lfpWithdrawTitle[locale]}`,
+    title: `${failed ? UI.errorTitlePrefix[locale] : ""}${UI.lfpWithdrawTitle[locale]}`,
     robots: { index: false, follow: false },
     referrer: "same-origin",
   };

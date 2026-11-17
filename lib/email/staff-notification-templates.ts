@@ -35,8 +35,8 @@ const KIND: Record<string, Entry> = {
     line: (ref) => ({ th: ref ? `มีผู้กล่าวถึงคุณในบันทึกภายในของเคส ${ref}` : "มีผู้กล่าวถึงคุณในบันทึกภายในของเคส", en: ref ? `You were mentioned in an internal note on case ${ref}.` : "You were mentioned in an internal note on a case." }),
   },
   complaint_escalated: {
-    title: { th: "มีการยกระดับเรื่องร้องเรียน", en: "A complaint has been escalated" },
-    line: (ref) => ({ th: ref ? `เรื่องร้องเรียน ${ref} เกินกำหนด จึงยกระดับเรื่องแล้ว` : "มีเรื่องร้องเรียนเกินกำหนด จึงยกระดับเรื่องแล้ว", en: ref ? `Complaint ${ref} is overdue and has been escalated.` : "A complaint is overdue and has been escalated." }),
+    title: { th: "มีการยกระดับข้อร้องเรียน", en: "A complaint has been escalated" },
+    line: (ref) => ({ th: ref ? `ข้อร้องเรียน ${ref} เกินกำหนด จึงยกระดับเรื่องแล้ว` : "มีข้อร้องเรียนเกินกำหนด จึงยกระดับเรื่องแล้ว", en: ref ? `Complaint ${ref} is overdue and has been escalated.` : "A complaint is overdue and has been escalated." }),
   },
   borrowing_overdue: {
     title: { th: "มีอุปกรณ์เกินกำหนดคืน", en: "Borrowed equipment is overdue" },
