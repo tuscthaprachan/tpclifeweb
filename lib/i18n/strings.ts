@@ -1272,7 +1272,7 @@ export const UI = {
     en: "Where a figure is hidden, the number of cases behind it is hidden too",
   },
 
-  homeHeading: { th: "ชีวิตนักศึกษาท่าพระจันทร์", en: "Student life at Tha Prachan" },
+  homeHeading: { th: "สวัสดีชาวท่าพระจันทร์", en: "Hello there, Tha Prachanians." },
   homeSearchLabel: { th: "ค้นหา", en: "Search" },
   homeSearchHint: { th: "พิมพ์เป็นภาษาไทยหรืออังกฤษก็ได้ เช่น รถรับส่ง", en: "Thai or English, for example shuttle" },
   homeToday: { th: "วันนี้", en: "Today" },
