@@ -86,7 +86,8 @@
    * ---------------------------------------------------------------- */
   --line: #e2dcde; /* decorative dividers only */
   --line-strong: #868082; /* 3.87:1 on white, 3.68:1 on --surface-alt, 3.39:1 on --surface-sunk */
-  --scroll-shadow: rgb(31 26 28 / 0.18);
+  --scroll-shadow: rgb(31 26 28 / 0.24); /* outer bar of the two-step scroll edge */
+  --scroll-shadow-soft: rgb(31 26 28 / 0.1); /* inner bar, next to it */
 
   /* ---------------------------------------------------------------- *
    * Action. Links, primary buttons. The purple pole of the axis.
@@ -284,7 +285,8 @@
 
     --line: #3a2d44; /* decorative only, 1.42:1 --surface, 1.30:1 --surface-alt, 1.18:1 --surface-sunk */
     --line-strong: #7d7886; /* 4.26:1 --surface, 3.88:1 --surface-alt, 3.53:1 --surface-sunk, 3.30:1 --surface-overlay */
-    --scroll-shadow: rgb(0 0 0 / 0.55);
+    --scroll-shadow: rgb(0 0 0 / 0.6);
+    --scroll-shadow-soft: rgb(0 0 0 / 0.3);
 
     --band-stop-1: #5a393a;
     --band-stop-2: #241830;
@@ -368,7 +370,8 @@
 
     --line: #3a2d44;
     --line-strong: #7d7886;
-    --scroll-shadow: rgb(0 0 0 / 0.55);
+    --scroll-shadow: rgb(0 0 0 / 0.6);
+    --scroll-shadow-soft: rgb(0 0 0 / 0.3);
 
     --band-stop-1: #5a393a;
     --band-stop-2: #241830;

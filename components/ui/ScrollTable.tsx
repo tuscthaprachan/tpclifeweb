@@ -3,7 +3,12 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { cx } from "./cx";
 
-const EDGE = "pointer-events-none absolute inset-y-0 z-10 w-[var(--space-2)] bg-[var(--scroll-shadow)] transition-opacity duration-150 motion-reduce:transition-none";
+const EDGE = "pointer-events-none absolute inset-y-0 z-10 w-[var(--space-3)] transition-opacity duration-150 motion-reduce:transition-none";
+
+function edgeBars(side: "start" | "end") {
+  const towards = side === "start" ? "right" : "left";
+  return { background: `linear-gradient(to ${towards}, var(--scroll-shadow) 0 50%, var(--scroll-shadow-soft) 50% 100%)` };
+}
 
 export function ScrollTable({
   children,
@@ -44,7 +49,7 @@ export function ScrollTable({
 
   return (
     <div className={cx("relative", className)}>
-      <div aria-hidden="true" className={cx(EDGE, "start-0", edges.start ? "opacity-100" : "opacity-0")} />
+      <div aria-hidden="true" style={edgeBars("start")} className={cx(EDGE, "start-0 rtl:-scale-x-100", edges.start ? "opacity-100" : "opacity-0")} />
       <div
         ref={ref}
         tabIndex={scrollable ? 0 : undefined}
@@ -55,7 +60,7 @@ export function ScrollTable({
       >
         {children}
       </div>
-      <div aria-hidden="true" className={cx(EDGE, "end-0", edges.end ? "opacity-100" : "opacity-0")} />
+      <div aria-hidden="true" style={edgeBars("end")} className={cx(EDGE, "end-0 rtl:-scale-x-100", edges.end ? "opacity-100" : "opacity-0")} />
     </div>
   );
 }
