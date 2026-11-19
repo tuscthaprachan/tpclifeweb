@@ -13,6 +13,7 @@
  */
 
 import { Lexend, Sarabun } from "next/font/google";
+import localFont from "next/font/local";
 
 export const lexend = Lexend({
   subsets: ["latin"],
@@ -28,5 +29,13 @@ export const sarabun = Sarabun({
   variable: "--font-sarabun",
 });
 
+export const chanok = localFont({
+  src: "./fonts/JSChanok-Hero.woff2",
+  weight: "400",
+  display: "swap",
+  variable: "--font-chanok",
+  fallback: ["Sarabun", "system-ui", "sans-serif"],
+});
+
 /** Applied to `<html>` so both font variables are in scope everywhere. */
-export const fontVariables = `${lexend.variable} ${sarabun.variable}`;
+export const fontVariables = `${lexend.variable} ${sarabun.variable} ${chanok.variable}`;

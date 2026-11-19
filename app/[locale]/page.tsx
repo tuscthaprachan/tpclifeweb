@@ -91,7 +91,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <div className="rounded-b-[var(--radius-band)]" style={{ background: "var(--band-gradient)" }}>
         <Container className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-[var(--space-4)] pb-[var(--space-5)] pt-[var(--space-4)] sm:items-end sm:gap-x-[var(--space-12)] sm:pb-0 sm:pt-[var(--space-8)]">
           <div className="contents sm:col-start-1 sm:row-start-1 sm:block sm:self-center sm:pb-[var(--space-8)]">
-            <Heading level={1} className="col-start-1 row-start-1 m-0 max-w-[12em] self-start text-[length:var(--text-2xl)] font-bold">
+            <Heading level={1} className={`col-start-1 row-start-1 m-0 max-w-[12em] self-start ${locale === "th" ? "text-[length:calc(var(--text-2xl)*1.4)] font-normal [font-family:var(--font-chanok),var(--font-th)]" : "text-[length:var(--text-2xl)] font-bold"}`}>
               {UI.homeHeading[locale]}
             </Heading>
             <SearchBar
