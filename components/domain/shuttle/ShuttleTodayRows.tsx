@@ -1,10 +1,8 @@
 "use client";
 
-import NextLink from "next/link";
-
 import { StatusTag, Timestamp } from "@/components/ui";
 import { fillText } from "@/components/domain/open-data/fill";
-import { TODAY_LINK_CLASS, TodayRow } from "@/components/domain/home/TodayRow";
+import { TodayRow } from "@/components/domain/home/TodayRow";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
@@ -32,11 +30,8 @@ export function ShuttleTodayRows({ locale, routes, now }: ShuttleTodayRowsProps)
 
 function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: ShuttleRoute; serverNowIso: string }) {
   const { status, now } = useShuttleStatus(route, serverNowIso);
-  const title = (
-    <NextLink href={localePath(locale, "/getting-around")} className={TODAY_LINK_CLASS}>
-      {pick(route.name, locale)}
-    </NextLink>
-  );
+  const title = pick(route.name, locale);
+  const href = localePath(locale, `/getting-around/shuttle/${route.slug.current}`);
 
   switch (status.kind) {
     case "running": {
@@ -45,6 +40,7 @@ function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: Sh
       return (
         <TodayRow
           title={title}
+          href={href}
           status={
             <span className="text-2xl font-bold tabular-nums text-ink-900">
               <span className="visually-hidden">{UI.nextDeparture[locale]}: </span>
@@ -60,21 +56,21 @@ function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: Sh
 
     case "finishedForToday":
       return (
-        <TodayRow title={title} status={<StatusTag tone="neutral" label={UI.lastDeparted[locale]} />}>
+        <TodayRow title={title} href={href} status={<StatusTag tone="neutral" label={UI.lastDeparted[locale]} />}>
           <NextServiceNote locale={locale} route={route} nextServiceDate={status.nextServiceDate} now={now} />
         </TodayRow>
       );
 
     case "notToday":
       return (
-        <TodayRow title={title} status={<StatusTag tone="neutral" label={UI.noServiceToday[locale]} />}>
+        <TodayRow title={title} href={href} status={<StatusTag tone="neutral" label={UI.noServiceToday[locale]} />}>
           <NextServiceNote locale={locale} route={route} nextServiceDate={status.nextServiceDate} now={now} />
         </TodayRow>
       );
 
     case "noTimetable":
       return (
-        <TodayRow title={title}>
+        <TodayRow title={title} href={href}>
           <span>{UI.shuttleNoTimetable[locale]}</span>
         </TodayRow>
       );

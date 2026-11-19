@@ -134,6 +134,13 @@
       "when": 1794664805645,
       "tag": "0018_notifications_case_views",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1795063983877,
+      "tag": "0019_today_details",
+      "breakpoints": true
     }
   ]
 }

@@ -151,6 +151,7 @@ export const CONSOLE_ICONS = {
   lostFound: PackageSearch,
   images: ImageIcon,
   siteSettings: Settings,
+  todaySettings: Sun,
   complaintCategories: Tags,
   borrowSchedule: ClipboardList,
   borrowCalendar: CalendarRange,

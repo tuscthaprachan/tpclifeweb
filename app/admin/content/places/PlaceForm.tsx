@@ -1,3 +1,4 @@
+import { Phone } from "lucide-react";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { FormSection } from "@/components/admin/content/FormSection";
@@ -11,6 +12,7 @@ import { getDb } from "@/lib/db";
 import { places } from "@/lib/db/schema";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
+import { ContactsField } from "../organisations/ContactsField";
 import { HoursField } from "./HoursField";
 import { deletePlace, savePlace } from "./actions";
 import { placeUsage } from "./usage";
@@ -90,6 +92,20 @@ export async function PlaceForm({ locale, id, saved, error }: { locale: Locale; 
             maxLength={300}
             defaultValue={{ th: place?.closureNoteTh, en: place?.closureNoteEn }}
           />
+        </Stack>
+      </FormSection>
+      <FormSection icon={Phone} id="place-visit" legend={L("placesGroupVisit")} hint={L("placesHintVisit")}>
+        <Stack space={4}>
+          <ContactsField defaultValue={place?.contacts ?? []} />
+          <BilingualTextarea
+            name="accessibility"
+            label={L("placesFieldAccessibility")}
+            hint={L("placesHintAccessibility")}
+            maxLength={1000}
+            rows={3}
+            defaultValue={{ th: place?.accessibilityTh, en: place?.accessibilityEn }}
+          />
+          <TextField name="moreInfoUrl" label={L("placesFieldMoreInfo")} hint={L("placesHintMoreInfo")} inputMode="url" maxLength={500} defaultValue={place?.moreInfoUrl ?? ""} />
         </Stack>
       </FormSection>
       <FormSection icon="places" id="place-map" legend={L("placesGroupMap")} hint={L("placesHintMap")}>

@@ -125,3 +125,123 @@ export function summariseLibraries(libraries: CampusPlace[], now: Date): Librari
   if (summary.open > 0) delete summary.nextOpening;
   return summary;
 }
+
+export interface HoursSpan {
+  opens: string;
+  closes: string;
+  /** Closes after midnight, on the next day. */
+  overnight: boolean;
+  note?: LocaleString;
+}
+
+export interface DayHours {
+  dateKey: string;
+  spans: HoursSpan[];
+  /** Dated rows set these hours rather than the usual ones. */
+  special: boolean;
+}
+
+function dayOfDateKey(dateKey: string): number {
+  return new Date(`${dateKey}T00:00:00Z`).getUTCDay();
+}
+
+function addDays(dateKey: string, days: number): string {
+  const date = new Date(`${dateKey}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+/** Every span that applies on a Bangkok calendar date, earliest first. */
+export function hoursOnDate(entries: OpeningHours[], dateKey: string): DayHours {
+  const dated = entries.filter((entry) => isDated(entry) && covers(entry, dateKey));
+  const applying = dated.length > 0 ? dated : entries.filter((entry) => !isDated(entry));
+  const day = dayOfDateKey(dateKey);
+  const spans = applying
+    .filter((entry) => entry.daysOfWeek.includes(day))
+    .flatMap((entry): HoursSpan[] => {
+      const s = span(entry);
+      if (!s) return [];
+      return [{ opens: formatClockTime(s.opens), closes: formatClockTime(s.closes % 1440), overnight: s.closes > 1440, note: entry.note }];
+    })
+    .sort((x, y) => (parseClockTime(x.opens) ?? 0) - (parseClockTime(y.opens) ?? 0));
+  return { dateKey, spans, special: dated.length > 0 };
+}
+
+/** The hours for `count` days starting with today. */
+export function hoursForDays(entries: OpeningHours[], now: Date, count = 7): DayHours[] {
+  const today = bangkokDateKey(now);
+  return Array.from({ length: count }, (_, i) => hoursOnDate(entries, addDays(today, i)));
+}
+
+export interface UsualHoursRow {
+  days: number[];
+  opens: string;
+  closes: string;
+  overnight: boolean;
+  note?: LocaleString;
+}
+
+/** The undated rows, as entered, in the order of their first day (Monday first). */
+export function usualHours(entries: OpeningHours[]): UsualHoursRow[] {
+  const mondayFirst = (day: number) => (day + 6) % 7;
+  return entries
+    .filter((entry) => !isDated(entry))
+    .flatMap((entry): UsualHoursRow[] => {
+      const s = span(entry);
+      if (!s || entry.daysOfWeek.length === 0) return [];
+      const days = [...entry.daysOfWeek].sort((x, y) => mondayFirst(x) - mondayFirst(y));
+      return [{ days, opens: formatClockTime(s.opens), closes: formatClockTime(s.closes % 1440), overnight: s.closes > 1440, note: entry.note }];
+    })
+    .sort((x, y) => mondayFirst(x.days[0]!) - mondayFirst(y.days[0]!) || (parseClockTime(x.opens) ?? 0) - (parseClockTime(y.opens) ?? 0));
+}
+
+export interface SpecialHoursRow extends UsualHoursRow {
+  validFrom?: string;
+  validUntil?: string;
+}
+
+/**
+ * Dated rows that have not ended and start after the `afterDays` already
+ * shown day by day, soonest first.
+ */
+export function upcomingSpecialHours(entries: OpeningHours[], now: Date, afterDays = 7): SpecialHoursRow[] {
+  const today = bangkokDateKey(now);
+  const shownUntil = addDays(today, afterDays - 1);
+  const mondayFirst = (day: number) => (day + 6) % 7;
+  return entries
+    .filter((entry) => isDated(entry) && (!entry.validUntil || entry.validUntil >= today) && (entry.validFrom ?? today) > shownUntil)
+    .flatMap((entry): SpecialHoursRow[] => {
+      const s = span(entry);
+      if (!s) return [];
+      const days = [...entry.daysOfWeek].sort((x, y) => mondayFirst(x) - mondayFirst(y));
+      return [
+        {
+          days,
+          opens: formatClockTime(s.opens),
+          closes: formatClockTime(s.closes % 1440),
+          overnight: s.closes > 1440,
+          note: entry.note,
+          validFrom: entry.validFrom,
+          validUntil: entry.validUntil,
+        },
+      ];
+    })
+    .sort((x, y) => (x.validFrom ?? "").localeCompare(y.validFrom ?? ""));
+}
+
+/** The next day, after today, on which the place opens, within `horizon` days. */
+export function nextOpeningAfterToday(entries: OpeningHours[], now: Date, horizon = 30): { dateKey: string; opens: string } | null {
+  const today = bangkokDateKey(now);
+  for (let i = 1; i <= horizon; i += 1) {
+    const day = hoursOnDate(entries, addDays(today, i));
+    if (day.spans[0]) return { dateKey: day.dateKey, opens: day.spans[0].opens };
+  }
+  return null;
+}
+
+/** Minutes from now until a "HH:mm" closing time, today or after midnight. */
+export function minutesUntilClock(time: string, nextDay: boolean, now: Date): number {
+  const target = (parseClockTime(time) ?? 0) + (nextDay ? 1440 : 0);
+  const current = bangkokMinutesOfDay(now);
+  return Math.max(0, target < current ? target + 1440 - current : target - current);
+}

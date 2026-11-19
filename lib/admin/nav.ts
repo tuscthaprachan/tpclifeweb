@@ -85,6 +85,7 @@ const CONTENT_PLACEMENT: Record<string, { group: ConsoleGroupId; icon: ConsoleIc
   canteenSettings: { group: "canteen", icon: "canteenSettings" },
   lostFound: { group: "lostFound", icon: "lostFound" },
   images: { group: "media", icon: "images" },
+  todaySettings: { group: "settings", icon: "todaySettings" },
   siteSettings: { group: "settings", icon: "siteSettings" },
 };
 

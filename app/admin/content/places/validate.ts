@@ -9,6 +9,10 @@ import { CATEGORIES, type ContentStatus } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { coordinatePairIssue, extraKit, rowsOf } from "../organisations/_shared/rows";
+import { contactRow } from "../organisations/validate";
+
+/** Static routes beside /places/[slug]. */
+const RESERVED_SLUGS = new Set(["libraries"]);
 
 function hoursRow(k: FieldKit, x: ReturnType<typeof extraKit>, locale: Locale) {
   const L = (key: AdminKey) => a(key, locale);
@@ -63,6 +67,9 @@ export async function validatePlaceForm(
     lat: x.decimal(L("dirFieldLat"), { min: -90, max: 90 }),
     lng: x.decimal(L("dirFieldLng"), { min: -180, max: 180 }),
     isKeyLocation: k.checkbox(),
+    contacts: rowsOf(contactRow(k, locale), { ignore: ["channel"], max: 20 }),
+    accessibility: k.bilingual(L("placesFieldAccessibility"), { max: 1000 }),
+    moreInfoUrl: k.href(L("placesFieldMoreInfo")),
   });
 
   const parsed = parseForm(schema, formDataToObject(formData));
@@ -72,6 +79,7 @@ export async function validatePlaceForm(
     const { data } = parsed;
     const taken = await isSlugTaken(db, { table: places, slugColumn: places.slug, idColumn: places.id, slug: data.slug, excludeId: id ?? undefined });
     if (taken) errors.slug = L("errSlugTaken");
+    if (RESERVED_SLUGS.has(data.slug)) errors.slug = L("placesErrSlugReserved");
     if (coordinatePairIssue(data.lat, data.lng)) errors[data.lat === null ? "lat" : "lng"] = L("dirErrCoordinatePair");
   }
 

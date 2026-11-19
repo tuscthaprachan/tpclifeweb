@@ -21,6 +21,7 @@ import {
   serviceAlerts,
   shuttleRoutes,
   siteSettings,
+  todaySettings,
 } from "@/lib/db/schema";
 import type { AdminKey } from "@/lib/i18n/admin";
 
@@ -220,6 +221,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: places,
     kind: "collection",
     columns: std(places, [places.nameTh, places.nameEn]),
+    viewPath: "/places",
     available: true,
   },
   {
@@ -232,6 +234,7 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: shuttleRoutes,
     kind: "collection",
     columns: std(shuttleRoutes, [shuttleRoutes.nameTh, shuttleRoutes.nameEn]),
+    viewPath: "/getting-around/shuttle",
     available: true,
   },
   {
@@ -257,6 +260,18 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     kind: "collection",
     columns: std(lostFoundItems, [lostFoundItems.titleTh, lostFoundItems.titleEn]),
     viewPath: "/lost-and-found",
+    available: true,
+  },
+  {
+    key: "todaySettings",
+    segment: "today",
+    labelKey: "typeTodaySettings",
+    oneKey: "typeTodaySettingsOne",
+    descriptionKey: "typeTodaySettingsDesc",
+    entityType: "todaySettings",
+    table: todaySettings,
+    kind: "singleton",
+    columns: { id: todaySettings.id, title: null, status: todaySettings.status, updatedAt: todaySettings.updatedAt },
     available: true,
   },
   {

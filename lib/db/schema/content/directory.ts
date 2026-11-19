@@ -85,6 +85,10 @@ export const places = pgTable(
     lat: doublePrecision("lat"),
     lng: doublePrecision("lng"),
     isKeyLocation: boolean("is_key_location").notNull().default(false),
+    contacts: jsonb("contacts").$type<OrganisationContactJson[]>().notNull().default(sql`'[]'::jsonb`),
+    accessibilityTh: text("accessibility_th"),
+    accessibilityEn: text("accessibility_en"),
+    moreInfoUrl: text("more_info_url"),
   },
   (t) => [
     index("places_listing_idx").on(t.status, t.nameEn),

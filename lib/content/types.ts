@@ -417,6 +417,11 @@ export interface CampusPlace extends DocumentMeta {
   lng?: number;
   /** True for places students most often need: shown on the at-a-glance panel. */
   isKeyLocation?: boolean;
+  contacts?: OrganisationContact[];
+  /** Step-free access, lifts, accessible toilets and the like. */
+  accessibility?: LocaleText;
+  /** A page with more about the place, on this site ("/guide/...") or elsewhere. */
+  moreInfoUrl?: string;
 }
 
 /* ------------------------------------------------------------------ *

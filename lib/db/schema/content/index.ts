@@ -15,3 +15,4 @@ export * from "./canteen";
 export * from "./revisions";
 export * from "./open-data";
 export * from "./redirects";
+export * from "./today";

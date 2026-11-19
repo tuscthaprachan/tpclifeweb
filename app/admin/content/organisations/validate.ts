@@ -60,7 +60,7 @@ export function checkContactValue(channel: ContactChannel, raw: string): { value
   }
 }
 
-function contactRow(k: FieldKit, locale: Locale) {
+export function contactRow(k: FieldKit, locale: Locale) {
   const L = (key: AdminKey) => a(key, locale);
   return z
     .object({

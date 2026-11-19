@@ -12,7 +12,7 @@
 
 import type { MetadataRoute } from "next";
 import { DEFAULT_LOCALE, LOCALES, localePath, type Locale } from "@/lib/i18n/config";
-import { getCanteenData, getLostFoundPage } from "@/lib/content";
+import { getActiveShuttleRoutes, getCanteenData, getLostFoundPage, getPlaces } from "@/lib/content";
 import { REPORT_PAGE_NUMBERS } from "@/components/domain/open-data/reports/reports";
 import { RULE_NUMBERS } from "@/components/domain/open-data/rules/rules";
 import { getOpenDataDocuments } from "@/lib/open-data/read";
@@ -24,6 +24,10 @@ const STATIC_ROUTES = [
   "/services",
   "/forms",
   "/getting-around",
+  "/places",
+  "/places/libraries",
+  "/weather",
+  "/alerts",
   "/welfare",
   "/news",
   "/events",
@@ -107,5 +111,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .map((doc) => entry(locale, `/about/open-data/tusc/reports/${doc.slug}`, new Date(doc.updatedAt))),
   ]);
 
-  return [...staticEntries, ...lostFoundEntries, ...canteenEntries, ...openDataEntries];
+  const [places, routes] = await Promise.all([getPlaces(), getActiveShuttleRoutes()]);
+  const todayEntries = LOCALES.flatMap((locale) => [
+    ...places.map((place) => entry(locale, `/places/${place.slug.current}`, new Date(place._updatedAt))),
+    ...routes.map((route) => entry(locale, `/getting-around/shuttle/${route.slug.current}`, new Date(route._updatedAt))),
+  ]);
+
+  return [...staticEntries, ...lostFoundEntries, ...canteenEntries, ...openDataEntries, ...todayEntries];
 }

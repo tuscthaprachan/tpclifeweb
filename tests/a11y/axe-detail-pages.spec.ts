@@ -31,9 +31,8 @@ const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 /**
  * Listing routes and the detail path each one links down into. `/directory`
- * and `/getting-around` are absent on purpose: they render organisations,
- * places and shuttle routes inline with anchors rather than linking to a
- * page of their own, so they have no detail pages to audit.
+ * is absent on purpose: it renders organisations inline with anchors rather
+ * than linking to a page of their own.
  */
 const LISTINGS: Array<{ listing: string; detailPrefix: string }> = [
   { listing: "/forms", detailPrefix: "/forms/" },
@@ -46,6 +45,10 @@ const LISTINGS: Array<{ listing: string; detailPrefix: string }> = [
   // What to eat. Both listings are empty (and the audit skips) until the canteen has been surveyed.
   { listing: "/eat/dishes", detailPrefix: "/eat/dishes/" },
   { listing: "/eat/stalls", detailPrefix: "/eat/stalls/" },
+  // The pages the home page's Today rows open.
+  { listing: "/places", detailPrefix: "/places/" },
+  { listing: "/getting-around", detailPrefix: "/getting-around/shuttle/" },
+  { listing: "/alerts", detailPrefix: "/alerts/" },
 ];
 
 /**

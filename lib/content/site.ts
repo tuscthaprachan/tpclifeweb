@@ -1,9 +1,9 @@
 import "server-only";
 
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import type { AuditExecutor } from "@/lib/db/audit";
-import { serviceAlerts, siteSettings } from "@/lib/db/schema";
+import { serviceAlerts, siteSettings, type ServiceAlertRow } from "@/lib/db/schema";
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { alertWindow } from "./window";
 import { iso, isoOrUndefined, ls, lsOpt, opt } from "./map";
@@ -58,7 +58,11 @@ export async function readActiveServiceAlerts(db: AuditExecutor, now: string): P
     .from(serviceAlerts)
     .where(alertWindow(at))
     .orderBy(desc(serviceAlerts.severity), desc(serviceAlerts.startsAt), serviceAlerts.id);
-  return rows.map((row) => ({
+  return rows.map(toServiceAlert);
+}
+
+function toServiceAlert(row: ServiceAlertRow): ServiceAlert {
+  return {
     _id: row.id,
     _type: "serviceAlert",
     _createdAt: iso(row.createdAt),
@@ -70,7 +74,7 @@ export async function readActiveServiceAlerts(db: AuditExecutor, now: string): P
     startsAt: iso(row.startsAt),
     endsAt: isoOrUndefined(row.endsAt),
     moreInfoUrl: opt(row.moreInfoUrl),
-  }));
+  };
 }
 
 /** Evaluated when the cache entry is filled, so the entry lives for `REVALIDATE.live` seconds at most. */
@@ -90,4 +94,19 @@ export async function getActiveServiceAlerts(now?: string): Promise<ServiceAlert
     () => (now ? readActiveServiceAlerts(getDb(), now) : cachedActiveAlerts()),
     [],
   );
+}
+
+/**
+ * One published alert by id, whatever its window, so a shared link to an
+ * alert that has ended still says what it was and that it is over. An alert
+ * that has not started yet is not shown.
+ */
+export async function readServiceAlertById(db: AuditExecutor, id: string, now: Date): Promise<ServiceAlert | null> {
+  const [row] = await db.select().from(serviceAlerts).where(and(eq(serviceAlerts.status, "published"), eq(serviceAlerts.id, id))).limit(1);
+  if (!row || row.startsAt > now) return null;
+  return toServiceAlert(row);
+}
+
+export async function getServiceAlertById(id: string): Promise<ServiceAlert | null> {
+  return safeFetch<ServiceAlert | null>("getServiceAlertById", () => readServiceAlertById(getDb(), id, new Date()), null);
 }

@@ -9,4 +9,6 @@ export const DETAIL_ROUTE: Partial<Record<ContentEntityType, string>> = {
   welfarePage: "/welfare",
   guidePage: "/guide",
   lostFoundItem: "/lost-and-found",
+  place: "/places",
+  shuttleRoute: "/getting-around/shuttle",
 };

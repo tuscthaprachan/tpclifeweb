@@ -102,11 +102,11 @@ export function addDaysToDateKey(dateKey: string, days: number): string {
 }
 
 /** 0 = Sunday through 6 = Saturday, matching `ServiceCalendar.daysOfWeek` and `Date#getDay`. */
-function dayOfWeekFromDateKey(dateKey: string): number {
+export function dayOfWeekFromDateKey(dateKey: string): number {
   return dateKeyToUtcDate(dateKey).getUTCDay();
 }
 
-function isServiceDay(calendar: ServiceCalendar, dateKey: string): boolean {
+export function isServiceDay(calendar: ServiceCalendar, dateKey: string): boolean {
   // The validity window is the outer bound of the whole service (for
   // example a semester's dates). It takes priority over everything else,
   // including addedDates: an exception date only makes sense inside the

@@ -25,6 +25,9 @@ export function toCampusPlace(row: PlaceRow): CampusPlace {
     lat: opt(row.lat),
     lng: opt(row.lng),
     isKeyLocation: row.isKeyLocation,
+    contacts: row.contacts.length > 0 ? withKeys(row.contacts) : undefined,
+    accessibility: ltOpt(row.accessibilityTh, row.accessibilityEn),
+    moreInfoUrl: opt(row.moreInfoUrl),
   };
 }
 
@@ -77,6 +80,21 @@ export async function readPlaces(db: AuditExecutor, keyOnly = false): Promise<Ca
 const cachedOrganisations = cachedRead(["organisations"], [CACHE_TAGS.directory], REVALIDATE.content, () =>
   readOrganisations(getDb()),
 );
+export async function readPlaceBySlug(db: AuditExecutor, slug: string): Promise<CampusPlace | null> {
+  const [row] = await db
+    .select()
+    .from(places)
+    .where(and(eq(places.status, "published"), eq(places.slug, slug)))
+    .limit(1);
+  return row ? toCampusPlace(row) : null;
+}
+
+const cachedPlaceBySlug = cachedRead(["place-by-slug"], [CACHE_TAGS.place], REVALIDATE.content, (slug: string) => readPlaceBySlug(getDb(), slug));
+
+export async function getPlaceBySlug(slug: string): Promise<CampusPlace | null> {
+  return safeFetch<CampusPlace | null>("getPlaceBySlug", () => cachedPlaceBySlug(slug), null);
+}
+
 const cachedKeyPlaces = cachedRead(["places-key"], [CACHE_TAGS.place], REVALIDATE.content, () => readPlaces(getDb(), true));
 const cachedPlaces = cachedRead(["places"], [CACHE_TAGS.place], REVALIDATE.content, () => readPlaces(getDb()));
 

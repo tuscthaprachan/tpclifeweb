@@ -69,3 +69,32 @@ export const PM25_TONE: Record<Pm25Level, WeatherTone> = {
   startingToAffect: "warning",
   affectsHealth: "error",
 };
+
+export const HEAT_ORDER: readonly HeatLevel[] = ["normal", "watch", "warning", "danger", "extremeDanger"];
+export const PM25_ORDER: readonly Pm25Level[] = ["veryGood", "good", "moderate", "startingToAffect", "affectsHealth"];
+
+/** Inclusive lower and exclusive upper bound of each heat level, in degrees Celsius. */
+export const HEAT_RANGE: Record<HeatLevel, { from?: number; below?: number }> = {
+  normal: { below: 27 },
+  watch: { from: 27, below: 33 },
+  warning: { from: 33, below: 42 },
+  danger: { from: 42, below: 52 },
+  extremeDanger: { from: 52 },
+};
+
+/** Exclusive lower and inclusive upper bound of each PM2.5 band, in micrograms per cubic metre. */
+export const PM25_RANGE: Record<Pm25Level, { above?: number; upTo?: number }> = {
+  veryGood: { upTo: 15 },
+  good: { above: 15, upTo: 25 },
+  moderate: { above: 25, upTo: 37.5 },
+  startingToAffect: { above: 37.5, upTo: 75 },
+  affectsHealth: { above: 75 },
+};
+
+/** Levels at which the home page repeats the advice under the reading. */
+export const HEAT_ADVISE_FROM: HeatLevel = "danger";
+export const PM25_ADVISE_FROM: Pm25Level = "startingToAffect";
+
+export function atOrAbove<L extends string>(order: readonly L[], level: L, threshold: L): boolean {
+  return order.indexOf(level) >= order.indexOf(threshold);
+}

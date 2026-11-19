@@ -49,6 +49,7 @@ describe("revalidateFor", () => {
       place: ["place", "canteen", "searchIndex"],
       lostFoundItem: ["lostFound", "searchIndex"],
       canteenSettings: ["canteen"],
+      todaySettings: ["today"],
       canteenStall: ["canteen", "searchIndex"],
       canteenDish: ["canteen", "searchIndex"],
       canonicalDish: ["canteen", "searchIndex"],

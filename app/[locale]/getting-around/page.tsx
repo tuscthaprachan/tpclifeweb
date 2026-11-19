@@ -93,7 +93,7 @@ export default async function GettingAroundPage({ params }: GettingAroundPagePro
           {routes.length > 0 ? (
             <Stack space={8}>
               {routes.map((route) => (
-                <ShuttleRouteTable key={route._id} locale={locale} route={route} headingLevel={3} />
+                <ShuttleRouteTable key={route._id} locale={locale} route={route} headingLevel={3} detailHref={`/${locale}/getting-around/shuttle/${route.slug.current}`} />
               ))}
             </Stack>
           ) : (

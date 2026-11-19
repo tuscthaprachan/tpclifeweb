@@ -31,7 +31,7 @@ export async function savePlace(id: string | null, _prev: ContentFormState, form
   const checked = await validatePlaceForm(db, { locale, id, formData, existingStatus: existing?.status });
   if (!checked.ok) return { ...EMPTY_FORM_STATE, errors: checked.errors };
   const { status, intent } = checked;
-  const { slug, name, building, description, category, openingHours, closureNote, lat, lng, isKeyLocation } = checked.data;
+  const { slug, name, building, description, category, openingHours, closureNote, lat, lng, isKeyLocation, contacts, accessibility, moreInfoUrl } = checked.data;
 
   let saved;
   try {
@@ -56,6 +56,10 @@ export async function savePlace(id: string | null, _prev: ContentFormState, form
         lat,
         lng,
         isKeyLocation,
+        contacts,
+        accessibilityTh: accessibility.th || null,
+        accessibilityEn: accessibility.en || null,
+        moreInfoUrl: moreInfoUrl || null,
       },
     });
   } catch (error) {

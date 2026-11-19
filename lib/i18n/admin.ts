@@ -34,6 +34,7 @@ import { OPEN_DATA_ADMIN_STRINGS } from "./admin-content/open-data";
 import { NOTIFICATION_STRINGS } from "./admin-content/notifications";
 import { PUBLISHING_STRINGS } from "./admin-content/publishing";
 import { STAFF_MEMBER_STRINGS } from "./admin-content/staff-members";
+import { TODAY_STRINGS } from "./admin-content/today";
 
 export const A = {
   /* Shell */
@@ -739,6 +740,7 @@ export const A = {
   ...CONSOLE_OPS_STRINGS,
   ...STAFF_MEMBER_STRINGS,
   ...NOTIFICATION_STRINGS,
+  ...TODAY_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 
 export type AdminKey = keyof typeof A;

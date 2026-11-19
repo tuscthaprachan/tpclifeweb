@@ -1,9 +1,10 @@
+import NextLink from "next/link";
 import type { HeadingLevel } from "@/lib/a11y";
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getShuttleStatus, originDepartures, resolveStopTime, type ShuttleStatus } from "@/lib/shuttle/schedule";
 import type { ShuttleRoute } from "@/lib/content/types";
-import { DataTable, type DataTableColumn, EmptyState, Heading, Stack, Tag } from "@/components/ui";
+import { DataTable, type DataTableColumn, EmptyState, Heading, Stack, StatusTag, Tag } from "@/components/ui";
 
 /*
  * TODO: add to UI strings. Same gap as ShuttlePanel.tsx: no shared string yet
@@ -22,6 +23,12 @@ interface ShuttleRouteTableProps {
   /** Depth of the route's own heading in the page outline. */
   headingLevel: HeadingLevel;
   now?: Date;
+  /** Mutes the departures that have already left today. */
+  markDeparted?: boolean;
+  /** Leaves out the heading, description and notes, for a page that shows them itself. */
+  tableOnly?: boolean;
+  /** Makes the route's heading a link to its own page. */
+  detailHref?: string;
 }
 
 /**
@@ -31,7 +38,7 @@ interface ShuttleRouteTableProps {
  * Rows are departures and columns are stops. Like every DataTable it stays a
  * real grid on phones and scrolls sideways when the stops do not fit.
  */
-export function ShuttleRouteTable({ locale, route, headingLevel, now = new Date() }: ShuttleRouteTableProps) {
+export function ShuttleRouteTable({ locale, route, headingLevel, now = new Date(), markDeparted = false, tableOnly = false, detailHref }: ShuttleRouteTableProps) {
   const departures = originDepartures(route);
   const routeName = pick(route.name, locale);
 
@@ -47,34 +54,68 @@ export function ShuttleRouteTable({ locale, route, headingLevel, now = new Date(
   const status = getShuttleStatus(route, now, { count: 1 });
   const nextOriginMinutes = status.kind === "running" ? status.departures[0]?.originMinutesOfDay : undefined;
 
-  const columns: DataTableColumn<(typeof departures)[number]>[] = route.stops.map((stop) => ({
+  const isDeparted = (minutes: number) =>
+    markDeparted && status.kind !== "notToday" && (nextOriginMinutes === undefined ? status.kind === "finishedForToday" : minutes < nextOriginMinutes);
+  const sameTimeEverywhere = markDeparted && route.stops.slice(1).every((stop) => stop.offsetMinutes === 0);
+  const shownStops = sameTimeEverywhere ? route.stops.slice(0, 1) : route.stops;
+
+  const columns: DataTableColumn<(typeof departures)[number]>[] = shownStops.map((stop) => ({
     id: stop._key,
-    header: pick(stop.name, locale),
+    header: sameTimeEverywhere ? `${UI.tdShuttleDeparts[locale]}: ${pick(stop.name, locale)}` : pick(stop.name, locale),
     cell: (departure) => {
       const { time } = resolveStopTime(departure.minutesOfDay, stop);
       const isNext = departure.minutesOfDay === nextOriginMinutes;
+      const departed = isDeparted(departure.minutesOfDay);
       return (
-        <span className={isNext ? "font-semibold text-action" : undefined}>
+        <span className={isNext ? "font-semibold text-action" : departed ? "text-ink-600" : undefined}>
           {time}
-          {isNext ? <span className="visually-hidden"> ({UI.nextDeparture[locale]})</span> : null}
+          {isNext && !markDeparted ? <span className="visually-hidden"> ({UI.nextDeparture[locale]})</span> : null}
         </span>
       );
     },
   }));
 
+  if (markDeparted) {
+    columns.push({
+      id: "status",
+      header: UI.tdShuttleStatus[locale],
+      cell: (departure) =>
+        departure.minutesOfDay === nextOriginMinutes ? (
+          <StatusTag tone="info" label={UI.nextDeparture[locale]} />
+        ) : isDeparted(departure.minutesOfDay) ? (
+          <span className="text-ink-600">{UI.tdShuttleDepartedLabel[locale]}</span>
+        ) : (
+          ""
+        ),
+    });
+  }
+
+  const table = (
+    <DataTable
+      columns={columns}
+      rows={departures}
+      getRowKey={(departure) => departure.raw}
+      caption={<>{routeName}. {UI.scheduled[locale]}.</>}
+    />
+  );
+  if (tableOnly)
+    return sameTimeEverywhere ? (
+      <Stack space={2}>
+        {table}
+        <p className="m-0 text-sm text-ink-600">{UI.tdShuttleSameTimeNote[locale]}</p>
+      </Stack>
+    ) : (
+      table
+    );
+
   return (
     <Stack space={3}>
       <Heading level={headingLevel} className="m-0">
-        {routeName}
+        {detailHref ? <NextLink href={detailHref}>{routeName}</NextLink> : routeName}
       </Heading>
       {route.description ? <p className="m-0 max-w-[var(--measure-en)] text-ink-900">{pick(route.description, locale)}</p> : null}
       <RouteStatusLine locale={locale} status={status.kind} />
-      <DataTable
-        columns={columns}
-        rows={departures}
-        getRowKey={(departure) => departure.raw}
-        caption={<>{routeName}. {UI.scheduled[locale]}.</>}
-      />
+      {table}
       {/* Visible near the table, not hidden in a tooltip or Details (CONTRIBUTING.md, Honesty). */}
       <p className="m-0 text-sm text-ink-600">{UI.scheduledExplainer[locale]}</p>
       {route.notes ? <p className="m-0 max-w-[var(--measure-en)] text-sm text-ink-600">{pick(route.notes, locale)}</p> : null}

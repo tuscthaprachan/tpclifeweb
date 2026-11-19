@@ -134,6 +134,22 @@ export const DIRECTORY_STRINGS = {
     th: "ไม่บังคับ ใช้ละติจูดและลองจิจูดแบบทศนิยมจากแผนที่",
     en: "Optional. Use latitude and longitude as decimals, copied from a map",
   },
+  placesGroupVisit: { th: "การติดต่อและการเข้าถึง", en: "Contact and access" },
+  placesHintVisit: {
+    th: "แสดงในหน้าของสถานที่ ซึ่งเปิดจากแถวในส่วน \"วันนี้\" ของหน้าแรก",
+    en: "Shown on the place's own page, which the home page's Today rows open",
+  },
+  placesFieldAccessibility: { th: "การเข้าถึง", en: "Accessibility" },
+  placesHintAccessibility: {
+    th: "เช่น ทางลาด ลิฟต์ ห้องน้ำสำหรับผู้ใช้รถเข็น หรือทางเข้าที่ไม่มีขั้นบันได",
+    en: "For example ramps, lifts, accessible toilets or step-free entrances",
+  },
+  placesFieldMoreInfo: { th: "ลิงก์ข้อมูลเพิ่มเติม", en: "More information link" },
+  placesHintMoreInfo: {
+    th: "ไม่บังคับ หน้าในเว็บไซต์นี้ (เช่น /guide/tu-library) หรือที่อยู่เว็บเต็ม",
+    en: "Optional. A page on this site (such as /guide/tu-library) or a full web address",
+  },
+  placesErrSlugReserved: { th: "ใช้ชื่อในลิงก์นี้ไม่ได้ เลือกชื่ออื่น", en: "This link name is taken by another page. Choose another" },
   placesFieldHours: { th: "ช่วงเวลาเปิดทำการ", en: "Opening hours" },
   placesHintHours: {
     th: "เพิ่มทีละกลุ่มวันที่เปิดปิดเวลาเดียวกัน วันที่ไม่ได้เลือกถือว่าปิด หากเวลาปิดก่อนเวลาเปิดหมายถึงปิดหลังเที่ยงคืน ใส่ช่วงวันที่สำหรับเวลาพิเศษ เช่น ช่วงสอบ ในวันดังกล่าวจะใช้เฉพาะแถวที่มีวันที่",
