@@ -12,7 +12,7 @@
  * Enhancement (JavaScript on): the input becomes an ARIA combobox
  * (WAI-ARIA APG "Editable Combobox With List Autocomplete" pattern) backed
  * by the prebuilt search index, fetched lazily from
- * `/api/search-index/[locale]` on first interaction rather than on mount,
+ * `/api/search-index` on first interaction rather than on mount,
  * so it never competes with first paint. Matching then runs entirely
  * in-memory (`lib/search`), debounced, so typing never issues one network
  * request per keystroke; only the initial index fetch touches the network.
@@ -25,7 +25,8 @@ import { liveRegionProps } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { search as runSearch, type SearchResult } from "@/lib/search";
-import type { SearchIndex, SearchRecord } from "@/lib/content/types";
+import type { SearchRecord } from "@/lib/content/types";
+import { loadSearchRecords } from "@/lib/search/wire";
 import { Button, cx } from "@/components/ui";
 import { useStatusMessage } from "@/components/hooks/use-status-message";
 import {
@@ -80,18 +81,10 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
   function loadIndex(): Promise<SearchRecord[]> {
     if (indexPromiseRef.current) return indexPromiseRef.current;
 
-    const promise = fetch(`/api/search-index/${locale}`)
-      .then((response) => {
-        if (!response.ok) throw new Error(`search index request failed: ${response.status}`);
-        return response.json() as Promise<SearchIndex>;
-      })
-      .then((index) => index.records)
-      .catch(() => {
-        // A failed fetch degrades to "no suggestions": the plain form
-        // submit still works, since it never depended on this promise.
-        indexPromiseRef.current = null;
-        return [] as SearchRecord[];
-      });
+    const promise = loadSearchRecords().catch(() => {
+      indexPromiseRef.current = null;
+      return [] as SearchRecord[];
+    });
 
     indexPromiseRef.current = promise;
     return promise;

@@ -74,7 +74,7 @@ function toFieldTokens(result: TokeniseResult): FieldTokens {
 
 /**
  * Records are tokenised once and cached by object identity. A `SearchIndex`
- * fetched from `/api/search-index/[locale]` is a stable array for the
+ * fetched from `/api/search-index` is a stable array for the
  * lifetime of a page, and the client-side combobox calls `search` again on
  * every keystroke, so this is what keeps that from re-running
  * `Intl.Segmenter` over every record's full haystack on every keystroke.

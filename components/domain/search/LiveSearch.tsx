@@ -13,32 +13,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Locale } from "@/lib/i18n/config";
-import type { SearchIndex, SearchRecord } from "@/lib/content/types";
+import type { SearchRecord } from "@/lib/content/types";
+import { loadSearchRecords } from "@/lib/search/wire";
 import { search } from "@/lib/search";
 import { logZeroResultSearch } from "@/lib/search/log-zero-result";
 import { useQueryRecord } from "@/lib/use-query";
 import { SearchPageView } from "./SearchPageView";
-
-const indexRequests = new Map<Locale, Promise<SearchRecord[]>>();
-
-function loadRecords(locale: Locale): Promise<SearchRecord[]> {
-  const existing = indexRequests.get(locale);
-  if (existing) return existing;
-
-  const request = fetch(`/api/search-index/${locale}`)
-    .then((response) => {
-      if (!response.ok) throw new Error(`search index request failed: ${response.status}`);
-      return response.json() as Promise<SearchIndex>;
-    })
-    .then((index) => index.records)
-    .catch((error: unknown) => {
-      indexRequests.delete(locale);
-      throw error;
-    });
-
-  indexRequests.set(locale, request);
-  return request;
-}
 
 export function LiveSearch({ locale }: { locale: Locale }) {
   const query = useQueryRecord().q ?? "";
@@ -49,7 +29,7 @@ export function LiveSearch({ locale }: { locale: Locale }) {
   useEffect(() => {
     if (!hasQuery) return;
     let cancelled = false;
-    loadRecords(locale).then(
+    loadSearchRecords().then(
       (loaded) => {
         if (!cancelled) setRecords(loaded);
       },

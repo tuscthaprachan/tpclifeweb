@@ -69,14 +69,6 @@ const nextConfig: NextConfig = {
         source: "/:locale/complaints/track/:path*",
         headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
       },
-      {
-        // The search index is regenerated on revalidation, so it may be cached
-        // hard at the edge but must revalidate quickly when content changes.
-        source: "/api/search-index/:locale",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400" },
-        ],
-      },
     ];
   },
 };
