@@ -36,6 +36,7 @@ import { join } from "node:path";
 
 import { ImageResponse } from "next/og";
 
+import { getSiteSettings } from "@/components/layout/site-settings";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 
 import palette from "./palette.json";
@@ -47,7 +48,11 @@ export type OgTone = "brand" | "transport" | "welfare" | "activity" | "governanc
 
 const TONE: Record<OgTone, { fill: string; soft: string; ink: string }> = palette.tones;
 
-const SERVICE_NAME: LocaleString = { th: "#ท้ายท่าพระจันทร์", en: "#trytpc" };
+const WORDMARK_LEAD: LocaleString = { th: "#ท้าย", en: "#try" };
+
+async function serviceName(locale: Locale): Promise<string> {
+  return pick((await getSiteSettings()).serviceName, locale);
+}
 const CAMPUS: LocaleString = {
   th: "ธรรมศาสตร์ ท่าพระจันทร์",
   en: "Thammasat Tha Prachan",
@@ -185,14 +190,15 @@ export function ogLocale(raw: string | undefined): Locale {
 }
 
 /** Alt text that says what the image shows, for `generateImageMetadata`. */
-export function ogAlt({ locale, title, kicker, description, hero }: OgContent): string {
-  if (hero) return `${pick(SERVICE_NAME, locale)} · ${title}`;
-  return [kicker, title, description, pick(SERVICE_NAME, locale)].filter(Boolean).join(" · ");
+export async function ogAlt({ locale, title, kicker, description, hero }: OgContent): Promise<string> {
+  const name = await serviceName(locale);
+  if (hero) return `${name} · ${title}`;
+  return [kicker, title, description, name].filter(Boolean).join(" · ");
 }
 
-function Wordmark({ locale, size, display = false }: { locale: Locale; size: number; display?: boolean }) {
-  const name = pick(SERVICE_NAME, locale);
-  const lead = locale === "th" ? "#ท้าย" : "#try";
+function Wordmark({ locale, name, size, display = false }: { locale: Locale; name: string; size: number; display?: boolean }) {
+  const builtIn = pick(WORDMARK_LEAD, locale);
+  const lead = name.startsWith(builtIn) ? builtIn : name.startsWith("#") ? "#" : "";
   const chanok = display && locale === "th";
   const shape = chanok ? shapeChanok : shapeThai;
   return (
@@ -254,11 +260,12 @@ const DOME_HEIGHT = 560;
 
 async function renderOgHero({ locale, title }: OgContent): Promise<ImageResponse> {
   const domeSrc = await loadDome();
+  const name = await serviceName(locale);
   return frame(
     TONE.brand.soft,
     [
       <div key="main" style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <Wordmark locale={locale} size={locale === "th" ? 150 : 168} display />
+        <Wordmark locale={locale} name={name} size={locale === "th" ? 150 : 168} display />
         <div
           style={{
             display: "flex",
@@ -291,6 +298,7 @@ async function renderOgHero({ locale, title }: OgContent): Promise<ImageResponse
 
 export async function renderOgImage(content: OgContent): Promise<ImageResponse> {
   if (content.hero) return renderOgHero(content);
+  const name = await serviceName(content.locale);
   const { locale, title, kicker, description, tone = "brand" } = content;
   const { fill, soft, ink } = TONE[tone];
   const heading = shapeThai(clip(title, 110));
@@ -344,7 +352,7 @@ export async function renderOgImage(content: OgContent): Promise<ImageResponse> 
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <Logo size={56} />
-          <Wordmark locale={locale} size={40} />
+          <Wordmark locale={locale} name={name} size={40} />
         </div>
         <div style={{ display: "flex", fontSize: 28, color: palette.inkMuted }}>{shapeThai(pick(CAMPUS, locale))}</div>
       </div>,

@@ -45,14 +45,7 @@ export default async function AboutIndexPage({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
   const settings = await getSiteSettings();
-  const phaseNote =
-    settings.phase === "live"
-      ? null
-      : settings.phaseNote
-        ? pick(settings.phaseNote, locale)
-        : settings.phase === "alpha"
-          ? UI.phaseAlphaNote[locale]
-          : UI.phaseBetaNote[locale];
+  const phaseNote = settings.phase === "live" ? null : pick(settings.phaseNote, locale).trim() || null;
 
   return (
     <Container width="narrow">

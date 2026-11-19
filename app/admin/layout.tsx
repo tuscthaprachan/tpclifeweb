@@ -18,17 +18,21 @@ import { AuthShell } from "@/components/admin/shell/AuthShell";
 import { ConsoleShell } from "@/components/admin/shell/ConsoleShell";
 import { SessionTimeout } from "@/components/admin/SessionTimeout";
 import { fontVariables } from "@/components/layout/fonts";
+import { getSiteSettings } from "@/components/layout/site-settings";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { getAdminSession } from "@/lib/auth/session";
 import { isStaff } from "@/lib/auth/roles";
-import { HTML_LANG } from "@/lib/i18n/config";
+import { HTML_LANG, pick } from "@/lib/i18n/config";
 import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, type ThemeChoice } from "@/lib/theme/config";
 
-export const metadata: Metadata = {
-  title: { default: "Staff console | #trytpc", template: "%s | #trytpc" },
-  robots: { index: false, follow: false, nocache: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const name = (await getSiteSettings()).serviceName.en;
+  return {
+    title: { default: `Staff console | ${name}`, template: `%s | ${name}` },
+    robots: { index: false, follow: false, nocache: true },
+  };
+}
 
 export const viewport: Viewport = { themeColor: "#ffffff", colorScheme: "light dark" };
 
@@ -49,7 +53,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             {children}
           </ConsoleShell>
         ) : (
-          <AuthShell locale={locale} theme={theme}>
+          <AuthShell locale={locale} theme={theme} serviceName={pick((await getSiteSettings()).serviceName, locale)}>
             {children}
           </AuthShell>
         )}

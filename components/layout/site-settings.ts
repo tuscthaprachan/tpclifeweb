@@ -13,14 +13,12 @@
  * site degrades to "the nav an editor has not customised yet" rather than to
  * a page with no way out.
  *
- * The consequence worth knowing is that an editor emptying `primaryNav` in
- * the admin console does NOT empty the site's menu, it restores this list. That is
- * the intended behaviour, and it is why the fallback stays maintained
- * alongside the routes rather than being left to rot.
+ * Once a row exists, everything here comes from it as stored: nothing is
+ * inserted, reordered or filled in behind the editor's back.
  */
 
 import { getSiteSettings as fetchSiteSettings } from "@/lib/content";
-import { DEFAULT_HOME_TASKS, servicesFirst } from "@/lib/content/home-tasks";
+import { DEFAULT_HOME_TASKS, MAX_HOME_TASKS } from "@/lib/content/home-tasks";
 import type { SiteSettings } from "@/lib/content/types";
 
 const FALLBACK_SITE_SETTINGS: SiteSettings = {
@@ -95,41 +93,18 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
  * Server Component, so this costs them an await and nothing else.
  */
 export async function getSiteSettings(): Promise<SiteSettings> {
-  return withRequiredNav((await fetchSiteSettings()) ?? FALLBACK_SITE_SETTINGS);
+  return normaliseSiteSettings((await fetchSiteSettings()) ?? FALLBACK_SITE_SETTINGS);
 }
 
 /**
- * Sections that must always be reachable from the primary navigation, even
- * when the `siteSettings` document in the CMS predates them. An editor can
- * still rename or move one by adding it to the document themselves; it is
- * only inserted when its path is missing, after the item named in `after`.
+ * Shapes the stored settings for rendering without second-guessing the
+ * editor: the menus, footer and Popular tiles are exactly what the console
+ * holds, in its order. Only the tile count is capped, as the console enforces.
  */
-const REQUIRED_NAV: readonly { item: SiteSettings["primaryNav"][number]; after: string }[] = [
-  { item: { label: { th: "กินอะไรดี", en: "What to eat" }, path: "/eat" }, after: "/getting-around" },
-];
-
-/**
- * The same for the footer: the Service Standard asks for performance data to
- * be published, so the link to it must not depend on an editor adding it.
- */
-const REQUIRED_FOOTER_NAV: readonly { item: SiteSettings["footerNav"][number]; after: string }[] = [
-  { item: { label: { th: "ผลการดำเนินงาน", en: "Performance" }, path: "/performance" }, after: "/cookies" },
-  { item: { label: { th: "ข้อมูลเปิด", en: "Open data" }, path: "/about/open-data" }, after: "/about" },
-];
-
-function withRequiredItems(nav: SiteSettings["primaryNav"], required: readonly { item: SiteSettings["primaryNav"][number]; after: string }[]) {
-  for (const { item, after } of required) {
-    if (nav.some((existing) => existing.path === item.path)) continue;
-    const anchor = nav.findIndex((existing) => existing.path === after);
-    const at = anchor === -1 ? nav.length : anchor + 1;
-    nav = [...nav.slice(0, at), item, ...nav.slice(at)];
-  }
-  return nav;
-}
-
-export function withRequiredNav(settings: SiteSettings): SiteSettings {
-  const homeTasks = servicesFirst(settings.homeTasks?.length ? settings.homeTasks : DEFAULT_HOME_TASKS);
-  const primaryNav = withRequiredItems(settings.primaryNav ?? [], REQUIRED_NAV);
-  const footerNav = settings.footerNav ? withRequiredItems(settings.footerNav, REQUIRED_FOOTER_NAV) : settings.footerNav;
-  return { ...settings, primaryNav, footerNav, homeTasks };
+export function normaliseSiteSettings(settings: SiteSettings): SiteSettings {
+  return {
+    ...settings,
+    primaryNav: settings.primaryNav ?? [],
+    homeTasks: (settings.homeTasks ?? []).slice(0, MAX_HOME_TASKS),
+  };
 }

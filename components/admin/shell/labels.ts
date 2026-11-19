@@ -56,9 +56,9 @@ export interface ShellLabels {
   shortcutsMenu: string;
 }
 
-export function shellLabels(locale: Locale): ShellLabels {
+export function shellLabels(locale: Locale, serviceName: string): ShellLabels {
   return {
-    serviceName: UI.serviceName[locale],
+    serviceName,
     consoleName: a("consoleName", locale),
     nav: a("consoleNav", locale),
     notIndexed: a("notIndexedNote", locale),

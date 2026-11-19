@@ -16,14 +16,14 @@ import { ThemeMenu } from "./ThemeMenu";
  * centred column. The language switch is the first form in the header and
  * works without JavaScript.
  */
-export function AuthShell({ locale, theme, children }: { locale: Locale; theme: ThemeChoice; children: ReactNode }) {
+export function AuthShell({ locale, theme, serviceName, children }: { locale: Locale; theme: ThemeChoice; serviceName: string; children: ReactNode }) {
   return (
     <div className="console-auth bg-surface-alt">
       <header className="console-auth-header">
         <Link href="/admin" className="console-brand">
           <SiteLogo size={28} priority />
           <span className="console-brand-text">
-            <span className="block font-semibold leading-tight">{UI.serviceName[locale]}</span>
+            <span className="block font-semibold leading-tight">{serviceName}</span>
             <span className="block text-sm leading-tight text-ink-600">{a("consoleName", locale)}</span>
           </span>
         </Link>

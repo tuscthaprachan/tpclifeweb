@@ -1,3 +1,7 @@
+import { getSiteSettings } from "@/components/layout/site-settings";
+import type { LocaleString } from "@/lib/i18n/config";
+import { UI } from "@/lib/i18n/strings";
+import { esc } from "./layout";
 import { ConsoleEmailSender, ResendSender } from "./senders";
 import { EmailError, type EmailMessage, type EmailSender } from "./types";
 
@@ -47,6 +51,17 @@ export function setEmailSenderForTests(sender: EmailSender | undefined): void {
   cached = sender;
 }
 
+/**
+ * Templates are written with the built-in service name. This swaps in the
+ * name set in the admin console, so a rename there reaches every email.
+ */
+export function applyServiceName(message: EmailMessage, name: LocaleString): EmailMessage {
+  const pairs = (["th", "en"] as const).filter((l) => name[l] && name[l] !== UI.serviceName[l]).map((l) => [UI.serviceName[l], name[l]] as const);
+  if (pairs.length === 0) return message;
+  const swap = (value: string, html: boolean) => pairs.reduce((out, [from, to]) => out.split(html ? esc(from) : from).join(html ? esc(to) : to), value);
+  return { ...message, subject: swap(message.subject, false), text: swap(message.text, false), html: swap(message.html, true) };
+}
+
 export type SendEmailResult = { ok: true; id: string } | { ok: false; error: string };
 
 /**
@@ -61,7 +76,8 @@ export async function sendEmail(message: EmailMessage, opts: { sender?: EmailSen
       return { ok: false, error: "not_configured" };
     }
     const sender = opts.sender ?? getEmailSender();
-    const { id } = await sender.send(message);
+    const named = opts.sender ? message : applyServiceName(message, (await getSiteSettings()).serviceName);
+    const { id } = await sender.send(named);
     return { ok: true, id };
   } catch (error) {
     const code = error instanceof EmailError ? error.code : "unknown";

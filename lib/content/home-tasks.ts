@@ -2,14 +2,7 @@ import type { HomeTask } from "./types";
 
 export const MAX_HOME_TASKS = 8;
 
-/**
- * The services a student does something in lead the Popular tiles, in this
- * order, whatever order the stored list is in: reporting an issue (drawn as
- * the highlighted tile), borrowing equipment, lost and found. An editor's own
- * wording for one is kept; a missing one is added with the wording below.
- * The forms index is no longer a tile, because these services replace the
- * Google Forms it pointed to; it stays reachable from search and /services.
- */
+/** The default Popular tiles when there is no site settings row yet. The console owns them after that. */
 export const SERVICE_HOME_TASKS: readonly HomeTask[] = [
   {
     label: { th: "แจ้งปัญหา", en: "Report an issue" },
@@ -27,8 +20,6 @@ export const SERVICE_HOME_TASKS: readonly HomeTask[] = [
     path: "/lost-and-found",
   },
 ];
-
-export const RETIRED_HOME_TASK_PATHS: readonly string[] = ["/forms"];
 
 export const HIGHLIGHTED_HOME_TASK_PATH = "/complaints";
 
@@ -50,11 +41,3 @@ export const DEFAULT_HOME_TASKS: readonly HomeTask[] = [
     path: "/directory",
   },
 ];
-
-/** Services first, then the stored tiles in their own order without retired ones, at most MAX_HOME_TASKS. */
-export function servicesFirst(tasks: readonly HomeTask[]): HomeTask[] {
-  const servicePaths = SERVICE_HOME_TASKS.map((t) => t.path);
-  const services = SERVICE_HOME_TASKS.map((s) => tasks.find((t) => t.path === s.path) ?? s);
-  const rest = tasks.filter((t) => !servicePaths.includes(t.path) && !RETIRED_HOME_TASK_PATHS.includes(t.path));
-  return [...services, ...rest].slice(0, MAX_HOME_TASKS);
-}

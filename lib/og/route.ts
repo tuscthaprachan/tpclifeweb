@@ -23,7 +23,7 @@ export function ogImageRoute<P extends { locale: string }>(resolve: Resolver<Omi
 
   return {
     async generateImageMetadata({ params }: { params: P | Promise<P> }) {
-      return [{ id: "og", alt: ogAlt(await content(await params)), size: OG_SIZE, contentType: OG_CONTENT_TYPE }];
+      return [{ id: "og", alt: await ogAlt(await content(await params)), size: OG_SIZE, contentType: OG_CONTENT_TYPE }];
     },
     async Image({ params }: { params: Promise<P> }) {
       return renderOgImage(await content(await params));

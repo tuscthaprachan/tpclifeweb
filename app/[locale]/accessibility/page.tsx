@@ -15,6 +15,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { getSiteSettings } from "@/components/layout/site-settings";
 import { Container, Heading, Prose, Stack, Timestamp } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -27,10 +28,10 @@ import { alternatesFor } from "@/lib/i18n/metadata";
  * instruction for a missing shared string, and reported in the harden
  * agent's final report rather than invented as a synonym of something else.
  */
-const INTRO: LocaleString = {
-  th: "เว็บไซต์ #ท้ายท่าพระจันทร์ (#trytpc) ตั้งเป้าให้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA หน้านี้บอกว่าส่วนใดเป็นไปตามมาตรฐานแล้ว ส่วนใดยังไม่เป็น และเพราะเหตุใด บริการนี้ยังอยู่ในช่วงทดลอง เนื้อหาและการใช้งานบางส่วนจึงยังไม่สมบูรณ์",
-  en: "#trytpc aims to meet WCAG 2.2 level AA. This page says what already meets the standard, what does not yet, and why. The service is still in an early phase, so some content and features are incomplete.",
-};
+const intro = (name: LocaleString): LocaleString => ({
+  th: `เว็บไซต์ ${name.th} (${name.en}) ตั้งเป้าให้เป็นไปตามมาตรฐาน WCAG 2.2 ระดับ AA หน้านี้บอกว่าส่วนใดเป็นไปตามมาตรฐานแล้ว ส่วนใดยังไม่เป็น และเพราะเหตุใด บริการนี้ยังอยู่ในช่วงทดลอง เนื้อหาและการใช้งานบางส่วนจึงยังไม่สมบูรณ์`,
+  en: `${name.en} aims to meet WCAG 2.2 level AA. This page says what already meets the standard, what does not yet, and why. The service is still in an early phase, so some content and features are incomplete.`,
+});
 
 const CONFORMANCE_HEADING: LocaleString = { th: "ผลการตรวจสอบตามมาตรฐาน", en: "How well the site meets the standard" };
 const CONFORMANCE_BODY: LocaleString = {
@@ -105,7 +106,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     alternates: alternatesFor(locale, "/accessibility"),
     title: UI.accessibilityStatement[locale],
-    description: INTRO[locale],
+    description: intro((await getSiteSettings()).serviceName)[locale],
   };
 }
 
@@ -124,7 +125,7 @@ export default async function AccessibilityStatementPage({ params }: { params: P
         <Stack space={4}>
           <Heading level={1}>{UI.accessibilityStatement[locale]}</Heading>
           <Prose locale={locale}>
-            <p>{INTRO[locale]}</p>
+            <p>{intro((await getSiteSettings()).serviceName)[locale]}</p>
           </Prose>
         </Stack>
 

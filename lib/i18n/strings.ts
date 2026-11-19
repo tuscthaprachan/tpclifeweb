@@ -370,14 +370,6 @@ export const UI = {
   /* Phase banner */
   phaseAlpha: { th: "อัลฟา", en: "Alpha" },
   phaseBeta: { th: "เบตา", en: "Beta" },
-  phaseAlphaNote: {
-    th: "บริการนี้เป็นบริการใหม่และยังอยู่ระหว่างทดลอง ข้อมูลบางส่วนอาจยังไม่ครบ",
-    en: "This is a new service still being tested. Some information may be incomplete",
-  },
-  phaseBetaNote: {
-    th: "บริการนี้เป็นบริการใหม่ ข้อเสนอแนะของคุณช่วยปรับปรุงบริการได้",
-    en: "This is a new service. Your feedback will help improve it",
-  },
 
   /* Feedback. One of the four measures the service is judged on. */
   feedbackQuestion: { th: "หน้านี้มีประโยชน์หรือไม่", en: "Was this page useful?" },
@@ -1284,7 +1276,6 @@ export const UI = {
   homeNews: { th: "ข่าว", en: "News" },
   homeUnion: { th: "อมธ. และสภานักศึกษา", en: "Student union and council" },
   servicesIntro: { th: "บริการทั้งหมดสำหรับนักศึกษาท่าพระจันทร์", en: "Every service for Tha Prachan students" },
-  phaseNewService: { th: "นี่เป็นบริการใหม่", en: "This is a new service." },
   phaseWhatThisMeans: { th: "ดูว่าหมายถึงอะไร", en: "What this means" },
   aboutServiceHeading: { th: "เกี่ยวกับบริการนี้", en: "About this service" },
   aboutStudentBodies: { th: "องค์กรนักศึกษา", en: "Student bodies" },

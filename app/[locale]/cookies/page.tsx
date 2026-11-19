@@ -13,6 +13,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { getSiteSettings } from "@/components/layout/site-settings";
 import { Container, DataTable, Heading, Prose, Stack } from "@/components/ui";
 import { DEFAULT_LOCALE, LOCALE_COOKIE, isLocale, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { THEME_COOKIE } from "@/lib/theme/config";
@@ -23,10 +24,10 @@ import { alternatesFor } from "@/lib/i18n/metadata";
 // equivalent beyond the nav label (UI.cookies). Hardcoded per
 // CONTRIBUTING.md's own instruction for a missing shared string, reported in
 // the harden agent's final report.
-const INTRO: LocaleString = {
-  th: "หน้านี้บอกว่า #ท้ายท่าพระจันทร์ เก็บข้อมูลอะไรไว้ในเบราว์เซอร์ของคุณ และเก็บไปเพื่ออะไร เว็บไซต์นี้ไม่มีคุกกี้โฆษณาและไม่ติดตามคุณข้ามเว็บไซต์อื่น",
-  en: "This page lists what #trytpc stores in your browser, and why. There are no advertising cookies and no cross-site tracking.",
-};
+const intro = (name: LocaleString): LocaleString => ({
+  th: `หน้านี้บอกว่า ${name.th} เก็บข้อมูลอะไรไว้ในเบราว์เซอร์ของคุณ และเก็บไปเพื่ออะไร เว็บไซต์นี้ไม่มีคุกกี้โฆษณาและไม่ติดตามคุณข้ามเว็บไซต์อื่น`,
+  en: `This page lists what ${name.en} stores in your browser, and why. There are no advertising cookies and no cross-site tracking.`,
+});
 
 const WHAT_HEADING: LocaleString = { th: "สิ่งที่จัดเก็บ", en: "What is stored" };
 
@@ -104,7 +105,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     alternates: alternatesFor(locale, "/cookies"),
     title: UI.cookies[locale],
-    description: INTRO[locale],
+    description: intro((await getSiteSettings()).serviceName)[locale],
   };
 }
 
@@ -120,7 +121,7 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
         <Stack space={4}>
           <Heading level={1}>{UI.cookies[locale]}</Heading>
           <Prose locale={locale}>
-            <p>{INTRO[locale]}</p>
+            <p>{intro((await getSiteSettings()).serviceName)[locale]}</p>
           </Prose>
         </Stack>
 
