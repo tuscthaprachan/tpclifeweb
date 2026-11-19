@@ -75,3 +75,11 @@ const cachedActiveRoutes = cachedRead(["shuttle-routes"], [CACHE_TAGS.shuttle], 
 export async function getActiveShuttleRoutes(): Promise<ShuttleRoute[]> {
   return safeFetch<ShuttleRoute[]>("getActiveShuttleRoutes", () => cachedActiveRoutes(), []);
 }
+
+const cachedRouteSlugs = cachedRead(["shuttle-route-slugs"], [CACHE_TAGS.shuttle], REVALIDATE.content, async () =>
+  (await readActiveShuttleRoutes(getDb())).map((route) => ({ slug: route.slug.current, updatedAt: route._updatedAt })),
+);
+
+export async function getShuttleRouteSlugs(): Promise<{ slug: string; updatedAt: string }[]> {
+  return safeFetch("getShuttleRouteSlugs", () => cachedRouteSlugs(), []);
+}

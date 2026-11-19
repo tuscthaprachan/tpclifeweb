@@ -1,13 +1,13 @@
 /**
  * The canteen dataset as JSON, for the /eat pages to load once per browser session
  * (components/domain/canteen/data-client.ts) instead of carrying it in every page's payload.
- * Prerendered and revalidated on the same hour as the content cache (`REVALIDATE.content`).
+ * Prerendered and revalidated on the same day as the content cache (`REVALIDATE.content`).
  */
 
 import { getCanteenData } from "@/lib/content";
 
 export const dynamic = "force-static";
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export async function GET() {
   const data = await getCanteenData();

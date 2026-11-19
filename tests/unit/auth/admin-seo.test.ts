@@ -20,7 +20,7 @@ describe("staff console is not indexed", () => {
   });
 
   it("is not redirected into a locale by the proxy", () => {
-    const matcher = proxyConfig.matcher[0] as string;
+    const matcher = proxyConfig.matcher[0]!.source;
     // The matcher is a negative lookahead; /admin must be in the excluded list.
     const regex = new RegExp(`^${matcher.replace(/^\//, "\\/")}$`);
     expect(regex.test("/admin")).toBe(false);

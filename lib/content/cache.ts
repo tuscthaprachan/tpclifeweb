@@ -58,7 +58,7 @@ export const REVALIDATE = {
    */
   windowed: 300,
   events: 900,
-  content: 3600,
+  content: 86400,
 } as const;
 
 /**

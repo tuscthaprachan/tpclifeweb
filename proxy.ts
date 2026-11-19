@@ -101,5 +101,13 @@ export const config = {
    * `requireStaff`, never here) and any path with a file extension
    * (favicon.ico, sitemap.xml, robots.txt, static assets).
    */
-  matcher: ["/((?!api|_next|admin\\b|.*\\..*).*)"],
+  matcher: [
+    {
+      source: "/((?!api|_next|admin\\b|.*\\..*).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
+  ],
 };

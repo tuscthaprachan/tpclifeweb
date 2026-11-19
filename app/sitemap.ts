@@ -12,7 +12,7 @@
 
 import type { MetadataRoute } from "next";
 import { DEFAULT_LOCALE, LOCALES, localePath, type Locale } from "@/lib/i18n/config";
-import { getActiveShuttleRoutes, getCanteenData, getLostFoundPage, getPlaces } from "@/lib/content";
+import { getCanteenData, getShuttleRouteSlugs, getLostFoundPage, getPlaces } from "@/lib/content";
 import { REPORT_PAGE_NUMBERS } from "@/components/domain/open-data/reports/reports";
 import { RULE_NUMBERS } from "@/components/domain/open-data/rules/rules";
 import { getOpenDataDocuments } from "@/lib/open-data/read";
@@ -73,7 +73,7 @@ const STATIC_ROUTES = [
 // generateStaticParams.
 const MAX_SITEMAP_ITEMS = 1000;
 
-function entry(locale: Locale, route: string, lastModified: Date): MetadataRoute.Sitemap[number] {
+function entry(locale: Locale, route: string, lastModified?: Date): MetadataRoute.Sitemap[number] {
   const languages: Record<string, string> = {};
   for (const l of LOCALES) languages[l] = `${SITE_URL}${localePath(l, route)}`;
   languages["x-default"] = `${SITE_URL}${localePath(DEFAULT_LOCALE, route)}`;
@@ -81,11 +81,7 @@ function entry(locale: Locale, route: string, lastModified: Date): MetadataRoute
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const lastModified = new Date();
-
-  const staticEntries = LOCALES.flatMap((locale) =>
-    STATIC_ROUTES.map((route) => entry(locale, route, lastModified)),
-  );
+  const staticEntries = LOCALES.flatMap((locale) => STATIC_ROUTES.map((route) => entry(locale, route)));
 
   const { items } = await getLostFoundPage({}, 1, MAX_SITEMAP_ITEMS);
   const lostFoundEntries = LOCALES.flatMap((locale) =>
@@ -111,10 +107,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .map((doc) => entry(locale, `/about/open-data/tusc/reports/${doc.slug}`, new Date(doc.updatedAt))),
   ]);
 
-  const [places, routes] = await Promise.all([getPlaces(), getActiveShuttleRoutes()]);
+  const [places, routes] = await Promise.all([getPlaces(), getShuttleRouteSlugs()]);
   const todayEntries = LOCALES.flatMap((locale) => [
     ...places.map((place) => entry(locale, `/places/${place.slug.current}`, new Date(place._updatedAt))),
-    ...routes.map((route) => entry(locale, `/getting-around/shuttle/${route.slug.current}`, new Date(route._updatedAt))),
+    ...routes.map((route) => entry(locale, `/getting-around/shuttle/${route.slug}`, new Date(route.updatedAt))),
   ]);
 
   return [...staticEntries, ...lostFoundEntries, ...canteenEntries, ...openDataEntries, ...todayEntries];
