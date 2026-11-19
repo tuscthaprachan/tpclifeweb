@@ -16,6 +16,7 @@ import { revalidateFor } from "@/lib/content/revalidate";
 import { withAudit, type AuditExecutor } from "@/lib/db/audit";
 import { lostFoundItemPhotos, lostFoundItems } from "@/lib/db/schema";
 import type { ContentStatus, OWNERS } from "@/lib/db/schema/content/enums";
+import type { HelpContactJson } from "@/lib/db/schema/content/common";
 import type { LOST_FOUND_CATEGORIES, LOST_FOUND_STATUSES } from "@/lib/db/schema/content/enums";
 import type { CaseActor, StaffActor } from "@/lib/cases/types";
 import { auditedLostFoundItems } from "./audited-item";
@@ -49,6 +50,8 @@ export interface ListingView {
   owner: Owner;
   publishedAt: Date | null;
   photoCount: number;
+  claimBy: string | null;
+  claimContact: HelpContactJson | null;
 }
 
 /** What stops a listing being published. Staff see these as a checklist. */
@@ -101,6 +104,8 @@ const view = (
   owner: r.owner,
   publishedAt: r.publishedAt,
   photoCount,
+  claimBy: r.claimBy,
+  claimContact: r.claimContact,
 });
 
 const publicColumns = {
@@ -233,6 +238,81 @@ export async function publishListingForCase(tx: AuditExecutor, caseId: string, a
     await saveContent({ entityType: "lostFoundItem", table: auditedLostFoundItems, actor, db: tx, id: item.id, status: "published", values: {}, now });
   }
   return { ...item, status: "published" };
+}
+
+/** Takes the listing of a case off the public list (back to draft). Call `expireListing` once the transaction has committed. Returns false when there is no listing. */
+export async function unpublishListingForCase(tx: AuditExecutor, caseId: string, actor: ContentActor, now: Date): Promise<boolean> {
+  const item = await getListingForCase(tx, caseId);
+  if (!item) return false;
+  if (item.status === "published") {
+    await saveContent({ entityType: "lostFoundItem", table: auditedLostFoundItems, actor, db: tx, id: item.id, status: "draft", values: {}, now });
+  }
+  return true;
+}
+
+export interface ListingDetailChanges {
+  heldAt: Bilingual;
+  claimBy: string | null;
+  claimContact: HelpContactJson | null;
+  registerStatus: RegisterStatus;
+}
+
+/** Updates where the item is held, the claim deadline, the public claim contact and the register status of a case's listing. Returns false when the case has no listing. */
+export async function updateListingDetailsForCase(db: AuditExecutor, caseId: string, changes: ListingDetailChanges, actor: ContentActor, now: Date): Promise<boolean> {
+  const [row] = await db.select({ id: lostFoundItems.id, registerStatus: lostFoundItems.registerStatus, resolvedAt: lostFoundItems.resolvedAt }).from(lostFoundItems).where(eq(lostFoundItems.caseId, caseId));
+  if (!row) return false;
+  const registerChanged = row.registerStatus !== changes.registerStatus;
+  await saveContent({
+    entityType: "lostFoundItem",
+    table: auditedLostFoundItems,
+    actor,
+    db,
+    id: row.id,
+    values: {
+      heldAtTh: changes.heldAt.th || null,
+      heldAtEn: changes.heldAt.en || null,
+      claimBy: changes.claimBy,
+      claimContact: changes.claimContact,
+      registerStatus: changes.registerStatus,
+      resolvedAt: registerChanged ? resolvedAtFor(changes.registerStatus, now) : row.resolvedAt,
+    },
+    now,
+  });
+  return true;
+}
+
+/** The public photos of a case's listing, in order. */
+export async function listListingPhotos(db: AuditExecutor, caseId: string): Promise<string[]> {
+  const rows = await db
+    .select({ imageId: lostFoundItemPhotos.imageId })
+    .from(lostFoundItemPhotos)
+    .innerJoin(lostFoundItems, eq(lostFoundItems.id, lostFoundItemPhotos.itemId))
+    .where(eq(lostFoundItems.caseId, caseId))
+    .orderBy(asc(lostFoundItemPhotos.position));
+  return rows.map((r) => r.imageId);
+}
+
+/** Takes one picture off the listing (the image stays in the library). Goes through `saveContent`, so it is audited and revisioned. Returns false when the case has no listing. */
+export async function removeListingPhoto(tx: AuditExecutor, caseId: string, imageId: string, actor: ContentActor, now: Date): Promise<boolean> {
+  const [row] = await tx.select({ id: lostFoundItems.id }).from(lostFoundItems).where(eq(lostFoundItems.caseId, caseId));
+  if (!row) return false;
+  const keep = (await listListingPhotos(tx, caseId)).filter((id) => id !== imageId);
+  await saveContent({
+    entityType: "lostFoundItem",
+    table: auditedLostFoundItems,
+    actor,
+    db: tx,
+    id: row.id,
+    values: {},
+    now,
+    children: async (inner, itemId) => {
+      await inner.delete(lostFoundItemPhotos).where(eq(lostFoundItemPhotos.itemId, itemId));
+      const rows = keep.map((id, position) => ({ itemId, imageId: id, position }));
+      if (rows.length > 0) await inner.insert(lostFoundItemPhotos).values(rows);
+      return { photos: rows };
+    },
+  });
+  return true;
 }
 
 /**

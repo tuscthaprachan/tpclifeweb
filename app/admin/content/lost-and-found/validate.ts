@@ -9,8 +9,9 @@ import type { HelpContactJson } from "@/lib/db/schema/content/common";
 import { OWNERS, LOST_FOUND_CATEGORIES, LOST_FOUND_KINDS, LOST_FOUND_STATUSES, type ContentStatus } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
+import { CLAIM_CHANNELS } from "@/lib/lost-found/constants";
 
-export const CLAIM_CHANNELS = ["line", "email", "phone", "inPerson", "url"] as const;
+export { CLAIM_CHANNELS };
 export const MAX_PHOTOS = 10;
 
 const filled = (formData: FormData, names: string[]) => names.some((n) => String(formData.get(n) ?? "").trim() !== "");

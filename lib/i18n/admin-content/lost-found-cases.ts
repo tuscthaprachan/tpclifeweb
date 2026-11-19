@@ -99,16 +99,15 @@ export const LOST_FOUND_CASES_STRINGS = {
   },
 
   /* Case page: listing */
-  lfcLostListingTitle: { th: "รายการสาธารณะของเรื่องนี้", en: "Public listing for this report" },
+  lfcLostListingTitle: { th: "รายการสาธารณะ", en: "Public listing" },
   lfcLostListingNote: {
     th: "รายงานของหายขึ้นเว็บไซต์ได้เมื่อเจ้าหน้าที่ตรวจและอนุมัติ ตรวจข้อความว่าไม่มีข้อมูลส่วนบุคคลก่อนประกาศ",
     en: "A lost report appears on the website once staff check and approve it. Make sure the text holds no personal details before you publish",
   },
-  lfcFoundListingTitle: { th: "รายการในรายการของที่พบ", en: "Listing on the public list" },
+  lfcFoundListingTitle: { th: "รายการสาธารณะ", en: "Public listing" },
   lfcListingNone: { th: "เรื่องนี้ยังไม่มีรายการสาธารณะ", en: "This case has no public listing" },
   lfcListingState: { th: "สถานะการเผยแพร่", en: "Publication" },
   lfcListingEdit: { th: "แก้ไขข้อความของรายการ", en: "Edit the listing text" },
-  lfcListingOpenEditor: { th: "เปิดในหน้าแก้ไขเนื้อหา", en: "Open in the content editor" },
   lfcGapsIntro: { th: "ยังประกาศไม่ได้ เพราะยังขาด:", en: "It cannot be published yet. Still needed:" },
   lfcGapTitleTh: { th: "ชื่อภาษาไทย", en: "Title in Thai" },
   lfcGapTitleEn: { th: "ชื่อภาษาอังกฤษ", en: "Title in English" },

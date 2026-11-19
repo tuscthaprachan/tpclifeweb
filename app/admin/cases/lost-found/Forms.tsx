@@ -6,7 +6,7 @@ import { uploadError, uploadNote } from "@/components/admin/content/upload/uploa
 import { useImageUpload } from "@/components/admin/content/upload/use-image-upload";
 import { Button, ErrorSummary, InsetText, NotificationBanner, Select, TextInput, Textarea } from "@/components/ui";
 import { LF_IDLE, lfErrors, lfFailed, lfValues, type LfNotice, type LfState } from "./lf-state";
-import { ID_CHECK_TYPES } from "@/lib/lost-found/constants";
+import { CLAIM_CHANNELS, ID_CHECK_TYPES } from "@/lib/lost-found/constants";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -18,6 +18,9 @@ import {
   markMatchAction,
   publishFoundAction,
   publishListingAction,
+  removeListingPhotoAction,
+  unpublishListingAction,
+  updateListingDetailsAction,
   revealClaimAction,
   revealIdentifyingAction,
   revealVerificationAction,
@@ -238,6 +241,91 @@ export function PublishListingForm({ locale, caseId, orgId, found, disabledReaso
       {openCaseAfter ? <input type="hidden" name="next" value="case" /> : null}
       {disabledReason ? <p className="m-0 text-ink-600">{disabledReason}</p> : null}
       <SaveButton locale={locale} pending={pending} variant="primary" label={L(found ? "lfcPublishFound" : "lfcPublishLost", locale)} />
+    </form>
+  );
+}
+
+export function UnpublishListingForm({ locale, caseId, orgId }: Base) {
+  const [state, run, pending] = useActionState<LfState, FormData>(unpublishListingAction, EMPTY);
+  const prefix = useId().replace(/:/g, "");
+  return (
+    <form action={run} noValidate className="flex flex-col gap-[var(--space-3)]">
+      <Feedback state={state} locale={locale} prefix={prefix} />
+      <HiddenIds caseId={caseId} orgId={orgId} />
+      <p className="m-0 text-ink-600">{L("lfrUnpublishHint", locale)}</p>
+      <SaveButton locale={locale} pending={pending} label={L("lfrUnpublish", locale)} />
+    </form>
+  );
+}
+
+export function RemovePhotoForm({ locale, caseId, orgId, imageId, name }: Base & { imageId: string; name: string }) {
+  const [state, run, pending] = useActionState<LfState, FormData>(removeListingPhotoAction, EMPTY);
+  const prefix = useId().replace(/:/g, "");
+  return (
+    <form action={run} noValidate className="flex flex-col gap-[var(--space-2)]">
+      <Feedback state={state} locale={locale} prefix={prefix} />
+      <HiddenIds caseId={caseId} orgId={orgId} />
+      <input type="hidden" name="imageId" value={imageId} />
+      <div>
+        <Button type="submit" variant="secondary" size="sm" loading={pending} loadingLabel={a("caseSaving", locale)}>
+          {L("lfrPhotoRemove", locale)}
+          <span className="visually-hidden"> {name}</span>
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+export interface ListingDetailDefaults {
+  registerStatus: string;
+  heldAtTh: string;
+  heldAtEn: string;
+  claimBy: string;
+  claimLabelTh: string;
+  claimLabelEn: string;
+  claimChannel: string;
+  claimValue: string;
+  claimHoursTh: string;
+  claimHoursEn: string;
+}
+
+/** Progress on the register, where the item is held, the claim deadline and the public claim contact. */
+export function ListingDetailsForm({ locale, caseId, orgId, defaults, statuses }: Base & { defaults: ListingDetailDefaults; statuses: Option[] }) {
+  const [state, run, pending] = useActionState<LfState, FormData>(updateListingDetailsAction, EMPTY);
+  const prefix = useId().replace(/:/g, "");
+  const errors = lfErrors(state);
+  const f = (name: string) => ({ id: control(prefix, name), name, error: errors[name] });
+  return (
+    <form action={run} noValidate className="flex flex-col gap-[var(--space-4)]">
+      <Feedback state={state} locale={locale} prefix={prefix} />
+      <HiddenIds caseId={caseId} orgId={orgId} />
+      <Select {...f("registerStatus")} label={L("lfFieldProgress", locale)} hint={L("lfFieldProgressHint", locale)} options={statuses} defaultValue={typed(state, "registerStatus", defaults.registerStatus)} className="max-w-[24rem]" />
+      <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
+        <TextInput {...f("heldAt.th")} lang="th" label={`${L("lfFieldHeldAt", locale)} (${L("langThai", locale)})`} hint={L("lfFieldHeldAtHint", locale)} defaultValue={typed(state, "heldAt.th", defaults.heldAtTh)} maxLength={300} />
+        <TextInput {...f("heldAt.en")} lang="en" label={`${L("lfFieldHeldAt", locale)} (${L("langEnglish", locale)})`} hint={L("lfFieldHeldAtHint", locale)} defaultValue={typed(state, "heldAt.en", defaults.heldAtEn)} maxLength={300} />
+      </div>
+      <TextInput {...f("claimBy")} type="date" label={L("lfFieldClaimBy", locale)} hint={L("lfFieldClaimByHint", locale)} defaultValue={typed(state, "claimBy", defaults.claimBy)} className="max-w-[16rem]" />
+      <fieldset className="m-0 flex flex-col gap-[var(--space-3)] border-0 p-0">
+        <legend className="mb-[var(--space-1)] text-lg font-semibold text-ink-900">{L("lfFieldClaimContact", locale)}</legend>
+        <p className="m-0 text-sm text-ink-600">{L("lfFieldClaimContactHint", locale)}</p>
+        <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
+          <TextInput {...f("claimLabel.th")} lang="th" label={`${L("blockContactLabel", locale)} (${L("langThai", locale)})`} defaultValue={typed(state, "claimLabel.th", defaults.claimLabelTh)} maxLength={100} />
+          <TextInput {...f("claimLabel.en")} lang="en" label={`${L("blockContactLabel", locale)} (${L("langEnglish", locale)})`} defaultValue={typed(state, "claimLabel.en", defaults.claimLabelEn)} maxLength={100} />
+        </div>
+        <Select
+          {...f("claimChannel")}
+          label={L("blockContactChannel", locale)}
+          options={[{ value: "", label: L("choiceNone", locale) }, ...CLAIM_CHANNELS.map((value) => ({ value, label: L(`channel_${value}` as AdminKey, locale) }))]}
+          defaultValue={typed(state, "claimChannel", defaults.claimChannel)}
+          className="max-w-[24rem]"
+        />
+        <TextInput {...f("claimValue")} label={L("blockContactValue", locale)} hint={L("blockContactValueHint", locale)} defaultValue={typed(state, "claimValue", defaults.claimValue)} maxLength={300} />
+        <div className="grid gap-[var(--space-4)] sm:grid-cols-2">
+          <TextInput {...f("claimHours.th")} lang="th" label={`${L("blockContactHours", locale)} (${L("langThai", locale)})`} defaultValue={typed(state, "claimHours.th", defaults.claimHoursTh)} maxLength={100} />
+          <TextInput {...f("claimHours.en")} lang="en" label={`${L("blockContactHours", locale)} (${L("langEnglish", locale)})`} defaultValue={typed(state, "claimHours.en", defaults.claimHoursEn)} maxLength={100} />
+        </div>
+      </fieldset>
+      <SaveButton locale={locale} pending={pending} label={L("lfrDetailsSave", locale)} />
     </form>
   );
 }

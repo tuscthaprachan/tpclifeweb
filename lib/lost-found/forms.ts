@@ -10,12 +10,15 @@ import { z } from "zod";
 import { fieldKit, formDataToObject, parseForm } from "@/lib/admin/content/fields";
 import type { FieldErrors } from "@/lib/admin/content/form-state";
 import { CASE_PREFERRED_CONTACTS } from "@/lib/db/schema/cases";
-import { LOST_FOUND_CATEGORIES } from "@/lib/db/schema/content/enums";
+import type { HelpContactJson } from "@/lib/db/schema/content/common";
+import { LOST_FOUND_CATEGORIES, LOST_FOUND_STATUSES } from "@/lib/db/schema/content/enums";
 import { ID_CHECK_TYPES } from "@/lib/db/schema/lost-found-staff";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { ANSWER_MAX } from "./claims";
+import { CLAIM_CHANNELS } from "./constants";
+import type { ListingDetailChanges } from "./listing";
 import type { ItemDescription, WalkInLost } from "./intake";
 
 export type Parsed<T> = { ok: true; data: T } | { ok: false; errors: FieldErrors };
@@ -51,6 +54,33 @@ export function parseDescription(formData: FormData, locale: Locale, now: Date =
     ok: true,
     data: { category: d.category!, title: d.title, description: d.description, placeId: d.placeId, locationNote: d.locationNote, occurredOn: d.occurredOn! },
   };
+}
+
+/** Where the item is held, the claim deadline, the public claim contact (all or nothing) and the progress shown on the register. */
+export function parseListingDetails(formData: FormData, locale: Locale): Parsed<ListingDetailChanges> {
+  const L = (key: AdminKey) => a(key, locale);
+  const filled = ["claimLabel.th", "claimLabel.en", "claimChannel", "claimValue", "claimHours.th", "claimHours.en"].some((n) => String(formData.get(n) ?? "").trim() !== "");
+  const k = fieldKit(locale, false);
+  const schema = z.object({
+    registerStatus: k.enumOf(L("lfFieldProgress"), LOST_FOUND_STATUSES),
+    heldAt: k.bilingual(L("lfFieldHeldAt"), { max: 300 }),
+    claimBy: k.date(L("lfFieldClaimBy")),
+    claimLabel: k.bilingual(L("blockContactLabel"), { required: filled, max: 100 }),
+    claimChannel: k.enumOf(L("blockContactChannel"), CLAIM_CHANNELS, { required: filled }),
+    claimValue: k.text(L("blockContactValue"), { required: filled, max: 300 }),
+    claimHours: k.bilingual(L("blockContactHours"), { max: 100 }),
+  });
+  const parsed = parseForm(schema, formDataToObject(formData));
+  if (!parsed.ok) return { ok: false, errors: parsed.errors };
+  const d = parsed.data;
+  if (d.claimChannel === "url") {
+    const url = parseForm(z.object({ v: k.url(L("blockContactValue")) }), { v: d.claimValue });
+    if (!url.ok) return { ok: false, errors: { claimValue: url.errors.v ?? L("lfErrClaimIncomplete") } };
+  }
+  const claimContact: HelpContactJson | null = filled
+    ? { label: d.claimLabel, channel: d.claimChannel!, value: d.claimValue, ...(d.claimHours.th || d.claimHours.en ? { hours: d.claimHours } : {}) }
+    : null;
+  return { ok: true, data: { registerStatus: d.registerStatus!, heldAt: d.heldAt, claimBy: d.claimBy, claimContact } };
 }
 
 /** The person's details for a walk-in lost report. */

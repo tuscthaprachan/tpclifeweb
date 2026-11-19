@@ -25,11 +25,11 @@ import type { Locale } from "@/lib/i18n/config";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
 import { createClaim, decideClaim, readClaimAnswer } from "@/lib/lost-found/claims";
 import { readVerificationDetail, saveStorageLocation, saveVerificationDetail } from "@/lib/lost-found/details";
-import { parseClaim, parseCollectionNote, parseContactFields, parseDescription, parseHandover, parseRejection, parseStorage, parseVerification, parseWalkIn } from "@/lib/lost-found/forms";
+import { parseClaim, parseCollectionNote, parseContactFields, parseDescription, parseHandover, parseListingDetails, parseRejection, parseStorage, parseVerification, parseWalkIn } from "@/lib/lost-found/forms";
 import { recordHandover } from "@/lib/lost-found/handover";
 import { logFoundItem, logWalkInLostReport, publishFoundItem, updateItemDescription } from "@/lib/lost-found/intake";
 import { markPossibleMatch } from "@/lib/lost-found/links";
-import { appendListingPhoto, contentActorOf, expireListing, getListingForCase, ListingIncompleteError, publishListingForCase } from "@/lib/lost-found/listing";
+import { appendListingPhoto, contentActorOf, expireListing, getListingForCase, ListingIncompleteError, publishListingForCase, removeListingPhoto, unpublishListingForCase, updateListingDetailsForCase } from "@/lib/lost-found/listing";
 import { notifyClaimant, notifyLostReporter, type NoticeKind } from "@/lib/lost-found/notify";
 import { addPrivatePhoto } from "@/lib/lost-found/photos";
 import { readIdentifyingDetail } from "@/lib/lost-found/identifying";
@@ -110,6 +110,42 @@ export async function publishListingAction(_prev: LfState, fd: FormData): Promis
     await db.transaction((tx) => publishListingForCase(tx, caseId, contentActorOf(actor), new Date()));
     await expireListing(db, caseId);
     return lfSaved("lfcSavedPublished");
+  });
+}
+
+/** Takes the listing off the public list; the case itself is untouched. */
+export async function unpublishListingAction(_prev: LfState, fd: FormData): Promise<LfState> {
+  return onCase(fd, async ({ caseId, actor }) => {
+    const db = getDb();
+    const done = await db.transaction((tx) => unpublishListingForCase(tx, caseId, contentActorOf(actor), new Date()));
+    if (!done) throw new CaseError("not_found", "This case has no listing.");
+    await expireListing(db, caseId);
+    return lfSaved("lfrSavedUnpublished");
+  });
+}
+
+/** Where the item is held, claim deadline, public claim contact and register progress. */
+export async function updateListingDetailsAction(_prev: LfState, fd: FormData): Promise<LfState> {
+  return onCase(fd, async ({ locale, caseId, actor }) => {
+    const parsed = parseListingDetails(fd, locale);
+    if (!parsed.ok) return lfInvalid(parsed.errors);
+    const db = getDb();
+    const done = await db.transaction((tx) => updateListingDetailsForCase(tx, caseId, parsed.data, contentActorOf(actor), new Date()));
+    if (!done) throw new CaseError("not_found", "This case has no listing.");
+    await expireListing(db, caseId);
+    return lfSaved("lfrSavedDetails");
+  });
+}
+
+/** Takes one picture off the public listing. */
+export async function removeListingPhotoAction(_prev: LfState, fd: FormData): Promise<LfState> {
+  return onCase(fd, async ({ caseId, actor }) => {
+    const imageId = text(fd, "imageId");
+    if (!isUuid(imageId)) throw new CaseError("not_found", "Photo not found.");
+    const db = getDb();
+    await db.transaction((tx) => removeListingPhoto(tx, caseId, imageId, contentActorOf(actor), new Date()));
+    await expireListing(db, caseId);
+    return lfSaved("lfrSavedPhotoRemoved");
   });
 }
 

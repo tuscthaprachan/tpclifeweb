@@ -1,10 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Archive, Camera, ClipboardList, Fingerprint, HandHelping, Link2, PackageCheck, Phone, ShieldCheck, UserRound } from "lucide-react";
 import { Heading, InsetText, StatusTag, SummaryList, Tag, Timestamp } from "@/components/ui";
 import { categoryLabel } from "@/components/domain/lostfound/categoryLabel";
 import { canEditContent } from "@/lib/admin/content/access";
 import { formatBangkokDateTime } from "@/lib/admin/content/datetime";
-import { isStorageConfigured } from "@/lib/admin/content/images";
+import { isStorageConfigured, listImageChoices, type ImageChoice } from "@/lib/admin/content/images";
 import { requireStaff } from "@/lib/auth/session";
 import { listContactSummaries } from "@/lib/cases/contacts";
 import { CASE_INBOX_ROLES } from "@/lib/cases/access";
@@ -14,14 +15,17 @@ import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { a, type AdminKey } from "@/lib/i18n/admin";
-import { pick, type Locale } from "@/lib/i18n/config";
+import { localePath, pick, type Locale } from "@/lib/i18n/config";
+import { UI } from "@/lib/i18n/strings";
+import { statusLabel as registerLabel } from "@/components/domain/lostfound/statusLabel";
+import { LOST_FOUND_STATUSES } from "@/lib/db/schema/content/enums";
 import { listClaims } from "@/lib/lost-found/claims";
 import { DEFAULT_REJECT_MESSAGE } from "@/lib/lost-found/claims";
 import { getCaseDetails } from "@/lib/lost-found/details";
 import { defaultHandoverDesk, getHandover } from "@/lib/lost-found/handover";
 import { hasIdentifyingDetail } from "@/lib/lost-found/identifying";
 import { linkedCases } from "@/lib/lost-found/links";
-import { getListingForCase, listingGaps, type ListingGap, type ListingView } from "@/lib/lost-found/listing";
+import { getListingForCase, listListingPhotos, listingGaps, type ListingGap, type ListingView } from "@/lib/lost-found/listing";
 import { describeMatch, rankMatches, type MatchCandidate } from "@/lib/lost-found/matching";
 import { publishWarnings } from "@/lib/lost-found/intake";
 import { listPrivatePhotos } from "@/lib/lost-found/photos";
@@ -40,6 +44,9 @@ import {
   MatchButton,
   PhotoUpload,
   PublishListingForm,
+  ListingDetailsForm,
+  RemovePhotoForm,
+  UnpublishListingForm,
   StorageForm,
   VerificationForm,
   VerificationReveal,
@@ -75,26 +82,43 @@ const GAP_KEY: Record<ListingGap, AdminKey> = {
 
 async function ListingSection({ caseId, locale, orgId, canEdit, found, status }: { caseId: string; locale: Locale; orgId: number; canEdit: boolean; found: boolean; status: string }) {
   const db = getDb();
-  const [listing, places] = await Promise.all([getListingForCase(db, caseId), placeOptions(db, locale)]);
+  const [listing, places, photoIds, choices] = await Promise.all([getListingForCase(db, caseId), placeOptions(db, locale), listListingPhotos(db, caseId), listImageChoices(db)]);
   if (!listing) return <p className="m-0 text-ink-600">{a("lfcListingNone", locale)}</p>;
   const gaps = listingGaps(listing);
   const published = listing.status === "published";
   const canPublish = gaps.length === 0 && !published;
   const foundNeedsIntake = found && status === "logged";
+  const photos = photoIds.map((id) => choices.find((c) => c.id === id)).filter((c): c is ImageChoice => Boolean(c));
+  const claim = listing.claimContact;
+  const publicHref = localePath(locale, `/lost-and-found/${listing.slug}`);
   return (
     <div className="flex flex-col gap-[var(--space-4)]">
+      <p className="m-0 text-ink-600">{a(published ? "lfrIntroPublished" : "lfrIntroDraft", locale)}</p>
       <SummaryList
         rows={[
           { key: a("lfcListingState", locale), value: <StatusTag tone={published ? "success" : "neutral"} label={a(published ? "statusPublished" : "statusDraft", locale)} /> },
+          ...(published && listing.publishedAt ? [{ key: a("lfrPublishedOn", locale), value: <Timestamp value={listing.publishedAt.toISOString()} locale={locale} format="datetime" /> }] : []),
           { key: a("fieldTitle", locale), value: <Bilingual th={listing.title.th} en={listing.title.en} locale={locale} /> },
           { key: a("lfFieldDescription", locale), value: <Bilingual th={listing.description.th} en={listing.description.en} locale={locale} /> },
           { key: a("fieldCategory", locale), value: categoryLabel(listing.category, locale) },
           { key: a("lfFieldOccurredOn", locale), value: listing.occurredOn },
           { key: a("lfFieldPlace", locale), value: places.find((p) => p.value === listing.placeId)?.label ?? a("caseNone", locale) },
           { key: a("lfFieldLocationNote", locale), value: <Bilingual th={listing.locationNote.th} en={listing.locationNote.en} locale={locale} /> },
+          { key: a("lfFieldHeldAt", locale), value: <Bilingual th={listing.heldAt.th} en={listing.heldAt.en} locale={locale} /> },
+          { key: a("lfFieldClaimBy", locale), value: listing.claimBy ?? a("caseNone", locale) },
+          { key: a("lfFieldClaimContact", locale), value: claim ? <Bilingual th={claim.label.th} en={claim.label.en} locale={locale} /> : a("caseNone", locale) },
           { key: a("lfFieldProgress", locale), value: a(`lfcRegister_${listing.registerStatus}` as AdminKey, locale) },
+          { key: a("lfFieldPhotos", locale), value: String(listing.photoCount) },
         ]}
       />
+      {published ? (
+        <p className="m-0">
+          <a href={publicHref} target="_blank" rel="noopener noreferrer">
+            {a("formViewOnSite", locale)}
+            <span className="visually-hidden"> ({UI.opensInNewTab[locale]})</span>
+          </a>
+        </p>
+      ) : null}
       {!published && gaps.length > 0 ? (
         <InsetText>
           <p className="m-0 font-medium">{a("lfcGapsIntro", locale)}</p>
@@ -106,6 +130,7 @@ async function ListingSection({ caseId, locale, orgId, canEdit, found, status }:
         </InsetText>
       ) : null}
       {canPublish && !foundNeedsIntake ? <PublishListingForm locale={locale} caseId={caseId} orgId={orgId} found={false} /> : null}
+      {published ? <UnpublishListingForm locale={locale} caseId={caseId} orgId={orgId} /> : null}
       <details className="rounded-panel border border-line">
         <summary className="cursor-pointer px-[var(--space-4)] py-[var(--space-3)] font-medium text-ink-900">{a("lfcListingEdit", locale)}</summary>
         <div className="border-t border-line p-[var(--space-4)]">
@@ -130,9 +155,50 @@ async function ListingSection({ caseId, locale, orgId, canEdit, found, status }:
           />
         </div>
       </details>
+      <details className="rounded-panel border border-line">
+        <summary className="cursor-pointer px-[var(--space-4)] py-[var(--space-3)] font-medium text-ink-900">{a("lfrDetailsEdit", locale)}</summary>
+        <div className="border-t border-line p-[var(--space-4)]">
+          <ListingDetailsForm
+            locale={locale}
+            caseId={caseId}
+            orgId={orgId}
+            statuses={LOST_FOUND_STATUSES.map((value) => ({ value, label: registerLabel(value, locale) }))}
+            defaults={{
+              registerStatus: listing.registerStatus,
+              heldAtTh: listing.heldAt.th,
+              heldAtEn: listing.heldAt.en,
+              claimBy: listing.claimBy ?? "",
+              claimLabelTh: claim?.label.th ?? "",
+              claimLabelEn: claim?.label.en ?? "",
+              claimChannel: claim?.channel ?? "",
+              claimValue: claim?.value ?? "",
+              claimHoursTh: claim?.hours?.th ?? "",
+              claimHoursEn: claim?.hours?.en ?? "",
+            }}
+          />
+        </div>
+      </details>
+      {photos.length > 0 ? (
+        <details className="rounded-panel border border-line">
+          <summary className="cursor-pointer px-[var(--space-4)] py-[var(--space-3)] font-medium text-ink-900">{a("lfrPhotosManage", locale)}</summary>
+          <ul className="m-0 flex list-none flex-wrap gap-[var(--space-4)] border-t border-line p-[var(--space-4)]">
+            {photos.map((photo, index) => {
+              const alt = pick({ th: photo.altTh, en: photo.altEn }, locale);
+              const name = alt || a("lfcPhotoAlt", locale, { n: index + 1 });
+              return (
+                <li key={photo.id} className="flex max-w-40 flex-col gap-[var(--space-2)]">
+                  {photo.url ? <Image src={photo.url} alt={alt} width={160} height={160} unoptimized className="size-40 rounded-control border border-line object-cover" /> : null}
+                  <span className="text-sm text-ink-600">{name}</span>
+                  <RemovePhotoForm locale={locale} caseId={caseId} orgId={orgId} imageId={photo.id} name={name} />
+                </li>
+              );
+            })}
+          </ul>
+        </details>
+      ) : null}
       {canEdit ? (
         <p className="m-0">
-          <Link href={`/admin/content/lost-and-found/${listing.id}`}>{a("lfcListingOpenEditor", locale)}</Link>
+          <Link href={`/admin/content/lost-and-found/${listing.id}/history`}>{a("lfrRevisions", locale)}</Link>
         </p>
       ) : null}
     </div>
@@ -241,7 +307,7 @@ async function LostPanel({ caseId, locale, orgId, canEdit, status }: PanelProps)
   const handoverTarget = links.find((l) => l.status === "confirmed") ?? links.find((l) => l.status === "possible");
   return (
     <>
-      <SectionCard id="lf-listing" icon={ClipboardList} title={a("lfcLostListingTitle", locale)}>
+      <SectionCard id="listing" icon={ClipboardList} title={a("lfcLostListingTitle", locale)}>
         <p className="m-0 text-ink-600">{a("lfcLostListingNote", locale)}</p>
         <ListingSection caseId={caseId} locale={locale} orgId={orgId} canEdit={canEdit} found={false} status={status} />
       </SectionCard>
@@ -303,7 +369,7 @@ async function FoundPanel({ caseId, locale, orgId, canEdit, status }: PanelProps
 
   return (
     <>
-      <SectionCard id="lf-listing" icon={ClipboardList} title={a("lfcFoundListingTitle", locale)}>
+      <SectionCard id="listing" icon={ClipboardList} title={a("lfcFoundListingTitle", locale)}>
         <ListingSection caseId={caseId} locale={locale} orgId={orgId} canEdit={canEdit} found status={status} />
         {status === "logged" ? (
           <div className="flex flex-col gap-[var(--space-3)]">
