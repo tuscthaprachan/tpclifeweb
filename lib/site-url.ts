@@ -1,4 +1,4 @@
-const PRODUCTION_SITE_URL = "https://tpclife.vercel.app";
+const PRODUCTION_SITE_URL = "https://trytpc.tuso.tu.ac.th";
 
 export const SITE_URL =
   process.env.VERCEL_ENV === "production"
