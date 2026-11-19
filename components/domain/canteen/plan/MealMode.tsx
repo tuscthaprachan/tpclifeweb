@@ -133,7 +133,7 @@ export function MealMode({
                 {combos.length > shown ? budget.mealsShown(locale, shown) : budget.mealsFound(locale, combos.length)}. {t(BUDGET.mealLimitNote, locale)}
               </p>
             </Stack>
-            <Button variant="secondary" href={eatHref(locale, "/eat/pick", filters, { mode: "meal", meal: amount, ...sameExtra })}>
+            <Button variant="secondary" href={eatHref(locale, "/eat/pick", filters, { mode: "meal", meal: amount, ...sameExtra })} rel="nofollow">
               {t(BUDGET.randomCombo, locale)}
             </Button>
           </div>

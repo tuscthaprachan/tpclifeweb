@@ -61,7 +61,7 @@ export function PickEmpty({ locale, data, filters, reason, now, meal }: PickEmpt
       </EmptyState>
       {shortfall?.raiseTo !== undefined ? (
         <p className="m-0">
-          <Link href={eatHref(locale, PICK_ROUTE, filters, { mode: "meal", meal: shortfall.raiseTo, ...(meal?.sameStall ? { same: 1 } : {}) })} className={linkClass}>
+          <Link href={eatHref(locale, PICK_ROUTE, filters, { mode: "meal", meal: shortfall.raiseTo, ...(meal?.sameStall ? { same: 1 } : {}) })} rel="nofollow" className={linkClass}>
             {budgetText.raiseTo(locale, shortfall.raiseTo)}
           </Link>
         </p>
@@ -80,7 +80,7 @@ export function PickEmpty({ locale, data, filters, reason, now, meal }: PickEmpt
       ) : null}
       <div className="flex flex-wrap gap-[var(--space-4)]">
         {countActiveValues(filters) > 0 ? (
-          <Link href={eatHref(locale, PICK_ROUTE, defaultFilters())} className={linkClass}>
+          <Link href={eatHref(locale, PICK_ROUTE, defaultFilters())} rel="nofollow" className={linkClass}>
             {PICK.startOver[locale]}
           </Link>
         ) : null}
