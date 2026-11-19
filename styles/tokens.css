@@ -51,6 +51,7 @@
   --brand-lilac: #c293e5; /* fill only, 2.44:1 on white */
   --brand-orange-deep: #843a01; /* 8.12:1 on white, 7.71:1 on --surface-alt, 7.12:1 on --surface-sunk */
   --brand-purple: #613f87; /* 8.17:1 on white, 7.76:1 on --surface-alt, 7.16:1 on --surface-sunk */
+  --logo-purple: #613f87;
 
   /* ---------------------------------------------------------------- *
    * Ink. Text colours, light theme. Near-neutral: very low chroma
@@ -307,6 +308,7 @@
     --brand-orange: #d98650; /* fill only, ink-on-fill 6.11:1 */
     --brand-coral: #d27058; /* fill only, ink-on-fill 5.07:1 */
     --brand-lilac: #b585d9; /* fill only, ink-on-fill 5.99:1 */
+    --logo-purple: #b585d9;
     --fill-transport: #d98650; /* ink-on-fill 6.11:1 */
     --fill-welfare: #d27058; /* ink-on-fill 5.07:1 */
     --fill-activity: #b585d9; /* ink-on-fill 5.99:1 */
@@ -388,6 +390,7 @@
     --brand-orange: #d98650;
     --brand-coral: #d27058;
     --brand-lilac: #b585d9;
+    --logo-purple: #b585d9;
     --fill-transport: #d98650;
     --fill-welfare: #d27058;
     --fill-activity: #b585d9;
