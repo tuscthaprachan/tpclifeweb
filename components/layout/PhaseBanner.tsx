@@ -8,22 +8,24 @@
  */
 
 import Link from "next/link";
-import { localePath, type Locale } from "@/lib/i18n/config";
+import { localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { ServicePhase } from "@/lib/content/types";
 import { ShellContainer } from "./ShellContainer";
 
-export function PhaseBanner({ locale, phase }: { locale: Locale; phase: ServicePhase }) {
+export function PhaseBanner({ locale, phase, note }: { locale: Locale; phase: ServicePhase; note?: LocaleString }) {
   if (phase === "live") return null;
 
   const tag = phase === "alpha" ? UI.phaseAlpha[locale] : UI.phaseBeta[locale];
+  const custom = pick(note, locale).trim();
+  const message = !custom ? UI.phaseNewService[locale] : locale === "en" && !/[.!?]$/.test(custom) ? `${custom}.` : custom;
 
   return (
     <aside aria-label={tag} className="border-b border-line">
       <ShellContainer className="flex items-center gap-2 py-1 text-sm">
         <strong className="shrink-0 rounded-pill bg-governance px-2 py-0.5 font-semibold uppercase text-ink-on-fill">{tag}</strong>
         <span className="text-ink-900">
-          {UI.phaseNewService[locale]}{" "}
+          {message}{" "}
           <Link href={localePath(locale, "/about")} className="inline-flex min-h-[var(--target-min)] items-center">
             {UI.phaseWhatThisMeans[locale]}
           </Link>

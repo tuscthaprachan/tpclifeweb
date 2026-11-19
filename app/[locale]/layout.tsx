@@ -113,7 +113,7 @@ export default async function RootLayout({
           <NavigationProgress />
         </Suspense>
 
-        <PhaseBanner locale={locale} phase={settings.phase} />
+        <PhaseBanner locale={locale} phase={settings.phase} note={settings.phaseNote} />
 
         <SiteHeader locale={locale} serviceName={settings.serviceName} navItems={settings.primaryNav} />
 
