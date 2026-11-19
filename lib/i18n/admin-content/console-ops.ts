@@ -3,8 +3,8 @@ import type { LocaleString } from "../config";
 /** Audit log, record history, dashboard activity, account sessions, keyboard shortcuts and system health. Keys start with `op`. */
 export const CONSOLE_OPS_STRINGS = {
   /* Navigation */
-  opNavAudit: { th: "บันทึกการดำเนินการ", en: "Audit log" },
-  opNavHealth: { th: "สถานะระบบ", en: "System health" },
+  opNavAudit: { th: "บันทึกกิจกรรม", en: "Activity log" },
+  opNavHealth: { th: "งานตามกำหนด", en: "Scheduled jobs" },
 
   /* Audit log page */
   opAuditTitle: { th: "บันทึกการดำเนินการ", en: "Audit log" },

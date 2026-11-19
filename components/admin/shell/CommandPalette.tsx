@@ -6,7 +6,7 @@ import { signOutAction, setAdminLocale } from "@/app/admin/actions";
 import { ConsoleIcon, type ConsoleIconName } from "@/components/admin/icons";
 import { lockScroll } from "@/components/admin/hooks/scroll-lock";
 import { applyThemeOnClient } from "@/components/layout/ThemeToggle";
-import type { ResolvedNav } from "@/lib/admin/nav-match";
+import type { ResolvedNav, ResolvedNavItem } from "@/lib/admin/nav-match";
 import type { GoShortcut } from "@/lib/admin/shortcuts";
 import { LOCALE_LABEL, OTHER_LOCALE, type Locale } from "@/lib/i18n/config";
 import { fill } from "./fill";
@@ -124,12 +124,22 @@ function PaletteDialog({ nav, labels, locale, shortcuts, onShowShortcuts, onClos
 
   const pages = useMemo<Entry[]>(() => {
     const hintFor = new Map(shortcuts.map((s) => [s.href, `g ${s.key}`]));
-    return nav.groups.flatMap((g) => g.items.map((i) => ({ id: i.id, title: i.label, subtitle: g.label, href: i.href, icon: i.icon, hint: hintFor.get(i.href) })));
+    const seen = new Set<string>();
+    const entry = (item: ResolvedNavItem, subtitle?: string): Entry => {
+      const hint = seen.has(item.href) ? undefined : hintFor.get(item.href);
+      seen.add(item.href);
+      return { id: item.id, title: item.label, subtitle, href: item.href, icon: item.icon, hint };
+    };
+    return nav.items.flatMap((item) => {
+      const sameAsChild = item.children.some((c) => c.href === item.href);
+      const children = item.children.map((c) => entry(c, item.label));
+      return sameAsChild ? children : [entry(item), ...children];
+    });
   }, [nav, shortcuts]);
   const actions = useMemo<Entry[]>(() => {
     const target = OTHER_LOCALE[locale];
     const out: Entry[] = [];
-    if (nav.groups.some((g) => g.items.some((i) => i.id === "cases"))) out.push({ id: "action-my-cases", title: labels.paletteMyCases, href: "/admin/cases?assignee=me&open=1", icon: "cases" });
+    if (nav.items.some((i) => i.children.some((c) => c.id === "inbox"))) out.push({ id: "action-my-cases", title: labels.paletteMyCases, href: "/admin/cases?assignee=me&open=1", icon: "cases" });
     out.push(
       {
         id: "action-theme",

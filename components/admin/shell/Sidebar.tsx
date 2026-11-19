@@ -2,27 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ConsoleIcon } from "@/components/admin/icons";
 import { lockScroll } from "@/components/admin/hooks/scroll-lock";
 import { SiteLogo } from "@/components/layout/SiteLogo";
-import { findActive, type ResolvedNavGroup } from "@/lib/admin/nav-match";
+import { findActive, type ResolvedNavItem } from "@/lib/admin/nav-match";
 import { useConsoleNav, useShell } from "./ShellContext";
-import { useStoredString } from "./useStoredString";
 
-const GROUPS_KEY = "trytpc:console:groups-closed";
 const DESKTOP = "(min-width: 64rem)";
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
-function parseClosed(raw: string | null): string[] {
-  if (!raw) return [];
-  try {
-    const value: unknown = JSON.parse(raw);
-    return Array.isArray(value) ? value.filter((v): v is string => typeof v === "string") : [];
-  } catch {
-    return [];
-  }
-}
 
 /**
  * Persistent navigation on desktop, an off-canvas drawer below 64rem. On
@@ -33,9 +21,7 @@ export function Sidebar() {
   const { nav, labels } = useConsoleNav();
   const { collapsed, toggleCollapsed, drawerOpen, closeDrawer, menuButtonRef } = useShell();
   const pathname = usePathname();
-  const active = findActive(nav.groups, pathname);
-  const [closedRaw, setClosedRaw] = useStoredString(GROUPS_KEY);
-  const closedGroups = parseClosed(closedRaw);
+  const currentId = findActive(nav.items, pathname)?.current?.id;
   const panel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -83,11 +69,6 @@ export function Sidebar() {
     };
   }, [drawerOpen, closeDrawer, menuButtonRef]);
 
-  function toggleGroup(id: string) {
-    const next = closedGroups.includes(id) ? closedGroups.filter((g) => g !== id) : [...closedGroups, id];
-    setClosedRaw(JSON.stringify(next));
-  }
-
   return (
     <div ref={panel} className="console-sidebar">
       <div className="console-sidebar-head">
@@ -104,16 +85,13 @@ export function Sidebar() {
       </div>
 
       <nav aria-label={labels.nav} className="console-nav">
-        {nav.groups.map((group) => (
-          <NavGroup
-            key={group.id}
-            group={group}
-            open={!closedGroups.includes(group.id)}
-            onToggle={() => toggleGroup(group.id)}
-            activeId={active?.item.id}
-            onNavigate={closeDrawer}
-          />
-        ))}
+        <ul className="m-0 list-none p-0">
+          {nav.items
+            .filter((item) => !item.hidden)
+            .map((item) => (
+              <NavEntry key={item.id} item={item} currentId={currentId} onNavigate={closeDrawer} />
+            ))}
+        </ul>
       </nav>
 
       <div className="console-sidebar-foot">
@@ -127,45 +105,29 @@ export function Sidebar() {
   );
 }
 
-function NavGroup({
-  group,
-  open,
-  onToggle,
-  activeId,
-  onNavigate,
-}: {
-  group: ResolvedNavGroup;
-  open: boolean;
-  onToggle: () => void;
-  activeId: string | undefined;
-  onNavigate: () => void;
-}) {
-  const listId = useId();
+function NavEntry({ item, currentId, onNavigate }: { item: ResolvedNavItem; currentId: string | undefined; onNavigate: () => void }) {
+  const children = item.children.filter((child) => !child.hidden);
   return (
-    <section className="console-group">
-      <h2 className="console-group-heading">
-        <button type="button" aria-expanded={open} aria-controls={listId} onClick={onToggle} className="console-group-button">
-          <span>{group.label}</span>
-          <ConsoleIcon name={open ? "chevronDown" : "chevronRight"} size={14} />
-        </button>
-      </h2>
-      <ul id={listId} hidden={!open} className="console-group-list">
-        {group.items.map((item) => (
-          <li key={item.id}>
-            <Link
-              href={item.href}
-              prefetch={false}
-              onClick={onNavigate}
-              aria-current={item.id === activeId ? "page" : undefined}
-              title={item.label}
-              className="console-nav-link"
-            >
-              <ConsoleIcon name={item.icon} />
-              <span className="console-label">{item.label}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <li>
+      <NavLink item={item} currentId={currentId} onNavigate={onNavigate} />
+      {children.length > 0 ? (
+        <ul className="ms-[var(--space-4)] list-none p-0 lg:[.console-frame[data-collapsed=true]_&]:ms-0">
+          {children.map((child) => (
+            <li key={child.id}>
+              <NavLink item={child} currentId={currentId} onNavigate={onNavigate} />
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </li>
+  );
+}
+
+function NavLink({ item, currentId, onNavigate }: { item: ResolvedNavItem; currentId: string | undefined; onNavigate: () => void }) {
+  return (
+    <Link href={item.href} prefetch={false} onClick={onNavigate} aria-current={item.id === currentId ? "page" : undefined} title={item.label} className="console-nav-link">
+      <ConsoleIcon name={item.icon} />
+      <span className="console-label">{item.label}</span>
+    </Link>
   );
 }

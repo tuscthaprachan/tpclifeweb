@@ -4,7 +4,8 @@ import { and, count, desc, eq, getTableColumns, inArray, isNull, sql } from "dri
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { alertWindow } from "@/lib/content/window";
 import { countContentTypes } from "@/lib/admin/content/list";
-import { CONTENT_TYPES, type ContentTypeDef } from "@/lib/admin/content/types";
+import { CONTENT_TYPES } from "@/lib/admin/content/types";
+import { isListedContentType } from "@/lib/admin/nav";
 import { accessibleServices } from "@/lib/cases/access";
 import { loanOverdueSql } from "@/lib/borrowing/overdue";
 import { addDays, dayKeyOf, dayStart } from "@/lib/borrowing/time";
@@ -17,7 +18,6 @@ import type { AuditExecutor } from "@/lib/db/audit";
 import { borrowingRequests } from "@/lib/db/schema/borrowing";
 import { cases, type CaseService } from "@/lib/db/schema/cases";
 import { complaintCases } from "@/lib/db/schema/complaints";
-import type { ContentStatus } from "@/lib/db/schema/content/enums";
 import { serviceAlerts } from "@/lib/db/schema";
 
 export interface CaseCounts {
@@ -62,7 +62,7 @@ export interface EditorCounts {
 }
 
 export async function loadEditorCounts(db: AuditExecutor, now = new Date()): Promise<EditorCounts> {
-  const counts = await countContentTypes(db, CONTENT_TYPES.filter((d) => d.available && d.columns.status));
+  const counts = await countContentTypes(db, CONTENT_TYPES.filter((d) => isListedContentType(d) && d.columns.status));
   let drafts = 0;
   let expired = 0;
   for (const c of counts.values()) {
@@ -76,46 +76,11 @@ export async function loadEditorCounts(db: AuditExecutor, now = new Date()): Pro
   return { drafts, expired, liveAlerts: alerts?.n ?? 0 };
 }
 
-export interface RecentItem {
-  key: string;
-  typeKey: string;
-  id: string;
-  title: { th: string; en: string };
-  status: ContentStatus | null;
-  updatedAt: Date;
-}
-
-/** The most recently updated rows across all collection types: the newest few of each, merged. */
-export async function loadRecentContent(db: AuditExecutor, limit = 8): Promise<RecentItem[]> {
-  const defs = CONTENT_TYPES.filter((d): d is ContentTypeDef & { columns: { title: [never, never] } } => d.available && d.kind === "collection" && d.columns.title !== null);
-  const perType = await Promise.all(
-    defs.map(async (def) => {
-      const { id, title, status, updatedAt } = def.columns;
-      const rows = await db
-        .select({ id, titleTh: title![0], titleEn: title![1], status: status ?? sql<null>`null`, updatedAt })
-        .from(def.table)
-        .where(def.where)
-        .orderBy(desc(updatedAt))
-        .limit(limit);
-      return rows.map(
-        (r): RecentItem => ({
-          key: `${def.key}:${r.id as string}`,
-          typeKey: def.key,
-          id: r.id as string,
-          title: { th: String(r.titleTh ?? ""), en: String(r.titleEn ?? "") },
-          status: (r.status as ContentStatus | null) ?? null,
-          updatedAt: new Date(r.updatedAt as Date),
-        }),
-      );
-    }),
-  );
-  return perType.flat().sort((x, y) => y.updatedAt.getTime() - x.updatedAt.getTime()).slice(0, limit);
-}
-
-
 export interface BorrowingCounts {
   /** Requests waiting for a decision. */
   pending: number;
+  /** Approved and due to be collected today (Bangkok time). */
+  collectToday: number;
   /** On loan and due back later today (Bangkok time). */
   dueToday: number;
   /** On loan and past the return time. */
@@ -123,17 +88,19 @@ export interface BorrowingCounts {
 }
 
 export async function loadBorrowingCounts(db: AuditExecutor, now = new Date()): Promise<BorrowingCounts> {
+  const today = dayStart(dayKeyOf(now));
   const tomorrow = dayStart(addDays(dayKeyOf(now), 1));
   const [row] = await db
     .select({
       pending: sql<number>`count(*) filter (where ${cases.status} = 'requested')::int`,
+      collectToday: sql<number>`count(*) filter (where ${cases.status} = 'approved' and ${borrowingRequests.collectAt} >= ${today} and ${borrowingRequests.collectAt} < ${tomorrow})::int`,
       dueToday: sql<number>`count(*) filter (where ${cases.status} = 'on_loan' and not ${loanOverdueSql(now)} and ${borrowingRequests.returnDueAt} < ${tomorrow})::int`,
       overdue: sql<number>`count(*) filter (where ${loanOverdueSql(now)})::int`,
     })
     .from(cases)
     .innerJoin(borrowingRequests, eq(borrowingRequests.caseId, cases.id))
     .where(eq(cases.service, "borrowing"));
-  return { pending: row?.pending ?? 0, dueToday: row?.dueToday ?? 0, overdue: row?.overdue ?? 0 };
+  return { pending: row?.pending ?? 0, collectToday: row?.collectToday ?? 0, dueToday: row?.dueToday ?? 0, overdue: row?.overdue ?? 0 };
 }
 
 export interface MyCases {
@@ -163,7 +130,7 @@ export interface MyDraft {
 
 /** Unpublished content whose last edit was by this person, newest first. */
 export async function loadMyDrafts(db: AuditExecutor, userId: string, limit = 5): Promise<MyDraft[]> {
-  const defs = CONTENT_TYPES.filter((d) => d.available && d.kind === "collection" && d.columns.title !== null && d.columns.status !== null);
+  const defs = CONTENT_TYPES.filter((d) => isListedContentType(d) && d.kind === "collection" && d.columns.title !== null && d.columns.status !== null);
   const perType = await Promise.all(
     defs.map(async (def) => {
       const updatedBy = (getTableColumns(def.table) as Record<string, AnyPgColumn>).updatedBy;

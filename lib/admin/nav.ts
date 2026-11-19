@@ -1,40 +1,38 @@
 /**
  * Single source of truth for the console's navigation. The sidebar, the
- * command palette, the breadcrumbs and the dashboard's quick actions all read
- * what `buildConsoleNav` returns, so a page is added to the console here and
- * nowhere else. Role gates mirror the pages' own `requireStaff` checks; they
- * only decide what is shown, never what is allowed.
+ * command palette, the breadcrumbs, the keyboard shortcuts and the Home page's
+ * Create menu all read what `buildConsoleNav` returns, so a page is added to
+ * the console here and nowhere else. Role gates mirror the pages' own
+ * `requireStaff` checks; they only decide what is shown, never what is allowed.
+ *
+ * The sidebar lists a few job-named entries (Home, Desk, Post, Website,
+ * Performance, Team). Website and Team hold many pages that are not listed in
+ * the sidebar but stay in the model as hidden children, so breadcrumbs and the
+ * palette still find them.
  */
 
 import type { ConsoleIconName } from "@/components/admin/icons";
 import { canEditContent } from "@/lib/admin/content/access";
 import { CONTENT_TYPES, contentPath, type ContentTypeDef } from "@/lib/admin/content/types";
-import { findActive, type ConsoleGroupId, type ResolvedNav } from "@/lib/admin/nav-match";
+import { findActive, type ResolvedNav } from "@/lib/admin/nav-match";
 import { canAccessService, canUseCaseInbox } from "@/lib/cases/access";
-import { hasAnyRole, hasRole, type ActiveRole } from "@/lib/auth/roles";
+import { hasRole, type ActiveRole } from "@/lib/auth/roles";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { canSeePerformance } from "@/lib/performance/access";
 
-export { findActive, pathMatches } from "@/lib/admin/nav-match";
-export type { ConsoleGroupId, ResolvedNav, ResolvedNavGroup, ResolvedNavItem, ResolvedQuickCreate } from "@/lib/admin/nav-match";
+export { findActive, flattenNav, pathMatches } from "@/lib/admin/nav-match";
+export type { ResolvedNav, ResolvedNavItem, ResolvedQuickCreate } from "@/lib/admin/nav-match";
 
 export interface ConsoleNavItem {
   id: string;
   href: string;
   labelKey: AdminKey;
   icon: ConsoleIconName;
-  /** The item is active on this path and anything beneath it. */
-  matchPrefix: string;
-  /** Active on the exact path only (the dashboard, which is the prefix of everything). */
+  match: string[];
   exact?: boolean;
-}
-
-export interface ConsoleNavGroup {
-  id: ConsoleGroupId;
-  labelKey: AdminKey;
-  icon: ConsoleIconName;
-  items: ConsoleNavItem[];
+  hidden?: boolean;
+  children?: ConsoleNavItem[];
 }
 
 /** An "Add ..." shortcut for a content collection. The label is `a("listAdd", locale, { item: a(itemKey, locale) })`. */
@@ -44,144 +42,188 @@ export interface ConsoleQuickCreate {
   labelKey: "listAdd";
   itemKey: AdminKey;
   icon: ConsoleIconName;
-  groupId: ConsoleGroupId;
+  groupKey: AdminKey;
 }
 
 export interface ConsoleNav {
-  groups: ConsoleNavGroup[];
+  items: ConsoleNavItem[];
   quickCreate: ConsoleQuickCreate[];
 }
 
-const GROUPS: readonly { id: ConsoleGroupId; labelKey: AdminKey; icon: ConsoleIconName }[] = [
-  { id: "work", labelKey: "csGroupWork", icon: "groupWork" },
-  { id: "announcements", labelKey: "csGroupAnnouncements", icon: "groupAnnouncements" },
-  { id: "information", labelKey: "csGroupInformation", icon: "groupInformation" },
-  { id: "directory", labelKey: "csGroupDirectory", icon: "groupDirectory" },
-  { id: "canteen", labelKey: "csGroupCanteen", icon: "groupCanteen" },
-  { id: "lostFound", labelKey: "csGroupLostFound", icon: "groupLostFound" },
-  { id: "borrowing", labelKey: "brNavGroup", icon: "groupBorrowing" },
-  { id: "media", labelKey: "csGroupMedia", icon: "groupMedia" },
-  { id: "settings", labelKey: "csGroupSettings", icon: "groupSettings" },
-];
+export type ContentSectionId = "announcements" | "information" | "directory" | "canteen" | "media" | "settings" | "lostFound";
 
-/** Which group and icon each content type gets, in display order within the group. */
-const CONTENT_PLACEMENT: Record<string, { group: ConsoleGroupId; icon: ConsoleIconName }> = {
-  serviceAlerts: { group: "announcements", icon: "alerts" },
-  news: { group: "announcements", icon: "news" },
-  events: { group: "announcements", icon: "events" },
-  guidePages: { group: "information", icon: "guides" },
-  welfarePages: { group: "information", icon: "welfare" },
-  policies: { group: "information", icon: "policies" },
-  faqs: { group: "information", icon: "faqs" },
-  openDataDocuments: { group: "information", icon: "policies" },
-  forms: { group: "information", icon: "forms" },
-  organisations: { group: "directory", icon: "organisations" },
-  faculties: { group: "directory", icon: "faculties" },
-  places: { group: "directory", icon: "places" },
-  shuttleRoutes: { group: "directory", icon: "shuttle" },
-  canteenStalls: { group: "canteen", icon: "stalls" },
-  canteenDishes: { group: "canteen", icon: "dishes" },
-  canonicalDishes: { group: "canteen", icon: "canonicalDishes" },
-  canteenSettings: { group: "canteen", icon: "canteenSettings" },
-  lostFound: { group: "lostFound", icon: "lostFound" },
-  images: { group: "media", icon: "images" },
-  todaySettings: { group: "settings", icon: "todaySettings" },
-  siteSettings: { group: "settings", icon: "siteSettings" },
+const SECTIONS: Record<ContentSectionId, { labelKey: AdminKey; icon: ConsoleIconName }> = {
+  announcements: { labelKey: "csGroupAnnouncements", icon: "groupAnnouncements" },
+  information: { labelKey: "csGroupInformation", icon: "groupInformation" },
+  directory: { labelKey: "csGroupDirectory", icon: "groupDirectory" },
+  canteen: { labelKey: "csGroupCanteen", icon: "groupCanteen" },
+  media: { labelKey: "csGroupMedia", icon: "groupMedia" },
+  settings: { labelKey: "csGroupSettings", icon: "groupSettings" },
+  lostFound: { labelKey: "csGroupLostFound", icon: "groupLostFound" },
 };
 
-/** Content types in the order the sidebar lists them inside a group. */
+/** Which section and icon each content type gets, in display order within the section. */
+const CONTENT_PLACEMENT: Record<string, { section: ContentSectionId; icon: ConsoleIconName }> = {
+  serviceAlerts: { section: "announcements", icon: "alerts" },
+  news: { section: "announcements", icon: "news" },
+  events: { section: "announcements", icon: "events" },
+  guidePages: { section: "information", icon: "guides" },
+  welfarePages: { section: "information", icon: "welfare" },
+  policies: { section: "information", icon: "policies" },
+  faqs: { section: "information", icon: "faqs" },
+  openDataDocuments: { section: "information", icon: "policies" },
+  forms: { section: "information", icon: "forms" },
+  organisations: { section: "directory", icon: "organisations" },
+  faculties: { section: "directory", icon: "faculties" },
+  places: { section: "directory", icon: "places" },
+  shuttleRoutes: { section: "directory", icon: "shuttle" },
+  canteenStalls: { section: "canteen", icon: "stalls" },
+  canteenDishes: { section: "canteen", icon: "dishes" },
+  canonicalDishes: { section: "canteen", icon: "canonicalDishes" },
+  canteenSettings: { section: "canteen", icon: "canteenSettings" },
+  lostFound: { section: "lostFound", icon: "lostFound" },
+  images: { section: "media", icon: "images" },
+  todaySettings: { section: "settings", icon: "todaySettings" },
+  siteSettings: { section: "settings", icon: "siteSettings" },
+};
+
+/** The content types under Post, in the order the sidebar and the Create menu list them. */
+export const POST_TYPE_KEYS: readonly string[] = ["serviceAlerts", "news", "events"];
+
+/** Content types that appear nowhere in the nav, hub, palette or Create menu. */
+const HIDDEN_TYPE_KEYS: readonly string[] = ["lostFound"];
+
 const CONTENT_ORDER = Object.keys(CONTENT_PLACEMENT);
 
-function contentItem(def: ContentTypeDef, icon: ConsoleIconName): ConsoleNavItem {
-  const href = contentPath(def);
-  return { id: `content-${def.key}`, href, labelKey: def.labelKey, icon, matchPrefix: href };
+/** True for a content type the console lists (available, and not one that is managed elsewhere). */
+export function isListedContentType(def: Pick<ContentTypeDef, "key" | "available">): boolean {
+  return def.available && !HIDDEN_TYPE_KEYS.includes(def.key) && def.key in CONTENT_PLACEMENT;
 }
 
-/** The navigation this staff member sees. Empty groups are dropped; the dashboard and Security are always present. */
-export function buildConsoleNav(roles: readonly ActiveRole[]): ConsoleNav {
-  const isAdmin = hasRole(roles, "admin");
-  const editor = canEditContent(roles);
-  const items = new Map<ConsoleGroupId, ConsoleNavItem[]>(GROUPS.map((g) => [g.id, []]));
-  const add = (group: ConsoleGroupId, item: ConsoleNavItem) => items.get(group)!.push(item);
+export interface ContentPlacement {
+  section: ContentSectionId;
+  sectionLabelKey: AdminKey;
+  sectionIcon: ConsoleIconName;
+  icon: ConsoleIconName;
+}
 
-  add("work", { id: "dashboard", href: "/admin", labelKey: "homeLink", icon: "dashboard", matchPrefix: "/admin", exact: true });
-  if (canUseCaseInbox(roles)) add("work", { id: "cases", href: "/admin/cases", labelKey: "casesLink", icon: "cases", matchPrefix: "/admin/cases" });
-  if (canSeePerformance(roles)) {
-    add("work", { id: "performance", href: "/admin/performance", labelKey: "pfLink", icon: "performance", matchPrefix: "/admin/performance" });
+const FALLBACK_PLACEMENT = { section: "information", icon: "info" } as const;
+
+/** The hub section and icon of a content type. */
+export function placementOf(key: string): ContentPlacement {
+  const place = CONTENT_PLACEMENT[key] ?? FALLBACK_PLACEMENT;
+  const section = SECTIONS[place.section];
+  return { section: place.section, sectionLabelKey: section.labelKey, sectionIcon: section.icon, icon: place.icon };
+}
+
+function contentItem(def: ContentTypeDef, hidden: boolean): ConsoleNavItem {
+  const href = contentPath(def);
+  return { id: `content-${def.key}`, href, labelKey: def.labelKey, icon: placementOf(def.key).icon, match: [href], hidden };
+}
+
+function listedTypes(): ContentTypeDef[] {
+  return CONTENT_TYPES.filter(isListedContentType).sort((x, y) => CONTENT_ORDER.indexOf(x.key) - CONTENT_ORDER.indexOf(y.key));
+}
+
+/** The navigation this staff member sees. Entries they have no role for are left out. */
+export function buildConsoleNav(roles: readonly ActiveRole[]): ConsoleNav {
+  const editor = canEditContent(roles);
+  const borrowing = canAccessService(roles, "borrowing");
+  const items: ConsoleNavItem[] = [{ id: "home", href: "/admin", labelKey: "homeLink", icon: "dashboard", match: ["/admin"], exact: true }];
+
+  if (canUseCaseInbox(roles)) {
+    const children: ConsoleNavItem[] = [{ id: "inbox", href: "/admin/cases", labelKey: "shNavInbox", icon: "cases", match: ["/admin/cases"], hidden: !borrowing }];
+    if (borrowing) children.push({ id: "loans", href: "/admin/borrowing", labelKey: "shNavLoans", icon: "borrowSchedule", match: ["/admin/borrowing"] });
+    items.push({ id: "desk", href: "/admin/cases", labelKey: "shNavDesk", icon: "groupWork", match: ["/admin/cases", "/admin/borrowing"], children });
   }
 
   const quickCreate: ConsoleQuickCreate[] = [];
   if (editor) {
-    const available = CONTENT_TYPES.filter((def) => def.available && CONTENT_PLACEMENT[def.key]);
-    available.sort((x, y) => CONTENT_ORDER.indexOf(x.key) - CONTENT_ORDER.indexOf(y.key));
-    for (const def of available) {
-      const place = CONTENT_PLACEMENT[def.key]!;
-      add(place.group, contentItem(def, place.icon));
-      if (def.kind === "collection") {
-        quickCreate.push({
-          id: `create-${def.key}`,
-          href: `${contentPath(def)}/new`,
-          labelKey: "listAdd",
-          itemKey: def.oneKey,
-          icon: "add",
-          groupId: place.group,
-        });
-      }
+    const types = listedTypes();
+    const post = POST_TYPE_KEYS.map((key) => types.find((d) => d.key === key)).filter((d): d is ContentTypeDef => d !== undefined);
+    const website = types.filter((d) => !POST_TYPE_KEYS.includes(d.key));
+    if (post.length > 0) {
+      const children = post.map((d) => contentItem(d, false));
+      items.push({ id: "post", href: children[0]!.href, labelKey: "shNavPost", icon: "groupAnnouncements", match: children.map((c) => c.href), children });
     }
-  }
-
-  if (canAccessService(roles, "borrowing")) {
-    add("borrowing", { id: "borrowing-schedule", href: "/admin/borrowing", labelKey: "brNavSchedule", icon: "borrowSchedule", matchPrefix: "/admin/borrowing", exact: true });
-    add("borrowing", { id: "borrowing-calendar", href: "/admin/borrowing/calendar", labelKey: "brNavCalendar", icon: "borrowCalendar", matchPrefix: "/admin/borrowing/calendar" });
-    if (hasAnyRole(roles, ["officer", "admin"])) {
-      add("borrowing", { id: "borrowing-items", href: "/admin/borrowing/items", labelKey: "brNavInventory", icon: "borrowInventory", matchPrefix: "/admin/borrowing/items" });
-    }
-  }
-
-  if (editor) {
-    add("settings", { id: "redirects", href: "/admin/settings/redirects", labelKey: "rdLink", icon: "redirects", matchPrefix: "/admin/settings/redirects" });
-  }
-
-  if (isAdmin) {
-    add("settings", {
-      id: "complaint-categories",
-      href: "/admin/complaints/categories",
-      labelKey: "cpcatLink",
-      icon: "complaintCategories",
-      matchPrefix: "/admin/complaints/categories",
+    items.push({
+      id: "website",
+      href: "/admin/content",
+      labelKey: "shNavWebsite",
+      icon: "guides",
+      match: ["/admin/content", "/admin/settings/redirects"],
+      children: [
+        ...website.map((d) => contentItem(d, true)),
+        { id: "redirects", href: "/admin/settings/redirects", labelKey: "rdLink", icon: "redirects", match: ["/admin/settings/redirects"], hidden: true },
+      ],
     });
-    add("settings", { id: "staff", href: "/admin/staff", labelKey: "csNavStaff", icon: "staff", matchPrefix: "/admin/staff" });
-    add("settings", { id: "audit", href: "/admin/audit", labelKey: "opNavAudit", icon: "audit", matchPrefix: "/admin/audit" });
-    add("settings", { id: "health", href: "/admin/health", labelKey: "opNavHealth", icon: "health", matchPrefix: "/admin/health" });
+    for (const def of [...post, ...website]) {
+      if (def.kind !== "collection") continue;
+      quickCreate.push({
+        id: `create-${def.key}`,
+        href: `${contentPath(def)}/new`,
+        labelKey: "listAdd",
+        itemKey: def.oneKey,
+        icon: "add",
+        groupKey: POST_TYPE_KEYS.includes(def.key) ? "shNavPost" : "shNavWebsite",
+      });
+    }
   }
-  add("settings", { id: "security", href: "/admin/security", labelKey: "csNavSecurity", icon: "security", matchPrefix: "/admin/security" });
 
-  const groups = GROUPS.map((g) => ({ ...g, items: items.get(g.id)! })).filter((g) => g.items.length > 0);
-  return { groups, quickCreate };
+  if (canSeePerformance(roles)) items.push({ id: "performance", href: "/admin/performance", labelKey: "pfLink", icon: "performance", match: ["/admin/performance"] });
+
+  if (hasRole(roles, "admin")) {
+    items.push({
+      id: "team",
+      href: "/admin/team",
+      labelKey: "shNavTeam",
+      icon: "staff",
+      match: ["/admin/team", "/admin/staff", "/admin/complaints/categories", "/admin/audit", "/admin/health"],
+      children: [
+        { id: "staff", href: "/admin/staff", labelKey: "csNavStaff", icon: "staff", match: ["/admin/staff"], hidden: true },
+        { id: "complaint-categories", href: "/admin/complaints/categories", labelKey: "cpcatLink", icon: "complaintCategories", match: ["/admin/complaints/categories"], hidden: true },
+        { id: "audit", href: "/admin/audit", labelKey: "opNavAudit", icon: "audit", match: ["/admin/audit"], hidden: true },
+        { id: "health", href: "/admin/health", labelKey: "opNavHealth", icon: "health", match: ["/admin/health"], hidden: true },
+      ],
+    });
+  }
+
+  items.push(
+    { id: "notifications", href: "/admin/notifications", labelKey: "ntTitle", icon: "notifications", match: ["/admin/notifications"], hidden: true },
+    { id: "security", href: "/admin/security", labelKey: "csNavSecurity", icon: "security", match: ["/admin/security"], hidden: true },
+  );
+
+  return { items, quickCreate };
+}
+
+function resolveItem(item: ConsoleNavItem, locale: Locale): ResolvedNav["items"][number] {
+  return {
+    id: item.id,
+    href: item.href,
+    label: a(item.labelKey, locale),
+    icon: item.icon,
+    match: item.match,
+    exact: item.exact,
+    hidden: item.hidden,
+    children: (item.children ?? []).map((child) => resolveItem(child, locale)),
+  };
 }
 
 /** Labels in the staff member's language, as plain data for client components. */
 export function resolveNav(nav: ConsoleNav, locale: Locale): ResolvedNav {
-  const groupLabel = new Map(nav.groups.map((g) => [g.id, a(g.labelKey, locale)]));
   return {
-    groups: nav.groups.map((g) => ({
-      id: g.id,
-      label: a(g.labelKey, locale),
-      icon: g.icon,
-      items: g.items.map((i) => ({ id: i.id, href: i.href, label: a(i.labelKey, locale), icon: i.icon, matchPrefix: i.matchPrefix, exact: i.exact })),
-    })),
+    items: nav.items.map((item) => resolveItem(item, locale)),
     quickCreate: nav.quickCreate.map((q) => ({
       id: q.id,
       href: q.href,
       label: a(q.labelKey, locale, { item: a(q.itemKey, locale) }),
       icon: q.icon,
-      groupId: q.groupId,
-      groupLabel: groupLabel.get(q.groupId) ?? "",
+      groupLabel: a(q.groupKey, locale),
     })),
   };
 }
 
-/** The nav item and group for a pathname (longest prefix), for breadcrumbs and titles. */
+/** The nav item (and its parent) for a pathname, for breadcrumbs and titles. */
 export function findActiveNav(nav: ConsoleNav, pathname: string) {
-  return findActive(nav.groups, pathname);
+  return findActive(nav.items, pathname);
 }

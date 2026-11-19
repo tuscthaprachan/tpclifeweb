@@ -68,9 +68,61 @@ describe("dashboard activity feed visibility", () => {
     expect(describeAction({ action: "news_posts.publish", entityType: "news_posts" }, "en", { actor: "Ann", entity: "" }).text).toBe("Ann published a news post");
     expect(describeAction({ action: "case.assign", entityType: "case" }, "en", { actor: "Ann", entity: "LF-2026-0001" }).text).toBe("Ann assigned case LF-2026-0001");
     const unknown = describeAction({ action: "brand.new_thing", entityType: "x" }, "th", { actor: "Ann", entity: "" });
-    expect(unknown).toMatchObject({ text: "Ann: brand.new_thing", known: false });
+    expect(unknown).toMatchObject({ text: "Ann ทำการเปลี่ยนแปลง", known: false });
+    expect(unknown.text).not.toContain("brand.new_thing");
     expect(entityHref("case", "abc")).toBe("/admin/cases/abc");
     expect(entityHref("cron", "retention")).toBeNull();
+  });
+});
+
+describe("dashboard activity, own sign-in events", () => {
+  it("leaves out the viewer's own sign-in, session and passkey events but keeps other people's", async () => {
+    await recordAudit(t.db, { action: "auth.sign_in", entityType: "user", entityId: t.admin.userId, actorUserId: t.admin.userId });
+    await recordAudit(t.db, { action: "auth.session_revoke", entityType: "user", entityId: t.admin.userId, actorUserId: t.admin.userId });
+    await recordAudit(t.db, { action: "auth.passkey.register", entityType: "user", entityId: t.admin.userId, actorUserId: t.admin.userId });
+    await recordAudit(t.db, { action: "auth.sign_in", entityType: "user", entityId: t.handler.userId, actorUserId: t.handler.userId });
+    await recordAudit(t.db, { action: "cron.run", entityType: "cron", entityId: "retention" });
+    const mine = await loadRecentActivity(t.db, { userId: t.admin.userId, roles: roles("admin"), limit: 50 });
+    expect(mine.filter((f) => f.action.startsWith("auth.") && f.actorUserId === t.admin.userId)).toEqual([]);
+    expect(mine.some((f) => f.action === "auth.sign_in" && f.actorUserId === t.handler.userId)).toBe(true);
+    expect(mine.some((f) => f.action === "cron.run" && f.actorUserId === null)).toBe(true);
+  });
+});
+
+describe("audit sentences", () => {
+  const ACTIONS = [
+    "account.update_name", "audit.export", "auth.passkey.register", "auth.passkey.remove", "auth.passkey.rename", "auth.session_revoke", "auth.session_revoke_others",
+    "auth.sign_in", "auth.sign_in.failed", "auth.sign_out", "borrowing.approve", "borrowing.cancel_by_staff", "borrowing.category_update", "borrowing.create",
+    "borrowing.decline", "borrowing.handover", "borrowing.item_create", "borrowing.item_update", "borrowing.not_collected", "borrowing.return", "borrowing.settle",
+    "borrowing.view_details", "case.assign", "case.create", "case.export", "case.note", "case.pii_purge", "case.public_update", "case.transition", "case_contact.add",
+    "case_contact.view", "case_link.issue", "case_link.revoke", "case_view.create", "case_view.delete", "case_view.update", "complaint.auto_close", "complaint.create",
+    "complaint.escalate", "complaint.recategorise", "complaint.redirect", "complaint.reopen", "complaint.resolve", "complaint.survey", "complaint.view_details",
+    "complaint.view_evidence", "complaint.wellbeing_route", "complaint_category.create", "complaint_category.update", "complaint_category_access.grant",
+    "complaint_category_access.revoke", "content.export", "cron.fail", "cron.run", "images.create", "images.delete", "images.replace", "images.update",
+    "lost_found.claim_create", "lost_found.claim_decide", "lost_found.claim_view", "lost_found.handover", "lost_found.identifying_view", "lost_found.match_link",
+    "lost_found.photo_add", "lost_found.storage_set", "lost_found.verification_set", "lost_found.verification_view", "lost_found_claim.create", "lost_found_item.report",
+    "lost_found_items.private_update", "open_data_budget_lines.import", "open_data_funds.import", "redirect.create", "redirect.delete", "redirect.update",
+    "staff_account.create", "staff_invite.accept", "staff_invite.create", "staff_invite.revoke", "staff_invite.supersede", "staff_member.suspend", "staff_member.update",
+    "staff_membership.add", "staff_recovery.issue", "staff_recovery.supersede", "staff_recovery.use", "staff_role.grant", "staff_role.revoke",
+  ];
+
+  it("has a written sentence in both languages for every action the console records", () => {
+    for (const action of ACTIONS) {
+      for (const locale of ["en", "th"] as const) {
+        const described = describeAction({ action, entityType: action.split(".")[0]! }, locale, { actor: "Ann", entity: "REF-1" });
+        expect(described.known, action).toBe(true);
+        expect(described.text, action).not.toContain(action);
+        expect(described.text, action).not.toMatch(/\{\w+\}/);
+      }
+    }
+  });
+
+  it("describes every content verb for a content table", () => {
+    for (const verb of ["create", "update", "publish", "unpublish", "delete", "restore", "duplicate", "scheduled_live", "scheduled_down", "slug_redirect"]) {
+      const described = describeAction({ action: `news_posts.${verb}`, entityType: "news_posts" }, "en", { actor: "Ann", entity: "" });
+      expect(described.known, verb).toBe(true);
+      expect(described.text).not.toContain("_");
+    }
   });
 });
 

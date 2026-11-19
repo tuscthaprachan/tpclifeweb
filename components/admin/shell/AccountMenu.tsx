@@ -11,7 +11,7 @@ export interface AccountMenuProps {
   email: string;
   /** One line per role, already in the staff member's language. */
   roles: string[];
-  labels: { accountMenu: string; signedInAs: string; roles: string; accountDetails: string; accountSecurity: string; signOut: string; shortcutsMenu: string; shortcutsGoTo: string; shortcutsThen: string };
+  labels: { accountMenu: string; signedInAs: string; roles: string; accountDetails: string; accountNotifications: string; accountSecurity: string; signOut: string; shortcutsMenu: string; shortcutsGoTo: string; shortcutsThen: string };
   shortcuts: GoShortcut[];
   onShowShortcuts: () => void;
 }
@@ -61,6 +61,12 @@ export function AccountMenu({ name, email, roles, labels, shortcuts, onShowShort
           <Link href="/admin/account" className="console-menu-item">
             <ConsoleIcon name="account" />
             <span>{labels.accountDetails}</span>
+          </Link>
+        </li>
+        <li>
+          <Link href="/admin/notifications" className="console-menu-item">
+            <ConsoleIcon name="notifications" />
+            <span>{labels.accountNotifications}</span>
           </Link>
         </li>
         <li>

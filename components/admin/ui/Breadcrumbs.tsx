@@ -42,21 +42,22 @@ export function Breadcrumbs({ items, label }: { items: Crumb[]; label: string })
 
 /**
  * Breadcrumbs built from the console navigation and the current path: the
- * group, the nav item (a link once you are deeper than it), then the page
- * title when it is plain text. Renders nothing on the dashboard or a path the
- * nav does not list.
+ * entry that holds the page (Post, Website, Team), the page's own item (a link
+ * once you are deeper than it), then the page title when it is plain text.
+ * Renders nothing on Home or a path the nav does not list.
  */
 export function AutoBreadcrumbs({ title }: { title?: string }) {
   const pathname = usePathname();
   const ctx = useOptionalConsoleNav();
   if (!ctx) return null;
-  const active = findActive(ctx.nav.groups, pathname);
-  if (!active || active.item.id === "dashboard") return null;
+  const active = findActive(ctx.nav.items, pathname);
+  if (!active || active.item.id === "home") return null;
 
-  const deeper = pathname.replace(/\/$/, "") !== active.item.href;
+  const { item, parent } = active;
+  const deeper = pathname.replace(/\/$/, "") !== item.href;
   const items: Crumb[] = [];
-  if (active.group.id !== "work") items.push({ label: active.group.label });
-  items.push({ label: active.item.label, href: deeper ? active.item.href : undefined });
+  if (parent) items.push({ label: parent.label, href: parent.href === item.href ? undefined : parent.href });
+  items.push({ label: item.label, href: deeper ? item.href : undefined });
   if (deeper && title) items.push({ label: title });
   return <Breadcrumbs items={items} label={ctx.labels.breadcrumbs} />;
 }

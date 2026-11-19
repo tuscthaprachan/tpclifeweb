@@ -28,7 +28,7 @@ export interface ConsoleShellProps {
 export async function ConsoleShell({ locale, session, theme, searchEndpoint, children }: ConsoleShellProps) {
   const nav = resolveNav(buildConsoleNav(session.roles), locale);
   const labels = shellLabels(locale);
-  const shortcuts = deriveShortcuts(nav, { content: labels.shortcutsContent });
+  const shortcuts = deriveShortcuts(nav);
   const orgNames = session.organisations.map((o) => pick({ th: o.nameTh, en: o.nameEn }, locale)).join(", ");
   const unread = await countUnread(getDb(), session.user.id);
   const bell = { unread, label: unread > 0 ? a("ntBellUnread", locale, { count: unread }) : a("ntBellLabel", locale) };

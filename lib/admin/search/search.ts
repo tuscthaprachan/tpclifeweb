@@ -4,7 +4,7 @@ import type { ConsoleIconName } from "@/components/admin/icons";
 import { canEditContent } from "@/lib/admin/content/access";
 import { listContentRows } from "@/lib/admin/content/list";
 import { CONTENT_TYPES, contentPath } from "@/lib/admin/content/types";
-import { buildConsoleNav } from "@/lib/admin/nav";
+import { buildConsoleNav, flattenNav, isListedContentType } from "@/lib/admin/nav";
 import type { ActiveRole } from "@/lib/auth/roles";
 import { canUseCaseInbox } from "@/lib/cases/access";
 import { listCases } from "@/lib/cases/engine";
@@ -51,8 +51,8 @@ export async function searchConsole(
 }
 
 async function contentResults(db: AuditExecutor, roles: readonly ActiveRole[], q: string, locale: Locale): Promise<SearchResult[]> {
-  const iconOf = new Map(buildConsoleNav(roles).groups.flatMap((g) => g.items.map((i) => [i.id, i.icon] as const)));
-  const defs = CONTENT_TYPES.filter((d) => d.available && d.kind === "collection" && d.columns.title);
+  const iconOf = new Map(flattenNav(buildConsoleNav(roles).items).map(({ item }) => [item.id, item.icon] as const));
+  const defs = CONTENT_TYPES.filter((d) => isListedContentType(d) && d.kind === "collection" && d.columns.title);
   const perType = await Promise.all(
     defs.map(async (def) => {
       const { rows } = await listContentRows(db, def, { q, limit: PER_TYPE });

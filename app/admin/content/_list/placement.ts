@@ -1,38 +1,21 @@
 import "server-only";
 
 import type { ConsoleIconName } from "@/components/admin/icons";
-import { buildConsoleNav, type ConsoleGroupId } from "@/lib/admin/nav";
+import { placementOf, type ContentSectionId } from "@/lib/admin/nav";
 import { getContentType, type ContentTypeDef } from "@/lib/admin/content/types";
 import type { AdminKey } from "@/lib/i18n/admin";
 
 export interface ContentPlacement {
-  group: ConsoleGroupId;
+  group: ContentSectionId;
   groupLabelKey: AdminKey;
   groupIcon: ConsoleIconName;
   icon: ConsoleIconName;
 }
 
-let cache: Map<string, ContentPlacement> | undefined;
-
-/** Where each content type sits in the sidebar (group and icon), read from the nav so the hub, lists and edit pages always agree with it. */
-function placements(): Map<string, ContentPlacement> {
-  if (cache) return cache;
-  const nav = buildConsoleNav([{ role: "admin" }]);
-  const map = new Map<string, ContentPlacement>();
-  for (const group of nav.groups) {
-    for (const item of group.items) {
-      if (!item.id.startsWith("content-")) continue;
-      map.set(item.id.slice("content-".length), { group: group.id, groupLabelKey: group.labelKey, groupIcon: group.icon, icon: item.icon });
-    }
-  }
-  cache = map;
-  return map;
-}
-
-const FALLBACK: ContentPlacement = { group: "information", groupLabelKey: "csGroupInformation", groupIcon: "groupInformation", icon: "info" };
-
+/** Which website hub section a content type sits in and its icon, from the nav's table so the hub, lists and edit pages always agree. */
 export function contentPlacement(def: Pick<ContentTypeDef, "key">): ContentPlacement {
-  return placements().get(def.key) ?? FALLBACK;
+  const place = placementOf(def.key);
+  return { group: place.section, groupLabelKey: place.sectionLabelKey, groupIcon: place.sectionIcon, icon: place.icon };
 }
 
 export function contentTypeBySegment(segment: string): ContentTypeDef {

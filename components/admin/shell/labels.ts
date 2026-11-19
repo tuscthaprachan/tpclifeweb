@@ -31,6 +31,7 @@ export interface ShellLabels {
   roles: string;
   accountDetails: string;
   accountSecurity: string;
+  accountNotifications: string;
   signOut: string;
   display: string;
   theme: string;
@@ -52,7 +53,6 @@ export interface ShellLabels {
   shortcutsOpenHelp: string;
   shortcutsClose: string;
   shortcutsPending: string;
-  shortcutsContent: string;
   shortcutsMenu: string;
 }
 
@@ -85,6 +85,7 @@ export function shellLabels(locale: Locale): ShellLabels {
     roles: a("csRolesHeading", locale),
     accountDetails: a("chAccountTitle", locale),
     accountSecurity: a("csAccountSecurity", locale),
+    accountNotifications: a("ntTitle", locale),
     signOut: a("signOut", locale),
     display: a("csSettingsMenu", locale),
     theme: UI.theme[locale],
@@ -106,7 +107,6 @@ export function shellLabels(locale: Locale): ShellLabels {
     shortcutsOpenHelp: a("opShortcutsOpenHelp", locale),
     shortcutsClose: a("opShortcutsClose", locale),
     shortcutsPending: a("opShortcutsPending", locale),
-    shortcutsContent: a("opShortcutsContent", locale),
     shortcutsMenu: a("opShortcutsMenu", locale),
   };
 }

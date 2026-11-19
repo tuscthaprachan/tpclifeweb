@@ -1,7 +1,8 @@
 /**
  * Turns an audit entry into a sentence a staff member can read, with an icon
- * and (where the record has a console page) a link. An action with no sentence
- * falls back to its own name, so a new action is shown rather than hidden.
+ * and (where the record has a console page) a link. Every action the console
+ * records has a sentence; one that is added without one reads "made a change"
+ * and is flagged `known: false` so the audit page can still show its code.
  * Content edits are recognised by the table name `saveContent` records.
  */
 
@@ -71,6 +72,38 @@ const SENTENCES: Record<string, ActionSentence> = {
   "audit.export": { key: "opActAuditExport", icon: "audit" },
   "cron.run": { key: "opActCronRun", icon: "health" },
   "cron.fail": { key: "opActCronFail", icon: "health" },
+  "auth.sign_in.failed": { key: "shActSignInFailed", icon: "security" },
+  "auth.passkey.rename": { key: "shActPasskeyRename", icon: "security" },
+  "borrowing.view_details": { key: "shActBorrowView", icon: "borrowSchedule" },
+  "borrowing.category_update": { key: "shActBorrowCategory", icon: "borrowInventory" },
+  "complaint.view_evidence": { key: "shActComplaintEvidence", icon: "cases" },
+  "complaint.wellbeing_route": { key: "shActComplaintWellbeing", icon: "cases" },
+  "complaint_category.create": { key: "shActCategoryCreate", icon: "complaintCategories" },
+  "complaint_category.update": { key: "shActCategoryUpdate", icon: "complaintCategories" },
+  "complaint_category_access.grant": { key: "shActCategoryGrant", icon: "complaintCategories" },
+  "complaint_category_access.revoke": { key: "shActCategoryRevoke", icon: "complaintCategories" },
+  "content.export": { key: "shActContentExport", icon: "download" },
+  "images.replace": { key: "shActImageReplace", icon: "images" },
+  "lost_found.claim_create": { key: "shActClaimCreate", icon: "lostFound" },
+  "lost_found_claim.create": { key: "shActClaimPublic", icon: "lostFound" },
+  "lost_found.claim_view": { key: "shActClaimView", icon: "lostFound" },
+  "lost_found.identifying_view": { key: "shActIdentifyingView", icon: "lostFound" },
+  "lost_found.photo_add": { key: "shActPhotoAdd", icon: "lostFound" },
+  "lost_found.storage_set": { key: "shActStorageSet", icon: "lostFound" },
+  "lost_found.verification_set": { key: "shActVerificationSet", icon: "lostFound" },
+  "lost_found.verification_view": { key: "shActVerificationView", icon: "lostFound" },
+  "lost_found_items.private_update": { key: "shActPrivateUpdate", icon: "lostFound" },
+  "open_data_budget_lines.import": { key: "shActImportBudget", icon: "upload" },
+  "open_data_funds.import": { key: "shActImportFunds", icon: "upload" },
+  "redirect.create": { key: "shActRedirectCreate", icon: "redirects" },
+  "redirect.update": { key: "shActRedirectUpdate", icon: "redirects" },
+  "redirect.delete": { key: "shActRedirectDelete", icon: "redirects" },
+  "staff_account.create": { key: "shActStaffAccount", icon: "staff" },
+  "staff_invite.revoke": { key: "shActInviteRevoke", icon: "staff" },
+  "staff_invite.supersede": { key: "shActInviteSupersede", icon: "staff" },
+  "staff_membership.add": { key: "shActMembershipAdd", icon: "staff" },
+  "staff_recovery.supersede": { key: "shActRecoverySupersede", icon: "security" },
+  "staff_recovery.use": { key: "shActRecoveryUse", icon: "security" },
 };
 
 const CONTENT_VERBS: Record<string, ActionSentence> = {
@@ -79,6 +112,11 @@ const CONTENT_VERBS: Record<string, ActionSentence> = {
   publish: { key: "opActContentPublish", icon: "publish" },
   unpublish: { key: "opActContentUnpublish", icon: "draft" },
   delete: { key: "opActContentDelete", icon: "delete" },
+  restore: { key: "shActContentRestore", icon: "edit" },
+  duplicate: { key: "shActContentDuplicate", icon: "add" },
+  scheduled_live: { key: "shActContentLive", icon: "publish" },
+  scheduled_down: { key: "shActContentDown", icon: "draft" },
+  slug_redirect: { key: "shActContentSlug", icon: "redirects" },
 };
 
 const byTable = new Map<string, ContentTypeDef[]>();
@@ -97,7 +135,7 @@ function contentOf(entityType: string): ContentTypeDef[] | undefined {
 export interface DescribedAction {
   text: string;
   icon: ConsoleIconName;
-  /** True when a written sentence exists; false when the action name is shown as it is. */
+  /** True when a written sentence exists; false for the generic "made a change" sentence. */
   known: boolean;
 }
 
@@ -117,7 +155,7 @@ export function describeAction(entry: { action: string; entityType: string }, lo
     const s = CONTENT_VERBS[entry.action.slice("images.".length)]!;
     return { text: a(s.key, locale, { actor: vars.actor, what: a("opContentImage", locale) }), icon: s.icon, known: true };
   }
-  return { text: a("opActFallback", locale, { actor: vars.actor, action: entry.action }), icon: "info", known: false };
+  return { text: a("shActFallback", locale, { actor: vars.actor }), icon: "info", known: false };
 }
 
 /** The console page for a record, or null when it has none. */

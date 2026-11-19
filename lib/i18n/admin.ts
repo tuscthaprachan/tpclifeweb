@@ -45,7 +45,7 @@ export const A = {
   consoleName: { th: "คอนโซลเจ้าหน้าที่", en: "Staff console" },
   signOut: { th: "ออกจากระบบ", en: "Sign out" },
   staffLink: { th: "จัดการเจ้าหน้าที่", en: "Manage staff" },
-  homeLink: { th: "หน้าหลัก", en: "Dashboard" },
+  homeLink: { th: "หน้าหลัก", en: "Home" },
   consoleNav: { th: "เมนูคอนโซลเจ้าหน้าที่", en: "Staff console menu" },
   notIndexedNote: { th: "สำหรับเจ้าหน้าที่ที่ได้รับเชิญเท่านั้น", en: "For invited staff only" },
   notConfiguredTitle: { th: "ยังไม่ได้ตั้งค่าการเข้าสู่ระบบ", en: "Sign-in is not set up" },
@@ -409,10 +409,10 @@ export const A = {
 
   /* Content: navigation and hub */
   contentLink: { th: "เนื้อหา", en: "Content" },
-  contentHubTitle: { th: "เนื้อหาเว็บไซต์", en: "Website content" },
+  contentHubTitle: { th: "เว็บไซต์", en: "Website" },
   contentHubIntro: {
-    th: "แก้ไขข่าว กิจกรรม หน้าแนะนำ และข้อมูลอื่นที่แสดงบนเว็บไซต์ การเปลี่ยนแปลงจะปรากฏหลังจากกดเผยแพร่",
-    en: "Edit the news, events, guides and other information shown on the website. Changes appear once you publish",
+    th: "แก้ไขหน้าแนะนำ ทำเนียบ โรงอาหาร รูปภาพ และข้อมูลอื่นที่แสดงบนเว็บไซต์ การเปลี่ยนแปลงจะปรากฏหลังจากกดเผยแพร่ ส่วนข่าว กิจกรรม และประกาศแจ้งเตือนอยู่ในเมนู “ข่าวและประกาศ”",
+    en: "Edit the guides, directory, canteen, images and other information shown on the website. Changes appear once you publish. News, events and service alerts are under Post.",
   },
   dashContentIntro: { th: "แก้ไขเนื้อหาที่แสดงบนเว็บไซต์", en: "Edit what the website shows" },
   dashAllContent: { th: "ดูเนื้อหาทั้งหมด", en: "See all content" },

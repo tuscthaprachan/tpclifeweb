@@ -54,7 +54,7 @@ describe("the inbox query string", () => {
     expect(inboxParams(parseInboxQuery({ service: "complaint", open: "0" }, allowed))).toBe("service=complaint&open=0");
     expect(inboxParams(parseInboxQuery({ q: "x", open: "1" }, allowed))).toBe("q=x&open=1");
     expect(inboxParams(parseInboxQuery({ q: "x", open: "0" }, allowed))).toBe("q=x");
-    for (const raw of [{}, { open: "0" }, { q: "x" }, { q: "x", open: "1" }, { assignee: "me", open: "1" }, { status: "searching" }, { service: "complaint", open: "0", sort: "due" }]) {
+    for (const raw of <Record<string, string>[]>[{}, { open: "0" }, { q: "x" }, { q: "x", open: "1" }, { assignee: "me", open: "1" }, { status: "searching" }, { service: "complaint", open: "0", sort: "due" }]) {
       expect(parseInboxQuery(Object.fromEntries(new URLSearchParams(roundTrip(raw))), allowed)).toMatchObject(parseInboxQuery(raw, allowed));
     }
   });

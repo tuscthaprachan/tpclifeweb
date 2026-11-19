@@ -6,7 +6,7 @@ import { at, setupBorrowing, type Ctx } from "../borrowing/helpers";
 
 let t: Ctx;
 
-const DAYS = ["2026-03-12", "2026-03-13", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-23"];
+const DAYS = ["2026-03-12", "2026-03-13", "2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20", "2026-03-23", "2026-03-24"];
 let next = 0;
 
 async function loan(status: string, returnDueAt?: Date) {
@@ -32,6 +32,13 @@ describe("borrowing counts for the dashboard", () => {
     await loan("on_loan", at("2026-03-12", "16:00"));
     await loan("on_loan", at("2026-03-14", "16:00"));
     await loan("returned", at("2026-03-10", "16:00"));
-    expect(await loadBorrowingCounts(t.db, now)).toEqual({ pending: 2, dueToday: 1, overdue: 2 });
+    expect(await loadBorrowingCounts(t.db, now)).toEqual({ pending: 2, collectToday: 0, dueToday: 1, overdue: 2 });
+  });
+
+  it("counts approved requests to be collected today", async () => {
+    const now = at("2026-03-13", "12:00");
+    const id = await loan("approved");
+    await t.db.update(schema.borrowingRequests).set({ collectAt: at("2026-03-13", "15:00") }).where(eq(schema.borrowingRequests.caseId, id));
+    expect((await loadBorrowingCounts(t.db, now)).collectToday).toBe(1);
   });
 });

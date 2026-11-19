@@ -6,7 +6,7 @@
  */
 
 import type { ConsoleIconName } from "@/components/admin/icons";
-import type { ResolvedNav } from "./nav-match";
+import { flattenNav, type ResolvedNav } from "./nav-match";
 
 export interface GoShortcut {
   /** The letter pressed after `g`. */
@@ -16,28 +16,22 @@ export interface GoShortcut {
   icon: ConsoleIconName;
 }
 
-/** Letter, then the nav item that owns it. `content` is the content hub, present when any content type is. */
+/** Letter, then the id of the nav item that owns it. Hidden items count: Team's pages have shortcuts too. */
 const TARGETS: readonly { key: string; id: string }[] = [
-  { key: "h", id: "dashboard" },
-  { key: "c", id: "cases" },
-  { key: "n", id: "content" },
-  { key: "s", id: "staff" },
-  { key: "a", id: "audit" },
-  { key: "b", id: "borrowing-schedule" },
+  { key: "h", id: "home" },
+  { key: "c", id: "inbox" },
+  { key: "l", id: "loans" },
+  { key: "n", id: "website" },
   { key: "p", id: "performance" },
+  { key: "t", id: "team" },
+  { key: "a", id: "audit" },
+  { key: "s", id: "staff" },
 ];
 
-export const CONTENT_HUB_HREF = "/admin/content";
-
-export function deriveShortcuts(nav: ResolvedNav, labels: { content: string }): GoShortcut[] {
-  const items = nav.groups.flatMap((g) => g.items);
+export function deriveShortcuts(nav: ResolvedNav): GoShortcut[] {
+  const items = flattenNav(nav.items).map((n) => n.item);
   const out: GoShortcut[] = [];
   for (const target of TARGETS) {
-    if (target.id === "content") {
-      const first = items.find((i) => i.id.startsWith("content-"));
-      if (first) out.push({ key: target.key, href: CONTENT_HUB_HREF, label: labels.content, icon: first.icon });
-      continue;
-    }
     const item = items.find((i) => i.id === target.id);
     if (item) out.push({ key: target.key, href: item.href, label: item.label, icon: item.icon });
   }

@@ -11,10 +11,11 @@ import { Timestamp } from "@/components/ui";
 import { countContentTypes, recentEditsBy } from "@/lib/admin/content/list";
 import { CONTENT_TYPES, contentPath, type ContentTypeDef } from "@/lib/admin/content/types";
 import { getAdminLocale } from "@/lib/admin/locale";
-import type { ConsoleGroupId } from "@/lib/admin/nav";
+import { isListedContentType, POST_TYPE_KEYS, type ContentSectionId } from "@/lib/admin/nav";
 import { isAuthConfigured } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { a, type AdminKey } from "@/lib/i18n/admin";
+import { A, a, type AdminKey } from "@/lib/i18n/admin";
+import { HubFilter } from "./HubFilter";
 
 export const dynamic = "force-dynamic";
 
@@ -23,22 +24,24 @@ export async function generateMetadata() {
   return { title: a("contentHubTitle", locale) };
 }
 
-const GROUP_ORDER: ConsoleGroupId[] = ["announcements", "information", "directory", "canteen", "lostFound", "media", "settings"];
+const GROUP_ORDER: ContentSectionId[] = ["information", "directory", "canteen", "media", "settings"];
+
+const WEBSITE_TYPES = CONTENT_TYPES.filter((def) => isListedContentType(def) && !POST_TYPE_KEYS.includes(def.key));
 
 export default async function ContentHubPage() {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
   const staff = await requireEditor();
   const db = getDb();
-  const [counts, mine] = await Promise.all([countContentTypes(db, CONTENT_TYPES), recentEditsBy(db, CONTENT_TYPES, staff.user.id)]);
+  const [counts, mine] = await Promise.all([countContentTypes(db, CONTENT_TYPES.filter(isListedContentType)), recentEditsBy(db, CONTENT_TYPES.filter(isListedContentType), staff.user.id)]);
   let drafts = 0;
-  for (const def of CONTENT_TYPES) {
+  for (const def of CONTENT_TYPES.filter(isListedContentType)) {
     const c = counts.get(def.key);
     if (c && def.columns.status) drafts += c.total - c.published;
   }
 
   const sections = GROUP_ORDER.map((id) => {
-    const defs = CONTENT_TYPES.filter((def) => def.available && contentPlacement(def).group === id);
+    const defs = WEBSITE_TYPES.filter((def) => contentPlacement(def).group === id);
     const first = defs[0] ? contentPlacement(defs[0]) : undefined;
     return { id, defs, labelKey: first?.groupLabelKey as AdminKey, icon: first?.groupIcon };
   }).filter((s) => s.defs.length > 0);
@@ -51,8 +54,9 @@ export default async function ContentHubPage() {
     const href = contentPath(def);
     const single = def.kind === "singleton";
     const label = a(def.labelKey, locale);
+    const searchText = [A[def.labelKey].th, A[def.labelKey].en, A[def.descriptionKey].th, A[def.descriptionKey].en].join(" ").toLowerCase();
     return (
-      <li key={def.key} className="console-card flex flex-col gap-[var(--space-2)] p-[var(--space-3)]">
+      <li key={def.key} data-hub-card data-hub-text={searchText} className="console-card flex flex-col gap-[var(--space-2)] p-[var(--space-3)]">
         <div className="flex items-start gap-[var(--space-2)]">
           <ConsoleIcon name={place.icon} size={22} className="mt-[2px] text-ink-600" />
           <div className="min-w-0 flex-1">
@@ -117,9 +121,23 @@ export default async function ContentHubPage() {
     );
   };
 
+  const redirectsText = [A.rdLink.th, A.rdLink.en, A.shRedirectsDesc.th, A.shRedirectsDesc.en].join(" ").toLowerCase();
+  const redirectsCard = (
+    <li key="redirects" data-hub-card data-hub-text={redirectsText} className="console-card flex items-start gap-[var(--space-2)] p-[var(--space-3)]">
+      <ConsoleIcon name="redirects" size={22} className="mt-[2px] text-ink-600" />
+      <div className="min-w-0 flex-1">
+        <Heading level={3} visualLevel={5} className="m-0 font-semibold">
+          <Link href="/admin/settings/redirects">{a("rdLink", locale)}</Link>
+        </Heading>
+        <p className="m-0 text-sm text-ink-600">{a("shRedirectsDesc", locale)}</p>
+      </div>
+    </li>
+  );
+
   return (
     <ConsolePage width="wide">
-      <PageHeader title={a("contentHubTitle", locale)} icon="groupAnnouncements" description={a("contentHubIntro", locale)} />
+      <PageHeader title={a("contentHubTitle", locale)} icon="guides" description={a("contentHubIntro", locale)} />
+      <HubFilter targetId="hub-sections" labels={{ label: a("shHubFindLabel", locale), hint: a("shHubFindHint", locale), count: a("shHubFindCount", locale), none: a("shHubFindNone", locale) }} />
       <section aria-labelledby="hub-summary" className="flex flex-col gap-[var(--space-3)]">
         <Heading level={2} visualLevel={4} id="hub-summary" className="m-0 flex items-center gap-[var(--space-2)] font-semibold">
           <ConsoleIcon name="draft" className="text-ink-600" />
@@ -156,15 +174,20 @@ export default async function ContentHubPage() {
           </ul>
         )}
       </section>
-      {sections.map((section) => (
-        <section key={section.id} aria-labelledby={`hub-${section.id}`} className="flex flex-col gap-[var(--space-3)]">
-          <Heading level={2} visualLevel={4} id={`hub-${section.id}`} className="m-0 flex items-center gap-[var(--space-2)] font-semibold">
-            {section.icon ? <ConsoleIcon name={section.icon} className="text-ink-600" /> : null}
-            {a(section.labelKey, locale)}
-          </Heading>
-          <ul className="m-0 grid list-none gap-[var(--space-3)] p-0 sm:grid-cols-2 xl:grid-cols-3">{section.defs.map(card)}</ul>
-        </section>
-      ))}
+      <div id="hub-sections" className="flex flex-col gap-[var(--space-6)]">
+        {sections.map((section) => (
+          <section key={section.id} data-hub-section aria-labelledby={`hub-${section.id}`} className="flex flex-col gap-[var(--space-3)]">
+            <Heading level={2} visualLevel={4} id={`hub-${section.id}`} className="m-0 flex items-center gap-[var(--space-2)] font-semibold">
+              {section.icon ? <ConsoleIcon name={section.icon} className="text-ink-600" /> : null}
+              {a(section.labelKey, locale)}
+            </Heading>
+            <ul className="m-0 grid list-none gap-[var(--space-3)] p-0 sm:grid-cols-2 xl:grid-cols-3">
+              {section.defs.map(card)}
+              {section.id === "settings" ? redirectsCard : null}
+            </ul>
+          </section>
+        ))}
+      </div>
     </ConsolePage>
   );
 }

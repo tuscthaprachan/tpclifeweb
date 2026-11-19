@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, inArray, not, or, sql, type SQL } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, isNotNull, not, or, sql, type SQL } from "drizzle-orm";
 import { CONTENT_TABLE_NAMES } from "@/lib/admin/audit/describe";
 import { visibleCondition } from "@/lib/admin/audit/query";
 import { hasRole, type ActiveRole } from "@/lib/auth/roles";
@@ -48,9 +48,14 @@ function scopeCondition(scope: ActivityScope): SQL | undefined {
   return parts.length > 0 ? or(...parts) : sql`false`;
 }
 
+function ownAuthEvent(userId: string): SQL {
+  return and(isNotNull(auditLog.actorUserId), eq(auditLog.actorUserId, userId), ilike(auditLog.action, "auth.%"))!;
+}
+
 /**
  * The newest entries the viewer may see. Reading a record is not activity, so
- * `view` actions are left out, and a complaint in a restricted category never
+ * `view` actions are left out, as are the viewer's own sign-in, session and
+ * passkey events (the viewer did those and knows), and a complaint in a restricted category never
  * appears for someone who is not named on it.
  */
 export async function loadRecentActivity(db: AuditExecutor, input: { userId: string; roles: readonly ActiveRole[]; limit?: number }): Promise<ActivityItem[]> {
@@ -66,7 +71,7 @@ export async function loadRecentActivity(db: AuditExecutor, input: { userId: str
     })
     .from(auditLog)
     .leftJoin(user, eq(user.id, auditLog.actorUserId))
-    .where(and(visibleCondition(input.userId), not(ilike(auditLog.action, "%view%")), scopeCondition(activityScope(input.roles))))
+    .where(and(visibleCondition(input.userId), not(ilike(auditLog.action, "%view%")), not(ownAuthEvent(input.userId)), scopeCondition(activityScope(input.roles))))
     .orderBy(desc(auditLog.occurredAt), desc(auditLog.id))
     .limit(input.limit ?? 10);
 
