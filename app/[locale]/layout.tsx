@@ -16,6 +16,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import "@/styles/globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { fontVariables } from "@/components/layout/fonts";
 import { PhaseBanner } from "@/components/layout/PhaseBanner";
 import { NavigationProgress } from "@/components/layout/NavigationProgress";
@@ -135,6 +136,8 @@ export default async function RootLayout({
           footerNav={settings.footerNav}
           helpContacts={settings.helpContacts}
         />
+
+        <Analytics />
       </body>
     </html>
   );
