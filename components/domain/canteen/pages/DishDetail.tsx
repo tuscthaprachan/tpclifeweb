@@ -147,7 +147,7 @@ export function DishDetail({ locale, data, dish, query }: DishDetailProps & { qu
       ) : null}
 
       <div className="flex flex-wrap items-center gap-[var(--space-4)]">
-        <Link href={eatHref(locale, "/eat/pick", filters)} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
+        <Link href={eatHref(locale, "/eat/pick", filters)} rel="nofollow" className="inline-flex min-h-[var(--target-min)] items-center font-medium">
           {t(countActiveValues(filters) > 0 ? EAT.decideWithThese : EAT.decideButton, locale)}
         </Link>
         {canonical ? (

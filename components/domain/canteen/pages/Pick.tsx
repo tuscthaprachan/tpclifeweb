@@ -70,7 +70,7 @@ export function PickResults({
     result = (
       <>
         <p className="m-0">
-          <Link href={`${localePath(locale, PICK_ROUTE)}?seed=`} className="inline-flex min-h-[var(--target-min)] items-center font-medium">
+          <Link href={`${localePath(locale, PICK_ROUTE)}?seed=`} rel="nofollow" className="inline-flex min-h-[var(--target-min)] items-center font-medium">
             {PICK.spin[locale]}
           </Link>
         </p>

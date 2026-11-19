@@ -149,13 +149,13 @@ function Actions({
     <div className="flex flex-col gap-[var(--space-4)]" role="group" aria-label={PICK.actionsLabel[locale]}>
       {eatNode}
       <div className="flex flex-wrap items-center gap-x-[var(--space-4)] gap-y-[var(--space-2)]">
-        <Button variant="secondary" href={pickHref(locale, filters, params, { seed: nextSeed, lock: [], of: undefined })} className="fun-spin">
+        <Button variant="secondary" href={pickHref(locale, filters, params, { seed: nextSeed, lock: [], of: undefined })} rel="nofollow" className="fun-spin">
           <span aria-hidden="true" className="fun-die">
             <DiceIcon size={22} />
           </span>
           {PICK.spinAgain[locale]}
         </Button>
-        <Button variant="quiet" href={pickHref(locale, filters, params, { seed: nextSeed, not })} className="px-0!">
+        <Button variant="quiet" href={pickHref(locale, filters, params, { seed: nextSeed, not })} rel="nofollow" className="px-0!">
           {PICK.notThis[locale]}
         </Button>
       </div>
@@ -185,7 +185,7 @@ function DishCard({ locale, data, filters, params, nextSeed, outcome }: PickResu
 
   const lockLink = (label: string, lock: PickParams["lock"]) => (
     <li key={label}>
-      <Link href={pickHref(locale, filters, params, { seed: nextSeed, lock, of: dish.slug.current })} className={CHIP}>
+      <Link href={pickHref(locale, filters, params, { seed: nextSeed, lock, of: dish.slug.current })} rel="nofollow" className={CHIP}>
         {label}
       </Link>
     </li>

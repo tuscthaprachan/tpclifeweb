@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: PICK.title[locale],
     description: PICK.intro[locale],
     // A seeded result is one of endlessly many URLs. The page itself is the thing to index.
-    robots: { index: false, follow: true },
+    robots: { index: false, follow: false },
   };
 }
 
