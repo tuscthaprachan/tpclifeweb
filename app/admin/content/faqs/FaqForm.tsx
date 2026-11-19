@@ -52,20 +52,24 @@ export async function FaqForm({ locale, id, saved }: { locale: Locale; id?: stri
       record={record}
       listHref={contentPath(def)}
       saved={saved}
+      details={
+        <>
+          <EnumSelect
+            name="category"
+            label={L("fieldCategory")}
+            hint={L("pagesHintCategory")}
+            defaultValue={faq?.category ?? ""}
+            options={[{ value: "", label: L("choiceSelect") }, ...categoryOptions(locale)]}
+          />
+          <TextField name="sortOrder" type="number" inputMode="numeric" label={L("pagesFieldSortOrder")} hint={L("faqsHintSortOrder")} defaultValue={faq?.sortOrder?.toString()} className="max-w-[12rem]" />
+        </>
+      }
     >
       <Group icon="edit" id="group-text" legend={L("pagesGroupText")}>
         <BilingualTextField name="question" label={L("faqsFieldQuestion")} maxLength={300} defaultValue={{ th: faq?.questionTh, en: faq?.questionEn }} />
         <BilingualRichTextField name="answer" label={L("faqsFieldAnswer")} refs={refs} defaultValue={{ th: faq?.answerTh, en: faq?.answerEn }} />
       </Group>
       <Group icon="guides" id="group-placement" legend={L("pagesGroupPlacement")}>
-        <EnumSelect
-          name="category"
-          label={L("fieldCategory")}
-          hint={L("pagesHintCategory")}
-          defaultValue={faq?.category ?? ""}
-          options={[{ value: "", label: L("choiceSelect") }, ...categoryOptions(locale)]}
-        />
-        <TextField name="sortOrder" type="number" inputMode="numeric" label={L("pagesFieldSortOrder")} hint={L("faqsHintSortOrder")} defaultValue={faq?.sortOrder?.toString()} className="max-w-[12rem]" />
         <ReferencePicker name="forms" label={L("faqsFieldForms")} hint={L("faqsHintForms")} multiple options={refs.forms} defaultValue={links.map((l) => l.formId)} />
         <TextField name="slug" label={L("faqsFieldSlug")} hint={L("faqsHintSlug")} defaultValue={faq?.slug} maxLength={80} className="max-w-[32rem]" />
       </Group>

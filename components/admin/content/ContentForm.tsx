@@ -39,10 +39,14 @@ interface ContentFormProps {
   deleteAction?: (formData: FormData) => Promise<void>;
   /** Where "Back to the list" goes. */
   listHref: string;
+  /** Replaces "Back to the list" when `listHref` is not a list (a settings index). */
+  backLabel?: string;
   /** Result of the last save, from the `?saved=` query on the edit page. */
   saved?: string;
   /** Hide the draft/publish buttons for types with no status (images). They get a single Save. */
   hasStatus?: boolean;
+  /** Publishing details (owner, category, publish date, tags). Shown in the side panel under Status; the controls still post with the form. */
+  details?: ReactNode;
   children: ReactNode;
 }
 
@@ -59,7 +63,7 @@ const SAVED_KEY = { saved: "formSavedDraft", published: "formSavedPublished", un
  *
  *   <ContentForm key={row.updatedAt.toISOString()} ...>
  */
-export function ContentForm({ locale, action, record, deleteAction, listHref, saved, hasStatus = true, children }: ContentFormProps) {
+export function ContentForm({ locale, action, record, deleteAction, listHref, backLabel, saved, hasStatus = true, details, children }: ContentFormProps) {
   const [state, formAction, pending] = useActionState(action, EMPTY_FORM_STATE);
   const [machine, send] = useReducer(contentFormReducer, initialContentForm);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -163,6 +167,13 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
           ) : null}
         </Stack>
       </Card>
+      {details ? (
+        <Card title={a("fmDetailsTitle", locale)} icon="publish" level={2}>
+          <div onChange={markDirty} className="flex flex-col gap-[var(--space-4)]">
+            {details}
+          </div>
+        </Card>
+      ) : null}
       {record && hasStatus && segment ? <LifecycleTools locale={locale} segment={segment} id={record.id} publishAt={record.publishAt} unpublishAt={record.unpublishAt} /> : null}
       {record && deleteAction ? (
         <Card title={a("cfDanger", locale)} icon="warning" level={2}>
@@ -180,7 +191,7 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
   );
 
   return (
-    <ContentFormProvider value={{ locale, errors: state.errors, pending: saving || pending, dirty, markDirty }}>
+    <ContentFormProvider value={{ locale, errors: state.errors, pending: saving || pending, dirty, markDirty, formId }}>
       <UnsavedChangesGuard dirty={dirty} locale={locale} />
       <FormLayout aside={aside}>
         <form ref={form} id={formId} onSubmit={onSubmit} onChange={markDirty} noValidate>
@@ -246,7 +257,7 @@ export function ContentForm({ locale, action, record, deleteAction, listHref, sa
         )}
         <span className="max-sm:hidden">
           <Button href={listHref} variant="quiet" icon={<ConsoleIcon name="back" />}>
-            {a("formBackToList", locale)}
+            {backLabel ?? a("formBackToList", locale)}
           </Button>
         </span>
       </ActionBar>

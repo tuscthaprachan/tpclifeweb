@@ -54,6 +54,15 @@ export async function PlaceForm({ locale, id, saved, error }: { locale: Locale; 
       record={record}
       listHref={contentPath(def)}
       saved={saved}
+      details={
+        <EnumSelect
+          name="category"
+          label={L("fieldCategory")}
+          hint={L("placesHintCategory")}
+          defaultValue={place?.category ?? ""}
+          options={[{ value: "", label: L("choiceSelect") }, ...categoryOptions(locale)]}
+        />
+      }
     >
       {usage && usage.total > 0 ? (
         <NotificationBanner variant="warning" title={L("placesInUseTitle")}>
@@ -64,13 +73,6 @@ export async function PlaceForm({ locale, id, saved, error }: { locale: Locale; 
         <Stack space={4}>
           <BilingualTextField name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: place?.nameTh, en: place?.nameEn }} />
           <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={place?.slug} />
-          <EnumSelect
-            name="category"
-            label={L("fieldCategory")}
-            hint={L("placesHintCategory")}
-            defaultValue={place?.category ?? ""}
-            options={[{ value: "", label: L("choiceSelect") }, ...categoryOptions(locale)]}
-          />
           <BilingualTextField
             name="building"
             label={L("placesFieldBuilding")}

@@ -31,7 +31,7 @@ interface ReferencePickerProps {
 
 /** Choose one or many rows of another table by title, shown in the staff member's language. */
 export function ReferencePicker({ name, label, hint, options, defaultValue, multiple = false, emptyLabel, onChange, unnamed }: ReferencePickerProps) {
-  const { errors, locale, markDirty } = useContentForm();
+  const { errors, locale, markDirty, formId } = useContentForm();
   const id = fieldId(name);
   const labelOf = (o: ReferenceChoice) => pick(o.label, locale) || pick({ th: o.label.en, en: o.label.th }, locale) || a("untitled", locale);
   const initial = defaultValue == null ? [] : Array.isArray(defaultValue) ? defaultValue : [defaultValue];
@@ -43,6 +43,7 @@ export function ReferencePicker({ name, label, hint, options, defaultValue, mult
       <Select
         id={id}
         name={unnamed ? undefined : name}
+        form={formId}
         label={label}
         hint={hint}
         error={errors[name]}

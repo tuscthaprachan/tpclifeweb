@@ -50,6 +50,12 @@ export async function EventForm({ locale, id, saved }: { locale: Locale; id?: st
       record={record}
       listHref={contentPath(def)}
       saved={saved}
+      details={
+        <>
+          <EnumSelect name="owner" label={L("fieldOwner")} defaultValue={event?.owner ?? ""} options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]} />
+          <EnumSelect name="category" label={L("fieldCategory")} defaultValue={event?.category ?? ""} options={[{ value: "", label: L("choiceNone") }, ...categoryOptions(locale)]} />
+        </>
+      }
     >
       <FormSection icon="edit" legend={L("eventsGroupAbout")} id="g-about">
         <Stack space={4}>
@@ -57,8 +63,6 @@ export async function EventForm({ locale, id, saved }: { locale: Locale; id?: st
           <SlugField label={L("fieldSlug")} defaultValue={event?.slug} />
           <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("eventsHintSummary")} maxLength={500} rows={3} defaultValue={{ th: event?.summaryTh, en: event?.summaryEn }} />
           <BilingualRichTextField name="body" label={L("eventsFieldBody")} refs={refs} defaultValue={{ th: event?.bodyTh, en: event?.bodyEn }} />
-          <EnumSelect name="owner" label={L("fieldOwner")} defaultValue={event?.owner ?? ""} options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]} />
-          <EnumSelect name="category" label={L("fieldCategory")} defaultValue={event?.category ?? ""} options={[{ value: "", label: L("choiceNone") }, ...categoryOptions(locale)]} />
           <ImagePicker
             name="cover"
             label={L("fieldCoverImage")}

@@ -108,16 +108,25 @@ function linkRow(k: FieldKit, locale: Locale) {
     );
 }
 
-/**
- * Everything the site settings form must satisfy, apart from writing it. The
- * settings are always live, so both languages are required throughout.
- */
-export function validateSiteSettingsForm(input: { locale: Locale; formData: FormData }) {
-  const { locale, formData } = input;
-  const L = (key: AdminKey) => a(key, locale);
+export const SITE_SECTIONS = ["general", "navigation", "footer", "home-tasks", "help"] as const;
+export type SiteSection = (typeof SITE_SECTIONS)[number];
 
+export const SITE_SECTION_FIELDS = {
+  general: ["serviceName", "tagline", "phase", "phaseNote"],
+  navigation: ["primaryNav"],
+  footer: ["footerNav", "organisationLinks"],
+  "home-tasks": ["homeTasks"],
+  help: ["helpContacts"],
+} as const satisfies Record<SiteSection, readonly string[]>;
+
+export function isSiteSection(value: string): value is SiteSection {
+  return (SITE_SECTIONS as readonly string[]).includes(value);
+}
+
+function siteSchema(locale: Locale) {
+  const L = (key: AdminKey) => a(key, locale);
   const k = fieldKit(locale, true);
-  const schema = z.object({
+  return z.object({
     serviceName: k.bilingual(L("siteFieldServiceName"), { required: true, max: 100 }),
     tagline: k.bilingual(L("siteFieldTagline"), { required: true, max: 250 }),
     phase: k.enumOf(L("siteFieldPhase"), SERVICE_PHASES),
@@ -134,8 +143,25 @@ export function validateSiteSettingsForm(input: { locale: Locale; formData: Form
     helpContacts: rowsOf(helpRow(k, locale), { ignore: ["channel"], max: 10 }),
     organisationLinks: rowsOf(linkRow(k, locale), { max: 20 }),
   });
+}
 
-  const parsed = parseForm(schema, formDataToObject(formData));
+type SiteData = z.output<ReturnType<typeof siteSchema>>;
+
+/**
+ * Everything the site settings form must satisfy, apart from writing it. The
+ * settings are always live, so both languages are required throughout.
+ */
+export function validateSiteSettingsForm(input: { locale: Locale; formData: FormData }) {
+  const parsed = parseForm(siteSchema(input.locale), formDataToObject(input.formData));
   if (!parsed.ok) return { ok: false as const, errors: parsed.errors satisfies FieldErrors };
   return { ok: true as const, data: parsed.data };
+}
+
+/** Validates only the fields of one section, so a section can be saved without touching the rest. */
+export function validateSiteSettingsSection(input: { locale: Locale; section: SiteSection; formData: FormData }) {
+  const schema = siteSchema(input.locale);
+  const mask = Object.fromEntries(SITE_SECTION_FIELDS[input.section].map((field) => [field, true])) as Record<string, true>;
+  const parsed = parseForm(schema.pick(mask as never), formDataToObject(input.formData));
+  if (!parsed.ok) return { ok: false as const, errors: parsed.errors satisfies FieldErrors };
+  return { ok: true as const, data: parsed.data as Partial<SiteData> };
 }

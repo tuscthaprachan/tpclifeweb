@@ -84,25 +84,29 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
         record={record}
         listHref={contentPath(def)}
         saved={saved}
+        details={
+          <>
+            <EnumSelect
+              name="category"
+              label={L("fieldCategory")}
+              hint={L("pagesHintCategory")}
+              defaultValue={form?.category ?? ""}
+              options={[{ value: "", label: L("choiceSelect") }, ...categoryOptions(locale)]}
+            />
+            <EnumSelect
+              name="owner"
+              label={L("fieldOwner")}
+              defaultValue={form?.owner ?? ""}
+              options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]}
+            />
+          </>
+        }
       >
         <Group icon="forms" id="group-basics" legend={L("formsGroupBasics")}>
           <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={pair(form?.titleTh, form?.titleEn)} />
           <SlugField label={L("fieldSlug")} defaultValue={form?.slug} />
           <BilingualTextField name="purpose" label={L("formsFieldPurpose")} hint={L("formsHintPurpose")} maxLength={300} defaultValue={pair(form?.purposeTh, form?.purposeEn)} />
           <BilingualRichTextField name="description" label={L("formsFieldDescription")} refs={refs} defaultValue={{ th: form?.descriptionTh, en: form?.descriptionEn }} />
-          <EnumSelect
-            name="category"
-            label={L("fieldCategory")}
-            hint={L("pagesHintCategory")}
-            defaultValue={form?.category ?? ""}
-            options={[{ value: "", label: L("choiceSelect") }, ...categoryOptions(locale)]}
-          />
-          <EnumSelect
-            name="owner"
-            label={L("fieldOwner")}
-            defaultValue={form?.owner ?? ""}
-            options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]}
-          />
           <BilingualTextarea name="audience" label={L("formsFieldAudience")} hint={L("formsHintAudience")} rows={2} maxLength={500} defaultValue={pair(form?.audienceTh, form?.audienceEn)} />
         </Group>
 

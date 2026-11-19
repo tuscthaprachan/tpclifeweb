@@ -15,6 +15,7 @@ import {
   useState,
   useSyncExternalStore,
   type KeyboardEvent,
+  type MutableRefObject,
   type ReactNode,
   type Ref,
 } from "react";
@@ -850,7 +851,45 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   );
 }
 
-/** One editor per language, stacked, each labelled with its language. Names are `<name>.th` and `<name>.en`. */
+function EnglishDisclosure({ summary, initiallyOpen, forceOpen, openRef, children }: { summary: string; initiallyOpen: boolean; forceOpen: boolean; openRef: MutableRefObject<(() => void) | null>; children: ReactNode }) {
+  const [open, setOpen] = useState(initiallyOpen || forceOpen);
+  const [sawForce, setSawForce] = useState(forceOpen);
+  const box = useRef<HTMLDetailsElement>(null);
+
+  if (forceOpen !== sawForce) {
+    setSawForce(forceOpen);
+    if (forceOpen) setOpen(true);
+  }
+
+  useEffect(() => {
+    openRef.current = () => setOpen(true);
+    const onHash = () => {
+      const id = window.location.hash.slice(1);
+      const target = id ? document.getElementById(decodeURIComponent(id)) : null;
+      if (target && box.current?.contains(target)) setOpen(true);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => {
+      openRef.current = null;
+      window.removeEventListener("hashchange", onHash);
+    };
+  }, [openRef]);
+
+  return (
+    <details ref={box} open={open} onToggle={(e) => setOpen(e.currentTarget.open)} className="rounded-panel border border-line">
+      <summary className="flex min-h-[var(--target-min)] cursor-pointer items-center px-[var(--space-4)] py-[var(--space-2)] font-medium text-ink-900 marker:text-accent">{summary}</summary>
+      <div className="border-t border-line p-[var(--space-4)]">{children}</div>
+    </details>
+  );
+}
+
+/**
+ * Thai first, then the English editor in a disclosure headed "English version".
+ * The disclosure is open when English already has content, and whenever the
+ * form has an error, so an error can never sit in a closed box; it is closed
+ * only for an empty, error-free item. Closed fields still post. Names are
+ * `<name>.th` and `<name>.en`.
+ */
 export function BilingualRichTextField({
   name,
   label,
@@ -864,7 +903,8 @@ export function BilingualRichTextField({
   defaultValue?: { th?: RichTextDoc | null; en?: RichTextDoc | null };
   refs: RichTextRefs;
 }) {
-  const { locale } = useContentForm();
+  const { locale, errors } = useContentForm();
+  const openEnglish = useRef<(() => void) | null>(null);
   const handles = { th: useRef<RichTextEditorHandle>(null), en: useRef<RichTextEditorHandle>(null) };
   const [pending, setPending] = useState<{ from: "th" | "en"; to: "th" | "en"; doc: RichTextDoc } | null>(null);
   const note = useStatusMessage<string>();
@@ -880,6 +920,7 @@ export function BilingualRichTextField({
   }
 
   function finish(from: "th" | "en", to: "th" | "en", doc: RichTextDoc) {
+    if (to === "en") openEnglish.current?.();
     handles[to].current?.setDoc(doc);
     setPending(null);
     note.show(a("edCopyDone", locale, { source: langName(from) }));
@@ -889,7 +930,7 @@ export function BilingualRichTextField({
     <div className="flex flex-col gap-[var(--space-6)]">
       {(["th", "en"] as const).map((lang) => {
         const other = lang === "th" ? "en" : "th";
-        return (
+        const editor = (
           <RichTextEditor
             key={lang}
             name={`${name}.${lang}`}
@@ -905,6 +946,18 @@ export function BilingualRichTextField({
               </Button>
             }
           />
+        );
+        if (lang === "th") return editor;
+        return (
+          <EnglishDisclosure
+            key={lang}
+            summary={a("fmEnglishOf", locale, { label })}
+            initiallyOpen={Boolean(defaultValue?.en && !isRichTextEmpty(defaultValue.en))}
+            forceOpen={Object.keys(errors).length > 0}
+            openRef={openEnglish}
+          >
+            {editor}
+          </EnglishDisclosure>
         );
       })}
       <p role="status" className="visually-hidden">

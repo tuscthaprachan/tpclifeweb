@@ -58,6 +58,24 @@ export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: str
       record={record}
       listHref={contentPath(def)}
       saved={saved}
+      details={
+        <>
+          <EnumSelect
+            name="owner"
+            label={L("fieldOwner")}
+            defaultValue={post?.owner ?? ""}
+            options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]}
+          />
+          <EnumSelect
+            name="category"
+            label={L("fieldCategory")}
+            defaultValue={post?.category ?? ""}
+            options={[{ value: "", label: L("choiceNone") }, ...categoryOptions(locale)]}
+          />
+          <DateTimeField name="publishedAt" label={L("fieldPublishedAt")} hint={L("hintPublishedAt")} defaultValue={formatBangkokDateTime(post?.publishedAt)} />
+          <BilingualListField name="tags" label={L("fieldTags")} itemLabel={L("fieldTag")} defaultValue={tags.map((t) => ({ th: t.labelTh, en: t.labelEn }))} />
+        </>
+      }
     >
       <FormSection id="news-title" icon="edit" legend={L("cfSecTitleSummary")}>
         <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: post?.titleTh, en: post?.titleEn }} />
@@ -84,22 +102,6 @@ export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: str
           storageConfigured={refs.storageConfigured}
           defaultValue={gallery.map((g) => g.imageId)}
         />
-      </FormSection>
-      <FormSection id="news-publishing" icon="publish" legend={L("cfSecPublishing")}>
-        <EnumSelect
-          name="owner"
-          label={L("fieldOwner")}
-          defaultValue={post?.owner ?? ""}
-          options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]}
-        />
-        <EnumSelect
-          name="category"
-          label={L("fieldCategory")}
-          defaultValue={post?.category ?? ""}
-          options={[{ value: "", label: L("choiceNone") }, ...categoryOptions(locale)]}
-        />
-        <DateTimeField name="publishedAt" label={L("fieldPublishedAt")} hint={L("hintPublishedAt")} defaultValue={formatBangkokDateTime(post?.publishedAt)} />
-        <BilingualListField name="tags" label={L("fieldTags")} itemLabel={L("fieldTag")} defaultValue={tags.map((t) => ({ th: t.labelTh, en: t.labelEn }))} />
       </FormSection>
     </ContentForm>
   );

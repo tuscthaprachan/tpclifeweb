@@ -66,6 +66,7 @@ export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: s
       record={record}
       listHref={contentPath(def)}
       saved={saved}
+      details={<EnumSelect name="owner" label={L("fieldOwner")} defaultValue={policy?.owner ?? ""} options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]} />}
     >
       <FormSection icon="edit" legend={L("policiesGroupAbout")} id="g-about">
         <Stack space={4}>
@@ -73,7 +74,6 @@ export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: s
           <SlugField label={L("fieldSlug")} defaultValue={policy?.slug} />
           <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: policy?.summaryTh, en: policy?.summaryEn }} />
           <BilingualRichTextField name="detail" label={L("policiesFieldDetail")} refs={refs} defaultValue={{ th: policy?.detailTh, en: policy?.detailEn }} />
-          <EnumSelect name="owner" label={L("fieldOwner")} defaultValue={policy?.owner ?? ""} options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]} />
           <BilingualTextField name="area" label={L("policiesFieldArea")} hint={L("policiesHintArea")} maxLength={100} defaultValue={{ th: policy?.policyAreaTh, en: policy?.policyAreaEn }} />
         </Stack>
       </FormSection>

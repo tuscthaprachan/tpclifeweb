@@ -843,6 +843,9 @@
   .console-form-aside {
     position: sticky;
     inset-block-start: calc(var(--console-topbar-h) + var(--space-4));
+    max-block-size: calc(100dvh - var(--console-topbar-h) - 6rem);
+    padding-inline-end: var(--space-1);
+    overflow-y: auto;
   }
 }
 

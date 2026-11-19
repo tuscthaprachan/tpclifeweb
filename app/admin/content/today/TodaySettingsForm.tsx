@@ -3,6 +3,7 @@ import { CloudSun, ListOrdered, Thermometer, FileText } from "lucide-react";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { BilingualTextarea, CheckboxField, EnumSelect, TextField } from "@/components/admin/content/fields";
 import { FormSection } from "@/components/admin/content/FormSection";
+import { SectionJumpNav } from "@/components/admin/content/SectionJumpNav";
 import { Stack } from "@/components/ui";
 import { userNames } from "@/lib/admin/content/list";
 import { DEFAULT_LIBRARY_GUIDE_PATH, normaliseTodayRows } from "@/lib/content/today";
@@ -45,8 +46,17 @@ export async function TodaySettingsForm({ locale, saved }: { locale: Locale; sav
       hasStatus={false}
     >
       <p className="m-0">{L("tdsIntro")}</p>
+      <SectionJumpNav
+        label={L("fmSectionsNav")}
+        items={[
+          { id: "tds-rows", label: L("tdsGroupRows") },
+          { id: "tds-heat", label: L("tdsGroupHeat") },
+          { id: "tds-pm25", label: L("tdsGroupPm25") },
+          { id: "tds-pages", label: L("tdsGroupPages") },
+        ]}
+      />
 
-      <FormSection id="tds-rows" icon={ListOrdered} legend={L("tdsGroupRows")} hint={L("tdsHintRows")}>
+      <FormSection collapsible defaultOpen errorPrefixes={["rows."]} id="tds-rows" icon={ListOrdered} legend={L("tdsGroupRows")} hint={L("tdsHintRows")}>
         <Stack space={4}>
           {rows.map((row, index) => (
             <fieldset key={row.key} className="m-0 grid gap-[var(--space-3)] border-0 border-b border-line p-0 pb-[var(--space-4)] md:grid-cols-[1fr_8rem_auto] md:items-end">
@@ -58,7 +68,7 @@ export async function TodaySettingsForm({ locale, saved }: { locale: Locale; sav
         </Stack>
       </FormSection>
 
-      <FormSection id="tds-heat" icon={Thermometer} legend={L("tdsGroupHeat")} hint={L("tdsHintHeat")}>
+      <FormSection collapsible errorPrefixes={["heatAdvice."]} id="tds-heat" icon={Thermometer} legend={L("tdsGroupHeat")} hint={L("tdsHintHeat")}>
         <Stack space={4}>
           {HEAT_LEVELS.map((level) => (
             <BilingualTextarea
@@ -73,7 +83,7 @@ export async function TodaySettingsForm({ locale, saved }: { locale: Locale; sav
         </Stack>
       </FormSection>
 
-      <FormSection id="tds-pm25" icon={CloudSun} legend={L("tdsGroupPm25")} hint={L("tdsHintPm25")}>
+      <FormSection collapsible errorPrefixes={["pm25Advice."]} id="tds-pm25" icon={CloudSun} legend={L("tdsGroupPm25")} hint={L("tdsHintPm25")}>
         <Stack space={4}>
           {PM25_LEVELS.map((level) => (
             <BilingualTextarea
@@ -88,7 +98,7 @@ export async function TodaySettingsForm({ locale, saved }: { locale: Locale; sav
         </Stack>
       </FormSection>
 
-      <FormSection id="tds-pages" icon={FileText} legend={L("tdsGroupPages")}>
+      <FormSection collapsible errorPrefixes={["weatherNote", "librariesIntro", "librariesGuidePath"]} id="tds-pages" icon={FileText} legend={L("tdsGroupPages")}>
         <Stack space={4}>
           <BilingualTextarea
             name="weatherNote"

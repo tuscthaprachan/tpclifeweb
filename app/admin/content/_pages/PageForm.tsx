@@ -90,24 +90,25 @@ export async function PageForm({ kind, locale, id, saved }: { kind: ContentPageK
       record={record}
       listHref={contentPath(def)}
       saved={saved}
+      details={
+        <>
+          <EnumSelect
+            name="category"
+            label={L("fieldCategory")}
+            hint={L("pagesHintCategory")}
+            defaultValue={page?.category ?? ""}
+            options={[{ value: "", label: L("choiceSelect") }, ...categoryOptions(locale)]}
+          />
+          <TextField name="sortOrder" type="number" inputMode="numeric" label={L("pagesFieldSortOrder")} hint={L("pagesHintSortOrder")} defaultValue={page?.sortOrder?.toString()} className="max-w-[12rem]" />
+          <DateField name="lastReviewed" label={L("pagesFieldLastReviewed")} hint={L("pagesHintLastReviewed")} defaultValue={page?.lastReviewed} />
+        </>
+      }
     >
       <Group icon="edit" id="group-text" legend={L("pagesGroupText")}>
         <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: page?.titleTh, en: page?.titleEn }} />
         <SlugField label={L("fieldSlug")} defaultValue={page?.slug} />
         <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: page?.summaryTh, en: page?.summaryEn }} />
         <BilingualRichTextField name="body" label={L("fieldBody")} refs={refs} defaultValue={{ th: page?.bodyTh, en: page?.bodyEn }} />
-      </Group>
-
-      <Group icon="guides" id="group-placement" legend={L("pagesGroupPlacement")}>
-        <EnumSelect
-          name="category"
-          label={L("fieldCategory")}
-          hint={L("pagesHintCategory")}
-          defaultValue={page?.category ?? ""}
-          options={[{ value: "", label: L("choiceSelect") }, ...categoryOptions(locale)]}
-        />
-        <TextField name="sortOrder" type="number" inputMode="numeric" label={L("pagesFieldSortOrder")} hint={L("pagesHintSortOrder")} defaultValue={page?.sortOrder?.toString()} className="max-w-[12rem]" />
-        <DateField name="lastReviewed" label={L("pagesFieldLastReviewed")} hint={L("pagesHintLastReviewed")} defaultValue={page?.lastReviewed} />
       </Group>
 
       <Group icon="forms" id="group-related" legend={L("pagesGroupRelated")}>

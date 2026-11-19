@@ -39,7 +39,7 @@ function Counted({ value, max }: { value: string; max: number }) {
 }
 
 function LanguageBox({ name, lang, label, hint, defaultValue, maxLength, multiline, rows }: BilingualProps & { lang: "th" | "en" }) {
-  const { errors, locale } = useContentForm();
+  const { errors, locale, formId } = useContentForm();
   const path = `${name}.${lang}`;
   const [value, setValue] = useState(defaultValue?.[lang] ?? "");
   const language = a(lang === "th" ? "langThai" : "langEnglish", locale);
@@ -50,6 +50,7 @@ function LanguageBox({ name, lang, label, hint, defaultValue, maxLength, multili
     hint,
     error: errors[path],
     lang,
+    form: formId,
     value,
     onChange: (e: { target: { value: string } }) => setValue(e.target.value),
     autoComplete: "off",
@@ -62,10 +63,10 @@ function LanguageBox({ name, lang, label, hint, defaultValue, maxLength, multili
   );
 }
 
-/** Thai and English side by side, stacked on a narrow screen. */
+/** Thai first, with the English box under it, in one column. */
 export function BilingualTextField(props: BilingualProps) {
   return (
-    <div className="grid gap-[var(--space-4)] md:grid-cols-2">
+    <div className="flex flex-col gap-[var(--space-4)]">
       <LanguageBox {...props} lang="th" />
       <LanguageBox {...props} lang="en" />
     </div>
@@ -87,11 +88,12 @@ interface SingleProps {
 
 /** A one-language text input. `type` can be "url", "email", "text" (default) or "number". */
 export function TextField({ name, label, hint, defaultValue, className, type = "text", ...rest }: SingleProps & { type?: string; maxLength?: number; inputMode?: "numeric" | "url" | "text" }) {
-  const { errors } = useContentForm();
+  const { errors, formId } = useContentForm();
   return (
     <TextInput
       id={fieldId(name)}
       name={name}
+      form={formId}
       type={type}
       label={label}
       hint={hint}
@@ -106,11 +108,12 @@ export function TextField({ name, label, hint, defaultValue, className, type = "
 
 /** Date and time in Thailand time; `defaultValue` from `formatBangkokDateTime`. */
 export function DateTimeField({ name, label, hint, defaultValue, className }: SingleProps) {
-  const { errors, locale } = useContentForm();
+  const { errors, locale, formId } = useContentForm();
   return (
     <TextInput
       id={fieldId(name)}
       name={name}
+      form={formId}
       type="datetime-local"
       label={label}
       hint={hint ?? a("hintThailandTime", locale)}
@@ -123,11 +126,12 @@ export function DateTimeField({ name, label, hint, defaultValue, className }: Si
 
 /** A calendar date. */
 export function DateField({ name, label, hint, defaultValue, className }: SingleProps) {
-  const { errors } = useContentForm();
+  const { errors, formId } = useContentForm();
   return (
     <TextInput
       id={fieldId(name)}
       name={name}
+      form={formId}
       type="date"
       label={label}
       hint={hint}
@@ -140,11 +144,12 @@ export function DateField({ name, label, hint, defaultValue, className }: Single
 
 /** A drop-down list. Add an empty option yourself (`{ value: "", label: "None" }`) when the field is optional. */
 export function EnumSelect({ name, label, hint, defaultValue, options, className }: SingleProps & { options: SelectOption[] }) {
-  const { errors } = useContentForm();
+  const { errors, formId } = useContentForm();
   return (
     <Select
       id={fieldId(name)}
       name={name}
+      form={formId}
       label={label}
       hint={hint}
       error={errors[name]}
@@ -174,7 +179,7 @@ export function EnumRadios({ name, label, hint, defaultValue, options, className
 
 /** A single tick box. Posts "on" when ticked; read it with `fieldKit(...).checkbox()`. */
 export function CheckboxField({ name, label, hint, defaultChecked }: { name: string; label: ReactNode; hint?: ReactNode; defaultChecked?: boolean }) {
-  const { errors } = useContentForm();
+  const { errors, formId } = useContentForm();
   const id = fieldId(name);
   return (
     <div className="flex flex-col">
@@ -183,6 +188,7 @@ export function CheckboxField({ name, label, hint, defaultChecked }: { name: str
           type="checkbox"
           id={id}
           name={name}
+          form={formId}
           defaultChecked={defaultChecked}
           aria-describedby={hint ? `${id}-hint` : undefined}
           className="m-0 mt-[calc((var(--target-min)-1.25rem)/2)] size-5 min-h-0 min-w-0 shrink-0"
@@ -267,7 +273,7 @@ export function BilingualListField({
   defaultValue?: { th: string; en: string }[];
   max?: number;
 }) {
-  const { errors, locale, markDirty } = useContentForm();
+  const { errors, locale, markDirty, formId } = useContentForm();
   const list = useRepeater(defaultValue, { locale, itemLabel, max, onChange: markDirty });
 
   return (
@@ -278,7 +284,7 @@ export function BilingualListField({
       <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">
         {list.rows.map((row, index) => (
           <li key={row.key} ref={list.rowRef(row.key)} className="flex flex-col gap-[var(--space-2)] rounded-panel border border-line p-[var(--space-3)]">
-            <div className="grid gap-[var(--space-3)] md:grid-cols-2">
+            <div className="flex flex-col gap-[var(--space-3)]">
               {(["th", "en"] as const).map((lang) => {
                 const path = `${name}.${index}.${lang}`;
                 return (
@@ -286,6 +292,7 @@ export function BilingualListField({
                     key={lang}
                     id={fieldId(path)}
                     name={path}
+                    form={formId}
                     lang={lang}
                     label={`${itemLabel} ${index + 1} (${a(lang === "th" ? "langThai" : "langEnglish", locale)})`}
                     defaultValue={row.value[lang]}

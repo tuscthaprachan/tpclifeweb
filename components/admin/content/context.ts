@@ -13,6 +13,8 @@ export interface ContentFormContextValue {
   dirty?: boolean;
   /** Call when the staff member changes something outside a native input (the rich text editor), so leaving the page warns. */
   markDirty: () => void;
+  /** The `<form>` id, so controls that sit in the side panel (outside the element) still post with it. */
+  formId?: string;
 }
 
 const ContentFormContext = createContext<ContentFormContextValue>({

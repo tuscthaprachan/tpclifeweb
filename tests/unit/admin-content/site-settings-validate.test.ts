@@ -1,5 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { isNavPath, validateSiteSettingsForm } from "@/app/admin/content/site-settings/validate";
+import { sectionValues } from "@/app/admin/content/site-settings/sections";
+import { isNavPath, SITE_SECTIONS, SITE_SECTION_FIELDS, validateSiteSettingsForm, validateSiteSettingsSection, type SiteSection } from "@/app/admin/content/site-settings/validate";
 import { siteSettings } from "@/lib/db/schema";
 import { createTestDb, makeUser } from "../db/harness";
 
@@ -156,5 +157,50 @@ describe("validateSiteSettingsForm", () => {
     const settings = await readSiteSettings(db);
     expect(settings).toMatchObject({ serviceName: { en: "Renamed" }, phase: "live", primaryNav: [{ path: "/news" }], helpContacts: [{ channel: "email" }], homeTasks: [] });
     expect(await db.select().from(siteSettings)).toHaveLength(1);
+  });
+});
+
+describe("site settings sections", () => {
+  const section = (id: SiteSection, overrides: Record<string, string> = {}) => validateSiteSettingsSection({ locale: "en", section: id, formData: form(overrides) });
+
+  it("covers every field of the full form exactly once", () => {
+    const all = SITE_SECTIONS.flatMap((id) => SITE_SECTION_FIELDS[id]);
+    expect(new Set(all).size).toBe(all.length);
+    const full = validate(form());
+    expect(full.ok && Object.keys(full.data).sort()).toEqual([...all].sort());
+  });
+
+  it("validates only the posted section", () => {
+    expect(section("navigation", { "serviceName.en": "" }).ok).toBe(true);
+    expect(section("general", { "serviceName.en": "" })).toMatchObject({ ok: false, errors: { "serviceName.en": expect.any(String) } });
+    const nav = section("navigation");
+    expect(nav.ok && Object.keys(nav.data)).toEqual(["primaryNav"]);
+  });
+
+  it("writes only the columns of its section", () => {
+    const footer = section("footer", { "footerNav.0.label.th": "เกี่ยวกับ", "footerNav.0.label.en": "About", "footerNav.0.path": "/about" });
+    expect(footer.ok && Object.keys(sectionValues("footer", footer.data)).sort()).toEqual(["footerNav", "organisationLinks"]);
+    const general = section("general");
+    expect(general.ok && Object.keys(sectionValues("general", general.data))).not.toContain("primaryNav");
+  });
+
+  it("leaves the other sections untouched when one is saved", async () => {
+    const actor = { userId, context: { actorUserId: userId } };
+    const full = validate(form());
+    if (!full.ok) throw new Error("invalid");
+    const d = full.data;
+    const first = await saveContent({
+      entityType: "siteSettings",
+      table: siteSettings,
+      actor,
+      db,
+      status: "published",
+      values: { singletonKey: "site", serviceNameTh: d.serviceName.th, serviceNameEn: d.serviceName.en, taglineTh: d.tagline.th, taglineEn: d.tagline.en, phase: d.phase, primaryNav: d.primaryNav, helpContacts: d.helpContacts },
+    });
+    const help = section("help", { "helpContacts.0.value": "other@example.ac.th" });
+    if (!help.ok) throw new Error("invalid");
+    await saveContent({ entityType: "siteSettings", table: siteSettings, actor, db, id: first.id, status: "published", values: { singletonKey: "site", ...sectionValues("help", help.data) } });
+    const [row] = await db.select().from(siteSettings);
+    expect(row).toMatchObject({ serviceNameEn: "Name", primaryNav: [{ path: "/news" }], helpContacts: [{ value: "other@example.ac.th" }] });
   });
 });

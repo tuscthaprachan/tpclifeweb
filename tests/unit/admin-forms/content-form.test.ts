@@ -2,6 +2,7 @@
 import { createElement, type ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { ContentForm } from "@/components/admin/content/ContentForm";
+import { TextField } from "@/components/admin/content/fields";
 import { takeEdits } from "@/components/admin/content/form/edit-stash";
 import { EMPTY_FORM_STATE, type ContentFormState } from "@/lib/admin/content/form-state";
 import { render, step } from "../support/dom";
@@ -57,5 +58,29 @@ describe("ContentForm save", () => {
     const view = await setup(async () => EMPTY_FORM_STATE);
     expect(input(view.host).value).toBe("kept");
     expect(view.host.textContent).toContain("kept editing while the save ran");
+  });
+});
+
+describe("ContentForm details panel", () => {
+  it("shows the details in the side panel and still posts them with the form", async () => {
+    const action = vi.fn(async () => EMPTY_FORM_STATE);
+    const view = await render(
+      createElement(
+        ContentForm,
+        {
+          locale: "en",
+          action,
+          listHref: "/admin/content/news",
+          details: createElement(TextField, { name: "owner", label: "Owner", defaultValue: "tusu" }),
+        } as unknown as ComponentProps<typeof ContentForm>,
+        createElement("input", { name: "title", defaultValue: "t" }),
+      ),
+    );
+    const owner = view.host.querySelector<HTMLInputElement>('input[name="owner"]')!;
+    const form = view.host.querySelector("form")!;
+    expect(form.contains(owner)).toBe(false);
+    expect(view.host.querySelector("aside")!.contains(owner)).toBe(true);
+    expect(owner.form).toBe(form);
+    expect(new FormData(form).get("owner")).toBe("tusu");
   });
 });
