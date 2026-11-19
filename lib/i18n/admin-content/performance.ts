@@ -11,7 +11,6 @@ export const PERFORMANCE_STRINGS = {
     th: "ตัวเลขที่เผยแพร่ต่อสาธารณะ และตัวเลขการทำงานประจำวันสำหรับเจ้าหน้าที่ดำเนินการและผู้ดูแลระบบ",
     en: "The figures published to the public, and the day to day counts for officers and administrators",
   },
-  pfDashIntro: { th: "ดูตัวเลขที่เผยแพร่ เรื่องที่ค้างอยู่ และเรื่องที่เกินกำหนด", en: "See the published figures, what is open and what is overdue" },
   pfPublicLink: { th: "ดูหน้าที่เผยแพร่ต่อสาธารณะ", en: "See the public page" },
   pfOpsHeading: { th: "การทำงานตอนนี้", en: "Right now" },
   pfOpsIntro: {

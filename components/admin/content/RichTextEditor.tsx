@@ -876,8 +876,11 @@ function EnglishDisclosure({ summary, initiallyOpen, forceOpen, openRef, childre
   }, [openRef]);
 
   return (
-    <details ref={box} open={open} onToggle={(e) => setOpen(e.currentTarget.open)} className="rounded-panel border border-line">
-      <summary className="flex min-h-[var(--target-min)] cursor-pointer items-center px-[var(--space-4)] py-[var(--space-2)] font-medium text-ink-900 marker:text-accent">{summary}</summary>
+    <details ref={box} open={open} onToggle={(e) => setOpen(e.currentTarget.open)} className="group rounded-panel border border-line">
+      <summary className="flex min-h-[var(--target-min)] cursor-pointer list-none items-center gap-[var(--space-2)] px-[var(--space-4)] py-[var(--space-2)] font-medium text-ink-900 [&::-webkit-details-marker]:hidden">
+        <ConsoleIcon name="chevronRight" size={16} className="shrink-0 text-ink-600 motion-safe:transition-transform group-open:rotate-90" />
+        {summary}
+      </summary>
       <div className="border-t border-line p-[var(--space-4)]">{children}</div>
     </details>
   );

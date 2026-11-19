@@ -103,7 +103,7 @@ describe("validateFormRecordForm", () => {
 
   it("checks slug, minutes and dates", async () => {
     const [existing] = await db.insert(forms).values({ slug: "emergency-report", category: "welfare", owner: "tusu", destinationType: "inPerson" }).returning();
-    expect(await validate(form())).toMatchObject({ ok: false, errors: { slug: "That web address name is already used. Try another" } });
+    expect(await validate(form())).toMatchObject({ ok: false, errors: { slug: "That web address ending is already used. Try another" } });
     expect((await validate(form(), { id: existing!.id })).ok).toBe(true);
     expect(await validate(form({ estimatedMinutes: "0", deadline: "2026-13-01" }))).toMatchObject({
       ok: false,

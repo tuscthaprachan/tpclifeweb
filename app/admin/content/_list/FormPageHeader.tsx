@@ -19,13 +19,13 @@ interface FormPageHeaderProps {
   actions?: ReactNode;
 }
 
-/** The header of a content add, edit or singleton page: the type's icon, a title and a trail of group, list, then this page. */
+/** The header of a content add, edit or singleton page: the type's icon, a title and a trail of Post or Website, list, then this page. */
 export function FormPageHeader({ def, locale, mode, title, trail = [], description, actions }: FormPageHeaderProps) {
   const place = contentPlacement(def);
   const label = a(def.labelKey, locale);
   const item = a(def.oneKey, locale);
   const heading = title ?? (mode === "new" ? a("listAdd", locale, { item }) : mode === "edit" ? a("editItem", locale, { item }) : label);
-  const crumbs: Crumb[] = [{ label: a(place.groupLabelKey, locale) }];
+  const crumbs: Crumb[] = [{ label: a(place.rootLabelKey, locale), href: place.rootHref }];
   if (mode === "page") {
     crumbs.push({ label });
   } else {

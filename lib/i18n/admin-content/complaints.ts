@@ -7,7 +7,6 @@ import type { LocaleString } from "../config";
  */
 export const COMPLAINTS_STRINGS = {
   /* Inbox */
-  cpcFilterOverdue: { th: "แสดงเฉพาะเรื่องที่เกินกำหนด", en: "Overdue only" },
   cpcOverdue: { th: "เกินกำหนด", en: "Overdue" },
   cpcEscalatedTag: { th: "ยกระดับแล้ว", en: "Escalated" },
   cpcStatusUsePanel: { th: "ข้อร้องเรียนเปลี่ยนสถานะได้จากปุ่มในส่วน “ข้อร้องเรียน” ด้านบน", en: "A complaint changes status with the buttons in the Complaint section above" },

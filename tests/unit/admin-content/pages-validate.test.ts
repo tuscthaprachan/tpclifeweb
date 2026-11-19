@@ -79,7 +79,7 @@ describe("validatePageForm", () => {
 
   it("keeps slugs unique within a kind, not across kinds, and lets a page keep its own", async () => {
     const [existing] = await db.insert(contentPages).values({ kind: "guide", slug: "mental-health", category: "welfare" }).returning();
-    expect(await guide(form())).toMatchObject({ ok: false, errors: { slug: "That web address name is already used. Try another" } });
+    expect(await guide(form())).toMatchObject({ ok: false, errors: { slug: "That web address ending is already used. Try another" } });
     expect((await guide(form(), { id: existing!.id })).ok).toBe(true);
     expect((await welfare(form())).ok).toBe(true);
     expect(await guide(form({ slug: "Not A Slug" }))).toMatchObject({ ok: false, errors: { slug: expect.stringContaining("lower case") } });

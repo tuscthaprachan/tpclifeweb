@@ -10,7 +10,6 @@ export const EDITOR_STRINGS = {
   edGroupMarks: { th: "ตัวอักษร", en: "Text formatting" },
   edGroupLists: { th: "รายการและคำพูดอ้างอิง", en: "Lists and quotes" },
   edGroupLink: { th: "ลิงก์", en: "Link" },
-  edGroupInsert: { th: "แทรกเนื้อหา", en: "Insert" },
   edGroupHistory: { th: "เลิกทำและทำซ้ำ", en: "Undo and redo" },
   edGroupTools: { th: "เครื่องมือช่วยเขียน", en: "Writing tools" },
   edUnderline: { th: "ขีดเส้นใต้", en: "Underline" },
@@ -37,14 +36,12 @@ export const EDITOR_STRINGS = {
   edModeLabel: { th: "โหมดการแก้ไข", en: "Editing mode" },
   edModeVisual: { th: "ภาพ", en: "Visual" },
   edModeMarkdown: { th: "Markdown", en: "Markdown" },
-  edMdLabel: { th: "Markdown ของ {label}", en: "Markdown for {label}" },
   edMdHint: {
     th: "ใช้ **ตัวหนา** *ตัวเอียง* ++ขีดเส้นใต้++ และ ~~ขีดฆ่า~~ ส่วนบล็อกพิเศษเขียนในบรรทัดเดียว เช่น ::callout{...} ระบบจะตรวจเมื่อสลับกลับไปโหมดภาพ",
     en: "Use **bold**, *italic*, ++underline++ and ~~strikethrough~~. Custom blocks go on one line, such as ::callout{...}. The text is checked when you go back to Visual",
   },
   edMdError: { th: "สลับไปโหมดภาพไม่ได้ เพราะ Markdown ยังไม่ถูกต้อง: {message}", en: "Cannot go back to Visual yet. The Markdown has a problem: {message}" },
   edMdUnsaved: { th: "การแก้ไขล่าสุดจะยังไม่บันทึกจนกว่าจะแก้ Markdown ให้ถูกต้อง", en: "Your latest changes will not be saved until this is fixed" },
-  edMdLoading: { th: "กำลังเตรียม Markdown", en: "Preparing Markdown" },
 
   edStatusLabel: { th: "สถิติของ {label}", en: "Statistics for {label}" },
   edWords: { th: "{count} คำ", en: "{count} {count:word|words}" },

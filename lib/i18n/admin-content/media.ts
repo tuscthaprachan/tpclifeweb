@@ -8,12 +8,7 @@ export const MEDIA_STRINGS = {
     en: "Every picture used on the website. Upload a new one, or correct the description and credit of an existing one",
   },
   mediaUploadNew: { th: "อัปโหลดรูปภาพ", en: "Upload a picture" },
-  mediaColPicture: { th: "รูปภาพ", en: "Picture" },
-  mediaColDescription: { th: "คำอธิบายภาพ", en: "Description" },
-  mediaColAdded: { th: "เพิ่มเมื่อ", en: "Added" },
   mediaNeedsDescription: { th: "ยังไม่มีคำอธิบายภาพ", en: "Needs a description" },
-  mediaShowMissing: { th: "แสดงเฉพาะรูปที่ยังไม่มีคำอธิบาย", en: "Show only pictures without a description" },
-  mediaShowAll: { th: "แสดงรูปทั้งหมด", en: "Show all pictures" },
   mediaNoPreview: { th: "ไม่มีตัวอย่างรูป", en: "No preview" },
   mediaListEmpty: { th: "ยังไม่มีรูปภาพในคลัง", en: "There are no pictures in the library yet" },
 
@@ -56,26 +51,6 @@ export const MEDIA_STRINGS = {
   mediaRoleText: { th: "ในเนื้อหา", en: "In the text" },
   mediaDeletedFile: { th: "ลบรูปแล้ว", en: "Picture deleted" },
 
-  /* Lost and found: list */
-  lfIntro: {
-    th: "รายการของหายและของเจอที่แสดงบนเว็บไซต์ รายงานที่นักศึกษาส่งเข้ามาจะอยู่ด้านบน และจะยังไม่แสดงต่อสาธารณะจนกว่าจะเผยแพร่",
-    en: "The lost and found items shown on the website. Reports sent in by students are listed first and stay hidden until you publish them",
-  },
-  lfPendingTitle: { th: "รายงานที่รอตรวจสอบ", en: "Reports waiting for approval" },
-  lfPendingNote: {
-    th: "รายงานที่ส่งมาทางเว็บไซต์ ตรวจรายละเอียด เติมให้ครบสองภาษา แล้วเผยแพร่ หรือลบถ้าไม่ใช่รายการจริง",
-    en: "Reports sent in through the website. Check the details, complete both languages, then publish, or delete the report if it is not genuine",
-  },
-  lfPendingNone: { th: "ไม่มีรายงานที่รอตรวจสอบ", en: "No reports are waiting" },
-  lfAllTitle: { th: "รายการทั้งหมด", en: "All listings" },
-  lfColReference: { th: "เลขอ้างอิง", en: "Reference" },
-  lfColKind: { th: "ประเภท", en: "Type" },
-  lfColItem: { th: "สิ่งของ", en: "Item" },
-  lfColProgress: { th: "ความคืบหน้า", en: "Progress" },
-  lfColReceived: { th: "ได้รับเมื่อ", en: "Received" },
-  lfFromPublic: { th: "ส่งโดยนักศึกษา", en: "Sent in by a student" },
-  lfListEmpty: { th: "ยังไม่มีรายการ", en: "There are no listings yet" },
-
   /* Lost and found: form */
   lfReportBannerTitle: { th: "รายงานนี้ส่งมาโดยนักศึกษา", en: "A student sent in this report" },
   lfReportBanner: {
@@ -83,7 +58,6 @@ export const MEDIA_STRINGS = {
     en: "This report is not on the website. Students usually write in one language only, so check the details, add the other language, then publish",
   },
   lfReference: { th: "เลขอ้างอิง: {reference}", en: "Reference: {reference}" },
-  lfSectionPublic: { th: "ข้อมูลที่แสดงบนเว็บไซต์", en: "Shown on the website" },
   lfSectionPublicHint: {
     th: "ทุกช่องในส่วนนี้จะเห็นได้โดยทุกคนเมื่อเผยแพร่รายการ",
     en: "Everything in this section can be seen by anyone once the listing is published",

@@ -10,10 +10,6 @@ import type { LocaleString } from "../config";
 export const BORROWING_STRINGS = {
   errCaseUseLoanActions: { th: "คำขอยืมอุปกรณ์เปลี่ยนสถานะได้จากปุ่มในส่วนคำขอยืมอุปกรณ์เท่านั้น", en: "A loan can only change status from the Loan request section" },
   /* Navigation and timeline */
-  brNavGroup: { th: "ยืมอุปกรณ์", en: "Equipment loans" },
-  brNavSchedule: { th: "ตารางงานของเคาน์เตอร์", en: "Schedule" },
-  brNavCalendar: { th: "ปฏิทินอุปกรณ์", en: "Calendar" },
-  brNavInventory: { th: "รายการอุปกรณ์", en: "Inventory" },
   caseEvent_lines_changed: { th: "ปรับจำนวนอุปกรณ์ที่อนุมัติ", en: "Quantities lowered" },
   caseEvent_handover_recorded: { th: "บันทึกการส่งมอบอุปกรณ์", en: "Handover recorded" },
   caseEvent_return_recorded: { th: "บันทึกการรับคืนอุปกรณ์", en: "Return recorded" },
@@ -160,10 +156,9 @@ export const BORROWING_STRINGS = {
   brErrUnavailableItem: { th: "{name} (ขอ {asked} ว่าง {free})", en: "{name} (asked for {asked}, {free} free)" },
 
   /* Schedule page */
-  brScheduleTitle: { th: "ตารางงานของเคาน์เตอร์ยืมอุปกรณ์", en: "Equipment desk schedule" },
+  brScheduleTitle: { th: "ยืมอุปกรณ์", en: "Loans" },
   brScheduleIntro: { th: "งานที่ต้องทำ เรียงตามวัน เลือกเลขอ้างอิงเพื่อเปิดคำขอและดำเนินการ", en: "What the desk has to do, by day. Select a reference to open the request and take the next step" },
   brSecNav: { th: "ไปที่ส่วนในหน้านี้", en: "Sections on this page" },
-  brSecEmpty: { th: "ไม่มีรายการ", en: "Nothing here" },
   brSecAwaiting: { th: "คำขอที่รอพิจารณา", en: "Requests waiting for a decision" },
   brSecAwaitingHint: { th: "เรียงตามเวลาที่ส่งคำขอ ตัดสินใจก่อนวันนัดรับ", en: "Oldest first. Decide before the collection day" },
   brSecOverdue: { th: "เลยกำหนดคืน", en: "Overdue" },

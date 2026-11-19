@@ -3,12 +3,9 @@ import type { LocaleString } from "../config";
 /** Staff console shell strings: sidebar, top bar, command palette and the shared page primitives. Keys start with `cs`. */
 export const CONSOLE_STRINGS = {
   /* Sidebar groups */
-  csGroupWork: { th: "งานประจำ", en: "Work" },
-  csGroupAnnouncements: { th: "ประกาศ", en: "Announcements" },
   csGroupInformation: { th: "ข้อมูลและคู่มือ", en: "Information" },
   csGroupDirectory: { th: "ทำเนียบ", en: "Directory" },
   csGroupCanteen: { th: "โรงอาหาร", en: "Canteen" },
-  csGroupLostFound: { th: "ของหายและของเจอ", en: "Lost and found" },
   csGroupMedia: { th: "สื่อ", en: "Media" },
   csGroupSettings: { th: "การตั้งค่า", en: "Settings" },
 
@@ -21,7 +18,6 @@ export const CONSOLE_STRINGS = {
   csCloseMenu: { th: "ปิดเมนู", en: "Close menu" },
   csCollapseSidebar: { th: "ย่อเมนูด้านข้าง", en: "Collapse the side menu" },
   csExpandSidebar: { th: "ขยายเมนูด้านข้าง", en: "Expand the side menu" },
-  csTopbar: { th: "แถบเครื่องมือ", en: "Toolbar" },
   csSettingsMenu: { th: "การแสดงผล", en: "Display" },
 
   /* Account menu */
@@ -50,8 +46,5 @@ export const CONSOLE_STRINGS = {
   csBreadcrumbs: { th: "เส้นทางหน้า", en: "Breadcrumb" },
   csDirty: { th: "มีการเปลี่ยนแปลงที่ยังไม่บันทึก", en: "You have unsaved changes" },
   csSaved: { th: "บันทึกการเปลี่ยนแปลงทั้งหมดแล้ว", en: "All changes saved" },
-  csFilters: { th: "ตัวกรอง", en: "Filters" },
-  csSearchField: { th: "ค้นหา", en: "Search" },
-  csActions: { th: "การดำเนินการ", en: "Actions" },
   csCount: { th: "{count} รายการ", en: "{count} {count:item|items}" },
 } as const satisfies Record<string, LocaleString>;

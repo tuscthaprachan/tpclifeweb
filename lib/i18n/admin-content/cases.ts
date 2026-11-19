@@ -3,17 +3,9 @@ import type { LocaleString } from "../config";
 /** Staff console strings for the shared case inbox (/admin/cases). Status names live with the state machines in lib/cases/services.ts. */
 export const CASES_STRINGS = {
   /* Navigation and dashboard */
-  casesLink: { th: "เรื่องที่ได้รับ", en: "Cases" },
-  casesTitle: { th: "เรื่องที่ได้รับ", en: "Cases" },
-  casesIntro: {
-    th: "เรื่องของหายและของที่พบ ข้อร้องเรียน และคำขอยืมอุปกรณ์ที่ อมธ. และสภานักศึกษาดูแลร่วมกัน ระบบบันทึกว่าองค์กรใดดำเนินการล่าสุด",
-    en: "Lost and found reports, complaints and equipment loans that TUSU and TUSC handle together. Each action records which organisation took it",
-  },
-  casesDashIntro: { th: "เปิดคิวเรื่องที่ต้องดูแล ตอบกลับ และเปลี่ยนสถานะ", en: "Open the queue to look into cases, reply and change their status" },
+  casesTitle: { th: "เรื่องที่ได้รับ", en: "Inbox" },
 
   /* Filters and list */
-  casesFilterService: { th: "บริการ", en: "Service" },
-  casesFilterAllServices: { th: "ทุกบริการ", en: "All services" },
   casesFilterStatus: { th: "สถานะ", en: "Status" },
   casesFilterAllStatuses: { th: "ทุกสถานะ", en: "All statuses" },
   casesFilterAssignee: { th: "ผู้รับผิดชอบ", en: "Assigned to" },
@@ -21,7 +13,6 @@ export const CASES_STRINGS = {
   casesFilterMe: { th: "ฉัน", en: "Me" },
   casesFilterUnassigned: { th: "ยังไม่มีผู้รับผิดชอบ", en: "Unassigned" },
   casesFilterReference: { th: "ค้นหาจากเลขอ้างอิง", en: "Search by reference" },
-  casesFilterOpenOnly: { th: "ซ่อนเรื่องที่ปิดแล้ว", en: "Hide closed cases" },
   casesFilterApply: { th: "กรอง", en: "Filter" },
   casesFilterClear: { th: "ล้างตัวกรอง", en: "Clear filters" },
   casesColReference: { th: "เลขอ้างอิง", en: "Reference" },
@@ -39,10 +30,8 @@ export const CASES_STRINGS = {
   /* Case page */
   caseBack: { th: "กลับไปคิวเรื่อง", en: "Back to the queue" },
   caseSummaryTitle: { th: "สรุปเรื่อง", en: "Summary" },
-  caseRowReference: { th: "เลขอ้างอิง", en: "Reference" },
   caseRowService: { th: "บริการ", en: "Service" },
   caseRowType: { th: "ประเภท", en: "Type" },
-  caseRowStatus: { th: "สถานะ", en: "Status" },
   caseRowDetails: { th: "รายละเอียดย่อ", en: "Summary" },
   caseRowAssigned: { th: "ผู้รับผิดชอบ", en: "Assigned to" },
   caseRowOpened: { th: "เปิดเรื่องเมื่อ", en: "Opened" },
@@ -54,7 +43,6 @@ export const CASES_STRINGS = {
   caseRowPiiGone: { th: "ลบข้อมูลส่วนบุคคลเมื่อ", en: "Personal data deleted" },
   caseNone: { th: "ไม่มี", en: "None" },
   caseActingFor: { th: "ดำเนินการในนามของ", en: "Acting for" },
-  caseNotFound: { th: "ไม่พบเรื่องนี้ หรือคุณไม่มีสิทธิ์ดู", en: "This case does not exist, or you cannot view it" },
 
   /* Contacts */
   caseContactsTitle: { th: "ข้อมูลติดต่อ", en: "Contact details" },
@@ -65,7 +53,6 @@ export const CASES_STRINGS = {
   caseContactsShow: { th: "แสดงข้อมูลติดต่อ", en: "Show contact details" },
   caseContactsHide: { th: "ซ่อนข้อมูลติดต่อ", en: "Hide contact details" },
   caseContactsLogged: { th: "ระบบบันทึกชื่อคุณไว้ทุกครั้งที่เปิดดูข้อมูลส่วนบุคคล", en: "Every time personal details are shown, it is recorded with your name" },
-  contactName: { th: "ชื่อ", en: "Name" },
   contactEmail: { th: "อีเมล", en: "Email address" },
   contactPhone: { th: "โทรศัพท์", en: "Phone" },
   contactLine: { th: "LINE ID", en: "LINE ID" },
@@ -104,7 +91,6 @@ export const CASES_STRINGS = {
   caseEvent_pii_deleted: { th: "ลบข้อมูลส่วนบุคคลแล้ว", en: "Personal data deleted" },
 
   /* Forms */
-  caseActionsTitle: { th: "ดำเนินการ", en: "Actions" },
   caseStatusHeading: { th: "เปลี่ยนสถานะ", en: "Change status" },
   caseStatusLabel: { th: "สถานะใหม่", en: "New status" },
   caseStatusChoose: { th: "เลือกสถานะ", en: "Choose a status" },

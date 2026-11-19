@@ -7,7 +7,6 @@ import type { LocaleString } from "../config";
  * language, when the page loads. Keys start with `nt`.
  */
 export const NOTIFICATION_STRINGS = {
-  ntLink: { th: "การแจ้งเตือน", en: "Notifications" },
   ntTitle: { th: "การแจ้งเตือน", en: "Notifications" },
   ntIntro: {
     th: "เรื่องที่มอบหมายให้คุณ การกล่าวถึงคุณในบันทึก ข้อร้องเรียนที่ยกระดับ อุปกรณ์ที่เกินกำหนดคืน และคำเชิญที่มีผู้ตอบรับ",

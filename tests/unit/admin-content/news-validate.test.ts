@@ -85,7 +85,7 @@ describe("validateNewsForm", () => {
     expect(await validate(form({ owner: "nobody" }))).toMatchObject({ ok: false, errors: { owner: "Select the responsible body" } });
 
     const [existing] = await db.insert(newsPosts).values({ slug: "freshers-week", owner: "tusc" }).returning();
-    expect(await validate(form())).toMatchObject({ ok: false, errors: { slug: "That web address name is already used. Try another" } });
+    expect(await validate(form())).toMatchObject({ ok: false, errors: { slug: "That web address ending is already used. Try another" } });
     expect((await validate(form(), { id: existing!.id })).ok).toBe(true);
   });
 

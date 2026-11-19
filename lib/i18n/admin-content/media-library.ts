@@ -80,17 +80,12 @@ export const MEDIA_LIBRARY_STRINGS = {
   mlDeleteRefusedIntro: { th: "รูปต่อไปนี้ลบไม่ได้ เพราะยังใช้อยู่ ให้เอารูปออกจากรายการเหล่านั้นก่อน", en: "These pictures cannot be deleted because they are still used. Take them out of those items first" },
   mlDeleteNothing: { th: "ไม่มีรูปที่ลบได้ในรายการที่เลือก", en: "None of the selected pictures can be deleted." },
   mlReasonInUse: { th: "ยังใช้ใน {where}", en: "Still used in {where}" },
-  mlReasonNotFound: { th: "ไม่พบรูปนี้ อาจลบไปแล้ว", en: "Not found. It may already have been deleted" },
 
   /* Usage */
-  mlUsageTitle: { th: "รูปนี้ใช้ที่ไหนบ้าง", en: "Where this picture is used" },
-  mlUsageCount: { th: "ใช้ใน {count} รายการ", en: "Used in {count} {count:item|items}" },
-  mlUsageEdit: { th: "แก้ไข {title}", en: "Edit {title}" },
   mlRoleSettings: { th: "ในการตั้งค่าเว็บไซต์", en: "In the site settings" },
   mlUsageUntitled: { th: "(ไม่มีชื่อ)", en: "(untitled)" },
 
   /* Detail page */
-  mlDetailFile: { th: "ไฟล์", en: "File" },
   mlFileName: { th: "ชื่อไฟล์", en: "File name" },
   mlFileType: { th: "ประเภทไฟล์", en: "File type" },
   mlFileSize: { th: "ขนาดไฟล์", en: "File size" },

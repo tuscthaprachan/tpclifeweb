@@ -46,7 +46,6 @@ export const DIRECTORY_STRINGS = {
     en: "Clear this when the group has stopped running. It stays here but readers will not see it",
   },
   dirGroupAbout: { th: "ข้อมูลทั่วไป", en: "About the group" },
-  dirGroupContacts: { th: "ช่องทางติดต่อ", en: "Contact channels" },
   dirFieldContacts: { th: "ช่องทางติดต่อ", en: "Contact channels" },
   dirHintContacts: {
     th: "เพิ่มช่องทางที่นักศึกษาติดต่อได้จริง ลำดับที่นี่คือลำดับที่แสดงบนบัตรของกลุ่ม",
@@ -77,7 +76,6 @@ export const DIRECTORY_STRINGS = {
     en: "Enter a user name using only letters, numbers, full stops, hyphens and underscores, like tusu.thaprachan",
   },
   dirErrLineId: { th: "กรอก LINE ID ให้ถูกต้อง โดยไม่เว้นวรรค", en: "Enter the LINE ID without spaces" },
-  dirErrChannel: { th: "เลือกช่องทาง", en: "Select the channel" },
 
   dirFieldFacultyLink: { th: "คณะหรือวิทยาลัยในรายการ", en: "Faculty in the faculty list" },
   dirHintFacultyLink: {
@@ -124,7 +122,6 @@ export const DIRECTORY_STRINGS = {
   placesFieldBuilding: { th: "อาคารและชั้น", en: "Building and floor" },
   placesHintBuilding: { th: "บอกอาคารและชั้น เพื่อให้นักศึกษาหาเจอ", en: "Give the building and floor so students can find it" },
   placesHintCategory: { th: "กำหนดสีที่ใช้แสดงสถานที่นี้บนเว็บไซต์", en: "Decides the colour used for this place on the site" },
-  placesFieldKey: { th: "สถานที่สำคัญ", en: "Key place" },
   placesLabelKey: { th: "แสดงในแผงสถานที่สำคัญ", en: "Show on the key places panel" },
   placesHintKey: { th: "เลือกเฉพาะสถานที่ที่นักศึกษาต้องใช้บ่อย", en: "Select only places students often need" },
   placesGroupAbout: { th: "ข้อมูลสถานที่", en: "About the place" },
@@ -149,7 +146,7 @@ export const DIRECTORY_STRINGS = {
     th: "ไม่บังคับ หน้าในเว็บไซต์นี้ (เช่น /guide/tu-library) หรือที่อยู่เว็บเต็ม",
     en: "Optional. A page on this site (such as /guide/tu-library) or a full web address",
   },
-  placesErrSlugReserved: { th: "ใช้ชื่อในลิงก์นี้ไม่ได้ เลือกชื่ออื่น", en: "This link name is taken by another page. Choose another" },
+  placesErrSlugReserved: { th: "ใช้ส่วนท้ายที่อยู่เว็บนี้ไม่ได้ เลือกแบบอื่น", en: "This web address ending is taken by another page. Choose another" },
   placesFieldHours: { th: "ช่วงเวลาเปิดทำการ", en: "Opening hours" },
   placesHintHours: {
     th: "เพิ่มทีละกลุ่มวันที่เปิดปิดเวลาเดียวกัน วันที่ไม่ได้เลือกถือว่าปิด หากเวลาปิดก่อนเวลาเปิดหมายถึงปิดหลังเที่ยงคืน ใส่ช่วงวันที่สำหรับเวลาพิเศษ เช่น ช่วงสอบ ในวันดังกล่าวจะใช้เฉพาะแถวที่มีวันที่",
@@ -184,7 +181,6 @@ export const DIRECTORY_STRINGS = {
   shuttleGroupTimetable: { th: "เวลาออกรถ", en: "Departure times" },
   shuttleGroupStops: { th: "ป้ายจอด", en: "Stops" },
   shuttleGroupMore: { th: "ค่าโดยสารและข้อมูลเพิ่มเติม", en: "Fare and more information" },
-  shuttleFieldActive: { th: "สถานะการให้บริการ", en: "Service status" },
   shuttleLabelActive: { th: "สายนี้กำลังให้บริการ", en: "This route is running" },
   shuttleHintActive: {
     th: "เอาเครื่องหมายออกเมื่อสายนี้หยุดให้บริการ เช่น ช่วงปิดภาคเรียน สายจะไม่แสดงต่อผู้อ่าน",
@@ -236,9 +232,6 @@ export const DIRECTORY_STRINGS = {
   shuttleErrDateOrder: { th: "วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มใช้", en: "The end date cannot be before the start date" },
 
   /* Site settings */
-  siteGroupIdentity: { th: "ชื่อและสถานะของบริการ", en: "Name and service stage" },
-  siteGroupMenus: { th: "เมนูและลิงก์", en: "Menus and links" },
-  siteGroupHelp: { th: "ช่องทางขอความช่วยเหลือ", en: "Help contacts" },
   siteFieldServiceName: { th: "ชื่อบริการ", en: "Service name" },
   siteFieldTagline: { th: "คำอธิบายสั้น", en: "Tagline" },
   siteHintTagline: { th: "หนึ่งประโยคที่บอกว่าเว็บไซต์นี้มีไว้ทำอะไร", en: "One sentence saying what the site is for" },
@@ -268,7 +261,6 @@ export const DIRECTORY_STRINGS = {
     th: "กรอกที่อยู่หน้าให้ขึ้นต้นด้วย / เช่น /news โดยไม่ต้องใส่ภาษานำหน้าและไม่ต้องลงท้ายด้วย /",
     en: "Enter the page address starting with /, like /news, with no language at the start and no / at the end",
   },
-  siteGroupHomeTasks: { th: "งานยอดนิยมในหน้าแรก", en: "Popular tasks on the home page" },
   siteFieldHomeTasks: { th: "งานยอดนิยม", en: "Popular tasks" },
   siteHintHomeTasks: {
     th: "แสดงตามลำดับนี้ในหน้าแรก ใส่งานที่คนใช้มากที่สุดไว้ก่อน เพิ่มได้ไม่เกิน {max} รายการ ถ้าเว้นว่างไว้ หน้าแรกจะแสดงรายการตั้งต้น",

@@ -43,7 +43,7 @@ export default async function ContentHubPage() {
   const sections = GROUP_ORDER.map((id) => {
     const defs = WEBSITE_TYPES.filter((def) => contentPlacement(def).group === id);
     const first = defs[0] ? contentPlacement(defs[0]) : undefined;
-    return { id, defs, labelKey: first?.groupLabelKey as AdminKey, icon: first?.groupIcon };
+    return { id, defs, labelKey: first?.groupLabelKey as AdminKey, icon: first?.groupIcon ?? undefined };
   }).filter((s) => s.defs.length > 0);
 
   const meta = "inline-flex items-center gap-[var(--space-1)] text-sm text-ink-600";

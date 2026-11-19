@@ -104,14 +104,18 @@ export default async function AdminDashboardPage() {
                   <Button href="/admin/cases/new/found" icon={<ConsoleIcon name="lostFound" />}>
                     {a("lfcInboxLogFound", locale)}
                   </Button>
-                  <Button href="/admin/cases/new/lost" icon={<ConsoleIcon name="lostFound" />}>
+                  <Button href="/admin/cases/new/lost" variant="secondary" icon={<ConsoleIcon name="lostFound" />}>
                     {a("lfcInboxLogLost", locale)}
                   </Button>
                 </div>
               ) : null}
               {quickCreate.length > 0 ? (
                 <details className="console-card">
-                  <summary className="inline-flex min-h-[var(--target-min)] w-full cursor-pointer list-none items-center gap-[var(--space-2)] rounded-control bg-action px-[var(--space-4)] py-[var(--space-2)] font-medium text-action-ink hover:bg-action-hover [&::-webkit-details-marker]:hidden">
+                  <summary
+                    className={`inline-flex min-h-[var(--target-min)] w-full cursor-pointer list-none items-center gap-[var(--space-2)] rounded-control px-[var(--space-4)] py-[var(--space-2)] font-medium [&::-webkit-details-marker]:hidden ${
+                      lostFound ? "border border-line-strong bg-surface text-ink-900 hover:bg-surface-alt" : "bg-action text-action-ink hover:bg-action-hover"
+                    }`}
+                  >
                     <ConsoleIcon name="add" />
                     {lostFound ? a("shCreateMore", locale) : a("shCreateTitle", locale)}
                   </summary>

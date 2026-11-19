@@ -44,7 +44,6 @@ export const A = {
   /* Shell */
   consoleName: { th: "คอนโซลเจ้าหน้าที่", en: "Staff console" },
   signOut: { th: "ออกจากระบบ", en: "Sign out" },
-  staffLink: { th: "จัดการเจ้าหน้าที่", en: "Manage staff" },
   homeLink: { th: "หน้าหลัก", en: "Home" },
   consoleNav: { th: "เมนูคอนโซลเจ้าหน้าที่", en: "Staff console menu" },
   notIndexedNote: { th: "สำหรับเจ้าหน้าที่ที่ได้รับเชิญเท่านั้น", en: "For invited staff only" },
@@ -123,7 +122,6 @@ export const A = {
   },
 
   /* My security */
-  securityLink: { th: "ความปลอดภัยของฉัน", en: "My security" },
   securityTitle: { th: "ความปลอดภัยของฉัน", en: "My security" },
   securityIntro: {
     th: "คุณเข้าสู่ระบบด้วยพาสคีย์เท่านั้น เพิ่มพาสคีย์ในทุกอุปกรณ์ที่คุณใช้ เช่น โทรศัพท์และแล็ปท็อป เพื่อไม่ให้เข้าสู่ระบบไม่ได้เมื่ออุปกรณ์หาย",
@@ -184,10 +182,6 @@ export const A = {
 
   /* Dashboard */
   dashTitle: { th: "คอนโซลเจ้าหน้าที่", en: "Staff console" },
-  dashIntro: {
-    th: "หน้านี้ยังเป็นหน้าเริ่มต้น เครื่องมือสำหรับงานจะทยอยเพิ่มเข้ามา",
-    en: "This is a starting page. The tools for your work will be added here",
-  },
   yourDetails: { th: "ข้อมูลของคุณ", en: "Your details" },
   rowName: { th: "ชื่อ", en: "Name" },
   rowEmail: { th: "อีเมล", en: "Email address" },
@@ -252,7 +246,6 @@ export const A = {
   pendingCaption: { th: "คำเชิญที่ยังใช้ได้", en: "Invitations that can still be used" },
   noPending: { th: "ไม่มีคำเชิญที่รอการตอบรับ", en: "There are no invitations waiting" },
   colEmail: { th: "อีเมล", en: "Email address" },
-  colOrganisation: { th: "หน่วยงาน", en: "Organisation" },
   colExpires: { th: "หมดอายุ", en: "Expires" },
   cancelInvite: { th: "ยกเลิกคำเชิญ", en: "Cancel invitation" },
   inviteHeading: { th: "เชิญเจ้าหน้าที่", en: "Invite a member of staff" },
@@ -312,7 +305,6 @@ export const A = {
   },
   you: { th: "คุณ", en: "you" },
   backToStaff: { th: "กลับไปหน้าเจ้าหน้าที่", en: "Back to staff" },
-  colAccount: { th: "บัญชี", en: "Account" },
   recoveryLinkVisible: { th: "สร้างลิงก์กู้คืน", en: "Make recovery link" },
   recoveryTitle: { th: "สร้างลิงก์กู้คืนบัญชีให้ {person}", en: "Make a recovery link for {person}" },
   recoveryIntro: {
@@ -408,19 +400,10 @@ export const A = {
   },
 
   /* Content: navigation and hub */
-  contentLink: { th: "เนื้อหา", en: "Content" },
   contentHubTitle: { th: "เว็บไซต์", en: "Website" },
   contentHubIntro: {
     th: "แก้ไขหน้าแนะนำ ทำเนียบ โรงอาหาร รูปภาพ และข้อมูลอื่นที่แสดงบนเว็บไซต์ การเปลี่ยนแปลงจะปรากฏหลังจากกดเผยแพร่ ส่วนข่าว กิจกรรม และประกาศแจ้งเตือนอยู่ในเมนู “ข่าวและประกาศ”",
     en: "Edit the guides, directory, canteen, images and other information shown on the website. Changes appear once you publish. News, events and service alerts are under Post.",
-  },
-  dashContentIntro: { th: "แก้ไขเนื้อหาที่แสดงบนเว็บไซต์", en: "Edit what the website shows" },
-  dashAllContent: { th: "ดูเนื้อหาทั้งหมด", en: "See all content" },
-  hubComingSoon: { th: "ยังไม่เปิดให้แก้ไข", en: "Editing not available yet" },
-  hubSingleton: { th: "แก้ไขหน้าเดียว", en: "One page to edit" },
-  hubCounts: {
-    th: "ทั้งหมด {total} รายการ เผยแพร่แล้ว {published} ฉบับร่าง {drafts}",
-    en: "{total} in total, {published} published, {drafts} {drafts:draft|drafts}",
   },
 
   /* Content: types (plural label, singular for "Add ...", one-line description) */
@@ -462,7 +445,7 @@ export const A = {
   typeShuttleDesc: { th: "สายรถ ป้ายจอด และตารางเวลา", en: "Routes, stops and timetables" },
   typeSiteSettings: { th: "ตั้งค่าเว็บไซต์", en: "Site settings" },
   typeSiteSettingsOne: { th: "ตั้งค่าเว็บไซต์", en: "site settings" },
-  typeSiteSettingsDesc: { th: "ชื่อเว็บไซต์ เมนู ช่องทางติดต่อ และสถานะของบริการ", en: "The site name, menus, help contacts and service phase" },
+  typeSiteSettingsDesc: { th: "ชื่อเว็บไซต์ เมนู ช่องทางติดต่อ และแถบสถานะของบริการ", en: "The site name, menus, help contacts and the service stage banner" },
   typeLostFound: { th: "รายการของเจอ", en: "Found item listings" },
   typeLostFoundOne: { th: "รายการของเจอ", en: "found item listing" },
   typeLostFoundDesc: { th: "รายการของที่เจอซึ่งแสดงต่อสาธารณะ", en: "Found items shown to the public" },
@@ -475,9 +458,9 @@ export const A = {
   typeCanteenDishes: { th: "เมนูอาหาร", en: "Canteen dishes" },
   typeCanteenDishesOne: { th: "เมนูอาหาร", en: "dish" },
   typeCanteenDishesDesc: { th: "เมนู ราคา และข้อมูลสารก่อภูมิแพ้", en: "Dishes, prices and allergen information" },
-  typeCanonicalDishes: { th: "ชื่อเมนูมาตรฐาน", en: "Canonical dishes" },
-  typeCanonicalDishesOne: { th: "ชื่อเมนูมาตรฐาน", en: "canonical dish" },
-  typeCanonicalDishesDesc: { th: "ชื่อกลางที่ใช้จัดกลุ่มและค้นหาเมนู", en: "The common names used to group and search dishes" },
+  typeCanonicalDishes: { th: "ชื่อเมนูกลาง", en: "Dish names" },
+  typeCanonicalDishesOne: { th: "ชื่อเมนูกลาง", en: "dish name" },
+  typeCanonicalDishesDesc: { th: "ชื่อกลางที่ใช้จัดกลุ่มและค้นหาเมนู", en: "The shared names used to group and search dishes" },
   typeImages: { th: "คลังรูปภาพ", en: "Images" },
   typeImagesOne: { th: "รูปภาพ", en: "image" },
   typeImagesDesc: { th: "รูปที่อัปโหลดและคำอธิบายรูป", en: "Uploaded pictures and their descriptions" },
@@ -489,13 +472,9 @@ export const A = {
   listActions: { th: "การดำเนินการ", en: "Actions" },
   listAdd: { th: "เพิ่ม{item}", en: "Add {item}" },
   listAddItem: { th: "เพิ่ม{item}", en: "Add {item}" },
-  listFilter: { th: "ค้นหาในรายการ", en: "Filter the list" },
-  listFilterApply: { th: "ค้นหา", en: "Filter" },
-  listFilterClear: { th: "ล้างตัวกรอง", en: "Clear filter" },
   listEmpty: { th: "ยังไม่มี{label}", en: "There are no {label} yet" },
   listNoMatches: { th: "ไม่พบรายการที่ตรงกับคำค้น", en: "Nothing matches that search" },
   listCaption: { th: "{label} แสดง {shown} จาก {total} รายการ", en: "{label}: showing {shown} of {total}" },
-  listTruncated: { th: "แสดง {shown} รายการล่าสุดจากทั้งหมด {total} ใช้ช่องค้นหาเพื่อหารายการอื่น", en: "Showing the {shown} most recent of {total}. Use the filter to find others" },
   listDeleted: { th: "ลบแล้ว", en: "Deleted" },
   listDeletedNote: { th: "ลบรายการแล้ว ประวัติการแก้ไขยังคงเก็บไว้", en: "The item has been deleted. Its edit history is kept" },
   statusDraft: { th: "ฉบับร่าง", en: "Draft" },
@@ -527,7 +506,6 @@ export const A = {
   formDeleteCancel: { th: "ไม่ลบ", en: "Keep it" },
   formViewOnSite: { th: "ดูบนเว็บไซต์", en: "View on the website" },
   formLastSaved: { th: "บันทึกล่าสุด", en: "Last saved" },
-  formLastSavedBy: { th: "โดย {name}", en: "by {name}" },
   formSavedDraft: { th: "บันทึกฉบับร่างแล้ว", en: "Draft saved" },
   formSavedPublished: { th: "เผยแพร่แล้ว", en: "Published" },
   formSavedUnpublished: { th: "ยกเลิกการเผยแพร่แล้ว ตอนนี้เป็นฉบับร่าง", en: "Unpublished. It is now a draft" },
@@ -539,7 +517,7 @@ export const A = {
   fieldTitle: { th: "ชื่อเรื่อง", en: "Title" },
   fieldSummary: { th: "สรุปสั้น", en: "Summary" },
   fieldBody: { th: "เนื้อหา", en: "Body" },
-  fieldSlug: { th: "ชื่อในที่อยู่เว็บ", en: "Web address name" },
+  fieldSlug: { th: "ส่วนท้ายที่อยู่เว็บ", en: "Web address ending" },
   fieldOwner: { th: "ผู้รับผิดชอบ", en: "Responsible body" },
   fieldCategory: { th: "หมวดหมู่", en: "Category" },
   fieldPublishedAt: { th: "วันที่เผยแพร่", en: "Publication date" },
@@ -577,7 +555,7 @@ export const A = {
     th: "ใช้ตัวอักษรภาษาอังกฤษพิมพ์เล็ก ตัวเลข และขีดกลางเท่านั้น เช่น freshers-week-2026",
     en: "Use lower case letters, numbers and hyphens only, like freshers-week-2026",
   },
-  errSlugTaken: { th: "ชื่อนี้มีคนใช้แล้ว ลองชื่ออื่น", en: "That web address name is already used. Try another" },
+  errSlugTaken: { th: "ส่วนท้ายที่อยู่เว็บนี้มีคนใช้แล้ว ลองแบบอื่น", en: "That web address ending is already used. Try another" },
   errRichTextInvalid: { th: "{field}มีเนื้อหาที่บันทึกไม่ได้: {detail}", en: "The {field} has content that cannot be saved: {detail}" },
   errImageUndescribed: {
     th: "รูปนี้ยังไม่มีคำอธิบายภาพทั้งสองภาษา เพิ่มคำอธิบายในคลังรูปภาพก่อนเผยแพร่",
@@ -650,7 +628,6 @@ export const A = {
   rteLineBreak: { th: "ขึ้นบรรทัดใหม่", en: "Line break" },
   rteUndo: { th: "เลิกทำ", en: "Undo" },
   rteRedo: { th: "ทำซ้ำ", en: "Redo" },
-  rteInsertBlock: { th: "แทรก{block}", en: "Insert {block}" },
   rteLinkTitle: { th: "ลิงก์", en: "Link" },
   rteLinkAddress: { th: "ที่อยู่ลิงก์", en: "Link address" },
   rteLinkHint: {

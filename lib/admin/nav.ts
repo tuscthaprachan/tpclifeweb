@@ -50,23 +50,22 @@ export interface ConsoleNav {
   quickCreate: ConsoleQuickCreate[];
 }
 
-export type ContentSectionId = "announcements" | "information" | "directory" | "canteen" | "media" | "settings" | "lostFound";
+/** The sections of the Website hub page. Post types and lost and found sit in none. */
+export type ContentSectionId = "information" | "directory" | "canteen" | "media" | "settings";
 
 const SECTIONS: Record<ContentSectionId, { labelKey: AdminKey; icon: ConsoleIconName }> = {
-  announcements: { labelKey: "csGroupAnnouncements", icon: "groupAnnouncements" },
   information: { labelKey: "csGroupInformation", icon: "groupInformation" },
   directory: { labelKey: "csGroupDirectory", icon: "groupDirectory" },
   canteen: { labelKey: "csGroupCanteen", icon: "groupCanteen" },
   media: { labelKey: "csGroupMedia", icon: "groupMedia" },
   settings: { labelKey: "csGroupSettings", icon: "groupSettings" },
-  lostFound: { labelKey: "csGroupLostFound", icon: "groupLostFound" },
 };
 
 /** Which section and icon each content type gets, in display order within the section. */
-const CONTENT_PLACEMENT: Record<string, { section: ContentSectionId; icon: ConsoleIconName }> = {
-  serviceAlerts: { section: "announcements", icon: "alerts" },
-  news: { section: "announcements", icon: "news" },
-  events: { section: "announcements", icon: "events" },
+const CONTENT_PLACEMENT: Record<string, { section: ContentSectionId | null; icon: ConsoleIconName }> = {
+  serviceAlerts: { section: null, icon: "alerts" },
+  news: { section: null, icon: "news" },
+  events: { section: null, icon: "events" },
   guidePages: { section: "information", icon: "guides" },
   welfarePages: { section: "information", icon: "welfare" },
   policies: { section: "information", icon: "policies" },
@@ -81,7 +80,7 @@ const CONTENT_PLACEMENT: Record<string, { section: ContentSectionId; icon: Conso
   canteenDishes: { section: "canteen", icon: "dishes" },
   canonicalDishes: { section: "canteen", icon: "canonicalDishes" },
   canteenSettings: { section: "canteen", icon: "canteenSettings" },
-  lostFound: { section: "lostFound", icon: "lostFound" },
+  lostFound: { section: null, icon: "lostFound" },
   images: { section: "media", icon: "images" },
   todaySettings: { section: "settings", icon: "todaySettings" },
   siteSettings: { section: "settings", icon: "siteSettings" },
@@ -101,19 +100,31 @@ export function isListedContentType(def: Pick<ContentTypeDef, "key" | "available
 }
 
 export interface ContentPlacement {
-  section: ContentSectionId;
-  sectionLabelKey: AdminKey;
-  sectionIcon: ConsoleIconName;
+  /** The Website hub section, or null for Post types and lost and found. */
+  section: ContentSectionId | null;
+  sectionLabelKey: AdminKey | null;
+  sectionIcon: ConsoleIconName | null;
   icon: ConsoleIconName;
+  /** The console entry that holds the type: Post or Website. */
+  rootLabelKey: AdminKey;
+  rootHref: string;
 }
 
 const FALLBACK_PLACEMENT = { section: "information", icon: "info" } as const;
 
-/** The hub section and icon of a content type. */
+/** The hub section, icon and holding entry (Post or Website) of a content type. */
 export function placementOf(key: string): ContentPlacement {
   const place = CONTENT_PLACEMENT[key] ?? FALLBACK_PLACEMENT;
-  const section = SECTIONS[place.section];
-  return { section: place.section, sectionLabelKey: section.labelKey, sectionIcon: section.icon, icon: place.icon };
+  const section = place.section ? SECTIONS[place.section] : null;
+  const post = POST_TYPE_KEYS.includes(key);
+  return {
+    section: place.section,
+    sectionLabelKey: section?.labelKey ?? null,
+    sectionIcon: section?.icon ?? null,
+    icon: place.icon,
+    rootLabelKey: post ? "shNavPost" : "shNavWebsite",
+    rootHref: post ? contentPath(CONTENT_TYPES.find((d) => d.key === POST_TYPE_KEYS[0])!) : "/admin/content",
+  };
 }
 
 function contentItem(def: ContentTypeDef, hidden: boolean): ConsoleNavItem {

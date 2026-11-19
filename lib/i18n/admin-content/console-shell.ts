@@ -23,7 +23,7 @@ export const CONSOLE_SHELL_STRINGS = {
   },
   shTeamAuditDesc: { th: "ใครเปลี่ยนแปลงอะไร และเมื่อไร", en: "Who changed what, and when." },
   shTeamHealthDesc: { th: "งานประจำวันทำงานสำเร็จหรือไม่ และสิ่งที่ต้องแก้ไข", en: "Whether the daily jobs ran, and anything that needs fixing." },
-  shRedirectsDesc: { th: "ส่งต่อที่อยู่เว็บเก่าไปยังหน้าใหม่", en: "Send an old web address to a new page." },
+  shRedirectsDesc: { th: "ส่งผู้ที่เปิดที่อยู่เว็บเก่าไปยังหน้าใหม่ เพื่อให้ลิงก์เดิมยังใช้ได้", en: "Send old web addresses to new pages, so links people saved still work." },
 
   /* Website hub */
   shHubFindLabel: { th: "ค้นหาหมวด", en: "Find a section" },
@@ -49,7 +49,6 @@ export const CONSOLE_SHELL_STRINGS = {
   shWorkDrafts: { th: "ฉบับร่างของคุณ", en: "Your drafts" },
   shCreateTitle: { th: "สร้างใหม่", en: "Create" },
   shCreateMore: { th: "สร้างอย่างอื่น", en: "Create something else" },
-  shDeskTitle: { th: "งานเคาน์เตอร์ของหายและของที่พบ", en: "Lost and found desk" },
 
   /* Audit sentences */
   shActFallback: { th: "{actor} ทำการเปลี่ยนแปลง", en: "{actor} made a change" },
@@ -76,9 +75,9 @@ export const CONSOLE_SHELL_STRINGS = {
   shActPrivateUpdate: { th: "{actor} แก้ไขรายละเอียดส่วนตัวของของที่พบ", en: "{actor} edited the private details of a found item" },
   shActImportBudget: { th: "{actor} นำเข้ารายการงบประมาณจากไฟล์ CSV", en: "{actor} imported budget lines from a CSV file" },
   shActImportFunds: { th: "{actor} นำเข้ากองทุนจากไฟล์ CSV", en: "{actor} imported funds from a CSV file" },
-  shActRedirectCreate: { th: "{actor} เพิ่มการเปลี่ยนเส้นทาง", en: "{actor} added a redirect" },
-  shActRedirectUpdate: { th: "{actor} แก้ไขการเปลี่ยนเส้นทาง", en: "{actor} edited a redirect" },
-  shActRedirectDelete: { th: "{actor} ลบการเปลี่ยนเส้นทาง", en: "{actor} deleted a redirect" },
+  shActRedirectCreate: { th: "{actor} เพิ่มลิงก์เก่า", en: "{actor} added an old link" },
+  shActRedirectUpdate: { th: "{actor} แก้ไขลิงก์เก่า", en: "{actor} edited an old link" },
+  shActRedirectDelete: { th: "{actor} ลบลิงก์เก่า", en: "{actor} deleted an old link" },
   shActStaffAccount: { th: "สร้างบัญชีเจ้าหน้าที่ใหม่", en: "A staff account was created" },
   shActInviteRevoke: { th: "{actor} ยกเลิกคำเชิญเจ้าหน้าที่", en: "{actor} cancelled a staff invitation" },
   shActInviteSupersede: { th: "คำเชิญเจ้าหน้าที่ถูกแทนที่ด้วยคำเชิญใหม่", en: "A staff invitation was replaced by a newer one" },
@@ -89,5 +88,5 @@ export const CONSOLE_SHELL_STRINGS = {
   shActContentDuplicate: { th: "{actor} ทำสำเนา{what}", en: "{actor} duplicated a {what}" },
   shActContentLive: { th: "{what}เผยแพร่ตามเวลาที่ตั้งไว้", en: "A {what} went live as scheduled" },
   shActContentDown: { th: "{what}ถูกถอดออกตามเวลาที่ตั้งไว้", en: "A {what} was taken down as scheduled" },
-  shActContentSlug: { th: "{actor} เปลี่ยนที่อยู่เว็บของ{what} และตั้งการเปลี่ยนเส้นทางให้", en: "{actor} changed the web address of a {what} and added a redirect" },
+  shActContentSlug: { th: "{actor} เปลี่ยนส่วนท้ายที่อยู่เว็บของ{what} และเพิ่มลิงก์เก่าให้", en: "{actor} changed the web address ending of a {what} and added an old link" },
 } as const satisfies Record<string, LocaleString>;

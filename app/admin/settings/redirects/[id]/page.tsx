@@ -29,7 +29,7 @@ export default async function EditRedirectPage({ params }: { params: Promise<{ i
 
   return (
     <ConsolePage width="content">
-      <PageHeader title={a("rdEditHeading", locale)} icon="redirects" breadcrumbs={[{ label: a("rdTitle", locale), href: "/admin/settings/redirects" }, { label: a("rdEditHeading", locale) }]} breadcrumbsLabel={a("csBreadcrumbs", locale)} />
+      <PageHeader title={a("rdEditHeading", locale)} icon="redirects" />
       <Card>
         <RedirectForm locale={locale} action={saveRedirectAction.bind(null, id)} defaults={{ from: row.fromPath, to: row.toPath, status: row.status }} submitLabel={a("rdSave", locale)} />
       </Card>

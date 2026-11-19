@@ -168,7 +168,6 @@ export const CONSOLE_ICONS = {
   groupInformation: Info,
   groupDirectory: BookUser,
   groupCanteen: Utensils,
-  groupLostFound: PackageSearch,
   groupBorrowing: Package,
   groupMedia: Images,
   groupSettings: Settings,

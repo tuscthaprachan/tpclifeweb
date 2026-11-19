@@ -66,7 +66,7 @@ describe("validateFaqForm", () => {
   it("checks the anchor name's format and uniqueness only when one is typed", async () => {
     expect(await validate(form({ slug: "Bad Slug" }))).toMatchObject({ ok: false, errors: { slug: expect.stringContaining("lower case") } });
     const [existing] = await db.insert(faqs).values({ slug: "certificate", category: "welfare" }).returning();
-    expect(await validate(form({ slug: "certificate" }))).toMatchObject({ ok: false, errors: { slug: "That web address name is already used. Try another" } });
+    expect(await validate(form({ slug: "certificate" }))).toMatchObject({ ok: false, errors: { slug: "That web address ending is already used. Try another" } });
     expect((await validate(form({ slug: "certificate" }), { id: existing!.id })).ok).toBe(true);
     await db.insert(faqs).values({ category: "welfare" });
     expect((await validate(form())).ok).toBe(true);

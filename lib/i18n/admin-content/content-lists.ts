@@ -70,21 +70,13 @@ export const CONTENT_LIST_STRINGS = {
   /* Export */
   clExport: { th: "ส่งออก CSV", en: "Export CSV" },
   clExportNote: { th: "ส่งออกตามตัวกรองปัจจุบัน", en: "Exports the current filters" },
-  clCsvId: { th: "รหัส", en: "id" },
-  clCsvTitleTh: { th: "ชื่อภาษาไทย", en: "title_th" },
-  clCsvTitleEn: { th: "ชื่อภาษาอังกฤษ", en: "title_en" },
 
   /* Row menu */
-  clMoreActions: { th: "การดำเนินการเพิ่มเติม", en: "More actions" },
   clMoreFor: { th: "การดำเนินการเพิ่มเติมสำหรับ {name}", en: "More actions for {name}" },
 
   /* Hub */
   clHubDraftsTotal: { th: "ฉบับร่างทั้งหมด", en: "Drafts across all types" },
   clHubDraftsHint: { th: "ยังไม่เผยแพร่", en: "Not yet published" },
-  clHubTypesTotal: { th: "ประเภทเนื้อหา", en: "Content types" },
   clHubMine: { th: "ที่ฉันแก้ไขล่าสุด", en: "Recently edited by me" },
   clHubMineEmpty: { th: "ยังไม่ได้แก้ไขเนื้อหาใด", en: "You have not edited any content yet." },
-  clHubMineWhen: { th: "แก้ไข {when}", en: "Edited {when}" },
-  clHubCount: { th: "{n} รายการ", en: "{n} {n:item|items}" },
-  clHubDraftsLink: { th: "ดูฉบับร่าง", en: "View drafts" },
 } as const satisfies Record<string, LocaleString>;

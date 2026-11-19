@@ -20,8 +20,6 @@ export const CONSOLE_CONTENT_STRINGS = {
   ccClearFilters: { th: "ล้างตัวกรองทั้งหมด", en: "Clear all filters" },
   ccEmptyHint: { th: "เพิ่มรายการแรกเพื่อให้แสดงที่นี่", en: "Add the first one and it will appear here." },
   ccNoMatchesHint: { th: "ลองใช้คำค้นอื่น หรือล้างตัวกรอง", en: "Try a different search, or clear the filters." },
-  ccNeedsDescription: { th: "ขาดคำอธิบาย", en: "Needs description" },
-  ccFilterImages: { th: "กรองรูปภาพ", en: "Filter pictures" },
   ccShowStall: { th: "แสดงร้านนี้", en: "Show this stall" },
 
   /* Content edit forms (cf) */
@@ -38,7 +36,6 @@ export const CONSOLE_CONTENT_STRINGS = {
   cfSecTitleSummary: { th: "ชื่อเรื่องและสรุป", en: "Title and summary" },
   cfSecBody: { th: "เนื้อหา", en: "Body" },
   cfSecImages: { th: "รูปภาพ", en: "Images" },
-  cfSecPublishing: { th: "การเผยแพร่", en: "Publishing" },
   cfSecName: { th: "ชื่อ", en: "Name" },
   cfSecPhoto: { th: "รูปภาพ", en: "Photo" },
   cfSecPhotos: { th: "รูปภาพ", en: "Photos" },

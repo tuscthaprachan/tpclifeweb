@@ -65,7 +65,7 @@ export function OpenDataHeader({
       title={title}
       icon={place.icon}
       description={description}
-      breadcrumbs={[{ label: a(place.groupLabelKey, locale) }, { label: a("typeOpenData", locale), href: OPEN_DATA_PATHS.documents }, ...trail, { label: title }]}
+      breadcrumbs={[{ label: a(place.rootLabelKey, locale), href: place.rootHref }, { label: a("typeOpenData", locale), href: OPEN_DATA_PATHS.documents }, ...trail, { label: title }]}
       breadcrumbsLabel={a("csBreadcrumbs", locale)}
       actions={actions}
       tabs={<OpenDataTabs locale={locale} current={section} />}

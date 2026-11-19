@@ -7,13 +7,13 @@ export const CONSOLE_OPS_STRINGS = {
   opNavHealth: { th: "งานตามกำหนด", en: "Scheduled jobs" },
 
   /* Audit log page */
-  opAuditTitle: { th: "บันทึกการดำเนินการ", en: "Audit log" },
+  opAuditTitle: { th: "บันทึกกิจกรรม", en: "Activity log" },
   opAuditIntro: {
     th: "ประวัติการเปลี่ยนแปลงทั้งหมดในคอนโซล เรียงจากล่าสุด เลือกรายการเพื่อดูค่าก่อนและหลังการเปลี่ยนแปลง",
     en: "Every change made in the console, newest first. Open an entry to see the values before and after.",
   },
   opAuditExport: { th: "ดาวน์โหลด CSV", en: "Download CSV" },
-  opFiltersLabel: { th: "กรองบันทึกการดำเนินการ", en: "Filter the audit log" },
+  opFiltersLabel: { th: "กรองบันทึกกิจกรรม", en: "Filter the activity log" },
   opFilterActor: { th: "ผู้ดำเนินการ", en: "Who did it" },
   opFilterAnyActor: { th: "ทุกคน", en: "Anyone" },
   opFilterAction: { th: "การดำเนินการ", en: "Action" },
@@ -53,7 +53,6 @@ export const CONSOLE_OPS_STRINGS = {
   opHistoryEmpty: { th: "ยังไม่มีบันทึกการดำเนินการ", en: "Nothing has been recorded for this record yet." },
 
   /* Sentences for known actions */
-  opActFallback: { th: "{actor}: {action}", en: "{actor}: {action}" },
   opContentPage: { th: "หน้าเนื้อหา", en: "content page" },
   opContentImage: { th: "รูปภาพ", en: "image" },
   opActContentCreate: { th: "{actor} สร้าง{what}", en: "{actor} created a {what}" },
@@ -108,29 +107,20 @@ export const CONSOLE_OPS_STRINGS = {
   opActAccountName: { th: "{actor} เปลี่ยนชื่อที่แสดง", en: "{actor} changed their display name" },
   opActSessionRevoke: { th: "{actor} ออกจากระบบอุปกรณ์อื่น", en: "{actor} signed out another device" },
   opActSessionRevokeOthers: { th: "{actor} ออกจากระบบทุกอุปกรณ์อื่น", en: "{actor} signed out all other devices" },
-  opActAuditExport: { th: "{actor} ดาวน์โหลดบันทึกการดำเนินการ", en: "{actor} downloaded the audit log" },
+  opActAuditExport: { th: "{actor} ดาวน์โหลดบันทึกกิจกรรม", en: "{actor} downloaded the activity log" },
   opActCronFail: { th: "งานตามกำหนด {entity} ล้มเหลว", en: "The scheduled job {entity} failed" },
   opActCronRun: { th: "ระบบรันงานตามกำหนด {entity}", en: "The scheduled job {entity} ran" },
 
   /* Dashboard */
   opActivityTitle: { th: "ความเคลื่อนไหวล่าสุด", en: "Recent activity" },
   opActivityEmpty: { th: "ยังไม่มีความเคลื่อนไหว", en: "There is no activity yet." },
-  opActivityAll: { th: "ดูบันทึกการดำเนินการทั้งหมด", en: "See the whole audit log" },
-  opMyWork: { th: "งานของฉัน", en: "My work" },
-  opMyCases: { th: "เรื่องที่มอบหมายให้ฉัน", en: "Cases assigned to me" },
+  opActivityAll: { th: "ดูกิจกรรมทั้งหมด", en: "See all activity" },
   opMyCasesRow: { th: "{service}: {count} เรื่องที่ยังเปิดอยู่", en: "{service}: {count} open" },
-  opMyDrafts: { th: "ฉบับร่างของฉัน", en: "My drafts" },
   opMyDraftsEmpty: { th: "คุณไม่มีฉบับร่างที่ยังไม่เผยแพร่", en: "You have no unpublished drafts." },
-  opStatBorrowPending: { th: "คำขอยืมรอพิจารณา", en: "Loan requests to decide" },
-  opHintBorrowPending: { th: "รอเจ้าหน้าที่อนุมัติหรือไม่อนุมัติ", en: "Waiting for a decision" },
-  opStatBorrowDue: { th: "ครบกำหนดคืนวันนี้", en: "Due back today" },
-  opHintBorrowDue: { th: "ยังไม่เลยเวลาคืน", en: "Not yet past the return time" },
-  opStatBorrowOverdue: { th: "เกินกำหนดคืน", en: "Overdue loans" },
-  opHintBorrowOverdue: { th: "เลยเวลาคืนแล้ว", en: "Past the return time" },
 
   /* Account */
   opAccountNameHeading: { th: "ชื่อที่แสดง", en: "Display name" },
-  opAccountNameIntro: { th: "ชื่อนี้แสดงให้เจ้าหน้าที่คนอื่นเห็นในบันทึกการดำเนินการและรายการมอบหมายงาน", en: "Other staff see this name in the audit log and when cases are assigned." },
+  opAccountNameIntro: { th: "ชื่อนี้แสดงให้เจ้าหน้าที่คนอื่นเห็นในบันทึกกิจกรรมและรายการมอบหมายงาน", en: "Other staff see this name in the activity log and when cases are assigned." },
   opAccountNameHint: { th: "ไม่เกิน 100 ตัวอักษร", en: "Up to 100 characters" },
   opAccountNameSave: { th: "บันทึกชื่อ", en: "Save name" },
   opAccountNameSavedTitle: { th: "บันทึกชื่อแล้ว", en: "Name saved" },
@@ -171,7 +161,6 @@ export const CONSOLE_OPS_STRINGS = {
   opShortcutsOpenHelp: { th: "แสดงแป้นพิมพ์ลัด", en: "Show keyboard shortcuts" },
   opShortcutsClose: { th: "ปิดรายการแป้นพิมพ์ลัด", en: "Close keyboard shortcuts" },
   opShortcutsPending: { th: "ไปที่หน้า: กดตัวอักษรถัดไป", en: "Go to a page: press the next key" },
-  opShortcutsContent: { th: "เนื้อหาทั้งหมด", en: "All content" },
   opShortcutsMenu: { th: "แป้นพิมพ์ลัด", en: "Keyboard shortcuts" },
   opPaletteActions: { th: "คำสั่ง", en: "Actions" },
   opPaletteMyCases: { th: "เรื่องที่มอบหมายให้ฉัน", en: "My cases" },
@@ -180,14 +169,14 @@ export const CONSOLE_OPS_STRINGS = {
   opPaletteShortcuts: { th: "แสดงแป้นพิมพ์ลัด", en: "Show keyboard shortcuts" },
 
   /* System health */
-  opHealthTitle: { th: "สถานะระบบ", en: "System health" },
+  opHealthTitle: { th: "งานตามกำหนด", en: "Scheduled jobs" },
   opHealthAllOk: { th: "การตั้งค่าและงานตามกำหนดทั้งหมดปกติ", en: "Every setting and scheduled job is in order." },
   opHealthOneAttention: { th: "มี 1 รายการที่ต้องตรวจสอบ", en: "1 item needs checking." },
   opHealthManyAttention: { th: "มี {count} รายการที่ต้องตรวจสอบ", en: "{count} {count:item needs|items need} checking." },
   opHealthConfigHeading: { th: "การตั้งค่า", en: "Configuration" },
   opHealthConfigIntro: { th: "แสดงเฉพาะว่าตั้งค่าไว้หรือไม่ ไม่แสดงค่าลับ", en: "Shows only whether a setting is present. Secret values are never shown." },
   opHealthCronHeading: { th: "งานตามกำหนด", en: "Scheduled jobs" },
-  opHealthCronIntro: { th: "เวลารันล่าสุดมาจากบันทึกการดำเนินการ", en: "The last run comes from the audit log." },
+  opHealthCronIntro: { th: "เวลาทำงานล่าสุดมาจากบันทึกกิจกรรม", en: "The last run comes from the activity log." },
   opHealthOk: { th: "ปกติ", en: "OK" },
   opHealthWarning: { th: "ควรตรวจสอบ", en: "Check" },
   opHealthError: { th: "มีปัญหา", en: "Problem" },

@@ -17,5 +17,4 @@ export const CONSOLE_PEOPLE_STRINGS = {
     en: "You are signed in until {time}. Working in the console extends this, up to 12 hours in total.",
   },
   cpSessionSignOutHint: { th: "ออกจากระบบเมื่อเสร็จงาน โดยเฉพาะบนเครื่องที่ใช้ร่วมกัน", en: "Sign out when you finish, especially on a shared computer." },
-  cpConfirmBack: { th: "กลับ", en: "Go back" },
 } as const satisfies Record<string, LocaleString>;
