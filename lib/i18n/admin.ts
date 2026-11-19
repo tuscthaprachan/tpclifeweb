@@ -35,6 +35,10 @@ import { NOTIFICATION_STRINGS } from "./admin-content/notifications";
 import { PUBLISHING_STRINGS } from "./admin-content/publishing";
 import { STAFF_MEMBER_STRINGS } from "./admin-content/staff-members";
 import { TODAY_STRINGS } from "./admin-content/today";
+import { CONSOLE_SHELL_STRINGS } from "./admin-content/console-shell";
+import { CONSOLE_DESK_STRINGS } from "./admin-content/console-desk";
+import { CONSOLE_FORMS_STRINGS } from "./admin-content/console-forms";
+import { LOST_FOUND_RECORD_STRINGS } from "./admin-content/lost-found-record";
 
 export const A = {
   /* Shell */
@@ -741,6 +745,10 @@ export const A = {
   ...STAFF_MEMBER_STRINGS,
   ...NOTIFICATION_STRINGS,
   ...TODAY_STRINGS,
+  ...CONSOLE_SHELL_STRINGS,
+  ...CONSOLE_DESK_STRINGS,
+  ...CONSOLE_FORMS_STRINGS,
+  ...LOST_FOUND_RECORD_STRINGS,
 } as const satisfies Record<string, LocaleString>;
 
 export type AdminKey = keyof typeof A;
