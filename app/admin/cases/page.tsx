@@ -4,7 +4,8 @@ import { ConsoleIcon } from "@/components/admin/icons";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { SelectAllCheckbox } from "@/components/admin/content/BulkControls";
 import { ContentTable, type ContentTableColumn } from "@/components/admin/content/ContentTable";
-import { ConsolePage, EmptyPanel, FilterChips, FilterDisclosure, PageHeader, SearchField, Toolbar } from "@/components/admin/ui";
+import { ConsolePage, EmptyPanel, PageHeader, SearchField } from "@/components/admin/ui";
+import { TabNav } from "@/components/admin/ui/TabNav";
 import { Button, Details, NotificationBanner, Pagination, Select, StatusTag, TextInput, Timestamp } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { adminTitle } from "@/lib/admin/metadata";
@@ -15,7 +16,7 @@ import { accessibleServices, CASE_INBOX_ROLES } from "@/lib/cases/access";
 import { parseCaseBulkReport, type CaseBulkReason } from "@/lib/cases/bulk";
 import { listAssignees, listCases, type CaseListRow } from "@/lib/cases/engine";
 import type { DueState } from "@/lib/cases/due";
-import { canonicalViewQuery, inboxHref, inboxParams, nextCaseSort, parseInboxQuery, type CaseSortKey } from "@/lib/cases/inbox-query";
+import { canonicalViewQuery, inboxHref, inboxParams, narrowsInbox, nextCaseSort, parseInboxQuery, type CaseSortKey } from "@/lib/cases/inbox-query";
 import { caseVisibleTo } from "@/lib/cases/restrictions";
 import { allStatuses, getServiceDef, getStatusDef, SERVICES, type CaseService } from "@/lib/cases/services";
 import { staffActorFor } from "@/lib/cases/staff";
@@ -27,6 +28,7 @@ import { a, type AdminKey } from "@/lib/i18n/admin";
 import { pick } from "@/lib/i18n/config";
 import { formatNumber } from "@/lib/i18n/format";
 import { bulkCasesAction, deleteViewAction, saveViewAction, updateViewAction } from "./inbox-actions";
+import { ChipRow, LogMenu, MoreFilters } from "./DeskControls";
 import { Glyph } from "./SectionCard";
 import { serviceIcon } from "./icons";
 
@@ -83,7 +85,7 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
     listAssignees(db, services[0]!),
     listViews(db, staff.user.id),
   ]);
-  const hasFilters = Boolean(service || status || query.assignee || query.q || query.open || query.overdue || query.escalated);
+  const hasFilters = narrowsInbox({ ...query, status }) || Boolean(service) || !query.open;
   const totalPages = Math.max(Math.ceil(list.total / list.pageSize), 1);
   const here = inboxParams({ ...query, page: 1 });
   const pageHref = (p: number) => inboxHref(query, { page: p });
@@ -187,8 +189,8 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
   const comparable = canonicalViewQuery(inboxParams({ ...query, page: 1 }));
   const savedMatch = hasFilters || query.sort !== "updated" || query.dir !== "desc" ? views.find((v) => canonicalViewQuery(inboxParams(parseInboxQuery(Object.fromEntries(new URLSearchParams(v.query)), { services, statuses: statuses.map((s) => s.key) }))) === comparable) : undefined;
   const chips = [
-    { id: "all", label: a("ckViewAll", locale), href: viewHref({}) },
     { id: "open", label: a("ckViewOpen", locale), href: viewHref({ open: "1" }) },
+    { id: "all", label: a("ckViewAll", locale), href: viewHref({ open: "0" }) },
     { id: "me", label: a("ckViewMine", locale), href: viewHref({ assignee: "me", open: "1" }) },
     { id: "unassigned", label: a("ckViewUnassigned", locale), href: viewHref({ assignee: "unassigned", open: "1" }) },
     ...(services.includes("complaint")
@@ -202,15 +204,28 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
   const current = savedMatch ? `view-${savedMatch.id}` : presetView;
 
   const canLog = services.includes("lost_found");
-  const hiddenKeep: Record<string, string> = {
+  const explicitOpen = first(raw.open) === "1" || first(raw.open) === "0" ? first(raw.open)! : undefined;
+  const sortKeep: Record<string, string> = query.sort !== "updated" || query.dir !== "desc" ? { sort: query.sort, dir: query.dir } : {};
+  const searchKeep: Record<string, string> = {
     ...(service ? { service } : {}),
     ...(status ? { status } : {}),
     ...(query.assignee ? { assignee: query.assignee } : {}),
-    ...(query.open ? { open: "1" } : {}),
+    ...(explicitOpen ? { open: explicitOpen } : {}),
     ...(query.overdue ? { overdue: "1" } : {}),
     ...(query.escalated ? { escalated: "1" } : {}),
-    ...(query.sort !== "updated" || query.dir !== "desc" ? { sort: query.sort, dir: query.dir } : {}),
+    ...sortKeep,
   };
+  const filterKeep: Record<string, string> = { ...searchKeep };
+  delete filterKeep.status;
+  delete filterKeep.assignee;
+  if (query.q) filterKeep.q = query.q;
+  const moreActive = Boolean(status) || Boolean(query.assignee && presetView !== query.assignee) || Boolean(query.overdue && presetView !== "overdue") || Boolean(query.escalated && presetView !== "escalated");
+  const tabLabels: Record<CaseService, AdminKey> = { lost_found: "dkTabLostFound", complaint: "dkTabComplaint", borrowing: "dkTabBorrowing" };
+  const tabHref = (target: CaseService | undefined) => {
+    const complaintFlags = !target || target === "complaint";
+    return inboxHref(query, { service: target, status: undefined, page: 1, overdue: complaintFlags && query.overdue, escalated: complaintFlags && query.escalated });
+  };
+  const tabs = services.length > 1 ? [{ id: "all", label: a("dkTabAll", locale), href: tabHref(undefined) }, ...services.map((s) => ({ id: s, label: a(tabLabels[s], locale), href: tabHref(s) }))] : [];
   const sortOptions = columns.filter((c) => c.sort).map((c) => ({ key: c.sort!.key, label: c.header }));
 
   return (
@@ -218,19 +233,9 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
       <PageHeader
         icon="cases"
         title={a("casesTitle", locale)}
-        description={a("casesIntro", locale)}
-        actions={
-          canLog ? (
-            <>
-              <Button href="/admin/cases/new/found" icon={<ConsoleIcon name="add" />}>
-                {a("lfcInboxLogFound", locale)}
-              </Button>
-              <Button href="/admin/cases/new/lost" variant="secondary" icon={<ConsoleIcon name="add" />}>
-                {a("lfcInboxLogLost", locale)}
-              </Button>
-            </>
-          ) : null
-        }
+        description={<span className="max-sm:hidden">{a("dkIntro", locale)}</span>}
+        actions={canLog ? <LogMenu label={a("dkLogMenu", locale)} foundLabel={a("dkLogFound", locale)} foundHref="/admin/cases/new/found" lostLabel={a("dkLogLost", locale)} lostHref="/admin/cases/new/lost" /> : null}
+        tabs={tabs.length > 0 ? <TabNav label={a("dkServiceTabs", locale)} items={tabs} current={service ?? "all"} /> : undefined}
       />
 
       {report ? (
@@ -261,92 +266,49 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
         </NotificationBanner>
       ) : null}
 
-      <Toolbar
-        search={<SearchField label={a("casesFilterReference", locale)} submitLabel={a("ckSearch", locale)} defaultValue={query.q} hidden={hiddenKeep} />}
-        filters={<FilterChips label={a("ckViewsLabel", locale)} options={chips} current={current} />}
-        actions={
-          canExport ? (
-            <Button href={exportHref} variant="secondary" icon={<ConsoleIcon name="download" />} download>
-              {a("ckExport", locale)}
-              <span className="visually-hidden">. {a("ckExportNote", locale)}</span>
-            </Button>
-          ) : undefined
-        }
-      />
+      <div className="max-w-[28rem]">
+        <SearchField label={a("casesFilterReference", locale)} submitLabel={a("ckSearch", locale)} defaultValue={query.q} hidden={searchKeep} />
+      </div>
+      <ChipRow label={a("ckViewsLabel", locale)} options={chips} current={current} />
 
-      <FilterDisclosure label={a("clFilters", locale)} defaultOpen={hasFilters}>
-      <Form action="" role="search" aria-label={a("ckFiltersLabel", locale)} className="console-filter-row flex flex-wrap items-end gap-[var(--space-3)]">
-        {query.q ? <input type="hidden" name="q" value={query.q} /> : null}
-        {hiddenKeep.sort ? (
-          <>
-            <input type="hidden" name="sort" value={query.sort} />
-            <input type="hidden" name="dir" value={query.dir} />
-          </>
-        ) : null}
-        {services.length > 1 ? (
+      <MoreFilters label={a("dkMoreFilters", locale)} defaultOpen={moreActive}>
+        <Form action="" role="search" aria-label={a("ckFiltersLabel", locale)} className="flex flex-wrap items-end gap-[var(--space-3)] max-sm:[&>*]:w-full max-sm:[&_select]:w-full">
+          {Object.entries(filterKeep).map(([k, v]) => (
+            <input key={k} type="hidden" name={k} value={v} />
+          ))}
           <div className="flex flex-col gap-[var(--space-1)]">
-            <label htmlFor="cases-service" className="text-sm font-medium">
-              {a("casesFilterService", locale)}
+            <label htmlFor="cases-status" className="text-sm font-medium">
+              {a("casesFilterStatus", locale)}
             </label>
-            <select id="cases-service" name="service" defaultValue={service ?? ""} className={field}>
-              <option value="">{a("casesFilterAllServices", locale)}</option>
-              {services.map((s: CaseService) => (
-                <option key={s} value={s}>
-                  {pick(SERVICES[s].label, locale)}
+            <select id="cases-status" name="status" defaultValue={status ?? ""} className={field}>
+              <option value="">{a("casesFilterAllStatuses", locale)}</option>
+              {serviceStatuses(service).map((s) => (
+                <option key={s.key} value={s.key}>
+                  {pick(s.label, locale)}
                 </option>
               ))}
             </select>
           </div>
-        ) : null}
-        <div className="flex flex-col gap-[var(--space-1)]">
-          <label htmlFor="cases-status" className="text-sm font-medium">
-            {a("casesFilterStatus", locale)}
-          </label>
-          <select id="cases-status" name="status" defaultValue={status ?? ""} className={field}>
-            <option value="">{a("casesFilterAllStatuses", locale)}</option>
-            {statuses.map((s) => (
-              <option key={s.key} value={s.key}>
-                {pick(s.label, locale)}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-[var(--space-1)]">
-          <label htmlFor="cases-assignee" className="text-sm font-medium">
-            {a("casesFilterAssignee", locale)}
-          </label>
-          <select id="cases-assignee" name="assignee" defaultValue={query.assignee ?? ""} className={field}>
-            <option value="">{a("casesFilterAnyone", locale)}</option>
-            <option value="me">{a("casesFilterMe", locale)}</option>
-            <option value="unassigned">{a("casesFilterUnassigned", locale)}</option>
-          </select>
-        </div>
-        <label className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
-          <input type="checkbox" name="open" value="1" defaultChecked={query.open} />
-          {a("casesFilterOpenOnly", locale)}
-        </label>
-        {services.includes("complaint") ? (
-          <>
-            <label className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
-              <input type="checkbox" name="overdue" value="1" defaultChecked={query.overdue} />
-              {a("cpcFilterOverdue", locale)}
+          <div className="flex flex-col gap-[var(--space-1)]">
+            <label htmlFor="cases-assignee" className="text-sm font-medium">
+              {a("casesFilterAssignee", locale)}
             </label>
-            <label className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]">
-              <input type="checkbox" name="escalated" value="1" defaultChecked={query.escalated} />
-              {a("ckFilterEscalated", locale)}
-            </label>
-          </>
-        ) : null}
-        <Button type="submit" variant="secondary" icon={<ConsoleIcon name="filter" />}>
-          {a("casesFilterApply", locale)}
-        </Button>
-        {hasFilters ? (
-          <Button href="/admin/cases" variant="quiet">
-            {a("casesFilterClear", locale)}
+            <select id="cases-assignee" name="assignee" defaultValue={query.assignee ?? ""} className={field}>
+              <option value="">{a("casesFilterAnyone", locale)}</option>
+              <option value="me">{a("casesFilterMe", locale)}</option>
+              <option value="unassigned">{a("casesFilterUnassigned", locale)}</option>
+            </select>
+          </div>
+          <Button type="submit" variant="secondary" icon={<ConsoleIcon name="filter" />}>
+            {a("casesFilterApply", locale)}
           </Button>
-        ) : null}
-      </Form>
-      </FilterDisclosure>
+          {hasFilters ? (
+            <Button href={service ? `/admin/cases?service=${service}` : "/admin/cases"} variant="quiet">
+              {a("casesFilterClear", locale)}
+            </Button>
+          ) : null}
+        </Form>
+      </MoreFilters>
 
       <p className="m-0 text-ink-600" role="status">
         {list.total === 1 ? a("casesTotalOne", locale) : a("casesTotal", locale, { count: formatNumber(list.total, locale) })}
@@ -364,10 +326,10 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
       ) : (
         <>
           <nav aria-label={a("ckSortMobile", locale)} className="sm:hidden">
-            <ul className="m-0 flex list-none flex-wrap gap-[var(--space-2)] p-0">
+            <ul className="m-0 flex list-none gap-[var(--space-2)] overflow-x-auto p-0 pb-[var(--space-1)]">
               {sortOptions.map((option) => (
-                <li key={option.key}>
-                  <Link href={sortHref(option.key)} aria-current={query.sort === option.key ? "true" : undefined} className="console-chip">
+                <li key={option.key} className="shrink-0">
+                  <Link href={sortHref(option.key)} aria-current={query.sort === option.key ? "true" : undefined} className="console-chip whitespace-nowrap">
                     {query.sort === option.key ? <ConsoleIcon name={query.dir === "asc" ? "moveUp" : "moveDown"} size={14} /> : null}
                     <span>{option.label}</span>
                   </Link>
@@ -419,7 +381,16 @@ export default async function CasesInboxPage({ searchParams }: { searchParams: P
       )}
       <Pagination currentPage={list.page} totalPages={totalPages} buildHref={pageHref} locale={locale} />
 
-      <Details summary={a("ckSvSaveTitle", locale)}>
+      <Details summary={a("dkMoreActions", locale)}>
+        {canExport ? (
+          <div className="mb-[var(--space-4)] border-b border-line pb-[var(--space-4)]">
+            <Button href={exportHref} variant="secondary" icon={<ConsoleIcon name="download" />} download>
+              {a("ckExport", locale)}
+              <span className="visually-hidden">. {a("ckExportNote", locale)}</span>
+            </Button>
+          </div>
+        ) : null}
+        <h2 className="m-0 mb-[var(--space-2)] text-lg font-semibold">{a("ckSvSaveTitle", locale)}</h2>
         <form action={saveViewAction} className="flex flex-col gap-[var(--space-3)]">
           <input type="hidden" name="back" value={here} />
           <p className="m-0 text-ink-600">{a("ckSvSaveHint", locale)}</p>

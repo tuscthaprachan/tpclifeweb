@@ -1,6 +1,7 @@
 import { AvailabilityMonth, ItemChooser } from "@/components/domain/borrowing";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { Card, ConsolePage, PageHeader } from "@/components/admin/ui";
+import { LoanTabs } from "@/components/admin/ui/LoanTabs";
 import { Button } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
 import { adminTitle } from "@/lib/admin/metadata";
@@ -27,14 +28,14 @@ const MONTHS_EITHER_WAY = 12;
 export default async function BorrowingCalendarPage({ searchParams }: { searchParams: Promise<Query> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
-  await requireStaff(["officer", "admin"]);
+  const staff = await requireStaff(["officer", "admin"]);
   const query = await searchParams;
   const basePath = "/admin/borrowing/calendar";
 
   if (!isDatabaseConfigured()) {
     return (
       <ConsolePage width="wide">
-        <PageHeader icon="events" title={a("bcalTitle", locale)} description={a("bcalIntro", locale)} />
+        <PageHeader icon="events" title={a("bcalTitle", locale)} description={a("bcalIntro", locale)} tabs={<LoanTabs current="calendar" roles={staff.roles} locale={locale} />} />
         <p className="m-0">{a("bcalUnavailable", locale)}</p>
       </ConsolePage>
     );
@@ -57,6 +58,7 @@ export default async function BorrowingCalendarPage({ searchParams }: { searchPa
         icon="events"
         title={a("bcalTitle", locale)}
         description={a("bcalIntro", locale)}
+        tabs={<LoanTabs current="calendar" roles={staff.roles} locale={locale} />}
         actions={
           <Button href={localePath(locale, "/borrow/availability")} variant="secondary">
             {a("bcalPublicLink", locale)}

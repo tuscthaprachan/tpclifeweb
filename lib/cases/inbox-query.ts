@@ -2,6 +2,10 @@
  * The query string of the case inbox: parsing `?service=&status=&assignee=&q=&open=&overdue=&escalated=&sort=&dir=&page=`
  * and building links that keep the other filters. Pure, so the page, the
  * saved views, the bulk form and the CSV export all read the same parameters.
+ *
+ * Open cases are the default view: with no `open` parameter and nothing else
+ * narrowing the list (a status, an assignee, a search or a complaint flag),
+ * only open cases are listed. `open=0` asks for every case, closed included.
  */
 
 export const CASE_SORT_KEYS = ["received", "updated", "due", "reference", "status"] as const;
@@ -29,6 +33,11 @@ export type RawInboxParams = Partial<Record<"service" | "status" | "assignee" | 
 
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
+/** True when a status, assignee, search or complaint flag is set, which turns the open-only default off. */
+export function narrowsInbox(query: Pick<InboxQuery, "status" | "assignee" | "q" | "overdue" | "escalated">): boolean {
+  return Boolean(query.status || query.assignee || query.q || query.overdue || query.escalated);
+}
+
 /** The parameters a saved view may hold: the filters and the sort, never the page. */
 export const VIEW_KEYS = ["service", "status", "assignee", "q", "open", "overdue", "escalated", "sort", "dir"] as const;
 
@@ -44,28 +53,35 @@ export function parseInboxQuery(raw: RawInboxParams, allowed: { services: readon
   const assignee = one(raw.assignee);
   const service = one(raw.service);
   const status = one(raw.status);
-  return {
-    service: service && allowed.services.includes(service) ? service : undefined,
-    status: status && allowed.statuses.includes(status) ? status : undefined,
-    assignee: assignee === "me" || assignee === "unassigned" ? assignee : undefined,
+  const narrowing = {
+    status: (status && allowed.statuses.includes(status) ? status : undefined) as string | undefined,
+    assignee: (assignee === "me" || assignee === "unassigned" ? assignee : undefined) as "me" | "unassigned" | undefined,
     q: one(raw.q)?.trim().slice(0, 100) || undefined,
-    open: one(raw.open) === "1",
     overdue: one(raw.overdue) === "1",
     escalated: one(raw.escalated) === "1",
+  };
+  const openRaw = one(raw.open);
+  return {
+    service: service && allowed.services.includes(service) ? service : undefined,
+    ...narrowing,
+    open: openRaw === "1" ? true : openRaw === "0" ? false : !narrowsInbox(narrowing),
     sort,
     dir,
     page: Math.max(1, Number.parseInt(one(raw.page) ?? "1", 10) || 1),
   };
 }
 
-/** The parameters as a query string (no leading `?`), leaving out defaults and empty values. */
+/** The parameters as a query string (no leading `?`), leaving out defaults and empty values. The open-only default is left out, and every-case is written `open=0`. */
 export function inboxParams(query: Partial<InboxQuery>): string {
   const sp = new URLSearchParams();
   if (query.service) sp.set("service", query.service);
   if (query.status) sp.set("status", query.status);
   if (query.assignee) sp.set("assignee", query.assignee);
   if (query.q) sp.set("q", query.q);
-  if (query.open) sp.set("open", "1");
+  const narrowing = narrowsInbox(query);
+  const open = query.open ?? !narrowing;
+  if (open && narrowing) sp.set("open", "1");
+  if (!open && !narrowing) sp.set("open", "0");
   if (query.overdue) sp.set("overdue", "1");
   if (query.escalated) sp.set("escalated", "1");
   const sort = query.sort ?? DEFAULT_CASE_SORT.sort;

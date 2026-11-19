@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Package, Plus } from "lucide-react";
 import { ConsolePage, PageHeader } from "@/components/admin/ui";
+import { LoanTabs } from "@/components/admin/ui/LoanTabs";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { Button, DataTable, Details, NotificationBanner, Tag, type DataTableColumn } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
@@ -24,7 +25,7 @@ export async function generateMetadata() {
 export default async function InventoryPage({ searchParams }: { searchParams: Promise<{ added?: string }> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
-  await requireStaff(["officer", "admin"]);
+  const staff = await requireStaff(["officer", "admin"]);
   const { added } = await searchParams;
   const inventory = await listInventory(getDb());
 
@@ -34,6 +35,7 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
         icon="borrowInventory"
         title={a("brInvTitle", locale)}
         description={a("brInvIntro", locale)}
+        tabs={<LoanTabs current="inventory" roles={staff.roles} locale={locale} />}
         actions={
           <Button href="/admin/borrowing/items/new" icon={<Plus aria-hidden="true" size={18} />}>
             {a("brInvAddItem", locale)}

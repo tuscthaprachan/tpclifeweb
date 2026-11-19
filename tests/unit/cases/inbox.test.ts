@@ -35,6 +35,30 @@ describe("the inbox query string", () => {
     expect(inboxHref(q, { page: 3 })).toBe("/admin/cases?status=searching&assignee=me&q=CP-2026&open=1&sort=due&dir=asc&page=3");
   });
 
+  it("lists open cases by default, and every case only for open=0 or when something narrows the list", () => {
+    expect(parseInboxQuery({}, allowed).open).toBe(true);
+    expect(parseInboxQuery({ service: "complaint" }, allowed).open).toBe(true);
+    expect(parseInboxQuery({ open: "0" }, allowed).open).toBe(false);
+    expect(parseInboxQuery({ open: "1", q: "x" }, allowed).open).toBe(true);
+    expect(parseInboxQuery({ q: "x" }, allowed).open).toBe(false);
+    expect(parseInboxQuery({ status: "searching" }, allowed).open).toBe(false);
+    expect(parseInboxQuery({ assignee: "me" }, allowed).open).toBe(false);
+    expect(parseInboxQuery({ overdue: "1" }, allowed).open).toBe(false);
+    expect(parseInboxQuery({ status: "nonsense" }, allowed).open).toBe(true);
+  });
+
+  it("writes the default view as nothing and every case as open=0, so links round-trip", () => {
+    const roundTrip = (raw: Record<string, string>) => inboxParams(parseInboxQuery(Object.fromEntries(new URLSearchParams(inboxParams(parseInboxQuery(raw, allowed)))), allowed));
+    expect(inboxParams(parseInboxQuery({ open: "0" }, allowed))).toBe("open=0");
+    expect(inboxParams(parseInboxQuery({ open: "1" }, allowed))).toBe("");
+    expect(inboxParams(parseInboxQuery({ service: "complaint", open: "0" }, allowed))).toBe("service=complaint&open=0");
+    expect(inboxParams(parseInboxQuery({ q: "x", open: "1" }, allowed))).toBe("q=x&open=1");
+    expect(inboxParams(parseInboxQuery({ q: "x", open: "0" }, allowed))).toBe("q=x");
+    for (const raw of [{}, { open: "0" }, { q: "x" }, { q: "x", open: "1" }, { assignee: "me", open: "1" }, { status: "searching" }, { service: "complaint", open: "0", sort: "due" }]) {
+      expect(parseInboxQuery(Object.fromEntries(new URLSearchParams(roundTrip(raw))), allowed)).toMatchObject(parseInboxQuery(raw, allowed));
+    }
+  });
+
   it("flips the direction of the sorted column and starts another at its natural direction", () => {
     const q = parseInboxQuery({}, allowed);
     expect(nextCaseSort(q, "updated")).toMatchObject({ sort: "updated", dir: "asc" });
@@ -46,6 +70,7 @@ describe("the inbox query string", () => {
   it("reduces a saved query to filters and sort in a fixed order", () => {
     expect(canonicalViewQuery("?page=4&q=x&service=complaint&bogus=1&dir=asc&sort=due")).toBe("service=complaint&q=x&sort=due&dir=asc");
     expect(canonicalViewQuery("q=" + "y".repeat(200))).toBe("");
+    expect(canonicalViewQuery("sort=due&open=0&service=complaint")).toBe("service=complaint&open=0&sort=due");
   });
 });
 

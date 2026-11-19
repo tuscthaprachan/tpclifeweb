@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AlarmClock, CalendarCheck, CalendarClock, CircleDollarSign, ClipboardCheck, PackageCheck, PackageMinus, Undo2, type LucideIcon } from "lucide-react";
 import { ConsolePage, PageHeader } from "@/components/admin/ui";
+import { LoanTabs } from "@/components/admin/ui/LoanTabs";
 import { NotConfigured } from "@/components/admin/NotConfigured";
 import { DataTable, StatusTag, Timestamp, type DataTableColumn } from "@/components/ui";
 import { getAdminLocale } from "@/lib/admin/locale";
@@ -51,27 +52,34 @@ export default async function BorrowingSchedulePage() {
     { id: "br-return-week", icon: CalendarClock, titleKey: "brSecReturnWeek", hintKey: "brSecReturnWeekHint", rows: s.returnsNext7, time: "returnDueAt" },
   ];
 
+  const filled = sections.filter((section) => section.rows.length > 0);
+  const empty = sections.filter((section) => section.rows.length === 0);
+
   return (
     <ConsolePage width="wide">
-      <PageHeader icon="borrowSchedule" title={a("brScheduleTitle", locale)} description={a("brScheduleIntro", locale)} />
+      <PageHeader icon="borrowSchedule" title={a("brScheduleTitle", locale)} description={a("brScheduleIntro", locale)} tabs={<LoanTabs current="today" roles={staff.roles} locale={locale} />} />
 
-      <nav aria-label={a("brSecNav", locale)}>
-        <ul className="m-0 flex list-none flex-wrap gap-x-[var(--space-5)] gap-y-[var(--space-2)] p-0">
-          {sections.map((section) => (
-            <li key={section.id}>
-              <a href={`#${section.id}`}>
-                {a(section.titleKey, locale)} ({section.rows.length})
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      {filled.length > 0 ? (
+        <nav aria-label={a("brSecNav", locale)}>
+          <ul className="m-0 flex list-none flex-wrap gap-x-[var(--space-5)] gap-y-[var(--space-2)] p-0">
+            {filled.map((section) => (
+              <li key={section.id}>
+                <a href={`#${section.id}`}>
+                  {a(section.titleKey, locale)} ({section.rows.length})
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ) : null}
 
-      {sections.map((section) => (
+      {filled.map((section) => (
         <SectionCard key={section.id} id={section.id} icon={section.icon} title={`${a(section.titleKey, locale)} (${section.rows.length})`} description={a(section.hintKey, locale)}>
-          {section.rows.length === 0 ? <p className="m-0 text-ink-600">{a("brSecEmpty", locale)}</p> : <Table section={section} locale={locale} />}
+          <Table section={section} locale={locale} />
         </SectionCard>
       ))}
+
+      {empty.length > 0 ? <p className="m-0 text-ink-600">{a("dkNothingIn", locale, { list: empty.map((section) => a(section.titleKey, locale)).join(", ") })}</p> : null}
     </ConsolePage>
   );
 }
