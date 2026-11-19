@@ -6,6 +6,7 @@ import { formatTime, isoDateTime } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
 import type { CampusEvent, NewsPost } from "@/lib/content/types";
 import { dayAndMonth } from "./dateParts";
+import { SECTION_ICONS } from "./icons";
 import { SectionBar } from "./SectionBar";
 
 const HEADING_ID = "home-whats-on-heading";
@@ -40,11 +41,12 @@ export function WhatsOn({ locale, events, news }: WhatsOnProps) {
 
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="activity">
+      <SectionBar id={HEADING_ID} tone="activity" icon={SECTION_ICONS.whatsOn}>
         {UI.homeWhatsOn[locale]}
       </SectionBar>
 
-      <Heading level={3} className="mb-0 mt-[var(--space-4)]">
+      <Heading level={3} className="mb-0 mt-[var(--space-4)] flex items-center gap-[var(--space-2)]">
+        <SECTION_ICONS.events className="size-[1em] shrink-0 text-activity" />
         {UI.homeEvents[locale]}
       </Heading>
       {upcomingEvents.length === 0 ? (
@@ -86,7 +88,8 @@ export function WhatsOn({ locale, events, news }: WhatsOnProps) {
         </ul>
       )}
 
-      <Heading level={3} className="mb-0 mt-[var(--space-4)]">
+      <Heading level={3} className="mb-0 mt-[var(--space-4)] flex items-center gap-[var(--space-2)]">
+        <SECTION_ICONS.news className="size-[1em] shrink-0 text-activity" />
         {UI.homeNews[locale]}
       </Heading>
       {latestNews.length === 0 ? (

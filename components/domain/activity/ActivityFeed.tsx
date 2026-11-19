@@ -2,6 +2,7 @@ import NextLink from "next/link";
 
 import { OWNER_LABEL_KEY } from "@/components/domain/form";
 import { SectionBar } from "@/components/domain/home/SectionBar";
+import { SECTION_ICONS } from "@/components/domain/home/icons";
 import { EmptyState, StatusTag, Tag, Timestamp } from "@/components/ui";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -33,7 +34,7 @@ export function ActivityFeed({ locale, news, policies, excludeNewsIds }: Activit
 
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="governance">
+      <SectionBar id={HEADING_ID} tone="governance" icon={SECTION_ICONS.union}>
         {UI.homeUnion[locale]}
       </SectionBar>
 

@@ -3,6 +3,7 @@
 import { StatusTag, Timestamp } from "@/components/ui";
 import { fillText } from "@/components/domain/open-data/fill";
 import { TodayRow } from "@/components/domain/home/TodayRow";
+import { TODAY_ICONS } from "@/components/domain/home/icons";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { bangkokDateKey } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
@@ -39,6 +40,7 @@ function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: Sh
       if (!next) return null;
       return (
         <TodayRow
+          icon={TODAY_ICONS.shuttle}
           title={title}
           href={href}
           status={
@@ -56,21 +58,21 @@ function ShuttleRow({ locale, route, serverNowIso }: { locale: Locale; route: Sh
 
     case "finishedForToday":
       return (
-        <TodayRow title={title} href={href} status={<StatusTag tone="neutral" label={UI.lastDeparted[locale]} />}>
+        <TodayRow icon={TODAY_ICONS.shuttle} title={title} href={href} status={<StatusTag tone="neutral" label={UI.lastDeparted[locale]} />}>
           <NextServiceNote locale={locale} route={route} nextServiceDate={status.nextServiceDate} now={now} />
         </TodayRow>
       );
 
     case "notToday":
       return (
-        <TodayRow title={title} href={href} status={<StatusTag tone="neutral" label={UI.noServiceToday[locale]} />}>
+        <TodayRow icon={TODAY_ICONS.shuttle} title={title} href={href} status={<StatusTag tone="neutral" label={UI.noServiceToday[locale]} />}>
           <NextServiceNote locale={locale} route={route} nextServiceDate={status.nextServiceDate} now={now} />
         </TodayRow>
       );
 
     case "noTimetable":
       return (
-        <TodayRow title={title} href={href}>
+        <TodayRow icon={TODAY_ICONS.shuttle} title={title} href={href}>
           <span>{UI.shuttleNoTimetable[locale]}</span>
         </TodayRow>
       );

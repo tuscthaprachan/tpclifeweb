@@ -6,6 +6,7 @@ import { UI } from "@/lib/i18n/strings";
 import { HIGHLIGHTED_HOME_TASK_PATH } from "@/lib/content/home-tasks";
 import type { HomeTask } from "@/lib/content/types";
 import { cx } from "@/components/ui/cx";
+import { SECTION_ICONS, iconForPath } from "./icons";
 import { SectionBar } from "./SectionBar";
 
 const HEADING_ID = "home-popular-heading";
@@ -18,13 +19,14 @@ interface PopularTasksProps {
 export function PopularTasks({ locale, tasks }: PopularTasksProps) {
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="action">
+      <SectionBar id={HEADING_ID} tone="action" icon={SECTION_ICONS.popular}>
         {UI.homePopular[locale]}
       </SectionBar>
 
       <ul className="m-0 mt-[var(--space-3)] grid list-none gap-[var(--space-2)] p-0">
         {tasks.map((task) => {
           const highlighted = task.path === HIGHLIGHTED_HOME_TASK_PATH;
+          const TaskIcon = iconForPath(task.path);
           return (
             <li key={task.path}>
               <NextLink
@@ -34,9 +36,12 @@ export function PopularTasks({ locale, tasks }: PopularTasksProps) {
                   highlighted ? "min-h-20 bg-action" : "bg-surface-alt",
                 )}
               >
-                <span>
-                  <span className={cx("block font-bold group-hover:underline", highlighted ? "text-[length:var(--text-lg)] text-action-ink" : "text-action")}>{pick(task.label, locale)}</span>
-                  <span className={cx("block text-[length:var(--text-sm)] leading-snug", highlighted ? "text-action-ink" : "text-ink-600")}>{pick(task.description, locale)}</span>
+                <span className="flex items-center gap-[var(--space-3)]">
+                  <TaskIcon className={cx("size-6 shrink-0", highlighted ? "text-action-ink" : "text-action")} />
+                  <span>
+                    <span className={cx("block font-bold group-hover:underline", highlighted ? "text-[length:var(--text-lg)] text-action-ink" : "text-action")}>{pick(task.label, locale)}</span>
+                    <span className={cx("block text-[length:var(--text-sm)] leading-snug", highlighted ? "text-action-ink" : "text-ink-600")}>{pick(task.description, locale)}</span>
+                  </span>
                 </span>
                 <span aria-hidden="true" className={cx("grid size-9 place-items-center rounded-full", highlighted ? "bg-action-ink text-action" : "bg-action text-action-ink")}>
                   <ArrowRightIcon />

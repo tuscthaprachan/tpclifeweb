@@ -24,6 +24,7 @@ import {
 } from "@/lib/weather/levels";
 import type { CampusWeather } from "@/lib/weather/read";
 import { getPlaceHoursStatus, summariseLibraries, type PlaceHoursStatus } from "./openingHours";
+import { SECTION_ICONS, TODAY_ICONS } from "./icons";
 import { SectionBar } from "./SectionBar";
 import { TodayRow } from "./TodayRow";
 
@@ -111,7 +112,7 @@ export function TodayList({ locale, alerts, routes, places, libraries, weather, 
     if (!nothingWithHours || !showsHours || hoursEmptyShown) return null;
     hoursEmptyShown = true;
     return (
-      <TodayRow title={UI.keyHoursTitle[locale]} href={localePath(locale, "/places")}>
+      <TodayRow title={UI.keyHoursTitle[locale]} href={localePath(locale, "/places")} icon={TODAY_ICONS.places}>
         <span>{UI.keyHoursNotPublished[locale]}</span>
       </TodayRow>
     );
@@ -119,7 +120,7 @@ export function TodayList({ locale, alerts, routes, places, libraries, weather, 
 
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="transport" aside={showsShuttle && routes.length > 0 ? <Tag tone="neutral">{UI.scheduled[locale]}</Tag> : undefined}>
+      <SectionBar id={HEADING_ID} tone="transport" icon={SECTION_ICONS.today} aside={showsShuttle && routes.length > 0 ? <Tag tone="neutral">{UI.scheduled[locale]}</Tag> : undefined}>
         {UI.homeToday[locale]}
       </SectionBar>
 
@@ -150,7 +151,7 @@ function WeatherRows({ locale, weather, settings }: { locale: Locale; weather: C
   if (heatAt && atOrAbove(HEAT_ORDER, heatAt, HEAT_ADVISE_FROM)) advice.push(pick(settings.heatAdvice[heatAt], locale));
   if (pmAt && atOrAbove(PM25_ORDER, pmAt, PM25_ADVISE_FROM)) advice.push(pick(settings.pm25Advice[pmAt], locale));
   return (
-    <TodayRow title={UI.homeWeather[locale]} href={localePath(locale, "/weather")}>
+    <TodayRow title={UI.homeWeather[locale]} href={localePath(locale, "/weather")} icon={TODAY_ICONS.weather}>
       {heat && heatAt ? (
         <span className="inline-flex flex-wrap items-baseline gap-x-[var(--space-2)]">
           <span>
@@ -179,6 +180,7 @@ function AlertRow({ locale, alert }: { locale: Locale; alert: ServiceAlert }) {
     <TodayRow
       title={pick(alert.title, locale)}
       href={localePath(locale, `/alerts/${alert._id}`)}
+      icon={TODAY_ICONS.alert}
       status={<StatusTag tone={SEVERITY_TONE[alert.severity]} label={UI[SEVERITY_LABEL[alert.severity]][locale]} />}
     >
       <span>{pick(alert.body, locale)}</span>
@@ -193,7 +195,7 @@ function LibrariesRow({ locale, libraries, now }: { locale: Locale; libraries: C
 
   if (summary.total === 0) {
     return (
-      <TodayRow title={title} href={href}>
+      <TodayRow icon={TODAY_ICONS.libraries} title={title} href={href}>
         <span>{UI.keyHoursNotPublished[locale]}</span>
       </TodayRow>
     );
@@ -207,7 +209,7 @@ function LibrariesRow({ locale, libraries, now }: { locale: Locale; libraries: C
     );
 
   return (
-    <TodayRow title={title} href={href} status={status}>
+    <TodayRow icon={TODAY_ICONS.libraries} title={title} href={href} status={status}>
       {summary.latest ? (
         <span>
           {fillText(UI[summary.latest.closesNextDay ? "homeLibrariesLatestTomorrow" : "homeLibrariesLatest"][locale], {
@@ -232,7 +234,7 @@ function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlac
   switch (status.kind) {
     case "open":
       return (
-        <TodayRow title={title} href={href} status={<StatusTag tone="success" label={UI.openNow[locale]} />}>
+        <TodayRow icon={TODAY_ICONS.places} title={title} href={href} status={<StatusTag tone="success" label={UI.openNow[locale]} />}>
           <span>
             {status.closesNextDay
               ? fillText(UI.homeClosesTomorrow[locale], { time: status.closes })
@@ -243,7 +245,7 @@ function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlac
       );
     case "closed":
       return (
-        <TodayRow title={title} href={href} status={<StatusTag tone="neutral" label={UI.closedNow[locale]} />}>
+        <TodayRow icon={TODAY_ICONS.places} title={title} href={href} status={<StatusTag tone="neutral" label={UI.closedNow[locale]} />}>
           {status.opensNext ? (
             <span>
               {UI.opensAt[locale]} {status.opensNext}
@@ -254,7 +256,7 @@ function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlac
       );
     case "noHours":
       return (
-        <TodayRow title={title} href={href}>
+        <TodayRow icon={TODAY_ICONS.places} title={title} href={href}>
           <span>{UI.keyHoursNotPublished[locale]}</span>
         </TodayRow>
       );
