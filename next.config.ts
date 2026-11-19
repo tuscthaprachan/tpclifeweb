@@ -32,6 +32,17 @@ const nextConfig: NextConfig = {
   // Next 16 no longer runs ESLint as part of `next build`. Linting is a
   // separate gate, run by `npm run check` and in CI.
 
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "tpclife.vercel.app" }],
+        destination: "https://trytpc.tuso.tu.ac.th/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
