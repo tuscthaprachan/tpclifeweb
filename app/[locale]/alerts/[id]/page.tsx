@@ -12,7 +12,11 @@ import { formatDateTime } from "@/lib/i18n/format";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+export function generateStaticParams() {
+  return [];
+}
 
 type Props = { params: Promise<{ locale: string; id: string }> };
 

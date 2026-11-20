@@ -17,6 +17,7 @@ import { getSiteSettings } from "@/components/layout/site-settings";
 import { Container, DataTable, Heading, Prose, Stack } from "@/components/ui";
 import { DEFAULT_LOCALE, LOCALE_COOKIE, isLocale, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { THEME_COOKIE } from "@/lib/theme/config";
+import { JS_COOKIE } from "@/lib/query-routes";
 import { UI } from "@/lib/i18n/strings";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
@@ -51,6 +52,14 @@ const THEME_COOKIE_ROW = {
     en: "Remembers whether you chose the light or dark theme. If you choose System, this cookie is not set.",
   } satisfies LocaleString,
   duration: { th: "1 ปี", en: "1 year" } satisfies LocaleString,
+};
+
+const JS_COOKIE_ROW = {
+  purpose: {
+    th: "บอกเว็บไซต์ว่าเบราว์เซอร์ของคุณเปิดใช้ JavaScript เพื่อให้หน้าที่มีตัวกรองหรือการค้นหาเปิดจากสำเนาที่เก็บไว้ล่วงหน้าได้เร็วขึ้น คุกกี้เก็บเพียงค่า 1",
+    en: "Tells the site your browser runs JavaScript, so pages with filters or a search open from the ready-made copy and load faster. It holds only the value 1.",
+  } satisfies LocaleString,
+  duration: { th: "จนกว่าจะปิดเบราว์เซอร์", en: "Until you close your browser" } satisfies LocaleString,
 };
 
 const LF_JOURNEY_ROW = {
@@ -141,6 +150,7 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
                 duration: LOCALE_COOKIE_ROW.duration[locale],
               },
               { name: THEME_COOKIE, purpose: THEME_COOKIE_ROW.purpose[locale], duration: THEME_COOKIE_ROW.duration[locale] },
+              { name: JS_COOKIE, purpose: JS_COOKIE_ROW.purpose[locale], duration: JS_COOKIE_ROW.duration[locale] },
               { name: "lf_journey_…, cp_journey, br_journey", purpose: LF_JOURNEY_ROW.purpose[locale], duration: LF_JOURNEY_ROW.duration[locale] },
               { name: "lf_track, cp_track, br_track", purpose: LF_TRACK_ROW.purpose[locale], duration: LF_TRACK_ROW.duration[locale] },
             ]}

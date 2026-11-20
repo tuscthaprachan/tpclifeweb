@@ -7,7 +7,7 @@
  * and, when nothing matches, the best ways to get dishes back.
  *
  * Prerendered: it does not read the query. components/domain/canteen/pages/Dishes.tsx reads the filters in the
- * browser, and a full page load of a URL with a query is answered by the copy under `filtered/` instead, so it
+ * browser, and a full page load of a URL with a query without JavaScript is answered by the copy under `filtered/` instead, so it
  * works without JavaScript.
  */
 

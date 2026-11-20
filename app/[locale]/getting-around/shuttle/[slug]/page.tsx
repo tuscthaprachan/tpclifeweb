@@ -14,7 +14,11 @@ import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { addDaysToDateKey } from "@/lib/shuttle/schedule";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+export function generateStaticParams() {
+  return [];
+}
 
 const EXCEPTION_HORIZON_DAYS = 60;
 

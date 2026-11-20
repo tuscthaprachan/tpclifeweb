@@ -19,7 +19,7 @@ import {
   LOCALE_COOKIE_MAX_AGE,
   type Locale,
 } from "@/lib/i18n/config";
-import { FILTERED_HEADER, FILTERED_SEGMENT, hasReaderQuery, isQueryRoute } from "@/lib/query-routes";
+import { FILTERED_HEADER, FILTERED_SEGMENT, JS_COOKIE, hasReaderQuery, isQueryRoute } from "@/lib/query-routes";
 import { findRedirect } from "@/lib/redirects/proxy-cache";
 import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, THEME_COOKIE_MAX_AGE } from "@/lib/theme/config";
 
@@ -73,7 +73,8 @@ export async function proxy(request: NextRequest) {
       return NextResponse.rewrite(new URL(`/${firstSegment}/${FILTERED_SEGMENT}-not-found`, request.url));
     }
     const isDocument = request.headers.get("rsc") !== "1";
-    if (isDocument && isQueryRoute(rest) && (hasReaderQuery(request.nextUrl.searchParams) || rest === "/eat/pick")) {
+    const needsServer = isDocument && !request.cookies.has(JS_COOKIE);
+    if (needsServer && isQueryRoute(rest) && (hasReaderQuery(request.nextUrl.searchParams) || rest === "/eat/pick")) {
       const target = request.nextUrl.clone();
       target.pathname = `/${firstSegment}/${FILTERED_SEGMENT}${rest}`;
       const headers = new Headers(request.headers);

@@ -5,7 +5,7 @@
  * as having none rather than hidden.
  *
  * Prerendered: it does not read the query. components/domain/canteen/pages/Stalls.tsx reads the filters in the
- * browser, and a full page load of a URL with a query is answered by the copy under `filtered/` instead.
+ * browser, and a full page load of a URL with a query without JavaScript is answered by the copy under `filtered/` instead.
  */
 
 import type { Metadata } from "next";

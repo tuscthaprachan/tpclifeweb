@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { use, useMemo } from "react";
+import { use, useEffect, useMemo } from "react";
 
 import { useUrlEcho } from "@/components/hooks/use-url-echo";
 
@@ -11,7 +11,10 @@ import type { CanteenData } from "@/lib/content/types";
 
 import { canteenData } from "../data-client";
 import { CanonicalRedirect, useRenderState, useSearch, type ServerRender } from "../live";
+import { PLAN_COPY } from "../plan/copy";
+import { readPlanMode } from "../plan/mode";
 import { planTarget } from "../redirects";
+import { t } from "../strings";
 import { PlanPage, type GroupHandlers } from "./Plan";
 
 export function LivePlan({ locale, data: given, server }: { locale: Locale; data?: CanteenData; server?: ServerRender }) {
@@ -26,6 +29,21 @@ export function LivePlan({ locale, data: given, server }: { locale: Locale; data
   const { now, seed } = useRenderState(committed, server);
 
   const pending = planTarget(locale, search, data, "pending") !== null;
+
+  useEffect(() => {
+    const titles = Object.values(PLAN_COPY).map((copy) => t(copy.title, locale));
+    const current = t(PLAN_COPY[readPlanMode(shown)].title, locale);
+    const apply = () => {
+      const shownTitle = titles.find((title) => document.title.startsWith(title));
+      if (shownTitle !== undefined && shownTitle !== current) document.title = current + document.title.slice(shownTitle.length);
+    };
+    apply();
+    const element = document.querySelector("title");
+    if (!element) return;
+    const observer = new MutationObserver(apply);
+    observer.observe(element, { childList: true, characterData: true, subtree: true });
+    return () => observer.disconnect();
+  }, [shown, locale]);
 
   const group: GroupHandlers = {
     onEdit: (next) => echo.edit(next),

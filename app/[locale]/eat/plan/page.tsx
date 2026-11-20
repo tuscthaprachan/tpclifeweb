@@ -11,7 +11,7 @@
  *
  * Prerendered as the meal planner without a budget: it does not read the query.
  * components/domain/canteen/pages/Plan.tsx reads the mode and the rest in the browser, and a full page load of a
- * URL with a query is answered by the copy under `filtered/` instead, which also does the redirects.
+ * URL with a query without JavaScript is answered by the copy under `filtered/` instead, which also does the redirects.
  */
 
 import type { Metadata } from "next";

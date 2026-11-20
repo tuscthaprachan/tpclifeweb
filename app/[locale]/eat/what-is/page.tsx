@@ -4,7 +4,7 @@
  * exchange and international students who have never met the dish.
  *
  * Prerendered: it does not read the query. components/domain/canteen/pages/WhatIs.tsx reads the filters (which only
- * the links carry on) in the browser, and a full page load of a URL with a query is answered by the copy under
+ * the links carry on) in the browser, and a full page load of a URL with a query without JavaScript is answered by the copy under
  * `filtered/` instead.
  */
 
