@@ -27,11 +27,6 @@ import { HTML_LANG, LOCALES, DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type 
 import { SITE_URL } from "@/lib/site-url";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme/config";
 
-// Every request path outside these two locales 404s instead of silently
-// rendering. Paired with the explicit isLocale check below, which TypeScript
-// needs anyway since `params.locale` is a plain string.
-export const dynamicParams = false;
-
 const LIGHT_THEME_COLOR = "#ffffff";
 const DARK_THEME_COLOR = "#1a1220";
 
