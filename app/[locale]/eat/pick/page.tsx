@@ -14,7 +14,7 @@
  *
  * Prerendered: it does not read the query, so it is only the controls and a way to start. The pick is worked out
  * by components/domain/canteen/pages/Pick.tsx from the address, in the browser. A full page load of a URL with a
- * query is answered by the copy under `filtered/` instead, which redirects to a seeded URL. Without JavaScript the
+ * query without JavaScript is answered by the copy under `filtered/` instead, which redirects to a seeded URL. Without JavaScript the
  * plain /eat/pick sends the reader to `?seed=` (a `<meta http-equiv="refresh">` inside `<noscript>`), and that
  * request gets a seed from the filtered copy.
  *

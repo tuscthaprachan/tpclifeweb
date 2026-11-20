@@ -26,6 +26,7 @@ import { SkipLink } from "@/components/layout/SkipLink";
 import { HTML_LANG, LOCALES, DEFAULT_LOCALE, OTHER_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { SITE_URL } from "@/lib/site-url";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme/config";
+import { JS_BOOT_SCRIPT } from "@/lib/query-routes";
 
 const LIGHT_THEME_COLOR = "#ffffff";
 const DARK_THEME_COLOR = "#1a1220";
@@ -99,6 +100,7 @@ export default async function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: JS_BOOT_SCRIPT }} />
       </head>
       <body>
         {/* First focusable element in the document (2.4.1). */}
