@@ -14,7 +14,7 @@ Nothing runs until the GitHub variables below are set, so Vercel keeps working u
 
 ## 1. Collect the secrets
 
-From Vercel (Project → Settings → Environment Variables, Production): `DATABASE_URL`, `BETTER_AUTH_SECRET`, `PII_ENCRYPTION_KEY` (and `PII_ENCRYPTION_KEY_PREVIOUS` if set), `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`.
+From Vercel (Project → Settings → Environment Variables, Production): `DATABASE_URL`, `AUTH_ALLOWED_EMAIL_DOMAINS`, `BETTER_AUTH_SECRET`, `PII_ENCRYPTION_KEY` (and `PII_ENCRYPTION_KEY_PREVIOUS` if set), `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`.
 
 Sensitive variables cannot be read back. Replace them, except `PII_ENCRYPTION_KEY`:
 
@@ -28,7 +28,9 @@ Sensitive variables cannot be read back. Replace them, except `PII_ENCRYPTION_KE
 
 Also create a Blob read-write token: Vercel → Storage → the Blob store → Settings. It is only needed while copying files.
 
-Make sure the Neon project is owned by a Neon account, not only by the Vercel integration, before deleting anything on Vercel.
+The Neon database was created through the Vercel Marketplace integration, so it is owned and billed through Vercel. Transfer it to a standalone Neon account (Neon console → project settings → transfer) before deleting anything on Vercel.
+
+As of 20 Nov 2026, `PII_ENCRYPTION_KEY`, `BETTER_AUTH_SECRET`, `CRON_SECRET` and `RESEND_API_KEY` are all Sensitive on Vercel. Unless someone kept `PII_ENCRYPTION_KEY`, re-encrypt personal data under a new key while the site is still on Vercel, before the switch.
 
 ## 2. GitHub settings
 
@@ -73,6 +75,7 @@ Subscription: `trytpc.tuso.tu.ac.th`.
 | `NEXT_PUBLIC_SITE_URL` | `https://trytpc.tuso.tu.ac.th` |
 | `BETTER_AUTH_URL` | `https://trytpc.tuso.tu.ac.th` |
 | `DATABASE_URL` | Neon pooled connection string |
+| `AUTH_ALLOWED_EMAIL_DOMAINS` | same as Vercel |
 | `BETTER_AUTH_SECRET` | from step 1 |
 | `PII_ENCRYPTION_KEY` | from step 1 |
 | `CRON_SECRET` | from step 1 |
