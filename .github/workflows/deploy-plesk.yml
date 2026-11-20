@@ -26,7 +26,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ vars.NODE_VERSION || '24' }}
+          # Build and test on the same Node as ci.yml. Vitest and jsdom do not
+          # support odd releases such as 23, and npm ci silently skips jsdom
+          # there. The standalone output runs on any Node 22 or later, so Plesk
+          # can run a different version (it offers 23).
+          node-version: 24
           cache: npm
       - run: npm ci
 

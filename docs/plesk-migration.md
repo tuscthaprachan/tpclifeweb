@@ -42,7 +42,6 @@ Secrets:
 
 Variables:
 - `SITE_URL`: `https://trytpc.tuso.tu.ac.th`
-- `NODE_VERSION`: the major version Plesk runs, e.g. `24`
 - `PLESK_DEPLOY`: `true` (turns on the deploy workflow)
 - `RUN_MIGRATIONS`: `false` to skip migrations on deploy (optional)
 - `PLESK_CRON`: leave unset until the switch
@@ -60,7 +59,7 @@ Subscription: `trytpc.tuso.tu.ac.th`.
    - Deployment path: `/trytpc-app` (or any folder outside `httpdocs`)
    - Copy the webhook URL Plesk shows into GitHub → Settings → Webhooks (content type `application/json`, push events).
 3. **Node.js**:
-   - Node.js version: the same major as `NODE_VERSION`
+   - Node.js version: 22 or later. CI builds on Node 24; the app needs 22+ at runtime (better-auth's `kysely`), so 20 does not work. On 20 Nov 2026 Plesk offered 23.11.1 and 20.20.2, so use 23
    - Application root: the deployment path
    - Document root: `<deployment path>/public`
    - Application mode: production
