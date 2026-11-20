@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
+  output: "standalone",
+
   // Fonts read at runtime by lib/og/render.tsx for share images.
   outputFileTracingIncludes: {
     "/**": ["./assets/og/**"],
@@ -15,6 +17,7 @@ const nextConfig: NextConfig = {
   images: {
     // Content images live in Vercel Blob (lib/storage), one public host per store.
     remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
+    localPatterns: [{ pathname: "/files/**" }, { pathname: "/**", search: "" }],
     formats: ["image/avif", "image/webp"],
   },
 

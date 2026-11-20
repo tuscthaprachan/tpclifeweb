@@ -11,7 +11,7 @@ import "server-only";
  */
 
 import { cookies, headers } from "next/headers";
-import { SITE_URL } from "@/lib/site-url";
+import { IS_PRODUCTION_SITE, SITE_URL } from "@/lib/site-url";
 
 export function cookieOptions(maxAge: number) {
   return { httpOnly: true, sameSite: "lax" as const, secure: process.env.NODE_ENV === "production", path: "/", maxAge };
@@ -81,7 +81,7 @@ export async function requestContext(): Promise<{ ip: string | null; userAgent: 
  * link a person copies opens on the same deployment.
  */
 export async function siteOrigin(): Promise<string> {
-  if (process.env.VERCEL_ENV === "production") return SITE_URL;
+  if (IS_PRODUCTION_SITE) return SITE_URL;
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");
   if (!host) return SITE_URL;

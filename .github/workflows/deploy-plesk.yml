@@ -1,0 +1,66 @@
+name: Deploy to Plesk
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-plesk
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Build and publish the deploy branch
+    if: vars.PLESK_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SITE_ENV: production
+      NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ vars.NODE_VERSION || '24' }}
+          cache: npm
+      - run: npm ci
+
+      - name: Check required secrets
+        run: |
+          test -n "$DATABASE_URL" || { echo "Set the DATABASE_URL repository secret."; exit 1; }
+          test -n "$NEXT_PUBLIC_SITE_URL" || { echo "Set the SITE_URL repository variable."; exit 1; }
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Apply database migrations
+        if: vars.RUN_MIGRATIONS != 'false'
+        run: npm run db:migrate
+
+      - name: Build
+        run: npm run build
+
+      - name: Assemble the standalone app
+        run: |
+          cp -r public .next/standalone/
+          mkdir -p .next/standalone/.next
+          cp -r .next/static .next/standalone/.next/
+          mkdir -p .next/standalone/tmp
+          echo "$GITHUB_SHA" > .next/standalone/tmp/restart.txt
+          echo "$GITHUB_SHA" > .next/standalone/REVISION
+          rm -f .next/standalone/.env .next/standalone/.env.*
+
+      - name: Push to the deploy branch
+        working-directory: .next/standalone
+        run: |
+          git init -q -b deploy
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -f
+          git commit -q -m "Deploy $GITHUB_SHA"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" deploy:deploy

@@ -1,0 +1,36 @@
+name: Scheduled jobs
+
+on:
+  schedule:
+    - cron: "0 19 * * *"
+    - cron: "23 0 * * *"
+    - cron: "41 1 * * *"
+    - cron: "17 17 * * *"
+  workflow_dispatch:
+    inputs:
+      job:
+        description: Job to run
+        type: choice
+        options: [retention, complaints, borrowing, publishing]
+
+jobs:
+  run:
+    if: vars.PLESK_CRON == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the job
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          SCHEDULE: ${{ github.event.schedule }}
+          CHOSEN: ${{ inputs.job }}
+        run: |
+          case "$SCHEDULE" in
+            "0 19 * * *") JOB=retention ;;
+            "23 0 * * *") JOB=complaints ;;
+            "41 1 * * *") JOB=borrowing ;;
+            "17 17 * * *") JOB=publishing ;;
+            *) JOB="$CHOSEN" ;;
+          esac
+          test -n "$JOB" && test -n "$CRON_SECRET" && test -n "$SITE_URL"
+          curl -fsS --retry 3 --retry-delay 30 --max-time 300 -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/$JOB"

@@ -1,0 +1,26 @@
+name: Copy files from Vercel Blob to Plesk
+
+on:
+  workflow_dispatch:
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy every file, one batch at a time
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          test -n "$CRON_SECRET" && test -n "$SITE_URL"
+          cursor=""
+          failed=0
+          while :; do
+            out=$(curl -fsS --max-time 300 -X POST -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/migration/import-blob?cursor=$cursor")
+            echo "$out"
+            failed=$((failed + $(echo "$out" | jq '.failed | length')))
+            [ "$(echo "$out" | jq -r '.done')" = "true" ] && break
+            cursor=$(echo "$out" | jq -r '.cursor | @uri')
+          done
+          echo "Failed: $failed"
+          test "$failed" -eq 0
