@@ -11,7 +11,7 @@ import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/co
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 type Props = { params: Promise<{ locale: string }> };
 

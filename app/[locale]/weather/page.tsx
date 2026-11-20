@@ -22,7 +22,7 @@ import {
 } from "@/lib/weather/levels";
 import { getCampusWeather, getCampusWeatherToday, type HourlyReading } from "@/lib/weather/read";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const HEAT_LABEL: Record<HeatLevel, UiKey> = {
   normal: "homeHeatNormal",
