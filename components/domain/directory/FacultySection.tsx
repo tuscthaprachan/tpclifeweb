@@ -1,5 +1,5 @@
 import { Heading, Stack } from "@/components/ui";
-import type { FacultyOffice } from "@/lib/content/faculties";
+import type { FacultyOffice, ProgrammeOffice } from "@/lib/content/faculties";
 import type { Organisation } from "@/lib/content/types";
 import type { Locale } from "@/lib/i18n/config";
 import { AudienceTag } from "./AudienceTag";
@@ -12,12 +12,13 @@ interface FacultySectionProps {
   heading: string;
   locale: Locale;
   office: FacultyOffice | undefined;
+  programmeOffices: ProgrammeOffice[];
   showOffice: boolean;
   committees: Organisation[];
   showNoCommittees: boolean;
 }
 
-export function FacultySection({ id, heading, locale, office, showOffice, committees, showNoCommittees }: FacultySectionProps) {
+export function FacultySection({ id, heading, locale, office, programmeOffices, showOffice, committees, showNoCommittees }: FacultySectionProps) {
   return (
     <section id={id}>
       <Stack space={4}>
@@ -30,7 +31,13 @@ export function FacultySection({ id, heading, locale, office, showOffice, commit
                 <AudienceTag audience="staff" locale={locale} />
               </div>
               <p className="m-0 text-sm text-ink-600">{DIRECTORY_TEXT.officeIntro[locale]}</p>
-              <FacultyOfficeDetails office={office} locale={locale} empty={DIRECTORY_TEXT.officeNone[locale]} />
+              <FacultyOfficeDetails
+                office={office}
+                programmeOffices={programmeOffices}
+                locale={locale}
+                empty={DIRECTORY_TEXT.officeNone[locale]}
+                programmeHeadingLevel={4}
+              />
             </Stack>
           </section>
         ) : null}

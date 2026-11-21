@@ -1,4 +1,5 @@
-import { index, integer, pgTable, text } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { index, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core";
 import { contentColumns } from "./common";
 
 /**
@@ -12,6 +13,13 @@ import { contentColumns } from "./common";
  * an editor has filled in, and never invents a phone number or an address.
  * `sort_order` is the order faculties are listed in the faculty picker.
  */
+export interface ProgrammeOfficeJson {
+  name: { th: string; en: string };
+  email?: string;
+  phone?: string;
+  website?: string;
+}
+
 export const faculties = pgTable(
   "faculties",
   {
@@ -28,6 +36,7 @@ export const faculties = pgTable(
     /** Opening hours or any other note about reaching the office, free text. */
     officeNoteTh: text("office_note_th"),
     officeNoteEn: text("office_note_en"),
+    programmeOffices: jsonb("programme_offices").$type<ProgrammeOfficeJson[]>().notNull().default(sql`'[]'::jsonb`),
   },
   (t) => [index("faculties_listing_idx").on(t.status, t.sortOrder, t.nameEn)],
 );

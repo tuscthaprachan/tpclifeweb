@@ -11,7 +11,7 @@ const arts = { th: "คณะศิลปศาสตร์", en: "Faculty of Li
 
 function faculty(id: string, name: { th: string; en: string }, office: Faculty["office"] = {}): Faculty {
   const hasOffice = Object.values(office).some((v) => v !== undefined);
-  return { _id: id, slug: id, name, office, hasOffice, councils: [], programmes: [] };
+  return { _id: id, slug: id, name, office, programmeOffices: [], hasOffice, councils: [], programmes: [] };
 }
 
 function org(slug: string, en: string, extra: Partial<Organisation>): Organisation {
@@ -66,5 +66,18 @@ describe("DirectoryResults", () => {
   it("hides faculty offices when filtering to committees", async () => {
     const view = await render(createElement(DirectoryResults, { locale: "en", organisations, faculties, query: { type: "facultyCommittee" } }));
     expect([...view.host.querySelectorAll("h3")].map((h) => h.textContent)).toEqual(["Student committees"]);
+  });
+
+  it("lists programme offices under the faculty office, each with its own contact links", async () => {
+    const withProgrammes = [
+      { ...faculty("f-law", law), programmeOffices: [{ name: { th: "นิติ อินเตอร์", en: "LL.B. Business Law" }, email: "interllb@example.ac.th", website: "llb.example.ac.th" }], hasOffice: true },
+    ];
+    const view = await render(createElement(DirectoryResults, { locale: "en", organisations, faculties: withProgrammes, query: {} }));
+    const lawSection = section(view.host, "Faculty of Law");
+    expect([...lawSection.querySelectorAll("h3, h4")].map((h) => h.textContent)).toEqual(["Faculty office", "Programme offices", "Student committees"]);
+    expect(lawSection.textContent).not.toContain("We do not have this office's contact details yet.");
+    const item = [...lawSection.querySelectorAll("li")].find((li) => li.textContent?.includes("LL.B. Business Law"))!;
+    expect(item.querySelector('a[href="mailto:interllb@example.ac.th"]')).not.toBeNull();
+    expect(item.querySelector('a[href="https://llb.example.ac.th"]')).not.toBeNull();
   });
 });

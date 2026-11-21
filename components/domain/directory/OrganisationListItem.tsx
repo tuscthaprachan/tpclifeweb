@@ -1,10 +1,8 @@
 import { MapPin } from "lucide-react";
-import { IconText, Link, TARGET_LINE_PADDING, cx } from "@/components/ui";
+import { IconText } from "@/components/ui";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { Organisation } from "@/lib/content/types";
-import { CopyContactButton } from "./CopyContactButton";
-import { contactHref, contactLabel } from "./contactHref";
-import { contactIcon } from "./contactIcon";
+import { ContactList } from "./ContactList";
 
 /**
  * One organisation's entry in the directory: name, and its real contact
@@ -32,37 +30,9 @@ export function OrganisationListItem({ org, locale }: { org: Organisation; local
           <IconText icon={MapPin} size={14}>{pick(org.location, locale)}</IconText>
         </p>
       ) : null}
-      <ul className="m-0 mt-[var(--space-1)] flex list-none flex-wrap gap-x-[var(--space-4)] gap-y-[var(--space-1)] p-0 text-sm">
-        {org.contacts.map((contact) => {
-          const href = contactHref(contact);
-          const label = contactLabel(contact, locale);
-          return (
-            <li key={contact._key}>
-              <IconText icon={contactIcon(contact.channel)} size={14} target>
-                {href ? (
-                  // IconText wraps the link in spans, so the global
-                  // `li > a:only-child` 2.5.8 rule no longer reaches it: give
-                  // it the target size here.
-                  <Link
-                    href={href}
-                    locale={locale}
-                    className={cx("inline-block min-h-[var(--target-min)] font-medium text-action", TARGET_LINE_PADDING)}
-                  >
-                    {label}
-                  </Link>
-                ) : (
-                  <span className={cx("inline-block text-ink-600", TARGET_LINE_PADDING)}>{label}</span>
-                )}
-              </IconText>
-              {contact.channel === "line" ? (
-                <span className="ml-[var(--space-2)] inline-flex items-center gap-[var(--space-2)] align-top">
-                  <CopyContactButton value={contact.value} locale={locale} />
-                </span>
-              ) : null}
-            </li>
-          );
-        })}
-      </ul>
+      <div className="mt-[var(--space-1)]">
+        <ContactList contacts={org.contacts} locale={locale} />
+      </div>
     </li>
   );
 }

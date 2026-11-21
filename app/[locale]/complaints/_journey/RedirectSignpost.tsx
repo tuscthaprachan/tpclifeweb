@@ -67,7 +67,13 @@ export function OfficeSection({ faculty, locale, level = 3 }: { faculty: Faculty
         <AudienceTag audience="staff" locale={locale} />
       </div>
       <p className="m-0 text-sm text-ink-600">{DIRECTORY_TEXT.officeIntro[locale]}</p>
-      <FacultyOfficeDetails office={faculty.office} locale={locale} empty={UI.cpRedirectOfficeNone[locale]} />
+      <FacultyOfficeDetails
+        office={faculty.office}
+        programmeOffices={faculty.programmeOffices}
+        locale={locale}
+        empty={UI.cpRedirectOfficeNone[locale]}
+        programmeHeadingLevel={level === 2 ? 3 : 4}
+      />
     </Stack>
   ) : (
     <p className="m-0 text-ink-900">{UI.cpRedirectGone[locale]}</p>

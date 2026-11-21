@@ -104,6 +104,19 @@ describe("getFacultiesWithOrganisations", () => {
     expect(filled.office).toEqual({ location: { th: "ชั้น 1", en: "Floor 1" }, phone: "02 111 1111", note: { th: "", en: "Weekdays 9 to 4" } });
   });
 
+  it("returns programme offices in their set order, and counts them towards hasOffice", async () => {
+    await ctx.db
+      .update(faculties)
+      .set({ programmeOffices: [{ name: { th: "บีอี", en: "BE" }, email: "be@example.ac.th" }, { name: { th: "", en: "PhD" }, website: "https://phd.example.ac.th" }] })
+      .where(eq(faculties.slug, "political-science"));
+    const faculty = await bySlug("political-science");
+    expect(faculty.programmeOffices).toEqual([
+      { name: { th: "บีอี", en: "BE" }, email: "be@example.ac.th", phone: undefined, website: undefined },
+      { name: { th: "", en: "PhD" }, email: undefined, phone: undefined, website: "https://phd.example.ac.th" },
+    ]);
+    expect(faculty.hasOffice).toBe(true);
+  });
+
   it("leaves out drafts, inactive committees and committees with no scope are faculty-wide", async () => {
     await ctx.db.update(directoryOrganisations).set({ isActive: false }).where(eq(directoryOrganisations.slug, "bba-tu"));
     await ctx.db.update(directoryOrganisations).set({ scope: null }).where(eq(directoryOrganisations.slug, "ibmp-tu"));
@@ -138,6 +151,38 @@ describe("validateFacultyForm", () => {
     expect(bad).toMatchObject({ ok: false, errors: { phone: expect.any(String), email: expect.any(String), website: expect.any(String) } });
     const good = await validate(form({ phone: "02 613 3000", email: "office@example.ac.th", website: "https://example.ac.th" }));
     expect(good).toMatchObject({ ok: true, data: { phone: "02 613 3000", email: "office@example.ac.th", website: "https://example.ac.th" } });
+  });
+
+  it("keeps filled programme offices, drops blank rows and checks each contact", async () => {
+    const good = await validate(
+      form({
+        "programmeOffices.0.name.th": "สาขาหนึ่ง",
+        "programmeOffices.0.name.en": "Programme one",
+        "programmeOffices.0.email": "one@example.ac.th",
+        "programmeOffices.0.phone": "",
+        "programmeOffices.0.website": "one.example.ac.th",
+        "programmeOffices.1.name.th": "",
+        "programmeOffices.1.name.en": "",
+        "programmeOffices.1.email": "",
+        "programmeOffices.1.phone": "",
+        "programmeOffices.1.website": "",
+      }),
+    );
+    expect(good).toMatchObject({
+      ok: true,
+      data: { programmeOffices: [{ name: { th: "สาขาหนึ่ง", en: "Programme one" }, email: "one@example.ac.th", website: "https://one.example.ac.th" }] },
+    });
+    const bad = await validate(
+      form({
+        "programmeOffices.0.name.th": "สาขา",
+        "programmeOffices.0.name.en": "Programme",
+        "programmeOffices.0.email": "nope",
+        "programmeOffices.1.name.th": "สาขาสอง",
+        "programmeOffices.1.name.en": "Programme two",
+        "programmeOffices.1.email": "",
+      }),
+    );
+    expect(bad).toMatchObject({ ok: false, errors: { "programmeOffices.0.email": expect.any(String), "programmeOffices.1.email": expect.any(String) } });
   });
 
   it("refuses a slug that is taken", async () => {

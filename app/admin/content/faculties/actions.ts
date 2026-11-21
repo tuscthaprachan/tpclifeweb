@@ -31,7 +31,7 @@ export async function saveFaculty(id: string | null, _prev: ContentFormState, fo
   const checked = await validateFacultyForm(db, { locale, id, formData, existingStatus: existing?.status });
   if (!checked.ok) return { ...EMPTY_FORM_STATE, errors: checked.errors };
   const { status, intent } = checked;
-  const { slug, name, sortOrder, location, phone, email, website, note } = checked.data;
+  const { slug, name, sortOrder, location, phone, email, website, note, programmeOffices } = checked.data;
 
   let saved;
   try {
@@ -53,6 +53,7 @@ export async function saveFaculty(id: string | null, _prev: ContentFormState, fo
         officeWebsite: website,
         officeNoteTh: note.th || null,
         officeNoteEn: note.en || null,
+        programmeOffices,
       },
     });
   } catch (error) {

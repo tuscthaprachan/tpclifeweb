@@ -31,6 +31,11 @@ export const DIRECTORY_TEXT = editableStrings(
       en: "The faculty's staff. Contact them about your studies, registration, courses and faculty paperwork.",
     },
     officeNone: { th: "เรายังไม่มีข้อมูลติดต่อสำนักงานนี้", en: "We do not have this office's contact details yet." },
+    programmeOfficesHeading: { th: "สำนักงานหลักสูตร", en: "Programme offices" },
+    programmeOfficesIntro: {
+      th: "เจ้าหน้าที่ของแต่ละหลักสูตร ติดต่อเรื่องที่เกี่ยวกับหลักสูตรของคุณโดยตรง",
+      en: "Staff who run each programme. Contact them about anything specific to your programme.",
+    },
     committeesHeading: { th: "คณะกรรมการนักศึกษา", en: "Student committees" },
     committeesIntro: {
       th: "นักศึกษาที่เป็นตัวแทนของนักศึกษาในคณะและจัดกิจกรรม ไม่ใช่เจ้าหน้าที่ของคณะ",

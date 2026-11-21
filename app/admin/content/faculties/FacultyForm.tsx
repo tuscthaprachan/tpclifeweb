@@ -11,6 +11,7 @@ import { faculties } from "@/lib/db/schema";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { deleteFaculty, saveFaculty } from "./actions";
+import { ProgrammeOfficesField } from "./ProgrammeOfficesField";
 import { facultyUsage } from "./usage";
 
 /** The faculty form, for the "new" page (no `id`) and the edit page. `error` is "inUse" after a refused delete. */
@@ -93,6 +94,7 @@ export async function FacultyForm({ locale, id, saved, error }: { locale: Locale
           />
         </Stack>
       </FormSection>
+      <ProgrammeOfficesField defaultValue={faculty?.programmeOffices ?? []} />
     </ContentForm>
   );
 }

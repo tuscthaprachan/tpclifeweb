@@ -116,7 +116,14 @@ function redirectParagraphs({ level, faculty, bodies }: RedirectTarget, lang: "t
     const lines = officeLines(faculty.office, lang);
     out.push(`${T.facultyOffice[lang]}: ${faculty.name[lang] || faculty.name[th ? "en" : "th"]}`);
     if (lines.length > 0) out.push(...lines);
-    else out.push(T.noOfficeDetails[lang]);
+    else if (faculty.programmeOffices.length === 0) out.push(T.noOfficeDetails[lang]);
+    if (faculty.programmeOffices.length > 0) {
+      out.push(`${T.programmeOffices[lang]}:`);
+      for (const office of faculty.programmeOffices) {
+        const details = [office.email, office.phone, office.website].filter(Boolean).join(", ");
+        out.push(`${office.name[lang] || office.name[th ? "en" : "th"]}: ${details}`);
+      }
+    }
   } else {
     out.push(T.askFaculty[lang]);
   }

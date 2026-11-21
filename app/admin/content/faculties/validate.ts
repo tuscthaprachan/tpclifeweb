@@ -7,6 +7,8 @@ import { faculties } from "@/lib/db/schema";
 import type { ContentStatus } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
+import type { ProgrammeOfficeJson } from "@/lib/db/schema/content/faculties";
+import { rowsOf } from "../organisations/_shared/rows";
 import { checkContactValue } from "../organisations/validate";
 
 /**
@@ -32,6 +34,32 @@ export async function validateFacultyForm(
     email: k.text(L("facFieldOfficeEmail"), { max: 254 }),
     website: k.url(L("facFieldOfficeWebsite")),
     note: k.bilingual(L("facFieldOfficeNote"), { max: 500 }),
+    programmeOffices: rowsOf(
+      z
+        .object({
+          name: k.bilingual(L("facFieldProgrammeName"), { required: true, max: 150 }),
+          email: k.text(L("facFieldProgrammeEmail"), { max: 254 }),
+          phone: k.text(L("facFieldProgrammePhone"), { max: 60 }),
+          website: k.text(L("facFieldProgrammeWebsite"), { max: 2048 }),
+        })
+        .transform((row, ctx): ProgrammeOfficeJson => {
+          const out: ProgrammeOfficeJson = { name: { th: row.name.th, en: row.name.en } };
+          for (const field of ["email", "phone", "website"] as const) {
+            const value = row[field].trim();
+            if (!value) continue;
+            const checked = checkContactValue(field, value);
+            if (checked.error) {
+              const label = L(field === "email" ? "facFieldProgrammeEmail" : field === "phone" ? "facFieldProgrammePhone" : "facFieldProgrammeWebsite").toLowerCase();
+              ctx.addIssue({ code: "custom", path: [field], message: a(checked.error, locale, { field: label }) });
+            } else out[field] = checked.value;
+          }
+          if (!row.email.trim() && !row.phone.trim() && !row.website.trim()) {
+            ctx.addIssue({ code: "custom", path: ["email"], message: L("facErrProgrammeContact") });
+          }
+          return out;
+        }),
+      { max: 30 },
+    ),
   });
 
   const raw = formDataToObject(formData);

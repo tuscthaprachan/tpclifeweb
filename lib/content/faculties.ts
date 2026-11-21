@@ -26,6 +26,13 @@ export interface FacultyOffice {
   note?: LocaleString;
 }
 
+export interface ProgrammeOffice {
+  name: LocaleString;
+  email?: string;
+  phone?: string;
+  website?: string;
+}
+
 /** A faculty committee as the service shows it. */
 export interface FacultyBody {
   _id: string;
@@ -43,6 +50,7 @@ export interface Faculty {
   slug: string;
   name: LocaleString;
   office: FacultyOffice;
+  programmeOffices: ProgrammeOffice[];
   /** True when at least one office field is filled in. */
   hasOffice: boolean;
   /** Faculty-wide councils or committees, A to Z by English name. A body with no scope set counts as one. */
@@ -85,14 +93,25 @@ async function readBodies(db: AuditExecutor, facultyIds: string[]): Promise<Map<
   return out;
 }
 
+export function toProgrammeOffices(row: FacultyRow): ProgrammeOffice[] {
+  return row.programmeOffices.map((p) => ({
+    name: ls(p.name.th, p.name.en),
+    email: opt(p.email),
+    phone: opt(p.phone),
+    website: opt(p.website),
+  }));
+}
+
 function toFaculty(row: FacultyRow, bodies: FacultyBody[]): Faculty {
   const office = toFacultyOffice(row);
+  const programmeOffices = toProgrammeOffices(row);
   return {
     _id: row.id,
     slug: row.slug,
     name: ls(row.nameTh, row.nameEn),
     office,
-    hasOffice: facultyHasOffice(office),
+    programmeOffices,
+    hasOffice: facultyHasOffice(office) || programmeOffices.length > 0,
     councils: bodies.filter((b) => b.scope === "faculty"),
     programmes: bodies.filter((b) => b.scope === "programme"),
   };
@@ -112,7 +131,7 @@ export async function readFacultyById(db: AuditExecutor, id: string): Promise<Fa
   return toFaculty(row, (await readBodies(db, [row.id])).get(row.id) ?? []);
 }
 
-const cachedFaculties = cachedRead(["faculties"], [CACHE_TAGS.faculty], REVALIDATE.content, () => readFacultiesWithOrganisations(getDb()));
+const cachedFaculties = cachedRead(["faculties", "programme-offices"], [CACHE_TAGS.faculty], REVALIDATE.content, () => readFacultiesWithOrganisations(getDb()));
 
 export async function getFacultiesWithOrganisations(): Promise<Faculty[]> {
   return safeFetch<Faculty[]>("getFacultiesWithOrganisations", () => cachedFaculties(), []);

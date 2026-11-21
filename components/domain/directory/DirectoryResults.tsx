@@ -68,7 +68,7 @@ export function DirectoryResults({ locale, organisations, faculties, query }: Di
     );
   }
 
-  const offices = typeFilter === "" ? faculties.filter((f) => (!facultyFilter || facultyKeyOf(f.name) === facultyFilter) && matches([f.name.th, f.name.en])) : [];
+  const offices = typeFilter === "" ? faculties.filter((f) => (!facultyFilter || facultyKeyOf(f.name) === facultyFilter) && matches([f.name.th, f.name.en, ...f.programmeOffices.flatMap((p) => [p.name.th, p.name.en])])) : [];
   const officeShown = new Set(offices.map((f) => f._id));
   const facultyById = new Map(faculties.map((f) => [f._id, f]));
   const facultyByKey = new Map(faculties.map((f) => [facultyKeyOf(f.name), f]));
@@ -165,6 +165,7 @@ export function DirectoryResults({ locale, organisations, faculties, query }: Di
                   heading={section.heading}
                   locale={locale}
                   office={section.faculty?.office}
+                  programmeOffices={section.faculty?.programmeOffices ?? []}
                   showOffice={section.showOffice}
                   committees={section.committees}
                   showNoCommittees={section.showNoCommittees}

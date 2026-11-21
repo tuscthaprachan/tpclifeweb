@@ -121,6 +121,18 @@ export const DIRECTORY_STRINGS = {
   facFieldOfficeWebsite: { th: "เว็บไซต์ของคณะ", en: "Faculty website" },
   facFieldOfficeNote: { th: "เวลาทำการหรือหมายเหตุ", en: "Opening hours or a note" },
   facHintOfficeNote: { th: "ข้อความอิสระ เช่น เวลาทำการ หรือช่องทางที่ควรใช้ก่อน", en: "Free text, for example opening hours or the best way to reach them first" },
+  facGroupProgrammeOffices: { th: "สำนักงานหลักสูตร", en: "Programme offices" },
+  facHintProgrammeOffices: {
+    th: "สำนักงานของแต่ละหลักสูตรในคณะ เป็นเจ้าหน้าที่ ไม่ใช่นักศึกษา ใส่ช่องทางติดต่ออย่างน้อยหนึ่งช่องต่อหลักสูตร",
+    en: "The office of each programme in the faculty. These are staff, not students. Give at least one way to contact each programme",
+  },
+  facFieldProgrammeOffice: { th: "สำนักงานหลักสูตร", en: "Programme office" },
+  facFieldProgrammeName: { th: "ชื่อหลักสูตร", en: "Programme name" },
+  facHintProgrammeName: { th: "เช่น สาขาอังกฤษ - อเมริกันศึกษา หลักสูตรนานาชาติ", en: "For example, British and American Studies (international programme)" },
+  facFieldProgrammeEmail: { th: "อีเมล", en: "Email" },
+  facFieldProgrammePhone: { th: "โทรศัพท์", en: "Phone" },
+  facFieldProgrammeWebsite: { th: "เว็บไซต์", en: "Website" },
+  facErrProgrammeContact: { th: "ใส่อีเมล โทรศัพท์ หรือเว็บไซต์อย่างน้อยหนึ่งช่อง", en: "Enter an email, phone number or website" },
   facInUseTitle: { th: "ลบคณะนี้ไม่ได้", en: "This faculty cannot be deleted" },
   facInUseBody: {
     th: "ยังมีรายการที่ใช้คณะนี้อยู่ ให้เอาคณะนี้ออกจากรายการเหล่านี้ก่อน แล้วลองลบอีกครั้ง: {uses}",
