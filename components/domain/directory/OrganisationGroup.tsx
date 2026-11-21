@@ -9,20 +9,29 @@ interface OrganisationGroupProps {
   headingLevel: HeadingLevel;
   organisations: Organisation[];
   locale: Locale;
+  id?: string;
 }
 
 /** One section of the directory list: a faculty, or the clubs/other group. Renders nothing when empty, so an active filter never leaves a bare heading. */
-export function OrganisationGroup({ heading, headingLevel, organisations, locale }: OrganisationGroupProps) {
+export function OrganisationGroup({
+  heading,
+  headingLevel,
+  organisations,
+  locale,
+  id,
+}: OrganisationGroupProps) {
   if (organisations.length === 0) return null;
 
   return (
-    <Stack space={2} as="section">
-      <Heading level={headingLevel}>{heading}</Heading>
-      <ul className="m-0 flex list-none flex-col divide-y divide-line p-0">
-        {organisations.map((org) => (
-          <OrganisationListItem key={org._id} org={org} locale={locale} />
-        ))}
-      </ul>
-    </Stack>
+    <section id={id}>
+      <Stack space={2}>
+        <Heading level={headingLevel}>{heading}</Heading>
+        <ul className="m-0 flex list-none flex-col divide-y divide-line p-0">
+          {organisations.map((org) => (
+            <OrganisationListItem key={org._id} org={org} locale={locale} />
+          ))}
+        </ul>
+      </Stack>
+    </section>
   );
 }

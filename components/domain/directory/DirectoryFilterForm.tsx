@@ -2,7 +2,7 @@
 
 import Form from "next/form";
 import Link from "next/link";
-import { Button, Select } from "@/components/ui";
+import { Button, Select, TextInput } from "@/components/ui";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { DIRECTORY_TEXT } from "./strings";
@@ -28,6 +28,7 @@ interface DirectoryFilterFormProps {
   action: string;
   currentType: string;
   currentFaculty: string;
+  currentQuery: string;
   facultyOptions: FacultyOption[];
 }
 
@@ -39,16 +40,26 @@ interface DirectoryFilterFormProps {
  * submits the form immediately, which is only an upgrade of the same
  * mechanism, not a replacement for it.
  */
-export function DirectoryFilterForm({ locale, action, currentType, currentFaculty, facultyOptions }: DirectoryFilterFormProps) {
+export function DirectoryFilterForm({ locale, action, currentType, currentFaculty, currentQuery, facultyOptions }: DirectoryFilterFormProps) {
   const typeOptions = [
     { value: "", label: UI.all[locale] },
     ...TYPE_ORDER.map((type) => ({ value: type, label: TYPE_OPTION_LABEL[type][locale] })),
   ];
   const facultySelectOptions = [{ value: "", label: UI.all[locale] }, ...facultyOptions];
-  const hasActiveFilter = currentType !== "" || currentFaculty !== "";
+  const hasActiveFilter = currentType !== "" || currentFaculty !== "" || currentQuery !== "";
+  const showFaculty = currentType === "" || currentType === "facultyCommittee";
 
   return (
     <Form action={action} aria-label={UI.filter[locale]} className="flex flex-wrap items-end gap-[var(--space-4)]">
+      <TextInput
+        id="directory-search"
+        name="q"
+        type="search"
+        label={DIRECTORY_TEXT.searchLabel[locale]}
+        hint={DIRECTORY_TEXT.searchHint[locale]}
+        defaultValue={currentQuery}
+        autoComplete="off"
+      />
       <Select
         id="directory-type"
         name="type"
@@ -57,14 +68,16 @@ export function DirectoryFilterForm({ locale, action, currentType, currentFacult
         defaultValue={currentType}
         onChange={(event) => event.currentTarget.form?.requestSubmit()}
       />
-      <Select
-        id="directory-faculty"
-        name="faculty"
-        label={DIRECTORY_TEXT.facultyLabel[locale]}
-        options={facultySelectOptions}
-        defaultValue={currentFaculty}
-        onChange={(event) => event.currentTarget.form?.requestSubmit()}
-      />
+      {showFaculty ? (
+        <Select
+          id="directory-faculty"
+          name="faculty"
+          label={DIRECTORY_TEXT.facultyLabel[locale]}
+          options={facultySelectOptions}
+          defaultValue={currentFaculty}
+          onChange={(event) => event.currentTarget.form?.requestSubmit()}
+        />
+      ) : null}
       <Button type="submit">{UI.applyFilters[locale]}</Button>
       {hasActiveFilter ? (
         <Link href={action} className="text-base text-action underline">
