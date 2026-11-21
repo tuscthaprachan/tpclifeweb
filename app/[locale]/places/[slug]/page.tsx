@@ -150,7 +150,11 @@ export default async function PlacePage({ params }: Props) {
                     <IconText icon={contactIcon(contact.channel)}>
                       <span className="text-ink-600">{contactLabel(contact, locale)}: </span>
                       {href ? (
-                        <Link href={href} locale={locale}>
+                        <Link
+                          href={href}
+                          locale={locale}
+                          className="inline-flex min-h-[var(--target-min)] items-center"
+                        >
                           {contact.value}
                         </Link>
                       ) : (

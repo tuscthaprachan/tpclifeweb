@@ -34,7 +34,14 @@ export function OrganisationListItem({ org, locale }: { org: Organisation; local
             <li key={contact._key}>
               <IconText icon={contactIcon(contact.channel)} size={14} className="items-center">
                 {href ? (
-                  <Link href={href} locale={locale} className="font-medium text-action">
+                  // IconText wraps the link in spans, so the global
+                  // `li > a:only-child` 2.5.8 rule no longer reaches it: give
+                  // it the target size here.
+                  <Link
+                    href={href}
+                    locale={locale}
+                    className="inline-flex min-h-[var(--target-min)] items-center font-medium text-action"
+                  >
                     {label}
                   </Link>
                 ) : (
