@@ -91,18 +91,25 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <div className="rounded-b-[var(--radius-band)]" style={{ background: "var(--band-gradient)" }}>
         <Container className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-[var(--space-4)] pb-[var(--space-5)] pt-[var(--space-4)] sm:items-end sm:gap-x-[var(--space-12)] sm:pb-0 sm:pt-[var(--space-8)]">
           <div className="contents sm:col-start-1 sm:row-start-1 sm:block sm:self-center sm:pb-[var(--space-8)]">
-            <Heading level={1} className={`col-start-1 row-start-1 m-0 max-w-[12em] self-start ${locale === "th" ? "text-[length:clamp(2.5rem,20vw_-_1.375rem,3.75rem)] font-normal [font-family:var(--font-chanok),var(--font-th)] sm:text-[length:clamp(4rem,1.75rem_+_5.4vw,6rem)]" : "text-[length:clamp(1.5rem,0.75rem_+_3.5vw,2.25rem)] font-bold sm:text-[length:clamp(2.25rem,0.75rem_+_3.6vw,3.75rem)]"}`}>
+            <Heading level={1} className={`col-start-1 row-start-1 m-0 max-w-[12em] self-center ${locale === "th" ? "text-[length:clamp(2.5rem,20vw_-_1.375rem,3.75rem)] font-normal [font-family:var(--font-chanok),var(--font-th)] sm:text-[length:clamp(4rem,1.75rem_+_5.4vw,6rem)]" : "text-[length:clamp(1.5rem,0.75rem_+_3.5vw,2.25rem)] font-bold sm:text-[length:clamp(2.25rem,0.75rem_+_3.6vw,3.75rem)]"}`}>
               {UI.homeHeading[locale]}
             </Heading>
             <SearchBar
               locale={locale}
               label={UI.homeSearchLabel[locale]}
-              hint={UI.homeSearchHint[locale]}
+              examples={[
+                UI.homeSearchExample1[locale],
+                UI.homeSearchExample2[locale],
+                UI.homeSearchExample3[locale],
+                UI.homeSearchExample4[locale],
+                UI.homeSearchExample5[locale],
+                UI.homeSearchExample6[locale],
+              ]}
               variant="pill"
               className="relative col-span-2 row-start-2 mt-[var(--space-2)] sm:mt-[var(--space-6)] sm:max-w-[40rem]"
             />
           </div>
-          <Dome className="pointer-events-none col-start-2 row-start-1 -mb-10 -mt-2 w-24 [mask-image:linear-gradient(to_bottom,#000_90%,transparent)] sm:my-0 sm:w-[170px] md:w-[220px] lg:w-[260px]" />
+          <Dome className="pointer-events-none col-start-2 row-start-1 -mt-2 w-24 self-end [mask-image:linear-gradient(to_bottom,#000_90%,transparent)] sm:my-0 sm:w-[170px] md:w-[220px] lg:w-[260px]" />
         </Container>
       </div>
 

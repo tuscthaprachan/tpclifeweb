@@ -17,20 +17,26 @@ interface TodayRowProps {
 
 export function TodayRow({ title, href, status, children, icon, iconClassName = "text-transport" }: TodayRowProps) {
   const rowIcon = icon ?? (href ? iconForPath(href) : undefined);
-  const marker = rowIcon ? <DecorativeIcon icon={rowIcon} className={`me-[var(--space-2)] self-center ${iconClassName}`} /> : null;
+  const marker = rowIcon ? (
+    <span className="me-[var(--space-2)] inline-flex h-[1lh] shrink-0 items-center">
+      <DecorativeIcon icon={rowIcon} className={iconClassName} />
+    </span>
+  ) : null;
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-[var(--space-3)] gap-y-[var(--space-1)] border-b border-line px-[var(--space-1)] py-[var(--space-3)]">
       <dt className="m-0 font-bold">
         {href ? (
-          <NextLink href={href} className={`${TODAY_LINK_CLASS} inline-flex items-baseline`}>
+          <NextLink href={href} className={`${TODAY_LINK_CLASS} inline-flex items-start`}>
             {marker}
-            {title}
-            <ArrowRightIcon className="ms-[var(--space-1)] text-action" />
+            <span>
+              {title}
+              <ArrowRightIcon className="ms-[var(--space-1)] inline-block text-action" />
+            </span>
           </NextLink>
         ) : (
-          <span className="inline-flex items-baseline">
+          <span className="inline-flex items-start">
             {marker}
-            {title}
+            <span>{title}</span>
           </span>
         )}
       </dt>

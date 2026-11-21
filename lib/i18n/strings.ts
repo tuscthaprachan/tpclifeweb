@@ -1268,7 +1268,12 @@ const UI_TEXT = {
 
   homeHeading: { th: "ท่าพระจันทร์สวัสดิ์", en: "Hello there, Tha Prachanians" },
   homeSearchLabel: { th: "ค้นหา", en: "Search" },
-  homeSearchHint: { th: "พิมพ์เป็นภาษาไทยหรืออังกฤษก็ได้ เช่น รถรับส่ง", en: "Thai or English, for example shuttle" },
+  homeSearchExample1: { th: "รถรับส่ง", en: "Shuttle" },
+  homeSearchExample2: { th: "ห้องสมุดเปิดกี่โมง", en: "Library opening hours" },
+  homeSearchExample3: { th: "ยืมร่ม", en: "Borrow an umbrella" },
+  homeSearchExample4: { th: "ของหาย", en: "Lost and found" },
+  homeSearchExample5: { th: "Shuttle", en: "รถรับส่ง" },
+  homeSearchExample6: { th: "โรงอาหาร", en: "Canteen" },
   homeToday: { th: "วันนี้", en: "Today" },
   homeFullTimetable: { th: "ตารางรถรับส่งทั้งหมด", en: "Full shuttle timetable" },
   homePopular: { th: "บริการที่ใช้บ่อย", en: "Popular" },

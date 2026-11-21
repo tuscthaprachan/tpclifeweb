@@ -28,6 +28,7 @@ import { search as runSearch, type SearchResult } from "@/lib/search";
 import type { SearchRecord } from "@/lib/content/types";
 import { loadSearchRecords } from "@/lib/search/wire";
 import { Button, cx } from "@/components/ui";
+import { SearchIcon } from "@/components/ui/icons";
 import { useStatusMessage } from "@/components/hooks/use-status-message";
 import {
   initialSearchCombobox,
@@ -43,15 +44,18 @@ interface SearchBarProps {
   label?: string;
   /** Replaces the default hint line. */
   hint?: string;
-  /** "pill" is the home page's rounded row with a purple pill button. */
+  /** Placeholder examples shown in turn while the box is empty and unfocused. */
+  examples?: string[];
+  /** "pill" is the home page's rounded row with a round icon button. */
   variant?: "default" | "pill";
   className?: string;
 }
 
 const DEBOUNCE_MS = 200;
 const MAX_SUGGESTIONS = 8;
+const EXAMPLE_MS = 3000;
 
-export function SearchBar({ locale, defaultValue = "", label, hint, variant = "default", className }: SearchBarProps) {
+export function SearchBar({ locale, defaultValue = "", label, hint, examples, variant = "default", className }: SearchBarProps) {
   const pill = variant === "pill";
   const router = useRouter();
   const inputId = useId();
@@ -59,6 +63,9 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
   const hintId = useId();
 
   const [query, setQuery] = useState(defaultValue);
+  const [focused, setFocused] = useState(false);
+  const [exampleIndex, setExampleIndex] = useState(0);
+  const exampleCount = examples?.length ?? 0;
   const [state, dispatch] = useReducer(searchComboboxReducer, initialSearchCombobox);
   const status = useStatusMessage<string>();
   const { show: showStatus, clear: clearStatus } = status;
@@ -77,6 +84,16 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (exampleCount < 2 || focused || query !== "") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = setInterval(() => setExampleIndex((index) => (index + 1) % exampleCount), EXAMPLE_MS);
+    return () => clearInterval(timer);
+  }, [exampleCount, focused, query]);
+
+  const placeholder = examples && exampleCount > 0 ? examples[exampleIndex % exampleCount] : label ? undefined : UI.searchPlaceholder[locale];
+  const hintText = pill ? hint : (hint ?? UI.searchHint[locale]);
 
   function loadIndex(): Promise<SearchRecord[]> {
     if (indexPromiseRef.current) return indexPromiseRef.current;
@@ -120,6 +137,7 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
   }
 
   function handleFocus() {
+    setFocused(true);
     void loadIndex();
   }
 
@@ -127,6 +145,7 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
     const next = event.relatedTarget as Node | null;
     const inside = next !== null && event.currentTarget.contains(next);
     if (inside) return;
+    setFocused(false);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     const requestId = ++requestIdRef.current;
     dispatch({ type: "focusOut", requestId, inside });
@@ -168,18 +187,20 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
 
   return (
     <Form role="search" action={localePath(locale, "/search")} className={className}>
-      <label htmlFor={inputId} className="mb-[var(--space-1)] block text-base font-medium text-ink-900">
+      <label htmlFor={inputId} className={pill ? "visually-hidden" : "mb-[var(--space-1)] block text-base font-medium text-ink-900"}>
         {label ?? UI.searchLabel[locale]}
       </label>
-      <p id={hintId} className={cx("mb-[var(--space-2)] text-sm text-ink-600", pill && "max-w-[calc(100%-5.5rem)] sm:max-w-none")}>
-        {hint ?? UI.searchHint[locale]}
-      </p>
+      {hintText ? (
+        <p id={hintId} className="mb-[var(--space-2)] text-sm text-ink-600">
+          {hintText}
+        </p>
+      ) : null}
 
       <div
         className={cx(
           "flex gap-[var(--space-2)]",
           pill &&
-            "gap-[var(--space-1)] rounded-pill border-2 border-line-strong bg-surface p-[var(--space-1)]",
+            "items-center gap-[var(--space-1)] rounded-pill border-2 border-line-strong bg-surface p-[var(--space-1)]",
         )}
       >
         <div className="relative min-w-0 flex-1" onBlur={handleBlur}>
@@ -192,9 +213,9 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
             aria-controls={listboxId}
             aria-activedescendant={activeId}
             aria-autocomplete="list"
-            aria-describedby={hintId}
+            aria-describedby={hintText ? hintId : undefined}
             autoComplete="off"
-            placeholder={label ? undefined : UI.searchPlaceholder[locale]}
+            placeholder={placeholder}
             value={query}
             onChange={(event) => handleChange(event.target.value)}
             onFocus={handleFocus}
@@ -202,7 +223,7 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
             style={pill ? { borderRadius: "var(--radius-pill)" } : undefined}
             className={cx(
               "min-h-[var(--target-min)] w-full px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900",
-              pill ? "min-h-12 rounded-pill border-0 bg-transparent px-[var(--space-4)]" : "rounded-control border border-line-strong bg-surface",
+              pill ? "block h-12 min-h-12 rounded-pill border-0 bg-transparent px-[var(--space-4)] py-0 placeholder:text-ink-600" : "rounded-control border border-line-strong bg-surface",
             )}
           />
           <ul
@@ -239,9 +260,10 @@ export function SearchBar({ locale, defaultValue = "", label, hint, variant = "d
           <button
             type="submit"
             style={{ borderRadius: "var(--radius-pill)" }}
-            className="min-h-12 rounded-pill bg-action px-[var(--space-5)] font-bold text-action-ink hover:bg-action-hover press"
+            className="inline-flex size-12 shrink-0 items-center justify-center rounded-pill bg-action text-action-ink hover:bg-action-hover press"
           >
-            {UI.searchSubmit[locale]}
+            <SearchIcon className="size-6 align-middle" />
+            <span className="visually-hidden">{UI.searchSubmit[locale]}</span>
           </button>
         ) : (
           <Button type="submit">{UI.searchSubmit[locale]}</Button>
