@@ -12,6 +12,8 @@ import { StartPage } from "../_journey/StartPage";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
+import { getServicePageText } from "@/lib/content/service-text";
+import { listItems } from "@/lib/content/service-pages";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     alternates: alternatesFor(locale, "/lost-and-found/report"),
     title: UI.reportLostItem[locale],
-    description: UI.lfpLostIntro[locale],
+    description: (await getServicePageText("lostReport")).intro[locale],
   };
 }
 
@@ -32,7 +34,7 @@ export default async function ReportLostStartPage({ params, searchParams }: { pa
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
-  const query = await searchParams;
+  const [query, t] = await Promise.all([searchParams, getServicePageText("lostReport")]);
   // Older links, such as ?kind=found, still land somewhere sensible.
   if (first(query.kind) === "found") redirect(localePath(locale, "/lost-and-found/found"));
 
@@ -40,8 +42,8 @@ export default async function ReportLostStartPage({ params, searchParams }: { pa
     <StartPage
       kind="lost"
       locale={locale}
-      intro={UI.lfpLostIntro[locale]}
-      need={[UI.lfpLostNeed1[locale], UI.lfpLostNeed2[locale], UI.lfpLostNeed3[locale], UI.lfpLostNeed4[locale]]}
+      intro={t.intro[locale]}
+      need={listItems(t.need[locale])}
       expired={first(query.expired) === "1"}
       problem={first(query.problem) === "1"}
     />

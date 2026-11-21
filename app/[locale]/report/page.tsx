@@ -6,7 +6,7 @@ import { Container, Heading, Link, Stack, StatusTag } from "@/components/ui";
 import { EXTERNAL_SERVICES } from "@/data/harvested-inventory";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { LocaleString } from "@/lib/content/types";
+import { getServicePageText } from "@/lib/content/service-text";
 import { alternatesFor } from "@/lib/i18n/metadata";
 
 /*
@@ -35,29 +35,6 @@ if (tuWellBeing.key !== "tuWellBeing") {
   throw new Error('data/harvested-inventory.ts: EXTERNAL_SERVICES[3] is no longer "tuWellBeing". Update app/[locale]/report/page.tsx to match.');
 }
 
-// None of these have a home in lib/i18n/strings.ts, which only has generic,
-// reusable vocabulary. Hardcoded and reported rather than stretched from
-// something that means something adjacent but different.
-const PAGE_INTRO: LocaleString = {
-  th: "เลือกช่องทางที่ตรงกับเรื่องที่ต้องการแจ้ง มีสามช่องทาง แยกตามประเภทของเรื่อง",
-  en: "Choose the option that matches what you need to report. There are three, depending on the kind of problem",
-}; // TODO: add to UI strings
-const ROUTE_1_USE_WHEN: LocaleString = {
-  th: "ใช้ช่องทางนี้เมื่อมีปัญหาเรื่องรายวิชา คณะ หรือมหาวิทยาลัย หรือต้องการร้องเรียน อมธ. และสภานักศึกษา หากมีใครตกอยู่ในอันตราย ให้โทร 191 หรือ 1669",
-  en: "Use this for a problem with a course, your faculty or the university, or to complain about TUSU or TUSC. If anyone is in danger, call 191 or 1669.",
-}; // TODO: add to UI strings
-const ROUTE_2_USE_WHEN: LocaleString = {
-  th: "ใช้ช่องทางนี้เมื่อพบปัญหาสภาพแวดล้อมหรือสิ่งอำนวยความสะดวกในมหาวิทยาลัย เช่น ไฟดับ น้ำรั่ว หรือทางเดินชำรุด",
-  en: "Use this for a fault with campus facilities or the physical environment, such as broken lighting, a leak, or a damaged walkway",
-}; // TODO: add to UI strings
-const ROUTE_1_LINK: LocaleString = { th: "เริ่มแจ้งปัญหา", en: "Report an issue" };
-const ROUTE_2_LINK: LocaleString = { th: "ไปที่ Traffy Fondue เพื่อแจ้งปัญหา", en: "Go to Traffy Fondue to report a problem" };
-const ROUTE_3_HEADING: LocaleString = { th: "ความเป็นอยู่และสุขภาพใจ", en: "Your own wellbeing" }; // TODO: add to UI strings
-const ROUTE_3_USE_WHEN: LocaleString = {
-  th: "ใช้ช่องทางนี้เมื่อมีเรื่องส่วนตัว ความเครียด หรือปัญหาสุขภาพใจที่กระทบกับตัวคุณเอง",
-  en: "Use this for a personal difficulty, stress, or a mental health concern that affects you specifically",
-}; // TODO: add to UI strings
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
@@ -69,6 +46,7 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
+  const t = await getServicePageText("report");
 
   return (
     <Container width="narrow">
@@ -76,35 +54,35 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
       <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Stack space={2}>
           <Heading level={1}>{UI.report[locale]}</Heading>
-          <p className="m-0 text-ink-600">{PAGE_INTRO[locale]}</p>
+          <p className="m-0 text-ink-600">{t.intro[locale]}</p>
         </Stack>
 
         <Stack space={3} as="section">
           <Heading level={2}>{UI.cpServiceName[locale]}</Heading>
-          <p className="m-0 text-ink-600">{ROUTE_1_USE_WHEN[locale]}</p>
+          <p className="m-0 text-ink-600">{t.issueUseWhen[locale]}</p>
           <StatusTag tone="neutral" label={UI.noSignInNeeded[locale]} />
           <p className="m-0">
             <Link href="/complaints" locale={locale} className="font-semibold text-action">
-              {pick(ROUTE_1_LINK, locale)}
+              {t.issueLink[locale]}
             </Link>
           </p>
         </Stack>
 
         <Stack space={3} as="section">
           <Heading level={2}>{pick(traffyFondue.name, locale)}</Heading>
-          <p className="m-0 text-ink-600">{ROUTE_2_USE_WHEN[locale]}</p>
+          <p className="m-0 text-ink-600">{t.facilityUseWhen[locale]}</p>
           {traffyFondue.note ? <p className="m-0 text-ink-600">{pick(traffyFondue.note, locale)}</p> : null}
           <StatusTag tone="neutral" label={UI.noSignInNeeded[locale]} />
           <p className="m-0">
             <Link href={traffyFondue.url} locale={locale} className="font-semibold text-action">
-              {pick(ROUTE_2_LINK, locale)}
+              {t.facilityLink[locale]}
             </Link>
           </p>
         </Stack>
 
         <Stack space={3} as="section">
-          <Heading level={2}>{ROUTE_3_HEADING[locale]}</Heading>
-          <p className="m-0 text-ink-600">{ROUTE_3_USE_WHEN[locale]}</p>
+          <Heading level={2}>{t.wellbeingHeading[locale]}</Heading>
+          <p className="m-0 text-ink-600">{t.wellbeingUseWhen[locale]}</p>
           <StatusTag tone="neutral" label={UI.noSignInNeeded[locale]} />
           <ul className="m-0 flex flex-col gap-[var(--space-2)] pl-[var(--space-6)]">
             <li>

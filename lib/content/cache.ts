@@ -34,6 +34,7 @@ export const CACHE_TAGS = {
   openDataReports: "openDataReports",
   redirects: "redirects",
   today: "today",
+  servicePages: "servicePages",
 } as const;
 
 export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS];

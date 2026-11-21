@@ -27,6 +27,7 @@ export type ContentEntityType =
   | "lostFoundItem"
   | "canteenSettings"
   | "todaySettings"
+  | "servicePages"
   | "canteenStall"
   | "canteenDish"
   | "canonicalDish"
@@ -65,6 +66,7 @@ export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
   // invalidate its tag.
   canteenSettings: [CACHE_TAGS.canteen],
   todaySettings: [CACHE_TAGS.today],
+  servicePages: [CACHE_TAGS.servicePages],
   canteenStall: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
   canteenDish: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
   canonicalDish: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],

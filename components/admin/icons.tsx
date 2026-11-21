@@ -152,6 +152,7 @@ export const CONSOLE_ICONS = {
   images: ImageIcon,
   siteSettings: Settings,
   todaySettings: Sun,
+  servicePages: LucideListChecks,
   complaintCategories: Tags,
   borrowSchedule: ClipboardList,
   borrowCalendar: CalendarRange,

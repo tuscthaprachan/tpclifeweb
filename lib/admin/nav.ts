@@ -72,6 +72,7 @@ const CONTENT_PLACEMENT: Record<string, { section: ContentSectionId | null; icon
   faqs: { section: "information", icon: "faqs" },
   openDataDocuments: { section: "information", icon: "policies" },
   forms: { section: "information", icon: "forms" },
+  servicePages: { section: "information", icon: "servicePages" },
   organisations: { section: "directory", icon: "organisations" },
   faculties: { section: "directory", icon: "faculties" },
   places: { section: "directory", icon: "places" },

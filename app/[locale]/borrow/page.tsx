@@ -18,6 +18,8 @@ import { getDb, isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
+import { getServicePageText } from "@/lib/content/service-text";
+import { listItems } from "@/lib/content/service-pages";
 import { beginJourney } from "./_journey/actions";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     alternates: alternatesFor(locale, "/borrow"),
     title: UI.brServiceName[locale],
-    description: UI.brIntro[locale],
+    description: (await getServicePageText("borrow")).intro[locale],
   };
 }
 
@@ -51,7 +53,7 @@ export default async function BorrowStartPage({ params, searchParams }: { params
   const locale: Locale = rawLocale;
   const query = await searchParams;
   const available = isDatabaseConfigured() && isPiiAvailable();
-  const categories = await readCategories();
+  const [categories, t] = await Promise.all([readCategories(), getServicePageText("borrow")]);
 
   return (
     <Container width="narrow">
@@ -59,7 +61,7 @@ export default async function BorrowStartPage({ params, searchParams }: { params
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Stack space={2}>
           <PageTitle path="/borrow">{UI.brServiceName[locale]}</PageTitle>
-          <p className="m-0 text-ink-900">{UI.brIntro[locale]}</p>
+          <p className="m-0 text-ink-900">{t.intro[locale]}</p>
         </Stack>
 
         {first(query.expired) === "1" ? (
@@ -75,7 +77,7 @@ export default async function BorrowStartPage({ params, searchParams }: { params
 
         {categories.length > 0 ? (
           <Stack space={2} as="section">
-            <Heading level={2}>{UI.brCanBorrow[locale]}</Heading>
+            <Heading level={2}>{t.canBorrowHeading[locale]}</Heading>
             <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">
               {categories.map((c) => {
                 const hint = pick({ th: c.hintTh, en: c.hintEn }, locale);
@@ -95,17 +97,16 @@ export default async function BorrowStartPage({ params, searchParams }: { params
         ) : null}
 
         <Stack space={2} as="section">
-          <Heading level={2}>{UI.brYouWillNeed[locale]}</Heading>
+          <Heading level={2}>{t.needHeading[locale]}</Heading>
           <ul className="m-0 flex list-disc flex-col gap-[var(--space-1)] pl-[var(--space-6)]">
-            <li>{UI.brNeed1[locale]}</li>
-            <li>{UI.brNeed2[locale]}</li>
-            <li>{UI.brNeed3[locale]}</li>
-            <li>{UI.brNeed4[locale]}</li>
+            {listItems(t.need[locale]).map((item) => (
+              <li key={item}>{item}</li>
+            ))}
           </ul>
         </Stack>
 
         <InsetText>
-          <p className="m-0">{UI.brRulesNote[locale].replace("{loan}", String(MAX_LOAN_DAYS)).replace("{ahead}", String(MAX_ADVANCE_DAYS))}</p>
+          <p className="m-0">{t.rulesNote[locale].replace("{loan}", String(MAX_LOAN_DAYS)).replace("{ahead}", String(MAX_ADVANCE_DAYS))}</p>
           <p className="m-0 mt-[var(--space-2)]">
             <Link href={localePath(locale, "/borrow/availability")} className="text-action underline">
               {UI.brSeeAvailability[locale]}
@@ -120,7 +121,7 @@ export default async function BorrowStartPage({ params, searchParams }: { params
           </form>
         ) : (
           <NotificationBanner variant="warning" title={UI.serviceUnavailableTitle[locale]}>
-            {UI.brUnavailable[locale]}
+            {t.unavailable[locale]}
           </NotificationBanner>
         )}
 

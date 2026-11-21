@@ -16,6 +16,8 @@ import { isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
+import { getServicePageText } from "@/lib/content/service-text";
+import { listItems } from "@/lib/content/service-pages";
 import { beginJourney } from "./_journey/actions";
 import { EmergencyBox } from "./_journey/EmergencyBox";
 
@@ -30,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return {
     alternates: alternatesFor(locale, "/complaints"),
     title: UI.cpServiceName[locale],
-    description: UI.cpIntro[locale],
+    description: (await getServicePageText("complaints")).intro[locale],
   };
 }
 
@@ -40,6 +42,7 @@ export default async function ComplaintsStartPage({ params, searchParams }: { pa
   const locale: Locale = rawLocale;
   const query = await searchParams;
   const available = isDatabaseConfigured() && isPiiAvailable();
+  const t = await getServicePageText("complaints");
 
   return (
     <Container width="narrow">
@@ -47,7 +50,7 @@ export default async function ComplaintsStartPage({ params, searchParams }: { pa
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Stack space={2}>
           <PageTitle path="/complaints">{UI.cpServiceName[locale]}</PageTitle>
-          <p className="m-0 text-ink-900">{UI.cpIntro[locale]}</p>
+          <p className="m-0 text-ink-900">{t.intro[locale]}</p>
         </Stack>
 
         <EmergencyBox locale={locale} />
@@ -64,36 +67,36 @@ export default async function ComplaintsStartPage({ params, searchParams }: { pa
         ) : null}
 
         <Stack space={2} as="section">
-          <Heading level={2}>{UI.cpLevelsHeading[locale]}</Heading>
-          <p className="m-0">{UI.cpLevelsBody[locale]}</p>
+          <Heading level={2}>{t.levelsHeading[locale]}</Heading>
+          <p className="m-0">{t.levelsBody[locale]}</p>
           <ul className="m-0 flex list-disc flex-col gap-[var(--space-1)] pl-[var(--space-6)]">
-            <li>{UI.cpLevelsCourse[locale]}</li>
-            <li>{UI.cpLevelsFaculty[locale]}</li>
-            <li>{UI.cpLevelsUniversity[locale]}</li>
+            {listItems(t.levels[locale]).map((item) => (
+              <li key={item}>{item}</li>
+            ))}
           </ul>
         </Stack>
 
         <Stack space={2} as="section">
-          <Heading level={2}>{UI.cpYouChoose[locale]}</Heading>
-          <p className="m-0">{UI.cpYouChooseBody[locale]}</p>
+          <Heading level={2}>{t.chooseHeading[locale]}</Heading>
+          <p className="m-0">{t.chooseBody[locale]}</p>
           <ul className="m-0 flex list-disc flex-col gap-[var(--space-1)] pl-[var(--space-6)]">
-            <li>{UI.cpYouChooseNamed[locale]}</li>
-            <li>{UI.cpYouChoosePseudonymous[locale]}</li>
-            <li>{UI.cpYouChooseAnonymous[locale]}</li>
+            {listItems(t.choose[locale]).map((item) => (
+              <li key={item}>{item}</li>
+            ))}
           </ul>
         </Stack>
 
         <Stack space={2} as="section">
-          <Heading level={2}>{UI.cpYouWillNeed[locale]}</Heading>
+          <Heading level={2}>{t.needHeading[locale]}</Heading>
           <ul className="m-0 flex list-disc flex-col gap-[var(--space-1)] pl-[var(--space-6)]">
-            <li>{UI.cpNeed1[locale]}</li>
-            <li>{UI.cpNeed2[locale]}</li>
-            <li>{UI.cpNeed3[locale]}</li>
+            {listItems(t.need[locale]).map((item) => (
+              <li key={item}>{item}</li>
+            ))}
           </ul>
         </Stack>
 
         <InsetText>
-          <p className="m-0">{UI.cpSensitiveNote[locale]}</p>
+          <p className="m-0">{t.sensitiveNote[locale]}</p>
         </InsetText>
 
         {available ? (
@@ -103,7 +106,7 @@ export default async function ComplaintsStartPage({ params, searchParams }: { pa
           </form>
         ) : (
           <NotificationBanner variant="warning" title={UI.serviceUnavailableTitle[locale]}>
-            {UI.cpUnavailable[locale]}
+            {t.unavailable[locale]}
           </NotificationBanner>
         )}
 
