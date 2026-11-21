@@ -4,9 +4,9 @@ import { eq } from "drizzle-orm";
 import { getDb, isDatabaseConfigured } from "@/lib/db";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { siteText } from "@/lib/db/schema";
-import { setTextOverrides, type TextOverrides } from "@/lib/i18n/editable";
+import { getTextOverrides, setTextOverrides, type TextOverrides } from "@/lib/i18n/editable";
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
-import { safeFetch } from "./safe-fetch";
+import { safeFetchResult } from "./safe-fetch";
 
 /** The stored overrides from the published Site text row, or none. */
 export async function readSiteTextOverrides(db: AuditExecutor): Promise<TextOverrides> {
@@ -24,8 +24,23 @@ const cachedOverrides = cachedRead(["site-text"], [CACHE_TAGS.siteText], REVALID
  * its built-in text.
  */
 export async function ensureSiteText(): Promise<TextOverrides> {
-  if (!isDatabaseConfigured()) return {};
-  const overrides = await safeFetch<TextOverrides>("ensureSiteText", () => cachedOverrides(), {});
-  setTextOverrides(overrides);
-  return overrides;
+  if (!isDatabaseConfigured()) return getTextOverrides();
+  const result = await safeFetchResult<TextOverrides | null>("ensureSiteText", () => loadOverrides(), null);
+  // A failed or skipped read keeps whatever this process already shows.
+  if (!result.ok || result.data === null) return getTextOverrides();
+  setTextOverrides(result.data);
+  return result.data;
+}
+
+/**
+ * The cached read, or null outside a Next request (unit tests, scripts), where
+ * the data cache does not exist. Emails and pages always run inside one.
+ */
+async function loadOverrides(): Promise<TextOverrides | null> {
+  try {
+    return await cachedOverrides();
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("incrementalCache missing")) return null;
+    throw error;
+  }
 }
