@@ -1,5 +1,8 @@
+import { AudienceTag } from "@/components/domain/directory/AudienceTag";
 import { contactHref } from "@/components/domain/directory/contactHref";
-import { Heading, Stack, SummaryList, type SummaryListRow } from "@/components/ui";
+import { FacultyOfficeDetails } from "@/components/domain/directory/FacultyOfficeDetails";
+import { DIRECTORY_TEXT } from "@/components/domain/directory/strings";
+import { Heading, Stack } from "@/components/ui";
 import type { Faculty, FacultyBody } from "@/lib/content/faculties";
 import type { RedirectTarget } from "@/lib/complaints/redirect";
 import { pick, type Locale } from "@/lib/i18n/config";
@@ -35,7 +38,11 @@ function BodyItem({ body, locale }: { body: FacultyBody; locale: Locale }) {
 export function BodiesSection({ faculty, bodies, locale, level = 3 }: { faculty: Faculty; bodies: FacultyBody[]; locale: Locale; level?: 2 | 3 }) {
   return (
     <Stack space={2}>
-      <Heading level={level}>{UI.cpRedirectBodiesHeading[locale]}</Heading>
+      <div className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
+        <Heading level={level}>{UI.cpRedirectBodiesHeading[locale]}</Heading>
+        <AudienceTag audience="students" locale={locale} />
+      </div>
+      <p className="m-0 text-sm text-ink-600">{DIRECTORY_TEXT.committeesIntro[locale]}</p>
       {bodies.length > 0 ? (
         <ul className="m-0 flex list-none flex-col gap-[var(--space-3)] p-0">
           {bodies.map((body) => (
@@ -51,22 +58,16 @@ export function BodiesSection({ faculty, bodies, locale, level = 3 }: { faculty:
 
 /** The faculty office with whatever an editor has filled in, or a line saying we have no details yet. */
 export function OfficeSection({ faculty, locale, level = 3 }: { faculty: Faculty | null; locale: Locale; level?: 2 | 3 }) {
-  const office = faculty?.office;
-  const rows: SummaryListRow[] = office
-    ? ([
-        office.location ? { key: UI.cpRedirectOfficeLocation[locale], value: pick(office.location, locale) } : null,
-        office.phone ? { key: UI.cpRedirectOfficePhone[locale], value: <a href={`tel:${office.phone.replace(/[\s-]/g, "")}`} className="text-action underline">{office.phone}</a> } : null,
-        office.email ? { key: UI.cpRedirectOfficeEmail[locale], value: <a href={`mailto:${office.email}`} className="text-action underline">{office.email}</a> } : null,
-        office.website ? { key: UI.cpRedirectOfficeWebsite[locale], value: <a href={office.website} target="_blank" rel="noreferrer" className="text-action underline">{office.website}<span className="visually-hidden"> {UI.cpRedirectOpensNewTab[locale]}</span></a> } : null,
-        office.note ? { key: UI.cpRedirectOfficeNote[locale], value: <span className="whitespace-pre-line">{pick(office.note, locale)}</span> } : null,
-      ] as Array<SummaryListRow | null>).filter((row): row is SummaryListRow => row !== null)
-    : [];
   return faculty ? (
     <Stack space={2}>
-      <Heading level={level}>
-        {UI.cpRedirectOfficeHeading[locale]}: {pick(faculty.name, locale)}
-      </Heading>
-      {rows.length > 0 ? <SummaryList rows={rows} /> : <p className="m-0 text-ink-900">{UI.cpRedirectOfficeNone[locale]}</p>}
+      <div className="flex flex-wrap items-center gap-x-[var(--space-3)] gap-y-[var(--space-1)]">
+        <Heading level={level}>
+          {UI.cpRedirectOfficeHeading[locale]}: {pick(faculty.name, locale)}
+        </Heading>
+        <AudienceTag audience="staff" locale={locale} />
+      </div>
+      <p className="m-0 text-sm text-ink-600">{DIRECTORY_TEXT.officeIntro[locale]}</p>
+      <FacultyOfficeDetails office={faculty.office} locale={locale} empty={UI.cpRedirectOfficeNone[locale]} />
     </Stack>
   ) : (
     <p className="m-0 text-ink-900">{UI.cpRedirectGone[locale]}</p>

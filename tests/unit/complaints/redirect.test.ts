@@ -175,7 +175,7 @@ describe("notifyRedirected", () => {
     const text = sender.outbox[0]!.text;
     expect(text).toContain("The lecturer has the final say");
     expect(text).toContain("If you cannot raise it with the lecturer, contact your faculty office.");
-    expect(text).toContain("Faculty office: Faculty of Law");
+    expect(text).toContain("Faculty office (university staff): Faculty of Law");
     expect(text).toContain("We do not have this office's contact details yet");
     expect(text).not.toContain("Instagram");
   });

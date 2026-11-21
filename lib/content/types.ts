@@ -384,6 +384,7 @@ export interface Organisation extends DocumentMeta {
   slug: Slug;
   type: OrganisationType;
   faculty?: LocaleString;
+  facultyId?: string;
   scope?: "faculty" | "programme";
   programmeName?: LocaleString;
   description?: LocaleText;

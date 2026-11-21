@@ -5,6 +5,7 @@ export interface FacultyGroup {
   /** `faculty.en`, used as a stable sort/dedupe key across both locales. */
   facultyKey: string;
   faculty: LocaleString;
+  facultyId?: string;
   organisations: Organisation[];
 }
 
@@ -13,8 +14,10 @@ export interface GroupedOrganisations {
   facultyGroups: FacultyGroup[];
   /** Clubs and independent groups, combined: neither carries a faculty. */
   clubs: Organisation[];
-  /** Student bodies and university divisions, everything left over. */
-  other: Organisation[];
+  /** Student bodies: run by students. */
+  studentBodies: Organisation[];
+  /** University divisions: run by university staff. */
+  divisions: Organisation[];
 }
 
 function byName(collator: Intl.Collator, locale: Locale) {
@@ -31,18 +34,23 @@ export function groupOrganisations(organisations: Organisation[], locale: Locale
   const compareByName = byName(collator, locale);
   const facultyMap = new Map<string, FacultyGroup>();
   const clubs: Organisation[] = [];
-  const other: Organisation[] = [];
+  const studentBodies: Organisation[] = [];
+  const divisions: Organisation[] = [];
 
   for (const org of organisations) {
     if (org.type === "facultyCommittee" && org.faculty) {
       const key = org.faculty.en || org.faculty.th;
       const existing = facultyMap.get(key);
-      if (existing) existing.organisations.push(org);
-      else facultyMap.set(key, { facultyKey: key, faculty: org.faculty, organisations: [org] });
+      if (existing) {
+        existing.organisations.push(org);
+        existing.facultyId ??= org.facultyId;
+      } else facultyMap.set(key, { facultyKey: key, faculty: org.faculty, facultyId: org.facultyId, organisations: [org] });
     } else if (org.type === "club" || org.type === "independentGroup") {
       clubs.push(org);
+    } else if (org.type === "universityDivision") {
+      divisions.push(org);
     } else {
-      other.push(org);
+      studentBodies.push(org);
     }
   }
 
@@ -55,7 +63,8 @@ export function groupOrganisations(organisations: Organisation[], locale: Locale
     );
   }
   clubs.sort(compareByName);
-  other.sort(compareByName);
+  studentBodies.sort(compareByName);
+  divisions.sort(compareByName);
 
-  return { facultyGroups, clubs, other };
+  return { facultyGroups, clubs, studentBodies, divisions };
 }

@@ -136,7 +136,8 @@ export const EMAIL_COMPLAINT_TEXT = editableStrings(
       en: "This is a matter for your faculty, which is outside what the Student Union and Student Council can act on. Please contact the people below.",
     },
     programme: { th: "(หลักสูตร: {programme})", en: "(programme: {programme})" },
-    facultyOffice: { th: "สำนักงานคณะ", en: "Faculty office" },
+    facultyOffice: { th: "สำนักงานคณะ (เจ้าหน้าที่มหาวิทยาลัย)", en: "Faculty office (university staff)" },
+    studentBodies: { th: "สภาหรือสโมสรนักศึกษา (ดำเนินการโดยนักศึกษา ไม่ใช่เจ้าหน้าที่ของคณะ)", en: "Student council or association (run by students, not faculty staff)" },
     noOfficeDetails: {
       th: "เรายังไม่มีข้อมูลติดต่อสำนักงานนี้ ลองสอบถามที่คณะหรือค้นหาในเว็บไซต์ของคณะ",
       en: "We do not have this office's contact details yet. Ask at the faculty, or look on its website.",

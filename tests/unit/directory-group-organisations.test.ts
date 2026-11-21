@@ -56,4 +56,11 @@ describe("groupOrganisations", () => {
     const group = groupOrganisations(orgs, "en").facultyGroups[0]!;
     expect(group.organisations.map((o) => o.slug.current)).toEqual(["c", "b", "m"]);
   });
+
+  it("keeps student bodies apart from university divisions", () => {
+    const orgs = [org("u", "ก", "Registrar", { type: "universityDivision" }), org("s", "ข", "Student union", { type: "studentBody" })];
+    const grouped = groupOrganisations(orgs, "en");
+    expect(grouped.studentBodies.map((o) => o.slug.current)).toEqual(["s"]);
+    expect(grouped.divisions.map((o) => o.slug.current)).toEqual(["u"]);
+  });
 });

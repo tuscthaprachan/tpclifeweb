@@ -4,10 +4,10 @@ import { Container, Stack, PageTitle } from "@/components/ui";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import { getOrganisations } from "@/lib/content";
+import { getFacultiesWithOrganisations, getOrganisations } from "@/lib/content";
 
 export async function DirectoryIndex({ locale, filtered }: { locale: Locale; filtered: boolean }) {
-  const organisations = await getOrganisations();
+  const [organisations, faculties] = await Promise.all([getOrganisations(), getFacultiesWithOrganisations()]);
 
   return (
     <Container width="narrow">
@@ -15,8 +15,8 @@ export async function DirectoryIndex({ locale, filtered }: { locale: Locale; fil
       <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <PageTitle path="/directory">{UI.directory[locale]}</PageTitle>
 
-        <QueryBoundary filtered={filtered} fallback={<DirectoryResults locale={locale} organisations={organisations} query={{}} />}>
-          <LiveDirectoryResults locale={locale} organisations={organisations} />
+        <QueryBoundary filtered={filtered} fallback={<DirectoryResults locale={locale} organisations={organisations} faculties={faculties} query={{}} />}>
+          <LiveDirectoryResults locale={locale} organisations={organisations} faculties={faculties} />
         </QueryBoundary>
       </Stack>
     </Container>

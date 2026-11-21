@@ -105,6 +105,7 @@ function redirectParagraphs({ level, faculty, bodies }: RedirectTarget, lang: "t
     out.push(T.courseContact[lang]);
   } else {
     out.push(T.facultyMatter[lang]);
+    if (bodies.length > 0) out.push(`${T.studentBodies[lang]}:`);
     for (const body of bodies) {
       const handles = instagramOf(body);
       const programme = body.programme?.[lang];
