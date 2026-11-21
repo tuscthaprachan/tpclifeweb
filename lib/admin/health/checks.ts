@@ -44,7 +44,7 @@ export function checkCronSecret(env: Env): HealthCheck {
 }
 
 export function checkStorage(env: Env): HealthCheck {
-  return set(env, "BLOB_READ_WRITE_TOKEN") || set(env, "BLOB_STORE_ID") ? { id: "storage", status: "ok", detail: "storageSet" } : { id: "storage", status: "warning", detail: "storageMissing" };
+  return set(env, "STORAGE_DIR") ? { id: "storage", status: "ok", detail: "storageSet" } : { id: "storage", status: "warning", detail: "storageMissing" };
 }
 
 export function checkEncryption(env: Env): HealthCheck {

@@ -60,7 +60,7 @@ describe("configuration checks never expose values", () => {
   it("cron secret, storage and encryption", () => {
     expect(checkCronSecret({ CRON_SECRET: "s" }).status).toBe("ok");
     expect(checkCronSecret({}).status).toBe("error");
-    expect(checkStorage({ BLOB_STORE_ID: "store_1" }).status).toBe("ok");
+    expect(checkStorage({ STORAGE_DIR: "/srv/files" }).status).toBe("ok");
     expect(checkStorage({}).status).toBe("warning");
     expect(checkEncryption({ PII_ENCRYPTION_KEY: KEY, NODE_ENV: "production" }).status).toBe("ok");
     expect(checkEncryption({ NODE_ENV: "production" }).status).toBe("error");
@@ -69,7 +69,7 @@ describe("configuration checks never expose values", () => {
   });
 
   it("a report holds no secret value", async () => {
-    const report = await runHealthChecks(db, { RESEND_API_KEY: "re_SECRETVALUE", EMAIL_FROM: "from@x.test", CRON_SECRET: "CRONSECRETVALUE", PII_ENCRYPTION_KEY: KEY, BLOB_READ_WRITE_TOKEN: "vercel_blob_rw_x_TOKEN" });
+    const report = await runHealthChecks(db, { RESEND_API_KEY: "re_SECRETVALUE", EMAIL_FROM: "from@x.test", CRON_SECRET: "CRONSECRETVALUE", PII_ENCRYPTION_KEY: KEY, STORAGE_DIR: "/srv/TOKENDIR" });
     const text = JSON.stringify(report);
     for (const secret of ["re_SECRETVALUE", "CRONSECRETVALUE", KEY, "TOKEN"]) expect(text).not.toContain(secret);
   });

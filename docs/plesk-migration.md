@@ -1,13 +1,13 @@
 # Moving from Vercel to Plesk
 
-The app runs on the Plesk Node.js extension. Neon stays as the database. Files move from Vercel Blob to the server's disk. GitHub Actions builds the app, so the server needs no SSH and no build step.
+The app runs on the Plesk Node.js extension. Neon stays as the database. Files are stored on the server's disk; Vercel Blob is no longer used. GitHub Actions builds the app, so the server needs no SSH and no build step.
 
 ## How it works
 
 - Push to `main` → `.github/workflows/deploy-plesk.yml` runs the unit tests, applies migrations to Neon, builds a standalone app and force-pushes it to the `deploy` branch.
 - Plesk's Git extension pulls `deploy` into the app folder. `tmp/restart.txt` changes on every deploy, so Passenger restarts the app.
 - `.github/workflows/cron-plesk.yml` calls the four nightly jobs (replaces `vercel.json`).
-- `STORAGE_DIR` switches file storage to disk. Files are served by `app/files/[...key]/route.ts`: public ones at `/files/<key>`, private ones only with a signed link that expires.
+- `STORAGE_DIR` is the file storage folder (required). Files are served by `app/files/[...key]/route.ts`: public ones at `/files/<key>`, private ones only with a signed link that expires.
 - `SITE_ENV=production` does what `VERCEL_ENV=production` did.
 
 Nothing runs until the GitHub variables below are set, so Vercel keeps working until the switch.
@@ -25,8 +25,6 @@ Sensitive variables cannot be read back. Replace them, except `PII_ENCRYPTION_KE
 | `CRON_SECRET` | `openssl rand -hex 32` (also set it on Vercel) |
 | `BETTER_AUTH_SECRET` | `openssl rand -base64 32` (signs everyone out once, passkeys keep working) |
 | `PII_ENCRYPTION_KEY` | Cannot be replaced. Find the original before going further |
-
-Also create a Blob read-write token: Vercel → Storage → the Blob store → Settings. It is only needed while copying files.
 
 The Neon database was created through the Vercel Marketplace integration, so it is owned and billed through Vercel. Transfer it to a standalone Neon account (Neon console → project settings → transfer) before deleting anything on Vercel.
 
@@ -81,7 +79,6 @@ Subscription: `trytpc.tuso.tu.ac.th`.
 | `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO` | from step 1 |
 | `STORAGE_DIR` | full path of `trytpc-storage` |
 | `STORAGE_SIGNING_SECRET` | `openssl rand -base64 32` |
-| `BLOB_READ_WRITE_TOKEN` | the Blob token, only until files are copied |
 
 5. **Apache & nginx Settings** → Additional nginx directives: `client_max_body_size 6m;`
 6. **Enable Node.js**, then **Restart App**.
@@ -95,16 +92,19 @@ Subscription: `trytpc.tuso.tu.ac.th`.
    - add AAAA `2404:140:1056:222::72` only if the subscription has that IPv6 address (Hosting & DNS → Hosting)
    - leave every other record. Do not use "Restore Default"
 3. Wait about 5 minutes, then SSL/TLS Certificates → Let's Encrypt for the domain and `www`.
-4. Actions → **Copy files from Vercel Blob to Plesk** → Run workflow. It copies in batches, skips files already there, then points open-data download links at `/files/...`. It must end with `Failed: 0`. Pictures are missing until it finishes.
-5. Pause the Vercel project, so its own scheduled jobs stop.
-6. Set the GitHub variable `PLESK_CRON` to `true`. Run **Scheduled jobs** by hand once for each job and check it succeeds.
-7. Check: home page, search, a complaint, lost-property and borrowing submission with their tracking links and emails, staff sign-in with an existing passkey, an image upload in the console, private photos in a case.
-8. Remove `BLOB_READ_WRITE_TOKEN` from Plesk.
+4. Pause the Vercel project, so its own scheduled jobs stop.
+5. Set the GitHub variable `PLESK_CRON` to `true`. Run **Scheduled jobs** by hand once for each job and check it succeeds.
+6. Check: home page, search, a complaint, lost-property and borrowing submission with their tracking links and emails, staff sign-in with an existing passkey, an image upload in the console, private photos in a case.
 
 To go back: restore the two Vercel A records, unpause Vercel, set `PLESK_CRON` to `false`.
 
 ## 5. After a week
 
 - Vercel: remove the domain, disconnect Git, delete the Blob store, delete the project.
-- Remove `app/api/migration`, `lib/migration`, `.github/workflows/import-blob.yml`, the Vercel Blob code in `lib/storage` and `vercel.json`.
+- Remove `vercel.json`.
 - Back up the `trytpc-storage` folder regularly (Plesk Backup Manager can include it).
+
+## Done on 21 Nov 2026
+
+- The 8 content images were copied from Blob, then moved into `trytpc-storage/public` (the copy had put them in `private`).
+- `BLOB_READ_WRITE_TOKEN` was removed from Plesk, and the Blob copy route, workflow and storage code were removed from the app.

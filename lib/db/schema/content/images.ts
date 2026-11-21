@@ -2,8 +2,8 @@ import { sql } from "drizzle-orm";
 import { boolean, check, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
- * Every picture on the public site (stored in Vercel Blob).
- * `storage_key` is the object key behind the storage interface (Vercel Blob).
+ * Every picture on the public site (stored on disk).
+ * `storage_key` is the object key behind the storage interface (disk storage).
  *
  * WCAG 1.1.1: an image is either described in both languages or explicitly
  * decorative. The check enforces that for rows that are not decorative; the

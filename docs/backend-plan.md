@@ -74,7 +74,7 @@ The Service Manual is written for UK government, so we adopt its principles and 
   - Sign-in does not depend on email. Resend (own domain, SPF, DKIM, DMARC) is live and required in production for invitations, recovery links and notifications.
   - Entra or LINE can be added later as extra sign-in methods without changing anything else.
 - **Authorisation**: roles `admin`, `editor` and `officer`, held by the person; which body (TUSU, TUSC or both) they belong to is a separate membership. Lost and found and complaints are jointly owned: TUSU and TUSC staff share one queue per service; each action records which organisation acted. Restricted complaint categories are visible only to named staff. Enforced in the data layer and backed by Postgres row-level security.
-- **Files**: Vercel Blob behind a small storage interface (S3-compatible, swappable). Public bucket for content images; private for item photos and complaint evidence, served via short-lived signed URLs.
+- **Files**: The server's disk (`STORAGE_DIR`) behind a small storage interface (swappable). Public bucket for content images; private for item photos and complaint evidence, served via short-lived signed URLs.
 - **Notifications**: email via Resend. Templates bilingual, stored in code. LINE is on the back burner.
 - **Jobs**: Vercel Cron for response-time reminders, escalations and PII deletion.
 - **Audit log**: append-only table, recording actor, action, entity, before/after diff, and every view of personal data.

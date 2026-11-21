@@ -15,8 +15,6 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@electric-sql/pglite"],
 
   images: {
-    // Content images live in Vercel Blob (lib/storage), one public host per store.
-    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
     localPatterns: [{ pathname: "/files/**" }, { pathname: "/**", search: "" }],
     formats: ["image/avif", "image/webp"],
   },

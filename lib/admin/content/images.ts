@@ -25,7 +25,7 @@ export interface ImageChoice {
 
 export { ADMIN_UPLOAD_MAX_BYTES };
 
-/** False when neither `BLOB_READ_WRITE_TOKEN` nor `BLOB_STORE_ID` is set. */
+/** False when `STORAGE_DIR` is not set. */
 export function isStorageConfigured(): boolean {
   try {
     getStorage();

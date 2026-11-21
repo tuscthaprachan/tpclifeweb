@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { MemoryStorage, StorageError, assertValidKey, getStorage, newObjectKey, setStorageForTests } from "@/lib/storage";
+import { LocalDiskStorage, MemoryStorage, StorageError, assertValidKey, getStorage, newObjectKey, setStorageForTests } from "@/lib/storage";
 import { MAX_SIGNED_URL_SECONDS } from "@/lib/storage/types";
 
 const data = new Uint8Array([1, 2, 3]);
@@ -87,18 +87,14 @@ describe("keys", () => {
 describe("getStorage", () => {
   afterEach(() => {
     setStorageForTests(undefined);
-    delete process.env.BLOB_READ_WRITE_TOKEN;
-    delete process.env.BLOB_STORE_ID;
+    delete process.env.STORAGE_DIR;
+    delete process.env.STORAGE_SIGNING_SECRET;
   });
 
-  it("throws only when used, and only without a token or store id", () => {
+  it("throws only when used, and only without STORAGE_DIR", () => {
     expect(() => getStorage()).toThrow(/not configured/);
-    process.env.BLOB_READ_WRITE_TOKEN = "vercel_blob_rw_abc123_secret";
-    expect(getStorage().publicUrl("a/b.png")).toBe("https://abc123.public.blob.vercel-storage.com/a/b.png");
-  });
-
-  it("uses the store id when there is no token", () => {
-    process.env.BLOB_STORE_ID = "store_AbC123";
-    expect(getStorage().publicUrl("a/b.png")).toBe("https://abc123.public.blob.vercel-storage.com/a/b.png");
+    process.env.STORAGE_DIR = "./tmp-storage-test";
+    process.env.STORAGE_SIGNING_SECRET = "s";
+    expect(getStorage()).toBeInstanceOf(LocalDiskStorage);
   });
 });

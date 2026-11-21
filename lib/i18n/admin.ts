@@ -592,12 +592,12 @@ export const A = {
   imageUploading: { th: "กำลังอัปโหลด", en: "Uploading" },
   storageNotConfiguredTitle: { th: "ยังอัปโหลดรูปไม่ได้", en: "Uploading is not set up" },
   errStorageNotConfigured: {
-    th: "ยังไม่ได้ตั้งค่าที่เก็บไฟล์ในสภาพแวดล้อมนี้ ผู้พัฒนาต้องตั้งค่า BLOB_READ_WRITE_TOKEN หรือ BLOB_STORE_ID ก่อน คุณยังเลือกรูปที่มีอยู่แล้วได้",
-    en: "File storage is not set up in this environment. A developer needs to set BLOB_READ_WRITE_TOKEN or BLOB_STORE_ID. You can still choose pictures already in the library",
+    th: "ยังไม่ได้ตั้งค่าที่เก็บไฟล์ในสภาพแวดล้อมนี้ ผู้พัฒนาต้องตั้งค่า STORAGE_DIR ก่อน คุณยังเลือกรูปที่มีอยู่แล้วได้",
+    en: "File storage is not set up in this environment. A developer needs to set STORAGE_DIR. You can still choose pictures already in the library",
   },
   errPhotoStorageNotConfigured: {
-    th: "ยังไม่ได้ตั้งค่าที่เก็บไฟล์ในสภาพแวดล้อมนี้ ผู้พัฒนาต้องตั้งค่า BLOB_READ_WRITE_TOKEN หรือ BLOB_STORE_ID ก่อน จึงจะเพิ่มรูปของสิ่งของได้ งานอื่นทำต่อได้ตามปกติ",
-    en: "File storage is not set up in this environment. A developer needs to set BLOB_READ_WRITE_TOKEN or BLOB_STORE_ID before item photos can be added. You can carry on with the other tasks",
+    th: "ยังไม่ได้ตั้งค่าที่เก็บไฟล์ในสภาพแวดล้อมนี้ ผู้พัฒนาต้องตั้งค่า STORAGE_DIR ก่อน จึงจะเพิ่มรูปของสิ่งของได้ งานอื่นทำต่อได้ตามปกติ",
+    en: "File storage is not set up in this environment. A developer needs to set STORAGE_DIR before item photos can be added. You can carry on with the other tasks",
   },
   errUploadChoose: { th: "เลือกไฟล์รูปภาพ", en: "Choose a picture file" },
   errUploadAlt: { th: "กรอกคำอธิบายภาพทั้งภาษาไทยและอังกฤษ หรือเลือกว่าเป็นรูปตกแต่ง", en: "Describe the picture in Thai and English, or select that it is only decoration" },
