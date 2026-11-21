@@ -60,6 +60,8 @@ export async function readOrganisations(db: AuditExecutor): Promise<Organisation
     slug: { current: row.slug },
     type: row.type,
     faculty: lsOpt(row.facultyTh, row.facultyEn),
+    scope: opt(row.scope),
+    programmeName: lsOpt(row.programmeNameTh, row.programmeNameEn),
     description: ltOpt(row.descriptionTh, row.descriptionEn),
     contacts: withKeys(row.contacts),
     location: lsOpt(row.locationTh, row.locationEn),

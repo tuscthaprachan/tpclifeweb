@@ -1,3 +1,4 @@
+import { pick, type Locale } from "@/lib/i18n/config";
 import type { LocaleString, Organisation } from "@/lib/content/types";
 
 export interface FacultyGroup {
@@ -8,7 +9,7 @@ export interface FacultyGroup {
 }
 
 export interface GroupedOrganisations {
-  /** Faculty committees, grouped by faculty then sorted by faculty name. */
+  /** Faculty committees, grouped by faculty then sorted by faculty name; the faculty-wide council leads each group. */
   facultyGroups: FacultyGroup[];
   /** Clubs and independent groups, combined: neither carries a faculty. */
   clubs: Organisation[];
@@ -16,8 +17,8 @@ export interface GroupedOrganisations {
   other: Organisation[];
 }
 
-function byNameEn(a: Organisation, b: Organisation): number {
-  return a.name.en.localeCompare(b.name.en);
+function byName(collator: Intl.Collator, locale: Locale) {
+  return (a: Organisation, b: Organisation): number => collator.compare(pick(a.name, locale), pick(b.name, locale));
 }
 
 /**
@@ -25,7 +26,9 @@ function byNameEn(a: Organisation, b: Organisation): number {
  * read: by faculty first, then clubs and independent groups as their own
  * section. This is a list grouped for scanning, not a bento grid.
  */
-export function groupOrganisations(organisations: Organisation[]): GroupedOrganisations {
+export function groupOrganisations(organisations: Organisation[], locale: Locale): GroupedOrganisations {
+  const collator = new Intl.Collator(locale);
+  const compareByName = byName(collator, locale);
   const facultyMap = new Map<string, FacultyGroup>();
   const clubs: Organisation[] = [];
   const other: Organisation[] = [];
@@ -43,10 +46,16 @@ export function groupOrganisations(organisations: Organisation[]): GroupedOrgani
     }
   }
 
-  const facultyGroups = [...facultyMap.values()].sort((a, b) => a.facultyKey.localeCompare(b.facultyKey));
-  for (const group of facultyGroups) group.organisations.sort(byNameEn);
-  clubs.sort(byNameEn);
-  other.sort(byNameEn);
+  const facultyGroups = [...facultyMap.values()].sort((a, b) =>
+    collator.compare(pick(a.faculty, locale), pick(b.faculty, locale)),
+  );
+  for (const group of facultyGroups) {
+    group.organisations.sort(
+      (a, b) => Number(b.scope === "faculty") - Number(a.scope === "faculty") || compareByName(a, b),
+    );
+  }
+  clubs.sort(compareByName);
+  other.sort(compareByName);
 
   return { facultyGroups, clubs, other };
 }
