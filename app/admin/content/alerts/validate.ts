@@ -34,7 +34,7 @@ export async function validateAlertForm(
       }),
     startsAt: k.dateTime(L("alertsFieldStartsAt"), { required: true }),
     endsAt: k.dateTime(L("alertsFieldEndsAt")),
-    moreInfoUrl: k.url(L("alertsFieldMoreInfo")),
+    moreInfoUrl: k.href(L("alertsFieldMoreInfo")),
   });
 
   const parsed = parseForm(schema, formDataToObject(formData));
