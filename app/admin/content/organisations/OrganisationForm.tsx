@@ -4,7 +4,7 @@ import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { BilingualTextarea, BilingualTextField, CheckboxField, EnumSelect, SlugField } from "@/components/admin/content/fields";
-import { Stack } from "@/components/ui";
+import { NotificationBanner, Stack } from "@/components/ui";
 import { loadChoices, userNames } from "@/lib/admin/content/list";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
 import { getDb } from "@/lib/db";
@@ -13,6 +13,7 @@ import { DIRECTORY_ORGANISATION_SCOPES, DIRECTORY_ORGANISATION_TYPES } from "@/l
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { ContactsField } from "./ContactsField";
+import { organisationGaps, type OrganisationGap } from "./gaps";
 import { deleteOrganisation, saveOrganisation } from "./actions";
 
 const SCOPE_KEY: Record<(typeof DIRECTORY_ORGANISATION_SCOPES)[number], AdminKey> = {
@@ -26,6 +27,12 @@ const TYPE_KEY: Record<(typeof DIRECTORY_ORGANISATION_TYPES)[number], AdminKey> 
   independentGroup: "dirTypeIndependentGroup",
   universityDivision: "dirTypeUniversityDivision",
   studentBody: "dirTypeStudentBody",
+};
+
+const GAP_KEY: Record<OrganisationGap, AdminKey> = {
+  contacts: "dirGapContacts",
+  location: "dirGapLocation",
+  description: "dirGapDescription",
 };
 
 /** The directory organisation form, for the "new" page (no `id`) and the edit page. */
@@ -49,6 +56,7 @@ export async function OrganisationForm({ locale, id, saved }: { locale: Locale; 
       }
     : undefined;
   const L = (key: AdminKey) => a(key, locale);
+  const gaps = org ? organisationGaps(org) : [];
 
   return (
     <ContentForm
@@ -60,6 +68,16 @@ export async function OrganisationForm({ locale, id, saved }: { locale: Locale; 
       listHref={contentPath(def)}
       saved={saved}
     >
+      {gaps.length > 0 ? (
+        <NotificationBanner variant="info" title={L("dirGapsTitle")}>
+          <p className="m-0">{L("dirGapsIntro")}</p>
+          <ul className="mt-[var(--space-2)] mb-0 list-disc pl-[var(--space-5)]">
+            {gaps.map((gap) => (
+              <li key={gap}>{L(GAP_KEY[gap])}</li>
+            ))}
+          </ul>
+        </NotificationBanner>
+      ) : null}
       <FormSection icon="organisations" id="org-about" legend={L("dirGroupAbout")}>
         <Stack space={4}>
           <BilingualTextField name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: org?.nameTh, en: org?.nameEn }} />

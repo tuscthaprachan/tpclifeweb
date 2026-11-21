@@ -51,6 +51,17 @@ export const DIRECTORY_STRINGS = {
     th: "เพิ่มช่องทางที่นักศึกษาติดต่อได้จริง ลำดับที่นี่คือลำดับที่แสดงบนบัตรของกลุ่ม",
     en: "Add the ways students can really reach the group. They show on the group's card in this order",
   },
+  dirGapsTitle: { th: "ข้อมูลที่ยังไม่ครบ", en: "Details still missing" },
+  dirGapsIntro: {
+    th: "ยังเผยแพร่ได้ตามปกติ แต่ถ้าเพิ่มข้อมูลต่อไปนี้ นักศึกษาจะติดต่อกลุ่มนี้ได้ง่ายขึ้น",
+    en: "You can still publish, but adding the following will make the group easier for students to reach",
+  },
+  dirGapContacts: {
+    th: "ช่องทางติดต่ออื่นนอกจาก Instagram เช่น อีเมล โทรศัพท์ เว็บไซต์ LINE หรือ Facebook",
+    en: "A contact other than Instagram, such as email, phone, a website, LINE or Facebook",
+  },
+  dirGapLocation: { th: "สถานที่ตั้ง", en: "A location" },
+  dirGapDescription: { th: "คำอธิบายกลุ่ม", en: "A description of the group" },
   dirFieldContact: { th: "ช่องทางติดต่อ", en: "Contact" },
   dirFieldChannel: { th: "ช่องทาง", en: "Channel" },
   dirChannelInstagram: { th: "Instagram", en: "Instagram" },
