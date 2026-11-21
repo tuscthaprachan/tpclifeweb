@@ -58,17 +58,21 @@ export function HelpBlock({ locale, contacts }: { locale: Locale; contacts: Help
                  */
                 <a
                   href={href}
-                  className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]"
+                  className="inline-flex min-h-[var(--target-min)] items-start gap-[var(--space-2)] py-[max(0px,calc((var(--target-min)-1lh)/2))]"
                   {...externalLinkProps(external)}
                 >
-                  <DecorativeIcon icon={helpChannelIcon(contact.channel)} size={16} />
+                  <span className="inline-flex h-[1lh] shrink-0 items-center">
+                    <DecorativeIcon icon={helpChannelIcon(contact.channel)} size={16} />
+                  </span>
                   <span>{label}
                   {external ? externalLinkSuffix(locale, true) : ""}</span>
                 </a>
               ) : (
-                <span className="inline-flex items-center gap-[var(--space-2)]">
-                  <DecorativeIcon icon={helpChannelIcon(contact.channel)} size={16} />
-                  {label}
+                <span className="inline-flex items-start gap-[var(--space-2)]">
+                  <span className="inline-flex h-[1lh] shrink-0 items-center">
+                    <DecorativeIcon icon={helpChannelIcon(contact.channel)} size={16} />
+                  </span>
+                  <span>{label}</span>
                 </span>
               )}
               {hours ? <span className="text-ink-600"> · {hours}</span> : null}
