@@ -1,0 +1,3 @@
+module.exports=[145432,a=>{"use strict";var b=a.i(187924),c=a.i(572131),d=a.i(912466),e=a.i(348006);a.s(["DialogDemo",0,function({headingLevel:a,locale:f}){let[g,h]=(0,c.useState)(!1);return(0,b.jsxs)("div",{children:[(0,b.jsx)(d.Button,{onClick:()=>h(!0),children:"Open dialog"}),(0,b.jsx)(e.Dialog,{open:g,onClose:()=>h(!1),title:"Confirm",headingLevel:a,locale:f,children:(0,b.jsx)("p",{className:"m-0 text-ink-900",children:"Escape, the close button, or the reader's own back gesture all close this. Nothing here ever blocks Escape."})})]})}])}];
+
+//# sourceMappingURL=app_%5Blocale%5D_design_demos_DialogDemo_tsx_0m47vr73yd4mu._.js.map

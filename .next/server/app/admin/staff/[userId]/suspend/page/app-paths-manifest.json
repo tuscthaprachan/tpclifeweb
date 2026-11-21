@@ -1,0 +1,3 @@
+{
+  "/admin/staff/[userId]/suspend/page": "app/admin/staff/[userId]/suspend/page.js"
+}

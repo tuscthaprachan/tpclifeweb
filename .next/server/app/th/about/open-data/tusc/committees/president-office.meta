@@ -1,0 +1,60 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/about/layout,_N_T_/[locale]/about/open-data/layout,_N_T_/[locale]/about/open-data/tusc/layout,_N_T_/[locale]/about/open-data/tusc/committees/layout,_N_T_/[locale]/about/open-data/tusc/committees/[slug]/layout,_N_T_/[locale]/about/open-data/tusc/committees/[slug]/page,_N_T_/th/about/open-data/tusc/committees/president-office,siteSettings,siteText,openDataPeople,openDataDocuments"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/about/open-data/tusc/committees/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/de05417f0de9d911819b0437ce632bc9eb93f670ed354f9dc3b49a51cd5336bf/$/th/about/open-data/tusc/committees/president-office",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/about/open-data/tusc/committees/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

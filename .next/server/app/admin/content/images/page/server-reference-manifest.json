@@ -1,0 +1,45 @@
+{
+  "node": {
+    "4093cb744d2ebf12abb28f8deabc20daf9b467283d": {
+      "workers": {
+        "app/admin/content/images/page": {
+          "moduleId": 3909,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00ac4ef09cee33883ab25e431574a3459e4b36515a": {
+      "workers": {
+        "app/admin/content/images/page": {
+          "moduleId": 3909,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "004678bcd0efeed12c5a32e8b8af4705533023ff93": {
+      "workers": {
+        "app/admin/content/images/page": {
+          "moduleId": 3909,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "40ab500d9a20b7fe0321c5f5ba375b13e12c278286": {
+      "workers": {
+        "app/admin/content/images/page": {
+          "moduleId": 3909,
+          "async": false
+        }
+      },
+      "exportedName": "uploadImageAction",
+      "filename": "app/admin/content/actions.ts"
+    }
+  },
+  "edge": {}
+}

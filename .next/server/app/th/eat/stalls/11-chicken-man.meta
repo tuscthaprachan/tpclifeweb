@@ -1,0 +1,50 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/eat/layout,_N_T_/[locale]/eat/stalls/layout,_N_T_/[locale]/eat/stalls/[slug]/layout,_N_T_/[locale]/eat/stalls/[slug]/page,_N_T_/th/eat/stalls/11-chicken-man,siteSettings,siteText,canteen,place,image"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/eat/stalls/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 160,
+                        "slots": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/02903e32af8f1e3930487e2740c687547e0b3fa66ae475568538a9ee1a822856/$/th/eat/stalls/11-chicken-man",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/eat/stalls/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

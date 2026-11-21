@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/forms/layout,_N_T_/[locale]/forms/[slug]/layout,_N_T_/[locale]/forms/[slug]/page,_N_T_/th/forms/tpc-emergency-report-and-complaint-form,siteSettings,siteText,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/forms/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/0f0bf8c4fc706f145a6be136411e5323d688c83ac243b9a58bcc493a56089fbc/$/th/forms/tpc-emergency-report-and-complaint-form",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/forms/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

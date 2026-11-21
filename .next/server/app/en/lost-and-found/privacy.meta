@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/lost-and-found/layout,_N_T_/[locale]/lost-and-found/privacy/layout,_N_T_/[locale]/lost-and-found/privacy/page,_N_T_/en/lost-and-found/privacy,siteSettings,siteText"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/lost-and-found/privacy/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/4676464de31396f1454dcd072ea0b826c2dc2f0889d80334a636428329837a71/$/en/lost-and-found/privacy",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/lost-and-found/privacy/page"
+    },
+    "isFallback": false
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/places/layout,_N_T_/[locale]/places/page,_N_T_/en/places,siteSettings,siteText,place"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/places/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/666769859d6131df49b306a9812d6b1623cfb1f4b1067239d75b0e379389418e/$/en/places",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/places/page"
+    },
+    "isFallback": false
+  }
+}

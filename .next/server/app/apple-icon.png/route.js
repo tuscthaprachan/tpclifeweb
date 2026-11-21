@@ -1,0 +1,11 @@
+var R=require("../../chunks/[turbopack]_runtime.js")("server/app/apple-icon.png/route.js")
+R.c("server/chunks/[root-of-the-server]__0sg6uv8uzz6vh._.js")
+R.c("server/chunks/_013mswtsyfnoo._.js")
+R.c("server/chunks/node_modules_next_dist_182yaz9b1ql64._.js")
+R.c("server/chunks/node_modules_next_dist_1zpao19gb4gey._.js")
+R.c("server/chunks/node_modules_next_dist_0asya_d53xspt._.js")
+R.c("server/chunks/[root-of-the-server]__02_2sm-ocfxhk._.js")
+R.c("server/chunks/node_modules_next_1lo724y0ayaf6._.js")
+R.c("server/chunks/_next-internal_server_app_apple-icon_png_route_actions_0jcl8aui56a1m.js")
+R.m(794252)
+module.exports=R.m(794252).exports

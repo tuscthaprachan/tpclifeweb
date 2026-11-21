@@ -1,0 +1,3 @@
+module.exports=[470944,e=>{"use strict";var t=e.i(250687);e.i(778405);let o={announcement:t.f.odDocTypeAnnouncement,regulation:t.f.odDocTypeRegulation,"university-regulation":t.f.odDocTypeUniversityRegulation,agenda:t.f.odDocTypeAgenda,minutes:t.f.odDocTypeMinutes,report:t.f.odDocTypeReport,"fund-list":t.f.odDocTypeFundList,guide:t.f.odDocTypeGuide,other:t.f.odDocTypeOther};e.s(["H",0,function(e,t){let[o,n]="th"===t?[e.titleTh,e.titleEn]:[e.titleEn,e.titleTh];return o||n},"L",0,function(e,n){return(o[e]??t.f.odDocTypeOther)[n]}])}];
+
+//# sourceMappingURL=components_domain_open-data_documents_ts_0dnzmzef0w1uk._.js.map

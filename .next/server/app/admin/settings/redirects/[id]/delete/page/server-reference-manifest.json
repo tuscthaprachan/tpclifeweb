@@ -1,0 +1,55 @@
+{
+  "node": {
+    "4093cb744d2ebf12abb28f8deabc20daf9b467283d": {
+      "workers": {
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00ac4ef09cee33883ab25e431574a3459e4b36515a": {
+      "workers": {
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "004678bcd0efeed12c5a32e8b8af4705533023ff93": {
+      "workers": {
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "40fb3431abe4c6048aee878d5759cf6eae0842cf86": {
+      "workers": {
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        }
+      },
+      "exportedName": "deleteRedirectAction",
+      "filename": "app/admin/settings/redirects/actions.ts"
+    },
+    "70750e8059bcda117f9ea49cfdc180d4fc6ac6f9b7": {
+      "workers": {
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        }
+      },
+      "exportedName": "saveRedirectAction",
+      "filename": "app/admin/settings/redirects/actions.ts"
+    }
+  },
+  "edge": {}
+}

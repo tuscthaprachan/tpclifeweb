@@ -1,0 +1,3 @@
+module.exports=[663935,e=>{"use strict";e.i(222260),e.s([])},651479,e=>{"use strict";e.i(222260),e.i(347540),e.i(250687),e.i(195790),e.s([])},496965,e=>{"use strict";(0,e.i(997953).registerClientReference)(function(){throw Error("Attempted to call ScrollTable() from the server but ScrollTable is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.")},"[project]/components/ui/ScrollTable.tsx","ScrollTable"),e.s([])},195790,e=>{"use strict";var t=e.i(496965);e.n(t)},196350,e=>{"use strict";e.i(222260),e.i(287568),e.i(250687),e.s([])}];
+
+//# sourceMappingURL=components_ui_00wkqwsu998ys._.js.map

@@ -1,0 +1,46 @@
+{
+  "status": 404,
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/lost-and-found/layout,_N_T_/[locale]/lost-and-found/[slug]/layout,_N_T_/[locale]/lost-and-found/[slug]/page,_N_T_/th/lost-and-found/_,siteSettings,siteText,lostFound,place,image"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/lost-and-found/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/345834f8979f39947fdbd5191eedda42559bd4b4d079230456d03afb293d84a1/$/th/lost-and-found/_",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/lost-and-found/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

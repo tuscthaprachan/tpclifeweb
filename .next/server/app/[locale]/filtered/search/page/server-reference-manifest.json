@@ -1,0 +1,15 @@
+{
+  "node": {
+    "4064e3e43eb93f79b1630110e75d3ab14405aeb680": {
+      "workers": {
+        "app/[locale]/filtered/search/page": {
+          "moduleId": 167058,
+          "async": false
+        }
+      },
+      "exportedName": "logZeroResultSearch",
+      "filename": "lib/search/log-zero-result.ts"
+    }
+  },
+  "edge": {}
+}

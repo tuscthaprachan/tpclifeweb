@@ -1,0 +1,1 @@
+ALTER TABLE "case_access_tokens" ADD COLUMN "claim_id" uuid;

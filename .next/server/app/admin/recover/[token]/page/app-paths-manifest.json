@@ -1,0 +1,3 @@
+{
+  "/admin/recover/[token]/page": "app/admin/recover/[token]/page.js"
+}

@@ -1,0 +1,75 @@
+{
+  "node": {
+    "4093cb744d2ebf12abb28f8deabc20daf9b467283d": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00ac4ef09cee33883ab25e431574a3459e4b36515a": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "004678bcd0efeed12c5a32e8b8af4705533023ff93": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "606f0eeaa687362dfdac9e33a8848015adec73d315": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "exportedName": "createCategoryAction",
+      "filename": "app/admin/complaints/categories/actions.ts"
+    },
+    "60a3becc9fe2cc1e777c4bfc825b00b6573dff0b43": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "exportedName": "grantAccessAction",
+      "filename": "app/admin/complaints/categories/actions.ts"
+    },
+    "608a5241148754397b76c578c8d8e3e1bc38ebc998": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "exportedName": "revokeAccessAction",
+      "filename": "app/admin/complaints/categories/actions.ts"
+    },
+    "60ca205cb2b7b73b36bec3810859b8235079f4742f": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "exportedName": "updateCategoryAction",
+      "filename": "app/admin/complaints/categories/actions.ts"
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,40 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/report/layout,_N_T_/[locale]/report/page,_N_T_/en/report,siteSettings,siteText,servicePages"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/report/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/137b2cff7e47cf6c16d12b68d07b3fc494396c8f5b6740011815fb7f7b6ced1f/$/en/report",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/report/page"
+    },
+    "isFallback": false
+  }
+}

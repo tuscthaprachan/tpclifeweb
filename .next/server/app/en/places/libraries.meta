@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/places/layout,_N_T_/[locale]/places/libraries/layout,_N_T_/[locale]/places/libraries/page,_N_T_/en/places/libraries,siteSettings,siteText,place,serviceAlert,today"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/places/libraries/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/352c9fe4deb3b37972796909c5678f59a93ba0853b156624e6672c34acce5eac/$/en/places/libraries",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/places/libraries/page"
+    },
+    "isFallback": false
+  }
+}

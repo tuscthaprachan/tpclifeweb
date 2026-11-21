@@ -1,0 +1,3 @@
+module.exports=[796460,a=>{"use strict";var b=a.i(666274),c=a.i(991922);a.S([b,"004678bcd0efeed12c5a32e8b8af4705533023ff93,e,00ac4ef09cee33883ab25e431574a3459e4b36515a,g,4093cb744d2ebf12abb28f8deabc20daf9b467283d,R",0,c,"6045e3cebf4cc454ff5a63aeb55316213289ab4459,v,6076f094f25310decf4cfded6861db6d1246c4276f,t,60f6e06084d35376fafc0aafa9db7061e6ba5992b2,a"],796460)}];
+
+//# sourceMappingURL=_next-internal_server_app_admin_borrowing_items_page_actions_1-hk76zn0yicp.js.map

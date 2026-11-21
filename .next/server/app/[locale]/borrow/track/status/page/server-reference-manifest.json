@@ -1,0 +1,35 @@
+{
+  "node": {
+    "40b4de997bbc968775e489f8c33b8abbe9e7e031ed": {
+      "workers": {
+        "app/[locale]/borrow/track/status/page": {
+          "moduleId": 816952,
+          "async": false
+        }
+      },
+      "exportedName": "cancelRequest",
+      "filename": "app/[locale]/borrow/track/actions.ts"
+    },
+    "40ba5eba991538e7405ad86648e0e9daf4880228ab": {
+      "workers": {
+        "app/[locale]/borrow/track/status/page": {
+          "moduleId": 816952,
+          "async": false
+        }
+      },
+      "exportedName": "forgetTracking",
+      "filename": "app/[locale]/borrow/track/actions.ts"
+    },
+    "40fb8e9cdce06cf8b6773df9776dac424d159422dd": {
+      "workers": {
+        "app/[locale]/borrow/track/status/page": {
+          "moduleId": 816952,
+          "async": false
+        }
+      },
+      "exportedName": "openTracking",
+      "filename": "app/[locale]/borrow/track/actions.ts"
+    }
+  },
+  "edge": {}
+}

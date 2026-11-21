@@ -1,0 +1,55 @@
+{
+  "node": {
+    "4093cb744d2ebf12abb28f8deabc20daf9b467283d": {
+      "workers": {
+        "app/admin/content/guides/page": {
+          "moduleId": 155453,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00ac4ef09cee33883ab25e431574a3459e4b36515a": {
+      "workers": {
+        "app/admin/content/guides/page": {
+          "moduleId": 155453,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "004678bcd0efeed12c5a32e8b8af4705533023ff93": {
+      "workers": {
+        "app/admin/content/guides/page": {
+          "moduleId": 155453,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "409149c8216dc5d0e61d876da992d6c82d4ace4262": {
+      "workers": {
+        "app/admin/content/guides/page": {
+          "moduleId": 155453,
+          "async": false
+        }
+      },
+      "exportedName": "bulkContentAction",
+      "filename": "app/admin/content/bulk/actions.ts"
+    },
+    "40e57e169de46434f6a936433f6adf30a9d43992cd": {
+      "workers": {
+        "app/admin/content/guides/page": {
+          "moduleId": 155453,
+          "async": false
+        }
+      },
+      "exportedName": "bulkDeleteAction",
+      "filename": "app/admin/content/bulk/actions.ts"
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,65 @@
+{
+  "node": {
+    "4093cb744d2ebf12abb28f8deabc20daf9b467283d": {
+      "workers": {
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00ac4ef09cee33883ab25e431574a3459e4b36515a": {
+      "workers": {
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "004678bcd0efeed12c5a32e8b8af4705533023ff93": {
+      "workers": {
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "6045e3cebf4cc454ff5a63aeb55316213289ab4459": {
+      "workers": {
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        }
+      },
+      "exportedName": "createItemAction",
+      "filename": "app/admin/borrowing/items/actions.ts"
+    },
+    "60f6e06084d35376fafc0aafa9db7061e6ba5992b2": {
+      "workers": {
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        }
+      },
+      "exportedName": "updateCategoryAction",
+      "filename": "app/admin/borrowing/items/actions.ts"
+    },
+    "6076f094f25310decf4cfded6861db6d1246c4276f": {
+      "workers": {
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        }
+      },
+      "exportedName": "updateItemAction",
+      "filename": "app/admin/borrowing/items/actions.ts"
+    }
+  },
+  "edge": {}
+}

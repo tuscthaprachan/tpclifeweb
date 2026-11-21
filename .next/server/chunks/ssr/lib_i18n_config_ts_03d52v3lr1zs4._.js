@@ -1,0 +1,3 @@
+module.exports=[408754,a=>{"use strict";let b=["th","en"];a.s(["L",0,"th","c",0,{th:"th-TH",en:"en-GB"},"M",0,"tpclife_locale","V",0,"trytpc_locale","G",0,31536e3,"b",0,{th:"ไทย",en:"English"},"e",0,{th:"en",en:"th"},"B",0,"Asia/Bangkok","Y",0,function(a){return"string"==typeof a&&b.includes(a)},"q",0,function(a,b="/"){let c="/"===b?"":b.startsWith("/")?b:`/${b}`;return`/${a}${c}`},"O",0,function(a,b){return a?.[b]??""},"P",0,function(a){let b=a.match(/^\/(th|en)(\/.*)?$/);return b?{locale:b[1],path:b[2]||"/"}:{locale:null,path:a}}])}];
+
+//# sourceMappingURL=lib_i18n_config_ts_03d52v3lr1zs4._.js.map

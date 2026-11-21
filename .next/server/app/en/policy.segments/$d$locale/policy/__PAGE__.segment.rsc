@@ -1,0 +1,36 @@
+3:"$Sreact.fragment"
+4:"/_next/static/chunks/3gpe1gahojycx.js"
+5:I[339756,["$4"],"default"]
+6:I[837457,["$4"],"default"]
+b:"/_next/static/chunks/3h-109p2et120.js"
+c:"/_next/static/chunks/1de_hcm47xg_z.js"
+d:"/_next/static/chunks/43s5bh2-_b22l.js"
+e:"/_next/static/chunks/1s3yaqh-iu6wo.js"
+f:"/_next/static/chunks/06bvfj1u8mtwe.js"
+10:I[522016,["$b","$c","$d","$e","$f"],""]
+11:I[505014,["$b","$c","$d","$e","$f"],"default"]
+12:"$Sreact.suspense"
+13:I[235182,["$b","$c","$d","$e","$f"],"PolicyResults"]
+14:"LivePolicyResults"
+15:I[235182,["$b","$c","$d","$e","$f"],"$14"]
+16:I[897367,["$4"],"OutletBoundary"]
+19:"ViewportBoundary"
+1a:I[897367,["$4"],"$19"]
+1b:"MetadataBoundary"
+1c:I[897367,["$4"],"$1b"]
+1d:I[27201,["$4"],"IconMark"]
+8:X
+8:C
+9:X
+a:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$3","c",{"children":[["$","div",null,{"className":"mx-auto w-full max-w-[var(--width-content)] px-[var(--gutter)] pb-8 pt-2","children":[["$","nav",null,{"aria-label":"Breadcrumb","className":"py-[var(--space-2)] text-sm","children":["$","ol",null,{"className":"flex flex-wrap items-center gap-2 text-ink-600","children":[["$","li","/",{"className":"flex items-center gap-2","children":[["$","$L10",null,{"href":"/en","className":"inline-flex min-h-[var(--target-min)] min-w-[var(--target-min)] items-center justify-center text-action","children":"Home"}],["$","span",null,{"aria-hidden":"true","children":"/"}]]}],["$","li","Policy progress",{"className":"flex items-center gap-2","children":[["$","span",null,{"aria-current":"page","className":"text-ink-900","children":"Policy progress"}],false]}]]}]}],["$","div",null,{"className":"flex flex-col","style":{"gap":"var(--space-8)"},"children":[["$","div",null,{"className":"flex flex-col","style":{"gap":"var(--space-2)"},"children":[["$","div",null,{"className":"flex items-center gap-[var(--space-3)]","children":[["$","span",null,{"aria-hidden":"true","className":"grid size-10 shrink-0 place-items-center rounded-[var(--radius-panel)] bg-action text-action-ink size-12","children":["$","$L11",null,{"icon":{"name":"landmark","size":24,"node":[["path",{"d":"M10 18v-7","key":"wt116b"}],["path",{"d":"M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z","key":"yxxwt6"}],["path",{"d":"M14 18v-7","key":"vav6t3"}],["path",{"d":"M18 18v-7","key":"aexdmj"}],["path",{"d":"M3 22h18","key":"8prr45"}],["path",{"d":"M6 18v-7","key":"1ivflk"}]]},"className":"shrink-0","aria-hidden":"true","focusable":"false","size":20,"strokeWidth":2}]}],["$","h1",null,{"className":"m-0 min-w-0","children":"Policy progress"}]]}],["$","p",null,{"className":"m-0 text-ink-600","children":"Progress on policies from TUSU Tha Prachan and TUSC Tha Prachan"}]]}],["$","$12",null,{"fallback":["$","$L13",null,{"locale":"en","policies":[],"generatedAt":"2026-11-21T13:49:41.139Z","query":{}}],"children":["$","$L15",null,{"locale":"en","policies":"$a:0:1:d:r:props:children:0:props:children:1:props:children:1:props:fallback:props:policies","generatedAt":"2026-11-21T13:49:41.139Z"}]}]]}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/06bvfj1u8mtwe.js","async":true}]],["$","$L16",null,{"children":["$","$12",null,{"name":"Next.MetadataOutlet","children":"$@17"}]}]]}],"p":"$@18","v":null,"s":"$9"}}]]
+2:[["children",{"s":"policy","h":64,"d":{"r":["$","$3","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","template":["$","$L6",null,{}]}]]}],"p":"$@7","v":"$8","s":"$9"},"c":"$Qa"}]]
+1:[["children",{"s":{"n":"locale","t":"d","k":"en","s":["about","admin","api","files"]},"h":48,"c":"$Q2"}]]
+0:{"t":{"t":{"s":"","h":80,"c":"$Q1"},"h":{"r":["$","$3","h",{"children":[null,["$","$L1a",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#1a1220","media":"(prefers-color-scheme: dark)"}],["$","meta","4",{"name":"color-scheme","content":"light dark"}]]}],["$","$L1c",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$12",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Policy progress | #trytpc"}],["$","meta","1",{"name":"description","content":"Progress on policies from TUSU Tha Prachan and TUSC Tha Prachan"}],["$","link","2",{"rel":"canonical","href":"https://trytpc.tuso.tu.ac.th/en/policy"}],["$","link","3",{"rel":"alternate","hrefLang":"th","href":"https://trytpc.tuso.tu.ac.th/th/policy"}],["$","link","4",{"rel":"alternate","hrefLang":"en","href":"https://trytpc.tuso.tu.ac.th/en/policy"}],["$","link","5",{"rel":"alternate","hrefLang":"x-default","href":"https://trytpc.tuso.tu.ac.th/th/policy"}],["$","meta","6",{"property":"og:title","content":"Policy progress | #trytpc"}],["$","meta","7",{"property":"og:description","content":"Progress on policies from TUSU Tha Prachan and TUSC Tha Prachan"}],["$","meta","8",{"property":"og:site_name","content":"#trytpc"}],["$","meta","9",{"property":"og:locale","content":"en_GB"}],["$","meta","10",{"property":"og:image","content":"https://trytpc.tuso.tu.ac.th/en/policy/opengraph-image/og?e4efa53273a1a7e4"}],["$","meta","11",{"property":"og:image:type","content":"image/png"}],["$","meta","12",{"property":"og:image:width","content":"1200"}],["$","meta","13",{"property":"og:image:height","content":"630"}],["$","meta","14",{"property":"og:image:alt","content":"Policy progress · Progress on policies from TUSU Tha Prachan and TUSC Tha Prachan · #trytpc"}],["$","meta","15",{"property":"og:locale:alternate","content":"th_TH"}],["$","meta","16",{"property":"og:type","content":"website"}],["$","meta","17",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","18",{"name":"twitter:title","content":"Policy progress | #trytpc"}],["$","meta","19",{"name":"twitter:description","content":"Progress on policies from TUSU Tha Prachan and TUSC Tha Prachan"}],["$","meta","20",{"name":"twitter:image","content":"https://trytpc.tuso.tu.ac.th/en/policy/opengraph-image/og?e4efa53273a1a7e4"}],["$","meta","21",{"name":"twitter:image:alt","content":"Policy progress · Progress on policies from TUSU Tha Prachan and TUSC Tha Prachan · #trytpc"}],["$","meta","22",{"name":"twitter:image:type","content":"image/png"}],["$","meta","23",{"name":"twitter:image:width","content":"1200"}],["$","meta","24",{"name":"twitter:image:height","content":"630"}],["$","link","25",{"rel":"icon","href":"/icon.png?icon.2a0k_6oqznrjs.png","sizes":"192x192","type":"image/png"}],["$","link","26",{"rel":"apple-touch-icon","href":"/apple-icon.png?apple-icon.3kidu19ewapt0.png","sizes":"180x180","type":"image/png"}],["$","$L1d","27",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@1e","v":null,"s":"$9"}},"a":"$@1f","u":"$@20","b":"qmIR3cH22fqFMpKPYAZwH"}
+17:null
+20:true
+9:300
+9:C
+1f:0
+7:"$undefined"
+1e:"$undefined"
+18:"$undefined"

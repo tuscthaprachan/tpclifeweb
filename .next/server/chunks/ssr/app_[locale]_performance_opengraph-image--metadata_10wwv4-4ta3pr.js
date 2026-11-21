@@ -1,0 +1,3 @@
+module.exports=[209107,a=>{"use strict";var b=a.i(638741);let c=(0,a.i(734451).f)(({locale:a})=>({locale:a,title:b.f.perfTitle[a]})),d=c.generateImageMetadata;c.Image;var e=a.i(352425);let f={generateImageMetadata:d};async function g(a){let{__metadata_id__:b,...c}=await a.params,d=(0,e.fillMetadataSegment)("/[locale]/performance",c,"opengraph-image",!1),{generateImageMetadata:g}=f;return(await g({params:c})).map((a,b)=>{let c=a.id+"";return function(a,b){let c={alt:a.alt,type:a.contentType||"image/png",url:d+(b?"/"+b:"")+"?dcf068b2987c9380"},{size:e}=a;return e&&(c.width=e.width,c.height=e.height),c}(a,c)})}a.s(["default",0,g],209107)},777551,function(a){a.n(a.i(209107))}];
+
+//# sourceMappingURL=app_%5Blocale%5D_performance_opengraph-image--metadata_10wwv4-4ta3pr.js.map

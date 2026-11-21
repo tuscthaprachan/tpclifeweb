@@ -1,0 +1,145 @@
+{
+  "node": {
+    "4093cb744d2ebf12abb28f8deabc20daf9b467283d": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00ac4ef09cee33883ab25e431574a3459e4b36515a": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "004678bcd0efeed12c5a32e8b8af4705533023ff93": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "404a7966f6e583ff4f37509a4ea0a4c8f2159c5f5c": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "duplicateItem",
+      "filename": "lib/admin/content/lifecycle-actions.ts"
+    },
+    "60bfce074e5e92147bb1cbf9cf7636c182b4c078f4": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "saveSchedule",
+      "filename": "lib/admin/content/lifecycle-actions.ts"
+    },
+    "40716b2dc7d6b604ef4ae713998e4ef3ac29eb4bfc": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "deleteFund",
+      "filename": "app/admin/content/open-data/actions.ts"
+    },
+    "40740c01d27aed3e96afe81c7dc2402d0596595053": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "deleteBudgetLine",
+      "filename": "app/admin/content/open-data/actions.ts"
+    },
+    "60a7f591712f71e65ffd2ec7e2b601c836e98f4ce8": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "deleteDecision",
+      "filename": "app/admin/content/open-data/actions.ts"
+    },
+    "700f709886879543d22a5b9de9c16aa64d880c6669": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "saveDocument",
+      "filename": "app/admin/content/open-data/actions.ts"
+    },
+    "70246badad2c5844c8f1d73f5484c6870d23092d9c": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "saveBudgetLine",
+      "filename": "app/admin/content/open-data/actions.ts"
+    },
+    "70515371dcaca087f8cc04eaeb1bd63cabcb6df740": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "saveFund",
+      "filename": "app/admin/content/open-data/actions.ts"
+    },
+    "70680e9f516b016bc05fad24e067be61888ac2e92d": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "importCsv",
+      "filename": "app/admin/content/open-data/actions.ts"
+    },
+    "708e70cd6348f64d0ca7b604a2fa80c6d03f4e2b9a": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "saveMeeting",
+      "filename": "app/admin/content/open-data/actions.ts"
+    },
+    "78324db66c2ba86234524b041d9597045fbbf248d9": {
+      "workers": {
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        }
+      },
+      "exportedName": "saveDecision",
+      "filename": "app/admin/content/open-data/actions.ts"
+    }
+  },
+  "edge": {}
+}

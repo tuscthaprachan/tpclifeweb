@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/guide/layout,_N_T_/[locale]/guide/[slug]/layout,_N_T_/[locale]/guide/[slug]/page,_N_T_/th/guide/student-discounts,siteSettings,siteText,content,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/guide/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/af1eac82194b53fe52a1f66ce55d2a432a6940ed90c0b0cf7218e4518271a437/$/th/guide/student-discounts",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/guide/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

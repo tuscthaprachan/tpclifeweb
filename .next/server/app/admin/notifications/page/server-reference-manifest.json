@@ -1,0 +1,55 @@
+{
+  "node": {
+    "4093cb744d2ebf12abb28f8deabc20daf9b467283d": {
+      "workers": {
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00ac4ef09cee33883ab25e431574a3459e4b36515a": {
+      "workers": {
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "004678bcd0efeed12c5a32e8b8af4705533023ff93": {
+      "workers": {
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "403c37323b8bdc9ba84ff10752d2227ea653d58761": {
+      "workers": {
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        }
+      },
+      "exportedName": "markAllReadAction",
+      "filename": "app/admin/notifications/actions.ts"
+    },
+    "40c058ad87390ca2d956075419b18f23ab5b2395ca": {
+      "workers": {
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        }
+      },
+      "exportedName": "markReadAction",
+      "filename": "app/admin/notifications/actions.ts"
+    }
+  },
+  "edge": {}
+}

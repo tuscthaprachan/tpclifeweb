@@ -1,0 +1,105 @@
+{
+  "node": {
+    "4093cb744d2ebf12abb28f8deabc20daf9b467283d": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00ac4ef09cee33883ab25e431574a3459e4b36515a": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "004678bcd0efeed12c5a32e8b8af4705533023ff93": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "404a7966f6e583ff4f37509a4ea0a4c8f2159c5f5c": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "duplicateItem",
+      "filename": "lib/admin/content/lifecycle-actions.ts"
+    },
+    "60bfce074e5e92147bb1cbf9cf7636c182b4c078f4": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "saveSchedule",
+      "filename": "lib/admin/content/lifecycle-actions.ts"
+    },
+    "40ab500d9a20b7fe0321c5f5ba375b13e12c278286": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "uploadImageAction",
+      "filename": "app/admin/content/actions.ts"
+    },
+    "40f445dab655a58b976e10d81b82eabe657e88cbf2": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "deleteGuidePage",
+      "filename": "app/admin/content/guides/actions.ts"
+    },
+    "7092a461d8b9074070a106eefd11992d43a4ea8f36": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "saveGuidePage",
+      "filename": "app/admin/content/guides/actions.ts"
+    },
+    "40011304244dda41ed2b91e4a2e5c4177e8764e788": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "deleteWelfarePage",
+      "filename": "app/admin/content/welfare/actions.ts"
+    },
+    "70ac9365ac1e75d5d94104c8ac03454b64598bbbe1": {
+      "workers": {
+        "app/admin/content/guides/[id]/page": {
+          "moduleId": 922182,
+          "async": false
+        }
+      },
+      "exportedName": "saveWelfarePage",
+      "filename": "app/admin/content/welfare/actions.ts"
+    }
+  },
+  "edge": {}
+}

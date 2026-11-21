@@ -1,0 +1,3 @@
+module.exports=[631378,a=>{"use strict";var b=a.i(572131);a.s(["ErrorTitle",0,function({prefix:a}){return(0,b.useEffect)(()=>{let b=()=>{document.title.startsWith(a)||(document.title=`${a}${document.title}`)};b();let c=document.querySelector("title");if(!c)return;let d=new MutationObserver(b);return d.observe(c,{childList:!0,characterData:!0,subtree:!0}),()=>d.disconnect()},[a]),null}])}];
+
+//# sourceMappingURL=components_ui_ErrorTitle_tsx_0_nmoe-najyif._.js.map

@@ -1,0 +1,40 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/getting-around/layout,_N_T_/[locale]/getting-around/page,_N_T_/en/getting-around,siteSettings,siteText,shuttle,serviceAlert,openDataDocuments"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/getting-around/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/e710b5f16d585575e49cc0cd762c2895b88e5e667a7aab5d2211368cfcb44443/$/en/getting-around",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/getting-around/page"
+    },
+    "isFallback": false
+  }
+}
