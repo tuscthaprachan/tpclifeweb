@@ -1,5 +1,5 @@
 import NextLink from "next/link";
-import { Sun } from "lucide-react";
+import { Cross, Sun, type LucideIcon } from "lucide-react";
 import { Fragment, type ReactNode } from "react";
 
 import { fillText } from "@/components/domain/open-data/fill";
@@ -226,14 +226,18 @@ function LibrariesRow({ locale, libraries, now }: { locale: Locale; libraries: C
   );
 }
 
+/** Places whose row needs a more specific icon than the one for /places. */
+const PLACE_ICON: Record<string, LucideIcon> = { "tu-virtual-clinic": Cross };
+
 function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlace; status: PlaceHoursStatus }) {
   const title = pick(place.name, locale);
   const href = localePath(locale, `/places/${place.slug.current}`);
+  const icon = PLACE_ICON[place.slug.current];
 
   switch (status.kind) {
     case "open":
       return (
-        <TodayRow title={title} href={href} status={<StatusTag tone="success" label={UI.openNow[locale]} />}>
+        <TodayRow title={title} href={href} icon={icon} status={<StatusTag tone="success" label={UI.openNow[locale]} />}>
           <span>
             {status.closesNextDay
               ? fillText(UI.homeClosesTomorrow[locale], { time: status.closes })
@@ -244,7 +248,7 @@ function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlac
       );
     case "closed":
       return (
-        <TodayRow title={title} href={href} status={<StatusTag tone="neutral" label={UI.closedNow[locale]} />}>
+        <TodayRow title={title} href={href} icon={icon} status={<StatusTag tone="neutral" label={UI.closedNow[locale]} />}>
           {status.opensNext ? (
             <span>
               {UI.opensAt[locale]} {status.opensNext}
@@ -255,7 +259,7 @@ function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlac
       );
     case "noHours":
       return (
-        <TodayRow title={title} href={href}>
+        <TodayRow title={title} href={href} icon={icon}>
           <span>{UI.keyHoursNotPublished[locale]}</span>
         </TodayRow>
       );

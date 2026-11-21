@@ -11,11 +11,13 @@ interface TodayRowProps {
   children: ReactNode;
   /** Shown before the title. Defaults to the icon for the section `href` points into. */
   icon?: LucideIcon;
+  /** Colour class for the icon. Defaults to the transport orange of the Today bar. */
+  iconClassName?: string;
 }
 
-export function TodayRow({ title, href, status, children, icon }: TodayRowProps) {
+export function TodayRow({ title, href, status, children, icon, iconClassName = "text-transport" }: TodayRowProps) {
   const rowIcon = icon ?? (href ? iconForPath(href) : undefined);
-  const marker = rowIcon ? <DecorativeIcon icon={rowIcon} className="me-[var(--space-2)] self-center text-action" /> : null;
+  const marker = rowIcon ? <DecorativeIcon icon={rowIcon} className={`me-[var(--space-2)] self-center ${iconClassName}`} /> : null;
   return (
     <div className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-[var(--space-3)] gap-y-[var(--space-1)] border-b border-line px-[var(--space-1)] py-[var(--space-3)]">
       <dt className="m-0 font-bold">
