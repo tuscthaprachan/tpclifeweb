@@ -37,7 +37,7 @@ export const DEFAULT_HOME_TASKS: readonly HomeTask[] = [
   },
   {
     label: { th: "ติดต่อหน่วยงาน", en: "Find a contact" },
-    description: { th: "เบอร์โทรและอีเมลของหน่วยงานในวิทยาเขต", en: "Phone numbers and emails for campus offices" },
+    description: { th: "เบอร์โทรและอีเมลของหน่วยงานในท่าพระจันทร์", en: "Phone numbers and emails for campus offices" },
     path: "/directory",
   },
 ];
