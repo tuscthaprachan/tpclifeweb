@@ -49,7 +49,7 @@ const config = [
 
   {
     // Node scripts are not part of the app bundle.
-    files: ["scripts/**/*.mjs", "*.config.mjs", "*.config.ts"],
+    files: ["scripts/**/*.mjs", "scripts/**/*.js", "*.config.mjs", "*.config.ts"],
     rules: { "@typescript-eslint/no-require-imports": "off" },
   },
 ];

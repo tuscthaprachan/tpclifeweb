@@ -6,6 +6,7 @@ The app runs on the Plesk Node.js extension. Neon stays as the database. Files a
 
 - Push to `main` → `.github/workflows/deploy-plesk.yml` runs the unit tests, applies migrations to Neon, builds a standalone app and force-pushes it to the `deploy` branch.
 - Plesk's Git extension pulls `deploy` into the app folder. `tmp/restart.txt` changes on every deploy, so Passenger restarts the app.
+- `server.js` on the deploy branch is `scripts/plesk-server.js`; Next's own server is `next-server.js`. Next saves regenerated pages into the deployed `.next/server/app`, and the old process can write pages from the old build there after the new files arrive and before the restart. Those pages link CSS and JS that no longer exist, so they show up unstyled. On startup the wrapper deletes every cached page that lacks the current build ID, and Next renders it again.
 - `.github/workflows/cron-plesk.yml` calls the four nightly jobs (replaces `vercel.json`).
 - `STORAGE_DIR` is the file storage folder (required). Files are served by `app/files/[...key]/route.ts`: public ones at `/files/<key>`, private ones only with a signed link that expires.
 - `SITE_ENV=production` does what `VERCEL_ENV=production` did.
