@@ -2,6 +2,7 @@ import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { AlertSeverity, ServiceAlert as ServiceAlertDoc } from "@/lib/content/types";
 import { Heading, Link, NotificationBanner, Tag, Timestamp } from "@/components/ui";
+import { localiseAppHref } from "@/components/ui/app-href";
 
 const SEVERITY_LABEL: Record<AlertSeverity, LocaleString> = {
   info: UI.alertSeverityInfo,
@@ -62,7 +63,7 @@ export function ServiceAlert({ locale, alert, announce = true, className }: Serv
       </p>
       {alert.moreInfoUrl ? (
         <p className="m-0 mt-[var(--space-2)]">
-          <Link href={alert.moreInfoUrl} locale={locale} className="text-action underline decoration-1 underline-offset-[0.2em]">
+          <Link href={localiseAppHref(alert.moreInfoUrl, locale)} locale={locale} className="text-action underline decoration-1 underline-offset-[0.2em]">
             {UI.alertMoreInfo[locale]}
           </Link>
         </p>

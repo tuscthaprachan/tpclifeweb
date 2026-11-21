@@ -5,6 +5,7 @@ import { AFFECTS_LABEL, SEVERITY_LABEL, SEVERITY_TONE } from "@/components/domai
 import { fillText } from "@/components/domain/open-data/fill";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container, Heading, InsetText, Link, Stack, StatusTag, SummaryList, Timestamp } from "@/components/ui";
+import { localiseAppHref } from "@/components/ui/app-href";
 import { isUuid } from "@/lib/admin/content/form-state";
 import { getServiceAlertById } from "@/lib/content";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
@@ -73,7 +74,7 @@ export default async function AlertPage({ params }: Props) {
 
         {alert.moreInfoUrl ? (
           <p className="m-0">
-            <Link href={alert.moreInfoUrl} locale={locale} className="font-semibold">
+            <Link href={localiseAppHref(alert.moreInfoUrl, locale)} locale={locale} className="font-semibold">
               {UI.tdMoreInfo[locale]}
             </Link>
           </p>
