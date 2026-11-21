@@ -2852,6 +2852,20 @@ const UI_TEXT = {
   tdAffectsSitewide: { th: "ทุกบริการ", en: "All services" },
   tdAllAlerts: { th: "ประกาศแจ้งเตือนทั้งหมด", en: "All service alerts" },
   tdRelatedAlerts: { th: "ประกาศที่เกี่ยวข้อง", en: "Related alerts" },
+
+  /* Rich text: live timeline */
+  tlLive: { th: "อัปเดตตามเวลาจริง", en: "Updates as it happens" },
+  tlNow: { th: "กำลังดำเนินการ", en: "Happening now" },
+  tlNext: { th: "ถัดไป", en: "Next" },
+  tlDone: { th: "เสร็จแล้ว", en: "Finished" },
+  tlTo: { th: "ถึง", en: "to" },
+  tlNowMarker: { th: "ตอนนี้", en: "Now" },
+  tlUntil: { th: "ถึง {time} เหลืออีก {left}", en: "Until {time}, {left} left" },
+  tlStartsIn: { th: "เริ่ม {time} อีก {left}", en: "Starts {time}, in {left}" },
+  tlQuiet: { th: "ตอนนี้ยังไม่มีช่วงใดดำเนินการ", en: "Nothing is happening right now" },
+  tlAllDone: { th: "ทุกช่วงเสร็จสิ้นแล้ว", en: "Every stage has finished" },
+  tlSpan: { th: "{from} ถึง {to}", en: "{from} to {to}" },
+  tlProgress: { th: "ผ่านไปแล้ว {percent}%", en: "{percent}% done" },
 } as const satisfies Record<string, LocaleString>;
 
 /** Every shared string, editable in the console (lib/i18n/editable.ts). */

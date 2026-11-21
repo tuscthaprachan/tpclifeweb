@@ -46,8 +46,8 @@ export const PLAIN_NODES = [
   "tableCell",
 ] as const;
 
-/** The six custom block nodes (leaf nodes, no children). */
-export const CUSTOM_NODES = ["image", "formCallout", "linkOut", "calloutBox", "stepList", "contactBlock"] as const;
+/** The custom block nodes (leaf nodes, no children). */
+export const CUSTOM_NODES = ["image", "formCallout", "linkOut", "calloutBox", "stepList", "contactBlock", "liveTimeline"] as const;
 
 export const MARKS = ["bold", "italic", "underline", "strike", "code", "link"] as const;
 
@@ -83,6 +83,17 @@ export interface CalloutBoxAttrs {
 export interface StepListAttrs {
   title?: LocaleStr;
   steps: Array<{ title: LocaleStr; detail?: LocaleStr }>;
+}
+export interface LiveTimelineItem {
+  /** ISO 8601 instants. */
+  startsAt: string;
+  endsAt: string;
+  label: LocaleStr;
+  detail?: LocaleStr;
+}
+export interface LiveTimelineAttrs {
+  title?: LocaleStr;
+  items: LiveTimelineItem[];
 }
 export interface ContactBlockAttrs {
   label: LocaleStr;
@@ -161,6 +172,26 @@ const stepListAttrs = z
   })
   .strict();
 
+const instant = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2})$/, "Time must be a full date and time")
+  .refine((v) => !Number.isNaN(Date.parse(v)), "Time is not a real moment");
+
+const liveTimelineAttrs = z
+  .object({
+    title: optionalLocaleStr,
+    items: z
+      .array(
+        z
+          .object({ startsAt: instant, endsAt: instant, label: localeStr, detail: optionalLocaleStr })
+          .strict()
+          .refine((i) => Date.parse(i.endsAt) > Date.parse(i.startsAt), "Each stage must end after it starts"),
+      )
+      .min(1)
+      .max(60),
+  })
+  .strict();
+
 const contactBlockAttrs = z
   .object({
     label: localeStr,
@@ -199,6 +230,7 @@ const NODE_ATTRS: Record<string, z.ZodType | undefined> = {
   calloutBox: calloutBoxAttrs,
   stepList: stepListAttrs,
   contactBlock: contactBlockAttrs,
+  liveTimeline: liveTimelineAttrs,
 };
 
 /* ------------------------------------------------------------------ *

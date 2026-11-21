@@ -5,13 +5,14 @@ import type { HeadingLevel } from "@/lib/a11y";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { RichTextDoc, RichTextNode } from "@/lib/rich-text/types";
-import type { CalloutBoxAttrs, ContactBlockAttrs, FormCalloutAttrs, ImageAttrs, LinkOutAttrs, StepListAttrs } from "@/lib/rich-text/schema";
+import type { CalloutBoxAttrs, ContactBlockAttrs, FormCalloutAttrs, ImageAttrs, LinkOutAttrs, LiveTimelineAttrs, StepListAttrs } from "@/lib/rich-text/schema";
 import { CalloutBoxBlock } from "./blocks/CalloutBoxBlock";
 import { ContactBlockRenderer } from "./blocks/ContactBlock";
 import { FormCalloutBlock } from "./blocks/FormCalloutBlock";
 import { ImageBlock } from "./blocks/ImageBlock";
 import { LinkOutBlock } from "./blocks/LinkOutBlock";
 import { StepListBlock } from "./blocks/StepListBlock";
+import { LiveTimelineBlock } from "./blocks/LiveTimelineBlock";
 import { clampHeadingLevel } from "./headingLevel";
 import type { ResolvedRefs } from "./types";
 
@@ -194,6 +195,8 @@ function renderNode(node: RichTextNode, ctx: Ctx, key: number): ReactNode {
       return <CalloutBoxBlock key={key} attrs={attrs as unknown as CalloutBoxAttrs} locale={ctx.locale} />;
     case "stepList":
       return <StepListBlock key={key} attrs={attrs as unknown as StepListAttrs} locale={ctx.locale} headingLevel={ctx.bodyLevel} />;
+    case "liveTimeline":
+      return <LiveTimelineBlock key={key} attrs={attrs as unknown as LiveTimelineAttrs} locale={ctx.locale} headingLevel={ctx.bodyLevel} />;
     case "contactBlock":
       return <ContactBlockRenderer key={key} attrs={attrs as unknown as ContactBlockAttrs} locale={ctx.locale} />;
     default:

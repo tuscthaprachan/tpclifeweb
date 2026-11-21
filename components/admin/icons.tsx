@@ -245,6 +245,7 @@ export const CONSOLE_ICONS = {
   blockLinkOut: LucideSquareArrowOutUpRight,
   blockCallout: LucideMessageSquareWarning,
   blockSteps: LucideListChecks,
+  blockTimeline: LucideCalendarClock,
   moveUp: LucideArrowUp,
   moveDown: LucideArrowDown,
   chevronUp: LucideChevronUp,

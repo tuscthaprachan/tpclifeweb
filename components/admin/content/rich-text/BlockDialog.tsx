@@ -6,6 +6,7 @@ import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { isSafeHref } from "@/lib/rich-text/schema";
 import { validateBlockAttrs, type BlockType } from "@/lib/rich-text/editor";
+import { formatBangkokDateTime, parseBangkokDateTime } from "@/lib/admin/content/datetime";
 import type { ImageChoice } from "@/lib/admin/content/images";
 import { ImagePicker } from "../ImagePicker";
 import { PortalDialog } from "../PortalDialog";
@@ -62,8 +63,15 @@ function precheck(type: BlockType, attrs: Raw): AdminKey | null {
       const steps = Array.isArray(attrs.steps) ? attrs.steps : [];
       return steps.length > 0 && steps.every((s) => filled(pair((s as Raw).title))) ? null : "errBlockSteps";
     }
+    case "liveTimeline": {
+      const items = (Array.isArray(attrs.items) ? attrs.items : []) as Raw[];
+      const ok = (i: Raw) => filled(pair(i.label)) && Date.parse(String(i.endsAt)) > Date.parse(String(i.startsAt));
+      return items.length > 0 && items.every(ok) ? null : "errBlockTimeline";
+    }
   }
 }
+
+const toInstant = (local: string): string => parseBangkokDateTime(local)?.toISOString() ?? "";
 
 interface BlockDialogProps {
   type: BlockType;
@@ -182,6 +190,56 @@ export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClo
         />
         <PairInput id={id("title")} label={a("blockCalloutTitle", locale)} value={pair(attrs.title)} onChange={(v) => set("title", v)} />
         <PairInput id={id("body")} label={a("blockCalloutBody", locale)} value={pair(attrs.body)} onChange={(v) => set("body", v)} multiline />
+      </>
+    );
+  } else if (type === "liveTimeline") {
+    const items = (Array.isArray(attrs.items) ? attrs.items : []) as Raw[];
+    const setItems = (next: Raw[]) => set("items", next);
+    const update = (i: number, patch: Raw) => setItems(items.map((it, j) => (j === i ? { ...it, ...patch } : it)));
+    const blank = (): Raw => {
+      const last = items[items.length - 1];
+      const from = last?.endsAt ? String(last.endsAt) : "";
+      return { startsAt: from, endsAt: "", label: { th: "", en: "" }, detail: null };
+    };
+    body = (
+      <>
+        <p className="m-0 text-ink-600">{a("blockTimelineHint", locale)}</p>
+        <PairInput id={id("title")} label={a("blockTimelineTitle", locale)} value={pair(attrs.title)} onChange={(v) => set("title", v)} />
+        <ol className="m-0 flex list-none flex-col gap-[var(--space-4)] p-0">
+          {items.map((item, i) => (
+            <li key={i} className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-3)]">
+              <p className="m-0 font-semibold">{a("blockTimelineN", locale, { n: i + 1 })}</p>
+              <div className="grid gap-[var(--space-3)] sm:grid-cols-2">
+                <TextInput id={id(`t${i}s`)} type="datetime-local" label={a("blockTimelineStart", locale)} value={formatBangkokDateTime(String(item.startsAt || "") || null)} onChange={(e) => update(i, { startsAt: toInstant(e.target.value) })} />
+                <TextInput id={id(`t${i}e`)} type="datetime-local" label={a("blockTimelineEnd", locale)} value={formatBangkokDateTime(String(item.endsAt || "") || null)} onChange={(e) => update(i, { endsAt: toInstant(e.target.value) })} />
+              </div>
+              <PairInput id={id(`t${i}l`)} label={a("blockTimelineLabel", locale)} value={pair(item.label)} onChange={(v) => update(i, { label: v })} />
+              <PairInput id={id(`t${i}d`)} label={a("blockTimelineDetail", locale)} value={pair(item.detail)} onChange={(v) => update(i, { detail: v })} multiline />
+              <div className="flex flex-wrap gap-[var(--space-2)]">
+                {i > 0 ? (
+                  <Button type="button" variant="secondary" size="sm" onClick={() => setItems(items.map((s, j) => (j === i - 1 ? items[i]! : j === i ? items[i - 1]! : s)))}>
+                    {a("moveUp", locale)}
+                  </Button>
+                ) : null}
+                {i < items.length - 1 ? (
+                  <Button type="button" variant="secondary" size="sm" onClick={() => setItems(items.map((s, j) => (j === i + 1 ? items[i]! : j === i ? items[i + 1]! : s)))}>
+                    {a("moveDown", locale)}
+                  </Button>
+                ) : null}
+                {items.length > 1 ? (
+                  <Button type="button" variant="quiet" size="sm" onClick={() => setItems(items.filter((_, j) => j !== i))}>
+                    {a("remove", locale)}
+                  </Button>
+                ) : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div>
+          <Button type="button" variant="secondary" onClick={() => setItems([...items, blank()])}>
+            {a("blockTimelineAdd", locale)}
+          </Button>
+        </div>
       </>
     );
   } else {

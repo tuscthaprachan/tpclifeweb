@@ -63,7 +63,7 @@ function customBlock(name: BlockType) {
 export const customBlockNodes = CUSTOM_NODES.map(customBlock);
 
 /**
- * The core vocabulary plus the six custom blocks. The editor passes its own
+ * The core vocabulary plus the custom blocks. The editor passes its own
  * versions of the blocks, extended with a React node view.
  */
 export function richTextExtensions(blocks: readonly AnyExtension[] = customBlockNodes): Extensions {

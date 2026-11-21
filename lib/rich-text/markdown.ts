@@ -9,7 +9,7 @@ import type { RichTextDoc, RichTextMark, RichTextNode } from "./types";
  * Rich text as Markdown and back, for the editor's Markdown mode. Standard
  * Markdown covers paragraphs, headings 2 to 4, lists, quotes, code, rules,
  * pipe tables and the marks bold (`**`), italic (`*`), underline (`++`),
- * strike (`~~`), code and links. The six custom blocks are leaf directives on
+ * strike (`~~`), code and links. The custom blocks are leaf directives on
  * one line, `::name{key="value" nested.key="value" list.0.key=true}`, whose
  * attributes are the block's attrs flattened with dotted paths, so bilingual
  * `{ th, en }` copy round-trips exactly. The result of `markdownToDoc` is
@@ -39,6 +39,7 @@ const DIRECTIVE_NAMES = {
   calloutBox: "callout",
   stepList: "steps",
   contactBlock: "contact",
+  liveTimeline: "timeline",
 } as const;
 
 const DIRECTIVE_TYPES = Object.fromEntries(Object.entries(DIRECTIVE_NAMES).map(([type, name]) => [name, type])) as Record<string, keyof typeof DIRECTIVE_NAMES>;
