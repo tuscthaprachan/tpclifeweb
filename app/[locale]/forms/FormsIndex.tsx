@@ -1,7 +1,7 @@
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ShellContainer } from "@/components/layout/ShellContainer";
 import { FormsResults, LiveFormsResults } from "@/components/domain/form/FormsResults";
-import { Heading } from "@/components/ui/Heading";
+import { PageTitle } from "@/components/ui/PageTitle";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { Stack } from "@/components/ui/Stack";
 import type { Locale } from "@/lib/i18n/config";
@@ -17,7 +17,7 @@ export async function FormsIndex({ locale, filtered }: { locale: Locale; filtere
 
       <Stack space={8}>
         <Stack space={2}>
-          <Heading level={1}>{UI.forms[locale]}</Heading>
+          <PageTitle path="/forms">{UI.forms[locale]}</PageTitle>
           <p className="m-0 text-ink-600">{UI.formsIntro[locale]}</p>
         </Stack>
 

@@ -1,4 +1,4 @@
-import { Container, EmptyState, Heading, Stack } from "@/components/ui";
+import { Container, EmptyState, Stack, PageTitle } from "@/components/ui";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { SearchResult } from "@/lib/search";
@@ -20,7 +20,7 @@ export function SearchPageView({ locale, query, results }: SearchPageViewProps) 
     <Container className="pb-8 pt-2">
       <Stack space={8}>
         <Stack space={4}>
-          <Heading level={1}>{hasQuery ? UI.searchResults[locale] : UI.search[locale]}</Heading>
+          <PageTitle path="/search">{hasQuery ? UI.searchResults[locale] : UI.search[locale]}</PageTitle>
           <SearchBar key={query} locale={locale} defaultValue={query} />
         </Stack>
 

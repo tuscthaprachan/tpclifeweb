@@ -12,6 +12,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getSiteSettings } from "@/components/layout/site-settings";
 import { Container } from "@/components/ui/Container";
 import { Heading } from "@/components/ui/Heading";
+import { PageTitle } from "@/components/ui/PageTitle";
 import { Stack } from "@/components/ui/Stack";
 import { STUDENT_BODIES } from "@/data/harvested-inventory";
 import { DEFAULT_LOCALE, LOCALES, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
@@ -52,7 +53,7 @@ export default async function AboutIndexPage({
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.about[locale] }]} />
 
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
-        <Heading level={1}>{UI.about[locale]}</Heading>
+        <PageTitle path="/about">{UI.about[locale]}</PageTitle>
         <section aria-labelledby="about-service" className="flex flex-col gap-[var(--space-2)]">
           <Heading level={2} id="about-service">
             {UI.aboutServiceHeading[locale]}

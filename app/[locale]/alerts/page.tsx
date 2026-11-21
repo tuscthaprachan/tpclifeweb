@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 
 import { SEVERITY_LABEL, SEVERITY_TONE, alertPath } from "@/components/domain/today";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, Stack, StatusTag, Timestamp } from "@/components/ui";
+import { Clock } from "lucide-react";
+import { Container, EmptyState, Heading, IconText, Stack, StatusTag, Timestamp, PageTitle } from "@/components/ui";
 import { getActiveServiceAlerts } from "@/lib/content";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -32,9 +33,9 @@ export default async function AlertsPage({ params }: Props) {
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.tdAlerts[locale] }]} />
       <Stack space={8} className="pb-[var(--space-12)]">
         <Stack space={3}>
-          <Heading level={1} className="m-0">
+          <PageTitle path="/alerts" className="m-0">
             {UI.tdAlerts[locale]}
-          </Heading>
+          </PageTitle>
           <p className="m-0 max-w-[var(--measure-en)] text-lg text-ink-900">{UI.tdAlertsIntro[locale]}</p>
         </Stack>
         {alerts.length === 0 ? (
@@ -51,8 +52,10 @@ export default async function AlertsPage({ params }: Props) {
                 </div>
                 <p className="m-0 max-w-[var(--measure-en)] text-ink-900">{pick(alert.body, locale)}</p>
                 <p className="m-0 text-sm text-ink-600">
-                  {UI.tdAlertUntil[locale]}{" "}
-                  {alert.endsAt ? <Timestamp value={alert.endsAt} locale={locale} format="datetime" /> : UI.tdAlertUntilFurther[locale]}
+                  <IconText icon={Clock} className="items-center">
+                    {UI.tdAlertUntil[locale]}{" "}
+                    {alert.endsAt ? <Timestamp value={alert.endsAt} locale={locale} format="datetime" /> : UI.tdAlertUntilFurther[locale]}
+                  </IconText>
                 </p>
               </li>
             ))}

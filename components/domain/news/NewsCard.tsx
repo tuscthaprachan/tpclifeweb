@@ -1,7 +1,8 @@
 import Image from "next/image";
 import NextLink from "next/link";
 
-import { Heading, Tag, Timestamp } from "@/components/ui";
+import { CalendarDays } from "lucide-react";
+import { Heading, IconText, Tag, Timestamp } from "@/components/ui";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import type { NewsPost } from "@/lib/content/types";
@@ -47,7 +48,7 @@ export function NewsCard({ post, locale, headingLevel }: NewsCardProps) {
         </Heading>
         <p className="m-0 text-ink-600">{summary}</p>
         <div className="mt-auto flex flex-wrap items-center gap-[var(--space-2)] pt-[var(--space-2)] text-sm text-ink-600">
-          <Timestamp value={post.publishedAt} locale={locale} />
+          <IconText icon={CalendarDays} className="items-center"><Timestamp value={post.publishedAt} locale={locale} /></IconText>
           <span aria-hidden="true">·</span>
           <span>{ownerLabel(post.owner, locale)}</span>
         </div>

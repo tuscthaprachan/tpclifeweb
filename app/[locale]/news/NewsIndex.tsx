@@ -1,7 +1,7 @@
 import { NewsCard } from "@/components/domain/news";
 import { LiveNewsResults, NewsResults } from "@/components/domain/news/NewsResults";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Heading, Stack } from "@/components/ui";
+import { Container, Stack, PageTitle } from "@/components/ui";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -22,7 +22,7 @@ export async function NewsIndex({ locale, filtered }: { locale: Locale; filtered
     <Container>
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.news[locale] }]} />
       <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-        <Heading level={1}>{UI.news[locale]}</Heading>
+        <PageTitle path="/news">{UI.news[locale]}</PageTitle>
 
         <QueryBoundary filtered={filtered} fallback={<NewsResults locale={locale} pages={pages} query={{}} />}>
           <LiveNewsResults locale={locale} pages={pages} />

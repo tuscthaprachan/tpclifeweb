@@ -1,4 +1,5 @@
 import NextLink from "next/link";
+import { Megaphone, UsersRound } from "lucide-react";
 
 import { OWNER_LABEL_KEY } from "@/components/domain/form";
 import { SectionBar } from "@/components/domain/home/SectionBar";
@@ -33,12 +34,12 @@ export function ActivityFeed({ locale, news, policies, excludeNewsIds }: Activit
 
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="governance">
+      <SectionBar id={HEADING_ID} tone="governance" icon={UsersRound}>
         {UI.homeUnion[locale]}
       </SectionBar>
 
       {items.length === 0 ? (
-        <EmptyState illustration={false} className="mt-[var(--space-3)]" title={UI.nothingHere[locale]} />
+        <EmptyState illustration={false} icon={Megaphone} className="mt-[var(--space-3)]" title={UI.nothingHere[locale]} />
       ) : (
         <ul className="m-0 list-none p-0">
           {items.map((item) => (

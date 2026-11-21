@@ -16,6 +16,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useId } from "react";
 import { cx } from "@/components/ui/cx";
+import { DecorativeIcon, iconForPath } from "@/components/ui/route-icons";
 import { UI } from "@/lib/i18n/strings";
 import { localePath, pick, stripLocale, type Locale } from "@/lib/i18n/config";
 import type { NavItem } from "@/lib/content/types";
@@ -91,8 +92,9 @@ export function ServiceNavigation({
               <Link
                 href={localePath(locale, item.path)}
                 aria-current={isCurrent ? "page" : isWithin ? "true" : undefined}
-                className="inline-flex min-h-[var(--target-min)] items-center py-1 font-medium text-ink-900 no-underline hover:text-action"
+                className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)] py-1 font-medium text-ink-900 no-underline hover:text-action"
               >
+                <NavIcon path={item.path} />
                 {pick(item.label, locale)}
               </Link>
             </li>
@@ -157,8 +159,9 @@ function MoreMenu({ locale, items, currentPath }: { locale: Locale; items: NavIt
               <Link
                 href={localePath(locale, item.path)}
                 aria-current={isCurrent ? "page" : isWithin ? "true" : undefined}
-                className="flex min-h-[var(--target-min)] items-center rounded-control px-3 py-1 font-medium text-ink-900 no-underline hover:bg-surface-alt hover:text-action"
+                className="flex min-h-[var(--target-min)] items-center gap-[var(--space-2)] rounded-control px-3 py-1 font-medium text-ink-900 no-underline hover:bg-surface-alt hover:text-action"
               >
+                <NavIcon path={item.path} />
                 {pick(item.label, locale)}
               </Link>
             </li>
@@ -167,4 +170,9 @@ function MoreMenu({ locale, items, currentPath }: { locale: Locale; items: NavIt
       </ul>
     </details>
   );
+}
+
+function NavIcon({ path }: { path: string }) {
+  const icon = iconForPath(path);
+  return icon ? <DecorativeIcon icon={icon} size={16} className="text-action" /> : null;
 }

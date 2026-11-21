@@ -1,7 +1,9 @@
 import Image from "next/image";
 import NextLink from "next/link";
 
-import { Heading, StatusTag, Tag } from "@/components/ui";
+import { MapPin } from "lucide-react";
+
+import { Heading, IconText, StatusTag, Tag } from "@/components/ui";
 import type { HeadingLevel } from "@/lib/a11y";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -57,7 +59,7 @@ export function EventCard({ event, locale, headingLevel }: EventCardProps) {
         <p className="m-0 text-ink-600">{summary}</p>
         <div className="mt-auto flex flex-col gap-[var(--space-1)] pt-[var(--space-2)] text-sm text-ink-600">
           <EventSchedule event={event} locale={locale} />
-          {location ? <span>{location}</span> : null}
+          {location ? <IconText icon={MapPin}>{location}</IconText> : null}
         </div>
       </div>
     </article>

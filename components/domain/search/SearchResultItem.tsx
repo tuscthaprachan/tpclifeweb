@@ -2,7 +2,7 @@ import type { HeadingLevel } from "@/lib/a11y";
 import type { Locale } from "@/lib/i18n/config";
 import { pick } from "@/lib/i18n/config";
 import type { SearchResult } from "@/lib/search";
-import { Heading, Link, Stack, Tag, type TagTone } from "@/components/ui";
+import { DecorativeIcon, Heading, Link, Stack, Tag, iconForPath, type TagTone } from "@/components/ui";
 import { SEARCH_TYPE_LABEL } from "./searchTypeLabels";
 
 interface SearchResultItemProps {
@@ -30,12 +30,16 @@ export function SearchResultItem({ result, locale, headingLevel }: SearchResultI
   const href = record.path[locale];
   const title = pick(record.title, locale);
   const summary = pick(record.summary, locale);
+  const TypeIcon = iconForPath(href);
   const typeLabel = pick(SEARCH_TYPE_LABEL[record.type], locale);
 
   return (
     <li className="border-b border-line py-[var(--space-4)] last:border-b-0">
       <Stack space={2}>
-        <Tag tone={toneFor(record.category)}>{typeLabel}</Tag>
+        <Tag tone={toneFor(record.category)} icon={false}>
+          {TypeIcon ? <DecorativeIcon icon={TypeIcon} size={14} className="mr-[var(--space-1)]" /> : null}
+          {typeLabel}
+        </Tag>
         <Heading level={headingLevel} visualLevel={3} className="m-0">
           <Link href={href} locale={locale} className="text-action no-underline hover:underline">
             {title}

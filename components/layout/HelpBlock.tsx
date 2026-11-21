@@ -5,6 +5,7 @@
  * the point.
  */
 
+import { DecorativeIcon, helpChannelIcon } from "@/components/ui";
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
 import { pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -57,14 +58,18 @@ export function HelpBlock({ locale, contacts }: { locale: Locale; contacts: Help
                  */
                 <a
                   href={href}
-                  className="inline-flex min-h-[var(--target-min)] items-center"
+                  className="inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)]"
                   {...externalLinkProps(external)}
                 >
-                  {label}
-                  {external ? externalLinkSuffix(locale, true) : ""}
+                  <DecorativeIcon icon={helpChannelIcon(contact.channel)} size={16} />
+                  <span>{label}
+                  {external ? externalLinkSuffix(locale, true) : ""}</span>
                 </a>
               ) : (
-                <span>{label}</span>
+                <span className="inline-flex items-center gap-[var(--space-2)]">
+                  <DecorativeIcon icon={helpChannelIcon(contact.channel)} size={16} />
+                  {label}
+                </span>
               )}
               {hours ? <span className="text-ink-600"> · {hours}</span> : null}
             </li>

@@ -6,6 +6,7 @@
 
 export * from "./cx";
 export * from "./icons";
+export * from "./route-icons";
 
 export * from "./Container";
 export * from "./Stack";
@@ -13,6 +14,9 @@ export * from "./Cluster";
 export * from "./Grid";
 
 export * from "./Heading";
+export * from "./PageTitle";
+export * from "./IconText";
+export * from "./contact-icons";
 export * from "./Prose";
 export * from "./SummaryList";
 export * from "./DataTable";

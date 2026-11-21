@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { contactHref, contactLabel } from "@/components/domain/directory";
+import { contactHref, contactIcon, contactLabel } from "@/components/domain/directory";
 import { isLibrary, upcomingSpecialHours } from "@/components/domain/home";
 import {
   AlertLinks,
@@ -15,7 +15,8 @@ import {
   todayHoursText,
 } from "@/components/domain/today";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Heading, Link, Stack, SummaryList, Timestamp, WarningText } from "@/components/ui";
+import { MapPin } from "lucide-react";
+import { Container, Heading, IconText, Link, PageTitle, Stack, SummaryList, Timestamp, WarningText } from "@/components/ui";
 import { getActiveServiceAlerts, getPlaceBySlug, getTodaySettings } from "@/lib/content";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -82,9 +83,9 @@ export default async function PlacePage({ params }: Props) {
 
       <Stack space={8} className="pb-[var(--space-12)]">
         <Stack space={3}>
-          <Heading level={1} className="m-0">
+          <PageTitle path={library ? "/places/libraries" : "/places"} className="m-0">
             {pick(place.name, locale)}
-          </Heading>
+          </PageTitle>
           {place.description ? <p className="m-0 max-w-[var(--measure-en)] text-lg text-ink-900">{pick(place.description, locale)}</p> : null}
         </Stack>
 
@@ -123,7 +124,11 @@ export default async function PlacePage({ params }: Props) {
         {place.building || mapUrl ? (
           <Stack space={2} as="section">
             <Heading level={2}>{UI.tdFindIt[locale]}</Heading>
-            {place.building ? <p className="m-0">{pick(place.building, locale)}</p> : null}
+            {place.building ? (
+              <p className="m-0">
+                <IconText icon={MapPin}>{pick(place.building, locale)}</IconText>
+              </p>
+            ) : null}
             {mapUrl ? (
               <p className="m-0">
                 <Link href={mapUrl} locale={locale}>
@@ -142,14 +147,16 @@ export default async function PlacePage({ params }: Props) {
                 const href = contactHref(contact);
                 return (
                   <li key={contact._key}>
-                    <span className="text-ink-600">{contactLabel(contact, locale)}: </span>
-                    {href ? (
-                      <Link href={href} locale={locale}>
-                        {contact.value}
-                      </Link>
-                    ) : (
-                      <span>{contact.value}</span>
-                    )}
+                    <IconText icon={contactIcon(contact.channel)}>
+                      <span className="text-ink-600">{contactLabel(contact, locale)}: </span>
+                      {href ? (
+                        <Link href={href} locale={locale}>
+                          {contact.value}
+                        </Link>
+                      ) : (
+                        <span>{contact.value}</span>
+                      )}
+                    </IconText>
                   </li>
                 );
               })}

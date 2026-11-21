@@ -1,4 +1,4 @@
-import { Link } from "@/components/ui";
+import { DecorativeIcon, Link, helpChannelIcon } from "@/components/ui";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { HelpContact } from "@/lib/content/types";
 
@@ -27,11 +27,15 @@ export function LostFoundClaimContact({ contact, locale }: { contact: HelpContac
   return (
     <div className="rounded-panel border border-line-strong px-[var(--space-4)] py-[var(--space-3)]">
       {href ? (
-        <Link href={href} locale={locale} className="font-semibold text-action">
+        <Link href={href} locale={locale} className="inline-flex items-center gap-[var(--space-2)] font-semibold text-action">
+          <DecorativeIcon icon={helpChannelIcon(contact.channel)} size={16} />
           {label}
         </Link>
       ) : (
-        <p className="m-0 font-semibold text-ink-900">{label}</p>
+        <p className="m-0 flex items-center gap-[var(--space-2)] font-semibold text-ink-900">
+          <DecorativeIcon icon={helpChannelIcon(contact.channel)} size={16} />
+          {label}
+        </p>
       )}
       {contact.channel === "inPerson" ? <p className="m-0 mt-[var(--space-1)] text-ink-600">{contact.value}</p> : null}
       {showsValueAsText ? (

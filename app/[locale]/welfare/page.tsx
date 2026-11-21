@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import NextLink from "next/link";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, Stack, StatusTag, Tag, Timestamp } from "@/components/ui";
+import { Clock } from "lucide-react";
+import { Container, IconText, EmptyState, Heading, Stack, StatusTag, Tag, Timestamp, PageTitle } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { SourceDocumentLink } from "@/components/domain/open-data/SourceDocumentLink";
@@ -52,7 +53,7 @@ export default async function WelfareIndexPage({ params }: { params: Promise<{ l
     <Container width="narrow">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.welfare[locale] }]} />
       <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-        <Heading level={1}>{UI.welfare[locale]}</Heading>
+        <PageTitle path="/welfare">{UI.welfare[locale]}</PageTitle>
 
         {pages.length === 0 ? (
           <EmptyState title={UI.nothingHere[locale]} />
@@ -73,9 +74,9 @@ export default async function WelfareIndexPage({ params }: { params: Promise<{ l
                     <p className="m-0 text-ink-600">{pick(page.summary, locale)}</p>
                     <div className="flex flex-wrap items-center gap-[var(--space-2)] text-sm text-ink-600">
                       {page.lastReviewed ? (
-                        <span>
+                        <IconText icon={Clock} className="items-center">
                           {UI.lastReviewed[locale]}: <Timestamp value={page.lastReviewed} locale={locale} />
-                        </span>
+                        </IconText>
                       ) : null}
                       {stale ? <StatusTag tone="warning" label={STALE_REVIEW_LABEL[locale]} /> : null}
                     </div>

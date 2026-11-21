@@ -1,4 +1,5 @@
 import NextLink from "next/link";
+import { Sun } from "lucide-react";
 import { Fragment, type ReactNode } from "react";
 
 import { fillText } from "@/components/domain/open-data/fill";
@@ -119,7 +120,7 @@ export function TodayList({ locale, alerts, routes, places, libraries, weather, 
 
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="transport" aside={showsShuttle && routes.length > 0 ? <Tag tone="neutral">{UI.scheduled[locale]}</Tag> : undefined}>
+      <SectionBar id={HEADING_ID} tone="transport" icon={Sun} aside={showsShuttle && routes.length > 0 ? <Tag tone="neutral">{UI.scheduled[locale]}</Tag> : undefined}>
         {UI.homeToday[locale]}
       </SectionBar>
 

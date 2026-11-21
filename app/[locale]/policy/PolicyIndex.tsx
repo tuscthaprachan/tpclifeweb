@@ -1,7 +1,7 @@
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ShellContainer } from "@/components/layout/ShellContainer";
 import { LivePolicyResults, PolicyResults } from "@/components/domain/policy/PolicyResults";
-import { Heading } from "@/components/ui/Heading";
+import { PageTitle } from "@/components/ui/PageTitle";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { Stack } from "@/components/ui/Stack";
 import type { Locale } from "@/lib/i18n/config";
@@ -18,7 +18,7 @@ export async function PolicyIndex({ locale, filtered }: { locale: Locale; filter
 
       <Stack space={8}>
         <Stack space={2}>
-          <Heading level={1}>{UI.policyTracker[locale]}</Heading>
+          <PageTitle path="/policy">{UI.policyTracker[locale]}</PageTitle>
           <p className="m-0 text-ink-600">{UI.policyIntro[locale]}</p>
         </Stack>
 

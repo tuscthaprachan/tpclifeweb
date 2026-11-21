@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getSiteSettings } from "@/components/layout/site-settings";
-import { ArrowRightIcon, Container, Heading, Stack } from "@/components/ui";
+import { ArrowRightIcon, Container, Heading, IconTile, Stack, iconForPathOrDefault } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
@@ -53,8 +53,9 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
               <li key={item.path}>
                 <NextLink
                   href={localePath(locale, item.path)}
-                  className="press group grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-[var(--space-3)] rounded-[var(--radius-block)] bg-surface-alt py-[var(--space-2)] pl-[var(--space-4)] pr-[var(--space-2)] no-underline"
+                  className="press group grid min-h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-[var(--space-3)] rounded-[var(--radius-block)] bg-surface-alt py-[var(--space-2)] pl-[var(--space-2)] pr-[var(--space-2)] no-underline"
                 >
+                  <IconTile icon={iconForPathOrDefault(item.path)} />
                   <span>
                     <span className="block font-bold text-action group-hover:underline">{pick(item.label, locale)}</span>
                     {description ? (

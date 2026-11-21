@@ -3,7 +3,7 @@ import NextLink from "next/link";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, Stack, Tag } from "@/components/ui";
+import { Container, EmptyState, Heading, Stack, Tag, PageTitle } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getContentPages } from "@/lib/content";
@@ -39,7 +39,7 @@ export default async function GuideIndexPage({ params }: { params: Promise<{ loc
     <Container width="narrow">
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.guide[locale] }]} />
       <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-        <Heading level={1}>{UI.guide[locale]}</Heading>
+        <PageTitle path="/guide">{UI.guide[locale]}</PageTitle>
 
         {pages.length === 0 ? (
           <EmptyState title={UI.nothingHere[locale]} />

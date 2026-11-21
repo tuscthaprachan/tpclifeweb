@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { fillText } from "@/components/domain/open-data/fill";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, DataTable, Heading, InsetText, Stack, StatusTag } from "@/components/ui";
+import { Container, DataTable, Heading, InsetText, Stack, StatusTag, PageTitle } from "@/components/ui";
 import { getTodaySettings, type TodaySettings } from "@/lib/content";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -91,9 +91,9 @@ export default async function WeatherPage({ params }: Props) {
 
       <Stack space={8} className="pb-[var(--space-12)]">
         <Stack space={3}>
-          <Heading level={1} className="m-0">
+          <PageTitle path="/weather" className="m-0">
             {UI.tdWeatherTitle[locale]}
-          </Heading>
+          </PageTitle>
           <p className="m-0 max-w-[var(--measure-en)] text-lg text-ink-900">{UI.tdWeatherIntro[locale]}</p>
         </Stack>
 

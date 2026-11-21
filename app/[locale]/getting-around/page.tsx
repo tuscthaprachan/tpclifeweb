@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ServiceAlert } from "@/components/domain/ServiceAlert";
 import { ShuttleRouteTable } from "@/components/domain/shuttle/ShuttleRouteTable";
-import { Container, EmptyState, Heading, Link, Stack, Tag } from "@/components/ui";
+import { Bus, CarFront, Ship, TrainFront } from "lucide-react";
+import { Container, EmptyState, Heading, IconText, Link, Stack, Tag, PageTitle } from "@/components/ui";
 import { SOURCE_DOCUMENTS, TRANSPORT } from "@/data/harvested-inventory";
 import { isLocale, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
@@ -75,7 +76,7 @@ export default async function GettingAroundPage({ params }: GettingAroundPagePro
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.gettingAround[locale] }]} />
 
       <Stack space={12} className="pb-[var(--space-12)]">
-        <Heading level={1}>{UI.gettingAround[locale]}</Heading>
+        <PageTitle path="/getting-around">{UI.gettingAround[locale]}</PageTitle>
 
         {relevantAlerts.length > 0 ? (
           <Stack space={3} as="section">
@@ -87,7 +88,11 @@ export default async function GettingAroundPage({ params }: GettingAroundPagePro
 
         {/* Shuttle bus */}
         <Stack space={4} as="section">
-          <Heading level={2}>{pick(HEADINGS.shuttle, locale)}</Heading>
+          <Heading level={2}>
+            <IconText icon={Bus} size={22} className="items-center">
+              {pick(HEADINGS.shuttle, locale)}
+            </IconText>
+          </Heading>
           <p className="m-0 max-w-[var(--measure-en)] text-ink-900">{pick(TRANSPORT.shuttle.note, locale)}</p>
 
           {routes.length > 0 ? (
@@ -112,7 +117,11 @@ export default async function GettingAroundPage({ params }: GettingAroundPagePro
 
         {/* MRT */}
         <Stack space={2} as="section">
-          <Heading level={2}>{pick(HEADINGS.mrt, locale)}</Heading>
+          <Heading level={2}>
+            <IconText icon={TrainFront} size={22} className="items-center">
+              {pick(HEADINGS.mrt, locale)}
+            </IconText>
+          </Heading>
           <p className="m-0 max-w-[var(--measure-en)] text-ink-900">
             {pick(TRANSPORT.mrt.line, locale)}, {pick(TRANSPORT.mrt.station, locale)}
           </p>
@@ -120,14 +129,22 @@ export default async function GettingAroundPage({ params }: GettingAroundPagePro
 
         {/* Chao Phraya express boat */}
         <Stack space={2} as="section">
-          <Heading level={2}>{pick(HEADINGS.boat, locale)}</Heading>
+          <Heading level={2}>
+            <IconText icon={Ship} size={22} className="items-center">
+              {pick(HEADINGS.boat, locale)}
+            </IconText>
+          </Heading>
           <p className="m-0 max-w-[var(--measure-en)] text-ink-900">{pick(TRANSPORT.boat.note, locale)}</p>
         </Stack>
 
         {/* Vehicle access rules and fines */}
         {vehicleAccessDoc ? (
           <Stack space={2} as="section">
-            <Heading level={2}>{pick(HEADINGS.vehicleAccess, locale)}</Heading>
+            <Heading level={2}>
+            <IconText icon={CarFront} size={22} className="items-center">
+              {pick(HEADINGS.vehicleAccess, locale)}
+            </IconText>
+          </Heading>
             <p className="m-0">
               <Link href={vehicleAccessDoc.url} locale={locale} className="text-action underline decoration-1 underline-offset-[0.2em]">
                 {pick(vehicleAccessDoc.title, locale)}

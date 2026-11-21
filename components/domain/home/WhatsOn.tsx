@@ -1,6 +1,7 @@
 import NextLink from "next/link";
+import { CalendarDays, Newspaper, Sparkles } from "lucide-react";
 
-import { Button, EmptyState, Heading, StatusTag, Timestamp } from "@/components/ui";
+import { Button, DecorativeIcon, EmptyState, Heading, StatusTag, Timestamp } from "@/components/ui";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { formatTime, isoDateTime } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
@@ -40,16 +41,18 @@ export function WhatsOn({ locale, events, news }: WhatsOnProps) {
 
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="activity">
+      <SectionBar id={HEADING_ID} tone="activity" icon={Sparkles}>
         {UI.homeWhatsOn[locale]}
       </SectionBar>
 
-      <Heading level={3} className="mb-0 mt-[var(--space-4)]">
+      <Heading level={3} className="mb-0 mt-[var(--space-4)] flex items-center gap-[var(--space-2)]">
+        <DecorativeIcon icon={CalendarDays} className="text-action" />
         {UI.homeEvents[locale]}
       </Heading>
       {upcomingEvents.length === 0 ? (
         <EmptyState
           illustration={false}
+          icon={CalendarDays}
           className="mt-[var(--space-3)]"
           title={UI.noUpcomingEvents[locale]}
           action={
@@ -86,12 +89,14 @@ export function WhatsOn({ locale, events, news }: WhatsOnProps) {
         </ul>
       )}
 
-      <Heading level={3} className="mb-0 mt-[var(--space-4)]">
+      <Heading level={3} className="mb-0 mt-[var(--space-4)] flex items-center gap-[var(--space-2)]">
+        <DecorativeIcon icon={Newspaper} className="text-action" />
         {UI.homeNews[locale]}
       </Heading>
       {latestNews.length === 0 ? (
         <EmptyState
           illustration={false}
+          icon={Newspaper}
           className="mt-[var(--space-3)]"
           title={UI.nothingHere[locale]}
           action={

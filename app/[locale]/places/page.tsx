@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { isLibrary } from "@/components/domain/home";
 import { PlacesTable } from "@/components/domain/today";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, Stack } from "@/components/ui";
+import { Container, EmptyState, Heading, Stack, PageTitle } from "@/components/ui";
 import { getPlaces } from "@/lib/content";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -38,9 +38,9 @@ export default async function PlacesPage({ params }: Props) {
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.tdPlaces[locale] }]} />
       <Stack space={8} className="pb-[var(--space-12)]">
         <Stack space={3}>
-          <Heading level={1} className="m-0">
+          <PageTitle path="/places" className="m-0">
             {UI.tdPlaces[locale]}
-          </Heading>
+          </PageTitle>
           <p className="m-0 max-w-[var(--measure-en)] text-lg text-ink-900">{UI.tdPlacesIntro[locale]}</p>
         </Stack>
 

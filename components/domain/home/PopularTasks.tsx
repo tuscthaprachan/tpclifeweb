@@ -1,6 +1,7 @@
 import NextLink from "next/link";
+import { Star } from "lucide-react";
 
-import { ArrowRightIcon } from "@/components/ui";
+import { ArrowRightIcon, IconTile, iconForPathOrDefault } from "@/components/ui";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { HIGHLIGHTED_HOME_TASK_PATH } from "@/lib/content/home-tasks";
@@ -18,7 +19,7 @@ interface PopularTasksProps {
 export function PopularTasks({ locale, tasks }: PopularTasksProps) {
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="action">
+      <SectionBar id={HEADING_ID} tone="action" icon={Star}>
         {UI.homePopular[locale]}
       </SectionBar>
 
@@ -30,10 +31,11 @@ export function PopularTasks({ locale, tasks }: PopularTasksProps) {
               <NextLink
                 href={localePath(locale, task.path)}
                 className={cx(
-                  "press group grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-[var(--space-3)] rounded-[var(--radius-block)] py-[var(--space-2)] pl-[var(--space-4)] pr-[var(--space-2)] no-underline",
+                  "press group grid min-h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-[var(--space-3)] rounded-[var(--radius-block)] py-[var(--space-2)] pl-[var(--space-2)] pr-[var(--space-2)] no-underline",
                   highlighted ? "min-h-20 bg-action" : "bg-surface-alt",
                 )}
               >
+                <IconTile icon={iconForPathOrDefault(task.path)} tone={highlighted ? "inverse" : "soft"} className={highlighted ? "size-12" : undefined} />
                 <span>
                   <span className={cx("block font-bold group-hover:underline", highlighted ? "text-[length:var(--text-lg)] text-action-ink" : "text-action")}>{pick(task.label, locale)}</span>
                   <span className={cx("block text-[length:var(--text-sm)] leading-snug", highlighted ? "text-action-ink" : "text-ink-600")}>{pick(task.description, locale)}</span>

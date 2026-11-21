@@ -12,7 +12,8 @@ import { FormCallout } from "@/components/domain/form";
 import { ProportionalImage } from "@/components/domain/media/ProportionalImage";
 import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Heading, Link, NotificationBanner, Stack, StatusTag, Tag } from "@/components/ui";
+import { Building2, MapPin } from "lucide-react";
+import { Container, Heading, IconText, Link, NotificationBanner, Stack, StatusTag, Tag } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getEventBySlug, getEventPreview, getUpcomingEvents, resolveRichTextRefs } from "@/lib/content";
@@ -82,8 +83,8 @@ export default async function EventDetailPage({
           <Heading level={1}>{title}</Heading>
           <div className="flex flex-col gap-[var(--space-1)] text-ink-600">
             <EventSchedule event={event} locale={locale} />
-            {location ? <span>{location}</span> : null}
-            <span className="text-sm">{ownerLabel(event.owner, locale)}</span>
+            {location ? <IconText icon={MapPin}>{location}</IconText> : null}
+            <IconText icon={Building2} className="text-sm">{ownerLabel(event.owner, locale)}</IconText>
           </div>
         </Stack>
 

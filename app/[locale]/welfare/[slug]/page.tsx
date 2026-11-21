@@ -11,7 +11,8 @@ import { notFound } from "next/navigation";
 import { FormCallout } from "@/components/domain/form";
 import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Heading, Link, NotificationBanner, Stack, Tag, Timestamp } from "@/components/ui";
+import { Clock } from "lucide-react";
+import { Container, Heading, IconText, Link, NotificationBanner, Stack, Tag, Timestamp } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getContentPageBySlug, getContentPagePreview, getContentPages, resolveRichTextRefs } from "@/lib/content";
@@ -102,7 +103,9 @@ export default async function WelfareDetailPage({
           <p className="m-0 text-ink-600">{pick(page.summary, locale)}</p>
           {page.lastReviewed ? (
             <p className="m-0 text-sm text-ink-600">
-              {UI.lastReviewed[locale]}: <Timestamp value={page.lastReviewed} locale={locale} />
+              <IconText icon={Clock} className="items-center">
+                {UI.lastReviewed[locale]}: <Timestamp value={page.lastReviewed} locale={locale} />
+              </IconText>
             </p>
           ) : null}
         </Stack>

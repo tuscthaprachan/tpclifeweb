@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { RichText } from "@/components/domain/rich-text";
-import { Container, Details, EmptyState, Heading, Stack, Tag } from "@/components/ui";
+import { Container, Details, EmptyState, Heading, Stack, Tag, PageTitle } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getFaqs, resolveRichTextRefs } from "@/lib/content";
@@ -78,7 +78,7 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
       />
 
       <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-        <Heading level={1}>{UI.faq[locale]}</Heading>
+        <PageTitle path="/faq">{UI.faq[locale]}</PageTitle>
 
         {groups.length === 0 ? (
           <EmptyState title={UI.nothingHere[locale]} />

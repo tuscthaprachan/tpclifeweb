@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Container } from "@/components/ui/Container";
 import { Stack } from "@/components/ui/Stack";
-import { Heading } from "@/components/ui/Heading";
+import { PageTitle } from "@/components/ui/PageTitle";
 import { Cluster } from "@/components/ui/Cluster";
 import { Button } from "@/components/ui/Button";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
@@ -42,7 +42,7 @@ export async function LostFoundIndex({ locale, filtered }: { locale: Locale; fil
       <Stack space={8}>
         <Stack space={4}>
           <Stack space={2}>
-            <Heading level={1}>{UI.lostAndFound[locale]}</Heading>
+            <PageTitle path="/lost-and-found">{UI.lostAndFound[locale]}</PageTitle>
             <p className="m-0 text-ink-600">{UI.lostAndFoundIntro[locale]}</p>
           </Stack>
           {/* Prominent, since reporting something is the action most readers who cannot find their item actually want. */}

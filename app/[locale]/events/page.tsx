@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { EventCard } from "@/components/domain/event";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Grid, Heading, Stack } from "@/components/ui";
+import { Container, EmptyState, Grid, Stack, PageTitle } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getUpcomingEvents } from "@/lib/content";
@@ -27,7 +27,7 @@ export default async function EventsIndexPage({ params }: { params: Promise<{ lo
     <Container>
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.events[locale] }]} />
       <Stack space={8} className="pb-[var(--space-8)] pt-[var(--space-2)]">
-        <Heading level={1}>{UI.upcomingEvents[locale]}</Heading>
+        <PageTitle path="/events">{UI.upcomingEvents[locale]}</PageTitle>
 
         {events.length === 0 ? (
           <EmptyState title={UI.noUpcomingEvents[locale]} />

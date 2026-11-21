@@ -9,7 +9,8 @@ import { categoryLabel, ownerLabel } from "@/components/domain/news";
 import { ProportionalImage } from "@/components/domain/media/ProportionalImage";
 import { RichText } from "@/components/domain/rich-text";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, Grid, Heading, Stack, Tag, Timestamp } from "@/components/ui";
+import { CalendarDays } from "lucide-react";
+import { Container, Grid, Heading, IconText, Stack, Tag, Timestamp } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getNewsPage, getNewsPostBySlug, getNewsPostPreview, resolveRichTextRefs } from "@/lib/content";
@@ -78,7 +79,7 @@ export default async function NewsDetailPage({
           {post.category ? <Tag tone={post.category}>{categoryLabel(post.category, locale)}</Tag> : null}
           <Heading level={1}>{title}</Heading>
           <div className="flex flex-wrap items-center gap-[var(--space-2)] text-sm text-ink-600">
-            <Timestamp value={post.publishedAt} locale={locale} />
+            <IconText icon={CalendarDays} className="items-center"><Timestamp value={post.publishedAt} locale={locale} /></IconText>
             <span aria-hidden="true">·</span>
             <span>{ownerLabel(post.owner, locale)}</span>
           </div>

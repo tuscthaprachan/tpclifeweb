@@ -3,7 +3,7 @@ import { EatHubResults } from "@/components/domain/canteen/pages/EatHub";
 import { LiveEatHubResults } from "@/components/domain/canteen/pages/EatHubLive";
 import { PreloadCanteenData } from "@/components/domain/canteen/pages/Preload";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Container, EmptyState, Heading, Stack } from "@/components/ui";
+import { Container, EmptyState, Stack, PageTitle } from "@/components/ui";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import type { RawParams } from "@/lib/canteen/params";
 import type { Locale } from "@/lib/i18n/config";
@@ -20,7 +20,7 @@ export async function EatHub({ locale, filtered, query = {} }: { locale: Locale;
 
   const header = (
     <Stack space={2}>
-      <Heading level={1} className="text-3xl">{t(EAT.title, locale)}</Heading>
+      <PageTitle path="/eat" className="text-3xl">{t(EAT.title, locale)}</PageTitle>
       <p className="m-0 text-ink-600">{t(EAT.intro, locale)}</p>
     </Stack>
   );

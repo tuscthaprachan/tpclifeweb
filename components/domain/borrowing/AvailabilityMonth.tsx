@@ -68,7 +68,7 @@ export function AvailabilityMonth({ locale, data, inventory, basePath, previousM
           {name}
         </Heading>
         <p className="m-0 flex flex-wrap items-center gap-[var(--space-2)] text-ink-900">
-          <Tag tone="activity">{itemName(data.category, locale)}</Tag>
+          <Tag tone="activity" icon={false}>{itemName(data.category, locale)}</Tag>
           <span>{av("lendableStock", locale, { count: formatNumber(data.lendable, locale), unit: unitName(data.item, locale) })}</span>
         </p>
         {staff && (!data.item.active || !data.category.active) ? <p className="m-0 text-ink-600">{av("inactiveNote", locale)}</p> : null}

@@ -1,7 +1,9 @@
-import { Link } from "@/components/ui";
+import { MapPin } from "lucide-react";
+import { IconText, Link } from "@/components/ui";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { Organisation } from "@/lib/content/types";
 import { contactHref, contactLabel } from "./contactHref";
+import { contactIcon } from "./contactIcon";
 
 /**
  * One organisation's entry in the directory: name, and its real contact
@@ -19,20 +21,26 @@ export function OrganisationListItem({ org, locale }: { org: Organisation; local
       className="scroll-mt-[calc(var(--header-height,4rem)+var(--space-4))] py-[var(--space-3)]"
     >
       <p className="m-0 font-semibold text-ink-900">{pick(org.name, locale)}</p>
-      {org.location ? <p className="m-0 text-sm text-ink-600">{pick(org.location, locale)}</p> : null}
+      {org.location ? (
+        <p className="m-0 text-sm text-ink-600">
+          <IconText icon={MapPin} size={14}>{pick(org.location, locale)}</IconText>
+        </p>
+      ) : null}
       <ul className="m-0 mt-[var(--space-1)] flex list-none flex-wrap gap-x-[var(--space-4)] gap-y-[var(--space-1)] p-0 text-sm">
         {org.contacts.map((contact) => {
           const href = contactHref(contact);
           const label = contactLabel(contact, locale);
           return (
             <li key={contact._key}>
-              {href ? (
-                <Link href={href} locale={locale} className="font-medium text-action">
-                  {label}
-                </Link>
-              ) : (
-                <span className="text-ink-600">{label}</span>
-              )}
+              <IconText icon={contactIcon(contact.channel)} size={14} className="items-center">
+                {href ? (
+                  <Link href={href} locale={locale} className="font-medium text-action">
+                    {label}
+                  </Link>
+                ) : (
+                  <span className="text-ink-600">{label}</span>
+                )}
+              </IconText>
             </li>
           );
         })}

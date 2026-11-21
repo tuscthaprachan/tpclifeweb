@@ -10,7 +10,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Button, Container, Heading, InsetText, NotificationBanner, Stack } from "@/components/ui";
+import { Button, Container, Heading, InsetText, NotificationBanner, Stack, PageTitle } from "@/components/ui";
 import { isPiiAvailable } from "@/lib/crypto/pii";
 import { isDatabaseConfigured } from "@/lib/db";
 import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
@@ -46,7 +46,7 @@ export default async function ComplaintsStartPage({ params, searchParams }: { pa
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.cpServiceName[locale] }]} />
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Stack space={2}>
-          <Heading level={1}>{UI.cpServiceName[locale]}</Heading>
+          <PageTitle path="/complaints">{UI.cpServiceName[locale]}</PageTitle>
           <p className="m-0 text-ink-900">{UI.cpIntro[locale]}</p>
         </Stack>
 

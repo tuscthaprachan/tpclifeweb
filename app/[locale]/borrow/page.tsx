@@ -10,7 +10,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Button, Container, Heading, InsetText, NotificationBanner, Stack } from "@/components/ui";
+import { Button, Container, Heading, InsetText, NotificationBanner, Stack, PageTitle } from "@/components/ui";
 import { listInventory, type InventoryCategory } from "@/lib/borrowing/availability";
 import { MAX_ADVANCE_DAYS, MAX_LOAN_DAYS } from "@/lib/borrowing/constants";
 import { isPiiAvailable } from "@/lib/crypto/pii";
@@ -58,7 +58,7 @@ export default async function BorrowStartPage({ params, searchParams }: { params
       <Breadcrumbs locale={locale} items={[{ label: UI.home[locale], path: "/" }, { label: UI.brServiceName[locale] }]} />
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]">
         <Stack space={2}>
-          <Heading level={1}>{UI.brServiceName[locale]}</Heading>
+          <PageTitle path="/borrow">{UI.brServiceName[locale]}</PageTitle>
           <p className="m-0 text-ink-900">{UI.brIntro[locale]}</p>
         </Stack>
 
