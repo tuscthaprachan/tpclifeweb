@@ -14,21 +14,20 @@ Nothing runs until the GitHub variables below are set, so Vercel keeps working u
 
 ## 1. Collect the secrets
 
-From Vercel (Project → Settings → Environment Variables, Production): `DATABASE_URL`, `AUTH_ALLOWED_EMAIL_DOMAINS`, `BETTER_AUTH_SECRET`, `PII_ENCRYPTION_KEY` (and `PII_ENCRYPTION_KEY_PREVIOUS` if set), `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO`.
+From Vercel (Project → Settings → Environment Variables, Production): `DATABASE_URL`, `AUTH_ALLOWED_EMAIL_DOMAINS`, `BETTER_AUTH_SECRET`, `PII_ENCRYPTION_KEY` (and `PII_ENCRYPTION_KEY_PREVIOUS` if set), `CRON_SECRET`, `EMAIL_REPLY_TO`. Email no longer goes through Resend (see Email below), so `RESEND_API_KEY` is not needed.
 
 Sensitive variables cannot be read back. Replace them, except `PII_ENCRYPTION_KEY`:
 
 | Variable | If hidden |
 |---|---|
 | `DATABASE_URL` | Neon console → Connection details (pooled) |
-| `RESEND_API_KEY` | New key in Resend |
 | `CRON_SECRET` | `openssl rand -hex 32` (also set it on Vercel) |
 | `BETTER_AUTH_SECRET` | `openssl rand -base64 32` (signs everyone out once, passkeys keep working) |
 | `PII_ENCRYPTION_KEY` | Cannot be replaced. Find the original before going further |
 
 The Neon database was created through the Vercel Marketplace integration, so it is owned and billed through Vercel. Transfer it to a standalone Neon account (Neon console → project settings → transfer) before deleting anything on Vercel.
 
-As of 20 Nov 2026, `PII_ENCRYPTION_KEY`, `BETTER_AUTH_SECRET`, `CRON_SECRET` and `RESEND_API_KEY` are all Sensitive on Vercel. Unless someone kept `PII_ENCRYPTION_KEY`, re-encrypt personal data under a new key while the site is still on Vercel, before the switch.
+As of 20 Nov 2026, `PII_ENCRYPTION_KEY`, `BETTER_AUTH_SECRET` and `CRON_SECRET` are all Sensitive on Vercel. Unless someone kept `PII_ENCRYPTION_KEY`, re-encrypt personal data under a new key while the site is still on Vercel, before the switch.
 
 ## 2. GitHub settings
 
@@ -76,12 +75,28 @@ Subscription: `trytpc.tuso.tu.ac.th`.
 | `BETTER_AUTH_SECRET` | from step 1 |
 | `PII_ENCRYPTION_KEY` | from step 1 |
 | `CRON_SECRET` | from step 1 |
-| `RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_REPLY_TO` | from step 1 |
+| `SMTP_HOST` | `localhost` |
+| `SMTP_PORT` | `587` |
+| `SMTP_USER` | `no-reply@trytpc.tuso.tu.ac.th` (see Email below) |
+| `SMTP_PASSWORD` | that mailbox's password |
+| `EMAIL_FROM` | `TryTPC <no-reply@trytpc.tuso.tu.ac.th>` |
+| `EMAIL_REPLY_TO` | from step 1 (optional) |
 | `STORAGE_DIR` | full path of `trytpc-storage` |
 | `STORAGE_SIGNING_SECRET` | `openssl rand -base64 32` |
 
 5. **Apache & nginx Settings** → Additional nginx directives: `client_max_body_size 6m;`
 6. **Enable Node.js**, then **Restart App**.
+
+## Email
+
+Mail goes out through the Plesk mail service for `trytpc.tuso.tu.ac.th`, on the same machine, so the app talks to `localhost:587`. Plesk signs it with the domain's DKIM key; the SPF record allows only this server, and DMARC is strict (`p=quarantine`, `adkim=s`, `aspf=s`). Resend is no longer used and its key can be revoked.
+
+1. **Mail → Email Addresses → Create Email Address**: `no-reply@trytpc.tuso.tu.ac.th`, with a strong password. Its mailbox collects bounces, so keep the mailbox on and check it now and then.
+2. **Mail → Mail Settings** for the domain: keep "Use DKIM spam protection system to sign outgoing email messages" ticked, and set "SSL/TLS certificate for mail" and "for webmail" to the domain's Let's Encrypt certificate.
+3. Set the `SMTP_*` and `EMAIL_FROM` variables in step 3.4 and restart the app. `EMAIL_FROM` must be on `trytpc.tuso.tu.ac.th`, or DMARC fails.
+4. Send a staff invite to a Gmail address and to an Outlook or TU address. In each, open the original message and check SPF, DKIM and DMARC all say `pass` and that it did not land in spam. The health page (`/admin/health`) shows whether email is configured, not whether it was delivered.
+
+The server's reverse DNS name is `pharm.tu.ac.th`, which is shared with other university sites; it resolves back to the same address, which is what the big providers require. If mail starts landing in spam, ask university IT whether the address is on a block list, or set a Smarthost under Mail → Smarthost (and update SPF to match).
 
 ## 4. Switch over
 

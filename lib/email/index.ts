@@ -2,14 +2,30 @@ import { getSiteSettings } from "@/components/layout/site-settings";
 import type { LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { esc } from "./layout";
-import { ConsoleEmailSender, ResendSender } from "./senders";
+import { ConsoleEmailSender, SmtpSender, type SmtpConfig } from "./senders";
 import { EmailError, type EmailMessage, type EmailSender } from "./types";
 
 export * from "./types";
 export * from "./templates";
-export { ConsoleEmailSender, MemoryEmailSender, ResendSender } from "./senders";
+export { ConsoleEmailSender, MemoryEmailSender, SmtpSender } from "./senders";
 
 let cached: EmailSender | undefined;
+
+/**
+ * The SMTP settings from the environment, or null when `SMTP_HOST` is unset.
+ * `SMTP_PORT` defaults to 587 (submission, STARTTLS); port 465 means implicit
+ * TLS unless `SMTP_SECURE` says otherwise. `SMTP_USER` and `SMTP_PASSWORD` are
+ * the login of the sending mailbox.
+ */
+export function smtpConfigFromEnv(env: Record<string, string | undefined> = process.env): SmtpConfig | null {
+  const host = env.SMTP_HOST?.trim();
+  if (!host) return null;
+  const port = Number(env.SMTP_PORT?.trim() || 587);
+  const secureRaw = env.SMTP_SECURE?.trim().toLowerCase();
+  const secure = secureRaw ? secureRaw === "1" || secureRaw === "true" : port === 465;
+  const user = env.SMTP_USER?.trim() || undefined;
+  return { host, port: Number.isInteger(port) && port > 0 ? port : 587, secure, user, password: user ? env.SMTP_PASSWORD ?? "" : undefined };
+}
 
 /**
  * True when a real or log-only sender is set up. Staff sign-in does not depend
@@ -17,29 +33,30 @@ let cached: EmailSender | undefined;
  * when this is true.
  */
 export function isEmailConfigured(): boolean {
-  return process.env.EMAIL_LOG_ONLY === "1" || Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM);
+  return process.env.EMAIL_LOG_ONLY === "1" || Boolean(smtpConfigFromEnv() && process.env.EMAIL_FROM?.trim());
 }
 
 /**
  * Picks the sender from the environment, on first use.
  *
- * `RESEND_API_KEY` and `EMAIL_FROM` together select Resend. Missing either, a
- * production build throws `not_configured` when called (never at import, so
- * the site still builds); development falls back to printing to the console.
+ * `SMTP_HOST` and `EMAIL_FROM` together select SMTP (in production, the Plesk
+ * mail service for the site's domain). Missing either, a production build
+ * throws `not_configured` when called (never at import, so the site still
+ * builds); development falls back to printing to the console.
  *
  * `EMAIL_LOG_ONLY=1` forces the console sender, in production too. Links then
  * appear in the server logs, so remove it once email works.
  */
 export function getEmailSender(): EmailSender {
   if (cached) return cached;
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
+  const smtp = smtpConfigFromEnv();
+  const from = process.env.EMAIL_FROM?.trim();
   if (process.env.EMAIL_LOG_ONLY === "1") {
     cached = new ConsoleEmailSender();
-  } else if (apiKey && from) {
-    cached = new ResendSender(apiKey, from, { replyTo: process.env.EMAIL_REPLY_TO?.trim() || undefined });
+  } else if (smtp && from) {
+    cached = new SmtpSender(smtp, from, { replyTo: process.env.EMAIL_REPLY_TO?.trim() || undefined });
   } else if (process.env.NODE_ENV === "production") {
-    throw new EmailError("not_configured", "Email is not configured. Set RESEND_API_KEY and EMAIL_FROM.");
+    throw new EmailError("not_configured", "Email is not configured. Set SMTP_HOST and EMAIL_FROM.");
   } else {
     cached = new ConsoleEmailSender();
   }

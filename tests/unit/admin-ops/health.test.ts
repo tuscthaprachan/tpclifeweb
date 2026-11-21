@@ -50,11 +50,11 @@ describe("migration check", () => {
 
 describe("configuration checks never expose values", () => {
   it("email", () => {
-    expect(checkEmail({ RESEND_API_KEY: "re_secret", EMAIL_FROM: "a@b.test" })).toMatchObject({ status: "ok", detail: "emailSending" });
-    expect(checkEmail({ RESEND_API_KEY: "re_secret", EMAIL_FROM: "no-domain" })).toMatchObject({ status: "warning", detail: "emailMissing" });
-    expect(checkEmail({ RESEND_API_KEY: "re_secret", EMAIL_FROM: "TryTPC <no-reply@mail.example.org>" })).toMatchObject({ status: "ok" });
+    expect(checkEmail({ SMTP_HOST: "localhost", EMAIL_FROM: "a@b.test" })).toMatchObject({ status: "ok", detail: "emailSending" });
+    expect(checkEmail({ SMTP_HOST: "localhost", EMAIL_FROM: "no-domain" })).toMatchObject({ status: "warning", detail: "emailMissing" });
+    expect(checkEmail({ SMTP_HOST: "localhost", EMAIL_FROM: "TryTPC <no-reply@mail.example.org>" })).toMatchObject({ status: "ok" });
     expect(checkEmail({ EMAIL_LOG_ONLY: "1" })).toMatchObject({ status: "warning", detail: "emailLogOnly" });
-    expect(checkEmail({ RESEND_API_KEY: "re_secret" })).toMatchObject({ status: "warning", detail: "emailMissing" });
+    expect(checkEmail({ SMTP_HOST: "localhost" })).toMatchObject({ status: "warning", detail: "emailMissing" });
   });
 
   it("cron secret, storage and encryption", () => {
@@ -69,9 +69,9 @@ describe("configuration checks never expose values", () => {
   });
 
   it("a report holds no secret value", async () => {
-    const report = await runHealthChecks(db, { RESEND_API_KEY: "re_SECRETVALUE", EMAIL_FROM: "from@x.test", CRON_SECRET: "CRONSECRETVALUE", PII_ENCRYPTION_KEY: KEY, STORAGE_DIR: "/srv/TOKENDIR" });
+    const report = await runHealthChecks(db, { SMTP_HOST: "localhost", SMTP_PASSWORD: "SMTPSECRETVALUE", EMAIL_FROM: "from@x.test", CRON_SECRET: "CRONSECRETVALUE", PII_ENCRYPTION_KEY: KEY, STORAGE_DIR: "/srv/TOKENDIR" });
     const text = JSON.stringify(report);
-    for (const secret of ["re_SECRETVALUE", "CRONSECRETVALUE", KEY, "TOKEN"]) expect(text).not.toContain(secret);
+    for (const secret of ["SMTPSECRETVALUE", "CRONSECRETVALUE", KEY, "TOKEN"]) expect(text).not.toContain(secret);
   });
 });
 

@@ -71,7 +71,7 @@ describe("house style", () => {
 describe("senders", () => {
   afterEach(() => {
     setEmailSenderForTests(undefined);
-    delete process.env.RESEND_API_KEY;
+    delete process.env.SMTP_HOST;
     delete process.env.EMAIL_FROM;
     vi.unstubAllEnvs();
   });
@@ -92,9 +92,9 @@ describe("senders", () => {
     expect(() => getEmailSender()).toThrow(/not configured/);
   });
 
-  it("isEmailConfigured is true only with Resend keys or log-only mode", () => {
+  it("isEmailConfigured is true only with SMTP settings or log-only mode", () => {
     expect(isEmailConfigured()).toBe(false);
-    vi.stubEnv("RESEND_API_KEY", "re_test");
+    vi.stubEnv("SMTP_HOST", "localhost");
     expect(isEmailConfigured()).toBe(false);
     vi.stubEnv("EMAIL_FROM", "a@example.org");
     expect(isEmailConfigured()).toBe(true);
@@ -106,7 +106,7 @@ describe("senders", () => {
   it("getEmailSender logs instead of sending when EMAIL_LOG_ONLY is 1", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("EMAIL_LOG_ONLY", "1");
-    vi.stubEnv("RESEND_API_KEY", "re_test");
+    vi.stubEnv("SMTP_HOST", "localhost");
     vi.stubEnv("EMAIL_FROM", "a@example.org");
     expect(getEmailSender()).toBeInstanceOf(ConsoleEmailSender);
   });

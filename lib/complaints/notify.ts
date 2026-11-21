@@ -214,7 +214,7 @@ export async function sendEscalationDigests(
   return sent;
 }
 
-/** Resend allows about two requests a second; digests go one at a time with this gap. */
+/** Digests go one at a time with this gap, so a burst does not trip the mail server's sending limits. */
 const DIGEST_GAP_MS = 600;
 
 const pause = (ms: number) => (ms > 0 ? new Promise<void>((resolve) => setTimeout(resolve, ms)) : Promise.resolve());

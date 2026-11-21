@@ -25,9 +25,9 @@ import type { EmailOutcome } from "@/components/admin/LinkReady";
 import { a } from "@/lib/i18n/admin";
 
 /** Sends `message`. Never throws: the link on screen is the delivery that counts. */
-async function sendLink(to: string, category: "staff_invite" | "staff_recovery", message: () => RenderedEmail): Promise<EmailOutcome> {
+async function sendLink(to: string, message: () => RenderedEmail): Promise<EmailOutcome> {
   if (!isEmailConfigured()) return "not_configured";
-  const result = await sendEmail({ to, ...message(), tags: [{ name: "category", value: category }] });
+  const result = await sendEmail({ to, ...message() });
   return result.ok ? "sent" : "failed";
 }
 
@@ -87,7 +87,7 @@ export async function createStaffInvite(_prev: InviteFormState, formData: FormDa
   }
 
   const link = `${getAuthBaseUrl() ?? ""}/admin/invite/${created.token}`;
-  const emailed = await sendLink(created.invite.email, "staff_invite", () =>
+  const emailed = await sendLink(created.invite.email, () =>
     staffInvite({
       inviterName: actor.user.name || actor.user.email,
       organisation: {
@@ -137,7 +137,7 @@ export async function issueRecovery(_prev: RecoveryFormState, formData: FormData
 
   const link = `${getAuthBaseUrl() ?? ""}/admin/recover/${issued.token}`;
   const organisation = staff.organisations[0];
-  const emailed = await sendLink(issued.person.email, "staff_recovery", () =>
+  const emailed = await sendLink(issued.person.email, () =>
     staffRecovery({
       organisation: { th: organisation?.nameTh ?? "", en: organisation?.nameEn ?? "" },
       recoverUrl: link,
