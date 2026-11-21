@@ -27,8 +27,9 @@ export const WELLBEING_CONTACT = {
   ],
 } as const;
 
-/** Emergency numbers shown beside the /report route. National numbers, not Thammasat's. */
+/** Emergency numbers shown beside the /report route: the two national numbers, then campus security. */
 export const EMERGENCY_NUMBERS = [
-  { number: "191", tel: "tel:191" },
-  { number: "1669", tel: "tel:1669" },
+  { number: "191", tel: "tel:191", label: "cpEmergencyPolice" },
+  { number: "1669", tel: "tel:1669", label: "cpEmergencyMedical" },
+  { number: "084 076 8650", tel: "tel:0840768650", label: "cpEmergencySecurity" },
 ] as const;

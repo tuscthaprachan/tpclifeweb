@@ -27,7 +27,7 @@ export function Urgent({ locale, crumbs, backHref }: { locale: Locale; crumbs: R
         <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0 text-xl">
           {EMERGENCY_NUMBERS.map((n) => (
             <li key={n.number}>
-              <span>{UI[n.number === "191" ? "cpEmergencyPolice" : "cpEmergencyMedical"][locale]}: </span>
+              <span>{UI[n.label][locale]}: </span>
               <a href={n.tel} className="font-bold text-action underline">
                 {n.number}
               </a>

@@ -24,7 +24,7 @@ export function EmergencyBox({ locale }: { locale: Locale }) {
       <ul className="m-0 mt-[var(--space-3)] flex list-none flex-col gap-[var(--space-2)] p-0">
         {EMERGENCY_NUMBERS.map((n) => (
           <li key={n.number}>
-            <span>{UI[n.number === "191" ? "cpEmergencyPolice" : "cpEmergencyMedical"][locale]}: </span>
+            <span>{UI[n.label][locale]}: </span>
             <a href={n.tel} className="font-semibold text-action underline">
               {n.number}
             </a>
