@@ -76,7 +76,7 @@ Subscription: `trytpc.tuso.tu.ac.th`.
 | `PII_ENCRYPTION_KEY` | from step 1 |
 | `CRON_SECRET` | from step 1 |
 | `SMTP_HOST` | `localhost` |
-| `SMTP_PORT` | `587` |
+| `SMTP_PORT` | `465` (587 is closed on this server) |
 | `SMTP_USER` | `no-reply@trytpc.tuso.tu.ac.th` (see Email below) |
 | `SMTP_PASSWORD` | that mailbox's password |
 | `EMAIL_FROM` | `TryTPC <no-reply@trytpc.tuso.tu.ac.th>` |
@@ -89,7 +89,7 @@ Subscription: `trytpc.tuso.tu.ac.th`.
 
 ## Email
 
-Mail goes out through the Plesk mail service for `trytpc.tuso.tu.ac.th`, on the same machine, so the app talks to `localhost:587`. Plesk signs it with the domain's DKIM key; the SPF record allows only this server, and DMARC is strict (`p=quarantine`, `adkim=s`, `aspf=s`). Resend is no longer used and its key can be revoked.
+Mail goes out through the Plesk mail service for `trytpc.tuso.tu.ac.th`, on the same machine, so the app talks to `localhost:465` (implicit TLS). Port 587 is not open on this server (checked 21 Nov 2026: 587 refused, 25 is Postfix, 465 accepts TLS). Plesk signs it with the domain's DKIM key; the SPF record allows only this server, and DMARC is strict (`p=quarantine`, `adkim=s`, `aspf=s`). Resend is no longer used and its key can be revoked.
 
 1. **Mail → Email Addresses → Create Email Address**: `no-reply@trytpc.tuso.tu.ac.th`, with a strong password. Its mailbox collects bounces, so keep the mailbox on and check it now and then.
 2. **Mail → Mail Settings** for the domain: keep "Use DKIM spam protection system to sign outgoing email messages" ticked, and set "SSL/TLS certificate for mail" and "for webmail" to the domain's Let's Encrypt certificate.

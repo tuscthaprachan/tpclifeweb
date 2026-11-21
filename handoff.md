@@ -150,7 +150,7 @@ Every lifecycle with more than two states is now declared in a pure module with 
 | `PII_ENCRYPTION_KEY` | Required in production: encrypts contacts, complaint text, evidence names, survey comments. Losing it loses that data. `PII_ENCRYPTION_KEY_PREVIOUS` is for rotation (decrypt only). |
 | `CRON_SECRET` | Both crons. |
 | `BLOB_READ_WRITE_TOKEN` or `BLOB_STORE_ID` | Private item photos and complaint evidence (OIDC with the store id on Vercel). |
-| `SMTP_HOST`, `EMAIL_FROM` | Notification emails through the Plesk mail service (`localhost:587`). Required in production; sign-in itself does not use email. Without them status mails are not sent. |
+| `SMTP_HOST`, `EMAIL_FROM` | Notification emails through the Plesk mail service (`localhost:465`; 587 is closed on this server). Required in production; sign-in itself does not use email. Without them status mails are not sent. |
 | `SMTP_USER`, `SMTP_PASSWORD` | Login of the sending mailbox. `SMTP_PORT` (default 587) and `SMTP_SECURE` are optional. |
 | `EMAIL_REPLY_TO` | Optional reply-to address. |
 | `EMAIL_LOG_ONLY` | Print emails to the log instead. Leave unset in production (the health page warns). |
