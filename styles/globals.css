@@ -254,6 +254,19 @@
   scroll-margin-bottom: var(--space-4);
 }
 
+/*
+ * The same for the floating Filters button on the eat pages (phones only). A
+ * scroll margin only helps when the browser decides to scroll, and it does not
+ * scroll to a control that is already fully on screen, even one sitting under
+ * the button. Scroll padding shrinks what counts as on screen, so a control
+ * behind the button is scrolled clear of it.
+ */
+@media (max-width: 47.99rem) {
+  html:has(.eat-floating-filters) {
+    scroll-padding-block-end: calc(5rem + env(safe-area-inset-bottom));
+  }
+}
+
 /* Visually hidden but present for assistive technology. */
 .visually-hidden {
   position: absolute;

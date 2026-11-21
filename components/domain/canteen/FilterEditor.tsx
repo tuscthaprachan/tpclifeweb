@@ -80,7 +80,8 @@ export function FilterEditor({ locale, count, children }: FilterEditorProps) {
             opener.current = "floating";
             setOpen(true);
           }}
-          className="fixed bottom-[max(var(--space-4),env(safe-area-inset-bottom))] left-1/2 z-[60] inline-flex min-h-[var(--target-min)] -translate-x-1/2 items-center gap-[var(--space-2)] rounded-pill bg-action px-[var(--space-5)] py-[var(--space-2)] text-base font-medium whitespace-nowrap text-action-ink shadow-[var(--shadow-elevation)] hover:bg-action-hover md:hidden"
+          // eat-floating-filters: globals.css pads the page's scroll area while this is shown.
+          className="eat-floating-filters fixed bottom-[max(var(--space-4),env(safe-area-inset-bottom))] left-1/2 z-[60] inline-flex min-h-[var(--target-min)] -translate-x-1/2 items-center gap-[var(--space-2)] rounded-pill bg-action px-[var(--space-5)] py-[var(--space-2)] text-base font-medium whitespace-nowrap text-action-ink shadow-[var(--shadow-elevation)] hover:bg-action-hover md:hidden"
         >
           <FiltersIcon />
           {floatingLabel}
