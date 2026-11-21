@@ -28,6 +28,10 @@ interface OrgRecord {
 }
 
 /** The id the handbook data gives an organisation, which the handbook enrichments refer to. */
+const EXTRA_CONTACTS: Record<string, OrganisationContactJson[]> = {
+  student_birsa: [{ channel: "website", value: "birsa.vercel.app" }],
+};
+
 const handbookOrgId = (handle: string) => `organisation-${handle.replace(/\./g, "-")}`;
 
 export function buildDirectory(): OrgRecord[] {
@@ -38,7 +42,7 @@ export function buildDirectory(): OrgRecord[] {
       type: org.type,
       name: { th: "nameTh" in org && org.nameTh ? org.nameTh : org.name, en: org.name },
       faculty: "faculty" in org ? { th: org.faculty.th, en: org.faculty.en } : undefined,
-      contacts: [{ channel: "instagram", value: org.handle }],
+      contacts: [{ channel: "instagram", value: org.handle }, ...(EXTRA_CONTACTS[org.handle] ?? [])],
     };
     const enrichment = enrichments.get(handbookOrgId(org.handle));
     // Only fill in names that were never captured in Thai (th still equals en).
