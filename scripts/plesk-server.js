@@ -2,30 +2,52 @@
 // standalone server.js to next-server.js and puts this file in its place, so
 // Plesk's "Application startup file: server.js" setting stays the same.
 //
-// Why: Next writes regenerated ISR pages to .next/server/app/*.html|.rsc|.meta,
-// the same files the deploy checks out. Plesk swaps the files in before
-// Passenger restarts the app, so the old process can still regenerate a page in
-// that window and write HTML from the old build over the new one. The new
-// process then serves that HTML, whose /_next/static CSS and JS no longer exist,
-// and the page shows up unstyled until it next revalidates (up to a day).
+// Why: Next keeps pages it regenerates at runtime on disk, in
+// .next/server/route-cache/. That folder is not part of the deploy branch, so
+// Plesk's Git deploy never clears it and it outlives every deploy. (On Vercel
+// each deploy starts from an empty disk.) The new process then serves pages
+// rendered by an older build. Their /_next/static CSS and JS no longer exist,
+// so they show up unstyled until they next revalidate, which can take a day.
 //
-// Every page Next renders contains its build ID, so any cached page without the
-// current one is left over from an older build. Delete it before Next starts;
-// Next renders it again on the first request.
+// So before Next starts:
+// 1. Empty route-cache when it was written by another build. A marker file
+//    records which build it belongs to, so a plain restart (Passenger idle
+//    shutdown, Restart App) keeps the cache.
+// 2. Delete any prerendered page in .next/server/app that lacks the current
+//    build ID. Every page Next renders contains it. This catches an old process
+//    writing over the new files between Plesk's checkout and the restart.
+// Next renders anything removed again on the next request.
 
 const fs = require("fs");
 const path = require("path");
 
-function removeStalePages() {
-  const root = path.join(__dirname, ".next", "server", "app");
-  let buildId;
-  try {
-    buildId = fs.readFileSync(path.join(__dirname, ".next", "BUILD_ID"), "utf8").trim();
-  } catch {
-    return;
-  }
-  if (!buildId) return;
+const serverDir = path.join(__dirname, ".next", "server");
 
+function readBuildId() {
+  try {
+    return fs.readFileSync(path.join(__dirname, ".next", "BUILD_ID"), "utf8").trim();
+  } catch {
+    return "";
+  }
+}
+
+function clearRouteCache(buildId) {
+  const dir = path.join(serverDir, "route-cache");
+  const marker = path.join(serverDir, "route-cache.build-id");
+  let owner = "";
+  try {
+    owner = fs.readFileSync(marker, "utf8").trim();
+  } catch {
+    // No marker: the cache predates this script or does not exist yet.
+  }
+  if (owner !== buildId && fs.existsSync(dir)) {
+    fs.rmSync(dir, { recursive: true, force: true });
+    console.log("[startup] Cleared the runtime page cache left by an older build");
+  }
+  fs.writeFileSync(marker, `${buildId}\n`);
+}
+
+function removeStalePrerenders(buildId) {
   let removed = 0;
   const walk = (dir) => {
     let entries;
@@ -59,16 +81,21 @@ function removeStalePages() {
       removed++;
     }
   };
-  walk(root);
+  walk(path.join(serverDir, "app"));
   if (removed > 0) {
-    console.log(`[startup] Removed ${removed} cached page(s) left over from an older build`);
+    console.log(`[startup] Removed ${removed} prerendered page(s) left over from an older build`);
   }
 }
 
-try {
-  removeStalePages();
-} catch (err) {
-  console.error("[startup] Stale page cleanup failed", err);
+const buildId = readBuildId();
+if (buildId) {
+  for (const step of [clearRouteCache, removeStalePrerenders]) {
+    try {
+      step(buildId);
+    } catch (err) {
+      console.error(`[startup] ${step.name} failed`, err);
+    }
+  }
 }
 
 require("./next-server.js");
