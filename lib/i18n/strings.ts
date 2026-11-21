@@ -769,7 +769,7 @@ export const UI = {
   },
   cpEmergencyTitle: { th: "ในกรณีฉุกเฉิน ห้ามใช้บริการนี้", en: "In an emergency, do not use this service" },
   cpEmergencyBody: {
-    th: "เจ้าหน้าที่อ่านเรื่องที่ส่งเข้ามาเฉพาะในเวลาทำการ หากมีใครกำลังตกอยู่ในอันตรายหรือต้องการความช่วยเหลือทันที โปรดโทรตามหมายเลขด้านล่าง",
+    th: "หากมีใครกำลังตกอยู่ในอันตรายหรือต้องการความช่วยเหลือทันที โปรดโทรตามหมายเลขด้านล่าง เมื่อเหตุคลี่คลายแล้วสามารถใช้บริการนี้ได้หากต้องการความช่วยเหลือเพิ่มเติม",
     en: "Staff only read what is sent during working hours. If anyone is in danger or needs help now, call one of the numbers below",
   },
   cpEmergencyPolice: { th: "ตำรวจ", en: "Police" },
