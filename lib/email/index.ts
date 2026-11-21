@@ -2,12 +2,12 @@ import { getSiteSettings } from "@/components/layout/site-settings";
 import type { LocaleString } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { esc } from "./layout";
-import { ConsoleEmailSender, SmtpSender, type SmtpConfig } from "./senders";
+import { ConsoleEmailSender, ResendSender, SmtpSender, type SmtpConfig } from "./senders";
 import { EmailError, type EmailMessage, type EmailSender } from "./types";
 
 export * from "./types";
 export * from "./templates";
-export { ConsoleEmailSender, MemoryEmailSender, SmtpSender } from "./senders";
+export { ConsoleEmailSender, MemoryEmailSender, ResendSender, SmtpSender } from "./senders";
 
 let cached: EmailSender | undefined;
 
@@ -33,14 +33,17 @@ export function smtpConfigFromEnv(env: Record<string, string | undefined> = proc
  * when this is true.
  */
 export function isEmailConfigured(): boolean {
-  return process.env.EMAIL_LOG_ONLY === "1" || Boolean(smtpConfigFromEnv() && process.env.EMAIL_FROM?.trim());
+  if (process.env.EMAIL_LOG_ONLY === "1") return true;
+  return Boolean((process.env.RESEND_API_KEY?.trim() || smtpConfigFromEnv()) && process.env.EMAIL_FROM?.trim());
 }
 
 /**
  * Picks the sender from the environment, on first use.
  *
- * `SMTP_HOST` and `EMAIL_FROM` together select SMTP (in production, the Plesk
- * mail service for the site's domain). Missing either, a production build
+ * `RESEND_API_KEY` and `EMAIL_FROM` select Resend (HTTPS API). Otherwise
+ * `SMTP_HOST` and `EMAIL_FROM` select SMTP. Resend wins when both are set:
+ * the production network blocks outbound SMTP, so the Plesk mail service
+ * cannot deliver. Missing a sender or `EMAIL_FROM`, a production build
  * throws `not_configured` when called (never at import, so the site still
  * builds); development falls back to printing to the console.
  *
@@ -49,14 +52,18 @@ export function isEmailConfigured(): boolean {
  */
 export function getEmailSender(): EmailSender {
   if (cached) return cached;
+  const apiKey = process.env.RESEND_API_KEY?.trim();
   const smtp = smtpConfigFromEnv();
   const from = process.env.EMAIL_FROM?.trim();
+  const replyTo = process.env.EMAIL_REPLY_TO?.trim() || undefined;
   if (process.env.EMAIL_LOG_ONLY === "1") {
     cached = new ConsoleEmailSender();
+  } else if (apiKey && from) {
+    cached = new ResendSender(apiKey, from, { replyTo });
   } else if (smtp && from) {
-    cached = new SmtpSender(smtp, from, { replyTo: process.env.EMAIL_REPLY_TO?.trim() || undefined });
+    cached = new SmtpSender(smtp, from, { replyTo });
   } else if (process.env.NODE_ENV === "production") {
-    throw new EmailError("not_configured", "Email is not configured. Set SMTP_HOST and EMAIL_FROM.");
+    throw new EmailError("not_configured", "Email is not configured. Set RESEND_API_KEY (or SMTP_HOST) and EMAIL_FROM.");
   } else {
     cached = new ConsoleEmailSender();
   }

@@ -4,6 +4,8 @@ import {
   ConsoleEmailSender,
   EmailError,
   MemoryEmailSender,
+  ResendSender,
+  SmtpSender,
   getEmailSender,
   setEmailSenderForTests,
   isEmailConfigured,
@@ -72,6 +74,7 @@ describe("senders", () => {
   afterEach(() => {
     setEmailSenderForTests(undefined);
     delete process.env.SMTP_HOST;
+    delete process.env.RESEND_API_KEY;
     delete process.env.EMAIL_FROM;
     vi.unstubAllEnvs();
   });
@@ -92,9 +95,23 @@ describe("senders", () => {
     expect(() => getEmailSender()).toThrow(/not configured/);
   });
 
-  it("isEmailConfigured is true only with SMTP settings or log-only mode", () => {
+  it("getEmailSender prefers Resend over SMTP when both are set", () => {
+    vi.stubEnv("SMTP_HOST", "localhost");
+    vi.stubEnv("EMAIL_FROM", "a@example.org");
+    expect(getEmailSender()).toBeInstanceOf(SmtpSender);
+    setEmailSenderForTests(undefined);
+    vi.stubEnv("RESEND_API_KEY", "re_test");
+    expect(getEmailSender()).toBeInstanceOf(ResendSender);
+  });
+
+  it("isEmailConfigured is true with Resend or SMTP settings, or log-only mode", () => {
     expect(isEmailConfigured()).toBe(false);
     vi.stubEnv("SMTP_HOST", "localhost");
+    expect(isEmailConfigured()).toBe(false);
+    vi.stubEnv("EMAIL_FROM", "a@example.org");
+    expect(isEmailConfigured()).toBe(true);
+    vi.unstubAllEnvs();
+    vi.stubEnv("RESEND_API_KEY", "re_test");
     expect(isEmailConfigured()).toBe(false);
     vi.stubEnv("EMAIL_FROM", "a@example.org");
     expect(isEmailConfigured()).toBe(true);

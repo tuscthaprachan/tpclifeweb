@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { EmailError, MemoryEmailSender, SmtpSender, sendEmail, smtpConfigFromEnv, type EmailMessage } from "@/lib/email";
-import type { SmtpTransportLike } from "@/lib/email/senders";
+import { EmailError, MemoryEmailSender, ResendSender, SmtpSender, sendEmail, smtpConfigFromEnv, type EmailMessage } from "@/lib/email";
+import type { ResendClientLike, SmtpTransportLike } from "@/lib/email/senders";
 
 const message: EmailMessage = { to: "person@example.org", subject: "Hello", text: "Hi", html: "<p>Hi</p>" };
 const FROM = "TryTPC <no-reply@trytpc.example.org>";
@@ -70,6 +70,52 @@ describe("SmtpSender", () => {
   });
 });
 
+describe("ResendSender", () => {
+  const resend = (send: ResendClientLike["emails"]["send"], replyTo?: string) =>
+    new ResendSender("re_key", FROM, { client: { emails: { send } }, retryDelaysMs: [0, 0], replyTo });
+
+  it("sends from the configured address with the message reply-to", async () => {
+    const send = vi.fn().mockResolvedValue({ data: { id: "abc" }, error: null });
+    await expect(resend(send).send({ ...message, replyTo: "desk@example.org" })).resolves.toEqual({ id: "abc" });
+    expect(send).toHaveBeenCalledWith({ from: FROM, to: message.to, subject: "Hello", text: "Hi", html: "<p>Hi</p>", replyTo: "desk@example.org" });
+  });
+
+  it("falls back to the configured reply-to", async () => {
+    const send = vi.fn().mockResolvedValue({ data: { id: "abc" }, error: null });
+    await resend(send, "default@example.org").send(message);
+    expect(send.mock.calls[0]?.[0].replyTo).toBe("default@example.org");
+  });
+
+  it("retries a rate limit and then succeeds", async () => {
+    const send = vi.fn()
+      .mockResolvedValueOnce({ data: null, error: { name: "rate_limit_exceeded", message: "Slow down", statusCode: 429 } })
+      .mockResolvedValueOnce({ data: { id: "ok" }, error: null });
+    await expect(resend(send).send(message)).resolves.toEqual({ id: "ok" });
+    expect(send).toHaveBeenCalledTimes(2);
+  });
+
+  it("retries network errors and gives up after two retries", async () => {
+    const send = vi.fn().mockRejectedValue(new Error("socket hang up"));
+    await expect(resend(send).send(message)).rejects.toThrow(/network_error: socket hang up/);
+    expect(send).toHaveBeenCalledTimes(3);
+  });
+
+  it("does not retry a validation error or an exhausted quota", async () => {
+    const invalid = vi.fn().mockResolvedValue({ data: null, error: { name: "validation_error", message: "Invalid `to` field", statusCode: 422 } });
+    await expect(resend(invalid).send(message)).rejects.toThrow(/validation_error: Invalid `to` field/);
+    expect(invalid).toHaveBeenCalledTimes(1);
+    const quota = vi.fn().mockResolvedValue({ data: null, error: { name: "daily_quota_exceeded", message: "Quota", statusCode: 429 } });
+    await expect(resend(quota).send(message)).rejects.toMatchObject({ code: "backend" });
+    expect(quota).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects an invalid recipient without calling the API", async () => {
+    const send = vi.fn();
+    await expect(resend(send).send({ ...message, to: "nope" })).rejects.toMatchObject({ code: "invalid_recipient" });
+    expect(send).not.toHaveBeenCalled();
+  });
+});
+
 describe("smtpConfigFromEnv", () => {
   it("is null without a host", () => {
     expect(smtpConfigFromEnv({})).toBeNull();
@@ -113,6 +159,7 @@ describe("sendEmail", () => {
   it("returns not ok when email is not configured", async () => {
     vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.stubEnv("SMTP_HOST", "");
+    vi.stubEnv("RESEND_API_KEY", "");
     vi.stubEnv("EMAIL_FROM", "");
     vi.stubEnv("EMAIL_LOG_ONLY", "");
     await expect(sendEmail(message)).resolves.toEqual({ ok: false, error: "not_configured" });

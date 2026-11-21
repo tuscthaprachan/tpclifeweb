@@ -76,7 +76,7 @@ The console is organised by job, not by table. Nav model: `lib/admin/nav.ts` (bu
 
 ### Emails (`lib/email`)
 
-Email goes out over SMTP through the Plesk mail service for the site's domain, which signs it with the domain's DKIM key (`SMTP_HOST` and `EMAIL_FROM`, usually `SMTP_USER` and `SMTP_PASSWORD`, optional `SMTP_PORT`, `SMTP_SECURE`, `EMAIL_REPLY_TO`; `EMAIL_LOG_ONLY=1` prints instead of sending). Resend is no longer used. `sendEmail` in `lib/email` never throws, retries temporary SMTP replies (4xx) and dropped connections twice, and logs only a code and message. Templates are bilingual and live in code: staff invite and recovery (`templates.ts`), lost and found status mails (`lost-found-templates.ts`), complaint acknowledged, resolved and the escalation digest to officers (`complaint-templates.ts`). A failed email never blocks a case action or an invitation. LINE is not built.
+Email goes out through the Resend HTTPS API (`RESEND_API_KEY` and `EMAIL_FROM` on `notify.trytpc.tuso.tu.ac.th`), because the hosting network blocks outbound SMTP. An SMTP sender for the Plesk mail service is also built in (`SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`, optional `SMTP_PORT`, `SMTP_SECURE`) and is used when `RESEND_API_KEY` is unset; see docs/plesk-migration.md. Optional `EMAIL_REPLY_TO`; `EMAIL_LOG_ONLY=1` prints instead of sending. `sendEmail` in `lib/email` never throws, retries rate limits, server errors and dropped connections twice, and logs only a code and message. Templates are bilingual and live in code: staff invite and recovery (`templates.ts`), lost and found status mails (`lost-found-templates.ts`), complaint acknowledged, resolved and the escalation digest to officers (`complaint-templates.ts`). A failed email never blocks a case action or an invitation. LINE is not built.
 
 ### Crons (`vercel.json`)
 
@@ -150,8 +150,8 @@ Every lifecycle with more than two states is now declared in a pure module with 
 | `PII_ENCRYPTION_KEY` | Required in production: encrypts contacts, complaint text, evidence names, survey comments. Losing it loses that data. `PII_ENCRYPTION_KEY_PREVIOUS` is for rotation (decrypt only). |
 | `CRON_SECRET` | Both crons. |
 | `BLOB_READ_WRITE_TOKEN` or `BLOB_STORE_ID` | Private item photos and complaint evidence (OIDC with the store id on Vercel). |
-| `SMTP_HOST`, `EMAIL_FROM` | Notification emails through the Plesk mail service (`localhost:465`; 587 is closed on this server). Required in production; sign-in itself does not use email. Without them status mails are not sent. |
-| `SMTP_USER`, `SMTP_PASSWORD` | Login of the sending mailbox. `SMTP_PORT` (default 587) and `SMTP_SECURE` are optional. |
+| `RESEND_API_KEY`, `EMAIL_FROM` | Notification emails through Resend. Required in production; sign-in itself does not use email. Without them status mails are not sent. |
+| `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD` | Alternative: the Plesk mail service, used only when `RESEND_API_KEY` is unset. Blocked outbound on the current network. `SMTP_PORT` (default 587) and `SMTP_SECURE` are optional. |
 | `EMAIL_REPLY_TO` | Optional reply-to address. |
 | `EMAIL_LOG_ONLY` | Print emails to the log instead. Leave unset in production (the health page warns). |
 
@@ -172,7 +172,7 @@ Use `next start`, not `next dev`, for Playwright. Never run `playwright install`
 ## Outstanding items for the user
 
 - Production: run migrations 0004 to 0011 and `npm run db:seed`, set `PII_ENCRYPTION_KEY` and `CRON_SECRET`, then ask for the merge.
-- Email is sent by the Plesk mail service: keep mail and DKIM signing on for the domain, the SPF and DMARC records in place, and `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD` and `EMAIL_FROM` set. Invitation and recovery links are emailed and also shown on screen once.
+- Email is sent by Resend: keep `notify.trytpc.tuso.tu.ac.th` verified (SPF, DKIM, DMARC), and `RESEND_API_KEY` and `EMAIL_FROM` set in production. Invitation and recovery links are emailed and also shown on screen once.
 - `BETTER_AUTH_SECRET` is set for Production only; add a separate Preview value. Check Neon preview branching is on so previews do not share the production database.
 - Desks must confirm the wellbeing centre contact details in `lib/complaints/constants.ts`, and the complaint category names, hints and targets at `/admin/complaints/categories`.
 - Name the staff on each restricted category (harassment, safety).

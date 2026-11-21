@@ -30,7 +30,7 @@ const set = (env: Env, name: string) => Boolean(env[name]?.trim());
 
 export function checkEmail(env: Env): HealthCheck {
   const from = env.EMAIL_FROM?.trim() ?? "";
-  if (set(env, "SMTP_HOST") && from) {
+  if ((set(env, "RESEND_API_KEY") || set(env, "SMTP_HOST")) && from) {
     if (env.EMAIL_LOG_ONLY === "1") return { id: "email", status: "warning", detail: "emailLogOnly" };
     if (!/@[^\s@<>]+\.[^\s@<>]+>?$/.test(from)) return { id: "email", status: "warning", detail: "emailMissing" };
     return { id: "email", status: "ok", detail: "emailSending" };

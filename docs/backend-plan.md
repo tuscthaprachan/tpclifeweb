@@ -71,11 +71,11 @@ The Service Manual is written for UK government, so we adopt its principles and 
   - Every member of staff has a "My security" page: list passkeys (name, added, last used), add one per device, rename, remove (never the last one).
   - Sessions: 30 minute idle timeout for staff with the GOV.UK session timeout warning, 12 hour absolute limit. Every account creation, passkey add or remove, recovery issue or use, and sign-in (or failed one) is audited.
   - Students: optional sign-in to see all their cases is not built. Its method is undecided (passkeys, or emailed codes via `lib/email`). Never required to report.
-  - Sign-in does not depend on email. Email goes through the Plesk mail service over SMTP (own domain, SPF, DKIM, DMARC) and is required in production for invitations, recovery links and notifications.
+  - Sign-in does not depend on email. Email goes through Resend (own subdomain, SPF, DKIM, DMARC; the network blocks outbound SMTP from the Plesk server) and is required in production for invitations, recovery links and notifications.
   - Entra or LINE can be added later as extra sign-in methods without changing anything else.
 - **Authorisation**: roles `admin`, `editor` and `officer`, held by the person; which body (TUSU, TUSC or both) they belong to is a separate membership. Lost and found and complaints are jointly owned: TUSU and TUSC staff share one queue per service; each action records which organisation acted. Restricted complaint categories are visible only to named staff. Enforced in the data layer and backed by Postgres row-level security.
 - **Files**: The server's disk (`STORAGE_DIR`) behind a small storage interface (swappable). Public bucket for content images; private for item photos and complaint evidence, served via short-lived signed URLs.
-- **Notifications**: email over SMTP through the Plesk mail service. Templates bilingual, stored in code. LINE is on the back burner.
+- **Notifications**: email through Resend (SMTP to the Plesk mail service is built in as an alternative). Templates bilingual, stored in code. LINE is on the back burner.
 - **Jobs**: Vercel Cron for response-time reminders, escalations and PII deletion.
 - **Audit log**: append-only table, recording actor, action, entity, before/after diff, and every view of personal data.
 - **Caching**: content writes call `revalidateTag` directly; the existing `CACHE_TAGS` stay. Replaces the Sanity webhook and Live.

@@ -14,7 +14,7 @@ Nothing runs until the GitHub variables below are set, so Vercel keeps working u
 
 ## 1. Collect the secrets
 
-From Vercel (Project → Settings → Environment Variables, Production): `DATABASE_URL`, `AUTH_ALLOWED_EMAIL_DOMAINS`, `BETTER_AUTH_SECRET`, `PII_ENCRYPTION_KEY` (and `PII_ENCRYPTION_KEY_PREVIOUS` if set), `CRON_SECRET`, `EMAIL_REPLY_TO`. Email no longer goes through Resend (see Email below), so `RESEND_API_KEY` is not needed.
+From Vercel (Project → Settings → Environment Variables, Production): `DATABASE_URL`, `AUTH_ALLOWED_EMAIL_DOMAINS`, `BETTER_AUTH_SECRET`, `PII_ENCRYPTION_KEY` (and `PII_ENCRYPTION_KEY_PREVIOUS` if set), `CRON_SECRET`, `EMAIL_REPLY_TO`. Also `RESEND_API_KEY` (see Email below).
 
 Sensitive variables cannot be read back. Replace them, except `PII_ENCRYPTION_KEY`:
 
@@ -75,11 +75,8 @@ Subscription: `trytpc.tuso.tu.ac.th`.
 | `BETTER_AUTH_SECRET` | from step 1 |
 | `PII_ENCRYPTION_KEY` | from step 1 |
 | `CRON_SECRET` | from step 1 |
-| `SMTP_HOST` | `localhost` |
-| `SMTP_PORT` | `465` (587 is closed on this server) |
-| `SMTP_USER` | `no-reply@trytpc.tuso.tu.ac.th` (see Email below) |
-| `SMTP_PASSWORD` | that mailbox's password |
-| `EMAIL_FROM` | `TryTPC <no-reply@trytpc.tuso.tu.ac.th>` |
+| `RESEND_API_KEY` | Resend API key, sending access to `notify.trytpc.tuso.tu.ac.th` (see Email below) |
+| `EMAIL_FROM` | `TryTPC <no-reply@notify.trytpc.tuso.tu.ac.th>` |
 | `EMAIL_REPLY_TO` | from step 1 (optional) |
 | `STORAGE_DIR` | full path of `trytpc-storage` |
 | `STORAGE_SIGNING_SECRET` | `openssl rand -base64 32` |
@@ -89,14 +86,13 @@ Subscription: `trytpc.tuso.tu.ac.th`.
 
 ## Email
 
-Mail goes out through the Plesk mail service for `trytpc.tuso.tu.ac.th`, on the same machine, so the app talks to `localhost:465` (implicit TLS). Port 587 is not open on this server (checked 21 Nov 2026: 587 refused, 25 is Postfix, 465 accepts TLS). Plesk signs it with the domain's DKIM key; the SPF record allows only this server, and DMARC is strict (`p=quarantine`, `adkim=s`, `aspf=s`). Resend is no longer used and its key can be revoked.
+Mail goes out through the Resend HTTPS API from `notify.trytpc.tuso.tu.ac.th`, a subdomain verified in Resend (its DKIM key at `resend._domainkey.notify…`, and the `send.notify…` MX and SPF records for bounces). DMARC is strict (`adkim=s`), so `EMAIL_FROM` must be exactly on `notify.trytpc.tuso.tu.ac.th`.
 
-1. **Mail → Email Addresses → Create Email Address**: `no-reply@trytpc.tuso.tu.ac.th`, with a strong password. Its mailbox collects bounces, so keep the mailbox on and check it now and then.
-2. **Mail → Mail Settings** for the domain: keep "Use DKIM spam protection system to sign outgoing email messages" ticked, and set "SSL/TLS certificate for mail" and "for webmail" to the domain's Let's Encrypt certificate.
-3. Set the `SMTP_*` and `EMAIL_FROM` variables in step 3.4 and restart the app. `EMAIL_FROM` must be on `trytpc.tuso.tu.ac.th`, or DMARC fails.
-4. Send a staff invite to a Gmail address and to an Outlook or TU address. In each, open the original message and check SPF, DKIM and DMARC all say `pass` and that it did not land in spam. The health page (`/admin/health`) shows whether email is configured, not whether it was delivered.
+The Plesk mail service cannot deliver on its own: the university network blocks outbound SMTP from this server (checked 21 Nov 2026: ports 25, 465, 587 and 2525 to Microsoft 365, Gmail, mail.tu.ac.th and Resend all time out; HTTPS works). The SMTP sender is kept in the code. If IT opens port 25 or provides a relay (then set it under Mail → Smarthost and add it to SPF), remove `RESEND_API_KEY`, set `SMTP_HOST=localhost`, `SMTP_PORT=465`, `SMTP_USER`, `SMTP_PASSWORD` (mailbox `no-reply@trytpc.tuso.tu.ac.th`) and `EMAIL_FROM=TryTPC <no-reply@trytpc.tuso.tu.ac.th>`. Plesk signs that domain with DKIM. When both are set, Resend is used.
 
-The server's reverse DNS name is `pharm.tu.ac.th`, which is shared with other university sites; it resolves back to the same address, which is what the big providers require. If mail starts landing in spam, ask university IT whether the address is on a block list, or set a Smarthost under Mail → Smarthost (and update SPF to match).
+1. In Resend, keep `notify.trytpc.tuso.tu.ac.th` verified and create an API key with sending access to it.
+2. Set `RESEND_API_KEY` (as a secret) and `EMAIL_FROM` in step 3.4 and restart the app.
+3. Send a staff invite to a Gmail address and to an Outlook or TU address. In each, open the original message and check SPF, DKIM and DMARC all say `pass` and that it did not land in spam. The health page (`/admin/health`) shows whether email is configured, not whether it was delivered.
 
 ## 4. Switch over
 
