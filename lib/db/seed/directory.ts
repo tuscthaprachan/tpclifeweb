@@ -29,7 +29,10 @@ interface OrgRecord {
 
 /** The id the handbook data gives an organisation, which the handbook enrichments refer to. */
 const EXTRA_CONTACTS: Record<string, OrganisationContactJson[]> = {
-  student_birsa: [{ channel: "website", value: "birsa.vercel.app" }],
+  student_birsa: [
+    { channel: "email", value: "birsa@tu.ac.th" },
+    { channel: "website", value: "birsa.vercel.app" },
+  ],
 };
 
 const handbookOrgId = (handle: string) => `organisation-${handle.replace(/\./g, "-")}`;
