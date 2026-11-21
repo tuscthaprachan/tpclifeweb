@@ -17,8 +17,9 @@
  */
 
 import type { Locale, LocaleString } from "./config";
+import { editableStrings } from "./editable";
 
-export const UI = {
+const UI_TEXT = {
   /* Global chrome */
   serviceName: { th: "#ท้ายท่าพระจันทร์", en: "#trytpc" },
   skipToContent: { th: "ข้ามไปยังเนื้อหาหลัก", en: "Skip to main content" },
@@ -2852,6 +2853,9 @@ export const UI = {
   tdAllAlerts: { th: "ประกาศแจ้งเตือนทั้งหมด", en: "All service alerts" },
   tdRelatedAlerts: { th: "ประกาศที่เกี่ยวข้อง", en: "Related alerts" },
 } as const satisfies Record<string, LocaleString>;
+
+/** Every shared string, editable in the console (lib/i18n/editable.ts). */
+export const UI = editableStrings("ui", UI_TEXT, { th: "ข้อความที่ใช้ร่วมกันทั้งเว็บไซต์", en: "Shared site text" });
 
 export type UiKey = keyof typeof UI;
 

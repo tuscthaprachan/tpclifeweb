@@ -8,9 +8,11 @@
  */
 
 import { DESK_CLOSES, DESK_OPENS } from "@/lib/borrowing/constants";
-import type { Locale } from "@/lib/i18n/config";
+import type { Locale, LocaleString } from "@/lib/i18n/config";
+import { fillText } from "@/lib/i18n/editable";
 import { formatDateTime } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
+import { EMAIL_LOAN_TEXT } from "./strings";
 import { emailDocument, heading, paragraph, reference, section } from "./layout";
 import type { RenderedEmail } from "./templates";
 
@@ -41,10 +43,10 @@ function render(subject: { th: string; en: string }, th: Section, en: Section, f
 }
 
 const SERVICE = UI.serviceName;
-const REFERENCE = { th: "เลขอ้างอิง", en: "Your reference" };
-const PRIVATE_TH = "ใครมีลิงก์ส่วนตัวก็ดูคำขอนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น";
-const PRIVATE_EN = "Anyone with the private link can see this request, so do not share it.";
-const HOURS = `${DESK_OPENS} - ${DESK_CLOSES}`;
+const T = EMAIL_LOAN_TEXT;
+const say = (entry: LocaleString, lang: Locale, values: Record<string, string | number> = {}) => fillText(entry[lang], values);
+const subjectOf = (entry: LocaleString, reference: string) => ({ th: say(entry, "th", { reference }), en: say(entry, "en", { reference }) });
+const hoursText = () => `${DESK_OPENS} - ${DESK_CLOSES}`;
 
 export interface LoanEmailParams {
   reference: string;
@@ -59,36 +61,26 @@ export interface LoanApprovedParams extends LoanEmailParams {
   cards: number;
 }
 
+/** A plain section: heading, paragraphs, the reference and the private-link note. */
+function sectionFor(lang: Locale, heading: string, paragraphs: string[], reference: string): Section {
+  return { lang, heading, paragraphs, reference: { label: T.reference[lang], value: reference }, after: [T.privateLink[lang]] };
+}
+
 /** The request was approved: when to collect, what to bring, when to return. */
 export function loanApproved({ reference, locale, collectAt, returnDueAt, cards }: LoanApprovedParams): RenderedEmail {
-  return render(
-    { th: `อนุมัติคำขอยืมอุปกรณ์แล้ว ${reference}`, en: `Your equipment request is approved ${reference}` },
-    {
-      lang: "th",
-      heading: "อนุมัติคำขอยืมอุปกรณ์แล้ว",
-      paragraphs: [
-        `เจ้าหน้าที่ของ${SERVICE.th}อนุมัติคำขอแล้ว มารับอุปกรณ์ได้ในวันที่ ${formatDateTime(collectAt, "th")} และคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")}`,
-        cards > 0 ? `วันรับอุปกรณ์ ให้นำบัตรนักศึกษาหรือบัตรประจำตัวประชาชนตัวจริง ${cards} ใบ มาวางเป็นหลักประกัน และรับบัตรคืนเมื่อคืนอุปกรณ์ครบ` : "วันรับอุปกรณ์ ให้นำบัตรนักศึกษาหรือบัตรประจำตัวประชาชนตัวจริงมาแสดง",
-        `เคาน์เตอร์เปิดวันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. ดูจำนวนและข้อความจากเจ้าหน้าที่ได้จากลิงก์ส่วนตัวที่ได้รับตอนส่งคำขอ`,
+  const hours = hoursText();
+  const sec = (lang: Locale) =>
+    sectionFor(
+      lang,
+      T.approvedHeading[lang],
+      [
+        say(T.approvedIntro, lang, { service: SERVICE[lang], collectAt: formatDateTime(collectAt, lang), returnBy: formatDateTime(returnDueAt, lang) }),
+        cards > 0 ? say(cards === 1 ? T.approvedDepositOne : T.approvedDepositMany, lang, { cards }) : T.approvedShowId[lang],
+        say(T.approvedHours, lang, { hours }),
       ],
-      reference: { label: REFERENCE.th, value: reference },
-      after: [PRIVATE_TH],
-    },
-    {
-      lang: "en",
-      heading: "Your equipment request is approved",
-      paragraphs: [
-        `Staff at ${SERVICE.en} have approved your request. Collect the equipment on ${formatDateTime(collectAt, "en")} and return it by ${formatDateTime(returnDueAt, "en")}.`,
-        cards > 0
-          ? `When you collect it, bring ${cards === 1 ? "your original student card or national ID card" : `${cards} original student cards or national ID cards`} to leave as a deposit. You get ${cards === 1 ? "it" : "them"} back when everything is returned.`
-          : "When you collect it, bring your original student card or national ID card to show.",
-        `The desk is open Monday to Friday, ${HOURS}. You can see the quantities approved, and any message from staff, on the private link you were given when you sent the request.`,
-      ],
-      reference: { label: REFERENCE.en, value: reference },
-      after: [PRIVATE_EN],
-    },
-    locale ?? "th",
-  );
+      reference,
+    );
+  return render(subjectOf(T.approvedSubject, reference), sec("th"), sec("en"), locale ?? "th");
 }
 
 export interface LoanDeclinedParams extends LoanEmailParams {
@@ -100,24 +92,8 @@ export interface LoanDeclinedParams extends LoanEmailParams {
 export function loanDeclined({ reference, locale, reason }: LoanDeclinedParams): RenderedEmail {
   const th = reason.th?.trim() || reason.en?.trim() || "";
   const en = reason.en?.trim() || reason.th?.trim() || "";
-  return render(
-    { th: `ไม่อนุมัติคำขอยืมอุปกรณ์ ${reference}`, en: `Your equipment request was not approved ${reference}` },
-    {
-      lang: "th",
-      heading: "ไม่อนุมัติคำขอยืมอุปกรณ์",
-      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}ไม่อนุมัติคำขอนี้ เหตุผลมีดังนี้`, th, "ส่งคำขอใหม่ได้ โดยเลือกวันหรือรายการอุปกรณ์ที่ว่างอยู่"],
-      reference: { label: REFERENCE.th, value: reference },
-      after: [PRIVATE_TH],
-    },
-    {
-      lang: "en",
-      heading: "Your equipment request was not approved",
-      paragraphs: [`Staff at ${SERVICE.en} could not approve your request. This is the reason.`, en, "You can make a new request, choosing dates or items that are free."],
-      reference: { label: REFERENCE.en, value: reference },
-      after: [PRIVATE_EN],
-    },
-    locale ?? "th",
-  );
+  const sec = (lang: Locale, why: string) => sectionFor(lang, T.declinedHeading[lang], [say(T.declinedIntro, lang, { service: SERVICE[lang] }), why, T.newRequest[lang]], reference);
+  return render(subjectOf(T.declinedSubject, reference), sec("th", th), sec("en", en), locale ?? "th");
 }
 
 export interface LoanDueParams extends LoanEmailParams {
@@ -126,140 +102,42 @@ export interface LoanDueParams extends LoanEmailParams {
 
 /** The working day before the return is due. */
 export function loanReminder({ reference, locale, returnDueAt }: LoanDueParams): RenderedEmail {
-  return render(
-    { th: `แจ้งเตือนกำหนดคืนอุปกรณ์ ${reference}`, en: `Reminder to return equipment ${reference}` },
-    {
-      lang: "th",
-      heading: "ใกล้ถึงกำหนดคืนอุปกรณ์",
-      paragraphs: [`อุปกรณ์ที่ยืมไปต้องคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")}`, `คืนได้ที่เคาน์เตอร์ วันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. หากคืนไม่ทัน ให้ติดต่อเจ้าหน้าที่ล่วงหน้า`],
-      reference: { label: REFERENCE.th, value: reference },
-      after: [PRIVATE_TH],
-    },
-    {
-      lang: "en",
-      heading: "Your equipment is due back soon",
-      paragraphs: [`The equipment you borrowed is due back by ${formatDateTime(returnDueAt, "en")}.`, `Return it to the desk, Monday to Friday, ${HOURS}. If you cannot return it in time, contact the desk before then.`],
-      reference: { label: REFERENCE.en, value: reference },
-      after: [PRIVATE_EN],
-    },
-    locale ?? "th",
-  );
+  const hours = hoursText();
+  const sec = (lang: Locale) =>
+    sectionFor(lang, T.reminderHeading[lang], [say(T.reminderDue, lang, { returnBy: formatDateTime(returnDueAt, lang) }), say(T.reminderHours, lang, { hours })], reference);
+  return render(subjectOf(T.reminderSubject, reference), sec("th"), sec("en"), locale ?? "th");
 }
 
 /** Once, when the return time has passed and the equipment is still out. */
 export function loanOverdue({ reference, locale, returnDueAt }: LoanDueParams): RenderedEmail {
-  return render(
-    { th: `เลยกำหนดคืนอุปกรณ์ ${reference}`, en: `Your equipment is overdue ${reference}` },
-    {
-      lang: "th",
-      heading: "เลยกำหนดคืนอุปกรณ์แล้ว",
-      paragraphs: [
-        `อุปกรณ์ที่ยืมไปต้องคืนภายในวันที่ ${formatDateTime(returnDueAt, "th")} แต่เรายังไม่ได้รับคืน`,
-        `โปรดนำมาคืนที่เคาน์เตอร์โดยเร็ว วันจันทร์ถึงวันศุกร์ เวลา ${HOURS} น. หากมีปัญหา ให้ติดต่อเจ้าหน้าที่ เพื่อไม่ให้กระทบผู้ที่จองยืมต่อ`,
-      ],
-      reference: { label: REFERENCE.th, value: reference },
-      after: [PRIVATE_TH],
-    },
-    {
-      lang: "en",
-      heading: "Your equipment is overdue",
-      paragraphs: [
-        `The equipment you borrowed was due back by ${formatDateTime(returnDueAt, "en")} and we have not had it back yet.`,
-        `Please bring it to the desk as soon as you can, Monday to Friday, ${HOURS}. If something is wrong, contact the desk, so the next person who booked it is not let down.`,
-      ],
-      reference: { label: REFERENCE.en, value: reference },
-      after: [PRIVATE_EN],
-    },
-    locale ?? "th",
-  );
+  const hours = hoursText();
+  const sec = (lang: Locale) =>
+    sectionFor(lang, T.overdueHeading[lang], [say(T.overdueDue, lang, { returnBy: formatDateTime(returnDueAt, lang) }), say(T.overdueHours, lang, { hours })], reference);
+  return render(subjectOf(T.overdueSubject, reference), sec("th"), sec("en"), locale ?? "th");
 }
 
 /** Everything came back and the loan is closed. */
 export function loanReturned({ reference, locale }: LoanEmailParams): RenderedEmail {
-  return render(
-    { th: `รับคืนอุปกรณ์เรียบร้อยแล้ว ${reference}`, en: `Your equipment has been returned ${reference}` },
-    {
-      lang: "th",
-      heading: "รับคืนอุปกรณ์เรียบร้อยแล้ว",
-      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}บันทึกแล้วว่าได้รับอุปกรณ์คืน การยืมครั้งนี้จึงสิ้นสุดลง ขอบคุณที่ใช้บริการ`, "หากมีบัตรที่วางไว้เป็นหลักประกัน เจ้าหน้าที่จะคืนให้ตามที่บันทึกไว้"],
-      reference: { label: REFERENCE.th, value: reference },
-      after: [PRIVATE_TH],
-    },
-    {
-      lang: "en",
-      heading: "Your equipment has been returned",
-      paragraphs: [`Staff at ${SERVICE.en} have recorded that the equipment is back, so this loan is now closed. Thank you.`, "If you left a card as a deposit, staff will give it back as recorded."],
-      reference: { label: REFERENCE.en, value: reference },
-      after: [PRIVATE_EN],
-    },
-    locale ?? "th",
-  );
+  const sec = (lang: Locale) => sectionFor(lang, T.returnedHeading[lang], [say(T.returnedIntro, lang, { service: SERVICE[lang] }), T.returnedCard[lang]], reference);
+  return render(subjectOf(T.returnedSubject, reference), sec("th"), sec("en"), locale ?? "th");
 }
 
 /** A loan that had a problem on return has been settled and closed. */
 export function loanSettled({ reference, locale }: LoanEmailParams): RenderedEmail {
-  return render(
-    { th: `ปิดเรื่องการยืมอุปกรณ์แล้ว ${reference}`, en: `Your equipment loan is settled ${reference}` },
-    {
-      lang: "th",
-      heading: "ปิดเรื่องการยืมอุปกรณ์แล้ว",
-      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}ดำเนินการเรื่องอุปกรณ์ที่ยืมเสร็จสิ้นแล้ว การยืมครั้งนี้จึงสิ้นสุดลง`, "ดูรายละเอียดที่เจ้าหน้าที่บันทึกไว้ได้จากลิงก์ส่วนตัวที่ได้รับตอนส่งคำขอ"],
-      reference: { label: REFERENCE.th, value: reference },
-      after: [PRIVATE_TH],
-    },
-    {
-      lang: "en",
-      heading: "Your equipment loan is settled",
-      paragraphs: [`Staff at ${SERVICE.en} have finished dealing with the equipment you borrowed, so this loan is now closed.`, "You can see what staff recorded on the private link you were given when you sent the request."],
-      reference: { label: REFERENCE.en, value: reference },
-      after: [PRIVATE_EN],
-    },
-    locale ?? "th",
-  );
+  const sec = (lang: Locale) => sectionFor(lang, T.settledHeading[lang], [say(T.settledIntro, lang, { service: SERVICE[lang] }), T.settledSee[lang]], reference);
+  return render(subjectOf(T.settledSubject, reference), sec("th"), sec("en"), locale ?? "th");
 }
 
 /** The request was approved but the equipment was not collected, so it was closed. */
 export function loanNotCollected({ reference, locale }: LoanEmailParams): RenderedEmail {
-  return render(
-    { th: `ปิดคำขอยืมอุปกรณ์เพราะไม่ได้มารับ ${reference}`, en: `Your equipment request was closed, not collected ${reference}` },
-    {
-      lang: "th",
-      heading: "ปิดคำขอยืมอุปกรณ์เพราะไม่ได้มารับ",
-      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}บันทึกว่าไม่ได้มารับอุปกรณ์ตามวันที่กำหนด จึงปิดคำขอนี้เพื่อให้คนอื่นยืมได้`, "ส่งคำขอใหม่ได้ โดยเลือกวันหรือรายการอุปกรณ์ที่ว่างอยู่"],
-      reference: { label: REFERENCE.th, value: reference },
-      after: [PRIVATE_TH],
-    },
-    {
-      lang: "en",
-      heading: "Your equipment request was closed, not collected",
-      paragraphs: [`Staff at ${SERVICE.en} recorded that the equipment was not collected when it was due, so this request is closed and others can borrow it.`, "You can make a new request, choosing dates or items that are free."],
-      reference: { label: REFERENCE.en, value: reference },
-      after: [PRIVATE_EN],
-    },
-    locale ?? "th",
-  );
+  const sec = (lang: Locale) => sectionFor(lang, T.notCollectedHeading[lang], [say(T.notCollectedIntro, lang, { service: SERVICE[lang] }), T.newRequest[lang]], reference);
+  return render(subjectOf(T.notCollectedSubject, reference), sec("th"), sec("en"), locale ?? "th");
 }
 
 /** Staff cancelled the request, with the reason. */
 export function loanCancelled({ reference, locale, reason }: LoanDeclinedParams): RenderedEmail {
   const th = reason.th?.trim() || reason.en?.trim() || "";
   const en = reason.en?.trim() || reason.th?.trim() || "";
-  return render(
-    { th: `ยกเลิกคำขอยืมอุปกรณ์ ${reference}`, en: `Your equipment request was cancelled ${reference}` },
-    {
-      lang: "th",
-      heading: "ยกเลิกคำขอยืมอุปกรณ์",
-      paragraphs: [`เจ้าหน้าที่ของ${SERVICE.th}ยกเลิกคำขอนี้ เหตุผลมีดังนี้`, th, "ส่งคำขอใหม่ได้ โดยเลือกวันหรือรายการอุปกรณ์ที่ว่างอยู่"],
-      reference: { label: REFERENCE.th, value: reference },
-      after: [PRIVATE_TH],
-    },
-    {
-      lang: "en",
-      heading: "Your equipment request was cancelled",
-      paragraphs: [`Staff at ${SERVICE.en} have cancelled your request. This is the reason.`, en, "You can make a new request, choosing dates or items that are free."],
-      reference: { label: REFERENCE.en, value: reference },
-      after: [PRIVATE_EN],
-    },
-    locale ?? "th",
-  );
+  const sec = (lang: Locale, why: string) => sectionFor(lang, T.cancelledHeading[lang], [say(T.cancelledIntro, lang, { service: SERVICE[lang] }), why, T.newRequest[lang]], reference);
+  return render(subjectOf(T.cancelledSubject, reference), sec("th", th), sec("en", en), locale ?? "th");
 }

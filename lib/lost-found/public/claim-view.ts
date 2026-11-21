@@ -14,6 +14,8 @@ import { caseEvents, cases } from "@/lib/db/schema/cases";
 import { organisations } from "@/lib/db/schema";
 import { lostFoundCaseDetails, lostFoundClaims, lostFoundHandovers } from "@/lib/db/schema/lost-found-staff";
 import type { LocaleString } from "@/lib/i18n/config";
+import { fillText } from "@/lib/i18n/editable";
+import { LOST_FOUND_TEXT } from "../strings";
 
 /**
  * Where a claim is, from the claimant's side. `closed` is derived: nobody decided
@@ -43,14 +45,12 @@ export interface ClaimTrackView {
   timeline: ClaimTrackEntry[];
 }
 
-const s = (th: string, en: string): LocaleString => ({ th, en });
-
 export const CLAIM_STAGE_LABEL: Record<ClaimStage, LocaleString> = {
-  waiting: s("รอตรวจสอบ", "Waiting to be checked"),
-  accepted: s("ยืนยันแล้ว พร้อมให้มารับ", "Accepted, ready to collect"),
-  not_accepted: s("ยังยืนยันไม่ได้", "Not accepted"),
-  returned: s("คืนให้คุณแล้ว", "Returned to you"),
-  closed: s("ปิดคำขอแล้ว", "Claim closed"),
+  waiting: LOST_FOUND_TEXT.stageWaiting,
+  accepted: LOST_FOUND_TEXT.stageAccepted,
+  not_accepted: LOST_FOUND_TEXT.stageNotAccepted,
+  returned: LOST_FOUND_TEXT.stageReturned,
+  closed: LOST_FOUND_TEXT.stageClosed,
 };
 
 /** The found item statuses after which an undecided claim will never be decided. */
@@ -63,8 +63,8 @@ export function claimStage(decision: string | null, itemStatus: string): ClaimSt
   return ITEM_SETTLED.includes(itemStatus) ? "closed" : "waiting";
 }
 
-const RECEIVED = s("ได้รับคำขอรับของแล้ว", "Claim received");
-const MESSAGE = s("ข้อความจากเจ้าหน้าที่", "Message from staff");
+const RECEIVED = LOST_FOUND_TEXT.claimReceived;
+const MESSAGE = LOST_FOUND_TEXT.messageFromStaff;
 
 /** The claim view for a link already resolved to `caseId` and `claimId`. Throws `not_found` if the claim is not on that case. */
 export async function claimTrackView(db: AuditExecutor, caseId: string, claimId: string): Promise<ClaimTrackView> {
@@ -99,7 +99,7 @@ export async function claimTrackView(db: AuditExecutor, caseId: string, claimId:
       .from(lostFoundCaseDetails)
       .innerJoin(organisations, eq(organisations.id, lostFoundCaseDetails.storageOrganisationId))
       .where(eq(lostFoundCaseDetails.caseId, caseId));
-    if (held) desk = s(`เคาน์เตอร์${held.nameTh}`, `${held.nameEn} desk`);
+    if (held) desk = { th: fillText(LOST_FOUND_TEXT.deskAt.th, { desk: held.nameTh }), en: fillText(LOST_FOUND_TEXT.deskAt.en, { desk: held.nameEn }) };
   }
   const lastMessage = stage === "accepted" ? messages.at(-1) : undefined;
 

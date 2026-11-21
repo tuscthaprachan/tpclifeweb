@@ -1,3 +1,4 @@
+import { DOMAIN_TEXT } from "@/components/domain/strings";
 import { WarningIcon } from "@/components/ui/icons";
 import { Timestamp } from "@/components/ui/Timestamp";
 import { cx } from "@/components/ui/cx";
@@ -14,10 +15,7 @@ const STALE_AFTER_DAYS = 365;
  * itself worth flagging. Hardcoded per house style and reported as a gap.
  */
 // TODO: add to UI strings.
-const NO_MOVEMENT_LABEL: LocaleString = {
-  th: "ไม่มีความเคลื่อนไหวมานานกว่าหนึ่งปี",
-  en: "No movement in over a year",
-};
+const NO_MOVEMENT_LABEL: LocaleString = DOMAIN_TEXT.policyNoMovement;
 
 interface PolicyLastUpdatedProps {
   policy: Policy;

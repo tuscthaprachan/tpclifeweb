@@ -11,6 +11,7 @@ import { SourceDocumentLink } from "@/components/domain/open-data/SourceDocument
 import { getContentPages } from "@/lib/content";
 import { getOpenDataDocuments } from "@/lib/open-data/read";
 import { alternatesFor } from "@/lib/i18n/metadata";
+import { WELFARE_TEXT } from "./text";
 
 const CATEGORY_LABEL = {
   transport: UI.categoryTransport,
@@ -23,8 +24,7 @@ const CATEGORY_LABEL = {
 // CONTRIBUTING.md. There is no shared UI string for this specific notice
 // (only page-specific ones exist in lib/i18n/strings.ts), so it is hardcoded
 // here and reported rather than invented as a synonym of something else.
-const STALE_REVIEW_LABEL = { th: "ยังไม่ได้ตรวจสอบมานาน", en: "Not reviewed recently" }; // TODO: add to UI strings
-const STALE_AFTER_DAYS = 365;
+const STALE_REVIEW_LABEL = WELFARE_TEXT.staleReviewLabel; const STALE_AFTER_DAYS = 365;
 
 function isStale(lastReviewed: string | undefined, now: Date): boolean {
   if (!lastReviewed) return true;

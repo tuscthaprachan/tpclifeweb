@@ -12,6 +12,7 @@
  * A failed send never fails the officer's action: it comes back as a reminder.
  */
 
+import { ensureSiteText } from "@/lib/content/site-text";
 import { and, eq } from "drizzle-orm";
 import { addNote } from "@/lib/cases/engine";
 import { contactAad, listContactSummaries, readContacts } from "@/lib/cases/contacts";
@@ -64,6 +65,7 @@ export async function notifyLostReporter(
   actor: StaffActor,
   opts: { deskOrganisationId?: number | null; sender?: EmailSender; emailConfigured?: boolean; now?: Date; env?: PiiEnv } = {},
 ): Promise<NoticeOutcome> {
+  await ensureSiteText();
   const summaries = await listContactSummaries(db, lostCaseId, actor);
   const reporter = summaries.find((c) => c.role === "reporter") ?? summaries[0];
   const decision = decideReporterNotice({
@@ -121,6 +123,7 @@ export async function notifyClaimant(
   actor: StaffActor,
   opts: { deskOrganisationId?: number | null; sender?: EmailSender; emailConfigured?: boolean; now?: Date; env?: PiiEnv } = {},
 ): Promise<NoticeOutcome> {
+  await ensureSiteText();
   const now = opts.now ?? new Date();
   const [claim] = await db.select({ caseId: lostFoundClaims.caseId, contactId: lostFoundClaims.claimantContactId }).from(lostFoundClaims).where(eq(lostFoundClaims.id, claimId));
   if (!claim) return { result: "remind", reason: "no_contact", preferred: null };

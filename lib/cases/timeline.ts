@@ -8,6 +8,7 @@
  * consistent with the staff console.
  */
 
+import { CASE_TEXT } from "@/lib/cases/strings";
 import { asc, and, eq, sql } from "drizzle-orm";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { caseEvents, cases, type CaseService } from "@/lib/db/schema/cases";
@@ -41,8 +42,8 @@ export function localisedBody(body: PublicBody | null | undefined, locale: Local
   return null;
 }
 
-const CREATED_TITLE: LocaleString = { th: "รับเรื่องแล้ว", en: "Received" };
-const UPDATE_TITLE: LocaleString = { th: "ข้อความจากเจ้าหน้าที่", en: "Message from staff" };
+const CREATED_TITLE: LocaleString = CASE_TEXT.timelineCreated;
+const UPDATE_TITLE: LocaleString = CASE_TEXT.timelineUpdate;
 
 /** Public events for a case that are not about one claim, oldest first. */
 export async function publicTimeline(db: AuditExecutor, caseId: string): Promise<PublicTimelineEntry[]> {

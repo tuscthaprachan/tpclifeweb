@@ -29,23 +29,20 @@ import { SummaryList, type SummaryListRow } from "@/components/ui/SummaryList";
 import { Tag } from "@/components/ui/Tag";
 import { Timestamp } from "@/components/ui/Timestamp";
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
-import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getPolicies, getPolicyBySlug, getPolicyPreview, resolveRichTextRefs } from "@/lib/content";
+import { POLICY_DETAIL_TEXT } from "./text";
 
 /*
  * Copy that lib/i18n/strings.ts does not carry, per CONTRIBUTING.md's
  * instruction for a missing shared string: hardcode both languages here
  * rather than invent a synonym from an existing key, and report the gap.
  */
-// TODO: add to UI strings.
-const POLICY_AREA_LABEL: LocaleString = { th: "ประเด็นนโยบาย", en: "Policy area" };
-// TODO: add to UI strings.
-const STARTED_LABEL: LocaleString = { th: "เริ่มดำเนินการ", en: "Started" };
-// TODO: add to UI strings.
-const TARGET_DATE_LABEL: LocaleString = { th: "กำหนดเป้าหมาย", en: "Target date" };
-// TODO: add to UI strings.
-const COMPLETED_LABEL: LocaleString = { th: "ดำเนินการเสร็จสิ้น", en: "Completed" };
+const POLICY_AREA_LABEL = POLICY_DETAIL_TEXT.policyAreaLabel;
+const STARTED_LABEL = POLICY_DETAIL_TEXT.startedLabel;
+const TARGET_DATE_LABEL = POLICY_DETAIL_TEXT.targetDateLabel;
+const COMPLETED_LABEL = POLICY_DETAIL_TEXT.completedLabel;
 
 export async function generateStaticParams() {
   const policies = await getPolicies();

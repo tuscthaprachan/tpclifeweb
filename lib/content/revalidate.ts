@@ -28,6 +28,7 @@ export type ContentEntityType =
   | "canteenSettings"
   | "todaySettings"
   | "servicePages"
+  | "siteText"
   | "canteenStall"
   | "canteenDish"
   | "canonicalDish"
@@ -67,6 +68,8 @@ export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
   canteenSettings: [CACHE_TAGS.canteen],
   todaySettings: [CACHE_TAGS.today],
   servicePages: [CACHE_TAGS.servicePages],
+  // Site text appears on every page, so an edit also refreshes every cached page (revalidateFor).
+  siteText: [CACHE_TAGS.siteText],
   canteenStall: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
   canteenDish: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
   canonicalDish: [CACHE_TAGS.canteen, CACHE_TAGS.searchIndex],
@@ -101,6 +104,7 @@ export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
 export function revalidateFor(entityType: ContentEntityType, slug?: string): readonly CacheTag[] {
   const tags = TAGS_BY_TYPE[entityType];
   for (const tag of tags) revalidateTag(tag, "max");
+  if (entityType === "siteText") revalidatePath("/", "layout");
   const base = DETAIL_ROUTE[entityType];
   if (base && slug) {
     for (const locale of LOCALES) revalidatePath(localePath(locale, `${base}/${slug}`));

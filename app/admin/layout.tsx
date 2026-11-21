@@ -24,6 +24,8 @@ import { getAdminLocale } from "@/lib/admin/locale";
 import { getAdminSession } from "@/lib/auth/session";
 import { isStaff } from "@/lib/auth/roles";
 import { HTML_LANG, pick } from "@/lib/i18n/config";
+import { ensureSiteText } from "@/lib/content/site-text";
+import { siteTextBootScript } from "@/lib/i18n/editable";
 import { isStoredTheme, LEGACY_THEME_COOKIE, THEME_COOKIE, type ThemeChoice } from "@/lib/theme/config";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -37,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export const viewport: Viewport = { themeColor: "#ffffff", colorScheme: "light dark" };
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-  const locale = await getAdminLocale();
+  const [locale, siteText] = await Promise.all([getAdminLocale(), ensureSiteText()]);
   const store = await cookies();
   const stored = (store.get(THEME_COOKIE) ?? store.get(LEGACY_THEME_COOKIE))?.value;
   const session = await getAdminSession();
@@ -46,6 +48,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <html lang={HTML_LANG[locale]} className={fontVariables} data-theme={isStoredTheme(stored) ? stored : undefined}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: siteTextBootScript(siteText) }} />
+      </head>
       <body className="console">
         <SkipLink locale={locale} />
         {inShell && session ? (

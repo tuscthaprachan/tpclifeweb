@@ -1,5 +1,6 @@
 "use client";
 
+import { DOMAIN_TEXT } from "@/components/domain/strings";
 import Form from "next/form";
 import { useRef } from "react";
 import { Button } from "@/components/ui/Button";
@@ -91,7 +92,7 @@ export function FormFilters({ locale, value, hasActiveFilters, className }: Form
           name="signIn"
           // TODO: add to UI strings. No shared label exists for "filter by
           // sign-in requirement".
-          label={locale === "th" ? "การเข้าสู่ระบบ" : "Sign in"}
+          label={DOMAIN_TEXT.formsSignInFilter[locale]}
           options={signInOptions}
           defaultValue={value.signIn}
           onChange={submitOnChange}

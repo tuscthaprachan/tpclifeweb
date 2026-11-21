@@ -21,6 +21,7 @@ import {
   serviceAlerts,
   servicePages,
   shuttleRoutes,
+  siteText,
   siteSettings,
   todaySettings,
 } from "@/lib/db/schema";
@@ -285,6 +286,18 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     table: servicePages,
     kind: "singleton",
     columns: { id: servicePages.id, title: null, status: servicePages.status, updatedAt: servicePages.updatedAt },
+    available: true,
+  },
+  {
+    key: "siteText",
+    segment: "site-text",
+    labelKey: "typeSiteText",
+    oneKey: "typeSiteTextOne",
+    descriptionKey: "typeSiteTextDesc",
+    entityType: "siteText",
+    table: siteText,
+    kind: "singleton",
+    columns: { id: siteText.id, title: null, status: siteText.status, updatedAt: siteText.updatedAt },
     available: true,
   },
   {

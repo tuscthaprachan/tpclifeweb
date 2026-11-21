@@ -51,6 +51,7 @@ describe("revalidateFor", () => {
       canteenSettings: ["canteen"],
       todaySettings: ["today"],
       servicePages: ["servicePages"],
+      siteText: ["siteText"],
       canteenStall: ["canteen", "searchIndex"],
       canteenDish: ["canteen", "searchIndex"],
       canonicalDish: ["canteen", "searchIndex"],

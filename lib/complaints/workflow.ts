@@ -10,6 +10,8 @@
  * Do not move a complaint with the engine's `transition` directly: use these.
  */
 
+import { COMPLAINT_TEXT } from "@/lib/complaints/strings";
+import { fillText } from "@/lib/i18n/editable";
 import { and, eq, sql } from "drizzle-orm";
 import { addPublicUpdate, canSeeCase, transition, type CaseActor, type PublicUpdateText, type StaffActor } from "@/lib/cases";
 import { appendEvent, auditContextOf, lockCase, touchCase } from "@/lib/cases/internal";
@@ -44,8 +46,8 @@ export function acknowledgementText(resolveBy: Date): { th: string; en: string }
   const th = new Intl.DateTimeFormat("th-TH", { dateStyle: "long", timeZone: "Asia/Bangkok" }).format(resolveBy);
   const en = new Intl.DateTimeFormat("en-GB", { dateStyle: "long", timeZone: "Asia/Bangkok" }).format(resolveBy);
   return {
-    th: `เจ้าหน้าที่ได้รับเรื่องแล้วและกำลังดำเนินการ เราตั้งเป้าแจ้งผลภายในวันที่ ${th}`,
-    en: `A member of staff has seen your complaint and is looking after it. We aim to give you an answer by ${en}.`,
+    th: fillText(COMPLAINT_TEXT.acknowledgement.th, { date: th }),
+    en: fillText(COMPLAINT_TEXT.acknowledgement.en, { date: en }),
   };
 }
 

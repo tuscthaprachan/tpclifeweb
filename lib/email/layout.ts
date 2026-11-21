@@ -5,6 +5,8 @@
  * where it does not. Colours come from styles/tokens.css.
  */
 
+import { EMAIL_LAYOUT_TEXT } from "./strings";
+
 export type EmailLang = "th" | "en";
 
 const C = {
@@ -28,11 +30,8 @@ const FONT: Record<EmailLang, string> = {
 const MONO = "ui-monospace,'SFMono-Regular',Menlo,Consolas,'Liberation Mono',monospace";
 const LEADING: Record<EmailLang, string> = { th: "1.75", en: "1.6" };
 
-const LANG_NAME: Record<EmailLang, string> = { th: "ภาษาไทย", en: "English" };
-const COPY_LINK: Record<EmailLang, string> = {
-  th: "หากปุ่มใช้ไม่ได้ ให้คัดลอกลิงก์นี้ไปเปิดในเบราว์เซอร์",
-  en: "If the button does not work, copy this link into your browser:",
-};
+const langName = (lang: EmailLang) => EMAIL_LAYOUT_TEXT.langName[lang];
+const copyLink = (lang: EmailLang) => EMAIL_LAYOUT_TEXT.copyLink[lang];
 
 const FONTS_URL = "https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap";
 
@@ -63,7 +62,7 @@ export function button(lang: EmailLang, label: string, url: string): string {
     `<tr><td bgcolor="${C.action}" style="background:${C.action};border-radius:12px">`,
     `<a href="${href}" target="_blank" style="display:inline-block;padding:14px 28px;${text(lang, 17, C.actionInk)};line-height:1.4;font-weight:600;text-decoration:none;border-radius:12px">${esc(label)}</a>`,
     `</td></tr></table>`,
-    `<p style="margin:0 0 4px;${text(lang, 14, C.ink3)}">${esc(COPY_LINK[lang])}</p>`,
+    `<p style="margin:0 0 4px;${text(lang, 14, C.ink3)}">${esc(copyLink(lang))}</p>`,
     `<p style="margin:0 0 24px;font-family:${MONO};font-size:13px;line-height:1.5;word-break:break-all"><a href="${href}" target="_blank" style="color:${C.action};text-decoration:underline">${href}</a></p>`,
   ].join("");
 }
@@ -81,7 +80,7 @@ export function list(lang: EmailLang, items: string[]): string {
 export function section(lang: EmailLang, parts: string[]): string {
   return [
     `<div lang="${lang}" style="${text(lang, 17)}">`,
-    `<p style="margin:0 0 8px;${text(lang, 13, C.ink2)};font-weight:600;letter-spacing:0.5px">${LANG_NAME[lang]}</p>`,
+    `<p style="margin:0 0 8px;${text(lang, 13, C.ink2)};font-weight:600;letter-spacing:0.5px">${langName(lang)}</p>`,
     ...parts,
     `</div>`,
   ].join("\n");
@@ -122,8 +121,8 @@ export function emailDocument({ title, lang, sections, preheader }: EmailDocumen
     `<tr><td class="outer" align="center" style="padding:32px 16px">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;border-collapse:separate">`,
     `<tr><td bgcolor="${C.bandFrom}" style="background:${C.bandFrom};background-image:linear-gradient(135deg,${C.bandFrom} 0%,#f8dccf 35%,${C.bandTo} 100%);border-radius:16px 16px 0 0;border:1px solid ${C.line};border-bottom:0;padding:24px 40px" class="pad">`,
-    `<p style="margin:0;font-family:${FONT.en};font-size:22px;line-height:1.2;font-weight:700;color:${C.action};letter-spacing:-0.2px">#trytpc</p>`,
-    `<p lang="th" style="margin:2px 0 0;font-family:${FONT.th};font-size:15px;line-height:1.4;font-weight:500;color:${C.accent}">#ท้ายท่าพระจันทร์</p>`,
+    `<p style="margin:0;font-family:${FONT.en};font-size:22px;line-height:1.2;font-weight:700;color:${C.action};letter-spacing:-0.2px">${esc(EMAIL_LAYOUT_TEXT.wordmarkEn.th)}</p>`,
+    `<p lang="th" style="margin:2px 0 0;font-family:${FONT.th};font-size:15px;line-height:1.4;font-weight:500;color:${C.accent}">${esc(EMAIL_LAYOUT_TEXT.wordmarkTh.th)}</p>`,
     `</td></tr>`,
     `<tr><td bgcolor="${C.card}" style="background:${C.card};border:1px solid ${C.line};border-top:0;border-radius:0 0 16px 16px;padding:0 0 24px">`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">`,
@@ -131,8 +130,8 @@ export function emailDocument({ title, lang, sections, preheader }: EmailDocumen
     `</table>`,
     `</td></tr>`,
     `<tr><td class="pad" align="center" style="padding:24px 40px 0">`,
-    `<p lang="th" style="margin:0;font-family:${FONT.th};font-size:13px;line-height:1.6;color:${C.ink3}">อีเมลฉบับนี้ส่งโดยอัตโนมัติจาก #ท้ายท่าพระจันทร์</p>`,
-    `<p lang="en" style="margin:0;font-family:${FONT.en};font-size:13px;line-height:1.6;color:${C.ink3}">An automated email from #trytpc.</p>`,
+    `<p lang="th" style="margin:0;font-family:${FONT.th};font-size:13px;line-height:1.6;color:${C.ink3}">${esc(EMAIL_LAYOUT_TEXT.footerTh.th)}</p>`,
+    `<p lang="en" style="margin:0;font-family:${FONT.en};font-size:13px;line-height:1.6;color:${C.ink3}">${esc(EMAIL_LAYOUT_TEXT.footerEn.en)}</p>`,
     `</td></tr>`,
     `</table>`,
     `</td></tr>`,

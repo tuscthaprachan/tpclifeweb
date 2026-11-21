@@ -4,6 +4,7 @@
  * is reported, never fatal. The wording is in lib/email/borrowing-templates.ts.
  */
 
+import { ensureSiteText } from "@/lib/content/site-text";
 import { borrowingTrackingLink } from "@/lib/email/borrowing-templates";
 import { getEmailSender, isEmailConfigured } from "@/lib/email";
 
@@ -12,6 +13,7 @@ export { isEmailConfigured };
 /** Sends the link. Returns false (never throws) when email is off or the send fails. */
 export async function sendTrackingLinkEmail(to: string, reference: string, link: string): Promise<boolean> {
   if (!isEmailConfigured()) return false;
+  await ensureSiteText();
   try {
     await getEmailSender().send({ to, ...borrowingTrackingLink({ reference, link }) });
     return true;

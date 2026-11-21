@@ -6,32 +6,22 @@ import { ShuttleRouteTable } from "@/components/domain/shuttle/ShuttleRouteTable
 import { Bus, CarFront, Ship, TrainFront } from "lucide-react";
 import { Container, EmptyState, Heading, IconText, Link, Stack, Tag, PageTitle } from "@/components/ui";
 import { SOURCE_DOCUMENTS, TRANSPORT } from "@/data/harvested-inventory";
-import { isLocale, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
+import { isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { SourceDocumentLink } from "@/components/domain/open-data/SourceDocumentLink";
 import { getOpenDataDocuments } from "@/lib/open-data/read";
 import { getActiveServiceAlerts, getActiveShuttleRoutes } from "@/lib/content";
 import { alternatesFor } from "@/lib/i18n/metadata";
+import { GETTING_AROUND_TEXT } from "./text";
 
-/*
- * TODO: add to UI strings. This page's section headings have no shared
- * entries in lib/i18n/strings.ts: only the umbrella `gettingAround` label
- * exists, not "shuttle bus", "MRT" or "vehicle access rules". Using local
- * literals until strings.ts gets them; reported in the shuttle agent's final
- * report.
- */
 const HEADINGS = {
-  shuttle: { th: "รถรับส่งธรรมศาสตร์ท่าพระจันทร์", en: "TPC shuttle bus" },
-  mrt: { th: "รถไฟฟ้า MRT", en: "MRT" },
-  boat: { th: "เรือด่วนเจ้าพระยา", en: "Chao Phraya express boat" },
-  vehicleAccess: { th: "หลักเกณฑ์รถเข้า-ออกและค่าปรับ", en: "Vehicle access rules and fines" },
-} as const satisfies Record<string, LocaleString>;
-
-// Same gap as components/domain/shuttle/ShuttlePanel.tsx and ShuttleRouteTable.tsx.
-const NO_TIMETABLE_NOTE: LocaleString = {
-  th: "ยังไม่มีการเผยแพร่ตารางเวลาสำหรับเส้นทางนี้ ทีมงานกำลังตรวจสอบตารางเวลาที่ประกาศไว้",
-  en: "A timetable for this route has not been published yet. The published schedule is being confirmed",
+  shuttle: GETTING_AROUND_TEXT.headingsShuttle,
+  mrt: GETTING_AROUND_TEXT.headingsMrt,
+  boat: GETTING_AROUND_TEXT.headingsBoat,
+  vehicleAccess: GETTING_AROUND_TEXT.headingsVehicleAccess,
 };
+
+const NO_TIMETABLE_NOTE = GETTING_AROUND_TEXT.noTimetableNote;
 
 const vehicleAccessDoc = SOURCE_DOCUMENTS.find((doc) => doc.key === "vehicleAccessRules");
 

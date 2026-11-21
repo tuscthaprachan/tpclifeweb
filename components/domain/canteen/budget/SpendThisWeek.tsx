@@ -42,7 +42,7 @@ export function SpendThisWeek({ locale, explain = true, className }: SpendThisWe
       ) : null}
       {explain ? (
         <>
-          <p className="m-0 text-sm text-ink-600">{t(BUDGET.spendOnlyNote, locale)}</p>
+          <p className="m-0 text-sm text-ink-600">{budget.spendOnlyNote(locale)}</p>
           {target === undefined ? <p className="m-0 text-sm text-ink-600">{t(BUDGET.spendNoTarget, locale)}</p> : null}
         </>
       ) : null}

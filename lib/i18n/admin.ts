@@ -36,6 +36,7 @@ import { PUBLISHING_STRINGS } from "./admin-content/publishing";
 import { STAFF_MEMBER_STRINGS } from "./admin-content/staff-members";
 import { TODAY_STRINGS } from "./admin-content/today";
 import { SERVICE_PAGES_STRINGS } from "./admin-content/service-pages";
+import { SITE_TEXT_STRINGS } from "./admin-content/site-text";
 import { CONSOLE_SHELL_STRINGS } from "./admin-content/console-shell";
 import { CONSOLE_DESK_STRINGS } from "./admin-content/console-desk";
 import { CONSOLE_FORMS_STRINGS } from "./admin-content/console-forms";
@@ -724,6 +725,7 @@ export const A = {
   ...NOTIFICATION_STRINGS,
   ...TODAY_STRINGS,
   ...SERVICE_PAGES_STRINGS,
+  ...SITE_TEXT_STRINGS,
   ...CONSOLE_SHELL_STRINGS,
   ...CONSOLE_DESK_STRINGS,
   ...CONSOLE_FORMS_STRINGS,

@@ -26,11 +26,12 @@ import { StatusTag } from "@/components/ui/StatusTag";
 import { SummaryList, type SummaryListRow } from "@/components/ui/SummaryList";
 import { Timestamp } from "@/components/ui/Timestamp";
 import { externalLinkProps, externalLinkSuffix, isExternalUrl } from "@/lib/a11y";
-import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
 import { formatDuration } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
 import { getFormBySlug, getFormPreview, getForms } from "@/lib/content";
 import type { FormRecord, HelpContact } from "@/lib/content/types";
+import { FORM_DETAIL_TEXT } from "./text";
 
 /*
  * Copy that lib/i18n/strings.ts does not carry. UI.requiresGoogleSignIn
@@ -40,35 +41,15 @@ import type { FormRecord, HelpContact } from "@/lib/content/types";
  * Hardcoded per house style (official register, both languages, no em dash)
  * rather than invented into the shared file, and reported as a gap.
  */
-// TODO: add to UI strings.
-const SIGN_IN_ACCOUNT_NOTE: Record<"google" | "tuAccount" | "other", LocaleString> = {
-  google: {
-    th: "เข้าสู่ระบบที่แบบฟอร์มภายนอก ใช้บัญชี Google ของมหาวิทยาลัยธรรมศาสตร์ (บัญชี TU) ก่อนกรอก",
-    en: "Sign in on the external form. Use your Thammasat (TU) Google account before filling it in",
-  },
-  tuAccount: {
-    th: "เข้าสู่ระบบที่แบบฟอร์มภายนอก ใช้บัญชีมหาวิทยาลัยธรรมศาสตร์ (บัญชี TU) ก่อนกรอก",
-    en: "Sign in on the external form. Use your Thammasat (TU) account before filling it in",
-  },
-  other: {
-    th: "เข้าสู่ระบบที่แบบฟอร์มภายนอก สอบถามผู้รับผิดชอบด้านล่างว่าต้องใช้บัญชีใด",
-    en: "Sign in on the external form. Check which account you need with the contact below",
-  },
+const SIGN_IN_ACCOUNT_NOTE = {
+  google: FORM_DETAIL_TEXT.signInAccountNoteGoogle,
+  tuAccount: FORM_DETAIL_TEXT.signInAccountNoteTuAccount,
+  other: FORM_DETAIL_TEXT.signInAccountNoteOther,
 };
-// TODO: add to UI strings.
-const EMAIL_START_LABEL: LocaleString = { th: "ส่งอีเมลเพื่อดำเนินการ", en: "Email to proceed" };
-// TODO: add to UI strings.
-const LINE_START_LABEL: LocaleString = { th: "เปิดแชท LINE เพื่อดำเนินการ", en: "Open LINE chat to proceed" };
-// TODO: add to UI strings.
-const IN_PERSON_NOTE: LocaleString = {
-  th: "แบบฟอร์มนี้ดำเนินการด้วยตนเองที่หน่วยงาน ไม่มีลิงก์สำหรับกรอกออนไลน์",
-  en: "This form is handled in person at the office. There is no online link to fill in",
-};
-// TODO: add to UI strings.
-const NO_DESTINATION_NOTE: LocaleString = {
-  th: "ยังไม่มีลิงก์สำหรับแบบฟอร์มนี้ ติดต่อผู้รับผิดชอบด้านล่าง",
-  en: "No link has been recorded for this form yet. Contact the responsible body below",
-};
+const EMAIL_START_LABEL = FORM_DETAIL_TEXT.emailStartLabel;
+const LINE_START_LABEL = FORM_DETAIL_TEXT.lineStartLabel;
+const IN_PERSON_NOTE = FORM_DETAIL_TEXT.inPersonNote;
+const NO_DESTINATION_NOTE = FORM_DETAIL_TEXT.noDestinationNote;
 
 export async function generateStaticParams() {
   const forms = await getForms();

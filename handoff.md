@@ -199,3 +199,11 @@ Use `next start`, not `next dev`, for Playwright. Never run `playwright install`
 - GOV.UK places field error messages above the input; the site's components put them below. Changing it touches every form; the user has not decided.
 - `npm audit`: 4 moderate, all in the `drizzle-kit` dev chain; the only fix is a major downgrade.
 - No seed content for events, news, policies or alerts; those pages show empty states until editors add them.
+
+## Site text and service pages
+
+- Every built-in public string is editable in the console at **Website → Settings → Site text** (`/admin/content/site-text`). A dictionary wrapped with `editableStrings(namespace, raw, label)` (`lib/i18n/editable.ts`) keeps its shape (`UI.home[locale]`), but each read returns the stored override when there is one. `UI` in `lib/i18n/strings.ts` is wrapped as namespace `ui`; page, component, canteen and email dictionaries are wrapped in their own namespaces and listed for the console through `lib/i18n/site-text-parts/*.ts` (imported by `lib/i18n/site-text-registry.ts`). A new dictionary must be imported there or the console will not list it.
+- Overrides live in the `site_text` singleton (`texts` jsonb keyed `<namespace>.<key>`, only text that differs from the default). The root layouts (`app/[locale]/layout.tsx`, `app/admin/layout.tsx`) await `ensureSiteText()` (`lib/content/site-text.ts`) before anything renders and write the same overrides into the page with `siteTextBootScript`, so client components hydrate with the same text. Share images call it in `lib/og/route.ts`. A save revalidates every page (`revalidateFor("siteText")` also calls `revalidatePath("/", "layout")`).
+- Rules for new code: read text at render time, never copy `X.key[locale]` into a module-level constant (it would ignore edits). Use `{placeholder}`s and `fillText` for values; the editor refuses an edit that drops a placeholder.
+- **Service pages** (`/admin/content/service-pages`) edits the start pages of borrowing, issue reporting, lost and found and Report with list fields (one item per line). Fields fall back to the site text.
+- Migrations 0020 (`service_pages`) and 0021 (`site_text`). The Plesk deploy applies them on push to `main`.

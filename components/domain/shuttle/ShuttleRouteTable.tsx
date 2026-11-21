@@ -1,3 +1,4 @@
+import { DOMAIN_TEXT } from "@/components/domain/strings";
 import NextLink from "next/link";
 import type { HeadingLevel } from "@/lib/a11y";
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
@@ -12,10 +13,7 @@ import { DataTable, type DataTableColumn, EmptyState, Heading, Stack, StatusTag,
  * local literal rather than importing it across domain components, since
  * neither file owns the other; both report the same gap.
  */
-const NO_TIMETABLE_NOTE: LocaleString = {
-  th: "ยังไม่ได้เผยแพร่ตารางเวลาของเส้นทางนี้",
-  en: "A timetable for this route has not been published yet",
-};
+const NO_TIMETABLE_NOTE: LocaleString = DOMAIN_TEXT.shuttleNoTimetable;
 
 interface ShuttleRouteTableProps {
   locale: Locale;

@@ -3,11 +3,12 @@
 import { EmptyState, Stack } from "@/components/ui";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
-import type { LocaleString, Organisation, OrganisationType } from "@/lib/content/types";
+import type { Organisation, OrganisationType } from "@/lib/content/types";
 import { useQueryRecord, type QueryRecord } from "@/lib/use-query";
 import { DirectoryFilterForm, type FacultyOption } from "./DirectoryFilterForm";
 import { groupOrganisations } from "./groupOrganisations";
 import { OrganisationGroup } from "./OrganisationGroup";
+import { DIRECTORY_TEXT } from "./strings";
 
 const VALID_TYPES = new Set<OrganisationType>([
   "facultyCommittee",
@@ -16,11 +17,6 @@ const VALID_TYPES = new Set<OrganisationType>([
   "universityDivision",
   "studentBody",
 ]);
-
-// No entry in lib/i18n/strings.ts for either group heading, only the
-// unrelated Category union. Hardcoded and reported, per CONTRIBUTING.md.
-const CLUBS_HEADING: LocaleString = { th: "ชุมนุมและกลุ่มอิสระ", en: "Clubs and independent groups" }; // TODO: add to UI strings
-const OTHER_HEADING: LocaleString = { th: "องค์กรนักศึกษาและหน่วยงานมหาวิทยาลัย", en: "Student bodies and university divisions" }; // TODO: add to UI strings
 
 function facultyOptionsFrom(organisations: Organisation[], locale: Locale): FacultyOption[] {
   const seen = new Map<string, string>();
@@ -78,8 +74,8 @@ export function DirectoryResults({ locale, organisations, query }: DirectoryResu
               locale={locale}
             />
           ))}
-          <OrganisationGroup heading={CLUBS_HEADING[locale]} headingLevel={2} organisations={grouped.clubs} locale={locale} />
-          <OrganisationGroup heading={OTHER_HEADING[locale]} headingLevel={2} organisations={grouped.other} locale={locale} />
+          <OrganisationGroup heading={DIRECTORY_TEXT.clubsHeading[locale]} headingLevel={2} organisations={grouped.clubs} locale={locale} />
+          <OrganisationGroup heading={DIRECTORY_TEXT.otherHeading[locale]} headingLevel={2} organisations={grouped.other} locale={locale} />
         </Stack>
       )}
     </>

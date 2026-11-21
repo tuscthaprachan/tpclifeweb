@@ -213,7 +213,7 @@ export function MineClient({ locale, dishes, stallNames, currentQuery }: MineCli
                 </>,
               ),
             ),
-            t(BUDGET.historyEmpty, locale),
+            budget.historyEmpty(locale),
           )}
           {history.length > HISTORY_SHOWN ? (
             <p className="m-0 text-sm text-ink-600">{budget.latestOf(locale, HISTORY_SHOWN, history.length)}</p>

@@ -1,3 +1,4 @@
+import { DOMAIN_TEXT } from "@/components/domain/strings";
 import { Timestamp } from "@/components/ui/Timestamp";
 import { cx } from "@/components/ui/cx";
 import { pick, type Locale, type LocaleString } from "@/lib/i18n/config";
@@ -11,7 +12,7 @@ import { getLatestUpdate } from "./updates";
  * names the whole dashboard ("Policy progress"), not one policy's own bar.
  */
 // TODO: add to UI strings.
-const PROGRESS_LABEL: LocaleString = { th: "ความคืบหน้า", en: "Progress" };
+const PROGRESS_LABEL: LocaleString = DOMAIN_TEXT.policyProgressLabel;
 
 interface PolicyProgressProps {
   policy: Policy;

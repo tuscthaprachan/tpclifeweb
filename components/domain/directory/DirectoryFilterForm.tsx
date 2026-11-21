@@ -5,24 +5,15 @@ import Link from "next/link";
 import { Button, Select } from "@/components/ui";
 import type { Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
+import { DIRECTORY_TEXT } from "./strings";
 import type { LocaleString, OrganisationType } from "@/lib/content/types";
 
-/**
- * Neither "organisation type" nor "faculty" nor the five `OrganisationType`
- * values have an entry in `lib/i18n/strings.ts` (only the unrelated
- * `Category` union is covered there). Hardcoded here per CONTRIBUTING.md's
- * own instruction for a missing shared string, and reported rather than
- * reusing something that means something else.
- */
-const TYPE_LABEL: LocaleString = { th: "ประเภทหน่วยงาน", en: "Organisation type" }; // TODO: add to UI strings
-const FACULTY_LABEL: LocaleString = { th: "คณะ", en: "Faculty" }; // TODO: add to UI strings
-
 const TYPE_OPTION_LABEL: Record<OrganisationType, LocaleString> = {
-  facultyCommittee: { th: "คณะกรรมการนักศึกษาคณะ", en: "Faculty committee" }, // TODO: add to UI strings
-  club: { th: "ชุมนุม", en: "Club" }, // TODO: add to UI strings
-  independentGroup: { th: "กลุ่มอิสระ", en: "Independent group" }, // TODO: add to UI strings
-  universityDivision: { th: "หน่วยงานมหาวิทยาลัย", en: "University division" }, // TODO: add to UI strings
-  studentBody: { th: "องค์กรนักศึกษา", en: "Student body" }, // TODO: add to UI strings
+  facultyCommittee: DIRECTORY_TEXT.typeFacultyCommittee,
+  club: DIRECTORY_TEXT.typeClub,
+  independentGroup: DIRECTORY_TEXT.typeIndependentGroup,
+  universityDivision: DIRECTORY_TEXT.typeUniversityDivision,
+  studentBody: DIRECTORY_TEXT.typeStudentBody,
 };
 
 const TYPE_ORDER: OrganisationType[] = ["facultyCommittee", "club", "independentGroup", "studentBody", "universityDivision"];
@@ -61,7 +52,7 @@ export function DirectoryFilterForm({ locale, action, currentType, currentFacult
       <Select
         id="directory-type"
         name="type"
-        label={TYPE_LABEL[locale]}
+        label={DIRECTORY_TEXT.typeLabel[locale]}
         options={typeOptions}
         defaultValue={currentType}
         onChange={(event) => event.currentTarget.form?.requestSubmit()}
@@ -69,7 +60,7 @@ export function DirectoryFilterForm({ locale, action, currentType, currentFacult
       <Select
         id="directory-faculty"
         name="faculty"
-        label={FACULTY_LABEL[locale]}
+        label={DIRECTORY_TEXT.facultyLabel[locale]}
         options={facultySelectOptions}
         defaultValue={currentFaculty}
         onChange={(event) => event.currentTarget.form?.requestSubmit()}

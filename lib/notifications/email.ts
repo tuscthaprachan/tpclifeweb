@@ -5,6 +5,7 @@
  * went. Suspended staff (no active role) and banned accounts are not emailed.
  */
 
+import { ensureSiteText } from "@/lib/content/site-text";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { user } from "@/lib/db/schema/auth";
@@ -31,6 +32,7 @@ export async function deliverNotificationEmails(db: AuditExecutor, ids: readonly
   if (ids.length === 0) return 0;
   try {
     if (!(opts.emailConfigured ?? isEmailConfigured())) return 0;
+  await ensureSiteText();
     const base = (opts.baseUrl ?? defaultBaseUrl())?.replace(/\/+$/, "");
     if (!base) return 0;
     const rows = await db

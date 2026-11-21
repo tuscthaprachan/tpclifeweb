@@ -1,4 +1,5 @@
 import { DataTable, type DataTableColumn } from "@/components/ui/DataTable";
+import { OPEN_DATA_TEXT } from "../strings";
 import { Heading } from "@/components/ui/Heading";
 import { Link } from "@/components/ui/Link";
 import { SummaryList } from "@/components/ui/SummaryList";
@@ -51,7 +52,7 @@ export function BudgetDictionary({ locale, lines, fileSize, sourceTitle, sourceH
   const sad = organisationLines(lines, Math.max(...years.map((y) => y.year))).find((o) => o.org?.key === "sad");
   const example = lines.find((l) => l.view === "project" && l.project === "TPC Games 2025") ?? lines[0];
   const never = UI.odDataDictNever[locale];
-  const to = locale === "th" ? "ถึง" : "to";
+  const to = OPEN_DATA_TEXT.dictRangeTo[locale];
 
   const viewsTable = 2;
   const typesTable = 3;
@@ -147,7 +148,7 @@ export function BudgetDictionary({ locale, lines, fileSize, sourceTitle, sourceH
           { key: UI.odDataDictFile[locale], value: fillText(UI.odDataDictFileValue[locale], { file: "budget-lines.csv", rows: n(lines.length), cols: n(BUDGET_COLUMNS.length) }) + (fileSize ? ` (${fileSize})` : "") },
           {
             key: UI.odDataDictCoverage[locale],
-            value: years.map((y) => `${format.year(y.year)} (${fillText(UI.odDataRows[locale], { n: n(y.rows) })})`).join(locale === "th" ? " และ " : " and "),
+            value: years.map((y) => `${format.year(y.year)} (${fillText(UI.odDataRows[locale], { n: n(y.rows) })})`).join(OPEN_DATA_TEXT.dictAnd[locale]),
           },
           {
             key: UI.odDataDictSource[locale],

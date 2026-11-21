@@ -208,7 +208,7 @@ export function GroupResults({ locale, data, state, path, now, freshSeed }: Grou
         </Heading>
         <p className="m-0 text-ink-900">
           {group.closest(target, locale)}{" "}
-          {group.blockedBy(binding.blockers.map((blocker) => name(blocker.personIndex)).join(locale === "th" ? " และ " : ", "), locale)}
+          {group.blockedBy(group.joinNames(binding.blockers.map((blocker) => name(blocker.personIndex)), locale), locale)}
         </p>
         {fixable ? (
           <>

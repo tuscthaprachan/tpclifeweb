@@ -30,6 +30,7 @@
  * restate what the move already did.
  */
 
+import { LOST_FOUND_TEXT } from "./strings";
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { addNote, addPublicUpdate } from "@/lib/cases/engine";
 import { insertContact, type ContactInput } from "@/lib/cases/contacts";
@@ -52,10 +53,7 @@ export function claimAnswerAad(claimId: string): string {
 }
 
 /** Polite text for a rejected claim, used to fill the form. Staff may edit it. */
-export const DEFAULT_REJECT_MESSAGE: BilingualText = {
-  th: "เรายังยืนยันไม่ได้ว่าของชิ้นนี้เป็นของคุณจากรายละเอียดที่ให้ไว้ ของชิ้นนี้ยังอยู่ในรายการของที่พบ หากมีรายละเอียดเพิ่มเติม โปรดแจ้งหรือแวะมาที่เคาน์เตอร์",
-  en: "We could not confirm from the details given that this item is yours. It is still on our list. If you can give more details, please tell us or visit the desk.",
-};
+export const DEFAULT_REJECT_MESSAGE: BilingualText = LOST_FOUND_TEXT.defaultRejectMessage;
 
 export interface NewClaim {
   foundCaseId: string;

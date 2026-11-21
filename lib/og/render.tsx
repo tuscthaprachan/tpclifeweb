@@ -40,6 +40,7 @@ import { getSiteSettings } from "@/components/layout/site-settings";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale, type LocaleString } from "@/lib/i18n/config";
 
 import palette from "./palette.json";
+import { OG_TEXT } from "./strings";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = "image/png";
@@ -53,10 +54,7 @@ const WORDMARK_LEAD: LocaleString = { th: "#ท้าย", en: "#try" };
 async function serviceName(locale: Locale): Promise<string> {
   return pick((await getSiteSettings()).serviceName, locale);
 }
-const CAMPUS: LocaleString = {
-  th: "ธรรมศาสตร์ ท่าพระจันทร์",
-  en: "Thammasat Tha Prachan",
-};
+const CAMPUS: LocaleString = OG_TEXT.campus;
 
 export interface OgContent {
   locale: Locale;

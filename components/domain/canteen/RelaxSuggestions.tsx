@@ -40,7 +40,7 @@ export function relaxText(suggestion: RelaxSuggestion, locale: Locale, stallName
     case "stall":
       return eat.relaxDrop(locale, (typeof value === "string" ? stallName?.(value) : undefined) ?? String(value), count);
     case "open":
-      return eat.relaxGeneric(locale, locale === "th" ? "ไม่ดูเวลาทำการ" : "Ignore opening hours", count);
+      return eat.relaxGeneric(locale, EAT.relaxWithoutOpen[locale], count);
   }
 }
 

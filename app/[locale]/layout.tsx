@@ -20,6 +20,8 @@ import { fontVariables } from "@/components/layout/fonts";
 import { PhaseBanner } from "@/components/layout/PhaseBanner";
 import { NavigationProgress } from "@/components/layout/NavigationProgress";
 import { getSiteSettings } from "@/components/layout/site-settings";
+import { ensureSiteText } from "@/lib/content/site-text";
+import { siteTextBootScript } from "@/lib/i18n/editable";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SkipLink } from "@/components/layout/SkipLink";
@@ -42,7 +44,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
-  const settings = await getSiteSettings();
+  const [settings] = await Promise.all([getSiteSettings(), ensureSiteText()]);
   const name = pick(settings.serviceName, locale);
   const description = pick(settings.tagline, locale);
 
@@ -90,7 +92,8 @@ export default async function RootLayout({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const settings = await getSiteSettings();
+  // Site text first: everything below reads it (lib/i18n/editable.ts).
+  const [settings, siteText] = await Promise.all([getSiteSettings(), ensureSiteText()]);
 
   return (
     <html
@@ -101,6 +104,7 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: JS_BOOT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: siteTextBootScript(siteText) }} />
       </head>
       <body>
         {/* First focusable element in the document (2.4.1). */}

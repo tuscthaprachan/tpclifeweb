@@ -5,6 +5,7 @@
  * CONTRIBUTING.md ("Reuse a string... rather than inventing a synonym").
  */
 
+import { DOMAIN_TEXT } from "@/components/domain/strings";
 import type { Locale, LocaleString } from "@/lib/i18n/config";
 import type { UiKey } from "@/lib/i18n/strings";
 import type { Category, FormRecord, Owner } from "@/lib/content/types";
@@ -23,14 +24,11 @@ export const OWNER_LABEL_KEY = {
   joint: "ownerJoint",
 } as const satisfies Record<Owner, UiKey>;
 
-export const SIGN_IN_ON_FORM: LocaleString = { th: "ต้องเข้าสู่ระบบ", en: "Sign in required" };
+export const SIGN_IN_ON_FORM: LocaleString = DOMAIN_TEXT.formSignInRequired;
 
-export const SIGN_IN_ON_FORM_TU: LocaleString = {
-  th: "ต้องเข้าสู่ระบบด้วยบัญชี TU",
-  en: "Sign in required (TU account)",
-};
+export const SIGN_IN_ON_FORM_TU: LocaleString = DOMAIN_TEXT.formSignInRequiredTu;
 
-export const NO_SIGN_IN_ON_FORM: LocaleString = { th: "ไม่ต้องเข้าสู่ระบบ", en: "No sign in needed" };
+export const NO_SIGN_IN_ON_FORM: LocaleString = DOMAIN_TEXT.formNoSignIn;
 
 export function signInBadgeLabel(signInType: FormRecord["signInType"], locale: Locale): string {
   return (signInType === "google" || signInType === "tuAccount" ? SIGN_IN_ON_FORM_TU : SIGN_IN_ON_FORM)[locale];

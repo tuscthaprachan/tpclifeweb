@@ -5,29 +5,32 @@
  * the plain style of the other service emails (lib/email/templates.ts).
  */
 
+import { ensureSiteText } from "@/lib/content/site-text";
 import { getEmailSender, isEmailConfigured, type EmailMessage } from "@/lib/email";
 import { button, emailDocument, heading, paragraph, reference as referenceBlock, section } from "@/lib/email/layout";
+import { EMAIL_ACCOUNT_TEXT, bothLanguages } from "@/lib/email/strings";
 import type { JourneyKind } from "./steps";
 
 export { isEmailConfigured };
 
 export function trackingLinkEmail(kind: JourneyKind, reference: string, link: string): Omit<EmailMessage, "to"> {
   const claim = kind === "claim";
+  const T = EMAIL_ACCOUNT_TEXT;
   const th = {
-    heading: claim ? "ลิงก์ส่วนตัวสำหรับติดตามคำขอรับของ" : "ลิงก์ส่วนตัวสำหรับติดตามเรื่องที่คุณแจ้ง",
-    line: "ใช้ลิงก์ด้านล่างเพื่อดูความคืบหน้า ใครมีลิงก์นี้ก็ดูความคืบหน้าได้ จึงไม่ควรส่งต่อให้ผู้อื่น",
-    referenceLabel: "เลขอ้างอิงของคุณ",
-    linkLabel: "เปิดหน้าติดตามเรื่อง",
-    after: "หากไม่ได้ส่งเรื่องนี้ ข้ามอีเมลฉบับนี้ไปได้เลย",
+    heading: (claim ? T.lfClaimHeading : T.lfReportHeading).th,
+    line: T.lfLine.th,
+    referenceLabel: T.lfReferenceLabel.th,
+    linkLabel: T.lfLinkLabel.th,
+    after: T.lfAfter.th,
   };
   const en = {
-    heading: claim ? "Your private link to track your claim" : "Your private link to track your report",
-    line: "Use the link below to see progress. Anyone with the link can see how this case is going, so do not share it.",
-    referenceLabel: "Your reference number",
-    linkLabel: "Open your tracking page",
-    after: "If you did not send this, ignore this email.",
+    heading: (claim ? T.lfClaimHeading : T.lfReportHeading).en,
+    line: T.lfLine.en,
+    referenceLabel: T.lfReferenceLabel.en,
+    linkLabel: T.lfLinkLabel.en,
+    after: T.lfAfter.en,
   };
-  const subject = `${claim ? "ติดตามคำขอรับของ" : "ติดตามเรื่องที่คุณแจ้ง"} ${reference} / ${claim ? "Track your claim" : "Track your report"} ${reference}`;
+  const subject = bothLanguages(claim ? T.lfClaimSubject : T.lfReportSubject, { reference });
   const text = [th, en].map((s) => [s.heading, "", s.referenceLabel, reference, "", s.line, "", s.linkLabel, link, "", s.after].join("\n")).join("\n\n---\n\n");
   const html = emailDocument({
     title: subject,
@@ -44,6 +47,7 @@ export function trackingLinkEmail(kind: JourneyKind, reference: string, link: st
 /** Sends the link. Returns false (never throws) when email is off or the send fails. */
 export async function sendTrackingLinkEmail(to: string, kind: JourneyKind, reference: string, link: string): Promise<boolean> {
   if (!isEmailConfigured()) return false;
+  await ensureSiteText();
   try {
     await getEmailSender().send({ to, ...trackingLinkEmail(kind, reference, link) });
     return true;

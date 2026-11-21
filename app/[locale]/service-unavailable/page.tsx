@@ -17,17 +17,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Button, Container, Heading, Stack } from "@/components/ui";
-import { DEFAULT_LOCALE, isLocale, localePath, type Locale, type LocaleString } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, isLocale, localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { alternatesFor } from "@/lib/i18n/metadata";
+import { SERVICE_UNAVAILABLE_TEXT } from "./text";
 
-// TODO: add to UI strings. UI.serviceUnavailableTitle exists but there is no
-// shared body copy for it; UI.errorBody is written for a page-level error,
-// not "the whole service is down", so it is not reused here.
-const SERVICE_UNAVAILABLE_BODY: LocaleString = {
-  th: "ระบบ #ท้ายท่าพระจันทร์ ไม่พร้อมให้บริการชั่วคราว อาจเกิดจากการปรับปรุงระบบหรือปัญหาทางเทคนิค ลองใหม่อีกครั้งในอีกสักครู่",
-  en: "#trytpc is temporarily unavailable, most likely due to maintenance or a technical problem. Please try again shortly.",
-};
+const SERVICE_UNAVAILABLE_BODY = SERVICE_UNAVAILABLE_TEXT.serviceUnavailableBody;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale: rawLocale } = await params;

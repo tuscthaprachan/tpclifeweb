@@ -148,6 +148,13 @@
       "when": 1795245803358,
       "tag": "0020_service_pages",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1795247631072,
+      "tag": "0021_site_text",
+      "breakpoints": true
     }
   ]
 }

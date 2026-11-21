@@ -21,7 +21,7 @@ import {
   TYPE_LABEL,
   VARIANTS_CHIP_LABEL,
 } from "./labels";
-import { eat } from "./strings";
+import { EAT, eat } from "./strings";
 
 /**
  * Old links can still say `avoid=pork`, `beef`, `seafood` or `nuts`. Those
@@ -132,7 +132,7 @@ const SUMMARY_LABELS = 3;
 export function filterSummary(filters: CanteenFilters, locale: Locale, stallName?: StallNamer): string {
   const chips = activeChips(filters, locale, stallName).filter((chip) => chip.id !== "variants");
   const count = countActiveValues(filters);
-  if (count === 0) return locale === "th" ? "กำลังแสดงทุกเมนู" : "Showing everything";
+  if (count === 0) return EAT.noFilters[locale];
   const named = chips.slice(0, SUMMARY_LABELS).map((chip) => chip.label);
   return [...named, eat.filterCount(locale, count)].join(" · ");
 }

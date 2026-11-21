@@ -13,6 +13,8 @@
  * HONESTY. A dish's summary shows its price with the day it was checked.
  */
 
+import { fillText } from "@/lib/i18n/editable";
+import { SEARCH_RESULT_TEXT } from "./strings";
 import { TYPE_LABEL } from "@/components/domain/canteen/labels";
 import { excerpt } from "@/components/domain/canteen/extras/text";
 import { indexCanteen, stallOf } from "@/lib/canteen/derive";
@@ -60,9 +62,11 @@ export function canteenSearchRecords(data: CanteenData): SearchRecord[] {
     const stall = stallOf(data, dish);
     const canonical = dish.canonicalId ? index.canonicalById.get(dish.canonicalId) : undefined;
     const price = (locale: "th" | "en") =>
-      locale === "th"
-        ? `${stall ? `ร้าน ${formatNumber(stall.number, "th")} ` : ""}${formatNumber(dish.price, "th")} บาท ตรวจเมื่อ ${formatDate(dish.checkedOn, "th")}`
-        : `${stall ? `Stall ${stall.number}, ` : ""}${formatNumber(dish.price, "en")} baht, checked ${formatDate(dish.checkedOn, "en")}`;
+      fillText(SEARCH_RESULT_TEXT.dishSummary[locale], {
+        stall: stall ? fillText(SEARCH_RESULT_TEXT.dishStall[locale], { number: formatNumber(stall.number, locale) }) : "",
+        price: formatNumber(dish.price, locale),
+        date: formatDate(dish.checkedOn, locale),
+      });
     records.push({
       id: dish._id,
       type: "canteenDish",

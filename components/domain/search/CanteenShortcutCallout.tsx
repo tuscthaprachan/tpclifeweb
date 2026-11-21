@@ -1,7 +1,9 @@
 import { TYPE_LABEL } from "@/components/domain/canteen/labels";
+import { SEARCH_TEXT } from "./strings";
 import { Link } from "@/components/ui";
 import { canteenShortcutHref, parseCanteenShortcut } from "@/lib/search/canteenShortcut";
 import { formatNumber } from "@/lib/i18n/format";
+import { fillText } from "@/lib/i18n/editable";
 import type { Locale } from "@/lib/i18n/config";
 
 /**
@@ -15,18 +17,13 @@ export function CanteenShortcutCallout({ query, locale }: { query: string; local
   if (!shortcut) return null;
 
   const max = formatNumber(shortcut.max, locale);
-  const types = shortcut.types.map((type) => TYPE_LABEL[type][locale]).join(locale === "th" ? " และ " : " and ");
-  const text =
-    locale === "th"
-      ? `ดูเมนูโรงอาหารราคาไม่เกิน ${max} บาท${types ? ` (${types})` : ""}`
-      : `See canteen dishes under ${max} baht${types ? ` (${types})` : ""}`;
-  const note =
-    locale === "th"
-      ? "ราคามาจากการสำรวจ ทุกราคาบอกวันที่ตรวจไว้"
-      : "Prices come from our survey and show the day they were checked.";
+  const joined = shortcut.types.map((type) => TYPE_LABEL[type][locale]).join(SEARCH_TEXT.shortcutTypesJoin[locale]);
+  const types = joined ? fillText(SEARCH_TEXT.shortcutTypes[locale], { types: joined }) : "";
+  const text = fillText(SEARCH_TEXT.shortcutLink[locale], { max, types });
+  const note = SEARCH_TEXT.shortcutNote[locale];
 
   return (
-    <aside aria-label={locale === "th" ? "ทางลัดไปโรงอาหาร" : "Canteen shortcut"} className="border-y border-line py-[var(--space-3)]">
+    <aside aria-label={SEARCH_TEXT.shortcutLabel[locale]} className="border-y border-line py-[var(--space-3)]">
       <p className="m-0 font-bold text-ink-900">
         <Link href={canteenShortcutHref(locale, shortcut)} locale={locale} className="inline-flex min-h-[var(--target-min)] items-center">
           {text}

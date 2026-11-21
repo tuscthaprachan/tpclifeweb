@@ -5,7 +5,10 @@
  * detail or anything a member of the public wrote.
  */
 
+import type { LocaleString } from "@/lib/i18n/config";
+import { fillText } from "@/lib/i18n/editable";
 import { UI } from "@/lib/i18n/strings";
+import { EMAIL_STAFF_NOTICE_TEXT } from "./strings";
 import { button, emailDocument, heading as h, paragraph, section } from "./layout";
 import type { RenderedEmail } from "./templates";
 
@@ -21,37 +24,30 @@ interface Copy {
 }
 
 interface Entry {
-  title: Copy;
+  title: LocaleString;
   line: (ref: string) => Copy;
 }
 
-const KIND: Record<string, Entry> = {
-  case_assigned: {
-    title: { th: "คุณได้รับมอบหมายเคสใหม่", en: "A case has been assigned to you" },
-    line: (ref) => ({ th: ref ? `คุณได้รับมอบหมายเคส ${ref}` : "คุณได้รับมอบหมายเคสใหม่", en: ref ? `Case ${ref} has been assigned to you.` : "A case has been assigned to you." }),
-  },
-  case_mention: {
-    title: { th: "มีผู้กล่าวถึงคุณในบันทึก", en: "You were mentioned in a note" },
-    line: (ref) => ({ th: ref ? `มีผู้กล่าวถึงคุณในบันทึกภายในของเคส ${ref}` : "มีผู้กล่าวถึงคุณในบันทึกภายในของเคส", en: ref ? `You were mentioned in an internal note on case ${ref}.` : "You were mentioned in an internal note on a case." }),
-  },
-  complaint_escalated: {
-    title: { th: "มีการยกระดับข้อร้องเรียน", en: "A complaint has been escalated" },
-    line: (ref) => ({ th: ref ? `ข้อร้องเรียน ${ref} เกินกำหนด จึงยกระดับเรื่องแล้ว` : "มีข้อร้องเรียนเกินกำหนด จึงยกระดับเรื่องแล้ว", en: ref ? `Complaint ${ref} is overdue and has been escalated.` : "A complaint is overdue and has been escalated." }),
-  },
-  borrowing_overdue: {
-    title: { th: "มีอุปกรณ์เกินกำหนดคืน", en: "Borrowed equipment is overdue" },
-    line: (ref) => ({ th: ref ? `การยืม ${ref} เกินกำหนดคืนแล้ว` : "มีรายการยืมที่เกินกำหนดคืน", en: ref ? `Loan ${ref} is past its return time.` : "A loan is past its return time." }),
-  },
-  invite_accepted: {
-    title: { th: "มีผู้ตอบรับคำเชิญของคุณแล้ว", en: "Your invitation was accepted" },
-    line: () => ({ th: "ผู้ที่คุณเชิญตอบรับและเข้าร่วมทีมแล้ว", en: "Someone you invited has accepted and joined the team." }),
-  },
-};
+const T = EMAIL_STAFF_NOTICE_TEXT;
 
-const FALLBACK: Entry = {
-  title: { th: "มีการแจ้งเตือนใหม่", en: "You have a new notification" },
-  line: () => ({ th: "มีการแจ้งเตือนใหม่ในคอนโซลเจ้าหน้าที่", en: "You have a new notification in the staff console." }),
-};
+/** A line that names the case when there is a reference and says it generally when there is not. */
+const withRef = (withRefText: LocaleString, withoutRefText: LocaleString) => (ref: string): Copy => ({
+  th: ref ? fillText(withRefText.th, { reference: ref }) : withoutRefText.th,
+  en: ref ? fillText(withRefText.en, { reference: ref }) : withoutRefText.en,
+});
+
+/** Built on each call, so a change in the console shows in the next email. */
+function kinds(): Record<string, Entry> {
+  return {
+    case_assigned: { title: T.caseAssignedTitle, line: withRef(T.caseAssignedRef, T.caseAssignedNoRef) },
+    case_mention: { title: T.caseMentionTitle, line: withRef(T.caseMentionRef, T.caseMentionNoRef) },
+    complaint_escalated: { title: T.complaintEscalatedTitle, line: withRef(T.complaintEscalatedRef, T.complaintEscalatedNoRef) },
+    borrowing_overdue: { title: T.borrowingOverdueTitle, line: withRef(T.borrowingOverdueRef, T.borrowingOverdueNoRef) },
+    invite_accepted: { title: T.inviteAcceptedTitle, line: () => ({ th: T.inviteAcceptedLine.th, en: T.inviteAcceptedLine.en }) },
+  };
+}
+
+const fallback = (): Entry => ({ title: T.fallbackTitle, line: () => ({ th: T.fallbackLine.th, en: T.fallbackLine.en }) });
 
 function assertHttps(url: string): void {
   let parsed: URL;
@@ -75,11 +71,12 @@ function block(lang: "th" | "en", title: string, line: string, label: string, ur
 
 export function staffNotification({ kind, reference, url }: StaffNotificationParams): RenderedEmail {
   assertHttps(url);
-  const entry = Object.hasOwn(KIND, kind) ? KIND[kind]! : FALLBACK;
+  const table = kinds();
+  const entry = Object.hasOwn(table, kind) ? table[kind]! : fallback();
   const line = entry.line(cleanReference(reference));
   const subject = `${entry.title.th} / ${entry.title.en}`;
-  const th = block("th", entry.title.th, `${line.th} บน${UI.serviceName.th}`, "เปิดในคอนโซล", url);
-  const en = block("en", entry.title.en, `${line.en} On ${UI.serviceName.en}.`, "Open in the console", url);
+  const th = block("th", entry.title.th, fillText(T.onService.th, { line: line.th, service: UI.serviceName.th }), T.openLabel.th, url);
+  const en = block("en", entry.title.en, fillText(T.onService.en, { line: line.en, service: UI.serviceName.en }), T.openLabel.en, url);
   const text = `${th.text}\n\n---\n\n${en.text}\n`;
   const html = emailDocument({ title: subject, lang: "th", sections: [th.html, en.html], preheader: line.th });
   return { subject, text, html };

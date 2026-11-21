@@ -1,5 +1,6 @@
 "use client";
 
+import { DOMAIN_TEXT } from "@/components/domain/strings";
 import Form from "next/form";
 import { useRef } from "react";
 import { OWNER_LABEL_KEY } from "@/components/domain/form";
@@ -17,7 +18,7 @@ import { STATUS_LABEL_KEY, STATUS_ORDER } from "./statusLabels";
  * pages, a different, closed set from a policy's free-text `policyArea`.
  */
 // TODO: add to UI strings.
-const POLICY_AREA_LABEL: LocaleString = { th: "ประเด็นนโยบาย", en: "Policy area" };
+const POLICY_AREA_LABEL: LocaleString = DOMAIN_TEXT.policyAreaLabel;
 
 const OWNER_FILTER_ORDER: readonly Owner[] = ["tusu", "tusc", "university", "joint"];
 

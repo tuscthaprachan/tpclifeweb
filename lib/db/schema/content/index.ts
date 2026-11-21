@@ -17,3 +17,4 @@ export * from "./open-data";
 export * from "./redirects";
 export * from "./today";
 export * from "./service-pages";
+export * from "./site-text";

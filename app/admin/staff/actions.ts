@@ -19,6 +19,7 @@ import { issueRecoveryLink, RECOVERY_TTL_HOURS, RecoveryError } from "@/lib/auth
 import { STAFF_ROLES, type StaffRole } from "@/lib/auth/roles";
 import { auditContextFor, requireStaff } from "@/lib/auth/session";
 import { findStaffByEmail, grantToStaffMember, listOrganisations, suspendMember, updateStaffMember } from "@/lib/auth/staff";
+import { ensureSiteText } from "@/lib/content/site-text";
 import { getDb } from "@/lib/db";
 import { isEmailConfigured, sendEmail, staffInvite, staffRecovery, type RenderedEmail } from "@/lib/email";
 import type { EmailOutcome } from "@/components/admin/LinkReady";
@@ -86,6 +87,7 @@ export async function createStaffInvite(_prev: InviteFormState, formData: FormDa
     throw error;
   }
 
+  await ensureSiteText();
   const link = `${getAuthBaseUrl() ?? ""}/admin/invite/${created.token}`;
   const emailed = await sendLink(created.invite.email, () =>
     staffInvite({
@@ -135,6 +137,7 @@ export async function issueRecovery(_prev: RecoveryFormState, formData: FormData
     throw error;
   }
 
+  await ensureSiteText();
   const link = `${getAuthBaseUrl() ?? ""}/admin/recover/${issued.token}`;
   const organisation = staff.organisations[0];
   const emailed = await sendLink(issued.person.email, () =>

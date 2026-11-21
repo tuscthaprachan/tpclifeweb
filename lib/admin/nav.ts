@@ -84,6 +84,7 @@ const CONTENT_PLACEMENT: Record<string, { section: ContentSectionId | null; icon
   lostFound: { section: null, icon: "lostFound" },
   images: { section: "media", icon: "images" },
   todaySettings: { section: "settings", icon: "todaySettings" },
+  siteText: { section: "settings", icon: "siteText" },
   siteSettings: { section: "settings", icon: "siteSettings" },
 };
 

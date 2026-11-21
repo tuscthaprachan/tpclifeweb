@@ -16,6 +16,7 @@
  */
 
 import type { LocaleString } from "@/lib/i18n/config";
+import { SEARCH_TEXT } from "./strings";
 import { UI } from "@/lib/i18n/strings";
 import type { SearchableType } from "@/lib/content/types";
 
@@ -28,16 +29,16 @@ export const SEARCH_TYPE_LABEL: Record<SearchableType, LocaleString> = {
   event: UI.events,
   newsPost: UI.news,
   // TODO: add to UI strings
-  shuttleRoute: { th: "รถรับส่ง", en: "Shuttle bus" },
+  shuttleRoute: SEARCH_TEXT.typeShuttleRoute,
   // TODO: add to UI strings
-  policy: { th: "นโยบาย", en: "Policy" },
+  policy: SEARCH_TEXT.typePolicy,
   // TODO: add to UI strings
-  organisation: { th: "หน่วยงาน", en: "Organisation" },
+  organisation: SEARCH_TEXT.typeOrganisation,
   // TODO: add to UI strings
-  place: { th: "สถานที่", en: "Place" },
+  place: SEARCH_TEXT.typePlace,
   lostFoundItem: UI.lostAndFound,
-  canteenDish: { th: "เมนูโรงอาหาร", en: "Canteen dish" },
-  canonicalDish: { th: "เมนูนี้คืออะไร", en: "What is this dish" },
+  canteenDish: SEARCH_TEXT.typeCanteenDish,
+  canonicalDish: SEARCH_TEXT.typeCanonicalDish,
   openDataPage: UI.odOpenData,
-  openDataDocument: { th: "เอกสารข้อมูลเปิด", en: "Open data document" },
+  openDataDocument: SEARCH_TEXT.typeOpenDataDocument,
 };

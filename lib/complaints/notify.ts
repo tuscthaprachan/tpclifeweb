@@ -14,6 +14,7 @@
  * not learn that a restricted complaint exists.
  */
 
+import { ensureSiteText } from "@/lib/content/site-text";
 import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 import { addNote, listContactSummaries, readContacts, type CaseActor, type StaffActor } from "@/lib/cases";
 import { contactAad } from "@/lib/cases/contacts";
@@ -130,6 +131,7 @@ async function noteOn(db: AuditExecutor, caseId: string, body: string, actor: Ca
 }
 
 async function send(db: AuditExecutor, caseId: string, kind: ComplainantNotice, actor: CaseActor, opts: NotifyOpts, render: (reference: string) => Promise<RenderedEmail>): Promise<NoticeOutcome> {
+  await ensureSiteText();
   const summaries = await summariesOf(db, caseId, actor);
   const person = summaries.find((c) => c.role === "reporter") ?? summaries[0];
   const decision = decideComplainantNotice({
@@ -197,6 +199,7 @@ export async function sendEscalationDigests(
   opts: { sender?: EmailSender; emailConfigured?: boolean; gapMs?: number } = {},
 ): Promise<number> {
   if (items.length === 0 || !(opts.emailConfigured ?? isEmailConfigured())) return 0;
+  await ensureSiteText();
   const recipients = await escalationRecipients(db, items);
   const sender = opts.sender ?? getEmailSender();
   let sent = 0;

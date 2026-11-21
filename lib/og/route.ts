@@ -12,6 +12,7 @@
  * generic content rather than throw: a share image must never 500.
  */
 
+import { ensureSiteText } from "@/lib/content/site-text";
 import type { Locale } from "@/lib/i18n/config";
 
 import { OG_CONTENT_TYPE, OG_SIZE, ogAlt, ogLocale, renderOgImage, type OgContent } from "./render";
@@ -19,7 +20,10 @@ import { OG_CONTENT_TYPE, OG_SIZE, ogAlt, ogLocale, renderOgImage, type OgConten
 type Resolver<P> = (params: P & { locale: Locale }) => Promise<OgContent> | OgContent;
 
 export function ogImageRoute<P extends { locale: string }>(resolve: Resolver<Omit<P, "locale">>) {
-  const content = (params: P) => resolve({ ...params, locale: ogLocale(params.locale) });
+  const content = async (params: P) => {
+    await ensureSiteText();
+    return resolve({ ...params, locale: ogLocale(params.locale) });
+  };
 
   return {
     async generateImageMetadata({ params }: { params: P | Promise<P> }) {

@@ -1,5 +1,6 @@
 "use client";
 
+import { DOMAIN_TEXT } from "@/components/domain/strings";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Grid } from "@/components/ui/Grid";
@@ -80,7 +81,7 @@ export function FormsResults({ locale, forms: allForms, query }: FormsResultsPro
             // copy exists; UI.searchNoResults is written for the free-text
             // search page ("try another word"), which does not describe a
             // dropdown filter with no matches.
-            title={locale === "th" ? "ไม่พบแบบฟอร์มที่ตรงกับตัวกรองที่เลือก" : "No forms match these filters"}
+            title={DOMAIN_TEXT.formsNoMatch[locale]}
             action={
               <Link href={localePath(locale, "/forms")} className="text-action underline">
                 {UI.clearFilters[locale]}
@@ -95,7 +96,7 @@ export function FormsResults({ locale, forms: allForms, query }: FormsResultsPro
               <Heading level={2}>
                 {/* TODO: add to UI strings. No shared label exists for the
                     highlighted/priority group of forms shown before the full list. */}
-                {locale === "th" ? "แบบฟอร์มที่ใช้บ่อย" : "Frequently used forms"}
+                {DOMAIN_TEXT.formsPriorityHeading[locale]}
               </Heading>
               <Grid minColumnWidth="18rem">
                 {priorityForms.map((form) => (

@@ -12,6 +12,7 @@
  * it never blocks the step that was just committed.
  */
 
+import { ensureSiteText } from "@/lib/content/site-text";
 import { and, eq } from "drizzle-orm";
 import type { CaseActor, PublicUpdateText } from "@/lib/cases";
 import { appendEvent, auditContextOf, lockCase, type NewEvent } from "@/lib/cases/internal";
@@ -103,6 +104,7 @@ async function record(db: AuditExecutor, caseId: string, actor: CaseActor, now: 
  * Never throws for a delivery problem.
  */
 export async function notifyBorrower(db: AuditExecutor, caseId: string, kind: BorrowerNotice, actor: CaseActor, opts: NotifyOpts = {}): Promise<NoticeOutcome> {
+  await ensureSiteText();
   const now = opts.now ?? new Date();
   const [contact] = await db
     .select({ id: caseContacts.id, hasEmail: caseContacts.emailEnc })

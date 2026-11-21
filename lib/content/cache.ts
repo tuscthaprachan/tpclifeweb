@@ -35,6 +35,7 @@ export const CACHE_TAGS = {
   redirects: "redirects",
   today: "today",
   servicePages: "servicePages",
+  siteText: "siteText",
 } as const;
 
 export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS];

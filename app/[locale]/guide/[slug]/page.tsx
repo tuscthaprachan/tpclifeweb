@@ -17,6 +17,7 @@ import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i
 import { UI } from "@/lib/i18n/strings";
 import { getContentPageBySlug, getContentPagePreview, getContentPages, resolveRichTextRefs } from "@/lib/content";
 import type { ContentPage } from "@/lib/content/types";
+import { GUIDE_DETAIL_TEXT } from "./text";
 
 const CATEGORY_LABEL = {
   transport: UI.categoryTransport,
@@ -25,12 +26,7 @@ const CATEGORY_LABEL = {
   governance: UI.categoryGovernance,
 };
 
-const STALE_REVIEW_LABEL = { th: "หน้านี้ยังไม่ได้ตรวจสอบมานานกว่าหนึ่งปี", en: "This page has not been reviewed in over a year" }; // TODO: add to UI strings
-const STALE_REVIEW_BODY = {
-  th: "เนื้อหาบางส่วนอาจไม่เป็นปัจจุบัน โปรดตรวจสอบกับผู้รับผิดชอบก่อนใช้งาน",
-  en: "Some details here may be out of date. Check with the responsible body before relying on them",
-}; // TODO: add to UI strings
-const STALE_AFTER_DAYS = 365;
+const STALE_REVIEW_LABEL = GUIDE_DETAIL_TEXT.staleReviewLabel; const STALE_REVIEW_BODY = GUIDE_DETAIL_TEXT.staleReviewBody; const STALE_AFTER_DAYS = 365;
 
 function isStale(lastReviewed: string | undefined, now: Date): boolean {
   if (!lastReviewed) return true;

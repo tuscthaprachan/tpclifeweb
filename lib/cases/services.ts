@@ -25,6 +25,7 @@ import type { StaffRole } from "@/lib/db/schema/staff-roles";
 import type { CaseService } from "@/lib/db/schema/cases";
 import type { AdminKey } from "@/lib/i18n/admin";
 import type { LocaleString } from "@/lib/i18n/config";
+import { CASE_TEXT } from "@/lib/cases/strings";
 import { withinReopenWindow } from "@/lib/complaints/reopen-window";
 
 export type { CaseService };
@@ -92,10 +93,8 @@ export interface ServiceDef {
   ownActionsNotice?: { error: AdminKey; panel: AdminKey };
 }
 
-const s = (th: string, en: string): LocaleString => ({ th, en });
-
-const RETURNED = s("คืนเจ้าของแล้ว", "Returned to the owner");
-const READY = s("พร้อมให้มารับ", "Ready to collect");
+const RETURNED = CASE_TEXT.lostReturned;
+const READY = CASE_TEXT.lostReady;
 
 /**
  * Lost report: submitted -> searching -> match_found -> ready_to_collect -> returned,
@@ -104,13 +103,13 @@ const READY = s("พร้อมให้มารับ", "Ready to collect");
 const LOST: MachineDef = {
   initial: "submitted",
   statuses: {
-    submitted: { label: s("รับเรื่องแล้ว", "Submitted"), publicLabel: s("รับเรื่องแล้ว", "Received"), tone: "info", terminal: false },
-    searching: { label: s("กำลังค้นหา", "Searching"), publicLabel: s("เรากำลังค้นหาให้", "We are looking for it"), tone: "info", terminal: false },
-    match_found: { label: s("พบของที่อาจตรงกัน", "Possible match found"), publicLabel: s("พบของที่อาจเป็นของคุณ", "We may have found it"), tone: "warning", terminal: false },
+    submitted: { label: CASE_TEXT.lostSubmittedStaff, publicLabel: CASE_TEXT.lostSubmittedPublic, tone: "info", terminal: false },
+    searching: { label: CASE_TEXT.lostSearchingStaff, publicLabel: CASE_TEXT.lostSearchingPublic, tone: "info", terminal: false },
+    match_found: { label: CASE_TEXT.lostMatchFoundStaff, publicLabel: CASE_TEXT.lostMatchFoundPublic, tone: "warning", terminal: false },
     ready_to_collect: { label: READY, publicLabel: READY, tone: "success", terminal: false },
     returned: { label: RETURNED, publicLabel: RETURNED, tone: "success", terminal: true },
-    closed_unfound: { label: s("ปิดเรื่อง ไม่พบของ", "Closed, not found"), publicLabel: s("ปิดเรื่อง ยังไม่พบของ", "Closed, not found"), tone: "neutral", terminal: true },
-    withdrawn: { label: s("ผู้แจ้งยกเลิก", "Withdrawn"), publicLabel: s("ยกเลิกเรื่องแล้ว", "Withdrawn"), tone: "neutral", terminal: true },
+    closed_unfound: { label: CASE_TEXT.lostClosedUnfoundStaff, publicLabel: CASE_TEXT.lostClosedUnfoundPublic, tone: "neutral", terminal: true },
+    withdrawn: { label: CASE_TEXT.lostWithdrawnStaff, publicLabel: CASE_TEXT.lostWithdrawnPublic, tone: "neutral", terminal: true },
   },
   transitions: {
     submitted: ["searching", "match_found", "closed_unfound", "withdrawn"],
@@ -133,12 +132,12 @@ const LOST: MachineDef = {
 const FOUND: MachineDef = {
   initial: "logged",
   statuses: {
-    logged: { label: s("บันทึกของแล้ว", "Logged"), publicLabel: null, tone: "info", terminal: false },
-    listed: { label: s("ประกาศในรายการของที่พบ", "Listed"), publicLabel: s("อยู่ในรายการของที่พบ", "Listed as found"), tone: "info", terminal: false },
-    claim_pending: { label: s("มีผู้ขอรับของ รอตรวจสอบ", "Claim pending"), publicLabel: s("กำลังตรวจสอบการอ้างสิทธิ์", "Checking a claim"), tone: "warning", terminal: false },
+    logged: { label: CASE_TEXT.foundLoggedStaff, publicLabel: null, tone: "info", terminal: false },
+    listed: { label: CASE_TEXT.foundListedStaff, publicLabel: CASE_TEXT.foundListedPublic, tone: "info", terminal: false },
+    claim_pending: { label: CASE_TEXT.foundClaimPendingStaff, publicLabel: CASE_TEXT.foundClaimPendingPublic, tone: "warning", terminal: false },
     ready_to_collect: { label: READY, publicLabel: READY, tone: "success", terminal: false },
     returned: { label: RETURNED, publicLabel: RETURNED, tone: "success", terminal: true },
-    withdrawn: { label: s("ถอนออกจากทะเบียน", "Removed from the register"), publicLabel: s("ถอนออกจากรายการแล้ว", "Removed from the register"), tone: "neutral", terminal: true },
+    withdrawn: { label: CASE_TEXT.foundWithdrawnStaff, publicLabel: CASE_TEXT.foundWithdrawnPublic, tone: "neutral", terminal: true },
   },
   transitions: {
     logged: ["listed", "claim_pending", "returned", "withdrawn"],
@@ -171,14 +170,14 @@ const FOUND: MachineDef = {
 const COMPLAINT: MachineDef = {
   initial: "received",
   statuses: {
-    received: { label: s("รับเรื่องแล้ว", "Received"), publicLabel: s("รับเรื่องแล้ว", "Received"), tone: "info", terminal: false },
-    acknowledged: { label: s("รับทราบแล้ว", "Acknowledged"), publicLabel: s("เจ้าหน้าที่รับทราบแล้ว", "Acknowledged by staff"), tone: "info", terminal: false },
-    in_progress: { label: s("กำลังดำเนินการ", "In progress"), publicLabel: s("กำลังดำเนินการ", "Being looked into"), tone: "warning", terminal: false },
-    reopened: { label: s("เปิดเรื่องอีกครั้ง", "Reopened"), publicLabel: s("เปิดเรื่องอีกครั้ง", "Reopened"), tone: "warning", terminal: false },
-    resolved: { label: s("แก้ไขแล้ว", "Resolved"), publicLabel: s("แก้ไขแล้ว", "Resolved"), tone: "success", terminal: true },
-    redirected: { label: s("ส่งต่อให้คณะหรือผู้สอน", "Redirected"), publicLabel: s("แนะนำหน่วยงานที่รับผิดชอบแล้ว", "Redirected to the right people"), tone: "neutral", terminal: true },
-    closed: { label: s("ปิดเรื่องแล้ว", "Closed"), publicLabel: s("ปิดเรื่องแล้ว", "Closed"), tone: "neutral", terminal: true },
-    withdrawn: { label: s("ผู้แจ้งยกเลิก", "Withdrawn"), publicLabel: s("ถอนข้อร้องเรียนแล้ว", "Withdrawn"), tone: "neutral", terminal: true },
+    received: { label: CASE_TEXT.complaintReceivedStaff, publicLabel: CASE_TEXT.complaintReceivedPublic, tone: "info", terminal: false },
+    acknowledged: { label: CASE_TEXT.complaintAcknowledgedStaff, publicLabel: CASE_TEXT.complaintAcknowledgedPublic, tone: "info", terminal: false },
+    in_progress: { label: CASE_TEXT.complaintInProgressStaff, publicLabel: CASE_TEXT.complaintInProgressPublic, tone: "warning", terminal: false },
+    reopened: { label: CASE_TEXT.complaintReopenedStaff, publicLabel: CASE_TEXT.complaintReopenedPublic, tone: "warning", terminal: false },
+    resolved: { label: CASE_TEXT.complaintResolvedStaff, publicLabel: CASE_TEXT.complaintResolvedPublic, tone: "success", terminal: true },
+    redirected: { label: CASE_TEXT.complaintRedirectedStaff, publicLabel: CASE_TEXT.complaintRedirectedPublic, tone: "neutral", terminal: true },
+    closed: { label: CASE_TEXT.complaintClosedStaff, publicLabel: CASE_TEXT.complaintClosedPublic, tone: "neutral", terminal: true },
+    withdrawn: { label: CASE_TEXT.complaintWithdrawnStaff, publicLabel: CASE_TEXT.complaintWithdrawnPublic, tone: "neutral", terminal: true },
   },
   transitions: {
     received: ["acknowledged", "in_progress", "resolved", "redirected", "withdrawn"],
@@ -208,15 +207,15 @@ const COMPLAINT: MachineDef = {
 const LOAN: MachineDef = {
   initial: "requested",
   statuses: {
-    requested: { label: s("รอพิจารณา", "Requested"), publicLabel: s("รอเจ้าหน้าที่พิจารณา", "Waiting for a decision"), tone: "info", terminal: false },
-    approved: { label: s("อนุมัติแล้ว รอรับของ", "Approved, to collect"), publicLabel: s("อนุมัติแล้ว มารับได้ตามวันเวลานัด", "Approved, collect at your booked time"), tone: "success", terminal: false },
-    on_loan: { label: s("ยืมออกไปแล้ว", "On loan"), publicLabel: s("รับอุปกรณ์ไปแล้ว", "Collected"), tone: "warning", terminal: false },
-    returned: { label: s("คืนครบ สภาพปกติ", "Returned"), publicLabel: s("คืนอุปกรณ์แล้ว", "Returned"), tone: "success", terminal: true },
-    compensation_due: { label: s("ชำรุดหรือสูญหาย รอชดใช้", "Compensation due"), publicLabel: s("มีอุปกรณ์ชำรุดหรือสูญหาย รอชดใช้", "Damage or loss to put right"), tone: "error", terminal: false },
-    settled: { label: s("ชดใช้เรียบร้อย", "Settled"), publicLabel: s("ชดใช้เรียบร้อยแล้ว", "Settled"), tone: "success", terminal: true },
-    declined: { label: s("ไม่อนุมัติ", "Declined"), publicLabel: s("ไม่อนุมัติ", "Not approved"), tone: "neutral", terminal: true },
-    cancelled: { label: s("ยกเลิกแล้ว", "Cancelled"), publicLabel: s("ยกเลิกแล้ว", "Cancelled"), tone: "neutral", terminal: true },
-    not_collected: { label: s("ไม่มารับ", "Not collected"), publicLabel: s("ไม่ได้มารับอุปกรณ์", "Not collected"), tone: "neutral", terminal: true },
+    requested: { label: CASE_TEXT.loanRequestedStaff, publicLabel: CASE_TEXT.loanRequestedPublic, tone: "info", terminal: false },
+    approved: { label: CASE_TEXT.loanApprovedStaff, publicLabel: CASE_TEXT.loanApprovedPublic, tone: "success", terminal: false },
+    on_loan: { label: CASE_TEXT.loanOnLoanStaff, publicLabel: CASE_TEXT.loanOnLoanPublic, tone: "warning", terminal: false },
+    returned: { label: CASE_TEXT.loanReturnedStaff, publicLabel: CASE_TEXT.loanReturnedPublic, tone: "success", terminal: true },
+    compensation_due: { label: CASE_TEXT.loanCompensationDueStaff, publicLabel: CASE_TEXT.loanCompensationDuePublic, tone: "error", terminal: false },
+    settled: { label: CASE_TEXT.loanSettledStaff, publicLabel: CASE_TEXT.loanSettledPublic, tone: "success", terminal: true },
+    declined: { label: CASE_TEXT.loanDeclinedStaff, publicLabel: CASE_TEXT.loanDeclinedPublic, tone: "neutral", terminal: true },
+    cancelled: { label: CASE_TEXT.loanCancelledStaff, publicLabel: CASE_TEXT.loanCancelledPublic, tone: "neutral", terminal: true },
+    not_collected: { label: CASE_TEXT.loanNotCollectedStaff, publicLabel: CASE_TEXT.loanNotCollectedPublic, tone: "neutral", terminal: true },
   },
   transitions: {
     requested: ["approved", "declined", "cancelled"],
@@ -236,34 +235,34 @@ export const SERVICES: Record<CaseService, ServiceDef> = {
   lost_found: {
     service: "lost_found",
     prefix: "LF",
-    label: s("ของหายและของที่พบ", "Lost and found"),
+    label: CASE_TEXT.serviceLostFound,
     roles: ["officer", "admin"],
     statusMoves: "generic",
     kinds: {
-      lost: { label: s("แจ้งของหาย", "Lost report"), machine: LOST },
-      found: { label: s("ของที่พบ", "Found item"), machine: FOUND },
+      lost: { label: CASE_TEXT.kindLost, machine: LOST },
+      found: { label: CASE_TEXT.kindFound, machine: FOUND },
     },
   },
   complaint: {
     service: "complaint",
     prefix: "CP",
-    label: s("ข้อร้องเรียน", "Complaints"),
+    label: CASE_TEXT.serviceComplaint,
     roles: ["officer", "admin"],
     statusMoves: "own_actions",
     ownActionsNotice: { error: "errCaseUseComplaintActions", panel: "cpcStatusUsePanel" },
     kinds: {
-      complaint: { label: s("ข้อร้องเรียน", "Complaint"), machine: COMPLAINT },
+      complaint: { label: CASE_TEXT.kindComplaint, machine: COMPLAINT },
     },
   },
   borrowing: {
     service: "borrowing",
     prefix: "BR",
-    label: s("ยืมอุปกรณ์", "Equipment loans"),
+    label: CASE_TEXT.serviceBorrowing,
     roles: ["officer", "admin"],
     statusMoves: "own_actions",
     ownActionsNotice: { error: "errCaseUseLoanActions", panel: "brStatusUsePanel" },
     kinds: {
-      loan: { label: s("คำขอยืมอุปกรณ์", "Loan request"), machine: LOAN },
+      loan: { label: CASE_TEXT.kindLoan, machine: LOAN },
     },
   },
 };
@@ -326,7 +325,7 @@ export function canSystemTransition(service: CaseService, kind: string, from: st
 }
 
 /** What the person sees for the current status; statuses with no public label read as "In progress". */
-export const IN_PROGRESS_LABEL: LocaleString = s("กำลังดำเนินการ", "In progress");
+export const IN_PROGRESS_LABEL: LocaleString = CASE_TEXT.inProgress;
 
 export function publicStatusLabel(service: CaseService, kind: string, status: string): LocaleString {
   return getStatusDef(service, kind, status)?.publicLabel ?? IN_PROGRESS_LABEL;

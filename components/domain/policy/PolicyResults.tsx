@@ -1,5 +1,6 @@
 "use client";
 
+import { DOMAIN_TEXT } from "@/components/domain/strings";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { liveRegionProps } from "@/lib/a11y";
@@ -103,7 +104,7 @@ export function PolicyResults({ locale, policies: allPolicies, generatedAt, quer
             // exists; UI.searchNoResults is written for the free-text search page
             // ("try another word"), which does not describe a dropdown filter with
             // no matches.
-            title={locale === "th" ? "ไม่พบนโยบายที่ตรงกับตัวกรองที่เลือก" : "No policies match these filters"}
+            title={DOMAIN_TEXT.policyNoMatch[locale]}
             action={
               <Link href={localePath(locale, "/policy")} className="text-action underline">
                 {UI.clearFilters[locale]}

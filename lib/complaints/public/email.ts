@@ -5,26 +5,30 @@
  * get this. Thai first and English second in one message.
  */
 
+import { ensureSiteText } from "@/lib/content/site-text";
 import { getEmailSender, isEmailConfigured, type EmailMessage } from "@/lib/email";
+import { EMAIL_ACCOUNT_TEXT, bothLanguages } from "@/lib/email/strings";
+import { fillText } from "@/lib/i18n/editable";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 export { isEmailConfigured };
 
 export function trackingLinkEmail(reference: string, link: string): Omit<EmailMessage, "to"> {
+  const T = EMAIL_ACCOUNT_TEXT;
   const th = {
-    heading: "ลิงก์ส่วนตัวสำหรับติดตามข้อร้องเรียนของคุณ",
-    lines: [`เลขอ้างอิงคือ ${reference}`, "ใช้ลิงก์ด้านล่างเพื่อดูความคืบหน้า ใครมีลิงก์นี้ก็ดูเรื่องนี้ได้ จึงไม่ควรส่งต่อให้ผู้อื่น"],
-    linkLabel: "ลิงก์ส่วนตัว",
-    after: ["หากคุณไม่ได้เป็นผู้ส่งข้อร้องเรียนนี้ ไม่ต้องดำเนินการใดกับอีเมลฉบับนี้"],
+    heading: T.cpHeading.th,
+    lines: [fillText(T.cpReference.th, { reference }), T.cpLine.th],
+    linkLabel: T.cpLinkLabel.th,
+    after: [T.cpAfter.th],
   };
   const en = {
-    heading: "Your private link to track your complaint",
-    lines: [`Your reference number is ${reference}.`, "Use the link below to see progress. Anyone with the link can see this complaint, so do not share it."],
-    linkLabel: "Your private link",
-    after: ["If you did not send this, ignore this email."],
+    heading: T.cpHeading.en,
+    lines: [fillText(T.cpReference.en, { reference }), T.cpLine.en],
+    linkLabel: T.cpLinkLabel.en,
+    after: [T.cpAfter.en],
   };
-  const subject = `ลิงก์ติดตามข้อร้องเรียน ${reference} / Your private link for complaint ${reference}`;
+  const subject = bothLanguages(T.cpSubject, { reference });
   const text = [th, en].map((s) => [s.heading, "", ...s.lines.flatMap((l) => [l, ""]), s.linkLabel, link, "", ...s.after].join("\n")).join("\n\n---\n\n");
   const section = (lang: "th" | "en", s: typeof th) =>
     `<div lang="${lang}"><h2 style="font-size:20px;margin:0 0 16px">${esc(s.heading)}</h2>${s.lines.map((l) => `<p style="margin:0 0 16px">${esc(l)}</p>`).join("")}<p style="margin:0 0 4px">${esc(s.linkLabel)}</p><p style="margin:0 0 24px"><a href="${esc(link)}" style="color:#1d70b8;word-break:break-all">${esc(link)}</a></p>${s.after.map((l) => `<p style="margin:0 0 16px">${esc(l)}</p>`).join("")}</div>`;
@@ -35,6 +39,7 @@ export function trackingLinkEmail(reference: string, link: string): Omit<EmailMe
 /** Sends the link. Returns false (never throws) when email is off or the send fails. */
 export async function sendTrackingLinkEmail(to: string, reference: string, link: string): Promise<boolean> {
   if (!isEmailConfigured()) return false;
+  await ensureSiteText();
   try {
     await getEmailSender().send({ to, ...trackingLinkEmail(reference, link) });
     return true;
