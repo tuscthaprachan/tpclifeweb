@@ -54,6 +54,16 @@ export default async function AboutIndexPage({
 
       <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
         <PageTitle path="/about">{UI.about[locale]}</PageTitle>
+        <p className="m-0 text-xl">{UI.aboutMadeTogether[locale]}</p>
+        <section aria-labelledby="about-why" className="flex flex-col gap-[var(--space-2)]">
+          <Heading level={2} id="about-why">
+            {UI.aboutWhyHeading[locale]}
+          </Heading>
+          <p className="m-0">{UI.aboutWhyProblem[locale]}</p>
+          <p className="m-0">{UI.aboutWhyAim[locale]}</p>
+          <p className="m-0">{UI.aboutWhyTogether[locale]}</p>
+          <p className="m-0">{UI.aboutWhyInvite[locale]}</p>
+        </section>
         <section aria-labelledby="about-service" className="flex flex-col gap-[var(--space-2)]">
           <Heading level={2} id="about-service">
             {UI.aboutServiceHeading[locale]}

@@ -1286,6 +1286,27 @@ const UI_TEXT = {
   phaseWhatThisMeans: { th: "ดูว่าหมายถึงอะไร", en: "What this means" },
   aboutServiceHeading: { th: "เกี่ยวกับบริการนี้", en: "About this service" },
   aboutStudentBodies: { th: "องค์กรนักศึกษา", en: "Student bodies" },
+  aboutMadeTogether: {
+    th: "เว็บไซต์นี้สร้างขึ้นร่วมกันโดย อมธ. ท่าพระจันทร์ และสภานักศึกษา ท่าพระจันทร์",
+    en: "This website is made together by TUSU Tha Prachan and TUSC Tha Prachan.",
+  },
+  aboutWhyHeading: { th: "ทำไมเราจึงสร้างเว็บไซต์นี้", en: "Why we made it" },
+  aboutWhyProblem: {
+    th: "ชีวิตที่ท่าพระจันทร์มีเรื่องที่ควรรู้มากมาย ทั้งกินอะไรดี เดินทางอย่างไร ต้องกรอกแบบฟอร์มไหน สัปดาห์นี้มีกิจกรรมอะไร และเมื่อมีปัญหาควรถามใคร แต่ข้อมูลเหล่านี้มักกระจัดกระจายอยู่ตามโพสต์ แชต และบอร์ดประกาศ จนการหาข้อมูลให้เจอขึ้นอยู่กับว่ารู้จักคนที่ใช่หรือไม่",
+    en: "Life at Tha Prachan is full of things worth knowing: where to eat, how to get around, which form to fill in, what is on this week, and who to ask when something goes wrong. Too often that information is scattered across posts, chats and noticeboards, and finding it depends on knowing the right person.",
+  },
+  aboutWhyAim: {
+    th: "เราอยากเปลี่ยนเรื่องนี้ เป้าหมายของเราเรียบง่าย คือทำให้ข้อมูลหาได้ง่ายขึ้น และให้ชีวิตที่ท่าพระจันทร์มีศูนย์กลางที่มั่นคง เป็นที่ที่นักศึกษาทุกคนกลับมาได้เสมอ ไม่ว่าจะต้องการอะไรหรือเมื่อใด",
+    en: "We want to change that. Our aim is simple: to make information easier to find, and to give life at Tha Prachan a central anchor, one place every student can come back to, whatever they need and whenever they need it.",
+  },
+  aboutWhyTogether: {
+    th: "เราเชื่อว่าสององค์กรทำงานร่วมกันได้ดีกว่าแยกกันทำ การสร้างเว็บไซต์นี้ด้วยกันทำให้นักศึกษาไม่ต้องรู้ว่าเรื่องไหนเป็นงานขององค์กรใด เพียงแค่รู้ว่าต้องมาที่นี่",
+    en: "We believe the two bodies serve students better together than apart. Building one site between us means no student has to know which body looks after what. They only need to know to come here.",
+  },
+  aboutWhyInvite: {
+    th: "เว็บไซต์นี้เป็นของนักศึกษาที่ใช้งาน และจะเติบโตต่อไปตามสิ่งที่พวกคุณต้องการ หากมีอะไรขาดหาย ไม่ชัดเจน หรือไม่ถูกต้อง บอกเราได้เสมอ",
+    en: "This site belongs to the students it serves, and it will keep growing as we learn what you need. If something is missing, unclear or wrong, tell us.",
+  },
   homeThenDeparture: { th: "รอบต่อไป", en: "then" },
   homeInMinutes: { th: "อีกประมาณ {n} นาที", en: "in about {n} min" },
   homeClosesTomorrow: { th: "ปิดพรุ่งนี้ {time}", en: "Closes {time} tomorrow" },
