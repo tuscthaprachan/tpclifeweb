@@ -1,5 +1,5 @@
 import { MapPin } from "lucide-react";
-import { IconText, Link } from "@/components/ui";
+import { IconText, Link, TARGET_LINE_PADDING, cx } from "@/components/ui";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { Organisation } from "@/lib/content/types";
 import { CopyContactButton } from "./CopyContactButton";
@@ -38,7 +38,7 @@ export function OrganisationListItem({ org, locale }: { org: Organisation; local
           const label = contactLabel(contact, locale);
           return (
             <li key={contact._key}>
-              <IconText icon={contactIcon(contact.channel)} size={14} className="items-center">
+              <IconText icon={contactIcon(contact.channel)} size={14} target>
                 {href ? (
                   // IconText wraps the link in spans, so the global
                   // `li > a:only-child` 2.5.8 rule no longer reaches it: give
@@ -46,16 +46,16 @@ export function OrganisationListItem({ org, locale }: { org: Organisation; local
                   <Link
                     href={href}
                     locale={locale}
-                    className="inline-flex min-h-[var(--target-min)] items-center font-medium text-action"
+                    className={cx("inline-block min-h-[var(--target-min)] font-medium text-action", TARGET_LINE_PADDING)}
                   >
                     {label}
                   </Link>
                 ) : (
-                  <span className="text-ink-600">{label}</span>
+                  <span className={cx("inline-block text-ink-600", TARGET_LINE_PADDING)}>{label}</span>
                 )}
               </IconText>
               {contact.channel === "line" ? (
-                <span className="ml-[var(--space-2)] inline-flex items-center gap-[var(--space-2)]">
+                <span className="ml-[var(--space-2)] inline-flex items-center gap-[var(--space-2)] align-top">
                   <CopyContactButton value={contact.value} locale={locale} />
                 </span>
               ) : null}

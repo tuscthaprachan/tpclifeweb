@@ -16,7 +16,7 @@ import {
 } from "@/components/domain/today";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { MapPin } from "lucide-react";
-import { Container, Heading, IconText, Link, PageTitle, Stack, SummaryList, Timestamp, WarningText } from "@/components/ui";
+import { Container, Heading, IconText, Link, PageTitle, Stack, SummaryList, TARGET_LINE_PADDING, Timestamp, WarningText, cx } from "@/components/ui";
 import { getActiveServiceAlerts, getPlaceBySlug, getTodaySettings } from "@/lib/content";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
@@ -147,18 +147,18 @@ export default async function PlacePage({ params }: Props) {
                 const href = contactHref(contact);
                 return (
                   <li key={contact._key}>
-                    <IconText icon={contactIcon(contact.channel)}>
+                    <IconText icon={contactIcon(contact.channel)} target>
                       <span className="text-ink-600">{contactLabel(contact, locale)}: </span>
                       {href ? (
                         <Link
                           href={href}
                           locale={locale}
-                          className="inline-flex min-h-[var(--target-min)] items-center"
+                          className={cx("inline-block min-h-[var(--target-min)]", TARGET_LINE_PADDING)}
                         >
                           {contact.value}
                         </Link>
                       ) : (
-                        <span>{contact.value}</span>
+                        <span className={cx("inline-block", TARGET_LINE_PADDING)}>{contact.value}</span>
                       )}
                     </IconText>
                   </li>
