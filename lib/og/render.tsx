@@ -176,6 +176,30 @@ function clip(text: string, max: number): string {
   return chars.length > max ? `${chars.slice(0, max - 1).join("").trimEnd()}…` : chars.join("");
 }
 
+const THAI = /[฀-๿]/;
+const thaiWords = new Intl.Segmenter("th", { granularity: "word" });
+
+/**
+ * Satori breaks lines only at spaces, and Thai puts no spaces between words,
+ * so a Thai sentence is one unbreakable run that overflows its box. Split it
+ * into words (spaces stay on the word before them) and lay them out as
+ * wrapping flex items, so a line can break between any two words. The
+ * container needs `flexWrap: "wrap"`. Text without Thai is returned as is.
+ */
+function wrapWords(text: string, shape: (s: string) => string = shapeThai): React.ReactNode {
+  if (!THAI.test(text)) return shape(text);
+  const words: string[] = [];
+  for (const { segment } of thaiWords.segment(text)) {
+    if (/^\s+$/.test(segment) && words.length > 0) words[words.length - 1] += segment;
+    else words.push(segment);
+  }
+  return words.map((word, i) => (
+    <span key={i} style={{ whiteSpace: "pre" }}>
+      {shape(word)}
+    </span>
+  ));
+}
+
 function titleSize(title: string): number {
   const n = Array.from(title).length;
   if (n <= 24) return 84;
@@ -269,6 +293,7 @@ async function renderOgHero({ locale, title }: OgContent): Promise<ImageResponse
         <div
           style={{
             display: "flex",
+            flexWrap: "wrap",
             fontSize: 36,
             lineHeight: locale === "th" ? 1.6 : 1.35,
             color: palette.inkMuted,
@@ -276,7 +301,7 @@ async function renderOgHero({ locale, title }: OgContent): Promise<ImageResponse
             maxWidth: 660,
           }}
         >
-          {shapeThai(clip(title, 120))}
+          {wrapWords(clip(title, 120))}
         </div>
       </div>,
       <div key="campus" style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 28, color: palette.inkMuted }}>
@@ -301,8 +326,8 @@ export async function renderOgImage(content: OgContent): Promise<ImageResponse> 
   const name = await serviceName(content.locale);
   const { locale, title, kicker, description, tone = "brand" } = content;
   const { fill, soft, ink } = TONE[tone];
-  const heading = shapeThai(clip(title, 110));
-  const lede = description ? shapeThai(clip(description, 160)) : undefined;
+  const heading = clip(title, 110);
+  const lede = description ? clip(description, 160) : undefined;
 
   return frame(
     soft,
@@ -328,16 +353,28 @@ export async function renderOgImage(content: OgContent): Promise<ImageResponse> 
         <div
           style={{
             display: "flex",
+            flexWrap: "wrap",
             fontSize: titleSize(heading),
             fontWeight: 700,
             lineHeight: locale === "th" ? 1.45 : 1.2,
             letterSpacing: "-0.01em",
           }}
         >
-          {heading}
+          {wrapWords(heading)}
         </div>
         {lede ? (
-          <div style={{ display: "flex", fontSize: 32, lineHeight: locale === "th" ? 1.6 : 1.4, color: palette.inkMuted, marginTop: 24 }}>{lede}</div>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              fontSize: 32,
+              lineHeight: locale === "th" ? 1.6 : 1.4,
+              color: palette.inkMuted,
+              marginTop: 24,
+            }}
+          >
+            {wrapWords(lede)}
+          </div>
         ) : null}
       </div>,
       <div
