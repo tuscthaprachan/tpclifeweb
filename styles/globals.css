@@ -498,3 +498,25 @@
     inline-size: 90%;
   }
 }
+
+.search-roll-in {
+  animation: search-roll-in 450ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.search-roll-out {
+  animation: search-roll-out 450ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes search-roll-in {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes search-roll-out {
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}

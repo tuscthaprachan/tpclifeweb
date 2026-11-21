@@ -64,7 +64,7 @@ export function SearchBar({ locale, defaultValue = "", label, hint, examples, va
 
   const [query, setQuery] = useState(defaultValue);
   const [focused, setFocused] = useState(false);
-  const [exampleIndex, setExampleIndex] = useState(0);
+  const [exampleTick, setExampleTick] = useState(0);
   const exampleCount = examples?.length ?? 0;
   const [state, dispatch] = useReducer(searchComboboxReducer, initialSearchCombobox);
   const status = useStatusMessage<string>();
@@ -88,11 +88,14 @@ export function SearchBar({ locale, defaultValue = "", label, hint, examples, va
   useEffect(() => {
     if (exampleCount < 2 || focused || query !== "") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = setInterval(() => setExampleIndex((index) => (index + 1) % exampleCount), EXAMPLE_MS);
+    const timer = setInterval(() => setExampleTick((tick) => tick + 1), EXAMPLE_MS);
     return () => clearInterval(timer);
   }, [exampleCount, focused, query]);
 
-  const placeholder = examples && exampleCount > 0 ? examples[exampleIndex % exampleCount] : label ? undefined : UI.searchPlaceholder[locale];
+  const rolling = examples !== undefined && exampleCount > 0;
+  const example = rolling ? examples[exampleTick % exampleCount] : undefined;
+  const previousExample = rolling && exampleTick > 0 ? examples[(exampleTick - 1) % exampleCount] : undefined;
+  const placeholder = example ?? (label ? undefined : UI.searchPlaceholder[locale]);
   const hintText = pill ? hint : (hint ?? UI.searchHint[locale]);
 
   function loadIndex(): Promise<SearchRecord[]> {
@@ -222,10 +225,28 @@ export function SearchBar({ locale, defaultValue = "", label, hint, examples, va
             onKeyDown={handleKeyDown}
             style={pill ? { borderRadius: "var(--radius-pill)" } : undefined}
             className={cx(
-              "min-h-[var(--target-min)] w-full px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900",
+              "peer min-h-[var(--target-min)] w-full px-[var(--space-3)] py-[var(--space-2)] text-base text-ink-900",
               pill ? "block h-12 min-h-12 rounded-pill border-0 bg-transparent px-[var(--space-4)] py-0 placeholder:text-ink-600" : "rounded-control border border-line-strong bg-surface",
+              rolling && "placeholder:text-transparent",
             )}
           />
+          {rolling ? (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 start-[var(--space-4)] end-[var(--space-2)] hidden items-center overflow-hidden text-base text-ink-600 peer-placeholder-shown:flex"
+            >
+              <span className="relative block h-[1lh] w-full overflow-hidden">
+                {previousExample !== undefined ? (
+                  <span key={`out-${exampleTick}`} className="search-roll-out absolute inset-0 truncate">
+                    {previousExample}
+                  </span>
+                ) : null}
+                <span key={`in-${exampleTick}`} className={cx("absolute inset-0 truncate", exampleTick > 0 && "search-roll-in")}>
+                  {example}
+                </span>
+              </span>
+            </span>
+          ) : null}
           <ul
             id={listboxId}
             role="listbox"
