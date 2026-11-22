@@ -6,7 +6,7 @@ import type { AuditExecutor } from "@/lib/db/audit";
 import { shuttleRoutes, shuttleStops } from "@/lib/db/schema";
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { ci, groupBy, iso, ls, lsOpt, ltOpt, opt, optList } from "./map";
-import { safeFetch } from "./safe-fetch";
+import { safeFetch, safeFetchResult, type FetchResult } from "./safe-fetch";
 import type { ShuttleRoute } from "./types";
 
 /**
@@ -72,8 +72,12 @@ const cachedActiveRoutes = cachedRead(["shuttle-routes"], [CACHE_TAGS.shuttle], 
   readActiveShuttleRoutes(getDb()),
 );
 
+export async function getActiveShuttleRoutesResult(): Promise<FetchResult<ShuttleRoute[]>> {
+  return safeFetchResult<ShuttleRoute[]>("getActiveShuttleRoutes", () => cachedActiveRoutes(), []);
+}
+
 export async function getActiveShuttleRoutes(): Promise<ShuttleRoute[]> {
-  return safeFetch<ShuttleRoute[]>("getActiveShuttleRoutes", () => cachedActiveRoutes(), []);
+  return (await getActiveShuttleRoutesResult()).data;
 }
 
 const cachedRouteSlugs = cachedRead(["shuttle-route-slugs"], [CACHE_TAGS.shuttle], REVALIDATE.content, async () =>

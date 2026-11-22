@@ -248,3 +248,18 @@ export function minutesUntilClock(time: string, nextDay: boolean, now: Date): nu
   const current = bangkokMinutesOfDay(now);
   return Math.max(0, target < current ? target + 1440 - current : target - current);
 }
+
+export type NextOpen = { when: "today" | "tomorrow" | "later"; dateKey: string; opens: string };
+
+/**
+ * When a place that is closed now opens next: later today, or the next day it
+ * has hours. Null when it has no hours, or none within the horizon.
+ */
+export function nextOpenFor(place: CampusPlace, now: Date, status: PlaceHoursStatus = getPlaceHoursStatus(place, now)): NextOpen | null {
+  if (status.kind !== "closed" || !place.openingHours || place.openingHours.length === 0) return null;
+  const today = bangkokDateKey(now);
+  if (status.opensNext) return { when: "today", dateKey: today, opens: status.opensNext };
+  const next = nextOpeningAfterToday(place.openingHours, now);
+  if (!next) return null;
+  return { when: next.dateKey === addDays(today, 1) ? "tomorrow" : "later", dateKey: next.dateKey, opens: next.opens };
+}

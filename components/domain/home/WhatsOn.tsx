@@ -1,7 +1,7 @@
 import NextLink from "next/link";
 import { CalendarDays, Newspaper, Sparkles } from "lucide-react";
 
-import { Button, DecorativeIcon, EmptyState, Heading, StatusTag, Timestamp } from "@/components/ui";
+import { DecorativeIcon, Heading, StatusTag, Timestamp } from "@/components/ui";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { formatTime, isoDateTime } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
@@ -41,7 +41,7 @@ export function WhatsOn({ locale, events, news }: WhatsOnProps) {
 
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="activity" icon={Sparkles}>
+      <SectionBar id={HEADING_ID} icon={Sparkles}>
         {UI.homeWhatsOn[locale]}
       </SectionBar>
 
@@ -50,17 +50,7 @@ export function WhatsOn({ locale, events, news }: WhatsOnProps) {
         {UI.homeEvents[locale]}
       </Heading>
       {upcomingEvents.length === 0 ? (
-        <EmptyState
-          illustration={false}
-          icon={CalendarDays}
-          className="mt-[var(--space-3)]"
-          title={UI.noUpcomingEvents[locale]}
-          action={
-            <Button href={localePath(locale, "/events")} variant="secondary" size="sm">
-              {UI.allEvents[locale]}
-            </Button>
-          }
-        />
+        <p className="m-0 mt-[var(--space-2)] text-ink-600">{UI.hlNoEvents[locale]}</p>
       ) : (
         <ul className="m-0 list-none p-0">
           {upcomingEvents.map((event) => {
@@ -94,17 +84,7 @@ export function WhatsOn({ locale, events, news }: WhatsOnProps) {
         {UI.homeNews[locale]}
       </Heading>
       {latestNews.length === 0 ? (
-        <EmptyState
-          illustration={false}
-          icon={Newspaper}
-          className="mt-[var(--space-3)]"
-          title={UI.nothingHere[locale]}
-          action={
-            <Button href={localePath(locale, "/news")} variant="secondary" size="sm">
-              {UI.allNews[locale]}
-            </Button>
-          }
-        />
+        <p className="m-0 mt-[var(--space-2)] text-ink-600">{UI.nothingHere[locale]}</p>
       ) : (
         <ul className="m-0 list-none p-0">
           {latestNews.map((post) => (

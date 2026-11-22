@@ -6,7 +6,9 @@
  * Every read goes through `lib/content`'s `safeFetch`-wrapped functions,
  * fetched in parallel with `Promise.all` so one slow or failed read cannot
  * serialise or blank the rest of the page. A database outage yields empty
- * arrays, and every block has its own empty state.
+ * arrays, and every block has its own empty state. The alerts, shuttle,
+ * places and weather reads also report whether they failed, so the page can
+ * say "unavailable" instead of showing an empty state that looks like good news.
  *
  * The alerts and shuttle reads are cached for a minute and invalidated by tag
  * when an alert or route changes (lib/content/cache.ts).
@@ -19,19 +21,20 @@ import { ActivityFeed } from "@/components/domain/activity";
 import { PopularTasks, TodayList, WHATS_ON_NEWS, WhatsOn, isLibrary, splitAlerts } from "@/components/domain/home";
 import { SearchBar } from "@/components/domain/search/SearchBar";
 import { ServiceAlert } from "@/components/domain/ServiceAlert";
+import { HeroPurpose } from "@/components/domain/home/HeroPurpose";
 import { getSiteSettings } from "@/components/layout/site-settings";
 import { Dome } from "@/components/illustrations/Dome";
-import { Container, Heading } from "@/components/ui";
+import { Container, Heading, WarningText } from "@/components/ui";
 import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { alternatesFor } from "@/lib/i18n/metadata";
 import { UI } from "@/lib/i18n/strings";
 import { getCampusWeather } from "@/lib/weather/read";
 import {
-  getActiveServiceAlerts,
-  getActiveShuttleRoutes,
-  getKeyPlaces,
+  getActiveServiceAlertsResult,
+  getActiveShuttleRoutesResult,
+  getKeyPlacesResult,
   getNewsPage,
-  getPlaces,
+  getPlacesResult,
   getPolicies,
   getTodaySettings,
   getUpcomingEvents,
@@ -69,17 +72,28 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const now = new Date();
   const settings = await getSiteSettings();
 
-  const [alerts, routes, keyPlaces, allPlaces, events, newsPage, policies, weather, todaySettings] = await Promise.all([
-    getActiveServiceAlerts(),
-    getActiveShuttleRoutes(),
-    getKeyPlaces(),
-    getPlaces(),
+  const [alertsRead, routesRead, keyPlacesRead, allPlacesRead, events, newsPage, policies, weatherRead, todaySettings] = await Promise.all([
+    getActiveServiceAlertsResult(),
+    getActiveShuttleRoutesResult(),
+    getKeyPlacesResult(),
+    getPlacesResult(),
     getUpcomingEvents(),
     getNewsPage(1, NEWS_FETCH_COUNT),
     getPolicies(),
     getCampusWeather(),
     getTodaySettings(),
   ]);
+
+  const alerts = alertsRead.data;
+  const routes = routesRead.data;
+  const keyPlaces = keyPlacesRead.data;
+  const allPlaces = allPlacesRead.data;
+  const weather = weatherRead;
+  const unavailable = {
+    shuttle: !routesRead.ok,
+    hours: !keyPlacesRead.ok || !allPlacesRead.ok,
+    weather: !weather.heat && !weather.pm25,
+  };
 
   const { banner, rows: alertRows } = splitAlerts(alerts);
   const libraries = allPlaces.filter(isLibrary);
@@ -94,6 +108,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <Heading level={1} className={`col-start-1 row-start-1 m-0 max-w-[12em] self-center ${locale === "th" ? "text-[length:clamp(2.5rem,20vw_-_1.375rem,3.75rem)] font-normal [font-family:var(--font-chanok),var(--font-th)] sm:text-[length:clamp(4rem,1.75rem_+_5.4vw,6rem)]" : "text-[length:clamp(1.5rem,0.75rem_+_3.5vw,2.25rem)] font-bold sm:text-[length:clamp(2.25rem,0.75rem_+_3.6vw,3.75rem)]"}`}>
               {UI.homeHeading[locale]}
             </Heading>
+            <div className="col-span-2 row-start-2 sm:col-span-1">
+              <HeroPurpose locale={locale} />
+            </div>
             <SearchBar
               locale={locale}
               label={UI.homeSearchLabel[locale]}
@@ -106,7 +123,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 UI.homeSearchExample6[locale],
               ]}
               variant="pill"
-              className="relative col-span-2 row-start-2 mt-[var(--space-2)] sm:mt-[var(--space-6)] sm:max-w-[40rem]"
+              className="relative col-span-2 row-start-3 mt-[var(--space-3)] sm:mt-[var(--space-6)] sm:max-w-[40rem]"
             />
           </div>
           <Dome className="pointer-events-none col-start-2 row-start-1 -mt-2 w-24 self-end [mask-image:linear-gradient(to_bottom,#000_90%,transparent)] sm:my-0 sm:w-[170px] md:w-[220px] lg:w-[260px]" />
@@ -114,11 +131,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </div>
 
       <Container className="flex flex-col gap-[var(--space-6)] pb-[var(--space-8)] pt-[var(--space-5)]">
-        {banner ? <ServiceAlert locale={locale} alert={banner} announce={false} /> : null}
+        {!alertsRead.ok ? (
+          <WarningText>
+            <span className="visually-hidden">{UI.warning[locale]}: </span>
+            {UI.htdAlertsUnavailable[locale]}
+          </WarningText>
+        ) : banner ? (
+          <ServiceAlert locale={locale} alert={banner} announce={false} compact now={now} />
+        ) : null}
 
         <div className="grid items-start gap-[var(--space-6)] sm:grid-cols-2 sm:gap-x-[var(--space-8)]">
-          <TodayList locale={locale} alerts={alertRows} routes={routes} places={otherKeyPlaces} libraries={libraries} weather={weather} settings={todaySettings} now={now} />
-          <PopularTasks locale={locale} tasks={settings.homeTasks} />
+          <TodayList locale={locale} alerts={alertRows} routes={routes} places={otherKeyPlaces} libraries={libraries} weather={weather} settings={todaySettings} now={now} unavailable={unavailable} />
+          <div className="order-first sm:order-none">
+            <PopularTasks locale={locale} tasks={settings.homeTasks} />
+          </div>
         </div>
 
         <div className="grid items-start gap-[var(--space-6)] sm:grid-cols-2 sm:gap-x-[var(--space-8)]">

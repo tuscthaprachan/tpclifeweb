@@ -24,7 +24,12 @@ export function PhaseBanner({ locale, phase, note }: { locale: Locale; phase: Se
     <aside aria-label={tag} className="border-b border-line">
       <ShellContainer className="flex items-center gap-2 py-1 text-sm">
         <strong className="shrink-0 rounded-pill bg-governance px-2 py-0.5 font-semibold uppercase text-ink-on-fill">{tag}</strong>
-        <span className="text-ink-900">
+        <span className="min-w-0 text-ink-900 sm:hidden">
+          <Link href={localePath(locale, "/about")} className="inline-flex min-h-[var(--target-min)] items-center">
+            {UI.hlPhaseShort[locale]}
+          </Link>
+        </span>
+        <span className="hidden text-ink-900 sm:inline">
           {message ? `${message} ` : null}
           <Link href={localePath(locale, "/about")} className="inline-flex min-h-[var(--target-min)] items-center">
             {UI.phaseWhatThisMeans[locale]}

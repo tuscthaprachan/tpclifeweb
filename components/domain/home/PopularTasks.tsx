@@ -19,7 +19,7 @@ interface PopularTasksProps {
 export function PopularTasks({ locale, tasks }: PopularTasksProps) {
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="action" icon={Star}>
+      <SectionBar id={HEADING_ID} icon={Star}>
         {UI.homePopular[locale]}
       </SectionBar>
 
@@ -51,9 +51,10 @@ export function PopularTasks({ locale, tasks }: PopularTasksProps) {
 
       <NextLink
         href={localePath(locale, "/services")}
-        className="inline-flex min-h-[var(--target-min)] items-center font-semibold"
+        className="mt-[var(--space-3)] inline-flex min-h-[var(--target-min)] items-center gap-[var(--space-2)] font-semibold"
       >
         {UI.homeAllServices[locale]}
+        <ArrowRightIcon />
       </NextLink>
     </section>
   );

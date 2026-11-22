@@ -5,3 +5,4 @@ export * from "./SectionBar";
 export * from "./TodayList";
 export * from "./TodayRow";
 export * from "./WhatsOn";
+export * from "./HeroPurpose";

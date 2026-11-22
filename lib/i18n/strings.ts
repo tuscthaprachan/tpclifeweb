@@ -2762,6 +2762,45 @@ const UI_TEXT = {
   tdPlaces: { th: "เวลาเปิดปิด", en: "Opening hours" },
   tdPlacesIntro: { th: "ห้องสมุด คลินิก ฟิตเนส และสถานที่อื่นในท่าพระจันทร์ เปิดอยู่ไหม และเปิดถึงกี่โมง", en: "Libraries, the clinic, the gym and everywhere else at Tha Prachan: open now or not, and until when." },
 
+  /* Home layout */
+  hlNoEvents: { th: "ยังไม่มีกิจกรรมที่กำหนดไว้", en: "No events scheduled." },
+  hlNoUnionUpdates: { th: "ยังไม่มีความเคลื่อนไหวจากองค์การนักศึกษาและสภานักศึกษา", en: "No updates from the student union or council yet." },
+  hlPurpose: {
+    th: "รถรับส่ง เวลาเปิดปิด แบบฟอร์ม และความช่วยเหลือสำหรับนักศึกษาธรรมศาสตร์ท่าพระจันทร์ รวมไว้ในที่เดียว",
+    en: "Shuttles, opening hours, forms and help for Thammasat Tha Prachan students, in one place.",
+  },
+  hlPhaseShort: { th: "บริการใหม่ อยู่ระหว่างทดลอง", en: "New and still being tested." },
+
+  /* Home Today panel reliability */
+  htdShuttlesNoService: { th: "รถรับส่ง: วันนี้ไม่มีให้บริการ", en: "Shuttles: no service today" },
+  htdAllResumeTomorrow: { th: "ทุกสายเริ่มวิ่งอีกครั้งพรุ่งนี้ เวลา {time}", en: "All lines resume tomorrow at {time}" },
+  htdAllResumeOn: { th: "ทุกสายเริ่มวิ่งอีกครั้ง {day} เวลา {time}", en: "All lines resume {day} at {time}" },
+  htdOpensToday: { th: "เปิดวันนี้ เวลา {time}", en: "Opens today at {time}" },
+  htdOpensTomorrow: { th: "เปิดพรุ่งนี้ เวลา {time}", en: "Opens tomorrow at {time}" },
+  htdOpensOn: { th: "เปิด {day} เวลา {time}", en: "Opens {day} at {time}" },
+  htdUpdated: { th: "อัปเดตเมื่อ {time} น.", en: "Updated {time}" },
+  htdAlertsUnavailable: {
+    th: "ตรวจสอบประกาศบริการไม่ได้ในขณะนี้ โปรดลองอีกครั้งในอีกสักครู่",
+    en: "We could not check for service alerts just now. Try again in a minute.",
+  },
+  htdShuttleUnavailable: { th: "ตารางรถรับส่งใช้ไม่ได้ในขณะนี้", en: "Shuttle times unavailable right now" },
+  htdSeeFullTimetable: { th: "ดูตารางเวลาทั้งหมด", en: "See the full timetable" },
+  htdHoursUnavailable: { th: "เวลาทำการใช้ไม่ได้ในขณะนี้", en: "Opening hours unavailable right now" },
+  htdSeeHours: { th: "ดูเวลาทำการทั้งหมด", en: "See all opening hours" },
+  htdWeatherUnavailable: { th: "ข้อมูลอากาศใช้ไม่ได้ในขณะนี้", en: "Weather unavailable right now" },
+
+  /* Service alert banner */
+  sabTitle: { th: "แจ้งเตือน{category}", en: "{category} alert" },
+  sabToday: { th: "{time} วันนี้", en: "{time} today" },
+  sabTomorrow: { th: "{time} พรุ่งนี้", en: "{time} tomorrow" },
+  sabDate: { th: "{weekday}ที่ {day}", en: "{weekday} {day}" },
+  sabOnDate: { th: "{date} เวลา {time}", en: "{date}, {time}" },
+  sabUntil: { th: "ถึง {end}", en: "Until {end}" },
+  sabFrom: { th: "ตั้งแต่ {start} ถึง {end}", en: "From {start} until {end}" },
+  sabFromOnly: { th: "ตั้งแต่ {start}", en: "From {start}" },
+  sabOngoing: { th: "จนกว่าจะมีประกาศใหม่", en: "Until further notice" },
+  sabEnded: { th: "สิ้นสุดแล้ว ({end})", en: "Ended ({end})" },
+
   /* Opening hours page (/places) */
   ohAsOf: { th: "ข้อมูล ณ {day} เวลา {time} น.", en: "As of {time}, {day}" },
   ohOpenCount: { th: "เปิดอยู่ {open} จาก {total} แห่ง", en: "{open} of {total} open now" },

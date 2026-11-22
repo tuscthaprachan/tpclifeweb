@@ -25,6 +25,8 @@
   --color-action: var(--colour-action);
   --color-action-hover: var(--colour-action-hover);
   --color-action-ink: var(--colour-action-ink);
+  --color-alert: var(--colour-alert);
+  --color-alert-ink: var(--colour-alert-ink);
   --color-accent: var(--colour-accent);
   --color-accent-strong: var(--colour-accent-strong);
 

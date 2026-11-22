@@ -6,7 +6,7 @@ import type { AuditExecutor } from "@/lib/db/audit";
 import { directoryOrganisations, places, type PlaceRow } from "@/lib/db/schema";
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { ci, iso, ls, lsOpt, ltOpt, opt, withKeys } from "./map";
-import { safeFetch } from "./safe-fetch";
+import { safeFetch, safeFetchResult, type FetchResult } from "./safe-fetch";
 import type { CampusPlace, Organisation } from "./types";
 
 export function toCampusPlace(row: PlaceRow): CampusPlace {
@@ -105,11 +105,19 @@ export async function getOrganisations(): Promise<Organisation[]> {
   return safeFetch<Organisation[]>("getOrganisations", () => cachedOrganisations(), []);
 }
 
+export async function getKeyPlacesResult(): Promise<FetchResult<CampusPlace[]>> {
+  return safeFetchResult<CampusPlace[]>("getKeyPlaces", () => cachedKeyPlaces(), []);
+}
+
 export async function getKeyPlaces(): Promise<CampusPlace[]> {
-  return safeFetch<CampusPlace[]>("getKeyPlaces", () => cachedKeyPlaces(), []);
+  return (await getKeyPlacesResult()).data;
+}
+
+export async function getPlacesResult(): Promise<FetchResult<CampusPlace[]>> {
+  return safeFetchResult<CampusPlace[]>("getPlaces", () => cachedPlaces(), []);
 }
 
 export async function getPlaces(): Promise<CampusPlace[]> {
-  return safeFetch<CampusPlace[]>("getPlaces", () => cachedPlaces(), []);
+  return (await getPlacesResult()).data;
 }
 

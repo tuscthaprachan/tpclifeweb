@@ -1,9 +1,9 @@
 import NextLink from "next/link";
-import { Megaphone, UsersRound } from "lucide-react";
+import { UsersRound } from "lucide-react";
 
 import { OWNER_LABEL_KEY } from "@/components/domain/form";
 import { SectionBar } from "@/components/domain/home/SectionBar";
-import { EmptyState, StatusTag, Tag, Timestamp } from "@/components/ui";
+import { StatusTag, Tag, Timestamp } from "@/components/ui";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import type { NewsPost, Policy } from "@/lib/content/types";
@@ -34,12 +34,12 @@ export function ActivityFeed({ locale, news, policies, excludeNewsIds }: Activit
 
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="governance" icon={UsersRound}>
+      <SectionBar id={HEADING_ID} icon={UsersRound}>
         {UI.homeUnion[locale]}
       </SectionBar>
 
       {items.length === 0 ? (
-        <EmptyState illustration={false} icon={Megaphone} className="mt-[var(--space-3)]" title={UI.nothingHere[locale]} />
+        <p className="m-0 mt-[var(--space-2)] text-ink-600">{UI.hlNoUnionUpdates[locale]}</p>
       ) : (
         <ul className="m-0 list-none p-0">
           {items.map((item) => (

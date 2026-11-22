@@ -4,11 +4,13 @@ import { StatusTag, Timestamp } from "@/components/ui";
 import { fillText } from "@/components/domain/open-data/fill";
 import { TodayRow } from "@/components/domain/home/TodayRow";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
-import { bangkokDateKey } from "@/lib/i18n/format";
+import { bangkokDateKey, formatDateShort, formatWeekday } from "@/lib/i18n/format";
 import { UI } from "@/lib/i18n/strings";
-import { addDaysToDateKey, originDepartures } from "@/lib/shuttle/schedule";
+import { addDaysToDateKey, getShuttleStatus, originDepartures } from "@/lib/shuttle/schedule";
 import type { ShuttleRoute } from "@/lib/content/types";
+import { mergeNoServiceToday } from "./mergeToday";
 import { useShuttleStatus } from "./useShuttleStatus";
+import { useMinuteClock } from "./useMinuteClock";
 
 interface ShuttleTodayRowsProps {
   locale: Locale;
@@ -20,12 +22,41 @@ interface ShuttleTodayRowsProps {
  * One row per route for the home page's Today list. The first render comes
  * from the server's `now`, so each row is complete without JavaScript; with it,
  * each row re-evaluates on the minute. There is no vehicle position behind any
- * of it, so the Today list carries the "Scheduled" tag and its explainer once,
- * above these rows (CONTRIBUTING.md, Honesty).
+ * of it, every row is a timetable calculation (CONTRIBUTING.md, Honesty).
+ * When every route has no service today and they resume together, the rows
+ * collapse into one.
  */
 export function ShuttleTodayRows({ locale, routes, now }: ShuttleTodayRowsProps) {
   const serverNowIso = now.toISOString();
+  const clock = useMinuteClock(serverNowIso);
+  const merged = mergeNoServiceToday(
+    routes,
+    routes.map((route) => getShuttleStatus(route, clock, { count: 2 })),
+    clock,
+  );
+  if (merged) return <MergedNoServiceRow locale={locale} merged={merged} now={clock} />;
   return routes.map((route) => <ShuttleRow key={route._id} locale={locale} route={route} serverNowIso={serverNowIso} />);
+}
+
+function MergedNoServiceRow({ locale, merged, now }: { locale: Locale; merged: NonNullable<ReturnType<typeof mergeNoServiceToday>>; now: Date }) {
+  let line: string | null = null;
+  if (merged.nextServiceDate && merged.firstDeparture) {
+    if (merged.isTomorrow) {
+      line = fillText(UI.htdAllResumeTomorrow[locale], { time: merged.firstDeparture });
+    } else {
+      const at = `${merged.nextServiceDate}T00:00:00.000Z`;
+      const withinWeek = merged.nextServiceDate < addDaysToDateKey(bangkokDateKey(now), 7);
+      line = fillText(UI.htdAllResumeOn[locale], {
+        day: withinWeek ? formatWeekday(at, locale) : formatDateShort(at, locale),
+        time: merged.firstDeparture,
+      });
+    }
+  }
+  return (
+    <TodayRow title={UI.htdShuttlesNoService[locale]} href={localePath(locale, "/getting-around")}>
+      {line ? <span>{line}</span> : null}
+    </TodayRow>
+  );
 }
 
 /**

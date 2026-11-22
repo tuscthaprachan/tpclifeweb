@@ -11,6 +11,8 @@ interface NotificationBannerProps {
   children: ReactNode;
   /** Success banners take focus when they appear (GOV.UK). Pass false where several focus targets share a page, such as the design reference. */
   focusOnMount?: boolean;
+  /** Swaps the brand colour for the dedicated service alert colour. Roles and announcements are unchanged. */
+  tone?: "alert";
   className?: string;
 }
 
@@ -47,7 +49,7 @@ const POLITENESS: Record<Exclude<BannerVariant, "info" | "success">, Announcemen
   warning: "assertive",
 };
 
-export function NotificationBanner({ variant, title, children, focusOnMount = true, className }: NotificationBannerProps) {
+export function NotificationBanner({ variant, title, children, focusOnMount = true, tone, className }: NotificationBannerProps) {
   const titleId = useId();
   const isSuccess = variant === "success";
   const roleProps = isSuccess
@@ -57,9 +59,9 @@ export function NotificationBanner({ variant, title, children, focusOnMount = tr
       : { role: "region" as const, "aria-labelledby": titleId };
 
   return (
-    <div {...roleProps} data-inherit-heading-colour="" className={cx("border-[length:var(--border-width-thick)] bg-surface text-ink-900", BORDER_CLASS[variant], className)}>
+    <div {...roleProps} data-inherit-heading-colour="" className={cx("border-[length:var(--border-width-thick)] bg-surface text-ink-900", tone === "alert" ? "border-alert" : BORDER_CLASS[variant], className)}>
       {isSuccess && focusOnMount ? <FocusParent /> : null}
-      <h2 id={titleId} className={cx("m-0 px-[var(--space-4)] py-[var(--space-2)] text-base font-bold", BAR_CLASS[variant])}>
+      <h2 id={titleId} className={cx("m-0 px-[var(--space-4)] py-[var(--space-2)] text-base font-bold", tone === "alert" ? "bg-alert text-alert-ink" : BAR_CLASS[variant])}>
         {title}
       </h2>
       {children ? <div className="px-[var(--space-4)] py-[var(--space-4)]">{children}</div> : null}

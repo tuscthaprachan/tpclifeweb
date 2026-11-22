@@ -97,6 +97,9 @@
   --colour-action-hover: #42295e; /* 12.28:1 on white, 11.66:1 on --surface-alt, 10.76:1 on --surface-sunk */
   --colour-action-ink: #ffffff; /*  8.17:1 on --colour-action */
 
+  --colour-alert: #b3261e; /* 6.54:1 on white. Service alert bar and border only. */
+  --colour-alert-ink: #ffffff; /* 6.54:1 on --colour-alert */
+
   /* Accent. Secondary actions. The deep orange pole of the axis, matched
      to --colour-action in OKLCH lightness and chroma so the two poles
      carry equal visual weight. */
@@ -297,6 +300,8 @@
     --colour-action: #c4a8ee; /* 8.84:1 --surface, 8.05:1 --surface-alt, 7.32:1 --surface-sunk */
     --colour-action-hover: #dccaf8; /* 12.03:1 --surface, 10.95:1 --surface-alt, 9.96:1 --surface-sunk */
     --colour-action-ink: #1a1220; /* 8.84:1 on --colour-action, 12.03:1 on hover */
+    --colour-alert: #f2908a;
+    --colour-alert-ink: #1a1220;
 
     --colour-accent: #e8a27c; /* 8.59:1 --surface, 7.82:1 --surface-alt, 7.11:1 --surface-sunk */
     --colour-accent-strong: #f5c6ab; /* 11.77:1 --surface, 10.72:1 --surface-alt, 9.74:1 --surface-sunk */
@@ -383,6 +388,8 @@
     --colour-action: #c4a8ee;
     --colour-action-hover: #dccaf8;
     --colour-action-ink: #1a1220;
+    --colour-alert: #f2908a;
+    --colour-alert-ink: #1a1220;
 
     --colour-accent: #e8a27c;
     --colour-accent-strong: #f5c6ab;

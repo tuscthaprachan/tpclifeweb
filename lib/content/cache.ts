@@ -74,7 +74,9 @@ export const REVALIDATE = {
  * serialisable: ISO strings, not `Date`s.
  *
  * A read that throws is not cached, so an outage heals on the next request.
- * Wrap the result in `safeFetch` to degrade to an empty page.
+ * Keep it that way: the cached function must throw on failure and never
+ * return an empty fallback, which would be stored for the whole window. Catch
+ * outside it with `safeFetch` or `safeFetchResult`.
  */
 export function cachedRead<Args extends unknown[], R>(
   keyParts: string[],

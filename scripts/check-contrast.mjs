@@ -78,6 +78,7 @@ function assertions() {
     out.push(["--colour-action-hover", surface, 4.5, "link hover"]);
     out.push(["--colour-accent", surface, 4.5, "secondary action"]);
     out.push(["--colour-accent-strong", surface, 4.5, "secondary action strong"]);
+    out.push(["--colour-alert", surface, 4.5, "service alert colour as text"]);
 
     // Status text.
     for (const status of ["--status-success", "--status-warning", "--status-error", "--status-info", "--status-neutral"]) {
@@ -126,8 +127,9 @@ function assertions() {
    */
   out.push(["--colour-action-ink", "--colour-action", 4.5, "notification banner title (important)"]);
   out.push(["--ink-inverse", "--status-success", 4.5, "notification banner title (success)"]);
+  out.push(["--colour-alert-ink", "--colour-alert", 4.5, "service alert banner title"]);
   for (const surface of surfaces) {
-    for (const edge of ["--colour-action", "--status-success", "--status-error"]) {
+    for (const edge of ["--colour-action", "--status-success", "--status-error", "--colour-alert"]) {
       out.push([edge, surface, 3, "banner and error summary border"]);
     }
     out.push(["--line-strong", surface, 3, "inset text rule and summary card border"]);

@@ -4,8 +4,9 @@ import { Fragment, type ReactNode } from "react";
 
 import { fillText } from "@/components/domain/open-data/fill";
 import { ShuttleTodayRows } from "@/components/domain/shuttle/ShuttleTodayRows";
-import { StatusTag, Tag, type StatusTone } from "@/components/ui";
+import { StatusTag, type StatusTone } from "@/components/ui";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
+import { bangkokDateKey, formatDateShort, formatTime, formatWeekday } from "@/lib/i18n/format";
 import { UI, type UiKey } from "@/lib/i18n/strings";
 import type { AlertSeverity, CampusPlace, ServiceAlert, ShuttleRoute } from "@/lib/content/types";
 import type { TodaySettings } from "@/lib/content/today";
@@ -24,7 +25,7 @@ import {
   type Pm25Level,
 } from "@/lib/weather/levels";
 import type { CampusWeather } from "@/lib/weather/read";
-import { getPlaceHoursStatus, summariseLibraries, type PlaceHoursStatus } from "./openingHours";
+import { getPlaceHoursStatus, nextOpenFor, summariseLibraries, type PlaceHoursStatus } from "./openingHours";
 import { SectionBar } from "./SectionBar";
 import { TodayRow } from "./TodayRow";
 
@@ -62,6 +63,8 @@ interface TodayListProps {
   weather: CampusWeather;
   settings: TodaySettings;
   now: Date;
+  /** Reads that failed, as opposed to returning nothing. */
+  unavailable?: { shuttle?: boolean; hours?: boolean; weather?: boolean };
 }
 
 /**
@@ -69,9 +72,9 @@ interface TodayListProps {
  * settings): by default shuttles, with any alert about them straight after,
  * the libraries as one row, the other key places, the heat index and PM2.5
  * as one row, and the remaining alerts. Every row title opens the page with
- * everything about it. The "Scheduled" tag sits once in the heading bar.
+ * everything about it. A read that failed shows a row saying so rather than nothing.
  */
-export function TodayList({ locale, alerts, routes, places, libraries, weather, settings, now }: TodayListProps) {
+export function TodayList({ locale, alerts, routes, places, libraries, weather, settings, now, unavailable = {} }: TodayListProps) {
   const visible = settings.rows.filter((row) => row.visible).map((row) => row.key);
   const showsShuttle = visible.includes("shuttle");
   const shuttleAlerts = showsShuttle ? alerts.filter((alert) => alert.affects?.includes("shuttle")) : [];
@@ -83,7 +86,7 @@ export function TodayList({ locale, alerts, routes, places, libraries, weather, 
   const render: Record<TodayRowKey, () => ReactNode> = {
     shuttle: () => (
       <>
-        <ShuttleTodayRows locale={locale} routes={routes} now={now} />
+        {unavailable.shuttle ? <ShuttleUnavailableRow locale={locale} /> : <ShuttleTodayRows locale={locale} routes={routes} now={now} />}
         {shuttleAlerts.map((alert) => (
           <AlertRow key={alert._id} locale={locale} alert={alert} />
         ))}
@@ -97,11 +100,12 @@ export function TodayList({ locale, alerts, routes, places, libraries, weather, 
               key={place._id}
               locale={locale}
               place={place}
+              now={now}
               status={place.closureNote ? { kind: "closed", note: place.closureNote } : getPlaceHoursStatus(place, now)}
             />
           ))
         : hoursEmpty(),
-    weather: () => <WeatherRows locale={locale} weather={weather} settings={settings} />,
+    weather: () => <WeatherRows locale={locale} weather={weather} settings={settings} unavailable={Boolean(unavailable.weather)} />,
     alerts: () =>
       otherAlerts.map((alert) => (
         <AlertRow key={alert._id} locale={locale} alert={alert} />
@@ -111,6 +115,16 @@ export function TodayList({ locale, alerts, routes, places, libraries, weather, 
   function hoursEmpty() {
     if (!nothingWithHours || !showsHours || hoursEmptyShown) return null;
     hoursEmptyShown = true;
+    if (unavailable.hours) {
+      return (
+        <TodayRow title={UI.keyHoursTitle[locale]} href={localePath(locale, "/places")}>
+          <span>{UI.htdHoursUnavailable[locale]}</span>
+          <NextLink href={localePath(locale, "/places")} className="font-semibold">
+            {UI.htdSeeHours[locale]}
+          </NextLink>
+        </TodayRow>
+      );
+    }
     return (
       <TodayRow title={UI.keyHoursTitle[locale]} href={localePath(locale, "/places")}>
         <span>{UI.keyHoursNotPublished[locale]}</span>
@@ -120,7 +134,7 @@ export function TodayList({ locale, alerts, routes, places, libraries, weather, 
 
   return (
     <section aria-labelledby={HEADING_ID}>
-      <SectionBar id={HEADING_ID} tone="transport" icon={Sun} aside={showsShuttle && routes.length > 0 ? <Tag tone="neutral">{UI.scheduled[locale]}</Tag> : undefined}>
+      <SectionBar id={HEADING_ID} tone="transport" icon={Sun}>
         {UI.homeToday[locale]}
       </SectionBar>
 
@@ -138,13 +152,32 @@ export function TodayList({ locale, alerts, routes, places, libraries, weather, 
           {UI.homeFullTimetable[locale]}
         </NextLink>
       ) : null}
+
+      <p className="m-0 mt-[var(--space-2)] text-sm text-ink-600">{fillText(UI.htdUpdated[locale], { time: formatTime(now, locale) })}</p>
     </section>
   );
 }
 
-function WeatherRows({ locale, weather, settings }: { locale: Locale; weather: CampusWeather; settings: TodaySettings }) {
+function ShuttleUnavailableRow({ locale }: { locale: Locale }) {
+  const href = localePath(locale, "/getting-around");
+  return (
+    <TodayRow title={UI.htdShuttleUnavailable[locale]} href={href}>
+      <NextLink href={href} className="font-semibold">
+        {UI.htdSeeFullTimetable[locale]}
+      </NextLink>
+    </TodayRow>
+  );
+}
+
+function WeatherRows({ locale, weather, settings, unavailable }: { locale: Locale; weather: CampusWeather; settings: TodaySettings; unavailable: boolean }) {
   const { heat, pm25 } = weather;
-  if (!heat && !pm25) return null;
+  if (!heat && !pm25) {
+    return unavailable ? (
+      <TodayRow title={UI.homeWeather[locale]} href={localePath(locale, "/weather")}>
+        <span>{UI.htdWeatherUnavailable[locale]}</span>
+      </TodayRow>
+    ) : null;
+  }
   const heatAt = heat ? heatLevel(heat.index) : null;
   const pmAt = pm25 ? pm25Level(pm25.value) : null;
   const advice: string[] = [];
@@ -229,10 +262,11 @@ function LibrariesRow({ locale, libraries, now }: { locale: Locale; libraries: C
 /** Places whose row needs a more specific icon than the one for /places. */
 const PLACE_ICON: Record<string, LucideIcon> = { "tu-virtual-clinic": Cross };
 
-function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlace; status: PlaceHoursStatus }) {
+function PlaceRow({ locale, place, status, now }: { locale: Locale; place: CampusPlace; status: PlaceHoursStatus; now: Date }) {
   const title = pick(place.name, locale);
   const href = localePath(locale, `/places/${place.slug.current}`);
   const icon = PLACE_ICON[place.slug.current];
+  const nextOpen = place.closureNote ? null : nextOpenFor(place, now, status);
 
   switch (status.kind) {
     case "open":
@@ -249,11 +283,7 @@ function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlac
     case "closed":
       return (
         <TodayRow title={title} href={href} icon={icon} status={<StatusTag tone="neutral" label={UI.closedNow[locale]} />}>
-          {status.opensNext ? (
-            <span>
-              {UI.opensAt[locale]} {status.opensNext}
-            </span>
-          ) : null}
+          {nextOpen ? <span>{nextOpenLine(locale, nextOpen, now)}</span> : null}
           {status.note ? <span>{pick(status.note, locale)}</span> : null}
         </TodayRow>
       );
@@ -264,4 +294,12 @@ function PlaceRow({ locale, place, status }: { locale: Locale; place: CampusPlac
         </TodayRow>
       );
   }
+}
+
+function nextOpenLine(locale: Locale, next: NonNullable<ReturnType<typeof nextOpenFor>>, now: Date): string {
+  if (next.when === "today") return fillText(UI.htdOpensToday[locale], { time: next.opens });
+  if (next.when === "tomorrow") return fillText(UI.htdOpensTomorrow[locale], { time: next.opens });
+  const at = `${next.dateKey}T00:00:00.000Z`;
+  const withinWeek = Date.parse(at) - Date.parse(`${bangkokDateKey(now)}T00:00:00.000Z`) < 7 * 24 * 60 * 60 * 1000;
+  return fillText(UI.htdOpensOn[locale], { day: withinWeek ? formatWeekday(at, locale) : formatDateShort(at, locale), time: next.opens });
 }

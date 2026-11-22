@@ -7,7 +7,7 @@ import { serviceAlerts, siteSettings, type ServiceAlertRow } from "@/lib/db/sche
 import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { alertWindow } from "./window";
 import { iso, isoOrUndefined, ls, lsOpt, opt } from "./map";
-import { safeFetch } from "./safe-fetch";
+import { safeFetch, safeFetchResult, type FetchResult } from "./safe-fetch";
 import type { ServiceAlert, SiteSettings } from "./types";
 
 /* ------------------------------------------------------------------ *
@@ -88,12 +88,16 @@ const cachedActiveAlerts = cachedRead(["service-alerts"], [CACHE_TAGS.serviceAle
  * a minute and invalidated when an alert changes, which is how alerts stay
  * current without a live subscription.
  */
-export async function getActiveServiceAlerts(now?: string): Promise<ServiceAlert[]> {
-  return safeFetch<ServiceAlert[]>(
+export async function getActiveServiceAlertsResult(now?: string): Promise<FetchResult<ServiceAlert[]>> {
+  return safeFetchResult<ServiceAlert[]>(
     "getActiveServiceAlerts",
     () => (now ? readActiveServiceAlerts(getDb(), now) : cachedActiveAlerts()),
     [],
   );
+}
+
+export async function getActiveServiceAlerts(now?: string): Promise<ServiceAlert[]> {
+  return (await getActiveServiceAlertsResult(now)).data;
 }
 
 /**
