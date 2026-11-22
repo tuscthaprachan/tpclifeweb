@@ -19,10 +19,7 @@ const MIN_SECRET_LENGTH = 32;
 
 export function getAuthBaseUrl(): string | undefined {
   const explicit = process.env.BETTER_AUTH_URL?.trim();
-  if (explicit) return explicit.replace(/\/+$/, "");
-  // Vercel preview deployments each have their own host and no BETTER_AUTH_URL.
-  const vercel = process.env.VERCEL_URL?.trim();
-  return vercel ? `https://${vercel}` : undefined;
+  return explicit ? explicit.replace(/\/+$/, "") : undefined;
 }
 
 /** What is missing, by variable name. Empty when sign-in can work. */

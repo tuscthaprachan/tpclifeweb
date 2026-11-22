@@ -3,9 +3,8 @@
  *
  * There is no consent banner here on purpose. Every cookie this site sets is
  * strictly necessary (it stores your language choice so the toggle in
- * lib/i18n/config.ts can keep you on the page you were reading), and Vercel
- * Web Analytics, the only other thing that can run, does not use cookies at
- * all. A consent banner over a cookie that is exempt from consent under
+ * lib/i18n/config.ts can keep you on the page you were reading), and the site
+ * runs no analytics or tracking tools. A consent banner over a cookie that is exempt from consent under
  * strictly-necessary rules would be theatre, not information, so this page
  * says what is true instead of asking for a click nobody needs to make.
  */

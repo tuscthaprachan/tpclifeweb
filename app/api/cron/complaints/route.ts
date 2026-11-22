@@ -1,8 +1,8 @@
 /**
- * Daily complaints job (see vercel.json): closes resolved complaints whose
- * reopen window has passed, flags complaints that missed a target as
- * escalated and emails the leads, and sweeps abandoned journeys. Vercel Cron
- * calls this with `Authorization: Bearer <CRON_SECRET>`; anything else is
+ * Daily complaints job: closes resolved complaints whose reopen window has
+ * passed, flags complaints that missed a target as escalated and emails the
+ * leads, and sweeps abandoned journeys. The Scheduled jobs GitHub workflow (.github/workflows/cron-plesk.yml) calls
+ * this daily with `Authorization: Bearer <CRON_SECRET>`; anything else is
  * refused. With no `CRON_SECRET` set the route is closed to everyone.
  */
 

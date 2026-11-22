@@ -67,11 +67,11 @@ export function trackCookie(name: string, ttlSeconds: number) {
 /** Who is calling, for rate limits and audit rows. */
 export async function requestContext(): Promise<{ ip: string | null; userAgent: string | null; requestId: string }> {
   const h = await headers();
-  const forwarded = h.get("x-vercel-forwarded-for") ?? h.get("x-forwarded-for");
+  const forwarded = h.get("x-real-ip") ?? h.get("x-forwarded-for");
   return {
     ip: forwarded?.split(",")[0]?.trim() || null,
     userAgent: h.get("user-agent"),
-    requestId: h.get("x-vercel-id") ?? h.get("x-request-id") ?? crypto.randomUUID(),
+    requestId: h.get("x-request-id") ?? crypto.randomUUID(),
   };
 }
 

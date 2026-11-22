@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
   },
 
   // The console uploads pictures through a Server Action (4 MB cap in
-  // lib/admin/content/upload-limit.ts; Vercel itself refuses bodies over 4.5 MB).
+  // lib/admin/content/upload-limit.ts; 4.5 MB is the app's own request body limit).
   experimental: {
     serverActions: { bodySizeLimit: "4.5mb" },
   },
@@ -32,17 +32,6 @@ const nextConfig: NextConfig = {
 
   // Next 16 no longer runs ESLint as part of `next build`. Linting is a
   // separate gate, run by `npm run check` and in CI.
-
-  async redirects() {
-    return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "tpclife.vercel.app" }],
-        destination: "https://trytpc.tuso.tu.ac.th/:path*",
-        permanent: true,
-      },
-    ];
-  },
 
   async headers() {
     return [

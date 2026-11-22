@@ -2,7 +2,7 @@
 
 A one-stop student life portal for Thammasat Tha Prachan, built for and with the Thammasat University Student Union Tha Prachan (อมธ. ท่าพระจันทร์) and the Thammasat University Student Council Tha Prachan (สภานักศึกษา ท่าพระจันทร์).
 
-Natively bilingual Thai and English. WCAG 2.2 AA. Content in Postgres (Neon), deployed on Vercel.
+Natively bilingual Thai and English. WCAG 2.2 AA. Content in Postgres (Neon), hosted on Plesk, with the database on Neon (see [docs/deploy-plesk.md](docs/deploy-plesk.md)).
 
 ## What it replaces
 
@@ -40,14 +40,14 @@ The site is at `http://localhost:3000`.
 
 ## Deploying
 
-Set these in Vercel under Settings, Environment Variables, for Production, Preview and Development. The build itself needs none of them (pages that cannot reach the database show their empty states), but the deployed site shows nothing without `DATABASE_URL`.
+On the live site, set these in Plesk under Node.js → Custom environment variables. The workflows read some of them as GitHub Actions secrets and variables (Settings → Secrets and variables → Actions): the secrets `DATABASE_URL` and `CRON_SECRET`, and the variables `SITE_URL`, `PLESK_DEPLOY`, `PLESK_CRON` and `RUN_MIGRATIONS`. docs/deploy-plesk.md has the full setup. The build itself needs none of them (pages that cannot reach the database show their empty states), but the deployed site shows nothing without `DATABASE_URL`.
 
 | Variable | Value |
 | --- | --- |
-| `DATABASE_URL` | the Neon connection string (the Neon integration sets it per preview branch) |
+| `DATABASE_URL` | the Neon connection string. Also a GitHub Actions secret, which the deploy workflow uses to run migrations |
 | `STORAGE_DIR` | an absolute path on the server, outside the app folder, where uploaded files are kept. Content images are served from it, so none show without it. Private links are signed with `STORAGE_SIGNING_SECRET` (falls back to `BETTER_AUTH_SECRET`) |
 | `PII_ENCRYPTION_KEY` | key that encrypts personal data in lost and found and complaint cases (AES-256-GCM): 32 random bytes, base64. Generate one with `openssl rand -base64 32` and keep a copy somewhere safe, because data encrypted with a lost key cannot be recovered. Required in production: without it nothing that holds personal data works, and nothing is stored in the clear. To rotate it, move the old value to `PII_ENCRYPTION_KEY_PREVIOUS` (decrypt only) and set a new one |
-| `CRON_SECRET` | any random string (`openssl rand -hex 32`). Vercel Cron sends it as a Bearer token to `/api/cron/retention` (deletes personal data a year after a case closes) and `/api/cron/complaints` (escalates complaints past their target, closes lapsed resolutions), the daily jobs in `vercel.json`. Without it that route is closed and nothing is deleted |
+| `CRON_SECRET` | any random string (`openssl rand -hex 32`). The Scheduled jobs workflow (`.github/workflows/cron-plesk.yml`) sends it as a Bearer token to `/api/cron/retention` (deletes personal data a year after a case closes) and `/api/cron/complaints` (escalates complaints past their target, closes lapsed resolutions), the daily jobs. Also a GitHub Actions secret. Without it that route is closed and nothing is deleted |
 | `NEXT_PUBLIC_SITE_URL` | the origin for non-production builds, with no trailing slash (production always uses `https://trytpc.tuso.tu.ac.th`, set in `lib/site-url.ts`) |
 
 Sign-in and email have their own variables, listed in `.env.example`.

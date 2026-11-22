@@ -8,8 +8,8 @@
  * limiter does not see. Both write to the same `rate_limit` table, ours under
  * an `app:` key prefix.
  *
- * Why the database and not memory: on Vercel each request may run on a different
- * instance that forgets everything, so an in-memory counter limits nothing.
+ * Why the database and not memory: Passenger may run more than one process,
+ * and a restart forgets everything, so an in-memory counter limits nothing.
  */
 
 import { sql } from "drizzle-orm";

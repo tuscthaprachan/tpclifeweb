@@ -6,11 +6,11 @@
  */
 
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
-import vercel from "@/vercel.json";
 import journal from "@/lib/db/migrations/meta/_journal.json";
 import { isPiiAvailable } from "@/lib/crypto/pii";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { auditLog } from "@/lib/db/schema/audit-log";
+import { CRON_SCHEDULES } from "./cron-jobs";
 
 export type HealthStatus = "ok" | "warning" | "error";
 
@@ -87,8 +87,8 @@ export function lateAfterHours(schedule: string): number {
   return hour === "*" || hour.includes("/") || hour.includes(",") ? 3 : 36;
 }
 
-/** The jobs in vercel.json. A job records its runs under the last segment of its path (`/api/cron/retention` is `retention`). */
-export const CRON_JOBS: readonly CronSchedule[] = vercel.crons.map((c) => ({
+/** The jobs in cron-jobs.ts. A job records its runs under the last segment of its path (`/api/cron/retention` is `retention`). */
+export const CRON_JOBS: readonly CronSchedule[] = CRON_SCHEDULES.map((c) => ({
   name: c.path.split("/").filter(Boolean).pop() ?? c.path,
   path: c.path,
   lateAfterHours: lateAfterHours(c.schedule),

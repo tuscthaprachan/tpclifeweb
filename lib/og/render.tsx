@@ -28,7 +28,7 @@
  * resolve the illustration's `<use>` references.
  *
  * `next.config.ts` traces `assets/og/**` into every server bundle so the
- * runtime-rendered images for dynamic slugs find the files on Vercel.
+ * runtime-rendered images for dynamic slugs find the files in the standalone build.
  */
 
 import { readFile } from "node:fs/promises";

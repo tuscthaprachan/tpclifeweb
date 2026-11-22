@@ -55,11 +55,11 @@ The Service Manual is written for UK government, so we adopt its principles and 
 - **Session timeout warning** on the staff console.
 - **Contact details**, **Email address**, **Dates**, **Names** patterns for inputs.
 - **Accounts**: following the Service Manual's guidance, reporting never requires an account. Tracking uses reference number plus a private link sent by email.
-- **Cookies**: essential only. Vercel Analytics is cookieless, so no cookie banner is needed; revisit if that changes.
+- **Cookies**: essential only. No analytics cookies are set, so no cookie banner is needed; revisit if that changes.
 
 ## Architecture
 
-- **Database**: Neon Postgres. Drizzle for schema and migrations (`drizzle-kit`). Vercel–Neon integration gives every preview deployment its own branch.
+- **Database**: Neon Postgres. Drizzle for schema and migrations (`drizzle-kit`). Neon branches can give previews their own copy of the data.
 - **App**: one Next.js app.
   - `/[locale]/…`: public site and service journeys.
   - `/admin/…`: staff console, same design system, Thai and English.
@@ -76,7 +76,7 @@ The Service Manual is written for UK government, so we adopt its principles and 
 - **Authorisation**: roles `admin`, `editor` and `officer`, held by the person; which body (TUSU, TUSC or both) they belong to is a separate membership. Lost and found and complaints are jointly owned: TUSU and TUSC staff share one queue per service; each action records which organisation acted. Restricted complaint categories are visible only to named staff. Enforced in the data layer and backed by Postgres row-level security.
 - **Files**: The server's disk (`STORAGE_DIR`) behind a small storage interface (swappable). Public bucket for content images; private for item photos and complaint evidence, served via short-lived signed URLs.
 - **Notifications**: email through Resend (SMTP to the Plesk mail service is built in as an alternative). Templates bilingual, stored in code. LINE is on the back burner.
-- **Jobs**: Vercel Cron for response-time reminders, escalations and PII deletion.
+- **Jobs**: Scheduled jobs (a GitHub Actions workflow that calls `/api/cron/*` on the Plesk site, see docs/deploy-plesk.md) for response-time reminders, escalations and PII deletion.
 - **Audit log**: append-only table, recording actor, action, entity, before/after diff, and every view of personal data.
 - **Caching**: content writes call `revalidateTag` directly; the existing `CACHE_TAGS` stay. Replaces the Sanity webhook and Live.
 - **Validation**: Zod schemas are the single source of truth for types, admin forms, server actions and the bilingual completeness rule.

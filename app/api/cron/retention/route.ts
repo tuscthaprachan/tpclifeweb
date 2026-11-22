@@ -1,7 +1,7 @@
 /**
- * Daily personal data retention job (see vercel.json). Vercel Cron calls this
- * with `Authorization: Bearer <CRON_SECRET>`; anything else is refused. With
- * no `CRON_SECRET` set the route is closed to everyone.
+ * Daily personal data retention job. The Scheduled jobs GitHub workflow (.github/workflows/cron-plesk.yml)
+ * calls this daily with `Authorization: Bearer <CRON_SECRET>`; anything else is
+ * refused. With no `CRON_SECRET` set the route is closed to everyone.
  */
 
 import { purgeExpiredPii } from "@/lib/cases/retention";

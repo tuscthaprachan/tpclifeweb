@@ -76,14 +76,16 @@ The console is organised by job, not by table. Nav model: `lib/admin/nav.ts` (bu
 
 ### Emails (`lib/email`)
 
-Email goes out through the Resend HTTPS API (`RESEND_API_KEY` and `EMAIL_FROM` on `notify.trytpc.tuso.tu.ac.th`), because the hosting network blocks outbound SMTP. An SMTP sender for the Plesk mail service is also built in (`SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`, optional `SMTP_PORT`, `SMTP_SECURE`) and is used when `RESEND_API_KEY` is unset; see docs/plesk-migration.md. Optional `EMAIL_REPLY_TO`; `EMAIL_LOG_ONLY=1` prints instead of sending. `sendEmail` in `lib/email` never throws, retries rate limits, server errors and dropped connections twice, and logs only a code and message. Templates are bilingual and live in code: staff invite and recovery (`templates.ts`), lost and found status mails (`lost-found-templates.ts`), complaint acknowledged, resolved and the escalation digest to officers (`complaint-templates.ts`). A failed email never blocks a case action or an invitation. LINE is not built.
+Email goes out through the Resend HTTPS API (`RESEND_API_KEY` and `EMAIL_FROM` on `notify.trytpc.tuso.tu.ac.th`), because the hosting network blocks outbound SMTP. An SMTP sender for the Plesk mail service is also built in (`SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`, optional `SMTP_PORT`, `SMTP_SECURE`) and is used when `RESEND_API_KEY` is unset; see docs/deploy-plesk.md. Optional `EMAIL_REPLY_TO`; `EMAIL_LOG_ONLY=1` prints instead of sending. `sendEmail` in `lib/email` never throws, retries rate limits, server errors and dropped connections twice, and logs only a code and message. Templates are bilingual and live in code: staff invite and recovery (`templates.ts`), lost and found status mails (`lost-found-templates.ts`), complaint acknowledged, resolved and the escalation digest to officers (`complaint-templates.ts`). A failed email never blocks a case action or an invitation. LINE is not built.
 
-### Crons (`vercel.json`)
+### Crons (`.github/workflows/cron-plesk.yml`)
 
-Both need `CRON_SECRET` (Vercel sends it as a bearer token); without it the routes return 503 and nothing runs.
+All four need `CRON_SECRET` (the Scheduled jobs workflow sends it as a bearer token; it is a GitHub secret and a Plesk variable); without it the routes return 503 and nothing runs.
 
 - `/api/cron/retention`, daily 19:00 UTC: deletes personal data (contacts, encrypted text, evidence files) one year after a case closes.
 - `/api/cron/complaints`, daily 00:23 UTC: closes resolved complaints whose reopen window has passed, flags missed targets as escalated and emails the leads, sweeps abandoned complaint journeys and their files.
+- `/api/cron/borrowing`, daily 01:41 UTC: return reminders, one overdue notice per loan, and the sweep of abandoned request journeys.
+- `/api/cron/publishing`, daily 17:17 UTC: records scheduled publish and unpublish changes in the audit log.
 
 ### Performance (Service Standard point 10)
 
@@ -135,8 +137,8 @@ Every lifecycle with more than two states is now declared in a pure module with 
 1. Confirm `DATABASE_URL` is the unpooled Neon connection (host without `-pooler`) without printing it.
 2. `npm run db:migrate` applies 0004 to 0011 (0004 recovery links and passkey `last_used_at`; 0005 case engine; 0006 to 0009 lost and found; 0010 complaints; 0011 journey metrics). All are additive.
 3. `npm run db:seed` (idempotent) adds the complaint categories and their targets. Without them no complaint can be made.
-4. Set the environment variables below in Vercel Production (and Preview where useful).
-5. Merge with a merge commit; Vercel deploys.
+4. Set the environment variables below in Plesk (Node.js → Custom environment variables), and the GitHub secrets and variables listed in docs/deploy-plesk.md.
+5. Merge with a merge commit; pushing to `main` runs the Deploy to Plesk workflow, which applies migrations and publishes the `deploy` branch.
 6. First admin on a fresh database: `npm run auth:bootstrap -- <email> tusu` (or `tusc`, or `tusu,tusc` for both bodies) prints a one-time invite link. The existing production admin keeps signing in with their existing passkey. Break-glass recovery: `npm run auth:bootstrap -- --recover <email>`.
 7. Name the staff on each restricted complaint category at `/admin/complaints/categories`; a restricted category with nobody named is visible to no one.
 
@@ -149,7 +151,7 @@ Every lifecycle with more than two states is now declared in a pure module with 
 | `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` | Sign-in. The URL's hostname is the passkey RP ID. |
 | `PII_ENCRYPTION_KEY` | Required in production: encrypts contacts, complaint text, evidence names, survey comments. Losing it loses that data. `PII_ENCRYPTION_KEY_PREVIOUS` is for rotation (decrypt only). |
 | `CRON_SECRET` | Both crons. |
-| `BLOB_READ_WRITE_TOKEN` or `BLOB_STORE_ID` | Private item photos and complaint evidence (OIDC with the store id on Vercel). |
+| `STORAGE_DIR`, `STORAGE_SIGNING_SECRET` | Required. Absolute path of the file storage folder on the server (outside the app folder), and the secret that signs private links (falls back to `BETTER_AUTH_SECRET`). Holds content images, private item photos and complaint evidence. |
 | `RESEND_API_KEY`, `EMAIL_FROM` | Notification emails through Resend. Required in production; sign-in itself does not use email. Without them status mails are not sent. |
 | `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD` | Alternative: the Plesk mail service, used only when `RESEND_API_KEY` is unset. Blocked outbound on the current network. `SMTP_PORT` (default 587) and `SMTP_SECURE` are optional. |
 | `EMAIL_REPLY_TO` | Optional reply-to address. |
@@ -188,7 +190,7 @@ Use `next start`, not `next dev`, for Playwright. Never run `playwright install`
 
 - Passkeys are bound to the `BETTER_AUTH_URL` hostname. Changing the production domain makes every passkey unusable until each person is recovered, so settle the domain first.
 - No passkey autofill (conditional UI) on the sign-in page.
-- Migrations do not run on deploy; offer to run `db:migrate` in the Vercel production build.
+- Migrations run in the deploy workflow unless the `RUN_MIGRATIONS` variable is `false`.
 - No Postgres row-level security yet: access is enforced in the data layer (`lib/cases/access.ts`, `restrictions.ts`) only.
 - No data subject request tooling in the console (the plan lists access and deletion requests); deletion today is the one year retention job.
 - Students cannot see all their cases in one place; each case has its own private link. Sign-in for students is undecided.

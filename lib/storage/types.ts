@@ -1,8 +1,8 @@
 /**
  * Object storage contract.
  *
- * Deliberately S3-shaped (keys, put, get, delete, presigned GET) so the Vercel
- * Blob implementation can be swapped for S3, R2 or MinIO without touching a
+ * Deliberately S3-shaped (keys, put, get, delete, presigned GET) so the local disk
+ * implementation can be swapped for S3, R2 or MinIO without touching a
  * caller. Callers hold a `key`, never a vendor URL, and the key is what goes in
  * the database.
  *

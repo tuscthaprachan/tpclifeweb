@@ -39,10 +39,10 @@ export interface AccessContext {
   organisations: Organisation[];
 }
 
-/** First hop of the client's address, as the platform reports it. */
+/** First hop of the client's address, as the reverse proxy reports it. */
 export async function getRequestMeta(): Promise<{ ip: string | null; userAgent: string | null }> {
   const h = await headers();
-  const forwarded = h.get("x-vercel-forwarded-for") ?? h.get("x-forwarded-for");
+  const forwarded = h.get("x-real-ip") ?? h.get("x-forwarded-for");
   return { ip: forwarded?.split(",")[0]?.trim() || null, userAgent: h.get("user-agent") };
 }
 

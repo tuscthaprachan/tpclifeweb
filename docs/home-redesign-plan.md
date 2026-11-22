@@ -168,7 +168,7 @@ Open points for the build:
 | Touch targets on `/` | 44 by 44 or more under `pointer: coarse` | `target-size.spec.ts` (already runs; add the section links) |
 | axe on `/th` and `/en`, light and dark | 0 violations | `axe.spec.ts` (already covers `/`) |
 | Reflow at 320, text spacing, 200% text | Pass | Existing specs |
-| Core Web Vitals, p75 mobile | LCP 2.5 s or less, INP 200 ms or less, CLS 0.1 or less | Vercel Speed Insights (already installed) |
+| Core Web Vitals, p75 mobile | LCP 2.5 s or less, INP 200 ms or less, CLS 0.1 or less | Real-user measurement; source to be decided |
 | Client JavaScript on `/` | No new client components; total first-load JS at least 20% below the current build | `next build` output before and after |
 
 ## 5. WCAG 2.2 AA requirements specific to this page
@@ -225,7 +225,7 @@ All new strings go in `lib/i18n/strings.ts` under a `home*` prefix (sign-off nee
 
 The section order in section 3 is a hypothesis. Run these first. Each step is small enough for the student union to run.
 
-1. **Analytics baseline (1 day).** From Vercel Web Analytics: top pages, entry pages, and the route people take from `/`. From the search index logs, if we keep any: the top queries and zero-result queries. Record the current home page metrics (section 4) as the "before".
+1. **Analytics baseline (1 day).** From the analytics source (to be decided): top pages, entry pages, and the route people take from `/`. From the search index logs, if we keep any: the top queries and zero-result queries. Record the current home page metrics (section 4) as the "before".
 2. **Top tasks survey (2 weeks).** Longlist of 50 to 70 tasks, written as verb phrases at the same granularity in students' words, drawn from analytics, the old Linktrees, union DMs and 6 to 8 short interviews. Google Forms with randomised order: "Choose up to 5 that matter most to you", Thai first with English available. One question each on year, faculty, and Thai or international. Recruit 200 to 400 voters through faculty LINE groups, the union's Instagram, and QR posters at the shuttle stop and canteen. The top tasks then set the order of "Popular tasks" and the desktop pinned nav.
 3. **First-click and five-second tests on a mock-up (1 week).** Static HTML mock-ups of the new page in Thai at 360 px. Use 30 or more participants for first-click on 6 tasks; use 20 or more for a five-second test ("What is this page for? What do you remember?").
 4. **Moderated usability (2 rounds of 5).** Run on participants' own phones (mostly Android). Tasks: next bus to Rangsit; is the library open now; find the leave form; report a lost item; make a complaint; see what the council is doing about a policy; switch language. Include at least one screen reader user (TalkBack with a Thai voice) and one low vision user at 200% zoom.

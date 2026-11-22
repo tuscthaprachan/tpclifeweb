@@ -316,7 +316,7 @@ Every function in `lib/canteen` is pure apart from `device.ts`, so the server (n
 
 ## 11. Measuring it
 
-Vercel Analytics custom events, no personal data:
+Custom analytics events (the analytics source is to be decided), no personal data:
 - `eat_pick` with mode and number of active filters
 - `eat_zero_results` with the filter combination (reusing the `log-zero-result` pattern), to show which dishes or price points are missing
 - `eat_relax_used` with which suggestion was taken

@@ -20,8 +20,8 @@ import "server-only";
  *
  * WHAT THIS DELIBERATELY DOES NOT DO
  * It does not hide the failure. Every caught error is logged on the server with
- * the label of the query that failed, so an outage is visible in the Vercel
- * logs rather than silently looking like an empty dataset.
+ * the label of the query that failed, so an outage is visible in the Plesk
+ * Node.js app log rather than silently looking like an empty dataset.
  *
  * It also does not paper over a MISSING row, which is a different thing. A
  * page asked for by slug that does not exist must still call `notFound()` and

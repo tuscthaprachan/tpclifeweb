@@ -64,7 +64,7 @@ type HookContext = Parameters<Parameters<typeof createAuthMiddleware>[0]>[0];
 
 function requestMeta(ctx: HeaderSource): Pick<AuditContext, "ip" | "userAgent"> {
   const headers = ctx.headers ?? ctx.request?.headers;
-  const forwarded = headers?.get("x-vercel-forwarded-for") ?? headers?.get("x-forwarded-for");
+  const forwarded = headers?.get("x-real-ip") ?? headers?.get("x-forwarded-for");
   return { ip: forwarded?.split(",")[0]?.trim() || null, userAgent: headers?.get("user-agent") ?? null };
 }
 
@@ -197,7 +197,7 @@ export function createAuth(deps: AuthDeps) {
 
     advanced: {
       cookiePrefix: "trytpc",
-      ipAddress: { ipAddressHeaders: ["x-vercel-forwarded-for", "x-forwarded-for"] },
+      ipAddress: { ipAddressHeaders: ["x-real-ip", "x-forwarded-for"] },
     },
 
     databaseHooks: {

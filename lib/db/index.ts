@@ -6,8 +6,8 @@ import "server-only";
  * Driver choice: `drizzle-orm/neon-serverless` (Pool over WebSocket), not
  * `neon-http`. Server Actions that write a row and its audit entry need an
  * interactive transaction, which the HTTP driver cannot do (it only supports
- * batched statements). The pool is created lazily and cached per server
- * instance; Vercel's Fluid compute reuses instances, so connections are shared.
+ * batched statements). The pool is created lazily and cached per Node
+ * process; Passenger may run more than one process, each with its own pool.
  * Node 22+ provides the global WebSocket the driver needs.
  *
  * Nothing here reads `DATABASE_URL` at import time. The error is thrown the

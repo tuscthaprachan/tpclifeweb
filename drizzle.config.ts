@@ -7,7 +7,7 @@ import { defineConfig } from "drizzle-kit";
 try {
   process.loadEnvFile(".env.local");
 } catch {
-  // No .env.local: rely on the real environment (CI, Vercel).
+  // No .env.local: rely on the real environment (CI, the server).
 }
 
 export default defineConfig({

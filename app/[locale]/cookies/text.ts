@@ -76,8 +76,8 @@ export const COOKIES_TEXT = editableStrings(
       en: "Analytics",
     },
     analyticsBody: {
-      th: "เมื่อเปิดใช้งาน เว็บไซต์นี้ใช้ Vercel Web Analytics นับจำนวนผู้เข้าชมหน้าเว็บแบบภาพรวมเท่านั้น บริการนี้ไม่ใช้คุกกี้ ไม่เก็บที่อยู่ IP แบบเต็ม ไม่สร้างรหัสที่ใช้ติดตามคุณข้ามการเข้าชมหรือข้ามเว็บไซต์ และไม่นำข้อมูลไปใช้โฆษณา",
-      en: "Where enabled, this site uses Vercel Web Analytics to count page views in aggregate only. It does not use cookies, does not store your full IP address, does not create an identifier that tracks you across visits or across other sites, and is never used for advertising.",
+      th: "เว็บไซต์นี้ไม่ใช้เครื่องมือวิเคราะห์การใช้งานหรือเครื่องมือติดตามใด ๆ ไม่นับผู้เข้าชม ไม่สร้างรหัสที่ใช้ติดตามคุณข้ามการเข้าชมหรือข้ามเว็บไซต์ และไม่นำข้อมูลการใช้งานไปใช้โฆษณา",
+      en: "This site does not use analytics or tracking tools. It does not count visitors, does not create an identifier that tracks you across visits or across other sites, and never uses your usage data for advertising.",
     },
     noAdsHeading: {
       th: "คุกกี้และการติดตามที่ไม่ใช้",

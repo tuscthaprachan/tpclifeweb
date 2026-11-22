@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { sql } from "drizzle-orm";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
@@ -14,6 +15,7 @@ import {
   migrationCheck,
   runHealthChecks,
 } from "@/lib/admin/health/checks";
+import { CRON_SCHEDULES } from "@/lib/admin/health/cron-jobs";
 import { recordCronRun, runRecordedCron } from "@/lib/admin/health/cron-run";
 import { createTestDb } from "../db/harness";
 
@@ -77,7 +79,16 @@ describe("configuration checks never expose values", () => {
 });
 
 describe("cron runs", () => {
-  it("reads the schedule from vercel.json", () => {
+  it("matches the schedules in the Scheduled jobs workflow", () => {
+    const workflow = readFileSync(".github/workflows/cron-plesk.yml", "utf8");
+    const scheduled = [...workflow.matchAll(/^\s*- cron: "([^"]+)"\s*$/gm)].map((m) => m[1]);
+    expect(scheduled.sort()).toEqual(CRON_SCHEDULES.map((j) => j.schedule).sort());
+    for (const { path, schedule } of CRON_SCHEDULES) {
+      expect(workflow).toContain(`"${schedule}") JOB=${path.split("/").pop()} ;;`);
+    }
+  });
+
+  it("builds the jobs from that schedule", () => {
     expect(CRON_JOBS.map((j) => j.name)).toEqual(expect.arrayContaining(["retention", "complaints", "borrowing"]));
     expect(lateAfterHours("23 0 * * *")).toBe(36);
     expect(lateAfterHours("*/15 * * * *")).toBe(3);

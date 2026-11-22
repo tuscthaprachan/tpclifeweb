@@ -6,7 +6,7 @@
 /** A person may reopen a resolved complaint for this many days after the resolution. */
 export const REOPEN_WINDOW_DAYS = 30;
 
-/** Evidence limits. Each file goes through a Server Action, which Vercel caps at 4.5 MB. */
+/** Evidence limits. Each file goes through a Server Action, which the body size limit in next.config.ts caps at 4.5 MB. */
 export const MAX_EVIDENCE_FILES = 3;
 export const MAX_EVIDENCE_BYTES = 4 * 1024 * 1024;
 

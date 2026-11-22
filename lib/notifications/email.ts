@@ -22,9 +22,7 @@ export interface DeliverOpts {
 
 function defaultBaseUrl(): string | undefined {
   const explicit = process.env.BETTER_AUTH_URL?.trim();
-  if (explicit) return explicit.replace(/\/+$/, "");
-  const vercel = process.env.VERCEL_URL?.trim();
-  return vercel ? `https://${vercel}` : undefined;
+  return explicit ? explicit.replace(/\/+$/, "") : undefined;
 }
 
 /** Returns how many emails were sent. */

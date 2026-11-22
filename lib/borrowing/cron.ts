@@ -1,5 +1,5 @@
 /**
- * The daily run for equipment loans (see vercel.json). Three jobs:
+ * The daily run for equipment loans (called by the Scheduled jobs workflow, .github/workflows/cron-plesk.yml). Three jobs:
  *
  * - a reminder to return, to loans on loan or approved whose return falls on
  *   the next desk day (or any day between, if the job missed one), once;

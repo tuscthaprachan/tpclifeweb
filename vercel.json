@@ -1,8 +1,0 @@
-{
-  "crons": [
-    { "path": "/api/cron/retention", "schedule": "0 19 * * *" },
-    { "path": "/api/cron/complaints", "schedule": "23 0 * * *" },
-    { "path": "/api/cron/borrowing", "schedule": "41 1 * * *" },
-    { "path": "/api/cron/publishing", "schedule": "17 17 * * *" }
-  ]
-}

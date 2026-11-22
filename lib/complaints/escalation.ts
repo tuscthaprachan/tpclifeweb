@@ -1,5 +1,5 @@
 /**
- * The daily jobs for complaints (run by /api/cron/complaints, see vercel.json):
+ * The daily jobs for complaints (run by /api/cron/complaints, called daily by the Scheduled jobs workflow):
  *
  *   closeLapsedResolutions  a resolved complaint whose reopen window has passed
  *                           becomes `closed`, and the one year clock restarts
