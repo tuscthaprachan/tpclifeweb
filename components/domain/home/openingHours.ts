@@ -41,9 +41,9 @@ export function entriesForDate(entries: OpeningHours[], at: Date): OpeningHours[
   return dated.length > 0 ? dated : entries.filter((entry) => !isDated(entry));
 }
 
-function entryForDay(entries: OpeningHours[], at: Date): OpeningHours | undefined {
+function entriesForDay(entries: OpeningHours[], at: Date): OpeningHours[] {
   const day = bangkokDayOfWeek(at);
-  return entriesForDate(entries, at).find((entry) => entry.daysOfWeek.includes(day));
+  return entriesForDate(entries, at).filter((entry) => entry.daysOfWeek.includes(day));
 }
 
 function span(entry: OpeningHours): { opens: number; closes: number } | null {
@@ -63,25 +63,28 @@ export function getPlaceHoursStatus(place: CampusPlace, now: Date): PlaceHoursSt
 
   const nowMinutes = bangkokMinutesOfDay(now);
 
-  const yesterday = entryForDay(place.openingHours, new Date(now.getTime() - DAY_MS));
-  const carried = yesterday ? span(yesterday) : null;
-  if (yesterday && carried && carried.closes > 1440 && nowMinutes < carried.closes - 1440) {
-    return { kind: "open", closes: formatClockTime(carried.closes), closesNextDay: false, note: yesterday.note };
+  for (const entry of entriesForDay(place.openingHours, new Date(now.getTime() - DAY_MS))) {
+    const carried = span(entry);
+    if (carried && carried.closes > 1440 && nowMinutes < carried.closes - 1440) {
+      return { kind: "open", closes: formatClockTime(carried.closes), closesNextDay: false, note: entry.note };
+    }
   }
 
-  const entry = entryForDay(place.openingHours, now);
-  if (!entry) return { kind: "closed" };
+  const today = entriesForDay(place.openingHours, now)
+    .map((entry) => ({ entry, span: span(entry) }))
+    .filter((item): item is { entry: OpeningHours; span: { opens: number; closes: number } } => item.span !== null)
+    .sort((a, b) => a.span.opens - b.span.opens);
+  if (today.length === 0) return { kind: "closed" };
 
-  const today = span(entry);
-  if (!today) return { kind: "closed", note: entry.note };
-
-  if (nowMinutes >= today.opens && nowMinutes < today.closes) {
-    return { kind: "open", closes: formatClockTime(today.closes), closesNextDay: today.closes > 1440, note: entry.note };
+  const current = today.find((item) => nowMinutes >= item.span.opens && nowMinutes < item.span.closes);
+  if (current) {
+    return { kind: "open", closes: formatClockTime(current.span.closes), closesNextDay: current.span.closes > 1440, note: current.entry.note };
   }
+  const later = today.find((item) => nowMinutes < item.span.opens);
   return {
     kind: "closed",
-    opensNext: nowMinutes < today.opens ? formatClockTime(today.opens) : undefined,
-    note: entry.note,
+    opensNext: later ? formatClockTime(later.span.opens) : undefined,
+    note: (later ?? today[today.length - 1]!).entry.note,
   };
 }
 

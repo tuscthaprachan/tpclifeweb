@@ -37,6 +37,20 @@ describe("getPlaceHoursStatus", () => {
     expect(getPlaceHoursStatus(pridi, at("2026-11-17T07:00:00"))).toMatchObject({ kind: "closed", opensNext: "08:30" });
   });
 
+  it("handles two sessions on the same day", () => {
+    const gym = place(
+      [
+        { _key: "m", daysOfWeek: EVERY_DAY, opens: "07:00", closes: "11:00" },
+        { _key: "e", daysOfWeek: EVERY_DAY, opens: "15:00", closes: "21:00" },
+      ],
+      "fitness",
+    );
+    expect(getPlaceHoursStatus(gym, at("2026-11-22T08:00:00"))).toMatchObject({ kind: "open", closes: "11:00" });
+    expect(getPlaceHoursStatus(gym, at("2026-11-22T12:21:00"))).toMatchObject({ kind: "closed", opensNext: "15:00" });
+    expect(getPlaceHoursStatus(gym, at("2026-11-22T16:00:00"))).toMatchObject({ kind: "open", closes: "21:00" });
+    expect(getPlaceHoursStatus(gym, at("2026-11-22T22:00:00"))).toMatchObject({ kind: "closed", opensNext: undefined });
+  });
+
   it("carries the last late night into the next range", () => {
     expect(getPlaceHoursStatus(pridi, at("2026-11-23T05:00:00"))).toMatchObject({ kind: "open", closes: "06:00" });
     expect(getPlaceHoursStatus(pridi, at("2026-11-23T22:30:00"))).toMatchObject({ kind: "open", closes: "23:00" });

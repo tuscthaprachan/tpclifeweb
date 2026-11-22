@@ -26,6 +26,11 @@ export const HIGHLIGHTED_HOME_TASK_PATH = "/complaints";
 export const DEFAULT_HOME_TASKS: readonly HomeTask[] = [
   ...SERVICE_HOME_TASKS,
   {
+    label: { th: "เวลาเปิดปิด", en: "Opening hours" },
+    description: { th: "ห้องสมุด ฟิตเนส คลินิก และที่อื่น ๆ เปิดอยู่ไหม", en: "Is the library, gym or clinic open now?" },
+    path: "/places",
+  },
+  {
     label: { th: "สวัสดิการและสุขภาพ", en: "Welfare and health" },
     description: { th: "ทุน ประกันอุบัติเหตุ สุขภาพจิต", en: "Grants, accident insurance, mental health" },
     path: "/welfare",
