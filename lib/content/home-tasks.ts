@@ -31,9 +31,9 @@ export const DEFAULT_HOME_TASKS: readonly HomeTask[] = [
     path: "/places",
   },
   {
-    label: { th: "สวัสดิการและสุขภาพ", en: "Welfare and health" },
-    description: { th: "ทุน ประกันอุบัติเหตุ สุขภาพจิต", en: "Grants, accident insurance, mental health" },
-    path: "/welfare",
+    label: { th: "สุขภาพและการดูแล", en: "Health and support" },
+    description: { th: "ประกันอุบัติเหตุ การปรึกษาด้านสุขภาพใจ และคลินิก", en: "Accident insurance, counselling and the clinic" },
+    path: "/health",
   },
   {
     label: { th: "กินอะไรดี", en: "What to eat" },

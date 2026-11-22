@@ -39,8 +39,6 @@ import {
   getActiveServiceAlerts,
   getActiveShuttleRoutes,
   getCanteenData,
-  getContentPageBySlug,
-  getContentPages,
   getEventBySlug,
   getFaqs,
   getFormBySlug,
@@ -58,6 +56,8 @@ import {
   getPriorityForms,
   getSearchIndex,
   getSiteSettings,
+  getTopicPageBySlug,
+  getTopicPages,
   getUpcomingEvents,
   resolveRichTextRefs,
 } from "@/lib/content";
@@ -295,23 +295,29 @@ describe("policies", () => {
 });
 
 describe("content pages and FAQs", () => {
-  it("lists a kind with hand-ordered pages first and unordered pages last, A to Z", async () => {
-    const guides = await getContentPages("guidePage");
-    expect(guides.every((p) => p._type === "guidePage")).toBe(true);
-    const orders = guides.map((p) => p.order);
-    const firstUnordered = orders.findIndex((o) => o === undefined);
-    expect(firstUnordered).toBeGreaterThan(0);
-    expect(orders.slice(0, firstUnordered)).toEqual([...orders.slice(0, firstUnordered)].sort((a, b) => a! - b!));
-    expect(orders.slice(firstUnordered).every((o) => o === undefined)).toBe(true);
-    const tail = guides.slice(firstUnordered).map((p) => p.title.en);
-    expect(tail).toEqual(sorted(tail, (t) => t));
-    const welfare = await getContentPages("welfarePage");
-    expect(welfare.length).toBeGreaterThan(0);
-    expect(welfare.every((p) => p._type === "welfarePage")).toBe(true);
+  it("lists a section with hand-ordered pages first and unordered pages last, A to Z", async () => {
+    await ctx.db.insert(contentPages).values([
+      { section: "help", slug: "zeta-help", titleEn: "Zeta", category: "welfare", ...published() },
+      { section: "help", slug: "alpha-help", titleEn: "Alpha", category: "welfare", ...published() },
+      { section: "help", slug: "ordered-help", titleEn: "Ordered", category: "welfare", sortOrder: 5, ...published() },
+      { section: "help", slug: "draft-help", titleEn: "Draft", category: "welfare", sortOrder: 1, status: "draft" },
+    ]);
+    const help = await getTopicPages("help");
+    expect(help.map((p) => p.slug.current)).toEqual(["ordered-help", "alpha-help", "zeta-help"]);
+    expect(help.every((p) => p._type === "topicPage" && p.section === "help")).toBe(true);
+    expect(help.map((p) => p.order)).toEqual([5, undefined, undefined]);
+  });
+
+  it("lists every section's pages when no section is given, each tagged with its section", async () => {
+    const all = await getTopicPages();
+    expect(all.length).toBeGreaterThan(0);
+    const bySection = await Promise.all((["start", "campus", "study", "health", "money", "help", "say"] as const).map((key) => getTopicPages(key)));
+    expect(bySection.flat().length).toBe(all.length);
+    expect(all.every((p) => p._type === "topicPage" && typeof p.section === "string")).toBe(true);
   });
 
   it("resolves related forms and pages in order, and skips drafts", async () => {
-    const [page] = await ctx.db.insert(contentPages).values({ kind: "guide", slug: "related-test", titleEn: "Related test", category: "welfare", sortOrder: 0, ...published() }).returning();
+    const [page] = await ctx.db.insert(contentPages).values({ section: "study", slug: "related-test", titleEn: "Related test", category: "welfare", sortOrder: 0, ...published() }).returning();
     const [formA] = await ctx.db.select().from(forms).limit(1);
     const [formB] = await ctx.db
       .insert(forms)
@@ -321,18 +327,20 @@ describe("content pages and FAQs", () => {
       { pageId: page!.id, formId: formB!.id, position: 1 },
       { pageId: page!.id, formId: formA!.id, position: 0 },
     ]);
-    const [other] = await ctx.db.select().from(contentPages).where(eq(contentPages.slug, "our-tpc"));
-    const [draftPage] = await ctx.db.insert(contentPages).values({ kind: "welfare", slug: "draft-related", titleEn: "Draft", category: "welfare", status: "draft" }).returning();
+    const [other] = await ctx.db.insert(contentPages).values({ section: "money", slug: "related-other", titleEn: "Other", category: "welfare", ...published() }).returning();
+    const [draftPage] = await ctx.db.insert(contentPages).values({ section: "study", slug: "draft-related", titleEn: "Draft", category: "welfare", status: "draft" }).returning();
     await ctx.db.insert(contentPageRelated).values([
       { pageId: page!.id, relatedPageId: draftPage!.id, position: 0 },
       { pageId: page!.id, relatedPageId: other!.id, position: 1 },
     ]);
-    const got = await getContentPageBySlug("guidePage", "related-test");
+    const got = await getTopicPageBySlug("related-test");
+    expect(got).toMatchObject({ _type: "topicPage", section: "study" });
     expect(got?.relatedForms?.map((f) => f._id)).toEqual([formA!.id, formB!.id]);
-    expect(got?.relatedPages?.map((p) => p.slug.current)).toEqual(["our-tpc"]);
-    expect((await getContentPages("guidePage"))[0]?.slug.current).toBe("related-test");
-    expect(await getContentPageBySlug("welfarePage", "related-test")).toBeNull();
-    expect(await getContentPageBySlug("welfarePage", "draft-related")).toBeNull();
+    expect(got?.relatedPages?.map((p) => p.slug.current)).toEqual(["related-other"]);
+    expect(got?.relatedPages?.[0]?.section).toBe("money");
+    expect((await getTopicPages("study"))[0]?.slug.current).toBe("related-test");
+    expect(await getTopicPageBySlug("draft-related")).toBeNull();
+    expect(await getTopicPageBySlug("no-such-page")).toBeNull();
   });
 
   it("returns FAQs in handbook order with their forms, never a draft", async () => {
@@ -473,7 +481,7 @@ describe("search index", () => {
     const index = await getSearchIndex();
     expect(Number.isNaN(Date.parse(index.generatedAt))).toBe(false);
     const types = new Set(index.records.map((r) => r.type));
-    for (const type of ["form", "shuttleRoute", "welfarePage", "guidePage", "faq", "event", "newsPost", "policy", "organisation", "place", "lostFoundItem", "canteenDish", "canonicalDish"]) {
+    for (const type of ["form", "shuttleRoute", "topicPage", "faq", "event", "newsPost", "policy", "organisation", "place", "lostFoundItem", "canteenDish", "canonicalDish"]) {
       expect(types, type).toContain(type);
     }
     for (const r of index.records) {
@@ -496,6 +504,8 @@ describe("search index", () => {
     expect(first("place").path.en).toMatch(/^\/en\/directory#place-/);
     expect(first("faq").path.en).toMatch(/^\/en\/faq#[0-9a-f-]{36}$/);
     expect(first("policy").path.en).toMatch(/^\/en\/policy\//);
+    expect(first("topicPage").path.en).toMatch(/^\/en\/(start|campus|study|health|money|help|have-your-say)\/[^/]+$/);
+    expect(records.find((r) => r.path.en === "/en/study/related-test")?.type).toBe("topicPage");
     expect(first("shuttleRoute").category).toBe("transport");
   });
 
@@ -520,9 +530,9 @@ describe("search index", () => {
     const { records } = await getSearchIndex();
     const news = records.find((r) => r.path.en === "/en/news/newest");
     expect(news).toBeDefined();
-    const [page] = await ctx.db.select().from(contentPages).where(eq(contentPages.slug, "our-tpc"));
-    const record = records.find((r) => r.id === page!.id)!;
-    expect(record.haystack.length).toBeGreaterThan(page!.titleEn.length + page!.summaryEn.length);
+    const topics = records.filter((r) => r.type === "topicPage");
+    expect(topics.length).toBeGreaterThan(0);
+    expect(topics.some((r) => r.haystack.length > r.title.en.length + r.summary.en.length + r.title.th.length + r.summary.th.length + 20)).toBe(true);
   });
 });
 

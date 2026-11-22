@@ -1,8 +1,8 @@
 /**
  * Static routes in both locales, plus the lost and found entries and the
- * canteen pages, which are read from the database. Other content-backed
- * routes (individual forms, news posts, events, policies, welfare and guide
- * pages) are not here yet; they follow the same shape, each from its
+ * canteen pages, which are read from the database, and the section hubs with
+ * every topic page. Other content-backed routes (individual forms, news
+ * posts, events, policies) are not here yet; they follow the same shape, each from its
  * `lib/content` list function mapped through `localePath`.
  *
  * Both reads fail safe (an empty list rather than a throw) if the database is
@@ -12,7 +12,8 @@
 
 import type { MetadataRoute } from "next";
 import { DEFAULT_LOCALE, LOCALES, localePath, type Locale } from "@/lib/i18n/config";
-import { getCanteenData, getShuttleRouteSlugs, getLostFoundPage, getPlaces } from "@/lib/content";
+import { getCanteenData, getShuttleRouteSlugs, getLostFoundPage, getPlaces, getTopicPages } from "@/lib/content";
+import { SECTION_LIST, topicPath } from "@/lib/content/sections";
 import { REPORT_PAGE_NUMBERS } from "@/components/domain/open-data/reports/reports";
 import { RULE_NUMBERS } from "@/components/domain/open-data/rules/rules";
 import { getOpenDataDocuments } from "@/lib/open-data/read";
@@ -28,7 +29,6 @@ const STATIC_ROUTES = [
   "/places/libraries",
   "/weather",
   "/alerts",
-  "/welfare",
   "/news",
   "/events",
   "/policy",
@@ -81,7 +81,13 @@ function entry(locale: Locale, route: string, lastModified?: Date): MetadataRout
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticEntries = LOCALES.flatMap((locale) => STATIC_ROUTES.map((route) => entry(locale, route)));
+  const hubRoutes = SECTION_LIST.map((section) => section.path);
+  const staticEntries = LOCALES.flatMap((locale) => [...STATIC_ROUTES, ...hubRoutes].map((route) => entry(locale, route)));
+
+  const topicPages = await getTopicPages();
+  const topicEntries = LOCALES.flatMap((locale) =>
+    topicPages.map((page) => entry(locale, topicPath(page.section, page.slug.current), new Date(page._updatedAt))),
+  );
 
   const { items } = await getLostFoundPage({}, 1, MAX_SITEMAP_ITEMS);
   const lostFoundEntries = LOCALES.flatMap((locale) =>
@@ -113,5 +119,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...routes.map((route) => entry(locale, `/getting-around/shuttle/${route.slug}`, new Date(route.updatedAt))),
   ]);
 
-  return [...staticEntries, ...lostFoundEntries, ...canteenEntries, ...openDataEntries, ...todayEntries];
+  return [...staticEntries, ...topicEntries, ...lostFoundEntries, ...canteenEntries, ...openDataEntries, ...todayEntries];
 }

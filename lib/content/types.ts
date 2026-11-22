@@ -425,7 +425,7 @@ export interface CampusPlace extends DocumentMeta {
   contacts?: OrganisationContact[];
   /** Step-free access, lifts, accessible toilets and the like. */
   accessibility?: LocaleText;
-  /** A page with more about the place, on this site ("/guide/...") or elsewhere. */
+  /** A page with more about the place, on this site ("/study/libraries") or elsewhere. */
   moreInfoUrl?: string;
 }
 
@@ -577,8 +577,7 @@ export type SearchableType =
   | "form"
   | "service"
   | "shuttleRoute"
-  | "welfarePage"
-  | "guidePage"
+  | "topicPage"
   | "faq"
   | "event"
   | "newsPost"

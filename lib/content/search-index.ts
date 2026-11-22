@@ -25,6 +25,7 @@ import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { readCanteenData } from "./canteen";
 import { readPlacesByIds } from "./directory";
 import { ls } from "./map";
+import { topicPath } from "./sections";
 import { liveWindow } from "./window";
 import { safeFetch } from "./safe-fetch";
 import type { Category, Owner, SearchIndex, SearchRecord, SearchableType } from "./types";
@@ -130,8 +131,8 @@ export async function readSearchIndex(db: AuditExecutor): Promise<SearchIndex> {
     ...pageRows.map((p) =>
       record(
         p.id,
-        p.kind === "welfare" ? "welfarePage" : "guidePage",
-        route(`${p.kind}/`, p.slug),
+        "topicPage",
+        { th: `/th${topicPath(p.section, p.slug)}`, en: `/en${topicPath(p.section, p.slug)}` },
         ls(p.titleTh, p.titleEn),
         ls(p.summaryTh, p.summaryEn),
         join(p.titleTh, p.titleEn, p.summaryTh, p.summaryEn, richTextToPlainText(p.bodyTh), richTextToPlainText(p.bodyEn)),

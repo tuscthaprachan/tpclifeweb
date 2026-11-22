@@ -3,6 +3,7 @@ import { editableStrings } from "@/lib/i18n/editable";
 export const SEARCH_TEXT = editableStrings(
   "domain-search",
   {
+    typeTopic: { th: "หัวข้อ", en: "Topic" },
     typeShuttleRoute: { th: "รถรับส่ง", en: "Shuttle bus" },
     typePolicy: { th: "นโยบาย", en: "Policy" },
     typeOrganisation: { th: "หน่วยงาน", en: "Organisation" },

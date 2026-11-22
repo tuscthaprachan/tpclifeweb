@@ -40,15 +40,16 @@ const FALLBACK_SITE_SETTINGS: SiteSettings = {
   },
 
   primaryNav: [
+    { label: { th: "เริ่มต้น", en: "Start" }, path: "/start" },
+    { label: { th: "ชีวิตประจำวัน", en: "Day to day" }, path: "/campus" },
+    { label: { th: "เรียนและสอบ", en: "Study" }, path: "/study" },
+    { label: { th: "สุขภาพและการดูแล", en: "Health" }, path: "/health" },
+    { label: { th: "การเงิน", en: "Money" }, path: "/money" },
+    { label: { th: "ขอความช่วยเหลือ", en: "Get help" }, path: "/help" },
+    { label: { th: "ส่งเสียงของคุณ", en: "Have your say" }, path: "/have-your-say" },
     { label: { th: "แบบฟอร์ม", en: "Forms" }, path: "/forms" },
     { label: { th: "การเดินทาง", en: "Getting around" }, path: "/getting-around" },
     { label: { th: "กินอะไรดี", en: "What to eat" }, path: "/eat" },
-    { label: { th: "สวัสดิการนักศึกษา", en: "Student welfare" }, path: "/welfare" },
-    { label: { th: "ข่าวสาร", en: "News" }, path: "/news" },
-    { label: { th: "กิจกรรม", en: "Events" }, path: "/events" },
-    { label: { th: "ของหายและของเก็บได้", en: "Lost and found" }, path: "/lost-and-found" },
-    { label: { th: "ความคืบหน้านโยบาย", en: "Policy progress" }, path: "/policy" },
-    { label: { th: "ทำเนียบชุมนุมและหน่วยงาน", en: "Directory" }, path: "/directory" },
   ],
 
   footerNav: [

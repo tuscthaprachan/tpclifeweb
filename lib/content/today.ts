@@ -11,7 +11,7 @@ import { CACHE_TAGS, REVALIDATE, cachedRead } from "./cache";
 import { lsOpt, opt } from "./map";
 import { safeFetch } from "./safe-fetch";
 
-export const DEFAULT_LIBRARY_GUIDE_PATH = "/guide/tu-library";
+export const DEFAULT_LIBRARY_GUIDE_PATH = "/study/libraries";
 
 export interface TodaySettings {
   /** Every row key once, in display order. */

@@ -41,14 +41,14 @@ describe("normaliseSiteSettings", () => {
 });
 
 describe("splitPrimaryNav", () => {
-  const items = settings(["/welfare", "/news", "/eat", "/getting-around", "/directory", "/forms"]).primaryNav;
+  const items = settings(["/start", "/campus", "/study", "/health", "/money", "/forms"]).primaryNav;
 
   it("pins the first four items in console order", () => {
-    expect(splitPrimaryNav(items).pinned.map((i) => i.path)).toEqual(["/welfare", "/news", "/eat", "/getting-around"]);
+    expect(splitPrimaryNav(items).pinned.map((i) => i.path)).toEqual(["/start", "/campus", "/study", "/health"]);
   });
 
   it("puts the rest under More in console order", () => {
-    expect(splitPrimaryNav(items).more.map((i) => i.path)).toEqual(["/directory", "/forms"]);
+    expect(splitPrimaryNav(items).more.map((i) => i.path)).toEqual(["/money", "/forms"]);
   });
 
   it("pins everything when there are four or fewer", () => {

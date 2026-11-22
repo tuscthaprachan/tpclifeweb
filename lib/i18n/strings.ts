@@ -43,7 +43,7 @@ const UI_TEXT = {
   /* Search */
   search: { th: "ค้นหา", en: "Search" },
   searchLabel: { th: "ค้นหาข้อมูลนักศึกษาธรรมศาสตร์ท่าพระจันทร์", en: "Search Thammasat Tha Prachan student information" },
-  searchPlaceholder: { th: "ค้นหาแบบฟอร์ม รถรับส่ง สวัสดิการ กิจกรรม", en: "Search forms, shuttle, welfare, activities" },
+  searchPlaceholder: { th: "ค้นหาแบบฟอร์ม รถรับส่ง สุขภาพ การเงิน กิจกรรม", en: "Search forms, shuttle, health, money, activities" },
   searchHint: {
     th: "พิมพ์คำค้นได้ทั้งภาษาไทยและภาษาอังกฤษ",
     en: "You can search in Thai or English",
@@ -164,8 +164,6 @@ const UI_TEXT = {
   },
 
   /* Content */
-  welfare: { th: "สวัสดิการนักศึกษา", en: "Student welfare" },
-  guide: { th: "คู่มือนักศึกษา", en: "Student guide" },
   directory: { th: "ทำเนียบชุมนุมและหน่วยงาน", en: "Directory" },
   gettingAround: { th: "การเดินทาง", en: "Getting around" },
   faq: { th: "คำถามที่พบบ่อย", en: "Common questions" },
@@ -2301,7 +2299,7 @@ const UI_TEXT = {
     th: "กองทุน 3 กองทุนช่วยนักศึกษาโดยตรง ได้แก่ กองทุนสำหรับนักศึกษาที่มีความจำเป็นทางการเงิน กองทุนสนับสนุนประกันอุบัติเหตุ และกองทุนการศึกษาระดับบัณฑิตศึกษา ข้อบังคับตั้งกองทุนแต่ไม่ได้บอกวิธียื่นขอ",
     en: "Three of the regulated funds help students directly: the Fund for Students in Financial Need, the Accident Insurance Support Fund and the Graduate Education Fund. The regulations set the funds up but do not say how to apply.",
   },
-  odFundsHelpLink: { th: "ไปที่หน้าสวัสดิการและเงินของนักศึกษา", en: "Go to the student welfare and money pages" },
+  odFundsHelpLink: { th: "ไปที่หน้าการเงิน", en: "Go to the money pages" },
   odFundsRelatedDocuments: { th: "ไฟล์ต้นทาง {n} ไฟล์ รวมรายชื่อกองทุนและข้อบังคับ {r} ฉบับ", en: "The {n} source files, including the list of funds and the {r} regulations." },
   odFundsRelatedData: { th: "รายชื่อกองทุนเป็น CSV พร้อมคำอธิบายคอลัมน์", en: "The list of funds as CSV, with a data dictionary." },
   odFundsRegNo: { th: "ไม่มี", en: "No" },

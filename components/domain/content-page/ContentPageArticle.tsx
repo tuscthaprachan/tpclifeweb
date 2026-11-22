@@ -6,6 +6,7 @@ import { RichText, richTextSections, type ResolvedRefs } from "@/components/doma
 import { ArrowLeftIcon, ArrowRightIcon, Heading, IconText, IconTile, Link, NotificationBanner, Stack, TableOfContents, Tag, Timestamp } from "@/components/ui";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
+import { topicPath } from "@/lib/content/sections";
 import type { ContentPage } from "@/lib/content/types";
 import { isStale } from "./stale";
 import { TopicTile } from "./TopicTile";
@@ -21,14 +22,11 @@ const CATEGORY_LABEL = {
 const ANCHOR_PREFIX = "section";
 const MIN_TOC_SECTIONS = 3;
 
-function relatedPagePath(page: ContentPage): string {
-  return page._type === "guidePage" ? `/guide/${page.slug.current}` : `/welfare/${page.slug.current}`;
-}
-
 interface ContentPageArticleProps {
   page: ContentPage;
   locale: Locale;
-  basePath: "/welfare" | "/guide";
+  /** The section hub the back link returns to, such as "/study". */
+  basePath: string;
   resolved: ResolvedRefs;
   staleLabel: string;
   staleBody: string;
@@ -138,7 +136,7 @@ export function ContentPageArticle({ page, locale, basePath, resolved, staleLabe
             {relatedPages.map((related) => (
               <li key={related._id}>
                 <NextLink
-                  href={localePath(locale, relatedPagePath(related))}
+                  href={localePath(locale, topicPath(related.section, related.slug.current))}
                   className="press group grid min-h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-[var(--space-3)] rounded-[var(--radius-block)] bg-surface-alt px-[var(--space-3)] py-[var(--space-2)] no-underline"
                 >
                   <TopicTile icon={topicIcon(related)} category={related.category} />

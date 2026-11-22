@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
+import type { ContentSection } from "@/lib/db/schema/content/enums";
 import { getDb } from "@/lib/db";
 import type { AuditExecutor } from "@/lib/db/audit";
 import {
@@ -18,17 +19,12 @@ import { liveWindow } from "./window";
 import { safeFetch } from "./safe-fetch";
 import type { ContentPage, Faq, FormRecord } from "./types";
 
-/** The two kinds of page that share the `content_pages` table. */
-export type ContentPageType = "welfarePage" | "guidePage";
-
-const KIND: Record<ContentPageType, "welfare" | "guide"> = { welfarePage: "welfare", guidePage: "guide" };
-const TYPE_OF_KIND = { welfare: "welfarePage", guide: "guidePage" } as const;
-
 /** A page without its relations. Related pages are returned in this shallow form. */
 function toPage(row: ContentPageRow): ContentPage {
   return {
     _id: row.id,
-    _type: TYPE_OF_KIND[row.kind],
+    _type: "topicPage",
+    section: row.section,
     _createdAt: iso(row.createdAt),
     _updatedAt: iso(row.updatedAt),
     title: ls(row.titleTh, row.titleEn),
@@ -81,22 +77,22 @@ async function toPages(db: AuditExecutor, rows: ContentPageRow[]): Promise<Conte
   });
 }
 
-/** `includeUnpublished` is for editor previews only. */
-export async function readContentPageBySlug(db: AuditExecutor, type: ContentPageType, slug: string, includeUnpublished = false, now: Date = new Date()): Promise<ContentPage | null> {
+/** `includeUnpublished` is for editor previews only. The slug is unique across sections. */
+export async function readTopicPageBySlug(db: AuditExecutor, slug: string, includeUnpublished = false, now: Date = new Date()): Promise<ContentPage | null> {
   const [row] = await db
     .select()
     .from(contentPages)
-    .where(and(includeUnpublished ? undefined : liveWindow(contentPages, now), eq(contentPages.kind, KIND[type]), eq(contentPages.slug, slug)))
+    .where(and(includeUnpublished ? undefined : liveWindow(contentPages, now), eq(contentPages.slug, slug)))
     .limit(1);
   return row ? ((await toPages(db, [row]))[0] ?? null) : null;
 }
 
-/** Hand-ordered pages first (lowest `order`), pages with no order after them, each group A to Z. */
-export async function readContentPages(db: AuditExecutor, type: ContentPageType): Promise<ContentPage[]> {
+/** Hand-ordered pages first (lowest `order`), pages with no order after them, each group A to Z. All sections when none is given. */
+export async function readTopicPages(db: AuditExecutor, section?: ContentSection): Promise<ContentPage[]> {
   const rows = await db
     .select()
     .from(contentPages)
-    .where(and(liveWindow(contentPages), eq(contentPages.kind, KIND[type])))
+    .where(and(liveWindow(contentPages), section ? eq(contentPages.section, section) : undefined))
     .orderBy(sql`${contentPages.sortOrder} asc nulls last`, ci(contentPages.titleEn), contentPages.slug);
   return toPages(db, rows);
 }
@@ -141,23 +137,16 @@ export async function readFaqs(db: AuditExecutor, now: Date = new Date()): Promi
 
 const PAGE_TAGS = [CACHE_TAGS.content, CACHE_TAGS.form] as const;
 
-const cachedPageBySlug = cachedRead(
-  ["content-page-by-slug"],
-  PAGE_TAGS,
-  REVALIDATE.windowed,
-  (type: ContentPageType, slug: string) => readContentPageBySlug(getDb(), type, slug),
-);
-const cachedPages = cachedRead(["content-pages"], PAGE_TAGS, REVALIDATE.windowed, (type: ContentPageType) =>
-  readContentPages(getDb(), type),
-);
+const cachedPageBySlug = cachedRead(["topic-page-by-slug"], PAGE_TAGS, REVALIDATE.windowed, (slug: string) => readTopicPageBySlug(getDb(), slug));
+const cachedPages = cachedRead(["topic-pages"], PAGE_TAGS, REVALIDATE.windowed, (section: ContentSection | undefined) => readTopicPages(getDb(), section));
 const cachedFaqs = cachedRead(["faqs"], [CACHE_TAGS.faq, CACHE_TAGS.form], REVALIDATE.windowed, () => readFaqs(getDb()));
 
-export async function getContentPageBySlug(type: ContentPageType, slug: string): Promise<ContentPage | null> {
-  return safeFetch<ContentPage | null>("getContentPageBySlug", () => cachedPageBySlug(type, slug), null);
+export async function getTopicPageBySlug(slug: string): Promise<ContentPage | null> {
+  return safeFetch<ContentPage | null>("getTopicPageBySlug", () => cachedPageBySlug(slug), null);
 }
 
-export async function getContentPages(type: ContentPageType): Promise<ContentPage[]> {
-  return safeFetch<ContentPage[]>("getContentPages", () => cachedPages(type), []);
+export async function getTopicPages(section?: ContentSection): Promise<ContentPage[]> {
+  return safeFetch<ContentPage[]>("getTopicPages", () => cachedPages(section), []);
 }
 
 export async function getFaqs(): Promise<Faq[]> {
@@ -165,6 +154,6 @@ export async function getFaqs(): Promise<Faq[]> {
 }
 
 /** Uncached and unfiltered: the page as saved, draft or scheduled. Call only behind `isPreview()`. */
-export async function getContentPagePreview(type: ContentPageType, slug: string): Promise<ContentPage | null> {
-  return safeFetch<ContentPage | null>("getContentPagePreview", () => readContentPageBySlug(getDb(), type, slug, true), null);
+export async function getTopicPagePreview(slug: string): Promise<ContentPage | null> {
+  return safeFetch<ContentPage | null>("getTopicPagePreview", () => readTopicPageBySlug(getDb(), slug, true), null);
 }

@@ -163,7 +163,7 @@ export async function FundsIndex({ locale, filtered }: { locale: Locale; filtere
             {UI.odFundsHelpHeading[locale]}
           </Heading>
           <p className="m-0 mb-[var(--space-3)] max-w-[var(--measure-en)]">{UI.odFundsHelpText[locale]}</p>
-          <Link href={localePath(locale, "/welfare")} locale={locale} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
+          <Link href={localePath(locale, "/money")} locale={locale} className="inline-flex min-h-[var(--target-min)] items-center text-action underline">
             {UI.odFundsHelpLink[locale]}
           </Link>
         </section>

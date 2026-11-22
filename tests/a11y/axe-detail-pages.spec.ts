@@ -6,7 +6,7 @@
  * `discoverRoutes()` walks the filesystem and deliberately skips dynamic
  * segments, because it cannot know what `[slug]` stands for without asking
  * the CMS. The consequence went unnoticed: every detail page on the site,
- * which is to say every news article, every form, every guide page, every
+ * which is to say every news article, every form, every topic page, every
  * policy and every lost property entry, was never audited at all. Only the
  * listings above them were.
  *
@@ -36,11 +36,15 @@ const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
  */
 const LISTINGS: Array<{ listing: string; detailPrefix: string }> = [
   { listing: "/forms", detailPrefix: "/forms/" },
-  { listing: "/guide", detailPrefix: "/guide/" },
   { listing: "/news", detailPrefix: "/news/" },
   { listing: "/events", detailPrefix: "/events/" },
   { listing: "/policy", detailPrefix: "/policy/" },
-  { listing: "/welfare", detailPrefix: "/welfare/" },
+  { listing: "/start", detailPrefix: "/start/" },
+  { listing: "/campus", detailPrefix: "/campus/" },
+  { listing: "/study", detailPrefix: "/study/" },
+  { listing: "/health", detailPrefix: "/health/" },
+  { listing: "/money", detailPrefix: "/money/" },
+  { listing: "/have-your-say", detailPrefix: "/have-your-say/" },
   { listing: "/lost-and-found", detailPrefix: "/lost-and-found/" },
   // What to eat. Both listings are empty (and the audit skips) until the canteen has been surveyed.
   { listing: "/eat/dishes", detailPrefix: "/eat/dishes/" },

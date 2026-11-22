@@ -209,14 +209,14 @@ describe("search: ranking", () => {
   it("ranks a title match above a body-only match", () => {
     const titleHit = record({
       id: "title-hit",
-      type: "guidePage",
+      type: "topicPage",
       weight: 60,
       title: { th: "หอพักนักศึกษา", en: "Student dormitory guide" },
       haystack: "หอพักนักศึกษา Student dormitory guide",
     });
     const bodyHit = record({
       id: "body-hit",
-      type: "guidePage",
+      type: "topicPage",
       weight: 60,
       title: { th: "คู่มือทั่วไป", en: "General guide" },
       haystack: "คู่มือทั่วไป General guide, mentions the dormitory in passing near the end.",
@@ -233,7 +233,7 @@ describe("search: prefix matching", () => {
   it("matches a query that is a prefix of a longer stored word", () => {
     const welfare = record({
       id: "welfare-1",
-      type: "welfarePage",
+      type: "topicPage",
       weight: 60,
       title: { th: "สวัสดิการนักศึกษา", en: "Student welfare" },
       haystack: "สวัสดิการนักศึกษา Student welfare",
