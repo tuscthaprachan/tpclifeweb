@@ -18,8 +18,7 @@ export type ContentEntityType =
   | "newsPost"
   | "event"
   | "policy"
-  | "welfarePage"
-  | "guidePage"
+  | "topicPage"
   | "faq"
   | "organisation"
   | "faculty"
@@ -52,8 +51,7 @@ export const TAGS_BY_TYPE: Record<ContentEntityType, readonly CacheTag[]> = {
   newsPost: [CACHE_TAGS.news, CACHE_TAGS.searchIndex],
   event: [CACHE_TAGS.event, CACHE_TAGS.searchIndex],
   policy: [CACHE_TAGS.policy, CACHE_TAGS.searchIndex],
-  welfarePage: [CACHE_TAGS.content, CACHE_TAGS.searchIndex],
-  guidePage: [CACHE_TAGS.content, CACHE_TAGS.searchIndex],
+  topicPage: [CACHE_TAGS.content, CACHE_TAGS.searchIndex],
   faq: [CACHE_TAGS.faq, CACHE_TAGS.searchIndex],
   // Faculty committees are also read through their faculty by the issue reporting service.
   organisation: [CACHE_TAGS.directory, CACHE_TAGS.faculty, CACHE_TAGS.searchIndex],

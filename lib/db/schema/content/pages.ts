@@ -12,22 +12,22 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { contentColumns, scheduleColumns, requiredRichDoc, type ExternalLinkJson } from "./common";
-import { categoryEnum, contentPageKindEnum } from "./enums";
+import { categoryEnum, contentSectionEnum } from "./enums";
 import { forms } from "./forms";
 
 /**
- * welfarePage and guidePage in ONE table, split by `kind`. They have the same
- * fields and the same queries, and `relatedPages` may point at either, which a
- * single table turns into an ordinary foreign key instead of a polymorphic
- * reference. Slugs are unique per kind (routes are /welfare/[slug] and
- * /guide/[slug]).
+ * Topic pages. Each one answers one or more student needs and sits in one
+ * life-event section (routes are /[section path]/[slug], see
+ * lib/content/sections.ts). Slugs are unique across all sections.
  */
 export const contentPages = pgTable(
   "content_pages",
   {
     ...contentColumns(),
     ...scheduleColumns(),
-    kind: contentPageKindEnum("kind").notNull(),
+    section: contentSectionEnum("section").notNull(),
+    /** The user needs this page meets, for editors. Never shown publicly. */
+    userNeed: text("user_need").notNull().default(""),
     slug: text("slug").notNull(),
     titleTh: text("title_th").notNull().default(""),
     titleEn: text("title_en").notNull().default(""),
@@ -43,8 +43,8 @@ export const contentPages = pgTable(
     sortOrder: integer("sort_order"),
   },
   (t) => [
-    unique("content_pages_kind_slug").on(t.kind, t.slug),
-    index("content_pages_listing_idx").on(t.kind, t.status, t.sortOrder, t.titleEn),
+    unique("content_pages_slug").on(t.slug),
+    index("content_pages_listing_idx").on(t.section, t.status, t.sortOrder, t.titleEn),
   ],
 );
 

@@ -1,3 +1,4 @@
+import type { ContentSection } from "@/lib/db/schema/content/enums";
 /**
  * The shape of every record TryTPC reads out of Postgres.
  *
@@ -337,7 +338,8 @@ export interface ExternalLink {
 }
 
 export interface ContentPage extends DocumentMeta {
-  _type: "welfarePage" | "guidePage";
+  _type: "topicPage";
+  section: ContentSection;
   title: LocaleString;
   slug: Slug;
   summary: LocaleText;

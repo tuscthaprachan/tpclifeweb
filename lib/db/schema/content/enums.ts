@@ -40,8 +40,10 @@ export const signInTypeEnum = pgEnum("form_sign_in_type", SIGN_IN_TYPES);
 export const POLICY_STATUSES = ["notStarted", "inProgress", "delivered", "blocked", "dropped"] as const;
 export const policyStatusEnum = pgEnum("policy_status", POLICY_STATUSES);
 
-export const CONTENT_PAGE_KINDS = ["welfare", "guide"] as const;
-export const contentPageKindEnum = pgEnum("content_page_kind", CONTENT_PAGE_KINDS);
+/** The life-event sections topic pages sit in. Paths and labels: lib/content/sections.ts. */
+export const CONTENT_SECTIONS = ["start", "campus", "study", "health", "money", "help", "say"] as const;
+export type ContentSection = (typeof CONTENT_SECTIONS)[number];
+export const contentSectionEnum = pgEnum("content_section", CONTENT_SECTIONS);
 
 export const DIRECTORY_ORGANISATION_TYPES = [
   "facultyCommittee",

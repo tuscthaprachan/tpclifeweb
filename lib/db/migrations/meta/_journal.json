@@ -162,6 +162,20 @@
       "when": 1795279386676,
       "tag": "0022_faculty_programme_offices",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1795341598334,
+      "tag": "0023_topic_sections",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1795341602464,
+      "tag": "0024_topic_sections_finish",
+      "breakpoints": true
     }
   ]
 }
