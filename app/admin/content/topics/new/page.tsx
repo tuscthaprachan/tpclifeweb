@@ -12,17 +12,17 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   const locale = await getAdminLocale();
-  return { title: a("listAdd", locale, { item: a("typeGuidesOne", locale) }) };
+  return { title: a("listAdd", locale, { item: a("typeTopicsOne", locale) }) };
 }
 
-export default async function NewGuidePage() {
+export default async function NewTopicPage() {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
   await requireEditor();
   return (
     <ConsolePage width="wide">
-      <FormPageHeader def={contentTypeBySegment("guides")} locale={locale} mode="new" />
-      <PageForm locale={locale} kind="guide" />
+      <FormPageHeader def={contentTypeBySegment("topics")} locale={locale} mode="new" />
+      <PageForm locale={locale} />
     </ConsolePage>
   );
 }

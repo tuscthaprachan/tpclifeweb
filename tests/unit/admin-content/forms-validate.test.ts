@@ -206,13 +206,13 @@ describe("findFormUsages", () => {
     expect(await findFormUsages(db, target!.id)).toEqual([]);
 
     const [news] = await db.insert(newsPosts).values({ slug: "n", owner: "tusu", titleEn: "News", bodyEn: calloutDoc(target!.id) as never }).returning();
-    const [page] = await db.insert(contentPages).values({ kind: "welfare", slug: "p", category: "welfare", titleEn: "Page" }).returning();
+    const [page] = await db.insert(contentPages).values({ section: "money", slug: "p", category: "welfare", titleEn: "Page" }).returning();
     const [faq] = await db.insert(faqs).values({ category: "welfare", questionEn: "Q?" }).returning();
     await db.insert(contentPageForms).values({ pageId: page!.id, formId: target!.id, position: 0 });
     await db.insert(faqForms).values({ faqId: faq!.id, formId: target!.id, position: 0 });
 
     const usages = await findFormUsages(db, target!.id);
-    expect(usages.map((u) => `${u.kind}:${u.id}`).sort()).toEqual([`news:${news!.id}`, `welfare:${page!.id}`, `faq:${faq!.id}`].sort());
+    expect(usages.map((u) => `${u.kind}:${u.id}`).sort()).toEqual([`news:${news!.id}`, `topic:${page!.id}`, `faq:${faq!.id}`].sort());
     expect(await findFormUsages(db, unused!.id)).toEqual([]);
 
     // An unused form deletes cleanly.

@@ -48,15 +48,7 @@ const LIFECYCLE: Record<string, Lifecycle> = {
     slugKey: "slug",
     children: [{ key: "updates", table: policyUpdates, fk: policyUpdates.policyId, fkKey: "policyId" }],
   },
-  guides: {
-    titleKeys: ["titleTh", "titleEn"],
-    slugKey: "slug",
-    children: [
-      { key: "forms", table: contentPageForms, fk: contentPageForms.pageId, fkKey: "pageId" },
-      { key: "related", table: contentPageRelated, fk: contentPageRelated.pageId, fkKey: "pageId" },
-    ],
-  },
-  welfare: {
+  topics: {
     titleKeys: ["titleTh", "titleEn"],
     slugKey: "slug",
     children: [

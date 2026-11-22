@@ -1,6 +1,8 @@
-import { eq, type SQL } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
 import type { AnyPgColumn, AnyPgTable } from "drizzle-orm/pg-core";
+import { topicPath } from "@/lib/content/sections";
 import type { ContentEntityType } from "@/lib/content/revalidate";
+import type { ContentSection } from "@/lib/db/schema/content/enums";
 import {
   canteenDishes,
   canteenSettings,
@@ -49,7 +51,7 @@ export interface ContentTypeDef {
   table: AnyPgTable;
   /** A singleton has one row and no list page: its page edits that row directly. */
   kind: "collection" | "singleton";
-  /** Several types can share a table (welfare and guide pages); this picks the rows of this one. */
+  /** Several types can share a table; this picks the rows of this one. */
   where?: SQL;
   /** Columns the list and counts read. */
   columns: {
@@ -61,6 +63,8 @@ export interface ContentTypeDef {
   };
   /** Public route of the detail page; the page is `<viewPath>/<slug>` in the staff member's language. */
   viewPath?: string;
+  /** For types whose public path depends on the row (topic pages sit under their section). Takes the place of `viewPath`. */
+  viewPathFor?: (row: { slug: string; section?: string }) => string;
   /** Whether the admin pages for this type have been built. */
   available: boolean;
 }
@@ -137,31 +141,16 @@ export const CONTENT_TYPES: readonly ContentTypeDef[] = [
     available: true,
   },
   {
-    key: "guidePages",
-    segment: "guides",
-    labelKey: "typeGuides",
-    oneKey: "typeGuidesOne",
-    descriptionKey: "typeGuidesDesc",
-    entityType: "guidePage",
+    key: "topicPages",
+    segment: "topics",
+    labelKey: "typeTopics",
+    oneKey: "typeTopicsOne",
+    descriptionKey: "typeTopicsDesc",
+    entityType: "topicPage",
     table: contentPages,
-    where: eq(contentPages.kind, "guide"),
     kind: "collection",
     columns: std(contentPages, [contentPages.titleTh, contentPages.titleEn]),
-    viewPath: "/guide",
-    available: true,
-  },
-  {
-    key: "welfarePages",
-    segment: "welfare",
-    labelKey: "typeWelfare",
-    oneKey: "typeWelfareOne",
-    descriptionKey: "typeWelfareDesc",
-    entityType: "welfarePage",
-    table: contentPages,
-    where: eq(contentPages.kind, "welfare"),
-    kind: "collection",
-    columns: std(contentPages, [contentPages.titleTh, contentPages.titleEn]),
-    viewPath: "/welfare",
+    viewPathFor: (row) => topicPath(row.section as ContentSection, row.slug),
     available: true,
   },
   {
@@ -370,3 +359,13 @@ export function getContentType(segment: string): ContentTypeDef | undefined {
 export function contentPath(def: Pick<ContentTypeDef, "segment">, id?: string): string {
   return `/admin/content/${def.segment}${id ? `/${id}` : ""}`;
 }
+
+/** The public path of a row (no language prefix), or null when the type has no public page or the row has no address yet. */
+export function viewPathOf(def: Pick<ContentTypeDef, "viewPath" | "viewPathFor">, row: { slug?: string | null; section?: string | null }): string | null {
+  if (!row.slug) return null;
+  if (def.viewPathFor) return row.section ? def.viewPathFor({ slug: row.slug, section: row.section }) : null;
+  return def.viewPath ? `${def.viewPath}/${row.slug}` : null;
+}
+
+/** True when the type has a public detail page. */
+export const hasPublicPage = (def: Pick<ContentTypeDef, "viewPath" | "viewPathFor">): boolean => Boolean(def.viewPath || def.viewPathFor);

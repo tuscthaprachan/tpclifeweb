@@ -3,7 +3,7 @@ import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { contentPageForms, contentPages, events, faqForms, faqs, forms, newsPosts, policies } from "@/lib/db/schema";
 
-export type FormUsageKind = "news" | "event" | "policy" | "guide" | "welfare" | "faq" | "form";
+export type FormUsageKind = "news" | "event" | "policy" | "topic" | "faq" | "form";
 
 /** One place that still points at a form. */
 export interface FormUsage {
@@ -33,7 +33,7 @@ export async function findFormUsages(db: AuditExecutor, formId: string): Promise
       .where(or(eq(events.relatedFormId, formId), calls(formId, events.bodyTh, events.bodyEn))),
     db.select({ id: policies.id, th: policies.titleTh, en: policies.titleEn }).from(policies).where(calls(formId, policies.detailTh, policies.detailEn)),
     db
-      .select({ id: contentPages.id, kind: contentPages.kind, th: contentPages.titleTh, en: contentPages.titleEn })
+      .select({ id: contentPages.id, th: contentPages.titleTh, en: contentPages.titleEn })
       .from(contentPages)
       .where(calls(formId, contentPages.bodyTh, contentPages.bodyEn)),
     db.select({ id: faqs.id, th: faqs.questionTh, en: faqs.questionEn }).from(faqs).where(calls(formId, faqs.answerTh, faqs.answerEn)),
@@ -42,7 +42,7 @@ export async function findFormUsages(db: AuditExecutor, formId: string): Promise
       .from(forms)
       .where(and(ne(forms.id, formId), calls(formId, forms.descriptionTh, forms.descriptionEn))),
     db
-      .select({ id: contentPages.id, kind: contentPages.kind, th: contentPages.titleTh, en: contentPages.titleEn })
+      .select({ id: contentPages.id, th: contentPages.titleTh, en: contentPages.titleEn })
       .from(contentPageForms)
       .innerJoin(contentPages, eq(contentPages.id, contentPageForms.pageId))
       .where(eq(contentPageForms.formId, formId)),
@@ -63,7 +63,7 @@ export async function findFormUsages(db: AuditExecutor, formId: string): Promise
   for (const r of news) add("news", "news", r);
   for (const r of eventRows) add("event", "events", r);
   for (const r of policyRows) add("policy", "policies", r);
-  for (const r of [...pages, ...pageLinks]) add(r.kind === "guide" ? "guide" : "welfare", r.kind === "guide" ? "guides" : "welfare", r);
+  for (const r of [...pages, ...pageLinks]) add("topic", "topics", r);
   for (const r of [...faqRows, ...faqLinks]) add("faq", "faqs", r);
   for (const r of formRows) add("form", "forms", r);
   return out;

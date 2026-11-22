@@ -1,16 +1,14 @@
-import { eq, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { z } from "zod";
 import { fieldKit, formDataToObject, parseForm } from "@/lib/admin/content/fields";
 import { resolveIntent, type FieldErrors, type ResolvedIntent } from "@/lib/admin/content/form-state";
 import { isSlugTaken } from "@/lib/admin/content/slug";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { contentPages, forms } from "@/lib/db/schema";
-import { CATEGORIES, type ContentStatus } from "@/lib/db/schema/content/enums";
+import { CATEGORIES, CONTENT_SECTIONS, type ContentStatus } from "@/lib/db/schema/content/enums";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
 import { externalLinks } from "./rows";
-
-export type ContentPageKind = "guide" | "welfare";
 
 /** Ids in `ids` that are not a form, for the related-form pickers. */
 export async function missingFormIds(db: AuditExecutor, ids: readonly string[]): Promise<string[]> {
@@ -21,21 +19,22 @@ export async function missingFormIds(db: AuditExecutor, ids: readonly string[]):
 }
 
 /**
- * Everything a guide or welfare page form must satisfy, apart from writing
- * it. The two kinds share one form, so `kind` only decides where the slug
- * must be unique and which row an edit may touch.
+ * Everything a topic page form must satisfy, apart from writing it. Slugs
+ * are unique across every section.
  */
 export async function validatePageForm(
   db: AuditExecutor,
-  input: { kind: ContentPageKind; locale: Locale; id: string | null; formData: FormData; existingStatus?: ContentStatus },
+  input: { locale: Locale; id: string | null; formData: FormData; existingStatus?: ContentStatus },
 ) {
-  const { kind, locale, id, formData } = input;
+  const { locale, id, formData } = input;
   const L = (key: AdminKey) => a(key, locale);
   const resolved: ResolvedIntent = resolveIntent(formData, input.existingStatus);
   const { publishing } = resolved;
 
   const k = fieldKit(locale, publishing);
   const schema = z.object({
+    section: k.enumOf(L("pagesFieldSection"), CONTENT_SECTIONS),
+    userNeed: k.text(L("pagesFieldUserNeed"), { max: 1000 }),
     slug: k.slug(L("fieldSlug")),
     title: k.bilingual(L("fieldTitle"), { required: true, max: 200 }),
     summary: k.bilingual(L("fieldSummary"), { required: true, max: 500 }),
@@ -59,7 +58,6 @@ export async function validatePageForm(
       idColumn: contentPages.id,
       slug: data.slug,
       excludeId: id ?? undefined,
-      where: eq(contentPages.kind, kind),
     });
     if (taken) errors.slug = L("errSlugTaken");
 

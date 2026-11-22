@@ -32,25 +32,25 @@ describe("deleting a picture", () => {
     const image = await newImage("content/images/in-text.jpg");
     const [page] = await db
       .insert(contentPages)
-      .values({ kind: "welfare", slug: "grants", titleTh: "ทุน", titleEn: "Grants", category: "welfare", bodyEn: docWith(image.id) })
+      .values({ section: "money", slug: "grants", titleTh: "ทุน", titleEn: "Grants", category: "welfare", bodyEn: docWith(image.id) })
       .returning();
 
     const result = await deleteImage(db, actor(), image.id);
     expect(result).toEqual({
       ok: false,
       reason: "inUse",
-      uses: [{ segment: "welfare", id: page!.id, title: { th: "ทุน", en: "Grants" }, role: "text" }],
+      uses: [{ segment: "topics", id: page!.id, title: { th: "ทุน", en: "Grants" }, role: "text" }],
     });
     expect(await db.select().from(images).where(eq(images.id, image.id))).toHaveLength(1);
     expect(await db.select().from(auditLog).where(eq(auditLog.action, "images.delete"))).toHaveLength(0);
   });
 
-  it("reports guide pages separately from welfare pages, and every language column", async () => {
+  it("reports topic pages under one segment, whatever their section, and every language column", async () => {
     const image = await newImage("content/images/guide.jpg");
-    await db.insert(contentPages).values({ kind: "guide", slug: "start", titleEn: "Start", category: "welfare", bodyTh: docWith(image.id), bodyEn: docWith(image.id) });
+    await db.insert(contentPages).values({ section: "start", slug: "start", titleEn: "Start", category: "welfare", bodyTh: docWith(image.id), bodyEn: docWith(image.id) });
     const uses = await findImageUses(db, image.id);
     expect(uses).toHaveLength(1);
-    expect(uses[0]).toMatchObject({ segment: "guides", role: "text" });
+    expect(uses[0]).toMatchObject({ segment: "topics", role: "text" });
   });
 
   it("is blocked by a cover picture and by a gallery", async () => {

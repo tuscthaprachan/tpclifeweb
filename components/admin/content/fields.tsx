@@ -106,6 +106,25 @@ export function TextField({ name, label, hint, defaultValue, className, type = "
   );
 }
 
+/** A one-language multi-line box. */
+export function TextareaField({ name, label, hint, defaultValue, className, rows = 4 }: SingleProps & { rows?: number }) {
+  const { errors, formId } = useContentForm();
+  return (
+    <Textarea
+      id={fieldId(name)}
+      name={name}
+      form={formId}
+      label={label}
+      hint={hint}
+      error={errors[name]}
+      defaultValue={defaultValue ?? ""}
+      autoComplete="off"
+      rows={rows}
+      className={className}
+    />
+  );
+}
+
 /** Date and time in Thailand time; `defaultValue` from `formatBangkokDateTime`. */
 export function DateTimeField({ name, label, hint, defaultValue, className }: SingleProps) {
   const { errors, locale, formId } = useContentForm();

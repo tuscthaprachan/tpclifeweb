@@ -6,6 +6,8 @@ export const CONTENT_LIST_STRINGS = {
   clSortBy: { th: "เรียงตาม {column}", en: "Sort by {column}" },
   clSortedAsc: { th: "เรียงจากน้อยไปมาก", en: "sorted ascending" },
   clSortedDesc: { th: "เรียงจากมากไปน้อย", en: "sorted descending" },
+  clColSection: { th: "หมวด", en: "Section" },
+  clColOrder: { th: "ลำดับ", en: "Order" },
   clColPublished: { th: "วันที่เผยแพร่", en: "Published" },
   clColStarts: { th: "วันที่เริ่ม", en: "Starts" },
 
@@ -17,6 +19,7 @@ export const CONTENT_LIST_STRINGS = {
   clWithinAny: { th: "ทุกช่วงเวลา", en: "Any time" },
   clWithin7: { th: "7 วันที่ผ่านมา", en: "Last 7 days" },
   clWithin30: { th: "30 วันที่ผ่านมา", en: "Last 30 days" },
+  clFilterSection: { th: "หมวด", en: "Section" },
   clFilterCategory: { th: "หมวดหมู่", en: "Category" },
   clFilterPolicyStatus: { th: "สถานะนโยบาย", en: "Policy status" },
   clFilterFacetAny: { th: "ทั้งหมด", en: "All" },

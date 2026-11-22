@@ -4,7 +4,7 @@
  * bulk actions and the CSV export all read the same parameters.
  */
 
-export const SORT_KEYS = ["title", "updated", "status", "date"] as const;
+export const SORT_KEYS = ["title", "updated", "status", "date", "order"] as const;
 export type SortKey = (typeof SORT_KEYS)[number];
 export type SortDir = "asc" | "desc";
 export type ListStatus = "published" | "draft" | "scheduled" | "expired";
@@ -38,7 +38,7 @@ export function parseWithin(value: string | undefined): ListWithin | undefined {
   return value === "7d" || value === "30d" ? value : undefined;
 }
 
-export const defaultDir = (sort: SortKey): SortDir => (sort === "title" || sort === "status" ? "asc" : "desc");
+export const defaultDir = (sort: SortKey): SortDir => (sort === "title" || sort === "status" || sort === "order" ? "asc" : "desc");
 
 /**
  * Reads and sanitises the list parameters. A sort key the type does not offer

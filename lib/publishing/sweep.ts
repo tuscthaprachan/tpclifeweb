@@ -20,7 +20,7 @@ const SCHEDULED: Scheduled[] = [
   { table: newsPosts as unknown as Scheduled["table"], entityType: () => "newsPost" },
   { table: events as unknown as Scheduled["table"], entityType: () => "event" },
   { table: policies as unknown as Scheduled["table"], entityType: () => "policy" },
-  { table: contentPages as unknown as Scheduled["table"], entityType: (row) => (row.kind === "welfare" ? "welfarePage" : "guidePage") },
+  { table: contentPages as unknown as Scheduled["table"], entityType: () => "topicPage" },
   { table: faqs as unknown as Scheduled["table"], entityType: () => "faq" },
   { table: forms as unknown as Scheduled["table"], entityType: () => "form" },
 ];

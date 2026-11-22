@@ -21,6 +21,10 @@ export interface ContentListRow {
   updatedByName?: string;
   /** The public web address name; only filled when the caller asks for editor details and the type has a public page. */
   slug?: string;
+  /** The section a topic page sits in; only filled when the caller asks for editor details and the type has one. */
+  section?: string;
+  /** Position in the list, for types that have one; only filled when the caller asks for editor details. */
+  sortOrder?: number | null;
   /** Publication window, for types that have one (see `scheduleState`). */
   publishAt?: Date | null;
   unpublishAt?: Date | null;
@@ -85,6 +89,8 @@ export function listOrder(def: ContentTypeDef, sort: SortKey, dir: SortDir, loca
     primary = sql`lower(coalesce(nullif(${first}, ''), ${second})) ${direction}`;
   } else if (sort === "status" && status) {
     primary = sql`${status}::text ${direction}`;
+  } else if (sort === "order" && listExtras(def).order) {
+    primary = sql`${listExtras(def).order!.column} ${direction} nulls last`;
   } else if (sort === "date" && listExtras(def).date) {
     primary = sql`${listExtras(def).date!.column} ${direction} nulls last`;
   } else {
@@ -110,6 +116,8 @@ export async function listContentRows(
   const tableColumns = getTableColumns(def.table) as Record<string, AnyPgColumn>;
   const editorColumn = options.withEditor ? tableColumns.updatedBy : undefined;
   const slugColumn = options.withEditor ? tableColumns.slug : undefined;
+  const sectionColumn = options.withEditor && listExtras(def).sectionColumn ? tableColumns.section : undefined;
+  const orderColumn = listExtras(def).order?.column;
   const dateColumn = listExtras(def).date?.column;
 
   const rows = await db
@@ -121,6 +129,8 @@ export async function listContentRows(
       updatedAt,
       updatedBy: editorColumn ?? sql<null>`null`,
       slug: slugColumn ?? sql<null>`null`,
+      section: sectionColumn ?? sql<null>`null`,
+      sortOrder: orderColumn ?? sql<null>`null`,
       date: dateColumn ?? sql<null>`null`,
       publishAt: tableColumns.publishAt ?? sql<null>`null`,
       unpublishAt: tableColumns.unpublishAt ?? sql<null>`null`,
@@ -142,6 +152,8 @@ export async function listContentRows(
       updatedAt: new Date(r.updatedAt as Date),
       updatedByName: r.updatedBy ? names.get(r.updatedBy as string) : undefined,
       slug: r.slug ? String(r.slug) : undefined,
+      section: r.section ? String(r.section) : undefined,
+      sortOrder: orderColumn ? (r.sortOrder as number | null) : undefined,
       date: r.date ? new Date(r.date as Date) : null,
       publishAt: r.publishAt ? new Date(r.publishAt as Date) : null,
       unpublishAt: r.unpublishAt ? new Date(r.unpublishAt as Date) : null,

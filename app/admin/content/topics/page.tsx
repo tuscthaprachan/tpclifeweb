@@ -9,12 +9,12 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   const locale = await getAdminLocale();
-  return { title: a("typeGuides", locale) };
+  return { title: a("typeTopics", locale) };
 }
 
-export default async function GuideListPage({ searchParams }: { searchParams: Promise<ContentListSearchParams> }) {
+export default async function TopicListPage({ searchParams }: { searchParams: Promise<ContentListSearchParams> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
   await requireEditor();
-  return <ContentListPage segment="guides" searchParams={searchParams} />;
+  return <ContentListPage segment="topics" searchParams={searchParams} />;
 }

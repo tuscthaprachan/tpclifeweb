@@ -2,14 +2,15 @@ import { eq } from "drizzle-orm";
 import type { AuditExecutor } from "@/lib/db/audit";
 import { contentPageForms, contentPageRelated } from "@/lib/db/schema";
 import { toExternalLinks } from "./rows";
-import type { ContentPageKind, validatePageForm } from "./validate";
+import type { validatePageForm } from "./validate";
 
 type PageData = Extract<Awaited<ReturnType<typeof validatePageForm>>, { ok: true }>["data"];
 
 /** The `content_pages` columns a validated page form sets. */
-export function pageValues(kind: ContentPageKind, data: PageData): Record<string, unknown> {
+export function pageValues(data: PageData): Record<string, unknown> {
   return {
-    kind,
+    section: data.section,
+    userNeed: data.userNeed,
     slug: data.slug,
     titleTh: data.title.th,
     titleEn: data.title.en,

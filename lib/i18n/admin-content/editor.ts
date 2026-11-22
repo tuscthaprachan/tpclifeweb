@@ -122,7 +122,6 @@ export const EDITOR_STRINGS = {
   edPageServices: { th: "บริการ", en: "Services" },
   edPageForms: { th: "แบบฟอร์ม", en: "Forms" },
   edPageGettingAround: { th: "การเดินทาง", en: "Getting around" },
-  edPageWelfare: { th: "สวัสดิการ", en: "Welfare" },
   edPageNews: { th: "ข่าวสาร", en: "News" },
   edPageEvents: { th: "กิจกรรม", en: "Events" },
   edPagePolicy: { th: "นโยบาย", en: "Policies" },

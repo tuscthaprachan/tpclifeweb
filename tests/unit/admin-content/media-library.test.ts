@@ -56,14 +56,14 @@ describe("usage scan", () => {
     await db.insert(newsPostImages).values({ newsPostId: post!.id, imageId: gallery.id, position: 0 });
     const [page] = await db
       .insert(contentPages)
-      .values({ kind: "guide", slug: "g", titleEn: "Guide", category: "welfare", bodyTh: doc(inPage.id), bodyEn: doc(inPage.id) })
+      .values({ section: "start", slug: "g", titleEn: "Guide", category: "welfare", bodyTh: doc(inPage.id), bodyEn: doc(inPage.id) })
       .returning();
 
     const usage = await scanImageUsage(db);
     expect(usage.get(cover.id)).toEqual([{ segment: "news", id: post!.id, title: { th: "", en: "Post" }, role: "cover" }]);
     expect(usage.get(gallery.id)?.[0]).toMatchObject({ segment: "news", role: "gallery" });
     expect(usage.get(inNews.id)?.[0]).toMatchObject({ segment: "news", role: "text" });
-    expect(usage.get(inPage.id)).toEqual([{ segment: "guides", id: page!.id, title: { th: "", en: "Guide" }, role: "text" }]);
+    expect(usage.get(inPage.id)).toEqual([{ segment: "topics", id: page!.id, title: { th: "", en: "Guide" }, role: "text" }]);
     expect(usage.has(unused.id)).toBe(false);
   });
 

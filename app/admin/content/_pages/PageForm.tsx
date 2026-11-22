@@ -1,64 +1,48 @@
-import { asc, and, eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
-import { BilingualTextarea, BilingualTextField, DateField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
+import { BilingualTextarea, BilingualTextField, DateField, EnumSelect, SlugField, TextareaField, TextField } from "@/components/admin/content/fields";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
 import { ReferencePicker, type ReferenceChoice } from "@/components/admin/content/ReferencePicker";
 import { categoryOptions } from "@/lib/admin/content/options";
-import { listContentRows, userNames } from "@/lib/admin/content/list";
+import { userNames } from "@/lib/admin/content/list";
 import { loadRichTextRefs } from "@/lib/admin/content/refs";
-import { contentPath, getContentType } from "@/lib/admin/content/types";
+import { contentPath, getContentType, viewPathOf } from "@/lib/admin/content/types";
+import { SECTIONS } from "@/lib/content/sections";
 import { getDb } from "@/lib/db";
 import { contentPageForms, contentPageRelated, contentPages } from "@/lib/db/schema";
+import { CONTENT_SECTIONS } from "@/lib/db/schema/content/enums";
 import { a } from "@/lib/i18n/admin";
-import { localePath, type Locale } from "@/lib/i18n/config";
-import { deleteGuidePage, saveGuidePage } from "../guides/actions";
-import { deleteWelfarePage, saveWelfarePage } from "../welfare/actions";
+import { localePath, pick, type Locale } from "@/lib/i18n/config";
+import { deleteTopicPage, saveTopicPage } from "../topics/actions";
 import { Group } from "./Group";
 import { ObjectListField } from "./ObjectListField";
-import type { ContentPageKind } from "./validate";
 
-const SEGMENT = { guide: "guides", welfare: "welfare" } as const;
-const ACTIONS = {
-  guide: { save: saveGuidePage, remove: deleteGuidePage },
-  welfare: { save: saveWelfarePage, remove: deleteWelfarePage },
-} as const;
-
-/** Every other guide and welfare page, labelled with its kind, for the related-pages picker. */
+/** Every other topic page, labelled with its section, for the related-pages picker. */
 async function relatedPageChoices(excludeId?: string): Promise<ReferenceChoice[]> {
-  const db = getDb();
-  const kinds: [ContentPageKind, "pagesKindGuide" | "pagesKindWelfare"][] = [
-    ["guide", "pagesKindGuide"],
-    ["welfare", "pagesKindWelfare"],
-  ];
-  const lists = await Promise.all(
-    kinds.map(async ([kind, key]) => {
-      const { rows } = await listContentRows(db, getContentType(SEGMENT[kind])!, { limit: 1000 });
-      return rows
-        .filter((r) => r.id !== excludeId)
-        .map((r) => ({
-          value: r.id,
-          label: {
-            th: a("pagesKindLabel", "th", { kind: a(key, "th"), title: r.title.th || r.title.en }),
-            en: a("pagesKindLabel", "en", { kind: a(key, "en"), title: r.title.en || r.title.th }),
-          },
-        }));
-    }),
-  );
-  return lists.flat();
+  const rows = await getDb()
+    .select({ id: contentPages.id, section: contentPages.section, titleTh: contentPages.titleTh, titleEn: contentPages.titleEn })
+    .from(contentPages)
+    .orderBy(asc(contentPages.section), asc(contentPages.sortOrder), asc(contentPages.titleEn))
+    .limit(1000);
+  return rows
+    .filter((r) => r.id !== excludeId)
+    .map((r) => ({
+      value: r.id,
+      label: {
+        th: a("pagesRelatedLabel", "th", { section: pick(SECTIONS[r.section].label, "th"), title: r.titleTh || r.titleEn }),
+        en: a("pagesRelatedLabel", "en", { section: pick(SECTIONS[r.section].label, "en"), title: r.titleEn || r.titleTh }),
+      },
+    }));
 }
 
-/**
- * The guide and welfare page form, for the "new" page (no `id`) and the edit
- * page. The two kinds have the same fields; `kind` picks the list, the public
- * route and the Server Actions.
- */
-export async function PageForm({ kind, locale, id, saved }: { kind: ContentPageKind; locale: Locale; id?: string; saved?: string }) {
+/** The topic page form, for the "new" page (no `id`) and the edit page. */
+export async function PageForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
   const db = getDb();
-  const def = getContentType(SEGMENT[kind])!;
+  const def = getContentType("topics")!;
   const refs = await loadRichTextRefs(db);
 
-  const [page] = id ? await db.select().from(contentPages).where(and(eq(contentPages.id, id), eq(contentPages.kind, kind))) : [];
+  const [page] = id ? await db.select().from(contentPages).where(eq(contentPages.id, id)) : [];
   if (id && !page) notFound();
   const [formLinks, relatedLinks, names, relatedChoices] = await Promise.all([
     page ? db.select().from(contentPageForms).where(eq(contentPageForms.pageId, page.id)).orderBy(asc(contentPageForms.position)) : [],
@@ -75,11 +59,11 @@ export async function PageForm({ kind, locale, id, saved }: { kind: ContentPageK
         publishAt: page.publishAt?.toISOString() ?? null,
         unpublishAt: page.unpublishAt?.toISOString() ?? null,
         updatedByName: page.updatedBy ? names.get(page.updatedBy) : null,
-        viewHref: localePath(locale, `${def.viewPath}/${page.slug}`),
+        viewHref: localePath(locale, viewPathOf(def, page)!),
       }
     : undefined;
   const L = (key: Parameters<typeof a>[0]) => a(key, locale);
-  const actions = ACTIONS[kind];
+  const actions = { save: saveTopicPage, remove: deleteTopicPage };
 
   return (
     <ContentForm
@@ -104,6 +88,17 @@ export async function PageForm({ kind, locale, id, saved }: { kind: ContentPageK
         </>
       }
     >
+      <Group icon="topics" id="group-where" legend={L("pagesGroupWhere")}>
+        <EnumSelect
+          name="section"
+          label={L("pagesFieldSection")}
+          hint={L("pagesHintSection")}
+          defaultValue={page?.section ?? ""}
+          options={[{ value: "", label: L("choiceSelect") }, ...CONTENT_SECTIONS.map((value) => ({ value, label: pick(SECTIONS[value].label, locale) }))]}
+        />
+        <TextareaField name="userNeed" label={L("pagesFieldUserNeed")} hint={L("pagesHintUserNeed")} defaultValue={page?.userNeed} rows={4} />
+      </Group>
+
       <Group icon="edit" id="group-text" legend={L("pagesGroupText")}>
         <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: page?.titleTh, en: page?.titleEn }} />
         <SlugField label={L("fieldSlug")} defaultValue={page?.slug} />

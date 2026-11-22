@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { events, newsPosts } from "@/lib/db/schema";
+import { contentPages, events, newsPosts } from "@/lib/db/schema";
 import { createTestDb, makeUser } from "../db/harness";
 
 vi.mock("@/lib/content/revalidate", () => ({ revalidateFor: vi.fn() }));
@@ -124,5 +124,33 @@ describe("buildContentCsv", () => {
     expect(lines[1]).toContain(",กล้วย,Banana,banana,draft,");
     expect(lines[2]).toContain(",เชอร์รี,Cherry,cherry,published,");
     expect(lines[2]).toContain("/en/news/cherry");
+  });
+});
+
+describe("topic page list", () => {
+  const topics = getContentType("topics")!;
+  const actor = () => ({ userId: ploy, context: { actorUserId: ploy } });
+  const topic = (slug: string, section: "start" | "study" | "health", sortOrder: number | null) =>
+    saveContent({ entityType: "topicPage", table: contentPages, actor: actor(), db, values: { slug, section, sortOrder, titleEn: slug, titleTh: slug, category: "welfare" } });
+
+  it("filters by section, sorts by order and knows each row's public path", async () => {
+    await topic("b-study", "study", 20);
+    await topic("a-study", "study", 10);
+    await topic("c-health", "health", null);
+    const { listExtras, sortableKeys } = await import("@/lib/admin/content/list-extras");
+    const { viewPathOf } = await import("@/lib/admin/content/types");
+    expect(listExtras(topics).facet?.options.map((o) => o.value)).toEqual(["start", "campus", "study", "health", "money", "help", "say"]);
+    expect(sortableKeys(topics)).toContain("order");
+
+    const all = await listContentRows(db, topics, { withEditor: true, sort: "order", dir: "asc" });
+    expect(all.rows.map((r) => r.slug)).toEqual(["a-study", "b-study", "c-health"]);
+    const study = await listContentRows(db, topics, { withEditor: true, sort: "order", dir: "asc", facet: "study" });
+    expect(study.rows.map((r) => [r.slug, r.section, r.sortOrder])).toEqual([["a-study", "study", 10], ["b-study", "study", 20]]);
+    expect((await countByStatus(db, topics, { facet: "health" })).all).toBe(1);
+    expect(viewPathOf(topics, study.rows[0]!)).toBe("/study/a-study");
+    expect(viewPathOf(topics, { slug: "x" })).toBeNull();
+    const { previewPath } = await import("@/lib/admin/content/preview-path");
+    expect(previewPath("topics", { slug: "a-study", section: "study" })).toBe("/study/a-study");
+    expect(previewPath("news", { slug: "n" })).toBe("/news/n");
   });
 });

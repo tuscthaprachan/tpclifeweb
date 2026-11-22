@@ -1,16 +1,27 @@
 import type { LocaleString } from "../config";
 
-/** Admin strings for guide pages, welfare pages, FAQs and forms. */
+/** Admin strings for topic pages, FAQs and forms. */
 export const PAGES_STRINGS = {
-  /* Guide and welfare pages */
+  /* Topic pages */
+  pagesGroupWhere: { th: "หน้านี้อยู่ที่ไหนและใครต้องการ", en: "Where it goes and who needs it" },
+  pagesFieldSection: { th: "หมวด", en: "Section" },
+  pagesHintSection: {
+    th: "หมวดบนเว็บไซต์ที่หน้านี้จะแสดง และเป็นส่วนหนึ่งของที่อยู่หน้านี้",
+    en: "The part of the website this page appears in. It is also part of the page's web address",
+  },
+  pagesFieldUserNeed: { th: "สิ่งที่ผู้อ่านต้องการ (ไม่บังคับ)", en: "What the reader needs (optional)" },
+  pagesHintUserNeed: {
+    th: "ใครต้องการหน้านี้ และเขากำลังพยายามทำอะไร เจ้าหน้าที่เท่านั้นที่เห็น จะไม่แสดงบนเว็บไซต์",
+    en: "Who needs this page and what they are trying to do. Only staff see this. It is never shown on the website",
+  },
   pagesGroupText: { th: "เนื้อหาของหน้า", en: "Page content" },
   pagesGroupPlacement: { th: "การจัดวางและการตรวจทาน", en: "Order and review" },
   pagesGroupRelated: { th: "ข้อมูลที่เกี่ยวข้อง", en: "Related information" },
   pagesHintCategory: { th: "ใช้กำหนดสีของหน้านี้ในรายการ", en: "Sets the colour used for this page in lists" },
   pagesFieldSortOrder: { th: "ลำดับในรายการ", en: "Position in the list" },
   pagesHintSortOrder: {
-    th: "ตัวเลขน้อยแสดงก่อน เว้นว่างไว้เพื่อให้เรียงตามตัวอักษรต่อจากหน้าที่กำหนดลำดับแล้ว",
-    en: "Lower numbers show first. Leave blank to list it alphabetically after the pages that have a position",
+    th: "ตัวเลขน้อยแสดงก่อนในหมวดของหน้านี้ เว้นว่างไว้เพื่อให้เรียงตามตัวอักษรต่อจากหน้าที่กำหนดลำดับแล้ว",
+    en: "Lower numbers show first in this page's section. Leave blank to list it alphabetically after the pages that have a position",
   },
   pagesFieldLastReviewed: { th: "ตรวจทานล่าสุดเมื่อ", en: "Last reviewed" },
   pagesHintLastReviewed: {
@@ -24,12 +35,10 @@ export const PAGES_STRINGS = {
   },
   pagesFieldRelatedPages: { th: "หน้าที่เกี่ยวข้อง", en: "Related pages" },
   pagesHintRelatedPages: {
-    th: "คู่มือหรือหน้าสวัสดิการอื่นที่ควรอ่านต่อ หน้าที่ยังไม่เผยแพร่จะไม่แสดงบนเว็บไซต์",
-    en: "Other guides or welfare pages worth reading next. Pages that are not published do not appear on the website",
+    th: "หน้าหัวข้ออื่นที่ควรอ่านต่อ หน้าที่ยังไม่เผยแพร่จะไม่แสดงบนเว็บไซต์",
+    en: "Other topic pages worth reading next. Pages that are not published do not appear on the website",
   },
-  pagesKindGuide: { th: "คู่มือ", en: "Guide" },
-  pagesKindWelfare: { th: "สวัสดิการ", en: "Welfare" },
-  pagesKindLabel: { th: "{kind}: {title}", en: "{kind}: {title}" },
+  pagesRelatedLabel: { th: "{section}: {title}", en: "{section}: {title}" },
   pagesFieldLinks: { th: "ลิงก์ไปเว็บไซต์อื่น", en: "Links to other websites" },
   pagesHintLinks: { th: "แหล่งข้อมูลภายนอก เช่น เว็บไซต์ของมหาวิทยาลัย", en: "Outside sources, such as a university website" },
   pagesFieldLink: { th: "ลิงก์", en: "Link" },
@@ -134,8 +143,7 @@ export const PAGES_STRINGS = {
   formsUseNews: { th: "ข่าว", en: "News post" },
   formsUseEvent: { th: "กิจกรรม", en: "Event" },
   formsUsePolicy: { th: "นโยบาย", en: "Policy" },
-  formsUseGuide: { th: "คู่มือ", en: "Guide" },
-  formsUseWelfare: { th: "สวัสดิการ", en: "Welfare page" },
+  formsUseTopic: { th: "หน้าหัวข้อ", en: "Topic page" },
   formsUseFaq: { th: "คำถามที่พบบ่อย", en: "FAQ" },
   formsUseForm: { th: "แบบฟอร์ม", en: "Form" },
 } as const satisfies Record<string, LocaleString>;

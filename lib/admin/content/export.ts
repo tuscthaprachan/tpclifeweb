@@ -6,18 +6,19 @@ import { localePath, type Locale } from "@/lib/i18n/config";
 import { toCsv, safeCell } from "./csv";
 import { EXPORT_LIMIT, listContentRows } from "./list";
 import type { ListQuery } from "./list-query";
-import type { ContentTypeDef } from "./types";
+import { viewPathOf, type ContentTypeDef } from "./types";
 
 export const EXPORT_HEADER = ["id", "title_th", "title_en", "slug", "status", "updated_at", "updated_by", "public_url"] as const;
 
 /** One CSV line's cells for a row. The public address is given only for published rows of a type with a public page. */
 export function exportCells(
-  def: Pick<ContentTypeDef, "viewPath">,
-  row: { id: string; title: { th: string; en: string }; status: string | null; updatedAt: Date; updatedByName?: string; slug?: string },
+  def: Pick<ContentTypeDef, "viewPath" | "viewPathFor">,
+  row: { id: string; title: { th: string; en: string }; status: string | null; updatedAt: Date; updatedByName?: string; slug?: string; section?: string },
   locale: Locale,
   origin: string = SITE_URL,
 ): string[] {
-  const live = def.viewPath && row.slug && row.status === "published" ? `${origin}${localePath(locale, `${def.viewPath}/${row.slug}`)}` : "";
+  const path = row.status === "published" ? viewPathOf(def, row) : null;
+  const live = path ? `${origin}${localePath(locale, path)}` : "";
   return [
     row.id,
     safeCell(row.title.th),

@@ -14,10 +14,10 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   const locale = await getAdminLocale();
-  return { title: a("typeGuidesOne", locale) };
+  return { title: a("typeTopicsOne", locale) };
 }
 
-export default async function EditGuidePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string }> }) {
+export default async function EditTopicPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string }> }) {
   const locale = await getAdminLocale();
   if (!isAuthConfigured()) return <NotConfigured locale={locale} />;
   await requireEditor();
@@ -27,8 +27,8 @@ export default async function EditGuidePage({ params, searchParams }: { params: 
 
   return (
     <ConsolePage width="wide">
-      <FormPageHeader def={contentTypeBySegment("guides")} locale={locale} mode="edit" />
-      <PageForm locale={locale} kind="guide" id={id} saved={saved} />
+      <FormPageHeader def={contentTypeBySegment("topics")} locale={locale} mode="edit" />
+      <PageForm locale={locale} id={id} saved={saved} />
     </ConsolePage>
   );
 }

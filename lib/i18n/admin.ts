@@ -404,8 +404,8 @@ export const A = {
   /* Content: navigation and hub */
   contentHubTitle: { th: "เว็บไซต์", en: "Website" },
   contentHubIntro: {
-    th: "แก้ไขหน้าแนะนำ ทำเนียบ โรงอาหาร รูปภาพ และข้อมูลอื่นที่แสดงบนเว็บไซต์ การเปลี่ยนแปลงจะปรากฏหลังจากกดเผยแพร่ ส่วนข่าว กิจกรรม และประกาศแจ้งเตือนอยู่ในเมนู “ข่าวและประกาศ”",
-    en: "Edit the guides, directory, canteen, images and other information shown on the website. Changes appear once you publish. News, events and service alerts are under Post.",
+    th: "แก้ไขหน้าหัวข้อ ทำเนียบ โรงอาหาร รูปภาพ และข้อมูลอื่นที่แสดงบนเว็บไซต์ การเปลี่ยนแปลงจะปรากฏหลังจากกดเผยแพร่ ส่วนข่าว กิจกรรม และประกาศแจ้งเตือนอยู่ในเมนู “ข่าวและประกาศ”",
+    en: "Edit the topic pages, directory, canteen, images and other information shown on the website. Changes appear once you publish. News, events and service alerts are under Post.",
   },
 
   /* Content: types (plural label, singular for "Add ...", one-line description) */
@@ -421,12 +421,9 @@ export const A = {
   typePolicies: { th: "นโยบาย", en: "Policies" },
   typePoliciesOne: { th: "นโยบาย", en: "policy" },
   typePoliciesDesc: { th: "นโยบายที่สัญญาไว้และความคืบหน้า", en: "Promised policies and how they are progressing" },
-  typeGuides: { th: "หน้าคู่มือ", en: "Guide pages" },
-  typeGuidesOne: { th: "หน้าคู่มือ", en: "guide page" },
-  typeGuidesDesc: { th: "คู่มือการใช้ชีวิตและการเรียนในมหาวิทยาลัย", en: "How-to guides for student life" },
-  typeWelfare: { th: "หน้าสวัสดิการ", en: "Welfare pages" },
-  typeWelfareOne: { th: "หน้าสวัสดิการ", en: "welfare page" },
-  typeWelfareDesc: { th: "สวัสดิการและความช่วยเหลือสำหรับนักศึกษา", en: "Support and benefits for students" },
+  typeTopics: { th: "หน้าหัวข้อ", en: "Topic pages" },
+  typeTopicsOne: { th: "หน้าหัวข้อ", en: "topic page" },
+  typeTopicsDesc: { th: "หน้าที่ตอบสิ่งที่นักศึกษาต้องการรู้ แยกตามช่วงชีวิตในมหาวิทยาลัย", en: "Pages that answer what students need to know, grouped by stage of student life" },
   typeFaqs: { th: "คำถามที่พบบ่อย", en: "FAQs" },
   typeFaqsOne: { th: "คำถามที่พบบ่อย", en: "FAQ" },
   typeFaqsDesc: { th: "คำถามและคำตอบในคู่มือนักศึกษา", en: "Questions and answers in the student handbook" },

@@ -40,12 +40,10 @@ interface Source {
   rich?: AnyPgColumn[];
 }
 
-const pageSegment = (row: Record<string, unknown>) => (row.kind === "welfare" ? "welfare" : "guides");
-
 const SOURCES: Source[] = [
   { segment: "news", table: newsPosts, id: newsPosts.id, titleTh: newsPosts.titleTh, titleEn: newsPosts.titleEn, direct: [{ column: newsPosts.coverImageId, role: "cover" }], rich: [newsPosts.bodyTh, newsPosts.bodyEn] },
   { segment: "events", table: events, id: events.id, titleTh: events.titleTh, titleEn: events.titleEn, direct: [{ column: events.coverImageId, role: "cover" }], rich: [events.bodyTh, events.bodyEn] },
-  { segment: pageSegment, table: contentPages, id: contentPages.id, titleTh: contentPages.titleTh, titleEn: contentPages.titleEn, kind: contentPages.kind, rich: [contentPages.bodyTh, contentPages.bodyEn] },
+  { segment: "topics", table: contentPages, id: contentPages.id, titleTh: contentPages.titleTh, titleEn: contentPages.titleEn, rich: [contentPages.bodyTh, contentPages.bodyEn] },
   { segment: "faqs", table: faqs, id: faqs.id, titleTh: faqs.questionTh, titleEn: faqs.questionEn, rich: [faqs.answerTh, faqs.answerEn] },
   { segment: "forms", table: forms, id: forms.id, titleTh: forms.titleTh, titleEn: forms.titleEn, rich: [forms.descriptionTh, forms.descriptionEn] },
   { segment: "policies", table: policies, id: policies.id, titleTh: policies.titleTh, titleEn: policies.titleEn, rich: [policies.detailTh, policies.detailEn] },

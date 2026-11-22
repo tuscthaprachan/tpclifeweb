@@ -12,9 +12,9 @@ import { contentPlacement } from "@/app/admin/content/_list/placement";
 import { bulkContentAction } from "@/app/admin/content/bulk/actions";
 import { queryString, ResultCount, RowAction } from "@/app/admin/content/_list/parts";
 import type { BulkFailure } from "@/lib/admin/content/bulk";
-import { contentPath, type ContentTypeDef } from "@/lib/admin/content/types";
+import { contentPath, viewPathOf, type ContentTypeDef } from "@/lib/admin/content/types";
 import { LIST_PAGE_SIZE, type ContentListRow, type StatusCounts } from "@/lib/admin/content/list";
-import type { ListExtras } from "@/lib/admin/content/list-extras";
+import { facetOptionLabel, type ListExtras, type ListFacet } from "@/lib/admin/content/list-extras";
 import { activeFilters, listHref, listParams, nextSort, withoutFilter, type ListQuery, type ListWithin, type SortKey } from "@/lib/admin/content/list-query";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { localePath, pick, type Locale } from "@/lib/i18n/config";
@@ -78,6 +78,11 @@ const SELECT = "min-h-[var(--target-min)] rounded-control border border-line-str
  * a sortable table with bulk actions, CSV export and real pagination. A
  * server component; the only client code is the select-all box and the bulk bar.
  */
+function facetValueLabel(facet: ListFacet, value: string | undefined, locale: Locale): string {
+  const option = facet.options.find((o) => o.value === value);
+  return option ? facetOptionLabel(option, locale) : a("clFilterFacetAny", locale);
+}
+
 export function ContentList({ def, locale, rows, total, query, counts, editors = [], extras = {}, bulk = false, bulkReport, canAdd = true, notice }: ContentListProps) {
   const label = a(def.labelKey, locale);
   const place = contentPlacement(def);
@@ -95,7 +100,10 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
   const facet = extras.facet;
   const editorName = editors.find((e) => e.id === query.by)?.name ?? query.by;
 
-  const liveHref = (row: ContentListRow) => (def.viewPath && row.slug && listStatus(row) === "published" ? localePath(locale, `${def.viewPath}/${row.slug}`) : null);
+  const liveHref = (row: ContentListRow) => {
+    const path = listStatus(row) === "published" ? viewPathOf(def, row) : null;
+    return path ? localePath(locale, path) : null;
+  };
 
   const columns: ContentTableColumn<ContentListRow>[] = [
     ...(bulk
@@ -178,6 +186,28 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
       },
     },
   ];
+  if (extras.sectionColumn) {
+    const sectionColumn: ContentTableColumn<ContentListRow> = {
+      id: "section",
+      header: a("clColSection", locale),
+      mobile: "sub",
+      cell: (row) => {
+        const option = facet?.options.find((o) => o.value === row.section);
+        return option ? facetOptionLabel(option, locale) : <span className="text-ink-600">-</span>;
+      },
+    };
+    columns.splice(columns.findIndex((c) => c.id === "status") + 1 || 1, 0, sectionColumn);
+  }
+  if (extras.order) {
+    const orderColumn: ContentTableColumn<ContentListRow> = {
+      id: "order",
+      header: a(extras.order.labelKey, locale),
+      mobile: "note",
+      sort: { key: "order", href: sortHref("order") },
+      cell: (row) => (row.sortOrder != null ? row.sortOrder : <span className="text-ink-600">-</span>),
+    };
+    columns.splice(columns.findIndex((c) => c.id === "updated"), 0, orderColumn);
+  }
   if (extras.date) {
     const dateColumn: ContentTableColumn<ContentListRow> = {
       id: "date",
@@ -214,7 +244,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
               ? a("clChipWithin", locale, { value: a(WITHIN_KEYS[query.within!], locale) })
               : a("clChipFacet", locale, {
                   label: facet ? a(facet.labelKey, locale) : "",
-                  value: facet ? a(facet.options.find((o) => o.value === query.facet)?.labelKey ?? "clFilterFacetAny", locale) : "",
+                  value: facet ? facetValueLabel(facet, query.facet, locale) : "",
                 });
     return { id: filter, text: value, href: listHref(base, withoutFilter(query, filter)) };
   });
@@ -306,7 +336,7 @@ export function ContentList({ def, locale, rows, total, query, counts, editors =
                 <option value="">{a("clFilterFacetAny", locale)}</option>
                 {facet.options.map((o) => (
                   <option key={o.value} value={o.value}>
-                    {a(o.labelKey, locale)}
+                    {facetOptionLabel(o, locale)}
                   </option>
                 ))}
               </select>

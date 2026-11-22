@@ -24,8 +24,7 @@ const USE_LABEL: Record<FormUsageKind, AdminKey> = {
   news: "formsUseNews",
   event: "formsUseEvent",
   policy: "formsUsePolicy",
-  guide: "formsUseGuide",
-  welfare: "formsUseWelfare",
+  topic: "formsUseTopic",
   faq: "formsUseFaq",
   form: "formsUseForm",
 };
