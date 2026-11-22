@@ -47,7 +47,7 @@ export const PLAIN_NODES = [
 ] as const;
 
 /** The custom block nodes (leaf nodes, no children). */
-export const CUSTOM_NODES = ["image", "formCallout", "linkOut", "calloutBox", "stepList", "contactBlock", "liveTimeline"] as const;
+export const CUSTOM_NODES = ["image", "formCallout", "linkOut", "calloutBox", "stepList", "contactBlock", "liveTimeline", "keyFacts"] as const;
 
 export const MARKS = ["bold", "italic", "underline", "strike", "code", "link"] as const;
 
@@ -83,6 +83,10 @@ export interface CalloutBoxAttrs {
 export interface StepListAttrs {
   title?: LocaleStr;
   steps: Array<{ title: LocaleStr; detail?: LocaleStr }>;
+}
+export interface KeyFactsAttrs {
+  title?: LocaleStr;
+  facts: Array<{ value: LocaleStr; label: LocaleStr }>;
 }
 export interface LiveTimelineItem {
   /** ISO 8601 instants. */
@@ -172,6 +176,13 @@ const stepListAttrs = z
   })
   .strict();
 
+const keyFactsAttrs = z
+  .object({
+    title: optionalLocaleStr,
+    facts: z.array(z.object({ value: localeStr, label: localeStr }).strict()).min(1).max(6),
+  })
+  .strict();
+
 const instant = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2})$/, "Time must be a full date and time")
@@ -231,6 +242,7 @@ const NODE_ATTRS: Record<string, z.ZodType | undefined> = {
   stepList: stepListAttrs,
   contactBlock: contactBlockAttrs,
   liveTimeline: liveTimelineAttrs,
+  keyFacts: keyFactsAttrs,
 };
 
 /* ------------------------------------------------------------------ *

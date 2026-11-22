@@ -1,43 +1,16 @@
 import type { Metadata } from "next";
 import { PreviewBanner } from "@/components/preview/PreviewBanner";
 import { PREVIEW_METADATA, isPreview } from "@/lib/preview/state";
-import NextLink from "next/link";
 import { slugParams } from "@/lib/static-params";
 import { notFound } from "next/navigation";
 
-// FormCallout takes a resolved FormRecord and a headingLevel.
-// getContentPageBySlug already resolves `relatedForms` to full records, so only
-// the import is needed here.
-import { FormCallout } from "@/components/domain/form";
-import { RichText } from "@/components/domain/rich-text";
+import { ContentPageArticle } from "@/components/domain/content-page";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { Clock } from "lucide-react";
-import { Container, Heading, IconText, Link, NotificationBanner, Stack, Tag, Timestamp } from "@/components/ui";
-import { DEFAULT_LOCALE, isLocale, localePath, pick, type Locale } from "@/lib/i18n/config";
+import { Container } from "@/components/ui";
+import { DEFAULT_LOCALE, isLocale, pick, type Locale } from "@/lib/i18n/config";
 import { UI } from "@/lib/i18n/strings";
 import { getContentPageBySlug, getContentPagePreview, getContentPages, resolveRichTextRefs } from "@/lib/content";
-import type { ContentPage } from "@/lib/content/types";
 import { GUIDE_DETAIL_TEXT } from "./text";
-
-const CATEGORY_LABEL = {
-  transport: UI.categoryTransport,
-  welfare: UI.categoryWelfare,
-  activity: UI.categoryActivity,
-  governance: UI.categoryGovernance,
-};
-
-const STALE_REVIEW_LABEL = GUIDE_DETAIL_TEXT.staleReviewLabel; const STALE_REVIEW_BODY = GUIDE_DETAIL_TEXT.staleReviewBody; const STALE_AFTER_DAYS = 365;
-
-function isStale(lastReviewed: string | undefined, now: Date): boolean {
-  if (!lastReviewed) return true;
-  const reviewedAt = new Date(lastReviewed).getTime();
-  if (Number.isNaN(reviewedAt)) return true;
-  return (now.getTime() - reviewedAt) / (1000 * 60 * 60 * 24) > STALE_AFTER_DAYS;
-}
-
-function relatedPagePath(page: ContentPage): string {
-  return page._type === "welfarePage" ? `/welfare/${page.slug.current}` : `/guide/${page.slug.current}`;
-}
 
 export async function generateStaticParams() {
   const pages = await getContentPages("guidePage");
@@ -76,9 +49,6 @@ export default async function GuideDetailPage({
   if (!page) notFound();
 
   const title = pick(page.title, locale);
-  const now = new Date();
-  const relatedForms = page.relatedForms ?? [];
-  const relatedPages = page.relatedPages ?? [];
   const resolved = await resolveRichTextRefs([page.body[locale]]);
 
   return (
@@ -92,67 +62,15 @@ export default async function GuideDetailPage({
           { label: title },
         ]}
       />
-      <Stack space={6} className="pb-[var(--space-8)] pt-[var(--space-2)]" as="section">
-        <Stack space={2}>
-          <Tag tone={page.category}>{CATEGORY_LABEL[page.category][locale]}</Tag>
-          <Heading level={1}>{title}</Heading>
-          <p className="m-0 text-ink-600">{pick(page.summary, locale)}</p>
-          {page.lastReviewed ? (
-            <p className="m-0 text-sm text-ink-600">
-              <IconText icon={Clock} className="items-center">
-                {UI.lastReviewed[locale]}: <Timestamp value={page.lastReviewed} locale={locale} />
-              </IconText>
-            </p>
-          ) : null}
-        </Stack>
-
-        {isStale(page.lastReviewed, now) ? (
-          <NotificationBanner variant="warning" title={STALE_REVIEW_LABEL[locale]}>
-            {STALE_REVIEW_BODY[locale]}
-          </NotificationBanner>
-        ) : null}
-
-        <RichText value={page.body[locale]} locale={locale} headingLevel={2} resolved={resolved} />
-
-        {relatedForms.length > 0 ? (
-          <Stack space={4}>
-            {relatedForms.map((form) => (
-              <FormCallout key={form._id} form={form} locale={locale} headingLevel={2} />
-            ))}
-          </Stack>
-        ) : null}
-
-        {page.relatedLinks && page.relatedLinks.length > 0 ? (
-          <Stack space={2} as="section">
-            <Heading level={2}>{UI.relatedLinks[locale]}</Heading>
-            <ul className="m-0 flex flex-col gap-[var(--space-2)] pl-[var(--space-6)]">
-              {page.relatedLinks.map((link) => (
-                <li key={link._key ?? link.url}>
-                  <Link href={link.url} locale={locale} className="font-medium text-action">
-                    {pick(link.label, locale)}
-                  </Link>
-                  {link.requiresSignIn ? <span className="ml-[var(--space-2)] text-sm text-ink-600">({UI.requiresSignIn[locale]})</span> : null}
-                </li>
-              ))}
-            </ul>
-          </Stack>
-        ) : null}
-
-        {relatedPages.length > 0 ? (
-          <Stack space={2} as="section">
-            <Heading level={2}>{UI.relatedPages[locale]}</Heading>
-            <ul className="m-0 flex flex-col gap-[var(--space-2)] pl-[var(--space-6)]">
-              {relatedPages.map((related) => (
-                <li key={related._id}>
-                  <NextLink href={localePath(locale, relatedPagePath(related))} className="font-medium text-action">
-                    {pick(related.title, locale)}
-                  </NextLink>
-                </li>
-              ))}
-            </ul>
-          </Stack>
-        ) : null}
-      </Stack>
+      <ContentPageArticle
+        page={page}
+        locale={locale}
+        basePath="/guide"
+        resolved={resolved}
+        staleLabel={GUIDE_DETAIL_TEXT.staleReviewLabel[locale]}
+        staleBody={GUIDE_DETAIL_TEXT.staleReviewBody[locale]}
+        allTopicsLabel={GUIDE_DETAIL_TEXT.allTopics[locale]}
+      />
     </Container>
   );
 }

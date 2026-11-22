@@ -3,14 +3,22 @@ import {
   Brain,
   Building2,
   Bus,
+  Globe,
   HandCoins,
   HeartHandshake,
   Landmark,
+  Languages,
   Library,
+  MapPin,
   Printer,
+  Scale,
+  ScrollText,
   ShieldPlus,
   Sparkles,
   Stethoscope,
+  TrainFront,
+  Users,
+  Vote,
   type LucideIcon,
 } from "lucide-react";
 import type { ContentPage } from "@/lib/content/types";
@@ -25,6 +33,17 @@ const BY_SLUG: Record<string, LucideIcon> = {
   "healthcare-rights": Stethoscope,
   "accident-insurance": ShieldPlus,
   "mental-health-services": Brain,
+  "student-rights-elections-dress-and-titles": Vote,
+  "our-tpc": Landmark,
+  "getting-to-tha-prachan": MapPin,
+  "tha-prachan-to-rangsit": TrainFront,
+  "tu-get": Languages,
+  "tu-library": Library,
+  "student-discounts": BadgePercent,
+  "about-tusc": Scale,
+  "about-tusu": Users,
+  "useful-online-services": Globe,
+  "rules-and-documents": ScrollText,
 };
 
 const BY_CATEGORY: Record<ContentPage["category"], LucideIcon> = {
@@ -34,6 +53,6 @@ const BY_CATEGORY: Record<ContentPage["category"], LucideIcon> = {
   governance: Landmark,
 };
 
-export function welfareTopicIcon(page: Pick<ContentPage, "slug" | "category">): LucideIcon {
+export function topicIcon(page: Pick<ContentPage, "slug" | "category">): LucideIcon {
   return BY_SLUG[page.slug.current] ?? BY_CATEGORY[page.category];
 }

@@ -21,6 +21,7 @@ export const BLOCK_LABEL: Record<BlockType, AdminKey> = {
   calloutBox: "blockCallout",
   stepList: "blockSteps",
   liveTimeline: "blockTimeline",
+  keyFacts: "blockFacts",
 };
 
 export const BLOCK_ICON: Record<BlockType, ConsoleIconName> = {
@@ -31,6 +32,7 @@ export const BLOCK_ICON: Record<BlockType, ConsoleIconName> = {
   calloutBox: "blockCallout",
   stepList: "blockSteps",
   liveTimeline: "blockTimeline",
+  keyFacts: "blockFacts",
 };
 
 type Raw = Record<string, unknown>;
@@ -60,6 +62,10 @@ export function summariseBlock(type: BlockType, attrs: Raw, locale: Locale, refs
     case "stepList": {
       const steps = Array.isArray(attrs.steps) ? attrs.steps : [];
       return [ls(attrs.title, locale), a("blockStepCount", locale, { count: steps.length })].filter(Boolean).join(": ");
+    }
+    case "keyFacts": {
+      const facts = Array.isArray(attrs.facts) ? (attrs.facts as Raw[]) : [];
+      return [ls(attrs.title, locale), facts.map((f) => ls(f.value, locale)).filter(Boolean).join(", ")].filter(Boolean).join(": ");
     }
     case "liveTimeline": {
       const items = Array.isArray(attrs.items) ? attrs.items : [];

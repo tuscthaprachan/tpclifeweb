@@ -63,6 +63,10 @@ function precheck(type: BlockType, attrs: Raw): AdminKey | null {
       const steps = Array.isArray(attrs.steps) ? attrs.steps : [];
       return steps.length > 0 && steps.every((s) => filled(pair((s as Raw).title))) ? null : "errBlockSteps";
     }
+    case "keyFacts": {
+      const facts = (Array.isArray(attrs.facts) ? attrs.facts : []) as Raw[];
+      return facts.length > 0 && facts.length <= 6 && facts.every((f) => filled(pair(f.value)) && filled(pair(f.label))) ? null : "errBlockFacts";
+    }
     case "liveTimeline": {
       const items = (Array.isArray(attrs.items) ? attrs.items : []) as Raw[];
       const ok = (i: Raw) => filled(pair(i.label)) && Date.parse(String(i.endsAt)) > Date.parse(String(i.startsAt));
@@ -190,6 +194,49 @@ export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClo
         />
         <PairInput id={id("title")} label={a("blockCalloutTitle", locale)} value={pair(attrs.title)} onChange={(v) => set("title", v)} />
         <PairInput id={id("body")} label={a("blockCalloutBody", locale)} value={pair(attrs.body)} onChange={(v) => set("body", v)} multiline />
+      </>
+    );
+  } else if (type === "keyFacts") {
+    const facts = (Array.isArray(attrs.facts) ? attrs.facts : []) as Raw[];
+    const setFacts = (next: Raw[]) => set("facts", next);
+    const update = (i: number, patch: Raw) => setFacts(facts.map((f, j) => (j === i ? { ...f, ...patch } : f)));
+    body = (
+      <>
+        <p className="m-0 text-ink-600">{a("blockFactsHint", locale)}</p>
+        <PairInput id={id("title")} label={a("blockFactsTitle", locale)} value={pair(attrs.title)} onChange={(v) => set("title", v)} />
+        <ol className="m-0 flex list-none flex-col gap-[var(--space-4)] p-0">
+          {facts.map((fact, i) => (
+            <li key={i} className="flex flex-col gap-[var(--space-3)] rounded-panel border border-line p-[var(--space-3)]">
+              <p className="m-0 font-semibold">{a("blockFactN", locale, { n: i + 1 })}</p>
+              <PairInput id={id(`f${i}v`)} label={a("blockFactValue", locale)} value={pair(fact.value)} onChange={(v) => update(i, { value: v })} />
+              <PairInput id={id(`f${i}l`)} label={a("blockFactLabel", locale)} value={pair(fact.label)} onChange={(v) => update(i, { label: v })} />
+              <div className="flex flex-wrap gap-[var(--space-2)]">
+                {i > 0 ? (
+                  <Button type="button" variant="secondary" size="sm" onClick={() => setFacts(facts.map((s, j) => (j === i - 1 ? facts[i]! : j === i ? facts[i - 1]! : s)))}>
+                    {a("moveUp", locale)}
+                  </Button>
+                ) : null}
+                {i < facts.length - 1 ? (
+                  <Button type="button" variant="secondary" size="sm" onClick={() => setFacts(facts.map((s, j) => (j === i + 1 ? facts[i]! : j === i ? facts[i + 1]! : s)))}>
+                    {a("moveDown", locale)}
+                  </Button>
+                ) : null}
+                {facts.length > 1 ? (
+                  <Button type="button" variant="quiet" size="sm" onClick={() => setFacts(facts.filter((_, j) => j !== i))}>
+                    {a("remove", locale)}
+                  </Button>
+                ) : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+        {facts.length < 6 ? (
+          <div>
+            <Button type="button" variant="secondary" onClick={() => setFacts([...facts, { value: { th: "", en: "" }, label: { th: "", en: "" } }])}>
+              {a("blockFactAdd", locale)}
+            </Button>
+          </div>
+        ) : null}
       </>
     );
   } else if (type === "liveTimeline") {

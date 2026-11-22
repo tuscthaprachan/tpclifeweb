@@ -12,6 +12,7 @@ import "@/app/[locale]/cookies/text";
 import "@/app/[locale]/forms/[slug]/text";
 import "@/app/[locale]/getting-around/text";
 import "@/app/[locale]/guide/[slug]/text";
+import "@/app/[locale]/guide/text";
 import "@/app/[locale]/lost-and-found/privacy/text";
 import "@/app/[locale]/policy/[slug]/text";
 import "@/app/[locale]/service-unavailable/text";

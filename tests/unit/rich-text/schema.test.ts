@@ -41,6 +41,7 @@ describe("parseRichTextDoc", () => {
       { type: "calloutBox", attrs: { tone: "info", body: ls } },
       { type: "stepList", attrs: { steps: [{ title: ls }] } },
       { type: "contactBlock", attrs: { label: ls, channel: "phone", value: "02 613 3333" } },
+      { type: "keyFacts", attrs: { facts: [{ value: ls, label: ls }] } },
     );
     expect(parseRichTextDoc(input)).toMatchObject({ type: "doc" });
   });
@@ -54,6 +55,12 @@ describe("parseRichTextDoc", () => {
     expect(() => parseRichTextDoc(doc(para("x", link("javascript:alert(1)"))))).toThrow(/Unsafe/);
     expect(() => parseRichTextDoc(doc({ type: "linkOut", attrs: { label: ls, url: "data:text/html,x" } }))).toThrow();
     expect(() => parseRichTextDoc(doc({ type: "contactBlock", attrs: { label: ls, channel: "url", value: "javascript:x" } }))).toThrow();
+  });
+
+  it("limits key facts to between one and six", () => {
+    const fact = { value: ls, label: ls };
+    expect(() => parseRichTextDoc(doc({ type: "keyFacts", attrs: { facts: [] } }))).toThrow();
+    expect(() => parseRichTextDoc(doc({ type: "keyFacts", attrs: { facts: Array(7).fill(fact) } }))).toThrow();
   });
 
   it("rejects unknown nodes and marks", () => {

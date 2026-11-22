@@ -1,4 +1,4 @@
-import { DecorativeIcon, Link, helpChannelIcon } from "@/components/ui";
+import { IconTile, Link, helpChannelIcon } from "@/components/ui";
 import { pick, type Locale } from "@/lib/i18n/config";
 import type { ContactBlockAttrs } from "@/lib/rich-text/schema";
 
@@ -44,26 +44,26 @@ export function ContactBlockRenderer({ attrs, locale }: { attrs: ContactBlockAtt
    */
   const showsValueAsText = !href && attrs.channel !== "inPerson";
 
+  const value = attrs.channel === "url" ? "" : attrs.value;
+
   return (
-    <div className="my-[var(--space-4)] rounded-panel border border-line-strong px-[var(--space-4)] py-[var(--space-3)]">
-      {href ? (
-        <Link href={href} locale={locale} className="inline-flex items-center gap-[var(--space-2)] font-semibold text-action">
-          <DecorativeIcon icon={helpChannelIcon(attrs.channel)} size={16} />
-          {label}
-        </Link>
-      ) : (
-        <p className="m-0 flex items-center gap-[var(--space-2)] font-semibold text-ink-900">
-          <DecorativeIcon icon={helpChannelIcon(attrs.channel)} size={16} />
-          {label}
-        </p>
-      )}
-      {attrs.channel === "inPerson" ? <p className="m-0 mt-[var(--space-1)] text-ink-600">{attrs.value}</p> : null}
-      {showsValueAsText ? (
-        <p className="m-0 mt-[var(--space-1)] text-ink-600">
-          {attrs.channel.toUpperCase()}: {attrs.value}
-        </p>
-      ) : null}
-      {hours ? <p className="m-0 mt-[var(--space-1)] text-sm text-ink-600">{hours}</p> : null}
+    <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-[var(--space-3)] rounded-[var(--radius-block)] bg-surface-alt p-[var(--space-3)]">
+      <IconTile icon={helpChannelIcon(attrs.channel)} tone="soft" />
+      <div className="min-w-0">
+        {href ? (
+          <Link href={href} locale={locale} className="font-semibold text-action">
+            {label}
+          </Link>
+        ) : (
+          <p className="m-0 font-semibold text-ink-900">{label}</p>
+        )}
+        {value ? (
+          <p className="m-0 mt-[var(--space-1)] text-[length:var(--text-lg)] font-bold text-ink-900 [overflow-wrap:anywhere]">
+            {showsValueAsText ? `${attrs.channel.toUpperCase()}: ${value}` : value}
+          </p>
+        ) : null}
+        {hours ? <p className="m-0 mt-[var(--space-1)] text-sm text-ink-600">{hours}</p> : null}
+      </div>
     </div>
   );
 }

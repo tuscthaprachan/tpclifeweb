@@ -40,6 +40,7 @@ const DIRECTIVE_NAMES = {
   stepList: "steps",
   contactBlock: "contact",
   liveTimeline: "timeline",
+  keyFacts: "facts",
 } as const;
 
 const DIRECTIVE_TYPES = Object.fromEntries(Object.entries(DIRECTIVE_NAMES).map(([type, name]) => [name, type])) as Record<string, keyof typeof DIRECTIVE_NAMES>;

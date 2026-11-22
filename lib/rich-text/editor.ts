@@ -74,6 +74,14 @@ function cleanAttrs(type: string, attrs: unknown): Raw | undefined {
           return defined({ startsAt: str(i.startsAt), endsAt: str(i.endsAt), label: localeStr(i.label), detail: optLocaleStr(i.detail) });
         }),
       });
+    case "keyFacts":
+      return defined({
+        title: optLocaleStr(o.title),
+        facts: (Array.isArray(o.facts) ? o.facts : []).map((raw) => {
+          const f = isRecord(raw) ? raw : {};
+          return { value: localeStr(f.value), label: localeStr(f.label) };
+        }),
+      });
     default:
       return undefined;
   }
@@ -161,6 +169,7 @@ export const BLOCK_DEFAULTS = {
   calloutBox: { tone: "info", title: null, body: { th: "", en: "" } },
   stepList: { title: null, steps: [{ title: { th: "", en: "" }, detail: null }] },
   liveTimeline: { title: null, items: [{ startsAt: "", endsAt: "", label: { th: "", en: "" }, detail: null }] },
+  keyFacts: { title: null, facts: [{ value: { th: "", en: "" }, label: { th: "", en: "" } }] },
 } as const satisfies Record<(typeof CUSTOM_NODES)[number], Raw>;
 
 export type BlockType = (typeof CUSTOM_NODES)[number];

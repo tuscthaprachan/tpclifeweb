@@ -198,6 +198,7 @@ describe("markdown round trip: custom blocks", () => {
     { type: "contactBlock", attrs: { label: bi("Line"), channel: "line", value: "@tusu", hours: bi("9 to 5") } },
     { type: "contactBlock", attrs: { label: bi("Web"), channel: "url", value: "https://example.com" } },
     { type: "contactBlock", attrs: { label: bi("Phone"), channel: "phone", value: "02 696 5000" } },
+    { type: "keyFacts", attrs: { title: bi("At a glance"), facts: [{ value: bi("5,000 baht"), label: bi("per visit") }, { value: { th: "ฟรี", en: "Free" }, label: bi("for students") }] } },
   ];
 
   for (const block of blocks) {
