@@ -11,6 +11,10 @@ export const WELFARE_DETAIL_TEXT = editableStrings(
       th: "เนื้อหาบางส่วนอาจไม่เป็นปัจจุบัน โปรดตรวจสอบกับผู้รับผิดชอบก่อนใช้งาน",
       en: "Some details here may be out of date. Check with the responsible body before relying on them",
     },
+    allTopics: {
+      th: "ดูหัวข้อสวัสดิการทั้งหมด",
+      en: "See all welfare topics",
+    },
   },
   { th: "หน้ารายละเอียดสวัสดิการ", en: "Welfare detail page" },
 );

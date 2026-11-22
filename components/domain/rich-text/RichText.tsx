@@ -30,6 +30,7 @@ interface RichTextProps {
   /** Forms and images referenced by the document, fetched by the read layer. */
   resolved?: ResolvedRefs;
   className?: string;
+  anchorPrefix?: string;
 }
 
 interface Ctx {
@@ -37,6 +38,7 @@ interface Ctx {
   headingLevel: HeadingLevel;
   bodyLevel: HeadingLevel;
   resolved: ResolvedRefs;
+  anchors?: Map<RichTextNode, string>;
 }
 
 function renderMarks(node: RichTextNode, ctx: Ctx): ReactNode {
@@ -141,7 +143,7 @@ function renderNode(node: RichTextNode, ctx: Ctx, key: number): ReactNode {
     case "heading": {
       const offset = typeof attrs.level === "number" ? attrs.level - 2 : 0;
       return (
-        <Heading key={key} level={clampHeadingLevel(ctx.headingLevel + offset)}>
+        <Heading key={key} id={ctx.anchors?.get(node)} level={clampHeadingLevel(ctx.headingLevel + offset)}>
           {renderInline(node.content, ctx)}
         </Heading>
       );
@@ -212,10 +214,27 @@ function renderNode(node: RichTextNode, ctx: Ctx, key: number): ReactNode {
  * rhythm come from the same place as every other rich text block. Never uses
  * `dangerouslySetInnerHTML`; every node type is a real React component.
  */
-export function RichText({ value, locale, headingLevel, resolved = {}, className }: RichTextProps) {
+export interface RichTextSection {
+  id: string;
+  label: string;
+}
+
+function topSections(value: RichTextDoc | null | undefined, prefix: string): { node: RichTextNode; section: RichTextSection }[] {
+  return (value?.content ?? [])
+    .filter((node) => node.type === "heading" && (node.attrs?.level ?? 2) === 2)
+    .map((node, i) => ({ node, section: { id: `${prefix}-${i + 1}`, label: cellText(node) } }))
+    .filter(({ section }) => section.label.length > 0);
+}
+
+export function richTextSections(value: RichTextDoc | null | undefined, prefix: string): RichTextSection[] {
+  return topSections(value, prefix).map(({ section }) => section);
+}
+
+export function RichText({ value, locale, headingLevel, resolved = {}, className, anchorPrefix }: RichTextProps) {
   if (!value || value.content.length === 0) return null;
 
-  const ctx: Ctx = { locale, headingLevel, bodyLevel: clampHeadingLevel(headingLevel), resolved };
+  const anchors = anchorPrefix ? new Map(topSections(value, anchorPrefix).map(({ node, section }) => [node, section.id])) : undefined;
+  const ctx: Ctx = { locale, headingLevel, bodyLevel: clampHeadingLevel(headingLevel), resolved, anchors };
 
   return (
     <Prose locale={locale} className={className}>
