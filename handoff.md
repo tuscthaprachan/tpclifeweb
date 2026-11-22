@@ -14,6 +14,10 @@ Session handoff for the backend migration described in `docs/backend-plan.md`. R
 - Public strings go in `lib/i18n/strings.ts` (a commented block per feature, keys with a prefix); staff strings in `lib/i18n/admin-content/<group>.ts`, spread into `A` in `lib/i18n/admin.ts`.
 - No coloured accent boxes (`npm run check:accent-boxes`): use inset text, warning text, notification banner, summary list.
 
+## Topic pages and sections
+
+The site is organised by user need (`docs/needs-rebuild-plan.md`). Welfare and guide pages are gone: every page in `content_pages` is a topic page in one of seven sections (`section`, migrations 0023 and 0024), with a staff-only `user_need`. `lib/content/sections.ts` holds each section's path, label, intro and the tool entries its hub lists; a hub merges its topic pages and entries by order. Routes are `/start`, `/campus`, `/study`, `/health`, `/money`, `/help`, `/have-your-say` and `/<section>/<slug>`; `/services` is the full map by need. The console has one type, Topic pages (`/admin/content/topics`), with a section filter. The seed reads `lib/db/seed/data/topics.json`. Content gaps that need the student bodies: daytime urgent mental-health help, how to apply for hardship grants, a disability contact, a clubs list, election dates, club funding.
+
 ## Staff and roles
 
 - Three roles, held by the person and not scoped to a body: `admin` (everything), `editor` (all content and open data for both bodies), `officer` (lost and found, complaints, borrowing including the inventory and calendar, performance, withheld complainant names). Migration 0016 mapped `lf_officer`, `complaints_handler`, `unit_lead` and `equipment_officer` to `officer`, collapsing duplicate active grants.

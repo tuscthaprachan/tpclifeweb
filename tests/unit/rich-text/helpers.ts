@@ -1,26 +1,13 @@
-import { FAQ_DOCS, GUIDE_PAGE_DOCS, NEW_ORGANISATION_DOCS, PLACE_DOCS, WELFARE_PAGE_DOCS } from "@/lib/db/seed/data/handbook";
-import { GUIDE_PAGES } from "@/lib/db/seed/pages";
+import { FAQ_DOCS, NEW_ORGANISATION_DOCS, PLACE_DOCS } from "@/lib/db/seed/data/handbook";
 
 /**
- * Every record the Postgres content seed builds from Portable Text blocks: the
- * handbook data (FAQs, welfare and guide pages, places, organisations) and the
- * hand-built guide pages in lib/db/seed/pages.ts. These are plain data, so
- * they are read directly.
+ * Every record the Postgres content seed builds from Portable Text blocks:
+ * FAQs, places and organisations. Topic pages are stored rich text already
+ * (lib/db/seed/data/topics.json), so they are not here. These are plain data,
+ * so they are read directly.
  */
 export async function loadSeedDocs(): Promise<Array<Record<string, unknown>>> {
-  const guidePages = GUIDE_PAGES.map((page) => ({
-    _id: `guide-${page.slug}`,
-    bodyTh: page.bodyTh,
-    bodyEn: page.bodyEn,
-  }));
-  return [
-    ...FAQ_DOCS,
-    ...WELFARE_PAGE_DOCS,
-    ...GUIDE_PAGE_DOCS,
-    ...PLACE_DOCS,
-    ...NEW_ORGANISATION_DOCS,
-    ...guidePages,
-  ] as Array<Record<string, unknown>>;
+  return [...FAQ_DOCS, ...PLACE_DOCS, ...NEW_ORGANISATION_DOCS] as Array<Record<string, unknown>>;
 }
 
 type PtBlock = { _type: string; [key: string]: unknown };

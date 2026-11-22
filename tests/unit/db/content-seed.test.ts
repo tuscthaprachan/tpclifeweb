@@ -22,13 +22,11 @@ import {
 import { readSiteSettings } from "@/lib/content/site";
 import { seedContent } from "@/lib/db/seed/content";
 import { buildDirectory } from "@/lib/db/seed/directory";
-import { GUIDE_PAGES } from "@/lib/db/seed/pages";
-import {
-  FAQ_DOCS,
-  GUIDE_PAGE_DOCS,
-  PLACE_DOCS,
-  WELFARE_PAGE_DOCS,
-} from "@/lib/db/seed/data/handbook";
+import { TOPIC_PAGES } from "@/lib/db/seed/pages";
+import { FAQ_DOCS, PLACE_DOCS } from "@/lib/db/seed/data/handbook";
+import { CONTENT_SECTIONS } from "@/lib/db/schema/content/enums";
+import { SECTIONS } from "@/lib/content/sections";
+import { parseRichTextDoc } from "@/lib/rich-text/schema";
 import { surveyCanteenData } from "@/lib/canteen/dataset";
 import { SURVEY_DISHES } from "@/lib/canteen/survey-2569";
 import { FORMS, SHUTTLE_ROUTES } from "@/data/harvested-inventory";
@@ -110,10 +108,7 @@ describe("content seed", () => {
 
   it("seeds the handbook and harvested content", async () => {
     expect(before.faqs).toBe(FAQ_DOCS.length);
-    const welfare = await ctx.db.select({ n: count() }).from(contentPages).where(eq(contentPages.kind, "welfare"));
-    const guide = await ctx.db.select({ n: count() }).from(contentPages).where(eq(contentPages.kind, "guide"));
-    expect(welfare[0]!.n).toBe(WELFARE_PAGE_DOCS.length);
-    expect(guide[0]!.n).toBe(GUIDE_PAGE_DOCS.length + GUIDE_PAGES.length);
+    expect(before.content_pages).toBe(TOPIC_PAGES.length);
     // Handbook places plus the canteen place.
     expect(before.places).toBe(PLACE_DOCS.length + 1);
     expect(before.directory_organisations).toBe(buildDirectory().length);
@@ -123,6 +118,51 @@ describe("content seed", () => {
     expect(before.shuttle_routes).toBe(SHUTTLE_ROUTES.length);
     expect(before.shuttle_stops).toBe(SHUTTLE_ROUTES.reduce((n, r) => n + r.stops.length, 0));
     expect(before.site_settings).toBe(1);
+  });
+
+  it("seeds one published topic page per entry in topics.json, in its section, with its order and the needs it meets", async () => {
+    const rows = await ctx.db.select().from(contentPages);
+    expect(rows).toHaveLength(TOPIC_PAGES.length);
+    expect(new Set(TOPIC_PAGES.map((p) => p.slug)).size).toBe(TOPIC_PAGES.length);
+    const bySlug = new Map(rows.map((r) => [r.slug, r]));
+    for (const page of TOPIC_PAGES) {
+      const row = bySlug.get(page.slug);
+      expect(row, page.slug).toBeDefined();
+      expect(CONTENT_SECTIONS, page.slug).toContain(row!.section);
+      expect(row!.section).toBe(page.section);
+      expect(row!.sortOrder).toBe(page.order);
+      expect(row!.status).toBe("published");
+      expect(row!.userNeed, page.slug).toMatch(/^As an? .+, I need .+, so that /);
+      expect(row!.titleEn).toBe(page.title.en);
+      expect(row!.titleTh).toBe(page.title.th);
+      expect(row!.summaryEn.length).toBeGreaterThan(0);
+      expect(row!.summaryTh.length).toBeGreaterThan(0);
+      expect(row!.lastReviewed).toBe(page.lastReviewed);
+      expect(row!.relatedLinks).toEqual(page.relatedLinks);
+    }
+  });
+
+  it("keeps topic page bodies valid rich text, with the same blocks in both languages", async () => {
+    const blockTypes = (nodes: Array<{ type: string }>) => nodes.map((n) => n.type);
+    for (const row of await ctx.db.select().from(contentPages)) {
+      expect(() => parseRichTextDoc(row.bodyEn), row.slug).not.toThrow();
+      expect(() => parseRichTextDoc(row.bodyTh), row.slug).not.toThrow();
+      expect(blockTypes(row.bodyTh.content), row.slug).toEqual(blockTypes(row.bodyEn.content));
+    }
+  });
+
+  it("gives topic pages orders that do not collide with their section's tool entries", async () => {
+    for (const section of CONTENT_SECTIONS) {
+      const orders = [
+        ...TOPIC_PAGES.filter((p) => p.section === section).map((p) => p.order),
+        ...SECTIONS[section].entries.map((e) => e.order),
+      ];
+      expect(new Set(orders).size, section).toBe(orders.length);
+    }
+  });
+
+  it("seeds no page in the help section: its needs are met by tools", async () => {
+    expect(TOPIC_PAGES.filter((p) => p.section === "help")).toHaveLength(0);
   });
 
   it("publishes everything it seeds", async () => {
@@ -173,7 +213,7 @@ describe("content seed", () => {
 describe("site settings home tasks", () => {
   it("seeds the seven default tasks, services first, and maps them through the read layer", async () => {
     const settings = await readSiteSettings(ctx.db);
-    expect(settings?.homeTasks.map((t) => t.path)).toEqual(["/complaints", "/borrow", "/lost-and-found", "/places", "/welfare", "/eat", "/directory"]);
+    expect(settings?.homeTasks.map((t) => t.path)).toEqual(["/complaints", "/borrow", "/lost-and-found", "/places", "/health", "/eat", "/directory"]);
     expect(settings?.homeTasks[0]).toEqual({
       label: { th: "แจ้งปัญหา", en: "Report an issue" },
       description: { th: "เรื่องรายวิชา คณะ หรือมหาวิทยาลัย", en: "A course, your faculty or the university" },

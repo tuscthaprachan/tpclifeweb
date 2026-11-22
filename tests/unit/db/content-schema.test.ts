@@ -175,10 +175,13 @@ describe("singletons and integrity", () => {
     const left = await ctx.db.select().from(canteenDishes).where(eq(canteenDishes.slug, "d-test"));
     expect(left).toHaveLength(0);
 
-    const [a] = await ctx.db.insert(contentPages).values({ kind: "guide", slug: "a", category: "welfare" }).returning();
+    const [a] = await ctx.db.insert(contentPages).values({ section: "study", slug: "a", category: "welfare" }).returning();
     await expect(ctx.db.insert(contentPageRelated).values({ pageId: a!.id, relatedPageId: a!.id, position: 0 })).rejects.toThrow();
-    await expect(ctx.db.insert(contentPages).values({ kind: "guide", slug: "a", category: "welfare" })).rejects.toThrow();
-    await ctx.db.insert(contentPages).values({ kind: "welfare", slug: "a", category: "welfare" });
+    await expect(ctx.db.insert(contentPages).values({ section: "study", slug: "a", category: "welfare" })).rejects.toThrow();
+    await expect(ctx.db.insert(contentPages).values({ section: "health", slug: "a", category: "welfare" })).rejects.toThrow();
+    await expect(ctx.db.insert(contentPages).values({ slug: "no-section", category: "welfare" } as never)).rejects.toThrow();
+    const [b] = await ctx.db.insert(contentPages).values({ section: "health", slug: "b", category: "welfare" }).returning();
+    expect(b!.userNeed).toBe("");
 
     await expect(
       ctx.db.insert(policies).values({ slug: "p-bad", owner: "tusu", progressPercent: 140 }),
