@@ -103,7 +103,7 @@ export function SiteHeader({
   const menuId = useId();
   const pathname = usePathname();
   const isHome = pathname === localePath(locale, "/");
-  const { detailsRef, summaryRef, open, onToggle } = useDisclosure({ closeOnSubmit: true, closeOn: pathname });
+  const { detailsRef, summaryRef, open, onToggle } = useDisclosure({ closeOnSubmit: true, closeOnOutsidePointer: true, closeOn: pathname });
 
   useEffect(() => {
     const el = headerRef.current;
@@ -118,6 +118,23 @@ export function SiteHeader({
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!open || !header) return;
+    const root = document.documentElement;
+    const setMenuTop = () => root.style.setProperty("--menu-top", `${Math.max(0, header.getBoundingClientRect().bottom)}px`);
+    setMenuTop();
+    const previousOverflow = root.style.overflow;
+    root.style.overflow = "hidden";
+    window.addEventListener("resize", setMenuTop);
+    window.visualViewport?.addEventListener("resize", setMenuTop);
+    return () => {
+      root.style.overflow = previousOverflow;
+      window.removeEventListener("resize", setMenuTop);
+      window.visualViewport?.removeEventListener("resize", setMenuTop);
+    };
+  }, [open]);
 
   const navLabel = UI.mainMenu[locale];
 
@@ -186,8 +203,8 @@ export function SiteHeader({
             <div
               id={menuId}
               className={cx(
-                "absolute inset-x-0 top-full z-[var(--z-header)] max-h-[calc(100dvh-var(--header-height,4rem))]",
-                "overflow-y-auto border-b border-line bg-surface shadow-[var(--shadow-elevation)]",
+                "absolute inset-x-0 top-full z-[var(--z-header)] max-h-[calc(100dvh-var(--menu-top,var(--header-height,4rem)))]",
+                "overflow-y-auto overscroll-contain border-b border-line bg-surface shadow-[var(--shadow-elevation)]",
               )}
             >
               <ShellContainer className="flex flex-col gap-6 py-4">

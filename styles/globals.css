@@ -256,6 +256,10 @@
   scroll-margin-bottom: var(--space-4);
 }
 
+header.sticky :where(a, button, input, select, textarea, summary, [tabindex]) {
+  scroll-margin: 0;
+}
+
 /*
  * The same for the floating Filters button on the eat pages (phones only). A
  * scroll margin only helps when the browser decides to scroll, and it does not
