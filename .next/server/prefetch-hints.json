@@ -1,0 +1,1895 @@
+{
+  "/_global-error": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 160,
+        "slots": null
+      }
+    }
+  },
+  "/_not-found": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 96,
+        "slots": {
+          "children": {
+            "hints": 160,
+            "slots": null
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/budget/[fiscalYear]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/budget": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/committees/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/committees": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/data": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/decisions": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/documents/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/documents": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/funds": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/meetings/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/meetings": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 160,
+                        "slots": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/people": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/reports/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/reports": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/rules/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusc/rules": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/open-data/tusu": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 160,
+                        "slots": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/tusc": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/about/tusu": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/accessibility": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/alerts": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/borrow/privacy": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/campus/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/campus": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/complaints/privacy": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/cookies": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/design": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/directory": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/dishes/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 160,
+                        "slots": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/dishes": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/map": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/mine": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/pick": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/plan": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/stalls/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 160,
+                        "slots": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/stalls": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/what-is/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 160,
+                        "slots": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/eat/what-is": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/events/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/events": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/faq": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/forms/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/forms": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/getting-around": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/have-your-say/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/have-your-say": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/health/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/health": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/help/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/help": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/lost-and-found/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/lost-and-found": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/lost-and-found/privacy": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/money/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/money": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/news/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/news": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 128,
+            "slots": null
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/performance": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/places/libraries": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/policy/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/policy": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/report": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/search": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/service-unavailable": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/services": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/start/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/start": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/study/[slug]": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/study": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/[locale]/weather": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

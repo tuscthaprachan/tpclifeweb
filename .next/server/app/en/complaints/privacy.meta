@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/complaints/layout,_N_T_/[locale]/complaints/privacy/layout,_N_T_/[locale]/complaints/privacy/page,_N_T_/en/complaints/privacy,siteSettings,siteText"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/complaints/privacy/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/25aec4e22326335e93ce49c7c28558f576a2a3ddafed49fd45a89e83ce083c8e/$/en/complaints/privacy",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/complaints/privacy/page"
+    },
+    "isFallback": false
+  }
+}

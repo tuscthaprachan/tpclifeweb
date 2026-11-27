@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/eat/layout,_N_T_/[locale]/eat/mine/layout,_N_T_/[locale]/eat/mine/page,_N_T_/en/eat/mine,siteSettings,siteText,canteen,place,image"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/eat/mine/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/76787ed26c85cb128142fc1ea3a579660e804ef8bdb51573512eefd9c3740950/$/en/eat/mine",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/eat/mine/page"
+    },
+    "isFallback": false
+  }
+}

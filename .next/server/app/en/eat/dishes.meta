@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/eat/layout,_N_T_/[locale]/eat/dishes/layout,_N_T_/[locale]/eat/dishes/page,_N_T_/en/eat/dishes,siteSettings,siteText,canteen,place,image"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/eat/dishes/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/cec70a5854efc05b6b0da02a39b8dc131c7953b85fe3c4138cf79aae1da1b2a3/$/en/eat/dishes",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/eat/dishes/page"
+    },
+    "isFallback": false
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "node": {
+    "4040bdc9620c95b54cb019f7fbe3e8f1ee51ae4ad6": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00b9ece19c0cd9c6f769013ae569226a8e42509115": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "00f803303c5e7d484f472770aea9e5c675a2269447": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "408405b33e2a4803fa1082f3bfd1b6ca5dd0779156": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "duplicateItem",
+      "filename": "lib/admin/content/lifecycle-actions.ts"
+    },
+    "60e37c6000d444e41be57c588765e9b901d4a74f19": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "saveSchedule",
+      "filename": "lib/admin/content/lifecycle-actions.ts"
+    },
+    "402fe8b9ee7d8b902f7643a0c0741cee72cb2c6ce2": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "bulkDeleteImagesAction",
+      "filename": "app/admin/content/images/actions.ts"
+    },
+    "4091459d8ea9a22f6aca0f61dd4e28f697832d8c36": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "deleteImageAction",
+      "filename": "app/admin/content/images/actions.ts"
+    },
+    "40fd12794463391cddd7ac0f90dad2d5e345ab96fc": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "bulkAltAction",
+      "filename": "app/admin/content/images/actions.ts"
+    },
+    "60c4fbfc43bff55045879dc47d1fb19620cd3cc069": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "replaceImageAction",
+      "filename": "app/admin/content/images/actions.ts"
+    },
+    "701613d4b352ddf4e653d6edaac7098de46e07e4bf": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        }
+      },
+      "exportedName": "saveImage",
+      "filename": "app/admin/content/images/actions.ts"
+    }
+  },
+  "edge": {}
+}

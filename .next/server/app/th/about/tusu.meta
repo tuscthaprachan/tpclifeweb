@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/about/layout,_N_T_/[locale]/about/tusu/layout,_N_T_/[locale]/about/tusu/page,_N_T_/th/about/tusu,siteSettings,siteText"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/about/tusu/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/0b318b7da911ea6d7d7661f5c1b5a7585a9d4f7aab10f81c46cd8c61f1927910/$/th/about/tusu",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/about/tusu/page"
+    },
+    "isFallback": false
+  }
+}

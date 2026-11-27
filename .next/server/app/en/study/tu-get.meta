@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/study/layout,_N_T_/[locale]/study/[slug]/layout,_N_T_/[locale]/study/[slug]/page,_N_T_/en/study/tu-get,siteSettings,siteText,content,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/study/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/3b4c773aa4f15fda120fc865addf33818e20951602b439d309d81623030094a9/$/en/study/tu-get",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/study/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

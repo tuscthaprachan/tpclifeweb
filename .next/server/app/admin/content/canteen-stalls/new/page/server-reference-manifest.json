@@ -1,0 +1,85 @@
+{
+  "node": {
+    "4040bdc9620c95b54cb019f7fbe3e8f1ee51ae4ad6": {
+      "workers": {
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "exportedName": "setAdminLocale",
+      "filename": "app/admin/actions.ts"
+    },
+    "00b9ece19c0cd9c6f769013ae569226a8e42509115": {
+      "workers": {
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "app/admin/actions.ts"
+    },
+    "00f803303c5e7d484f472770aea9e5c675a2269447": {
+      "workers": {
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "exportedName": "extendSession",
+      "filename": "app/admin/actions.ts"
+    },
+    "408405b33e2a4803fa1082f3bfd1b6ca5dd0779156": {
+      "workers": {
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "exportedName": "duplicateItem",
+      "filename": "lib/admin/content/lifecycle-actions.ts"
+    },
+    "60e37c6000d444e41be57c588765e9b901d4a74f19": {
+      "workers": {
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "exportedName": "saveSchedule",
+      "filename": "lib/admin/content/lifecycle-actions.ts"
+    },
+    "4056ae534a46987b5c5ff796310cdde54feaa17a7d": {
+      "workers": {
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "exportedName": "uploadImageAction",
+      "filename": "app/admin/content/actions.ts"
+    },
+    "405151d3e78e98f54746ca9f12c5fbe6dd251f5d43": {
+      "workers": {
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "exportedName": "deleteCanteenStall",
+      "filename": "app/admin/content/canteen-stalls/actions.ts"
+    },
+    "7053507b7e1cbd8e504bb82b4bef5f306ad3200e58": {
+      "workers": {
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "exportedName": "saveCanteenStall",
+      "filename": "app/admin/content/canteen-stalls/actions.ts"
+    }
+  },
+  "edge": {}
+}

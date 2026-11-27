@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/have-your-say/layout,_N_T_/[locale]/have-your-say/[slug]/layout,_N_T_/[locale]/have-your-say/[slug]/page,_N_T_/en/have-your-say/rules-and-your-rights,siteSettings,siteText,content,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/have-your-say/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/e635a2346dd46e3cdcb50fa806e1dcf02b9cbbc578b54c81279a000067aedc22/$/en/have-your-say/rules-and-your-rights",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/have-your-say/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

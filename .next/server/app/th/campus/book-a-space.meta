@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/campus/layout,_N_T_/[locale]/campus/[slug]/layout,_N_T_/[locale]/campus/[slug]/page,_N_T_/th/campus/book-a-space,siteSettings,siteText,content,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/campus/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/7f7f7bcf619d3546641f7a77b7a81b8f9064b15140577c6cc710e43117b48c15/$/th/campus/book-a-space",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/campus/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

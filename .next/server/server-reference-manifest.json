@@ -1,0 +1,4604 @@
+{
+  "node": {
+    "4025dabe3b8665a2eacb228dbf3264b10655e28fdf": {
+      "workers": {
+        "app/[locale]/borrow/[step]/page": {
+          "moduleId": 569837,
+          "async": false
+        },
+        "app/[locale]/borrow/page": {
+          "moduleId": 920957,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/borrow/_journey/actions.ts",
+      "exportedName": "beginJourney"
+    },
+    "40553c0d2203ced5e8f12b6a24db84652b081e0c3c": {
+      "workers": {
+        "app/[locale]/borrow/[step]/page": {
+          "moduleId": 569837,
+          "async": false
+        },
+        "app/[locale]/borrow/page": {
+          "moduleId": 920957,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/borrow/_journey/actions.ts",
+      "exportedName": "forgetJourney"
+    },
+    "40db0d7fa089fbfa380cf87a1c3a845fae45c2565c": {
+      "workers": {
+        "app/[locale]/borrow/[step]/page": {
+          "moduleId": 569837,
+          "async": false
+        },
+        "app/[locale]/borrow/page": {
+          "moduleId": 920957,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/borrow/_journey/actions.ts",
+      "exportedName": "sendJourney"
+    },
+    "40dcc6760c1d7caacea7592fe5aa4027b89872ed73": {
+      "workers": {
+        "app/[locale]/borrow/[step]/page": {
+          "moduleId": 569837,
+          "async": false
+        },
+        "app/[locale]/borrow/page": {
+          "moduleId": 920957,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/borrow/_journey/actions.ts",
+      "exportedName": "saveStep"
+    },
+    "40f4136921b7e7cc469f5d5de236413c2f29fac659": {
+      "workers": {
+        "app/[locale]/borrow/[step]/page": {
+          "moduleId": 569837,
+          "async": false
+        },
+        "app/[locale]/borrow/page": {
+          "moduleId": 920957,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/borrow/_journey/actions.ts",
+      "exportedName": "emailLink"
+    },
+    "401f04165aaf2b623ded494e251803984f4e4de78f": {
+      "workers": {
+        "app/[locale]/borrow/track/cancel/page": {
+          "moduleId": 988547,
+          "async": false
+        },
+        "app/[locale]/borrow/track/page": {
+          "moduleId": 218823,
+          "async": false
+        },
+        "app/[locale]/borrow/track/status/page": {
+          "moduleId": 816952,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/borrow/track/actions.ts",
+      "exportedName": "openTracking"
+    },
+    "40244ebce6b27009beef8c3c7d851f8e4056c06551": {
+      "workers": {
+        "app/[locale]/borrow/track/cancel/page": {
+          "moduleId": 988547,
+          "async": false
+        },
+        "app/[locale]/borrow/track/page": {
+          "moduleId": 218823,
+          "async": false
+        },
+        "app/[locale]/borrow/track/status/page": {
+          "moduleId": 816952,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/borrow/track/actions.ts",
+      "exportedName": "cancelRequest"
+    },
+    "40d308776c547068b2f0ccbf1c4f5736f72cc42bf5": {
+      "workers": {
+        "app/[locale]/borrow/track/cancel/page": {
+          "moduleId": 988547,
+          "async": false
+        },
+        "app/[locale]/borrow/track/page": {
+          "moduleId": 218823,
+          "async": false
+        },
+        "app/[locale]/borrow/track/status/page": {
+          "moduleId": 816952,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/borrow/track/actions.ts",
+      "exportedName": "forgetTracking"
+    },
+    "4001849bb86eb5f129c28d05d24656e6fd173940df": {
+      "workers": {
+        "app/[locale]/complaints/[step]/page": {
+          "moduleId": 411989,
+          "async": false
+        },
+        "app/[locale]/complaints/page": {
+          "moduleId": 454817,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/_journey/actions.ts",
+      "exportedName": "saveStep"
+    },
+    "40287c0f68b17f51ee61e4c105f23514b80aae2921": {
+      "workers": {
+        "app/[locale]/complaints/[step]/page": {
+          "moduleId": 411989,
+          "async": false
+        },
+        "app/[locale]/complaints/page": {
+          "moduleId": 454817,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/_journey/actions.ts",
+      "exportedName": "afterEmergency"
+    },
+    "404a96ad64f3ef00c6e8503a0e761d78dcf25a5054": {
+      "workers": {
+        "app/[locale]/complaints/[step]/page": {
+          "moduleId": 411989,
+          "async": false
+        },
+        "app/[locale]/complaints/page": {
+          "moduleId": 454817,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/_journey/actions.ts",
+      "exportedName": "uploadEvidence"
+    },
+    "404e4f5bae9d42d1ae5113f03f90a3a76453ef2687": {
+      "workers": {
+        "app/[locale]/complaints/[step]/page": {
+          "moduleId": 411989,
+          "async": false
+        },
+        "app/[locale]/complaints/page": {
+          "moduleId": 454817,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/_journey/actions.ts",
+      "exportedName": "forgetJourney"
+    },
+    "4073356e7becf88ec1ed5bbaaa4b82972618676245": {
+      "workers": {
+        "app/[locale]/complaints/[step]/page": {
+          "moduleId": 411989,
+          "async": false
+        },
+        "app/[locale]/complaints/page": {
+          "moduleId": 454817,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/_journey/actions.ts",
+      "exportedName": "beginJourney"
+    },
+    "40938f3ac294228a11b2d08b3264abf1776f69cdf2": {
+      "workers": {
+        "app/[locale]/complaints/[step]/page": {
+          "moduleId": 411989,
+          "async": false
+        },
+        "app/[locale]/complaints/page": {
+          "moduleId": 454817,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/_journey/actions.ts",
+      "exportedName": "removeEvidence"
+    },
+    "409585bbf1047d7a23610383f995476d5fdf3b7b5a": {
+      "workers": {
+        "app/[locale]/complaints/[step]/page": {
+          "moduleId": 411989,
+          "async": false
+        },
+        "app/[locale]/complaints/page": {
+          "moduleId": 454817,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/_journey/actions.ts",
+      "exportedName": "sendJourney"
+    },
+    "409c61e4273c610f1e0b022bd912adb42594a6a7db": {
+      "workers": {
+        "app/[locale]/complaints/[step]/page": {
+          "moduleId": 411989,
+          "async": false
+        },
+        "app/[locale]/complaints/page": {
+          "moduleId": 454817,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/_journey/actions.ts",
+      "exportedName": "emailLink"
+    },
+    "40d18b5d0377366523a1ee291ee309b153155aec51": {
+      "workers": {
+        "app/[locale]/complaints/[step]/page": {
+          "moduleId": 411989,
+          "async": false
+        },
+        "app/[locale]/complaints/page": {
+          "moduleId": 454817,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/_journey/actions.ts",
+      "exportedName": "continueToTusu"
+    },
+    "4020c57d9701a2945a7b034619d2cd620a5a5d4bed": {
+      "workers": {
+        "app/[locale]/complaints/track/page": {
+          "moduleId": 187396,
+          "async": false
+        },
+        "app/[locale]/complaints/track/reopen/page": {
+          "moduleId": 769770,
+          "async": false
+        },
+        "app/[locale]/complaints/track/status/page": {
+          "moduleId": 129305,
+          "async": false
+        },
+        "app/[locale]/complaints/track/survey/page": {
+          "moduleId": 821572,
+          "async": false
+        },
+        "app/[locale]/complaints/track/withdraw/page": {
+          "moduleId": 889272,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/track/actions.ts",
+      "exportedName": "openTracking"
+    },
+    "402ff429ec1a4c22600802ca69cc52cf31b9d73d1a": {
+      "workers": {
+        "app/[locale]/complaints/track/page": {
+          "moduleId": 187396,
+          "async": false
+        },
+        "app/[locale]/complaints/track/reopen/page": {
+          "moduleId": 769770,
+          "async": false
+        },
+        "app/[locale]/complaints/track/status/page": {
+          "moduleId": 129305,
+          "async": false
+        },
+        "app/[locale]/complaints/track/survey/page": {
+          "moduleId": 821572,
+          "async": false
+        },
+        "app/[locale]/complaints/track/withdraw/page": {
+          "moduleId": 889272,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/track/actions.ts",
+      "exportedName": "withdrawComplaint"
+    },
+    "4037aba1fde2aeb6d23f959ea06d6d9ee3cc08b8c6": {
+      "workers": {
+        "app/[locale]/complaints/track/page": {
+          "moduleId": 187396,
+          "async": false
+        },
+        "app/[locale]/complaints/track/reopen/page": {
+          "moduleId": 769770,
+          "async": false
+        },
+        "app/[locale]/complaints/track/status/page": {
+          "moduleId": 129305,
+          "async": false
+        },
+        "app/[locale]/complaints/track/survey/page": {
+          "moduleId": 821572,
+          "async": false
+        },
+        "app/[locale]/complaints/track/withdraw/page": {
+          "moduleId": 889272,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/track/actions.ts",
+      "exportedName": "reopenComplaintAction"
+    },
+    "404268a61b590a9849682d836ce2961d573448fcfb": {
+      "workers": {
+        "app/[locale]/complaints/track/page": {
+          "moduleId": 187396,
+          "async": false
+        },
+        "app/[locale]/complaints/track/reopen/page": {
+          "moduleId": 769770,
+          "async": false
+        },
+        "app/[locale]/complaints/track/status/page": {
+          "moduleId": 129305,
+          "async": false
+        },
+        "app/[locale]/complaints/track/survey/page": {
+          "moduleId": 821572,
+          "async": false
+        },
+        "app/[locale]/complaints/track/withdraw/page": {
+          "moduleId": 889272,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/track/actions.ts",
+      "exportedName": "forgetTracking"
+    },
+    "40d0841b6e03543cf4d37f0d5191131f37878ca6f5": {
+      "workers": {
+        "app/[locale]/complaints/track/page": {
+          "moduleId": 187396,
+          "async": false
+        },
+        "app/[locale]/complaints/track/reopen/page": {
+          "moduleId": 769770,
+          "async": false
+        },
+        "app/[locale]/complaints/track/status/page": {
+          "moduleId": 129305,
+          "async": false
+        },
+        "app/[locale]/complaints/track/survey/page": {
+          "moduleId": 821572,
+          "async": false
+        },
+        "app/[locale]/complaints/track/withdraw/page": {
+          "moduleId": 889272,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/complaints/track/actions.ts",
+      "exportedName": "submitSurveyAction"
+    },
+    "406e9abbf0e4a2517c2391fc9771c6b7cdfe530b74": {
+      "workers": {
+        "app/[locale]/filtered/search/page": {
+          "moduleId": 167058,
+          "async": false
+        },
+        "app/[locale]/search/page": {
+          "moduleId": 932903,
+          "async": false
+        }
+      },
+      "filename": "lib/search/log-zero-result.ts",
+      "exportedName": "logZeroResultSearch"
+    },
+    "4077350db724587abafb45537e5b42992bd73f0c09": {
+      "workers": {
+        "app/[locale]/lost-and-found/[slug]/claim/[step]/page": {
+          "moduleId": 830131,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/[slug]/claim/page": {
+          "moduleId": 782695,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/[step]/page": {
+          "moduleId": 541068,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/page": {
+          "moduleId": 266439,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/[step]/page": {
+          "moduleId": 63897,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/page": {
+          "moduleId": 551854,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/lost-and-found/_journey/actions.ts",
+      "exportedName": "beginJourney"
+    },
+    "40ce6f7ec8c2b37d7f8eebbd59a9415dcb29cb0a55": {
+      "workers": {
+        "app/[locale]/lost-and-found/[slug]/claim/[step]/page": {
+          "moduleId": 830131,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/[slug]/claim/page": {
+          "moduleId": 782695,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/[step]/page": {
+          "moduleId": 541068,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/page": {
+          "moduleId": 266439,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/[step]/page": {
+          "moduleId": 63897,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/page": {
+          "moduleId": 551854,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/lost-and-found/_journey/actions.ts",
+      "exportedName": "sendJourney"
+    },
+    "40d76884723eef2fe7cff08b768cbef7a34e667b9e": {
+      "workers": {
+        "app/[locale]/lost-and-found/[slug]/claim/[step]/page": {
+          "moduleId": 830131,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/[slug]/claim/page": {
+          "moduleId": 782695,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/[step]/page": {
+          "moduleId": 541068,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/page": {
+          "moduleId": 266439,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/[step]/page": {
+          "moduleId": 63897,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/page": {
+          "moduleId": 551854,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/lost-and-found/_journey/actions.ts",
+      "exportedName": "forgetJourney"
+    },
+    "40efbc4cc8fe555daeaa614f1f3030e2a1aa48094e": {
+      "workers": {
+        "app/[locale]/lost-and-found/[slug]/claim/[step]/page": {
+          "moduleId": 830131,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/[slug]/claim/page": {
+          "moduleId": 782695,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/[step]/page": {
+          "moduleId": 541068,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/page": {
+          "moduleId": 266439,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/[step]/page": {
+          "moduleId": 63897,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/page": {
+          "moduleId": 551854,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/lost-and-found/_journey/actions.ts",
+      "exportedName": "saveStep"
+    },
+    "40f4820450df1d4c819237e41d690cdd4a50134902": {
+      "workers": {
+        "app/[locale]/lost-and-found/[slug]/claim/[step]/page": {
+          "moduleId": 830131,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/[slug]/claim/page": {
+          "moduleId": 782695,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/[step]/page": {
+          "moduleId": 541068,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/found/page": {
+          "moduleId": 266439,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/[step]/page": {
+          "moduleId": 63897,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/report/page": {
+          "moduleId": 551854,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/lost-and-found/_journey/actions.ts",
+      "exportedName": "emailLink"
+    },
+    "40e8ada26ef1d19402cff55dd8c668f7823ac1c6d9": {
+      "workers": {
+        "app/[locale]/lost-and-found/track/page": {
+          "moduleId": 753180,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/track/status/page": {
+          "moduleId": 948446,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/track/withdraw/page": {
+          "moduleId": 432230,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/lost-and-found/track/actions.ts",
+      "exportedName": "withdrawReport"
+    },
+    "40fb6ef598f0f7bbda3460231abb8d635b8f364006": {
+      "workers": {
+        "app/[locale]/lost-and-found/track/page": {
+          "moduleId": 753180,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/track/status/page": {
+          "moduleId": 948446,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/track/withdraw/page": {
+          "moduleId": 432230,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/lost-and-found/track/actions.ts",
+      "exportedName": "forgetTracking"
+    },
+    "40fd4706608bb9a73724b25162541a90f1dfc7279c": {
+      "workers": {
+        "app/[locale]/lost-and-found/track/page": {
+          "moduleId": 753180,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/track/status/page": {
+          "moduleId": 948446,
+          "async": false
+        },
+        "app/[locale]/lost-and-found/track/withdraw/page": {
+          "moduleId": 432230,
+          "async": false
+        }
+      },
+      "filename": "app/[locale]/lost-and-found/track/actions.ts",
+      "exportedName": "openTracking"
+    },
+    "4040bdc9620c95b54cb019f7fbe3e8f1ee51ae4ad6": {
+      "workers": {
+        "app/admin/account/page": {
+          "moduleId": 537735,
+          "async": false
+        },
+        "app/admin/audit/page": {
+          "moduleId": 141912,
+          "async": false
+        },
+        "app/admin/borrowing/calendar/page": {
+          "moduleId": 177365,
+          "async": false
+        },
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        },
+        "app/admin/borrowing/items/new/page": {
+          "moduleId": 169546,
+          "async": false
+        },
+        "app/admin/borrowing/items/page": {
+          "moduleId": 796460,
+          "async": false
+        },
+        "app/admin/borrowing/page": {
+          "moduleId": 757967,
+          "async": false
+        },
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        },
+        "app/admin/cases/page": {
+          "moduleId": 488187,
+          "async": false
+        },
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        },
+        "app/admin/content/[type]/[id]/history/page": {
+          "moduleId": 359507,
+          "async": false
+        },
+        "app/admin/content/alerts/[id]/page": {
+          "moduleId": 255248,
+          "async": false
+        },
+        "app/admin/content/alerts/new/page": {
+          "moduleId": 488077,
+          "async": false
+        },
+        "app/admin/content/alerts/page": {
+          "moduleId": 665970,
+          "async": false
+        },
+        "app/admin/content/bulk/[segment]/page": {
+          "moduleId": 210096,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/[id]/page": {
+          "moduleId": 375907,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/new/page": {
+          "moduleId": 826758,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/page": {
+          "moduleId": 881085,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/[id]/page": {
+          "moduleId": 493090,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/new/page": {
+          "moduleId": 313986,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/page": {
+          "moduleId": 82128,
+          "async": false
+        },
+        "app/admin/content/canteen-settings/page": {
+          "moduleId": 930263,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/page": {
+          "moduleId": 290818,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/prices/page": {
+          "moduleId": 686052,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/page": {
+          "moduleId": 359340,
+          "async": false
+        },
+        "app/admin/content/events/[id]/page": {
+          "moduleId": 562647,
+          "async": false
+        },
+        "app/admin/content/events/new/page": {
+          "moduleId": 527187,
+          "async": false
+        },
+        "app/admin/content/events/page": {
+          "moduleId": 373667,
+          "async": false
+        },
+        "app/admin/content/faculties/[id]/page": {
+          "moduleId": 783670,
+          "async": false
+        },
+        "app/admin/content/faculties/new/page": {
+          "moduleId": 553317,
+          "async": false
+        },
+        "app/admin/content/faculties/page": {
+          "moduleId": 618524,
+          "async": false
+        },
+        "app/admin/content/faqs/[id]/page": {
+          "moduleId": 675740,
+          "async": false
+        },
+        "app/admin/content/faqs/new/page": {
+          "moduleId": 71171,
+          "async": false
+        },
+        "app/admin/content/faqs/page": {
+          "moduleId": 81393,
+          "async": false
+        },
+        "app/admin/content/forms/[id]/page": {
+          "moduleId": 786265,
+          "async": false
+        },
+        "app/admin/content/forms/new/page": {
+          "moduleId": 777148,
+          "async": false
+        },
+        "app/admin/content/forms/page": {
+          "moduleId": 660593,
+          "async": false
+        },
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/images/bulk/delete/page": {
+          "moduleId": 204922,
+          "async": false
+        },
+        "app/admin/content/images/bulk/edit/page": {
+          "moduleId": 683938,
+          "async": false
+        },
+        "app/admin/content/images/new/page": {
+          "moduleId": 517708,
+          "async": false
+        },
+        "app/admin/content/images/page": {
+          "moduleId": 3909,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/history/page": {
+          "moduleId": 25508,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/page": {
+          "moduleId": 458082,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/new/page": {
+          "moduleId": 94741,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/page": {
+          "moduleId": 361022,
+          "async": false
+        },
+        "app/admin/content/news/[id]/page": {
+          "moduleId": 737776,
+          "async": false
+        },
+        "app/admin/content/news/new/page": {
+          "moduleId": 266214,
+          "async": false
+        },
+        "app/admin/content/news/page": {
+          "moduleId": 918909,
+          "async": false
+        },
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/page": {
+          "moduleId": 897767,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/import/page": {
+          "moduleId": 640634,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/page": {
+          "moduleId": 8390,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/page": {
+          "moduleId": 780672,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        },
+        "app/admin/content/open-data/page": {
+          "moduleId": 455363,
+          "async": false
+        },
+        "app/admin/content/organisations/[id]/page": {
+          "moduleId": 330184,
+          "async": false
+        },
+        "app/admin/content/organisations/new/page": {
+          "moduleId": 506577,
+          "async": false
+        },
+        "app/admin/content/organisations/page": {
+          "moduleId": 317243,
+          "async": false
+        },
+        "app/admin/content/page": {
+          "moduleId": 867390,
+          "async": false
+        },
+        "app/admin/content/places/[id]/page": {
+          "moduleId": 126766,
+          "async": false
+        },
+        "app/admin/content/places/new/page": {
+          "moduleId": 652996,
+          "async": false
+        },
+        "app/admin/content/places/page": {
+          "moduleId": 554863,
+          "async": false
+        },
+        "app/admin/content/policies/[id]/page": {
+          "moduleId": 101273,
+          "async": false
+        },
+        "app/admin/content/policies/new/page": {
+          "moduleId": 244827,
+          "async": false
+        },
+        "app/admin/content/policies/page": {
+          "moduleId": 455331,
+          "async": false
+        },
+        "app/admin/content/service-pages/page": {
+          "moduleId": 108197,
+          "async": false
+        },
+        "app/admin/content/shuttle/[id]/page": {
+          "moduleId": 887719,
+          "async": false
+        },
+        "app/admin/content/shuttle/new/page": {
+          "moduleId": 656594,
+          "async": false
+        },
+        "app/admin/content/shuttle/page": {
+          "moduleId": 576952,
+          "async": false
+        },
+        "app/admin/content/site-settings/[section]/page": {
+          "moduleId": 810834,
+          "async": false
+        },
+        "app/admin/content/site-settings/page": {
+          "moduleId": 954050,
+          "async": false
+        },
+        "app/admin/content/site-text/page": {
+          "moduleId": 976103,
+          "async": false
+        },
+        "app/admin/content/today/page": {
+          "moduleId": 28130,
+          "async": false
+        },
+        "app/admin/content/topics/[id]/page": {
+          "moduleId": 618920,
+          "async": false
+        },
+        "app/admin/content/topics/new/page": {
+          "moduleId": 801518,
+          "async": false
+        },
+        "app/admin/content/topics/page": {
+          "moduleId": 740647,
+          "async": false
+        },
+        "app/admin/health/page": {
+          "moduleId": 230088,
+          "async": false
+        },
+        "app/admin/invite/[token]/page": {
+          "moduleId": 116995,
+          "async": false
+        },
+        "app/admin/no-access/page": {
+          "moduleId": 681585,
+          "async": false
+        },
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        },
+        "app/admin/page": {
+          "moduleId": 404100,
+          "async": false
+        },
+        "app/admin/performance/page": {
+          "moduleId": 222744,
+          "async": false
+        },
+        "app/admin/recover/[token]/page": {
+          "moduleId": 13744,
+          "async": false
+        },
+        "app/admin/security/page": {
+          "moduleId": 10251,
+          "async": false
+        },
+        "app/admin/security/passkeys/[id]/remove/page": {
+          "moduleId": 563495,
+          "async": false
+        },
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        },
+        "app/admin/settings/redirects/[id]/page": {
+          "moduleId": 842848,
+          "async": false
+        },
+        "app/admin/settings/redirects/page": {
+          "moduleId": 851936,
+          "async": false
+        },
+        "app/admin/sign-in/page": {
+          "moduleId": 400807,
+          "async": false
+        },
+        "app/admin/signed-out/page": {
+          "moduleId": 583957,
+          "async": false
+        },
+        "app/admin/staff/[userId]/page": {
+          "moduleId": 108912,
+          "async": false
+        },
+        "app/admin/staff/[userId]/suspend/page": {
+          "moduleId": 493196,
+          "async": false
+        },
+        "app/admin/staff/invites/[id]/cancel/page": {
+          "moduleId": 804196,
+          "async": false
+        },
+        "app/admin/staff/page": {
+          "moduleId": 92073,
+          "async": false
+        },
+        "app/admin/staff/recovery/[userId]/page": {
+          "moduleId": 402701,
+          "async": false
+        },
+        "app/admin/staff/roles/[id]/remove/page": {
+          "moduleId": 316260,
+          "async": false
+        },
+        "app/admin/team/page": {
+          "moduleId": 590654,
+          "async": false
+        }
+      },
+      "filename": "app/admin/actions.ts",
+      "exportedName": "setAdminLocale"
+    },
+    "00b9ece19c0cd9c6f769013ae569226a8e42509115": {
+      "workers": {
+        "app/admin/account/page": {
+          "moduleId": 537735,
+          "async": false
+        },
+        "app/admin/audit/page": {
+          "moduleId": 141912,
+          "async": false
+        },
+        "app/admin/borrowing/calendar/page": {
+          "moduleId": 177365,
+          "async": false
+        },
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        },
+        "app/admin/borrowing/items/new/page": {
+          "moduleId": 169546,
+          "async": false
+        },
+        "app/admin/borrowing/items/page": {
+          "moduleId": 796460,
+          "async": false
+        },
+        "app/admin/borrowing/page": {
+          "moduleId": 757967,
+          "async": false
+        },
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        },
+        "app/admin/cases/page": {
+          "moduleId": 488187,
+          "async": false
+        },
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        },
+        "app/admin/content/[type]/[id]/history/page": {
+          "moduleId": 359507,
+          "async": false
+        },
+        "app/admin/content/alerts/[id]/page": {
+          "moduleId": 255248,
+          "async": false
+        },
+        "app/admin/content/alerts/new/page": {
+          "moduleId": 488077,
+          "async": false
+        },
+        "app/admin/content/alerts/page": {
+          "moduleId": 665970,
+          "async": false
+        },
+        "app/admin/content/bulk/[segment]/page": {
+          "moduleId": 210096,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/[id]/page": {
+          "moduleId": 375907,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/new/page": {
+          "moduleId": 826758,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/page": {
+          "moduleId": 881085,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/[id]/page": {
+          "moduleId": 493090,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/new/page": {
+          "moduleId": 313986,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/page": {
+          "moduleId": 82128,
+          "async": false
+        },
+        "app/admin/content/canteen-settings/page": {
+          "moduleId": 930263,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/page": {
+          "moduleId": 290818,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/prices/page": {
+          "moduleId": 686052,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/page": {
+          "moduleId": 359340,
+          "async": false
+        },
+        "app/admin/content/events/[id]/page": {
+          "moduleId": 562647,
+          "async": false
+        },
+        "app/admin/content/events/new/page": {
+          "moduleId": 527187,
+          "async": false
+        },
+        "app/admin/content/events/page": {
+          "moduleId": 373667,
+          "async": false
+        },
+        "app/admin/content/faculties/[id]/page": {
+          "moduleId": 783670,
+          "async": false
+        },
+        "app/admin/content/faculties/new/page": {
+          "moduleId": 553317,
+          "async": false
+        },
+        "app/admin/content/faculties/page": {
+          "moduleId": 618524,
+          "async": false
+        },
+        "app/admin/content/faqs/[id]/page": {
+          "moduleId": 675740,
+          "async": false
+        },
+        "app/admin/content/faqs/new/page": {
+          "moduleId": 71171,
+          "async": false
+        },
+        "app/admin/content/faqs/page": {
+          "moduleId": 81393,
+          "async": false
+        },
+        "app/admin/content/forms/[id]/page": {
+          "moduleId": 786265,
+          "async": false
+        },
+        "app/admin/content/forms/new/page": {
+          "moduleId": 777148,
+          "async": false
+        },
+        "app/admin/content/forms/page": {
+          "moduleId": 660593,
+          "async": false
+        },
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/images/bulk/delete/page": {
+          "moduleId": 204922,
+          "async": false
+        },
+        "app/admin/content/images/bulk/edit/page": {
+          "moduleId": 683938,
+          "async": false
+        },
+        "app/admin/content/images/new/page": {
+          "moduleId": 517708,
+          "async": false
+        },
+        "app/admin/content/images/page": {
+          "moduleId": 3909,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/history/page": {
+          "moduleId": 25508,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/page": {
+          "moduleId": 458082,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/new/page": {
+          "moduleId": 94741,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/page": {
+          "moduleId": 361022,
+          "async": false
+        },
+        "app/admin/content/news/[id]/page": {
+          "moduleId": 737776,
+          "async": false
+        },
+        "app/admin/content/news/new/page": {
+          "moduleId": 266214,
+          "async": false
+        },
+        "app/admin/content/news/page": {
+          "moduleId": 918909,
+          "async": false
+        },
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/page": {
+          "moduleId": 897767,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/import/page": {
+          "moduleId": 640634,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/page": {
+          "moduleId": 8390,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/page": {
+          "moduleId": 780672,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        },
+        "app/admin/content/open-data/page": {
+          "moduleId": 455363,
+          "async": false
+        },
+        "app/admin/content/organisations/[id]/page": {
+          "moduleId": 330184,
+          "async": false
+        },
+        "app/admin/content/organisations/new/page": {
+          "moduleId": 506577,
+          "async": false
+        },
+        "app/admin/content/organisations/page": {
+          "moduleId": 317243,
+          "async": false
+        },
+        "app/admin/content/page": {
+          "moduleId": 867390,
+          "async": false
+        },
+        "app/admin/content/places/[id]/page": {
+          "moduleId": 126766,
+          "async": false
+        },
+        "app/admin/content/places/new/page": {
+          "moduleId": 652996,
+          "async": false
+        },
+        "app/admin/content/places/page": {
+          "moduleId": 554863,
+          "async": false
+        },
+        "app/admin/content/policies/[id]/page": {
+          "moduleId": 101273,
+          "async": false
+        },
+        "app/admin/content/policies/new/page": {
+          "moduleId": 244827,
+          "async": false
+        },
+        "app/admin/content/policies/page": {
+          "moduleId": 455331,
+          "async": false
+        },
+        "app/admin/content/service-pages/page": {
+          "moduleId": 108197,
+          "async": false
+        },
+        "app/admin/content/shuttle/[id]/page": {
+          "moduleId": 887719,
+          "async": false
+        },
+        "app/admin/content/shuttle/new/page": {
+          "moduleId": 656594,
+          "async": false
+        },
+        "app/admin/content/shuttle/page": {
+          "moduleId": 576952,
+          "async": false
+        },
+        "app/admin/content/site-settings/[section]/page": {
+          "moduleId": 810834,
+          "async": false
+        },
+        "app/admin/content/site-settings/page": {
+          "moduleId": 954050,
+          "async": false
+        },
+        "app/admin/content/site-text/page": {
+          "moduleId": 976103,
+          "async": false
+        },
+        "app/admin/content/today/page": {
+          "moduleId": 28130,
+          "async": false
+        },
+        "app/admin/content/topics/[id]/page": {
+          "moduleId": 618920,
+          "async": false
+        },
+        "app/admin/content/topics/new/page": {
+          "moduleId": 801518,
+          "async": false
+        },
+        "app/admin/content/topics/page": {
+          "moduleId": 740647,
+          "async": false
+        },
+        "app/admin/health/page": {
+          "moduleId": 230088,
+          "async": false
+        },
+        "app/admin/invite/[token]/page": {
+          "moduleId": 116995,
+          "async": false
+        },
+        "app/admin/no-access/page": {
+          "moduleId": 681585,
+          "async": false
+        },
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        },
+        "app/admin/page": {
+          "moduleId": 404100,
+          "async": false
+        },
+        "app/admin/performance/page": {
+          "moduleId": 222744,
+          "async": false
+        },
+        "app/admin/recover/[token]/page": {
+          "moduleId": 13744,
+          "async": false
+        },
+        "app/admin/security/page": {
+          "moduleId": 10251,
+          "async": false
+        },
+        "app/admin/security/passkeys/[id]/remove/page": {
+          "moduleId": 563495,
+          "async": false
+        },
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        },
+        "app/admin/settings/redirects/[id]/page": {
+          "moduleId": 842848,
+          "async": false
+        },
+        "app/admin/settings/redirects/page": {
+          "moduleId": 851936,
+          "async": false
+        },
+        "app/admin/sign-in/page": {
+          "moduleId": 400807,
+          "async": false
+        },
+        "app/admin/signed-out/page": {
+          "moduleId": 583957,
+          "async": false
+        },
+        "app/admin/staff/[userId]/page": {
+          "moduleId": 108912,
+          "async": false
+        },
+        "app/admin/staff/[userId]/suspend/page": {
+          "moduleId": 493196,
+          "async": false
+        },
+        "app/admin/staff/invites/[id]/cancel/page": {
+          "moduleId": 804196,
+          "async": false
+        },
+        "app/admin/staff/page": {
+          "moduleId": 92073,
+          "async": false
+        },
+        "app/admin/staff/recovery/[userId]/page": {
+          "moduleId": 402701,
+          "async": false
+        },
+        "app/admin/staff/roles/[id]/remove/page": {
+          "moduleId": 316260,
+          "async": false
+        },
+        "app/admin/team/page": {
+          "moduleId": 590654,
+          "async": false
+        }
+      },
+      "filename": "app/admin/actions.ts",
+      "exportedName": "signOutAction"
+    },
+    "00f803303c5e7d484f472770aea9e5c675a2269447": {
+      "workers": {
+        "app/admin/account/page": {
+          "moduleId": 537735,
+          "async": false
+        },
+        "app/admin/audit/page": {
+          "moduleId": 141912,
+          "async": false
+        },
+        "app/admin/borrowing/calendar/page": {
+          "moduleId": 177365,
+          "async": false
+        },
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        },
+        "app/admin/borrowing/items/new/page": {
+          "moduleId": 169546,
+          "async": false
+        },
+        "app/admin/borrowing/items/page": {
+          "moduleId": 796460,
+          "async": false
+        },
+        "app/admin/borrowing/page": {
+          "moduleId": 757967,
+          "async": false
+        },
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        },
+        "app/admin/cases/page": {
+          "moduleId": 488187,
+          "async": false
+        },
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        },
+        "app/admin/content/[type]/[id]/history/page": {
+          "moduleId": 359507,
+          "async": false
+        },
+        "app/admin/content/alerts/[id]/page": {
+          "moduleId": 255248,
+          "async": false
+        },
+        "app/admin/content/alerts/new/page": {
+          "moduleId": 488077,
+          "async": false
+        },
+        "app/admin/content/alerts/page": {
+          "moduleId": 665970,
+          "async": false
+        },
+        "app/admin/content/bulk/[segment]/page": {
+          "moduleId": 210096,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/[id]/page": {
+          "moduleId": 375907,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/new/page": {
+          "moduleId": 826758,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/page": {
+          "moduleId": 881085,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/[id]/page": {
+          "moduleId": 493090,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/new/page": {
+          "moduleId": 313986,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/page": {
+          "moduleId": 82128,
+          "async": false
+        },
+        "app/admin/content/canteen-settings/page": {
+          "moduleId": 930263,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/page": {
+          "moduleId": 290818,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/prices/page": {
+          "moduleId": 686052,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/page": {
+          "moduleId": 359340,
+          "async": false
+        },
+        "app/admin/content/events/[id]/page": {
+          "moduleId": 562647,
+          "async": false
+        },
+        "app/admin/content/events/new/page": {
+          "moduleId": 527187,
+          "async": false
+        },
+        "app/admin/content/events/page": {
+          "moduleId": 373667,
+          "async": false
+        },
+        "app/admin/content/faculties/[id]/page": {
+          "moduleId": 783670,
+          "async": false
+        },
+        "app/admin/content/faculties/new/page": {
+          "moduleId": 553317,
+          "async": false
+        },
+        "app/admin/content/faculties/page": {
+          "moduleId": 618524,
+          "async": false
+        },
+        "app/admin/content/faqs/[id]/page": {
+          "moduleId": 675740,
+          "async": false
+        },
+        "app/admin/content/faqs/new/page": {
+          "moduleId": 71171,
+          "async": false
+        },
+        "app/admin/content/faqs/page": {
+          "moduleId": 81393,
+          "async": false
+        },
+        "app/admin/content/forms/[id]/page": {
+          "moduleId": 786265,
+          "async": false
+        },
+        "app/admin/content/forms/new/page": {
+          "moduleId": 777148,
+          "async": false
+        },
+        "app/admin/content/forms/page": {
+          "moduleId": 660593,
+          "async": false
+        },
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/images/bulk/delete/page": {
+          "moduleId": 204922,
+          "async": false
+        },
+        "app/admin/content/images/bulk/edit/page": {
+          "moduleId": 683938,
+          "async": false
+        },
+        "app/admin/content/images/new/page": {
+          "moduleId": 517708,
+          "async": false
+        },
+        "app/admin/content/images/page": {
+          "moduleId": 3909,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/history/page": {
+          "moduleId": 25508,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/page": {
+          "moduleId": 458082,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/new/page": {
+          "moduleId": 94741,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/page": {
+          "moduleId": 361022,
+          "async": false
+        },
+        "app/admin/content/news/[id]/page": {
+          "moduleId": 737776,
+          "async": false
+        },
+        "app/admin/content/news/new/page": {
+          "moduleId": 266214,
+          "async": false
+        },
+        "app/admin/content/news/page": {
+          "moduleId": 918909,
+          "async": false
+        },
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/page": {
+          "moduleId": 897767,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/import/page": {
+          "moduleId": 640634,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/page": {
+          "moduleId": 8390,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/page": {
+          "moduleId": 780672,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        },
+        "app/admin/content/open-data/page": {
+          "moduleId": 455363,
+          "async": false
+        },
+        "app/admin/content/organisations/[id]/page": {
+          "moduleId": 330184,
+          "async": false
+        },
+        "app/admin/content/organisations/new/page": {
+          "moduleId": 506577,
+          "async": false
+        },
+        "app/admin/content/organisations/page": {
+          "moduleId": 317243,
+          "async": false
+        },
+        "app/admin/content/page": {
+          "moduleId": 867390,
+          "async": false
+        },
+        "app/admin/content/places/[id]/page": {
+          "moduleId": 126766,
+          "async": false
+        },
+        "app/admin/content/places/new/page": {
+          "moduleId": 652996,
+          "async": false
+        },
+        "app/admin/content/places/page": {
+          "moduleId": 554863,
+          "async": false
+        },
+        "app/admin/content/policies/[id]/page": {
+          "moduleId": 101273,
+          "async": false
+        },
+        "app/admin/content/policies/new/page": {
+          "moduleId": 244827,
+          "async": false
+        },
+        "app/admin/content/policies/page": {
+          "moduleId": 455331,
+          "async": false
+        },
+        "app/admin/content/service-pages/page": {
+          "moduleId": 108197,
+          "async": false
+        },
+        "app/admin/content/shuttle/[id]/page": {
+          "moduleId": 887719,
+          "async": false
+        },
+        "app/admin/content/shuttle/new/page": {
+          "moduleId": 656594,
+          "async": false
+        },
+        "app/admin/content/shuttle/page": {
+          "moduleId": 576952,
+          "async": false
+        },
+        "app/admin/content/site-settings/[section]/page": {
+          "moduleId": 810834,
+          "async": false
+        },
+        "app/admin/content/site-settings/page": {
+          "moduleId": 954050,
+          "async": false
+        },
+        "app/admin/content/site-text/page": {
+          "moduleId": 976103,
+          "async": false
+        },
+        "app/admin/content/today/page": {
+          "moduleId": 28130,
+          "async": false
+        },
+        "app/admin/content/topics/[id]/page": {
+          "moduleId": 618920,
+          "async": false
+        },
+        "app/admin/content/topics/new/page": {
+          "moduleId": 801518,
+          "async": false
+        },
+        "app/admin/content/topics/page": {
+          "moduleId": 740647,
+          "async": false
+        },
+        "app/admin/health/page": {
+          "moduleId": 230088,
+          "async": false
+        },
+        "app/admin/invite/[token]/page": {
+          "moduleId": 116995,
+          "async": false
+        },
+        "app/admin/no-access/page": {
+          "moduleId": 681585,
+          "async": false
+        },
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        },
+        "app/admin/page": {
+          "moduleId": 404100,
+          "async": false
+        },
+        "app/admin/performance/page": {
+          "moduleId": 222744,
+          "async": false
+        },
+        "app/admin/recover/[token]/page": {
+          "moduleId": 13744,
+          "async": false
+        },
+        "app/admin/security/page": {
+          "moduleId": 10251,
+          "async": false
+        },
+        "app/admin/security/passkeys/[id]/remove/page": {
+          "moduleId": 563495,
+          "async": false
+        },
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        },
+        "app/admin/settings/redirects/[id]/page": {
+          "moduleId": 842848,
+          "async": false
+        },
+        "app/admin/settings/redirects/page": {
+          "moduleId": 851936,
+          "async": false
+        },
+        "app/admin/sign-in/page": {
+          "moduleId": 400807,
+          "async": false
+        },
+        "app/admin/signed-out/page": {
+          "moduleId": 583957,
+          "async": false
+        },
+        "app/admin/staff/[userId]/page": {
+          "moduleId": 108912,
+          "async": false
+        },
+        "app/admin/staff/[userId]/suspend/page": {
+          "moduleId": 493196,
+          "async": false
+        },
+        "app/admin/staff/invites/[id]/cancel/page": {
+          "moduleId": 804196,
+          "async": false
+        },
+        "app/admin/staff/page": {
+          "moduleId": 92073,
+          "async": false
+        },
+        "app/admin/staff/recovery/[userId]/page": {
+          "moduleId": 402701,
+          "async": false
+        },
+        "app/admin/staff/roles/[id]/remove/page": {
+          "moduleId": 316260,
+          "async": false
+        },
+        "app/admin/team/page": {
+          "moduleId": 590654,
+          "async": false
+        }
+      },
+      "filename": "app/admin/actions.ts",
+      "exportedName": "extendSession"
+    },
+    "00411ef3ca7a805149a05baed15d66921a5c7f6736": {
+      "workers": {
+        "app/admin/account/page": {
+          "moduleId": 537735,
+          "async": false
+        }
+      },
+      "filename": "app/admin/account/actions.ts",
+      "exportedName": "revokeOtherSessionsAction"
+    },
+    "4065673ebd1c03a691d4ffaf9ad7810afff7cd5974": {
+      "workers": {
+        "app/admin/account/page": {
+          "moduleId": 537735,
+          "async": false
+        }
+      },
+      "filename": "app/admin/account/actions.ts",
+      "exportedName": "revokeSessionAction"
+    },
+    "407fe7a32c96314a2eaddccd6d9b166768a0b664db": {
+      "workers": {
+        "app/admin/account/page": {
+          "moduleId": 537735,
+          "async": false
+        }
+      },
+      "filename": "app/admin/account/actions.ts",
+      "exportedName": "updateNameAction"
+    },
+    "602c3acf44901bbdade11499ec4a3a467963474b38": {
+      "workers": {
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        },
+        "app/admin/borrowing/items/new/page": {
+          "moduleId": 169546,
+          "async": false
+        },
+        "app/admin/borrowing/items/page": {
+          "moduleId": 796460,
+          "async": false
+        }
+      },
+      "filename": "app/admin/borrowing/items/actions.ts",
+      "exportedName": "createItemAction"
+    },
+    "60abe27dc86712b9ede370ec90f56603ebe19b9ce8": {
+      "workers": {
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        },
+        "app/admin/borrowing/items/new/page": {
+          "moduleId": 169546,
+          "async": false
+        },
+        "app/admin/borrowing/items/page": {
+          "moduleId": 796460,
+          "async": false
+        }
+      },
+      "filename": "app/admin/borrowing/items/actions.ts",
+      "exportedName": "updateCategoryAction"
+    },
+    "60d144d408d58b85d7298b23795c3d81d355dcfe13": {
+      "workers": {
+        "app/admin/borrowing/items/[id]/page": {
+          "moduleId": 975624,
+          "async": false
+        },
+        "app/admin/borrowing/items/new/page": {
+          "moduleId": 169546,
+          "async": false
+        },
+        "app/admin/borrowing/items/page": {
+          "moduleId": 796460,
+          "async": false
+        }
+      },
+      "filename": "app/admin/borrowing/items/actions.ts",
+      "exportedName": "updateItemAction"
+    },
+    "403d5d29fa11740820c72aa777da5a20a71158db7a": {
+      "workers": {
+        "app/admin/cases/page": {
+          "moduleId": 488187,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/inbox-actions.ts",
+      "exportedName": "bulkCasesAction"
+    },
+    "4058ef8a4c75123c3a8663096a0ad9685573fac027": {
+      "workers": {
+        "app/admin/cases/page": {
+          "moduleId": 488187,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/inbox-actions.ts",
+      "exportedName": "saveViewAction"
+    },
+    "40c1831d500bec486bf0dcb70f04bc26cffb6e5aca": {
+      "workers": {
+        "app/admin/cases/page": {
+          "moduleId": 488187,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/inbox-actions.ts",
+      "exportedName": "updateViewAction"
+    },
+    "40c2a0a00fdd8fb3ab22516bcb15d64e6ce13df69d": {
+      "workers": {
+        "app/admin/cases/page": {
+          "moduleId": 488187,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/inbox-actions.ts",
+      "exportedName": "deleteViewAction"
+    },
+    "60173571ed1695a04fe74f4822e300fb096e0bec52": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/borrowing/actions.ts",
+      "exportedName": "approveAction"
+    },
+    "603cae195dbb93f7fa70139c9cf2439c003be879e6": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/borrowing/actions.ts",
+      "exportedName": "cancelAction"
+    },
+    "6068dd09a569619bf2d6026a6af163747898a34c6e": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/borrowing/actions.ts",
+      "exportedName": "declineAction"
+    },
+    "608937b83867556ef3c0e174a198c46c344e5cc669": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/borrowing/actions.ts",
+      "exportedName": "handoverAction"
+    },
+    "602a36a37a1053017cf1e67c35b7cbe5f5e633d418": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/borrowing/actions.ts",
+      "exportedName": "notCollectedAction"
+    },
+    "6071390687555ed78f87726875c13e3142dafb5fda": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/borrowing/actions.ts",
+      "exportedName": "returnAction"
+    },
+    "605c2a1aa6c028f7582b441c3e798e61101f618245": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/borrowing/actions.ts",
+      "exportedName": "revealDetailsAction"
+    },
+    "60b53a61d2e2e847ec88c4425c75ad82b25e8ad9ee": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/borrowing/actions.ts",
+      "exportedName": "settleAction"
+    },
+    "603a3485d095c50094056dd9ccbf405b470366412c": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "acknowledgeAction"
+    },
+    "60ef5752926d503c5903818285c2c624acc08d828f": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "closeAction"
+    },
+    "60ef48c5a8db384329b00b537c0eeb5b9eada0393a": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "recategoriseAction"
+    },
+    "600324ce2ad0f39f0b12ab50a66d89df4a94d1b7e5": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "redirectAction"
+    },
+    "60a43bf3f8d63ddf4ff7687cbf7dd60775e8a54bb5": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "reopenAction"
+    },
+    "60647c2039abed6dfcb30b156d7ab71a23a1af21c7": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "resolveAction"
+    },
+    "605e0d5654b591a3a05278b23fdd435b59300ef45a": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "revealEvidenceAction"
+    },
+    "60857fced30a423f9784f3ba2ec60ecaa8c31a73cc": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "revealTextAction"
+    },
+    "60c070d6898f20218f82bd4f219780b47c179f8542": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "startAction"
+    },
+    "60852c8c6155e395b0e7ce188c94b31448aa083dcf": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "withdrawAction"
+    },
+    "6009fde81b4dd749003c3dc60024163e46bbd54cdf": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/complaints/actions.ts",
+      "exportedName": "wellbeingAction"
+    },
+    "6082c22e4f1afe0c4458bde8c9cf885674ca5f3adc": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "addClaimAction"
+    },
+    "60a71810301791dcbb08860f0b4eb944dbaa47e225": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "addFinderAction"
+    },
+    "6000593c138dca159397016ad21bb012700fba34ba": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "decideClaimAction"
+    },
+    "6021bce20fd41f7b7906b52770aee90acc684a2ff5": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "handoverAction"
+    },
+    "6087234dc118f032accf6473f23c660cc7229d221d": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "markMatchAction"
+    },
+    "60d6693dadf9c0044f03f423234af446448fbc63fd": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "publishFoundAction"
+    },
+    "60749a81ab2c47bfee91b16b73617ad51d276cf889": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "publishListingAction"
+    },
+    "6076863f233e5199ed01c227a480504d00bac2d7bf": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "removeListingPhotoAction"
+    },
+    "6085b9fe27c3678fb988f20eef5c5b758f2f9bc83e": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "unpublishListingAction"
+    },
+    "60db5294162542f60575b375260a7a652d6c175525": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "updateListingDetailsAction"
+    },
+    "60510b7e9c9e243cb2971e604ed4c5612d3cbd7d00": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "revealClaimAction"
+    },
+    "609d0bf96b78de91ecd90aec07cd7c740648f2757a": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "revealIdentifyingAction"
+    },
+    "6065d9aad3594a51788a65dcd690855520f5c7e6db": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "revealVerificationAction"
+    },
+    "60551725d798b5df775718bf322733c95699a0af20": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "saveStorageAction"
+    },
+    "6099d98283cd104f33f5c94807acecd8c5d6d8700f": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "saveVerificationAction"
+    },
+    "6039fee4d8fa7b1f013889d511e555298d661a5afa": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "startFoundAction"
+    },
+    "608ec5fb1b5264b16d50d391c290a3f35caab52011": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "describeFoundAction"
+    },
+    "6077f1f348b4be9dcf677de403169f27115301d886": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "logLostAction"
+    },
+    "6013d3fe23d28d176d51f146973f0a772a53965cf9": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "updateListingAction"
+    },
+    "40faf42c8a640f4fbb164ed475bc34a843d21bb0b8": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        },
+        "app/admin/cases/new/found/[id]/page": {
+          "moduleId": 864758,
+          "async": false
+        },
+        "app/admin/cases/new/found/page": {
+          "moduleId": 547933,
+          "async": false
+        },
+        "app/admin/cases/new/lost/page": {
+          "moduleId": 136694,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/lost-found/actions.ts",
+      "exportedName": "uploadPhotoAction"
+    },
+    "60abd011e10e70b1363fe184655bc894a0a512ad60": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/actions.ts",
+      "exportedName": "addNoteAction"
+    },
+    "603419712e2ac91e135036fc1c12776e955b6a3ff9": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/actions.ts",
+      "exportedName": "addUpdateAction"
+    },
+    "60521bb7e65c0e5d65fc99a577f4f91564554b63a5": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/actions.ts",
+      "exportedName": "assignAction"
+    },
+    "6014f6fa740869a135b0ba1e113331f81e4b434b60": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/actions.ts",
+      "exportedName": "changeStatusAction"
+    },
+    "60c03c0e553507da4f7032d4173d325dfaf1a48577": {
+      "workers": {
+        "app/admin/cases/[id]/page": {
+          "moduleId": 43262,
+          "async": false
+        }
+      },
+      "filename": "app/admin/cases/actions.ts",
+      "exportedName": "revealContactsAction"
+    },
+    "601cdcea2dc4481f1e33bff0d3410d335dbe2a023d": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "filename": "app/admin/complaints/categories/actions.ts",
+      "exportedName": "createCategoryAction"
+    },
+    "606aa8e7e41f93073ea5309884ec80190154b06ec5": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "filename": "app/admin/complaints/categories/actions.ts",
+      "exportedName": "grantAccessAction"
+    },
+    "602c18b7b1c5f0853ce221b133c11f248deb556591": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "filename": "app/admin/complaints/categories/actions.ts",
+      "exportedName": "revokeAccessAction"
+    },
+    "6019892b7458901170f3766a04f1889b3ce0c5af07": {
+      "workers": {
+        "app/admin/complaints/categories/page": {
+          "moduleId": 654263,
+          "async": false
+        }
+      },
+      "filename": "app/admin/complaints/categories/actions.ts",
+      "exportedName": "updateCategoryAction"
+    },
+    "40a6e04a3b51c1e3279ae0fb72cbff4c70d592b50b": {
+      "workers": {
+        "app/admin/content/alerts/page": {
+          "moduleId": 665970,
+          "async": false
+        },
+        "app/admin/content/bulk/[segment]/page": {
+          "moduleId": 210096,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/page": {
+          "moduleId": 881085,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/page": {
+          "moduleId": 82128,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/page": {
+          "moduleId": 359340,
+          "async": false
+        },
+        "app/admin/content/events/page": {
+          "moduleId": 373667,
+          "async": false
+        },
+        "app/admin/content/faculties/page": {
+          "moduleId": 618524,
+          "async": false
+        },
+        "app/admin/content/faqs/page": {
+          "moduleId": 81393,
+          "async": false
+        },
+        "app/admin/content/forms/page": {
+          "moduleId": 660593,
+          "async": false
+        },
+        "app/admin/content/news/page": {
+          "moduleId": 918909,
+          "async": false
+        },
+        "app/admin/content/organisations/page": {
+          "moduleId": 317243,
+          "async": false
+        },
+        "app/admin/content/page": {
+          "moduleId": 867390,
+          "async": false
+        },
+        "app/admin/content/places/page": {
+          "moduleId": 554863,
+          "async": false
+        },
+        "app/admin/content/policies/page": {
+          "moduleId": 455331,
+          "async": false
+        },
+        "app/admin/content/shuttle/page": {
+          "moduleId": 576952,
+          "async": false
+        },
+        "app/admin/content/topics/page": {
+          "moduleId": 740647,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/bulk/actions.ts",
+      "exportedName": "bulkContentAction"
+    },
+    "40decbaaa537a303fe85a66821b7cba0c92fdb1410": {
+      "workers": {
+        "app/admin/content/alerts/page": {
+          "moduleId": 665970,
+          "async": false
+        },
+        "app/admin/content/bulk/[segment]/page": {
+          "moduleId": 210096,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/page": {
+          "moduleId": 881085,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/page": {
+          "moduleId": 82128,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/page": {
+          "moduleId": 359340,
+          "async": false
+        },
+        "app/admin/content/events/page": {
+          "moduleId": 373667,
+          "async": false
+        },
+        "app/admin/content/faculties/page": {
+          "moduleId": 618524,
+          "async": false
+        },
+        "app/admin/content/faqs/page": {
+          "moduleId": 81393,
+          "async": false
+        },
+        "app/admin/content/forms/page": {
+          "moduleId": 660593,
+          "async": false
+        },
+        "app/admin/content/news/page": {
+          "moduleId": 918909,
+          "async": false
+        },
+        "app/admin/content/organisations/page": {
+          "moduleId": 317243,
+          "async": false
+        },
+        "app/admin/content/page": {
+          "moduleId": 867390,
+          "async": false
+        },
+        "app/admin/content/places/page": {
+          "moduleId": 554863,
+          "async": false
+        },
+        "app/admin/content/policies/page": {
+          "moduleId": 455331,
+          "async": false
+        },
+        "app/admin/content/shuttle/page": {
+          "moduleId": 576952,
+          "async": false
+        },
+        "app/admin/content/topics/page": {
+          "moduleId": 740647,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/bulk/actions.ts",
+      "exportedName": "bulkDeleteAction"
+    },
+    "405a21fd9d99fc16860e26b044efd91866fc3d5147": {
+      "workers": {
+        "app/admin/content/[type]/[id]/history/page": {
+          "moduleId": 359507,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/history/page": {
+          "moduleId": 25508,
+          "async": false
+        }
+      },
+      "filename": "lib/admin/content/lifecycle-actions.ts",
+      "exportedName": "restoreItem"
+    },
+    "408405b33e2a4803fa1082f3bfd1b6ca5dd0779156": {
+      "workers": {
+        "app/admin/content/[type]/[id]/history/page": {
+          "moduleId": 359507,
+          "async": false
+        },
+        "app/admin/content/alerts/[id]/page": {
+          "moduleId": 255248,
+          "async": false
+        },
+        "app/admin/content/alerts/new/page": {
+          "moduleId": 488077,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/[id]/page": {
+          "moduleId": 375907,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/new/page": {
+          "moduleId": 826758,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/[id]/page": {
+          "moduleId": 493090,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/new/page": {
+          "moduleId": 313986,
+          "async": false
+        },
+        "app/admin/content/canteen-settings/page": {
+          "moduleId": 930263,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/page": {
+          "moduleId": 290818,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/prices/page": {
+          "moduleId": 686052,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        },
+        "app/admin/content/events/[id]/page": {
+          "moduleId": 562647,
+          "async": false
+        },
+        "app/admin/content/events/new/page": {
+          "moduleId": 527187,
+          "async": false
+        },
+        "app/admin/content/faculties/[id]/page": {
+          "moduleId": 783670,
+          "async": false
+        },
+        "app/admin/content/faculties/new/page": {
+          "moduleId": 553317,
+          "async": false
+        },
+        "app/admin/content/faqs/[id]/page": {
+          "moduleId": 675740,
+          "async": false
+        },
+        "app/admin/content/faqs/new/page": {
+          "moduleId": 71171,
+          "async": false
+        },
+        "app/admin/content/forms/[id]/page": {
+          "moduleId": 786265,
+          "async": false
+        },
+        "app/admin/content/forms/new/page": {
+          "moduleId": 777148,
+          "async": false
+        },
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/history/page": {
+          "moduleId": 25508,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/page": {
+          "moduleId": 458082,
+          "async": false
+        },
+        "app/admin/content/news/[id]/page": {
+          "moduleId": 737776,
+          "async": false
+        },
+        "app/admin/content/news/new/page": {
+          "moduleId": 266214,
+          "async": false
+        },
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        },
+        "app/admin/content/organisations/[id]/page": {
+          "moduleId": 330184,
+          "async": false
+        },
+        "app/admin/content/organisations/new/page": {
+          "moduleId": 506577,
+          "async": false
+        },
+        "app/admin/content/places/[id]/page": {
+          "moduleId": 126766,
+          "async": false
+        },
+        "app/admin/content/places/new/page": {
+          "moduleId": 652996,
+          "async": false
+        },
+        "app/admin/content/policies/[id]/page": {
+          "moduleId": 101273,
+          "async": false
+        },
+        "app/admin/content/policies/new/page": {
+          "moduleId": 244827,
+          "async": false
+        },
+        "app/admin/content/service-pages/page": {
+          "moduleId": 108197,
+          "async": false
+        },
+        "app/admin/content/shuttle/[id]/page": {
+          "moduleId": 887719,
+          "async": false
+        },
+        "app/admin/content/shuttle/new/page": {
+          "moduleId": 656594,
+          "async": false
+        },
+        "app/admin/content/site-settings/[section]/page": {
+          "moduleId": 810834,
+          "async": false
+        },
+        "app/admin/content/site-text/page": {
+          "moduleId": 976103,
+          "async": false
+        },
+        "app/admin/content/today/page": {
+          "moduleId": 28130,
+          "async": false
+        },
+        "app/admin/content/topics/[id]/page": {
+          "moduleId": 618920,
+          "async": false
+        },
+        "app/admin/content/topics/new/page": {
+          "moduleId": 801518,
+          "async": false
+        }
+      },
+      "filename": "lib/admin/content/lifecycle-actions.ts",
+      "exportedName": "duplicateItem"
+    },
+    "60e37c6000d444e41be57c588765e9b901d4a74f19": {
+      "workers": {
+        "app/admin/content/[type]/[id]/history/page": {
+          "moduleId": 359507,
+          "async": false
+        },
+        "app/admin/content/alerts/[id]/page": {
+          "moduleId": 255248,
+          "async": false
+        },
+        "app/admin/content/alerts/new/page": {
+          "moduleId": 488077,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/[id]/page": {
+          "moduleId": 375907,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/new/page": {
+          "moduleId": 826758,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/[id]/page": {
+          "moduleId": 493090,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/new/page": {
+          "moduleId": 313986,
+          "async": false
+        },
+        "app/admin/content/canteen-settings/page": {
+          "moduleId": 930263,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/page": {
+          "moduleId": 290818,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/prices/page": {
+          "moduleId": 686052,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        },
+        "app/admin/content/events/[id]/page": {
+          "moduleId": 562647,
+          "async": false
+        },
+        "app/admin/content/events/new/page": {
+          "moduleId": 527187,
+          "async": false
+        },
+        "app/admin/content/faculties/[id]/page": {
+          "moduleId": 783670,
+          "async": false
+        },
+        "app/admin/content/faculties/new/page": {
+          "moduleId": 553317,
+          "async": false
+        },
+        "app/admin/content/faqs/[id]/page": {
+          "moduleId": 675740,
+          "async": false
+        },
+        "app/admin/content/faqs/new/page": {
+          "moduleId": 71171,
+          "async": false
+        },
+        "app/admin/content/forms/[id]/page": {
+          "moduleId": 786265,
+          "async": false
+        },
+        "app/admin/content/forms/new/page": {
+          "moduleId": 777148,
+          "async": false
+        },
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/history/page": {
+          "moduleId": 25508,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/page": {
+          "moduleId": 458082,
+          "async": false
+        },
+        "app/admin/content/news/[id]/page": {
+          "moduleId": 737776,
+          "async": false
+        },
+        "app/admin/content/news/new/page": {
+          "moduleId": 266214,
+          "async": false
+        },
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        },
+        "app/admin/content/organisations/[id]/page": {
+          "moduleId": 330184,
+          "async": false
+        },
+        "app/admin/content/organisations/new/page": {
+          "moduleId": 506577,
+          "async": false
+        },
+        "app/admin/content/places/[id]/page": {
+          "moduleId": 126766,
+          "async": false
+        },
+        "app/admin/content/places/new/page": {
+          "moduleId": 652996,
+          "async": false
+        },
+        "app/admin/content/policies/[id]/page": {
+          "moduleId": 101273,
+          "async": false
+        },
+        "app/admin/content/policies/new/page": {
+          "moduleId": 244827,
+          "async": false
+        },
+        "app/admin/content/service-pages/page": {
+          "moduleId": 108197,
+          "async": false
+        },
+        "app/admin/content/shuttle/[id]/page": {
+          "moduleId": 887719,
+          "async": false
+        },
+        "app/admin/content/shuttle/new/page": {
+          "moduleId": 656594,
+          "async": false
+        },
+        "app/admin/content/site-settings/[section]/page": {
+          "moduleId": 810834,
+          "async": false
+        },
+        "app/admin/content/site-text/page": {
+          "moduleId": 976103,
+          "async": false
+        },
+        "app/admin/content/today/page": {
+          "moduleId": 28130,
+          "async": false
+        },
+        "app/admin/content/topics/[id]/page": {
+          "moduleId": 618920,
+          "async": false
+        },
+        "app/admin/content/topics/new/page": {
+          "moduleId": 801518,
+          "async": false
+        }
+      },
+      "filename": "lib/admin/content/lifecycle-actions.ts",
+      "exportedName": "saveSchedule"
+    },
+    "4075c4f77e5ec92d752dfae969d12bd07ffcf09c7a": {
+      "workers": {
+        "app/admin/content/alerts/[id]/page": {
+          "moduleId": 255248,
+          "async": false
+        },
+        "app/admin/content/alerts/new/page": {
+          "moduleId": 488077,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/alerts/actions.ts",
+      "exportedName": "deleteAlert"
+    },
+    "70a7bcd1829d3de38081b607eaf516b6a9568bf6e5": {
+      "workers": {
+        "app/admin/content/alerts/[id]/page": {
+          "moduleId": 255248,
+          "async": false
+        },
+        "app/admin/content/alerts/new/page": {
+          "moduleId": 488077,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/alerts/actions.ts",
+      "exportedName": "saveAlert"
+    },
+    "401f1d4b8cf0d0fa5aaca9f7065b5eba377c0087b2": {
+      "workers": {
+        "app/admin/content/canonical-dishes/[id]/page": {
+          "moduleId": 375907,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/new/page": {
+          "moduleId": 826758,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/canonical-dishes/actions.ts",
+      "exportedName": "deleteCanonicalDish"
+    },
+    "70a5473776fa99394cbb19470f6973cc68fb3e8e66": {
+      "workers": {
+        "app/admin/content/canonical-dishes/[id]/page": {
+          "moduleId": 375907,
+          "async": false
+        },
+        "app/admin/content/canonical-dishes/new/page": {
+          "moduleId": 826758,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/canonical-dishes/actions.ts",
+      "exportedName": "saveCanonicalDish"
+    },
+    "4056ae534a46987b5c5ff796310cdde54feaa17a7d": {
+      "workers": {
+        "app/admin/content/canteen-dishes/[id]/page": {
+          "moduleId": 493090,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/new/page": {
+          "moduleId": 313986,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/[id]/page": {
+          "moduleId": 290818,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        },
+        "app/admin/content/events/[id]/page": {
+          "moduleId": 562647,
+          "async": false
+        },
+        "app/admin/content/events/new/page": {
+          "moduleId": 527187,
+          "async": false
+        },
+        "app/admin/content/faqs/[id]/page": {
+          "moduleId": 675740,
+          "async": false
+        },
+        "app/admin/content/faqs/new/page": {
+          "moduleId": 71171,
+          "async": false
+        },
+        "app/admin/content/forms/[id]/page": {
+          "moduleId": 786265,
+          "async": false
+        },
+        "app/admin/content/forms/new/page": {
+          "moduleId": 777148,
+          "async": false
+        },
+        "app/admin/content/images/new/page": {
+          "moduleId": 517708,
+          "async": false
+        },
+        "app/admin/content/images/page": {
+          "moduleId": 3909,
+          "async": false
+        },
+        "app/admin/content/lost-and-found/[id]/page": {
+          "moduleId": 458082,
+          "async": false
+        },
+        "app/admin/content/news/[id]/page": {
+          "moduleId": 737776,
+          "async": false
+        },
+        "app/admin/content/news/new/page": {
+          "moduleId": 266214,
+          "async": false
+        },
+        "app/admin/content/policies/[id]/page": {
+          "moduleId": 101273,
+          "async": false
+        },
+        "app/admin/content/policies/new/page": {
+          "moduleId": 244827,
+          "async": false
+        },
+        "app/admin/content/topics/[id]/page": {
+          "moduleId": 618920,
+          "async": false
+        },
+        "app/admin/content/topics/new/page": {
+          "moduleId": 801518,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/actions.ts",
+      "exportedName": "uploadImageAction"
+    },
+    "40618a4320e992b04df5dd283e9b111bf707abd6e1": {
+      "workers": {
+        "app/admin/content/canteen-dishes/[id]/page": {
+          "moduleId": 493090,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/new/page": {
+          "moduleId": 313986,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/canteen-dishes/actions.ts",
+      "exportedName": "deleteCanteenDish"
+    },
+    "70518bc56b251a6b77ea8f003ded2976ec89307b54": {
+      "workers": {
+        "app/admin/content/canteen-dishes/[id]/page": {
+          "moduleId": 493090,
+          "async": false
+        },
+        "app/admin/content/canteen-dishes/new/page": {
+          "moduleId": 313986,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/canteen-dishes/actions.ts",
+      "exportedName": "saveCanteenDish"
+    },
+    "702aead2bee9e5540f63b580be4697157a4d75d763": {
+      "workers": {
+        "app/admin/content/canteen-settings/page": {
+          "moduleId": 930263,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/canteen-settings/actions.ts",
+      "exportedName": "saveCanteenSettings"
+    },
+    "405151d3e78e98f54746ca9f12c5fbe6dd251f5d43": {
+      "workers": {
+        "app/admin/content/canteen-stalls/[id]/page": {
+          "moduleId": 290818,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/canteen-stalls/actions.ts",
+      "exportedName": "deleteCanteenStall"
+    },
+    "7053507b7e1cbd8e504bb82b4bef5f306ad3200e58": {
+      "workers": {
+        "app/admin/content/canteen-stalls/[id]/page": {
+          "moduleId": 290818,
+          "async": false
+        },
+        "app/admin/content/canteen-stalls/new/page": {
+          "moduleId": 544288,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/canteen-stalls/actions.ts",
+      "exportedName": "saveCanteenStall"
+    },
+    "704f68a484a521184b4b1eeb3942f9b6e514a748b4": {
+      "workers": {
+        "app/admin/content/canteen-stalls/[id]/prices/page": {
+          "moduleId": 686052,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/canteen-stalls/[id]/prices/actions.ts",
+      "exportedName": "saveStallPrices"
+    },
+    "402ea6aa0eef2e8fdc5da277a97de93a45c912101a": {
+      "workers": {
+        "app/admin/content/events/[id]/page": {
+          "moduleId": 562647,
+          "async": false
+        },
+        "app/admin/content/events/new/page": {
+          "moduleId": 527187,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/events/actions.ts",
+      "exportedName": "deleteEvent"
+    },
+    "70e8f47bdfd9f37cc34077220cbcb23ac3fea5bb97": {
+      "workers": {
+        "app/admin/content/events/[id]/page": {
+          "moduleId": 562647,
+          "async": false
+        },
+        "app/admin/content/events/new/page": {
+          "moduleId": 527187,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/events/actions.ts",
+      "exportedName": "saveEvent"
+    },
+    "402961a966cb696a4bf2fc640a05751bedc384e6bd": {
+      "workers": {
+        "app/admin/content/faculties/[id]/page": {
+          "moduleId": 783670,
+          "async": false
+        },
+        "app/admin/content/faculties/new/page": {
+          "moduleId": 553317,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/faculties/actions.ts",
+      "exportedName": "deleteFaculty"
+    },
+    "706b815906be5230b14b89060ce8e02f5f45b68e6b": {
+      "workers": {
+        "app/admin/content/faculties/[id]/page": {
+          "moduleId": 783670,
+          "async": false
+        },
+        "app/admin/content/faculties/new/page": {
+          "moduleId": 553317,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/faculties/actions.ts",
+      "exportedName": "saveFaculty"
+    },
+    "40d5e3035599c74d56c41e5b1773374d2c9df083d7": {
+      "workers": {
+        "app/admin/content/faqs/[id]/page": {
+          "moduleId": 675740,
+          "async": false
+        },
+        "app/admin/content/faqs/new/page": {
+          "moduleId": 71171,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/faqs/actions.ts",
+      "exportedName": "deleteFaq"
+    },
+    "706c5fc8691eb2820ea2979713cc18aab5112b79cf": {
+      "workers": {
+        "app/admin/content/faqs/[id]/page": {
+          "moduleId": 675740,
+          "async": false
+        },
+        "app/admin/content/faqs/new/page": {
+          "moduleId": 71171,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/faqs/actions.ts",
+      "exportedName": "saveFaq"
+    },
+    "40d0bbdc303e3998f99ee09fb619642d2a9db646da": {
+      "workers": {
+        "app/admin/content/forms/[id]/page": {
+          "moduleId": 786265,
+          "async": false
+        },
+        "app/admin/content/forms/new/page": {
+          "moduleId": 777148,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/forms/actions.ts",
+      "exportedName": "deleteFormRecord"
+    },
+    "707cf099c200e1c9cdbc40d5a9efb2c8923d50b286": {
+      "workers": {
+        "app/admin/content/forms/[id]/page": {
+          "moduleId": 786265,
+          "async": false
+        },
+        "app/admin/content/forms/new/page": {
+          "moduleId": 777148,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/forms/actions.ts",
+      "exportedName": "saveFormRecord"
+    },
+    "402fe8b9ee7d8b902f7643a0c0741cee72cb2c6ce2": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/images/bulk/delete/page": {
+          "moduleId": 204922,
+          "async": false
+        },
+        "app/admin/content/images/bulk/edit/page": {
+          "moduleId": 683938,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/images/actions.ts",
+      "exportedName": "bulkDeleteImagesAction"
+    },
+    "4091459d8ea9a22f6aca0f61dd4e28f697832d8c36": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/images/bulk/delete/page": {
+          "moduleId": 204922,
+          "async": false
+        },
+        "app/admin/content/images/bulk/edit/page": {
+          "moduleId": 683938,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/images/actions.ts",
+      "exportedName": "deleteImageAction"
+    },
+    "40fd12794463391cddd7ac0f90dad2d5e345ab96fc": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/images/bulk/delete/page": {
+          "moduleId": 204922,
+          "async": false
+        },
+        "app/admin/content/images/bulk/edit/page": {
+          "moduleId": 683938,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/images/actions.ts",
+      "exportedName": "bulkAltAction"
+    },
+    "60c4fbfc43bff55045879dc47d1fb19620cd3cc069": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/images/bulk/delete/page": {
+          "moduleId": 204922,
+          "async": false
+        },
+        "app/admin/content/images/bulk/edit/page": {
+          "moduleId": 683938,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/images/actions.ts",
+      "exportedName": "replaceImageAction"
+    },
+    "701613d4b352ddf4e653d6edaac7098de46e07e4bf": {
+      "workers": {
+        "app/admin/content/images/[id]/page": {
+          "moduleId": 550716,
+          "async": false
+        },
+        "app/admin/content/images/bulk/delete/page": {
+          "moduleId": 204922,
+          "async": false
+        },
+        "app/admin/content/images/bulk/edit/page": {
+          "moduleId": 683938,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/images/actions.ts",
+      "exportedName": "saveImage"
+    },
+    "40aefb43c469a01ee89a090d2507f5b8ff7cedd727": {
+      "workers": {
+        "app/admin/content/lost-and-found/[id]/page": {
+          "moduleId": 458082,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/lost-and-found/actions.ts",
+      "exportedName": "deleteLostFound"
+    },
+    "70dbe866e126fa21863d468001bd9cb09fe10d3e42": {
+      "workers": {
+        "app/admin/content/lost-and-found/[id]/page": {
+          "moduleId": 458082,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/lost-and-found/actions.ts",
+      "exportedName": "saveLostFound"
+    },
+    "40874592c20565a4072ec2a57a24c9796205b98d7c": {
+      "workers": {
+        "app/admin/content/news/[id]/page": {
+          "moduleId": 737776,
+          "async": false
+        },
+        "app/admin/content/news/new/page": {
+          "moduleId": 266214,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/news/actions.ts",
+      "exportedName": "deleteNewsPost"
+    },
+    "70a0c915fc2348a1d769e7e921db4542a724bad991": {
+      "workers": {
+        "app/admin/content/news/[id]/page": {
+          "moduleId": 737776,
+          "async": false
+        },
+        "app/admin/content/news/new/page": {
+          "moduleId": 266214,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/news/actions.ts",
+      "exportedName": "saveNewsPost"
+    },
+    "407c62815dbb64494b4c13ea60703c532a5c32d880": {
+      "workers": {
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/open-data/actions.ts",
+      "exportedName": "deleteBudgetLine"
+    },
+    "409b2bbfedb588cf944807fdee685071c4a2f3e9d5": {
+      "workers": {
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/open-data/actions.ts",
+      "exportedName": "deleteFund"
+    },
+    "60d9b5b976d294f1acebcbdce142bb1b0274c01129": {
+      "workers": {
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/open-data/actions.ts",
+      "exportedName": "deleteDecision"
+    },
+    "7050231682da3408e548b59656270b30254d315027": {
+      "workers": {
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/open-data/actions.ts",
+      "exportedName": "saveFund"
+    },
+    "7087021032f1c1a5d160ee41657a88d7d533f05f70": {
+      "workers": {
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/open-data/actions.ts",
+      "exportedName": "saveBudgetLine"
+    },
+    "7087af9a9718fe3cfa6355704723a3170dfb922ade": {
+      "workers": {
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/open-data/actions.ts",
+      "exportedName": "saveDocument"
+    },
+    "70894b0bdb18d6addc2bdb4167781ecf8be304af17": {
+      "workers": {
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/import/page": {
+          "moduleId": 640634,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/open-data/actions.ts",
+      "exportedName": "importCsv"
+    },
+    "70b9fa4e1e621739ce3b264586b850d6934639d2b1": {
+      "workers": {
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/open-data/actions.ts",
+      "exportedName": "saveMeeting"
+    },
+    "78c4ec00544da56d4586952ea716a2c39267434ddc": {
+      "workers": {
+        "app/admin/content/open-data/[id]/page": {
+          "moduleId": 457263,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/[id]/page": {
+          "moduleId": 996833,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/[id]/page": {
+          "moduleId": 622125,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/funds/new/page": {
+          "moduleId": 961920,
+          "async": false
+        },
+        "app/admin/content/open-data/budget/new/page": {
+          "moduleId": 204040,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/[decisionId]/page": {
+          "moduleId": 183238,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/decisions/new/page": {
+          "moduleId": 822243,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/[id]/page": {
+          "moduleId": 485482,
+          "async": false
+        },
+        "app/admin/content/open-data/meetings/new/page": {
+          "moduleId": 128613,
+          "async": false
+        },
+        "app/admin/content/open-data/new/page": {
+          "moduleId": 955653,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/open-data/actions.ts",
+      "exportedName": "saveDecision"
+    },
+    "40aafb1909db5aad3afe4bd8e85a38229543c43373": {
+      "workers": {
+        "app/admin/content/organisations/[id]/page": {
+          "moduleId": 330184,
+          "async": false
+        },
+        "app/admin/content/organisations/new/page": {
+          "moduleId": 506577,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/organisations/actions.ts",
+      "exportedName": "deleteOrganisation"
+    },
+    "709f135da1b02cfde133f2e6122cb75e444d13edcd": {
+      "workers": {
+        "app/admin/content/organisations/[id]/page": {
+          "moduleId": 330184,
+          "async": false
+        },
+        "app/admin/content/organisations/new/page": {
+          "moduleId": 506577,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/organisations/actions.ts",
+      "exportedName": "saveOrganisation"
+    },
+    "4029ed539a2e1bd54fe45d877fa9f21c77a8b038d7": {
+      "workers": {
+        "app/admin/content/places/[id]/page": {
+          "moduleId": 126766,
+          "async": false
+        },
+        "app/admin/content/places/new/page": {
+          "moduleId": 652996,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/places/actions.ts",
+      "exportedName": "deletePlace"
+    },
+    "70b289f9b0516de79150867afd8086129555d1b16b": {
+      "workers": {
+        "app/admin/content/places/[id]/page": {
+          "moduleId": 126766,
+          "async": false
+        },
+        "app/admin/content/places/new/page": {
+          "moduleId": 652996,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/places/actions.ts",
+      "exportedName": "savePlace"
+    },
+    "40f5393b345499c94b3049c0f020b9e5d171859ac2": {
+      "workers": {
+        "app/admin/content/policies/[id]/page": {
+          "moduleId": 101273,
+          "async": false
+        },
+        "app/admin/content/policies/new/page": {
+          "moduleId": 244827,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/policies/actions.ts",
+      "exportedName": "deletePolicy"
+    },
+    "703dd3a778e167298731d1bfb6abe3cd3e13f20c62": {
+      "workers": {
+        "app/admin/content/policies/[id]/page": {
+          "moduleId": 101273,
+          "async": false
+        },
+        "app/admin/content/policies/new/page": {
+          "moduleId": 244827,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/policies/actions.ts",
+      "exportedName": "savePolicy"
+    },
+    "70fbd215eb7db9209863f10b532b38ae9b59590914": {
+      "workers": {
+        "app/admin/content/service-pages/page": {
+          "moduleId": 108197,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/service-pages/actions.ts",
+      "exportedName": "saveServicePages"
+    },
+    "4099d670d1345f060fdd42e4cde2a9f0dd6bce34ac": {
+      "workers": {
+        "app/admin/content/shuttle/[id]/page": {
+          "moduleId": 887719,
+          "async": false
+        },
+        "app/admin/content/shuttle/new/page": {
+          "moduleId": 656594,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/shuttle/actions.ts",
+      "exportedName": "deleteShuttleRoute"
+    },
+    "70448dc08317df18274a41b41db1d74e7547574318": {
+      "workers": {
+        "app/admin/content/shuttle/[id]/page": {
+          "moduleId": 887719,
+          "async": false
+        },
+        "app/admin/content/shuttle/new/page": {
+          "moduleId": 656594,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/shuttle/actions.ts",
+      "exportedName": "saveShuttleRoute"
+    },
+    "70f4fef89e5fda78917e4fe21ec092aaae9c2ec1cb": {
+      "workers": {
+        "app/admin/content/site-settings/[section]/page": {
+          "moduleId": 810834,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/site-settings/actions.ts",
+      "exportedName": "saveSiteSettingsSection"
+    },
+    "708334413c2f90dcea6464d1998a58b856a1ec916a": {
+      "workers": {
+        "app/admin/content/site-text/page": {
+          "moduleId": 976103,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/site-text/actions.ts",
+      "exportedName": "saveSiteText"
+    },
+    "7088ee40de79125b29cbf81e8741caf269261e7f42": {
+      "workers": {
+        "app/admin/content/today/page": {
+          "moduleId": 28130,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/today/actions.ts",
+      "exportedName": "saveTodaySettings"
+    },
+    "40bd792bcbc491891a44539e658856aad7bd4ac99b": {
+      "workers": {
+        "app/admin/content/topics/[id]/page": {
+          "moduleId": 618920,
+          "async": false
+        },
+        "app/admin/content/topics/new/page": {
+          "moduleId": 801518,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/topics/actions.ts",
+      "exportedName": "deleteTopicPage"
+    },
+    "7008b200ed9b9e52ca6f0f56116890afc391e22943": {
+      "workers": {
+        "app/admin/content/topics/[id]/page": {
+          "moduleId": 618920,
+          "async": false
+        },
+        "app/admin/content/topics/new/page": {
+          "moduleId": 801518,
+          "async": false
+        }
+      },
+      "filename": "app/admin/content/topics/actions.ts",
+      "exportedName": "saveTopicPage"
+    },
+    "40a580d70cbfa44c8275463a023f9fece0ffc093f7": {
+      "workers": {
+        "app/admin/invite/[token]/page": {
+          "moduleId": 116995,
+          "async": false
+        }
+      },
+      "filename": "app/admin/invite/[token]/actions.ts",
+      "exportedName": "acceptInviteAction"
+    },
+    "40270bd4b848ab4d7e466d9853aa7c3818d40294ac": {
+      "workers": {
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        }
+      },
+      "filename": "app/admin/notifications/actions.ts",
+      "exportedName": "markAllReadAction"
+    },
+    "4054eb63a6e7ae4a11c1a35f8a566d903618c09fbc": {
+      "workers": {
+        "app/admin/notifications/page": {
+          "moduleId": 247222,
+          "async": false
+        }
+      },
+      "filename": "app/admin/notifications/actions.ts",
+      "exportedName": "markReadAction"
+    },
+    "004f16059bafbb63973a7ae1b08191965ec7898015": {
+      "workers": {
+        "app/admin/security/page": {
+          "moduleId": 10251,
+          "async": false
+        },
+        "app/admin/security/passkeys/[id]/remove/page": {
+          "moduleId": 563495,
+          "async": false
+        }
+      },
+      "filename": "app/admin/security/actions.ts",
+      "exportedName": "removeOlderPasskeysAction"
+    },
+    "40df981b77fbf951526a1033e16c28f2d4acf47815": {
+      "workers": {
+        "app/admin/security/page": {
+          "moduleId": 10251,
+          "async": false
+        },
+        "app/admin/security/passkeys/[id]/remove/page": {
+          "moduleId": 563495,
+          "async": false
+        }
+      },
+      "filename": "app/admin/security/actions.ts",
+      "exportedName": "removePasskeyAction"
+    },
+    "40fb0b0ab462198350cb1de8876668f9fce20933ce": {
+      "workers": {
+        "app/admin/security/page": {
+          "moduleId": 10251,
+          "async": false
+        },
+        "app/admin/security/passkeys/[id]/remove/page": {
+          "moduleId": 563495,
+          "async": false
+        }
+      },
+      "filename": "app/admin/security/actions.ts",
+      "exportedName": "renamePasskeyAction"
+    },
+    "4012e4ce994b9c1cb839bc399bf28ee30268d1cfc0": {
+      "workers": {
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        },
+        "app/admin/settings/redirects/[id]/page": {
+          "moduleId": 842848,
+          "async": false
+        },
+        "app/admin/settings/redirects/page": {
+          "moduleId": 851936,
+          "async": false
+        }
+      },
+      "filename": "app/admin/settings/redirects/actions.ts",
+      "exportedName": "deleteRedirectAction"
+    },
+    "70018a576db4341208f1e5a4e6faa960557997620a": {
+      "workers": {
+        "app/admin/settings/redirects/[id]/delete/page": {
+          "moduleId": 563532,
+          "async": false
+        },
+        "app/admin/settings/redirects/[id]/page": {
+          "moduleId": 842848,
+          "async": false
+        },
+        "app/admin/settings/redirects/page": {
+          "moduleId": 851936,
+          "async": false
+        }
+      },
+      "filename": "app/admin/settings/redirects/actions.ts",
+      "exportedName": "saveRedirectAction"
+    },
+    "60cb944565b93a14abd2245820d4b8b1481ec50830": {
+      "workers": {
+        "app/admin/staff/[userId]/page": {
+          "moduleId": 108912,
+          "async": false
+        },
+        "app/admin/staff/[userId]/suspend/page": {
+          "moduleId": 493196,
+          "async": false
+        },
+        "app/admin/staff/invites/[id]/cancel/page": {
+          "moduleId": 804196,
+          "async": false
+        },
+        "app/admin/staff/page": {
+          "moduleId": 92073,
+          "async": false
+        }
+      },
+      "filename": "app/admin/staff/actions.ts",
+      "exportedName": "createStaffInvite"
+    },
+    "406c44b08e8201ff6ab8b99afa83d986a7467c9f53": {
+      "workers": {
+        "app/admin/staff/[userId]/page": {
+          "moduleId": 108912,
+          "async": false
+        },
+        "app/admin/staff/[userId]/suspend/page": {
+          "moduleId": 493196,
+          "async": false
+        },
+        "app/admin/staff/invites/[id]/cancel/page": {
+          "moduleId": 804196,
+          "async": false
+        }
+      },
+      "filename": "app/admin/staff/actions.ts",
+      "exportedName": "suspendMemberAction"
+    },
+    "4097856139a9bd6e7e88450253b5fc3d61cf429a00": {
+      "workers": {
+        "app/admin/staff/[userId]/page": {
+          "moduleId": 108912,
+          "async": false
+        },
+        "app/admin/staff/[userId]/suspend/page": {
+          "moduleId": 493196,
+          "async": false
+        },
+        "app/admin/staff/invites/[id]/cancel/page": {
+          "moduleId": 804196,
+          "async": false
+        }
+      },
+      "filename": "app/admin/staff/actions.ts",
+      "exportedName": "updateMember"
+    },
+    "40c646f15ef4aa3a8bbf5def8b633c300a06437802": {
+      "workers": {
+        "app/admin/staff/[userId]/page": {
+          "moduleId": 108912,
+          "async": false
+        },
+        "app/admin/staff/[userId]/suspend/page": {
+          "moduleId": 493196,
+          "async": false
+        },
+        "app/admin/staff/invites/[id]/cancel/page": {
+          "moduleId": 804196,
+          "async": false
+        }
+      },
+      "filename": "app/admin/staff/actions.ts",
+      "exportedName": "cancelInvite"
+    },
+    "603f31f58d86d4fb5de31325d1491efeb0b96c6626": {
+      "workers": {
+        "app/admin/staff/[userId]/page": {
+          "moduleId": 108912,
+          "async": false
+        },
+        "app/admin/staff/[userId]/suspend/page": {
+          "moduleId": 493196,
+          "async": false
+        },
+        "app/admin/staff/invites/[id]/cancel/page": {
+          "moduleId": 804196,
+          "async": false
+        },
+        "app/admin/staff/recovery/[userId]/page": {
+          "moduleId": 402701,
+          "async": false
+        }
+      },
+      "filename": "app/admin/staff/actions.ts",
+      "exportedName": "issueRecovery"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "hFpsbS5za3dZJ8SuekepMGTqrzZWXin2wMxoCw24rR8="
+}

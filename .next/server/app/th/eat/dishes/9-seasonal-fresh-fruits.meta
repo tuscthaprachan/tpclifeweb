@@ -1,0 +1,50 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/eat/layout,_N_T_/[locale]/eat/dishes/layout,_N_T_/[locale]/eat/dishes/[slug]/layout,_N_T_/[locale]/eat/dishes/[slug]/page,_N_T_/th/eat/dishes/9-seasonal-fresh-fruits,siteSettings,siteText,canteen,place,image"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/eat/dishes/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 160,
+                        "slots": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/90a9ca13d1c6f3c5739927da5cd24e136420198b06bea2ffc042786d46c21348/$/th/eat/dishes/9-seasonal-fresh-fruits",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/eat/dishes/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

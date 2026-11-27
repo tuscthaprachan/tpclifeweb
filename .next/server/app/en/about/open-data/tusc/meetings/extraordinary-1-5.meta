@@ -1,0 +1,60 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/about/layout,_N_T_/[locale]/about/open-data/layout,_N_T_/[locale]/about/open-data/tusc/layout,_N_T_/[locale]/about/open-data/tusc/meetings/layout,_N_T_/[locale]/about/open-data/tusc/meetings/[slug]/layout,_N_T_/[locale]/about/open-data/tusc/meetings/[slug]/page,_N_T_/en/about/open-data/tusc/meetings/extraordinary-1-5,siteSettings,siteText,openDataMeetings,openDataDocuments"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/about/open-data/tusc/meetings/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/118ad99fbc8eb99a6f367966e65f3c52cc737564e8fff90c1177ac1239ee94a7/$/en/about/open-data/tusc/meetings/extraordinary-1-5",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/about/open-data/tusc/meetings/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

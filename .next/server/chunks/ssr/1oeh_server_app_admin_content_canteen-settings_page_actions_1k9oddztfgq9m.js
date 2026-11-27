@@ -1,0 +1,3 @@
+module.exports=[930263,a=>{"use strict";var b=a.i(666274),c=a.i(195422),d=a.i(224328);a.S([b,"00b9ece19c0cd9c6f769013ae569226a8e42509115,g,00f803303c5e7d484f472770aea9e5c675a2269447,e,4040bdc9620c95b54cb019f7fbe3e8f1ee51ae4ad6,R",0,c,"408405b33e2a4803fa1082f3bfd1b6ca5dd0779156,M,60e37c6000d444e41be57c588765e9b901d4a74f19,G",0,d,"702aead2bee9e5540f63b580be4697157a4d75d763,f"],930263)}];
+
+//# sourceMappingURL=1oeh_server_app_admin_content_canteen-settings_page_actions_1k9oddztfgq9m.js.map

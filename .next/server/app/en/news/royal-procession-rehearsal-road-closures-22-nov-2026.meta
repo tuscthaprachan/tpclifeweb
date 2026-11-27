@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/news/layout,_N_T_/[locale]/news/[slug]/layout,_N_T_/[locale]/news/[slug]/page,_N_T_/en/news/royal-procession-rehearsal-road-closures-22-nov-2026,siteSettings,siteText,news,image"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/news/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/0472482b3a02605a2b18d4f640428bf6165ebc30cb8f7095688aa4da4b7b0d5d/$/en/news/royal-procession-rehearsal-road-closures-22-nov-2026",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/news/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

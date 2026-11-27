@@ -1,0 +1,3 @@
+module.exports=[71171,a=>{"use strict";var b=a.i(666274),c=a.i(195422),d=a.i(82475),e=a.i(805979);a.S([b,"00b9ece19c0cd9c6f769013ae569226a8e42509115,g,00f803303c5e7d484f472770aea9e5c675a2269447,e,4040bdc9620c95b54cb019f7fbe3e8f1ee51ae4ad6,R",0,c,"408405b33e2a4803fa1082f3bfd1b6ca5dd0779156,M,60e37c6000d444e41be57c588765e9b901d4a74f19,G",0,d,"4056ae534a46987b5c5ff796310cdde54feaa17a7d,f",0,e,"40d5e3035599c74d56c41e5b1773374d2c9df083d7,i,706c5fc8691eb2820ea2979713cc18aab5112b79cf,v"],71171)}];
+
+//# sourceMappingURL=_next-internal_server_app_admin_content_faqs_new_page_actions_09c1wl5kfl5qr.js.map

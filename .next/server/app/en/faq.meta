@@ -1,0 +1,40 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/faq/layout,_N_T_/[locale]/faq/page,_N_T_/en/faq,siteSettings,siteText,faq,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/faq/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/4c2c2f955f82dbfd84dd6a5fadb0f8e2a97897ae56ddda80d344b269a51ac4ba/$/en/faq",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/faq/page"
+    },
+    "isFallback": false
+  }
+}

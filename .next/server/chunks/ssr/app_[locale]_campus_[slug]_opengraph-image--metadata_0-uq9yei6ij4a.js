@@ -1,0 +1,3 @@
+module.exports=[512039,a=>{"use strict";a.i(125270);let b=(0,a.i(653809).f)("campus"),c=b.topic.generateImageMetadata;b.topic.Image;var d=a.i(352425);let e={generateImageMetadata:c};async function f(a){let{__metadata_id__:b,...c}=await a.params,f=(0,d.fillMetadataSegment)("/[locale]/campus/[slug]",c,"opengraph-image",!1),{generateImageMetadata:g}=e;return(await g({params:c})).map((a,b)=>{let c=a.id+"";return function(a,b){let c={alt:a.alt,type:a.contentType||"image/png",url:f+(b?"/"+b:"")+"?c33241a930fa3e96"},{size:d}=a;return d&&(c.width=d.width,c.height=d.height),c}(a,c)})}a.s(["default",0,f],512039)},627810,function(a){a.n(a.i(512039))}];
+
+//# sourceMappingURL=app_%5Blocale%5D_campus_%5Bslug%5D_opengraph-image--metadata_0-uq9yei6ij4a.js.map

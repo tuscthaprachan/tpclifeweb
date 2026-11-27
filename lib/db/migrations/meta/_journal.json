@@ -1,0 +1,181 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792655615315,
+      "tag": "0000_init",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792655616769,
+      "tag": "0001_audit_log_append_only",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792656132218,
+      "tag": "0002_needy_randall_flagg",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792662128941,
+      "tag": "0003_content_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792846202188,
+      "tag": "0004_staff_recovery_passkey_last_used",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792851897326,
+      "tag": "0005_case_engine",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792852880825,
+      "tag": "0006_lost_found_case_link",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792853235245,
+      "tag": "0007_lost_found_staff",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792853263770,
+      "tag": "0008_lost_found_public_journeys",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792911024471,
+      "tag": "0009_claim_tracking_links",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792912243653,
+      "tag": "0010_complaints",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792914862190,
+      "tag": "0011_journey_metrics",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1792933710085,
+      "tag": "0012_home_tasks",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793248995922,
+      "tag": "0013_faculties_signposting",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793262687450,
+      "tag": "0014_borrowing",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1793369595826,
+      "tag": "0015_open_data",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1794645773347,
+      "tag": "0016_staff_roles_memberships",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794647113173,
+      "tag": "0017_content_lifecycle",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794664805645,
+      "tag": "0018_notifications_case_views",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1795063983877,
+      "tag": "0019_today_details",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1795245803358,
+      "tag": "0020_service_pages",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1795247631072,
+      "tag": "0021_site_text",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1795279386676,
+      "tag": "0022_faculty_programme_offices",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1795341598334,
+      "tag": "0023_topic_sections",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1795341602464,
+      "tag": "0024_topic_sections_finish",
+      "breakpoints": true
+    }
+  ]
+}

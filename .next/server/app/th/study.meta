@@ -1,0 +1,40 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/study/layout,_N_T_/[locale]/study/page,_N_T_/th/study,siteSettings,siteText,content,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/study/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/3a7161455ccd64030ca78a7791caf18a1bf070b44ea2265b829977fffbac3863/$/th/study",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/study/page"
+    },
+    "isFallback": false
+  }
+}

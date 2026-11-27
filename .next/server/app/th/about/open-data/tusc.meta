@@ -1,0 +1,50 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/about/layout,_N_T_/[locale]/about/open-data/layout,_N_T_/[locale]/about/open-data/tusc/layout,_N_T_/[locale]/about/open-data/tusc/page,_N_T_/th/about/open-data/tusc,siteSettings,siteText,openDataDocuments,openDataMeetings,openDataFunds"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/about/open-data/tusc/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 160,
+                        "slots": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/97f9ed36d76d50dcfd456578c6b6d80607d3f0380f8cb0e691e67ef73c0f1df1/$/th/about/open-data/tusc",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/about/open-data/tusc/page"
+    },
+    "isFallback": false
+  }
+}

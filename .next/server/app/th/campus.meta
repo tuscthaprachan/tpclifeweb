@@ -1,0 +1,40 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/campus/layout,_N_T_/[locale]/campus/page,_N_T_/th/campus,siteSettings,siteText,content,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/campus/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/0b6ff65b193d94a282072e380422552758f450dcead9deff2aa52ad1a05d7f3a/$/th/campus",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/campus/page"
+    },
+    "isFallback": false
+  }
+}

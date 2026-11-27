@@ -1,0 +1,60 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/about/layout,_N_T_/[locale]/about/open-data/layout,_N_T_/[locale]/about/open-data/tusc/layout,_N_T_/[locale]/about/open-data/tusc/documents/layout,_N_T_/[locale]/about/open-data/tusc/documents/[slug]/layout,_N_T_/[locale]/about/open-data/tusc/documents/[slug]/page,_N_T_/th/about/open-data/tusc/documents/41-minutes-of-the-student-council-of-thammasat-university-tha-p,siteSettings,siteText,openDataDocuments"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/about/open-data/tusc/documents/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/148025a6e5993c89e05afca158747452dd6101779fa1a7e11976e967694b8cdf/$/th/about/open-data/tusc/documents/41-minutes-of-the-student-council-of-thammasat-university-tha-p",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/about/open-data/tusc/documents/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

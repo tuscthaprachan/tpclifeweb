@@ -1,0 +1,60 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/about/layout,_N_T_/[locale]/about/open-data/layout,_N_T_/[locale]/about/open-data/tusc/layout,_N_T_/[locale]/about/open-data/tusc/reports/layout,_N_T_/[locale]/about/open-data/tusc/reports/[slug]/layout,_N_T_/[locale]/about/open-data/tusc/reports/[slug]/page,_N_T_/th/about/open-data/tusc/reports/46-report-summary-of-the-results-of-the-monitoring-and-auditing,siteSettings,siteText,openDataDocuments,openDataPeople,openDataReports"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/about/open-data/tusc/reports/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 96,
+                            "slots": {
+                              "children": {
+                                "hints": 160,
+                                "slots": null
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/ca1f58fbb4da1fc225ac4846e9900070e8697565502c0cc222e5c6a36d2bce4f/$/th/about/open-data/tusc/reports/46-report-summary-of-the-results-of-the-monitoring-and-auditing",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/about/open-data/tusc/reports/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

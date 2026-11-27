@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/money/layout,_N_T_/[locale]/money/[slug]/layout,_N_T_/[locale]/money/[slug]/page,_N_T_/en/money/hardship-grants,siteSettings,siteText,content,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/money/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/8fdface6758e9c7f6629ac723ebe6343c2aa7d1509559ac9a441b38f5dc3fa45/$/en/money/hardship-grants",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/money/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

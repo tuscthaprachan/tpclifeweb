@@ -1,0 +1,34 @@
+3:"$Sreact.fragment"
+4:"/_next/static/chunks/3gpe1gahojycx.js"
+5:I[339756,["$4"],"default"]
+6:I[837457,["$4"],"default"]
+b:"$Sreact.suspense"
+c:"/_next/static/chunks/23t5wgy22a_e8.js"
+d:"/_next/static/chunks/30hsp9pf9kb3e.js"
+e:"/_next/static/chunks/2mht46owf0lg3.js"
+f:"/_next/static/chunks/00mxe9zmr1pmx.js"
+10:"/_next/static/chunks/30vv-xbniyv7y.js"
+11:I[505014,["$c","$d","$e","$f","$10"],"default"]
+12:I[168206,["$c","$d","$e","$f","$10"],"SearchBar"]
+13:I[434330,["$c","$d","$e","$f","$10"],"LiveSearch"]
+14:I[897367,["$4"],"OutletBoundary"]
+17:"ViewportBoundary"
+18:I[897367,["$4"],"$17"]
+19:"MetadataBoundary"
+1a:I[897367,["$4"],"$19"]
+1b:I[27201,["$4"],"IconMark"]
+8:X
+8:C
+9:X
+a:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$3","c",{"children":[["$","$b",null,{"fallback":["$","div",null,{"className":"mx-auto w-full px-[var(--gutter)] pb-8 pt-2","style":{"maxWidth":"var(--width-content)"},"children":["$","div",null,{"className":"flex flex-col","style":{"gap":"var(--space-8)"},"children":[["$","div",null,{"className":"flex flex-col","style":{"gap":"var(--space-4)"},"children":[["$","div",null,{"className":"flex items-center gap-[var(--space-3)]","children":[["$","span",null,{"aria-hidden":"true","className":"grid size-10 shrink-0 place-items-center rounded-[var(--radius-panel)] bg-action text-action-ink size-12","children":["$","$L11",null,{"icon":{"name":"search","size":24,"node":[["path",{"d":"m21 21-4.34-4.34","key":"14j7rj"}],["circle",{"cx":"11","cy":"11","r":"8","key":"4ej97u"}]]},"className":"shrink-0","aria-hidden":"true","focusable":"false","size":20,"strokeWidth":2}]}],["$","h1",null,{"className":"m-0 min-w-0","children":"ค้นหา"}]]}],["$","$L12","",{"locale":"th","defaultValue":""}]]}],null,null]}]}],"children":["$","$L13",null,{"locale":"th"}]}],[["$","script","script-0",{"src":"/_next/static/chunks/30vv-xbniyv7y.js","async":true}]],["$","$L14",null,{"children":["$","$b",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]]}],"p":"$@16","v":null,"s":"$9"}}]]
+2:[["children",{"s":"search","h":64,"d":{"r":["$","$3","c",{"children":[null,["$","$L5",null,{"parallelRouterKey":"children","template":["$","$L6",null,{}]}]]}],"p":"$@7","v":"$8","s":"$9"},"c":"$Qa"}]]
+1:[["children",{"s":{"n":"locale","t":"d","k":"th","s":["about","admin","api","files"]},"h":48,"c":"$Q2"}]]
+0:{"t":{"t":{"s":"","h":80,"c":"$Q1"},"h":{"r":["$","$3","h",{"children":[null,["$","$L18",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#1a1220","media":"(prefers-color-scheme: dark)"}],["$","meta","4",{"name":"color-scheme","content":"light dark"}]]}],["$","$L1a",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$b",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"ผลการค้นหา | #ท้ายท่าพระจันทร์"}],["$","meta","1",{"name":"description","content":"ศูนย์รวมข้อมูลและบริการองค์กรนักศึกษาในมหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์"}],["$","link","2",{"rel":"canonical","href":"https://trytpc.tuso.tu.ac.th/th/search"}],["$","link","3",{"rel":"alternate","hrefLang":"th","href":"https://trytpc.tuso.tu.ac.th/th/search"}],["$","link","4",{"rel":"alternate","hrefLang":"en","href":"https://trytpc.tuso.tu.ac.th/en/search"}],["$","link","5",{"rel":"alternate","hrefLang":"x-default","href":"https://trytpc.tuso.tu.ac.th/th/search"}],["$","meta","6",{"property":"og:title","content":"ผลการค้นหา | #ท้ายท่าพระจันทร์"}],["$","meta","7",{"property":"og:description","content":"ศูนย์รวมข้อมูลและบริการองค์กรนักศึกษาในมหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์"}],["$","meta","8",{"property":"og:site_name","content":"#ท้ายท่าพระจันทร์"}],["$","meta","9",{"property":"og:locale","content":"th_TH"}],["$","meta","10",{"property":"og:image","content":"https://trytpc.tuso.tu.ac.th/th/search/opengraph-image/og?52f594a6a625ff13"}],["$","meta","11",{"property":"og:image:type","content":"image/png"}],["$","meta","12",{"property":"og:image:width","content":"1200"}],["$","meta","13",{"property":"og:image:height","content":"630"}],["$","meta","14",{"property":"og:image:alt","content":"ผลการค้นหา · #ท้ายท่าพระจันทร์"}],["$","meta","15",{"property":"og:locale:alternate","content":"en_GB"}],["$","meta","16",{"property":"og:type","content":"website"}],["$","meta","17",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","18",{"name":"twitter:title","content":"ผลการค้นหา | #ท้ายท่าพระจันทร์"}],["$","meta","19",{"name":"twitter:description","content":"ศูนย์รวมข้อมูลและบริการองค์กรนักศึกษาในมหาวิทยาลัยธรรมศาสตร์ ท่าพระจันทร์"}],["$","meta","20",{"name":"twitter:image","content":"https://trytpc.tuso.tu.ac.th/th/search/opengraph-image/og?52f594a6a625ff13"}],["$","meta","21",{"name":"twitter:image:alt","content":"ผลการค้นหา · #ท้ายท่าพระจันทร์"}],["$","meta","22",{"name":"twitter:image:type","content":"image/png"}],["$","meta","23",{"name":"twitter:image:width","content":"1200"}],["$","meta","24",{"name":"twitter:image:height","content":"630"}],["$","link","25",{"rel":"icon","href":"/icon.png?icon.2a0k_6oqznrjs.png","sizes":"192x192","type":"image/png"}],["$","link","26",{"rel":"apple-touch-icon","href":"/apple-icon.png?apple-icon.3kidu19ewapt0.png","sizes":"180x180","type":"image/png"}],["$","$L1b","27",{}]]}]}],null]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"p":"$@1c","v":null,"s":"$9"}},"a":"$@1d","u":"$@1e","b":"ZtsPGmDwI1TtT2nyeB7L-"}
+15:null
+1e:true
+9:300
+9:C
+1d:0
+7:"$undefined"
+1c:"$undefined"
+16:"$undefined"

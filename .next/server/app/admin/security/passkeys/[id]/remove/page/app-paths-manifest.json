@@ -1,0 +1,3 @@
+{
+  "/admin/security/passkeys/[id]/remove/page": "app/admin/security/passkeys/[id]/remove/page.js"
+}

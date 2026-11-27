@@ -1,0 +1,46 @@
+{
+  "status": 404,
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/events/layout,_N_T_/[locale]/events/[slug]/layout,_N_T_/[locale]/events/[slug]/page,_N_T_/en/events/_,siteSettings,siteText,event,place,form,image"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/events/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/b7c01a3bc08ad8c8504e3aac66534b96dd152a57e9c5e178a9a9d49de133ad0f/$/en/events/_",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/events/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/eat/layout,_N_T_/[locale]/eat/page,_N_T_/en/eat,siteSettings,siteText,canteen,place,image"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/eat/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/1d0cfcdaaf48a20b1659ccc37397075f6fb9761cf23b45ebf684f26a3743a439/$/en/eat",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/eat/page"
+    },
+    "isFallback": false
+  }
+}

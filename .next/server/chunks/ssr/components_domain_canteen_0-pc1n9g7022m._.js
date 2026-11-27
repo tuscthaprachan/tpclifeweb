@@ -1,0 +1,3 @@
+module.exports=[296420,a=>{"use strict";var b=a.i(187924),c=a.i(919579),d=a.i(558567),e=a.i(799514);a.s(["f",0,function({checkedOn:a,locale:f,className:g}){return(0,b.jsxs)("p",{className:(0,d.f)("m-0 text-sm text-ink-600",g),children:[(0,e.t)(e.q.priceCheckedOn,f)," ",(0,b.jsx)(c.f,{value:a,locale:f})]})}])},605737,a=>{"use strict";var b=a.i(187924),c=a.i(558567),d=a.i(408754);a.s(["f",0,function({name:a,locale:e,className:f}){let g=d.e[e],h=(0,d.O)(a,e),i=(0,d.O)(a,g);return i&&i!==h?(0,b.jsx)("span",{lang:g,className:(0,c.f)("block text-sm text-ink-600",f),children:i}):null}])}];
+
+//# sourceMappingURL=components_domain_canteen_0-pc1n9g7022m._.js.map

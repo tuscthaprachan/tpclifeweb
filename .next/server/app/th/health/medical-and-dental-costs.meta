@@ -1,0 +1,45 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/health/layout,_N_T_/[locale]/health/[slug]/layout,_N_T_/[locale]/health/[slug]/page,_N_T_/th/health/medical-and-dental-costs,siteSettings,siteText,content,form"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/health/$d$slug/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 160,
+                    "slots": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/5a3893239767608e54b7be931dd40e4755d34a916be4283c199cd88bbbe4a6bb/$/th/health/medical-and-dental-costs",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/health/[slug]/page"
+    },
+    "isFallback": false
+  }
+}

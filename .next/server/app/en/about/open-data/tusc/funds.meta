@@ -1,0 +1,55 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/[locale]/layout,_N_T_/[locale]/about/layout,_N_T_/[locale]/about/open-data/layout,_N_T_/[locale]/about/open-data/tusc/layout,_N_T_/[locale]/about/open-data/tusc/funds/layout,_N_T_/[locale]/about/open-data/tusc/funds/page,_N_T_/en/about/open-data/tusc/funds,siteSettings,siteText,openDataFunds,openDataDocuments"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/$d$locale",
+    "/$d$locale/about/open-data/tusc/funds/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 32,
+        "slots": {
+          "children": {
+            "hints": 64,
+            "slots": {
+              "children": {
+                "hints": 96,
+                "slots": {
+                  "children": {
+                    "hints": 96,
+                    "slots": {
+                      "children": {
+                        "hints": 96,
+                        "slots": {
+                          "children": {
+                            "hints": 160,
+                            "slots": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/af93a5e46de77800ef23390acfe34c48142c37e7906fd9b66d9fda5624ec3153/$/en/about/open-data/tusc/funds",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/[locale]/about/open-data/tusc/funds/page"
+    },
+    "isFallback": false
+  }
+}
