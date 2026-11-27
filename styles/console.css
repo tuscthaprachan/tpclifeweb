@@ -772,6 +772,53 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+.console-document {
+  min-inline-size: 0;
+  background: var(--surface);
+}
+
+.console-document-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--gutter);
+  border-block-end: var(--border-width) solid var(--line);
+}
+
+.console-document-languages {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.console-document-languages button {
+  min-height: var(--target-min);
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--ink-900);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.console-document-languages button[aria-pressed="true"] {
+  border-color: var(--colour-action);
+  color: var(--colour-action-ink);
+  background: var(--colour-action);
+  font-weight: var(--weight-bold);
+}
+
+.console-document-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  inline-size: min(100%, calc(var(--width-reading) + 2 * var(--gutter)));
+  margin-inline: auto;
+  padding: var(--space-6) var(--gutter) var(--space-8);
+}
+
 .console-form-aside {
   min-inline-size: 0;
 }

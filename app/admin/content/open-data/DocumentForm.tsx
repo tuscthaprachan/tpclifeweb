@@ -1,6 +1,7 @@
 import { asc, eq, inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextField, CheckboxField, DateField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { FormSection } from "@/components/admin/content/FormSection";
 import { documentTypeLabel } from "@/components/domain/open-data/documents";
@@ -50,6 +51,10 @@ export async function DocumentForm({ locale, owners, id, saved }: { locale: Loca
       listHref={OPEN_DATA_PATHS.documents}
       saved={saved}
     >
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="title" label={L("fieldTitle")} maxLength={400} defaultValue={{ th: doc?.titleTh, en: doc?.titleEn }} />
+        <BilingualTextField appearance="text" name="issuer" label={L("odmFieldIssuer")} maxLength={400} defaultValue={{ th: doc?.issuerTh, en: doc?.issuerEn }} />
+      </DocumentCanvas>
       <FormSection id="od-doc-identity" icon="edit" legend={L("odmSecIdentity")}>
         {doc ? (
           <p className="m-0">
@@ -72,11 +77,9 @@ export async function DocumentForm({ locale, owners, id, saved }: { locale: Loca
             options={[{ value: "", label: L("choiceSelect") }, ...OPEN_DATA_DOCUMENT_TYPES.map((t) => ({ value: t, label: documentTypeLabel(t, locale) }))]}
           />
         </div>
-        <BilingualTextField name="title" label={L("fieldTitle")} maxLength={400} defaultValue={{ th: doc?.titleTh, en: doc?.titleEn }} />
         <SlugField label={L("fieldSlug")} defaultValue={doc?.slug} />
       </FormSection>
       <FormSection id="od-doc-facts" icon="info" legend={L("odmSecFacts")} hint={L("odmHintFacts")}>
-        <BilingualTextField name="issuer" label={L("odmFieldIssuer")} maxLength={400} defaultValue={{ th: doc?.issuerTh, en: doc?.issuerEn }} />
         <div className="grid gap-[var(--space-4)] md:grid-cols-2">
           <TextField name="reference" label={L("odmFieldReference")} defaultValue={doc?.reference} />
           <TextField name="signatory" label={L("odmFieldSignatory")} defaultValue={doc?.signatory} />

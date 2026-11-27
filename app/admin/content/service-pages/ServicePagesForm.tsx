@@ -2,6 +2,7 @@ import { asc } from "drizzle-orm";
 import { ClipboardList, FileText, HandHelping, Megaphone, PackageSearch, SearchCheck } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea } from "@/components/admin/content/fields";
 import { FormSection } from "@/components/admin/content/FormSection";
 import { SectionJumpNav } from "@/components/admin/content/SectionJumpNav";
@@ -61,41 +62,44 @@ export async function ServicePagesForm({ locale, saved }: { locale: Locale; save
       <p className="m-0">{L("svpIntro")}</p>
       <SectionJumpNav label={L("fmSectionsNav")} items={SERVICE_PAGE_KEYS.map((page) => ({ id: `svp-${page}`, label: pick(SERVICE_PAGES[page].name, locale) }))} />
 
-      {SERVICE_PAGE_KEYS.map((page, index) => {
-        const def = SERVICE_PAGES[page];
-        const fields: Record<string, ServiceTextField> = def.fields;
-        const current: Record<string, { th: string; en: string }> = mergeServiceText(page, stored);
-        return (
-          <FormSection
-            key={page}
-            collapsible
-            defaultOpen={index === 0}
-            errorPrefixes={[`t.${page}.`]}
-            id={`svp-${page}`}
-            icon={ICON[page] ?? FileText}
-            legend={pick(def.name, locale)}
-            hint={
-              <a href={localePath(locale, def.path)} target="_blank" rel="noreferrer" className="text-action underline">
-                {L("svpViewPage")}
-              </a>
-            }
-          >
-            <Stack space={4}>
-              {Object.entries(fields).map(([field, f]) => (
-                <BilingualTextarea
-                  key={field}
-                  name={`t.${page}.${field}`}
-                  label={pick(f.label, locale)}
-                  hint={hintFor(f)}
-                  rows={f.list ? 5 : f.max <= 120 ? 1 : 3}
-                  maxLength={f.max}
-                  defaultValue={current[field]}
-                />
-              ))}
-            </Stack>
-          </FormSection>
-        );
-      })}
+      <DocumentCanvas locale={locale}>
+        {SERVICE_PAGE_KEYS.map((page, index) => {
+          const def = SERVICE_PAGES[page];
+          const fields: Record<string, ServiceTextField> = def.fields;
+          const current: Record<string, { th: string; en: string }> = mergeServiceText(page, stored);
+          return (
+            <FormSection
+              key={page}
+              collapsible
+              defaultOpen={index === 0}
+              errorPrefixes={[`t.${page}.`]}
+              id={`svp-${page}`}
+              icon={ICON[page] ?? FileText}
+              legend={pick(def.name, locale)}
+              hint={
+                <a href={localePath(locale, def.path)} target="_blank" rel="noreferrer" className="text-action underline">
+                  {L("svpViewPage")}
+                </a>
+              }
+            >
+              <Stack space={4}>
+                {Object.entries(fields).map(([field, f]) => (
+                  <BilingualTextarea
+                    appearance="text"
+                    key={field}
+                    name={`t.${page}.${field}`}
+                    label={pick(f.label, locale)}
+                    hint={hintFor(f)}
+                    rows={f.list ? 5 : f.max <= 120 ? 1 : 3}
+                    maxLength={f.max}
+                    defaultValue={current[field]}
+                  />
+                ))}
+              </Stack>
+            </FormSection>
+          );
+        })}
+      </DocumentCanvas>
     </ContentForm>
   );
 }

@@ -1,6 +1,7 @@
 import { asc, count, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, CheckboxField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { ImagePicker } from "@/components/admin/content/ImagePicker";
 import { CUISINE_LABEL } from "@/components/domain/canteen/labels";
@@ -19,7 +20,7 @@ import { RepeatRows, type RowValue } from "./RepeatRows";
 import { deleteCanteenStall, saveCanteenStall } from "./actions";
 import { labelled } from "./shared";
 import { FormSection } from "@/components/admin/content/FormSection";
-import { Clock, Map as MapIcon, Camera, PlusCircle } from "lucide-react";
+import { Clock, Map as MapIcon, PlusCircle } from "lucide-react";
 
 /** The stall form, for the "new" page (no `id`) and the edit page. */
 export async function CanteenStallForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
@@ -30,7 +31,7 @@ export async function CanteenStallForm({ locale, id, saved }: { locale: Locale; 
   const [stall] = id ? await db.select().from(canteenStalls).where(eq(canteenStalls.id, id)) : [];
   if (id && !stall) notFound();
   const [images, names, dishes, addOns, links, [{ n: dishCount } = { n: 0 }]] = await Promise.all([
-    listImageChoices(db),
+    listImageChoices(db, stall?.photoId ? [stall.photoId] : []),
     userNames(db, [stall?.updatedBy]),
     stall
       ? db.select({ id: canteenDishes.id, nameTh: canteenDishes.nameTh, nameEn: canteenDishes.nameEn, menuNumber: canteenDishes.menuNumber }).from(canteenDishes).where(eq(canteenDishes.stallId, stall.id)).orderBy(asc(canteenDishes.nameEn))
@@ -103,15 +104,25 @@ export async function CanteenStallForm({ locale, id, saved }: { locale: Locale; 
         saved={saved}
       >
         {stall && dishCount > 0 ? <InsetText>{a("canteenStallHasDishes", locale, { count: dishCount })}</InsetText> : null}
-      <FormSection id="stall-name" icon="stalls" legend={L("cfSecStallIdentity")}>
-          <BilingualTextField name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: stall?.nameTh, en: stall?.nameEn }} />
+        <DocumentCanvas locale={locale}>
+          <BilingualTextField appearance="title" name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: stall?.nameTh, en: stall?.nameEn }} />
+          <BilingualTextarea appearance="text" name="wayfinding" label={L("canteenFieldWayfinding")} hint={L("canteenHintWayfinding")} maxLength={500} rows={3} defaultValue={{ th: stall?.wayfindingTh, en: stall?.wayfindingEn }} />
+          <ImagePicker
+            name="photo"
+            label={L("canteenFieldPhoto")}
+            images={images}
+            storageConfigured={isStorageConfigured()}
+            defaultValue={stall?.photoId ? [stall.photoId] : []}
+          />
+        </DocumentCanvas>
+        <FormSection id="stall-name" icon="stalls" legend={L("canteenFieldCuisine")}>
           <SlugField label={L("fieldSlug")} suggestFrom="name.en" hint={L("canteenHintStallSlug")} defaultValue={stall?.slug} />
           <TextField name="number" label={L("canteenFieldNumber")} hint={L("canteenHintStallNumber")} inputMode="numeric" className="max-w-[10rem]" defaultValue={stall ? String(stall.number) : ""} />
           <CheckGroup name="cuisine" label={L("canteenFieldCuisine")} options={cuisineOptions} defaultValue={stall?.cuisine} />
           <CheckboxField name="halal" label={L("canteenFieldHalal")} hint={L("canteenHintHalal")} defaultChecked={stall?.halal} />
           <CheckboxField name="vegetarianStall" label={L("canteenFieldVegetarianStall")} hint={L("canteenHintVegetarianStall")} defaultChecked={stall?.vegetarianStall} />
-      </FormSection>
-      <FormSection id="stall-hours" icon={Clock} legend={L("cfSecHours")}>
+        </FormSection>
+        <FormSection id="stall-hours" icon={Clock} legend={L("cfSecHours")}>
           <RepeatRows
             name="hours"
             legend={L("canteenFieldHours")}
@@ -127,8 +138,8 @@ export async function CanteenStallForm({ locale, id, saved }: { locale: Locale; 
               { key: "note.en", label: `${L("canteenFieldHoursNote")} (${L("langEnglish")})`, kind: "text", lang: "en" },
             ]}
           />
-      </FormSection>
-      <FormSection id="stall-map" icon={MapIcon} legend={L("canteenFieldMapGroup")} hint={L("canteenHintMap")}>
+        </FormSection>
+        <FormSection id="stall-map" icon={MapIcon} legend={L("canteenFieldMapGroup")} hint={L("canteenHintMap")}>
           <div className="flex flex-col gap-[var(--space-3)]">
             <div className="grid gap-[var(--space-3)] sm:grid-cols-2 md:grid-cols-4">
               <TextField name="mapCol" label={L("canteenFieldMapCol")} inputMode="numeric" defaultValue={stall ? String(stall.mapCol) : ""} />
@@ -143,18 +154,8 @@ export async function CanteenStallForm({ locale, id, saved }: { locale: Locale; 
               options={MAP_SHAPES.map((value) => ({ value, label: L(value === "rect" ? "canteenShapeRect" : value === "triangleBottomRight" ? "canteenShapeTriBR" : "canteenShapeTriBL") }))}
             />
           </div>
-          <BilingualTextarea name="wayfinding" label={L("canteenFieldWayfinding")} hint={L("canteenHintWayfinding")} maxLength={500} rows={3} defaultValue={{ th: stall?.wayfindingTh, en: stall?.wayfindingEn }} />
-      </FormSection>
-      <FormSection id="stall-photo" icon={Camera} legend={L("cfSecPhoto")}>
-          <ImagePicker
-            name="photo"
-            label={L("canteenFieldPhoto")}
-            images={images}
-            storageConfigured={isStorageConfigured()}
-            defaultValue={stall?.photoId ? [stall.photoId] : []}
-          />
-      </FormSection>
-      <FormSection id="stall-addons" icon={PlusCircle} legend={L("canteenFieldAddOns")}>
+        </FormSection>
+        <FormSection id="stall-addons" icon={PlusCircle} legend={L("canteenFieldAddOns")}>
           <RepeatRows
             name="addOns"
             legend={L("canteenFieldAddOns")}
@@ -172,7 +173,7 @@ export async function CanteenStallForm({ locale, id, saved }: { locale: Locale; 
                 : []),
             ]}
           />
-      </FormSection>
+        </FormSection>
       </ContentForm>
     </>
   );

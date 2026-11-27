@@ -6,6 +6,8 @@ import type { LocaleString } from "../config";
  * `block*` strings stay in lib/i18n/admin.ts.
  */
 export const EDITOR_STRINGS = {
+  edDocumentTitle: { th: "แก้ไขเนื้อหา", en: "Edit content" },
+  edDocumentLanguage: { th: "ภาษาของเนื้อหา", en: "Content language" },
   edGroupStyle: { th: "รูปแบบข้อความ", en: "Text style" },
   edGroupMarks: { th: "ตัวอักษร", en: "Text formatting" },
   edGroupLists: { th: "รายการและคำพูดอ้างอิง", en: "Lists and quotes" },

@@ -369,43 +369,43 @@ header.sticky :where(a, button, input, select, textarea, summary, [tabindex]) {
 .prose-editor > * + * {
   margin-top: var(--space-4);
 }
-.prose-editor h2 {
+.prose-editor h2:not(:where([data-editor-block] *)) {
   font-size: var(--text-xl);
   font-weight: 600;
 }
-.prose-editor h3 {
+.prose-editor h3:not(:where([data-editor-block] *)) {
   font-size: var(--text-lg);
   font-weight: 600;
 }
-.prose-editor h4 {
+.prose-editor h4:not(:where([data-editor-block] *)) {
   font-size: var(--text-base);
   font-weight: 600;
 }
-.prose-editor ul {
+.prose-editor ul:not(:where([data-editor-block] *)) {
   list-style: disc;
   padding-left: var(--space-6);
 }
-.prose-editor ol {
+.prose-editor ol:not(:where([data-editor-block] *)) {
   list-style: decimal;
   padding-left: var(--space-6);
 }
-.prose-editor blockquote {
+.prose-editor blockquote:not(:where([data-editor-block] *)) {
   border-left: var(--border-width-thick) solid var(--line-strong);
   padding-left: var(--space-4);
   font-style: italic;
 }
-.prose-editor a {
+.prose-editor a:not(:where([data-editor-block] *)) {
   color: var(--colour-action);
   text-decoration: underline;
 }
-.prose-editor code {
+.prose-editor code:not(:where([data-editor-block] *)) {
   background: var(--surface-sunk);
   border-radius: var(--radius-control);
   padding: 0 var(--space-1);
   font-family: var(--font-mono);
   font-size: 0.9em;
 }
-.prose-editor pre {
+.prose-editor pre:not(:where([data-editor-block] *)) {
   background: var(--surface-sunk);
   border-radius: var(--radius-control);
   padding: var(--space-3);
@@ -414,26 +414,26 @@ header.sticky :where(a, button, input, select, textarea, summary, [tabindex]) {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.prose-editor pre code {
+.prose-editor pre code:not(:where([data-editor-block] *)) {
   background: none;
   padding: 0;
   font-size: inherit;
 }
-.prose-editor hr {
+.prose-editor hr:not(:where([data-editor-block] *)) {
   border: 0;
   border-top: var(--border-width) solid var(--line-strong);
   margin-block: var(--space-4);
 }
-.prose-editor hr.ProseMirror-selectednode {
+.prose-editor hr.ProseMirror-selectednode:not(:where([data-editor-block] *)) {
   outline: var(--border-width-thick) solid var(--colour-action);
 }
-.prose-editor table {
+.prose-editor table:not(:where([data-editor-block] *)) {
   border-collapse: collapse;
   width: 100%;
   table-layout: fixed;
 }
-.prose-editor th,
-.prose-editor td {
+.prose-editor th:not(:where([data-editor-block] *)),
+.prose-editor td:not(:where([data-editor-block] *)) {
   border: var(--border-width) solid var(--line-strong);
   padding: var(--space-1) var(--space-2);
   vertical-align: top;
@@ -441,33 +441,33 @@ header.sticky :where(a, button, input, select, textarea, summary, [tabindex]) {
   min-width: 3rem;
   overflow-wrap: anywhere;
 }
-.prose-editor th {
+.prose-editor th:not(:where([data-editor-block] *)) {
   background: var(--surface-sunk);
   font-weight: 600;
 }
 @media (max-width: 39.99rem) {
-  .prose-editor .tableWrapper {
+  .prose-editor .tableWrapper:not(:where([data-editor-block] *)) {
     overflow-x: auto;
   }
-  .prose-editor table {
+  .prose-editor table:not(:where([data-editor-block] *)) {
     table-layout: auto;
     width: max-content;
     min-width: 100%;
   }
-  .prose-editor td,
-  .prose-editor th {
+  .prose-editor td:not(:where([data-editor-block] *)),
+  .prose-editor th:not(:where([data-editor-block] *)) {
     min-width: 5rem;
   }
 }
-.prose-editor .selectedCell {
+.prose-editor .selectedCell:not(:where([data-editor-block] *)) {
   outline: var(--border-width-thick) solid var(--colour-action);
   outline-offset: -2px;
 }
-.prose-editor .rt-find-match {
+.prose-editor .rt-find-match:not(:where([data-editor-block] *)) {
   background: var(--surface-sunk);
   outline: 1px dashed var(--line-strong);
 }
-.prose-editor .rt-find-current {
+.prose-editor .rt-find-current:not(:where([data-editor-block] *)) {
   background: var(--fill-activity-soft);
   outline: var(--border-width-thick) solid var(--colour-action);
 }

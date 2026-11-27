@@ -30,7 +30,7 @@ function contactHref(contact: ContactBlockAttrs): string | null {
  * person or channel partway through a page, distinct from the sitewide help
  * block (3.2.6), which always lives in the same place in the footer.
  */
-export function ContactBlockRenderer({ attrs, locale }: { attrs: ContactBlockAttrs; locale: Locale }) {
+export function ContactBlockRenderer({ attrs, locale, preview }: { attrs: ContactBlockAttrs; locale: Locale; preview?: boolean }) {
   if (!attrs?.value) return null;
 
   const label = pick(attrs.label, locale);
@@ -50,7 +50,9 @@ export function ContactBlockRenderer({ attrs, locale }: { attrs: ContactBlockAtt
     <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-[var(--space-3)] rounded-[var(--radius-block)] bg-surface-alt p-[var(--space-3)]">
       <IconTile icon={helpChannelIcon(attrs.channel)} tone="soft" />
       <div className="min-w-0">
-        {href ? (
+        {href && preview ? (
+          <p className="m-0 font-semibold text-action underline">{label}</p>
+        ) : href ? (
           <Link href={href} locale={locale} className="font-semibold text-action">
             {label}
           </Link>

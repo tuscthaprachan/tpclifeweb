@@ -1,6 +1,7 @@
 import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextField, EnumSelect, TextField } from "@/components/admin/content/fields";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
@@ -19,10 +20,9 @@ import { deleteFaq, saveFaq } from "./actions";
 export async function FaqForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
   const db = getDb();
   const def = getContentType("faqs")!;
-  const refs = await loadRichTextRefs(db);
-
   const [faq] = id ? await db.select().from(faqs).where(eq(faqs.id, id)) : [];
   if (id && !faq) notFound();
+  const refs = await loadRichTextRefs(db, [], [faq?.answerTh, faq?.answerEn]);
   const [links, names] = faq
     ? await Promise.all([
         db.select().from(faqForms).where(eq(faqForms.faqId, faq.id)).orderBy(asc(faqForms.position)),
@@ -54,6 +54,7 @@ export async function FaqForm({ locale, id, saved }: { locale: Locale; id?: stri
       saved={saved}
       details={
         <>
+          <TextField name="slug" label={L("faqsFieldSlug")} hint={L("faqsHintSlug")} defaultValue={faq?.slug} maxLength={80} className="max-w-[32rem]" />
           <EnumSelect
             name="category"
             label={L("fieldCategory")}
@@ -65,13 +66,12 @@ export async function FaqForm({ locale, id, saved }: { locale: Locale; id?: stri
         </>
       }
     >
-      <Group icon="edit" id="group-text" legend={L("pagesGroupText")}>
-        <BilingualTextField name="question" label={L("faqsFieldQuestion")} maxLength={300} defaultValue={{ th: faq?.questionTh, en: faq?.questionEn }} />
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="question" label={L("faqsFieldQuestion")} maxLength={300} defaultValue={{ th: faq?.questionTh, en: faq?.questionEn }} />
         <BilingualRichTextField name="answer" label={L("faqsFieldAnswer")} refs={refs} defaultValue={{ th: faq?.answerTh, en: faq?.answerEn }} />
-      </Group>
+      </DocumentCanvas>
       <Group icon="guides" id="group-placement" legend={L("pagesGroupPlacement")}>
         <ReferencePicker name="forms" label={L("faqsFieldForms")} hint={L("faqsHintForms")} multiple options={refs.forms} defaultValue={links.map((l) => l.formId)} />
-        <TextField name="slug" label={L("faqsFieldSlug")} hint={L("faqsHintSlug")} defaultValue={faq?.slug} maxLength={80} className="max-w-[32rem]" />
       </Group>
     </ContentForm>
   );

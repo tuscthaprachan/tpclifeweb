@@ -1,4 +1,4 @@
-/** Text controls' values by field name, as posted. Files and the rich text editor's own state are not included. */
+/** Posted string values by field name, including the rich text editor’s serialized document. */
 export type FormEntries = [string, string][];
 
 let held: { key: string; entries: FormEntries } | null = null;
@@ -44,7 +44,7 @@ export function restoreEntries(form: HTMLFormElement, entries: FormEntries): boo
   let changed = false;
   for (const element of Array.from(form.elements)) {
     if (!(element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) || !element.name || element.disabled) continue;
-    if (element instanceof HTMLInputElement && (element.type === "hidden" || element.type === "file" || element.type === "submit" || element.type === "button")) continue;
+    if (element instanceof HTMLInputElement && ((element.type === "hidden" && !element.hasAttribute("data-restore-editor")) || element.type === "file" || element.type === "submit" || element.type === "button")) continue;
     const values = byName.get(element.name) ?? [];
     if (element instanceof HTMLInputElement && (element.type === "checkbox" || element.type === "radio")) {
       const should = values.includes(element.value);

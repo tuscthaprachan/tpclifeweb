@@ -2,6 +2,7 @@ import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, DateField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
@@ -32,10 +33,9 @@ const STATUS_LABEL = {
 export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
   const db = getDb();
   const def = getContentType("policies")!;
-  const refs = await loadRichTextRefs(db);
-
   const [policy] = id ? await db.select().from(policies).where(eq(policies.id, id)) : [];
   if (id && !policy) notFound();
+  const refs = await loadRichTextRefs(db, [], [policy?.detailTh, policy?.detailEn]);
   const [updates, names, others] = await Promise.all([
     policy ? db.select().from(policyUpdates).where(eq(policyUpdates.policyId, policy.id)).orderBy(asc(policyUpdates.position)) : [],
     userNames(db, [policy?.updatedBy]),
@@ -66,17 +66,19 @@ export async function PolicyForm({ locale, id, saved }: { locale: Locale; id?: s
       record={record}
       listHref={contentPath(def)}
       saved={saved}
-      details={<EnumSelect name="owner" label={L("fieldOwner")} defaultValue={policy?.owner ?? ""} options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]} />}
-    >
-      <FormSection icon="edit" legend={L("policiesGroupAbout")} id="g-about">
-        <Stack space={4}>
-          <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: policy?.titleTh, en: policy?.titleEn }} />
+      details={
+        <>
           <SlugField label={L("fieldSlug")} defaultValue={policy?.slug} />
-          <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: policy?.summaryTh, en: policy?.summaryEn }} />
-          <BilingualRichTextField name="detail" label={L("policiesFieldDetail")} refs={refs} defaultValue={{ th: policy?.detailTh, en: policy?.detailEn }} />
+          <EnumSelect name="owner" label={L("fieldOwner")} defaultValue={policy?.owner ?? ""} options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]} />
           <BilingualTextField name="area" label={L("policiesFieldArea")} hint={L("policiesHintArea")} maxLength={100} defaultValue={{ th: policy?.policyAreaTh, en: policy?.policyAreaEn }} />
-        </Stack>
-      </FormSection>
+        </>
+      }
+    >
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: policy?.titleTh, en: policy?.titleEn }} />
+        <BilingualTextarea appearance="lead" name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: policy?.summaryTh, en: policy?.summaryEn }} />
+        <BilingualRichTextField name="detail" label={L("policiesFieldDetail")} refs={refs} defaultValue={{ th: policy?.detailTh, en: policy?.detailEn }} />
+      </DocumentCanvas>
 
       <FormSection icon="performance" legend={L("policiesGroupProgress")} id="g-progress">
         <Stack space={4}>

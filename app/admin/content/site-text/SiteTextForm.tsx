@@ -1,4 +1,5 @@
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea } from "@/components/admin/content/fields";
 import { Stack } from "@/components/ui";
 import { a } from "@/lib/i18n/admin";
@@ -45,32 +46,35 @@ export function SiteTextForm({
       hasStatus={false}
     >
       <input type="hidden" name="$return" value={returnQuery} />
-      <Stack space={6}>
-        {rows.map((row, index) => {
-          const marks = textPlaceholders(`${row.fallback.th} ${row.fallback.en}`);
-          const hint = [
-            `${pick(row.group, locale)} · ${row.key}`,
-            row.edited ? a("sitHintBuiltIn", locale, { th: row.fallback.th, en: row.fallback.en }) : null,
-            marks.length > 0 ? a("sitHintPlaceholders", locale, { list: marks.join(", ") }) : null,
-          ]
-            .filter(Boolean)
-            .join(" · ");
-          const longest = Math.max(row.fallback.th.length, row.fallback.en.length);
-          return (
-            <div key={row.key} className="border-0 border-b border-line pb-[var(--space-4)]">
-              <input type="hidden" name={`k.${index}`} value={row.key} />
-              <BilingualTextarea
-                name={`v.${index}`}
-                label={`${row.edited ? `${a("sitEditedMark", locale)} ` : ""}${short(row.fallback[locale])}`}
-                hint={hint}
-                rows={longest > 160 ? 4 : longest > 60 ? 2 : 1}
-                maxLength={SITE_TEXT_MAX}
-                defaultValue={row.current}
-              />
-            </div>
-          );
-        })}
-      </Stack>
+      <DocumentCanvas locale={locale}>
+        <Stack space={6}>
+          {rows.map((row, index) => {
+            const marks = textPlaceholders(`${row.fallback.th} ${row.fallback.en}`);
+            const hint = [
+              `${pick(row.group, locale)} · ${row.key}`,
+              row.edited ? a("sitHintBuiltIn", locale, { th: row.fallback.th, en: row.fallback.en }) : null,
+              marks.length > 0 ? a("sitHintPlaceholders", locale, { list: marks.join(", ") }) : null,
+            ]
+              .filter(Boolean)
+              .join(" · ");
+            const longest = Math.max(row.fallback.th.length, row.fallback.en.length);
+            return (
+              <div key={row.key} className="border-0 border-b border-line pb-[var(--space-4)]">
+                <input type="hidden" name={`k.${index}`} value={row.key} />
+                <BilingualTextarea
+                  appearance="text"
+                  name={`v.${index}`}
+                  label={`${row.edited ? `${a("sitEditedMark", locale)} ` : ""}${short(row.fallback[locale])}`}
+                  hint={hint}
+                  rows={longest > 160 ? 4 : longest > 60 ? 2 : 1}
+                  maxLength={SITE_TEXT_MAX}
+                  defaultValue={row.current}
+                />
+              </div>
+            );
+          })}
+        </Stack>
+      </DocumentCanvas>
     </ContentForm>
   );
 }

@@ -1,6 +1,7 @@
 import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, DateField, EnumSelect, SlugField, TextareaField, TextField } from "@/components/admin/content/fields";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
 import { ReferencePicker, type ReferenceChoice } from "@/components/admin/content/ReferencePicker";
@@ -40,10 +41,9 @@ async function relatedPageChoices(excludeId?: string): Promise<ReferenceChoice[]
 export async function PageForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
   const db = getDb();
   const def = getContentType("topics")!;
-  const refs = await loadRichTextRefs(db);
-
   const [page] = id ? await db.select().from(contentPages).where(eq(contentPages.id, id)) : [];
   if (id && !page) notFound();
+  const refs = await loadRichTextRefs(db, [], [page?.bodyTh, page?.bodyEn]);
   const [formLinks, relatedLinks, names, relatedChoices] = await Promise.all([
     page ? db.select().from(contentPageForms).where(eq(contentPageForms.pageId, page.id)).orderBy(asc(contentPageForms.position)) : [],
     page ? db.select().from(contentPageRelated).where(eq(contentPageRelated.pageId, page.id)).orderBy(asc(contentPageRelated.position)) : [],
@@ -76,6 +76,7 @@ export async function PageForm({ locale, id, saved }: { locale: Locale; id?: str
       saved={saved}
       details={
         <>
+          <SlugField label={L("fieldSlug")} defaultValue={page?.slug} />
           <EnumSelect
             name="category"
             label={L("fieldCategory")}
@@ -88,6 +89,12 @@ export async function PageForm({ locale, id, saved }: { locale: Locale; id?: str
         </>
       }
     >
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: page?.titleTh, en: page?.titleEn }} />
+        <BilingualTextarea appearance="lead" name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: page?.summaryTh, en: page?.summaryEn }} />
+        <BilingualRichTextField name="body" label={L("fieldBody")} refs={refs} defaultValue={{ th: page?.bodyTh, en: page?.bodyEn }} />
+      </DocumentCanvas>
+
       <Group icon="topics" id="group-where" legend={L("pagesGroupWhere")}>
         <EnumSelect
           name="section"
@@ -97,13 +104,6 @@ export async function PageForm({ locale, id, saved }: { locale: Locale; id?: str
           options={[{ value: "", label: L("choiceSelect") }, ...CONTENT_SECTIONS.map((value) => ({ value, label: pick(SECTIONS[value].label, locale) }))]}
         />
         <TextareaField name="userNeed" label={L("pagesFieldUserNeed")} hint={L("pagesHintUserNeed")} defaultValue={page?.userNeed} rows={4} />
-      </Group>
-
-      <Group icon="edit" id="group-text" legend={L("pagesGroupText")}>
-        <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: page?.titleTh, en: page?.titleEn }} />
-        <SlugField label={L("fieldSlug")} defaultValue={page?.slug} />
-        <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: page?.summaryTh, en: page?.summaryEn }} />
-        <BilingualRichTextField name="body" label={L("fieldBody")} refs={refs} defaultValue={{ th: page?.bodyTh, en: page?.bodyEn }} />
       </Group>
 
       <Group icon="forms" id="group-related" legend={L("pagesGroupRelated")}>

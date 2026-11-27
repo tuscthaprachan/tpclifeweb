@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, CheckboxField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { NotificationBanner, Stack } from "@/components/ui";
 import { userNames } from "@/lib/admin/content/list";
@@ -69,18 +70,30 @@ export async function PlaceForm({ locale, id, saved, error }: { locale: Locale; 
           {a("placesInUseBody", locale, { uses })}
         </NotificationBanner>
       ) : null}
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: place?.nameTh, en: place?.nameEn }} />
+        <BilingualTextField
+          appearance="text"
+          name="building"
+          label={L("placesFieldBuilding")}
+          hint={L("placesHintBuilding")}
+          maxLength={150}
+          defaultValue={{ th: place?.buildingTh, en: place?.buildingEn }}
+        />
+        <BilingualTextarea appearance="lead" name="description" label={L("dirFieldDescription")} maxLength={1500} rows={4} defaultValue={{ th: place?.descriptionTh, en: place?.descriptionEn }} />
+        <BilingualTextarea
+          appearance="text"
+          name="accessibility"
+          label={L("placesFieldAccessibility")}
+          hint={L("placesHintAccessibility")}
+          maxLength={1000}
+          rows={3}
+          defaultValue={{ th: place?.accessibilityTh, en: place?.accessibilityEn }}
+        />
+      </DocumentCanvas>
       <FormSection icon="places" id="place-about" legend={L("placesGroupAbout")}>
         <Stack space={4}>
-          <BilingualTextField name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: place?.nameTh, en: place?.nameEn }} />
           <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={place?.slug} />
-          <BilingualTextField
-            name="building"
-            label={L("placesFieldBuilding")}
-            hint={L("placesHintBuilding")}
-            maxLength={150}
-            defaultValue={{ th: place?.buildingTh, en: place?.buildingEn }}
-          />
-          <BilingualTextarea name="description" label={L("dirFieldDescription")} maxLength={1500} rows={4} defaultValue={{ th: place?.descriptionTh, en: place?.descriptionEn }} />
           <CheckboxField name="isKeyLocation" label={L("placesLabelKey")} hint={L("placesHintKey")} defaultChecked={place?.isKeyLocation ?? false} />
         </Stack>
       </FormSection>
@@ -99,14 +112,6 @@ export async function PlaceForm({ locale, id, saved, error }: { locale: Locale; 
       <FormSection icon={Phone} id="place-visit" legend={L("placesGroupVisit")} hint={L("placesHintVisit")}>
         <Stack space={4}>
           <ContactsField defaultValue={place?.contacts ?? []} />
-          <BilingualTextarea
-            name="accessibility"
-            label={L("placesFieldAccessibility")}
-            hint={L("placesHintAccessibility")}
-            maxLength={1000}
-            rows={3}
-            defaultValue={{ th: place?.accessibilityTh, en: place?.accessibilityEn }}
-          />
           <TextField name="moreInfoUrl" label={L("placesFieldMoreInfo")} hint={L("placesHintMoreInfo")} inputMode="url" maxLength={500} defaultValue={place?.moreInfoUrl ?? ""} />
         </Stack>
       </FormSection>

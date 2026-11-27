@@ -95,11 +95,43 @@ describe("RichTextEditor", () => {
     expect(h.querySelectorAll('[role="textbox"]')).toHaveLength(2);
   });
 
-  it("shows a custom block card with icon buttons that name the block", async () => {
+  it("renders the localized block in the document and edits it in place", async () => {
     const h = await mount();
-    expect(h.querySelector('button[aria-label="Edit: Notice box"]')).not.toBeNull();
-    expect(h.querySelector('button[aria-label="Remove: Notice box"]')).not.toBeNull();
-    expect(h.querySelector('button[aria-label="Move up: Notice box"]')).not.toBeNull();
+    const body = h.querySelector('[role="textbox"][lang="en"]')!;
+    const block = body.querySelector("[data-editor-block]")!;
+    expect(block.querySelector('[lang="en"]')?.textContent).toBe("b");
+    expect(block.querySelector('button[aria-label="Remove: Notice box"]')).not.toBeNull();
+    expect(block.querySelector('button[aria-label="Move up: Notice box"]')).not.toBeNull();
+
+    const edit = () => block.querySelector<HTMLButtonElement>('button[aria-label="Edit: Notice box"]')!;
+    await act(async () => edit().click());
+    const fields = block.querySelector('[role="group"][aria-labelledby]')!;
+    const text = fields.querySelector<HTMLTextAreaElement>('textarea[lang="en"]')!;
+    expect(document.querySelector("dialog[open]")).toBeNull();
+    expect(document.activeElement?.textContent).toBe("Edit Notice box");
+    const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!;
+    await act(async () => {
+      setter.call(text, "Edited notice");
+      text.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    expect(JSON.parse(hidden(h, "body.en")).content[1].attrs.body.en).toBe("b");
+
+    const save = [...fields.querySelectorAll("button")].find((button) => button.textContent === "Save changes")!;
+    await act(async () => save.click());
+    expect(block.textContent).toContain("Edited notice");
+    expect(JSON.parse(hidden(h, "body.en")).content[1].attrs.body).toEqual({ th: "ก", en: "Edited notice" });
+    expect(document.activeElement).toBe(edit());
+
+    await act(async () => edit().click());
+    const reopened = block.querySelector<HTMLTextAreaElement>('textarea[lang="en"]')!;
+    await act(async () => {
+      setter.call(reopened, "Discarded change");
+      reopened.dispatchEvent(new Event("input", { bubbles: true }));
+      reopened.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
+    });
+    expect(block.querySelector("textarea")).toBeNull();
+    expect(JSON.parse(hidden(h, "body.en")).content[1].attrs.body.en).toBe("Edited notice");
+    expect(document.activeElement).toBe(edit());
   });
 
   it("opens the Insert menu from the keyboard and closes it with Escape", async () => {

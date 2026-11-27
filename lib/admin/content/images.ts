@@ -18,6 +18,8 @@ export interface ImageChoice {
   id: string;
   /** Null when file storage is not configured, so no thumbnail can be shown. */
   url: string | null;
+  width?: number;
+  height?: number;
   altTh: string;
   altEn: string;
   isDecorative: boolean;
@@ -35,16 +37,25 @@ export function isStorageConfigured(): boolean {
   }
 }
 
-/** The newest 300 pictures, for pickers. */
-export async function listImageChoices(db: AuditExecutor = getDb()): Promise<ImageChoice[]> {
+/** The newest 300 pictures and any older pictures already selected in the form. */
+export async function listImageChoices(db: AuditExecutor = getDb(), selectedIds: readonly string[] = []): Promise<ImageChoice[]> {
   const rows = await db.select().from(images).orderBy(desc(images.createdAt)).limit(300);
-  return rows.map((r) => ({
-    id: r.id,
-    url: publicImageUrl(r.storageKey),
-    altTh: r.altTh,
-    altEn: r.altEn,
-    isDecorative: r.isDecorative,
-  }));
+  const found = new Set(rows.map((row) => row.id));
+  const missing = [...new Set(selectedIds)].filter((id) => !found.has(id));
+  const selected = missing.length ? await db.select().from(images).where(inArray(images.id, missing)) : [];
+  return [...rows, ...selected].map(toImageChoice);
+}
+
+function toImageChoice(row: typeof images.$inferSelect): ImageChoice {
+  return {
+    id: row.id,
+    url: publicImageUrl(row.storageKey),
+    width: row.width ?? undefined,
+    height: row.height ?? undefined,
+    altTh: row.altTh,
+    altEn: row.altEn,
+    isDecorative: row.isDecorative,
+  };
 }
 
 export type UploadResult = { ok: true; image: ImageChoice } | { ok: false; error: string };
@@ -113,7 +124,7 @@ export async function uploadContentImage(input: {
 
   return {
     ok: true,
-    image: { id: row.id, url: publicImageUrl(row.storageKey), altTh: row.altTh, altEn: row.altEn, isDecorative: row.isDecorative },
+    image: toImageChoice(row),
   };
 }
 

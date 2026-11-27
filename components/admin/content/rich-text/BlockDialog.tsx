@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Button, Checkboxes, ErrorMessage, Select, Textarea, TextInput } from "@/components/ui";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import type { Locale } from "@/lib/i18n/config";
@@ -9,6 +9,7 @@ import { validateBlockAttrs, type BlockType } from "@/lib/rich-text/editor";
 import { formatBangkokDateTime, parseBangkokDateTime } from "@/lib/admin/content/datetime";
 import type { ImageChoice } from "@/lib/admin/content/images";
 import { ImagePicker } from "../ImagePicker";
+import { useDocumentLanguage } from "../document-language";
 import { PortalDialog } from "../PortalDialog";
 import { ReferencePicker } from "../ReferencePicker";
 import { BLOCK_LABEL, type RichTextRefs } from "./blocks";
@@ -81,17 +82,23 @@ interface BlockDialogProps {
   type: BlockType;
   mode: "insert" | "edit";
   initial: Raw;
+  /** Position inside the document when editing an existing block. */
+  inlineId?: string;
   locale: Locale;
+  bodyLocale?: Locale;
   refs: RichTextRefs;
   onSubmit: (attrs: Raw) => void;
   onClose: () => void;
-  /** A picture uploaded from the image picker in this dialog, so the editor's block cards can show it. */
+  /** A picture uploaded from the image picker in this dialog, so the editor can show it. */
   onImageUploaded?: (image: ImageChoice) => void;
 }
 
 /** The form for one custom block's attrs, opened by the toolbar (insert) or the block's Edit button. */
-export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClose, onImageUploaded }: BlockDialogProps) {
+export function BlockDialog({ type, mode, initial, inlineId, locale, bodyLocale, refs, onSubmit, onClose, onImageUploaded }: BlockDialogProps) {
   const uid = useId();
+  const documentLanguage = useDocumentLanguage();
+  const heading = useRef<HTMLParagraphElement>(null);
+  useLayoutEffect(() => heading.current?.focus(), []);
   const [attrs, setAttrs] = useState<Raw>(() => structuredClone(initial));
   const [error, setError] = useState<string | null>(null);
   const set = (key: string, value: unknown) => setAttrs((cur) => ({ ...cur, [key]: value }));
@@ -99,11 +106,36 @@ export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClo
 
   function submit() {
     const key = precheck(type, attrs);
-    if (key) return setError(a(key, locale));
+    if (key) {
+      setError(a(key, locale));
+      return false;
+    }
     const detail = validateBlockAttrs(type, attrs);
-    if (detail) return setError(a("errBlockInvalid", locale, { detail }));
+    if (detail) {
+      setError(a("errBlockInvalid", locale, { detail }));
+      return false;
+    }
     onSubmit(attrs);
+    return true;
   }
+
+  // Saving the surrounding document must include an open inline block.
+  useLayoutEffect(() => {
+    if (!inlineId) return;
+    const form = heading.current?.closest("form");
+    if (!form) return;
+    const onFormSubmit = (event: Event) => {
+      if (event.defaultPrevented || submit()) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (bodyLocale) documentLanguage?.setLanguage(bodyLocale);
+      const disclosure = heading.current?.closest("details");
+      if (disclosure) disclosure.open = true;
+      requestAnimationFrame(() => heading.current?.focus());
+    };
+    form.addEventListener("submit", onFormSubmit, true);
+    return () => form.removeEventListener("submit", onFormSubmit, true);
+  });
 
   let body: ReactNode;
   if (type === "contactBlock") {
@@ -142,7 +174,13 @@ export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClo
           label={a("blockImagePicture", locale)}
           images={refs.images}
           storageConfigured={refs.storageConfigured}
-          onUploaded={onImageUploaded}
+          onUploaded={(image) => {
+            onImageUploaded?.(image);
+            setAttrs((cur) => ({
+              ...cur,
+              alt: filled(pair(cur.alt)) ? cur.alt : { th: image.altTh, en: image.altEn },
+            }));
+          }}
           defaultValue={attrs.imageId ? [String(attrs.imageId)] : []}
           onChange={(ids) => {
             const chosen = refs.images.find((i) => i.id === ids[0]);
@@ -155,7 +193,6 @@ export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClo
         />
         <Checkboxes
           id={id("decorative")}
-          name={id("decorative")}
           legend={a("blockImageDecorative", locale)}
           hint={a("blockImageDecorativeHint", locale)}
           options={[{ value: "yes", label: a("imageDecorativeLabel", locale) }]}
@@ -174,7 +211,6 @@ export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClo
         <PairInput id={id("description")} label={a("blockLinkDescription", locale)} value={pair(attrs.description)} onChange={(v) => set("description", v)} />
         <Checkboxes
           id={id("signin")}
-          name={id("signin")}
           legend={a("blockLinkSignIn", locale)}
           options={[{ value: "yes", label: a("blockLinkSignInLabel", locale) }]}
           value={attrs.requiresSignIn ? ["yes"] : []}
@@ -331,39 +367,63 @@ export function BlockDialog({ type, mode, initial, locale, refs, onSubmit, onClo
     );
   }
 
-  return (
-    <PortalDialog
-      open
-      onClose={onClose}
-      title={a(mode === "insert" ? "blockInsertTitle" : "blockEditTitle", locale, { block: a(BLOCK_LABEL[type], locale) })}
-      headingLevel={2}
-      locale={locale}
-      className="w-[min(100vw-2rem,44rem)]"
+  const title = a(mode === "insert" ? "blockInsertTitle" : "blockEditTitle", locale, { block: a(BLOCK_LABEL[type], locale) });
+  const fields = (
+    <div
+      className="flex flex-col gap-[var(--space-4)]"
+      onChange={(event) => event.stopPropagation()}
+      onKeyDown={(event) => {
+        if (!event.currentTarget.contains(event.target as Node)) return;
+        if (event.key === "Escape" && inlineId && !event.defaultPrevented) {
+          event.preventDefault();
+          event.stopPropagation();
+          onClose();
+        }
+        if (event.key === "Enter" && !event.defaultPrevented && !event.nativeEvent.isComposing
+          && event.target instanceof HTMLInputElement && !["file", "checkbox"].includes(event.target.type)) {
+          event.preventDefault();
+          submit();
+        }
+      }}
     >
-      <div
-        className="flex flex-col gap-[var(--space-4)]"
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && e.target instanceof HTMLInputElement && e.target.type !== "file") {
-            e.preventDefault();
-            submit();
-          }
-        }}
-      >
-        {body}
-        {error ? (
-          <ErrorMessage id={id("error")}>
-            <span role="alert">{error}</span>
-          </ErrorMessage>
-        ) : null}
-        <div className="flex flex-wrap gap-[var(--space-3)]">
-          <Button type="button" onClick={submit}>
-            {a(mode === "insert" ? "blockInsert" : "blockSaveChanges", locale)}
-          </Button>
-          <Button type="button" variant="secondary" onClick={onClose}>
-            {a("cancel", locale)}
-          </Button>
-        </div>
+      {inlineId ? (
+        <p id={id("heading")} ref={heading} tabIndex={-1} className="m-0 font-semibold">
+          {title}
+        </p>
+      ) : null}
+      {body}
+      {error ? (
+        <ErrorMessage id={id("error")}>
+          <span role="alert">{error}</span>
+        </ErrorMessage>
+      ) : null}
+      <div className="flex flex-wrap gap-[var(--space-3)]">
+        <Button type="button" onClick={submit}>
+          {a(mode === "insert" ? "blockInsert" : "blockSaveChanges", locale)}
+        </Button>
+        <Button type="button" variant="secondary" onClick={onClose}>
+          {a("cancel", locale)}
+        </Button>
       </div>
+    </div>
+  );
+
+  if (inlineId) {
+    return (
+      <div
+        id={inlineId}
+        role="group"
+        aria-labelledby={id("heading")}
+        className="mt-[var(--space-3)] border border-line bg-surface-alt p-[var(--space-3)]"
+      >
+        {fields}
+      </div>
+    );
+  }
+
+  return (
+    <PortalDialog open onClose={onClose} title={title} headingLevel={2} locale={locale} className="w-[min(100vw-2rem,44rem)]">
+      {fields}
     </PortalDialog>
   );
 }

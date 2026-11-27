@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, SlugField } from "@/components/admin/content/fields";
 import { userNames } from "@/lib/admin/content/list";
 import { contentPath, getContentType } from "@/lib/admin/content/types";
@@ -47,6 +48,7 @@ export async function CanonicalDishForm({ locale, id, saved }: { locale: Locale;
       record={record}
       listHref={contentPath(def)}
       saved={saved}
+      details={<SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={dish?.slug} />}
     >
       {usage && inUse ? (
         <NotificationBanner variant="warning" title={L("canteenCanonicalInUseTitle")}>
@@ -61,11 +63,11 @@ export async function CanonicalDishForm({ locale, id, saved }: { locale: Locale;
           {usage.total > usage.dishes.length ? <p className="m-0 mt-[var(--space-2)]">{a("canteenCanonicalInUseMore", locale, { n: usage.total - usage.dishes.length })}</p> : null}
         </NotificationBanner>
       ) : null}
-      <FormSection id="canon-name" icon="canonicalDishes" legend={L("cfSecName")}>
-        <BilingualTextField name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: dish?.nameTh, en: dish?.nameEn }} />
-        <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={dish?.slug} />
-      </FormSection>
-      <FormSection id="canon-about" icon="guides" legend={L("cfSecAliasesExplainer")}>
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: dish?.nameTh, en: dish?.nameEn }} />
+        <BilingualTextarea appearance="text" name="explainer" label={L("canteenFieldExplainer")} hint={L("canteenHintExplainer")} maxLength={1000} rows={5} defaultValue={{ th: dish?.explainerTh, en: dish?.explainerEn }} />
+      </DocumentCanvas>
+      <FormSection id="canon-about" icon="guides" legend={L("canteenFieldAliases")}>
         <RepeatRows
           name="aliases"
           legend={L("canteenFieldAliases")}
@@ -75,7 +77,6 @@ export async function CanonicalDishForm({ locale, id, saved }: { locale: Locale;
           defaultRows={aliasRows}
           fields={[{ key: "value", label: L("canteenFieldAlias"), kind: "text" }]}
         />
-        <BilingualTextarea name="explainer" label={L("canteenFieldExplainer")} hint={L("canteenHintExplainer")} maxLength={1000} rows={5} defaultValue={{ th: dish?.explainerTh, en: dish?.explainerEn }} />
       </FormSection>
       <FormSection id="canon-order" icon={Languages} legend={L("cfSecHowToOrder")}>
         <RepeatRows

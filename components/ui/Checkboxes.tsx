@@ -12,7 +12,7 @@ interface CheckboxesProps {
   legend: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
-  name: string;
+  name?: string;
   options: CheckboxOption[];
   value?: string[];
   defaultValue?: string[];

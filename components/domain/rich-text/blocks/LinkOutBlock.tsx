@@ -12,18 +12,15 @@ import type { LinkOutAttrs } from "@/lib/rich-text/schema";
  * visible text before the link itself, not just implied by an icon (3.3.8,
  * and the same honesty rule the emergency report form relies on).
  */
-export function LinkOutBlock({ attrs, locale }: { attrs: LinkOutAttrs; locale: Locale }) {
+export function LinkOutBlock({ attrs, locale, preview }: { attrs: LinkOutAttrs; locale: Locale; preview?: boolean }) {
   if (!attrs?.url) return null;
 
   const label = pick(attrs.label, locale);
   const description = attrs.description ? pick(attrs.description, locale) : "";
 
-  return (
-    <Link
-      href={attrs.url}
-      locale={locale}
-      className="press group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-[var(--space-3)] rounded-[var(--radius-block)] bg-surface-alt p-[var(--space-3)] no-underline"
-    >
+  const className = "group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-[var(--space-3)] rounded-[var(--radius-block)] bg-surface-alt p-[var(--space-3)] no-underline";
+  const content = (
+    <>
       <IconTile icon={ExternalLink} tone="soft" />
       <span className="min-w-0">
         {attrs.requiresSignIn ? <span className="block text-sm font-medium text-ink-600">{UI.requiresSignIn[locale]}</span> : null}
@@ -33,6 +30,12 @@ export function LinkOutBlock({ attrs, locale }: { attrs: LinkOutAttrs; locale: L
       <span aria-hidden="true" className="grid size-7 place-items-center rounded-full bg-action text-action-ink">
         <ArrowRightIcon />
       </span>
-    </Link>
+    </>
+  );
+
+  return preview ? (
+    <div className={className}>{content}</div>
+  ) : (
+    <Link href={attrs.url} locale={locale} className={`press ${className}`}>{content}</Link>
   );
 }

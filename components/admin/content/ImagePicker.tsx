@@ -4,13 +4,15 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { uploadImageAction } from "@/app/admin/content/actions";
 import { ConsoleIcon } from "@/components/admin/icons";
-import { Button, ErrorMessage, NotificationBanner } from "@/components/ui";
+import { ProportionalImage } from "@/components/domain/media/ProportionalImage";
+import { Button, ErrorMessage, Grid, NotificationBanner } from "@/components/ui";
 import { fieldId } from "@/lib/admin/content/form-state";
 import type { ImageChoice } from "@/lib/admin/content/images";
 import { ADMIN_UPLOAD_MAX_BYTES } from "@/lib/admin/content/upload-limit";
 import { a } from "@/lib/i18n/admin";
-import { pick } from "@/lib/i18n/config";
+import { pick, type Locale } from "@/lib/i18n/config";
 import { useContentForm } from "./context";
+import { useDocumentLanguage } from "./document-language";
 import { PortalDialog } from "./PortalDialog";
 import { uploadError, uploadNote } from "./upload/upload-machine";
 import { useImageUpload } from "./upload/use-image-upload";
@@ -49,27 +51,50 @@ function Thumb({ image, size = 64 }: { image: ImageChoice | undefined; size?: nu
   return <Image src={image.url} alt="" width={size} height={size} unoptimized className="shrink-0 rounded-control bg-surface-sunk object-cover" style={{ width: size, height: size }} />;
 }
 
+function EditorialPicture({ src, alt, lang, width, height, gallery }: {
+  src: string;
+  alt: string;
+  lang: Locale;
+  width?: number;
+  height?: number;
+  gallery: boolean;
+}) {
+  if (gallery) {
+    return (
+      <div lang={lang} className="relative aspect-[4/3] w-full overflow-hidden rounded-panel bg-surface-sunk">
+        <Image src={src} alt={alt} fill sizes="(min-width: 768px) 340px, 100vw" className="object-cover" />
+      </div>
+    );
+  }
+  return <div lang={lang}><ProportionalImage src={src} alt={alt} width={width} height={height} /></div>;
+}
+
 /**
  * Choose pictures from the library, or upload a new one (with its alt text).
  * Posts the chosen image ids under `name`.
  */
 export function ImagePicker({ name, label, hint, images: initial, storageConfigured, defaultValue = [], multiple = false, onChange, unnamed, onUploaded }: ImagePickerProps) {
   const { errors, locale, markDirty } = useContentForm();
+  const documentLanguage = useDocumentLanguage();
+  const editorial = documentLanguage !== null && !unnamed;
+  const pictureLanguage = editorial ? documentLanguage.language : locale;
   const [library, setLibrary] = useState(initial);
   const [chosen, setChosen] = useState<string[]>(defaultValue);
   const [open, setOpen] = useState(false);
   const upload = useImageUpload<ImageChoice>(locale);
   const uploading = upload.busy;
   const chosenRef = useRef(defaultValue);
+  const chooser = useRef<HTMLDivElement>(null);
   const byId = new Map(library.map((i) => [i.id, i]));
   const id = fieldId(name);
   const error = errors[name];
+  const labelId = `${id}-label`;
 
   const update = (change: string[] | ((current: string[]) => string[])) => {
     const next = typeof change === "function" ? change(chosenRef.current) : change;
     chosenRef.current = next;
     setChosen(next);
-    markDirty();
+    if (!unnamed) markDirty();
     onChange?.(next);
   };
   const toggle = (imageId: string) => {
@@ -88,6 +113,45 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
   };
   const altOf = (image: ImageChoice | undefined) =>
     image ? (image.isDecorative ? a("imageDecorative", locale) : pick({ th: image.altTh, en: image.altEn }, locale) || a("imageNoAlt", locale)) : a("imageMissing", locale);
+
+  const pictures = chosen.map((imageId, index) => {
+    const image = byId.get(imageId);
+    const alt = image && !image.isDecorative ? pick({ th: image.altTh, en: image.altEn }, pictureLanguage) : "";
+    const actionName = <span className="visually-hidden" lang={alt ? pictureLanguage : locale}> {alt || altOf(image)}</span>;
+    return (
+      <li key={imageId} className={editorial ? "flex min-w-0 flex-col gap-[var(--space-2)]" : "flex flex-wrap items-center gap-[var(--space-3)] rounded-control border border-line p-[var(--space-2)]"}>
+        {editorial && image?.url ? (
+          <EditorialPicture src={image.url} alt={alt} lang={pictureLanguage} width={image.width} height={image.height} gallery={multiple} />
+        ) : (
+          <>
+            <Thumb image={image} />
+            <span className="min-w-0 flex-1 text-sm">{altOf(image)}</span>
+          </>
+        )}
+        <span className="flex flex-wrap gap-[var(--space-1)]">
+          {multiple && index > 0 ? (
+            <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="moveUp" />} onClick={() => move(index, -1)}>
+              {a("moveUp", locale)}
+              {actionName}
+            </Button>
+          ) : null}
+          {multiple && index < chosen.length - 1 ? (
+            <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="moveDown" />} onClick={() => move(index, 1)}>
+              {a("moveDown", locale)}
+              {actionName}
+            </Button>
+          ) : null}
+          <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="delete" />} onClick={() => {
+            update((current) => current.filter((x) => x !== imageId));
+            if (editorial) chooser.current?.querySelector("button")?.focus();
+          }}>
+            {a("remove", locale)}
+            {actionName}
+          </Button>
+        </span>
+      </li>
+    );
+  });
 
   async function uploadPicture(form: HTMLElement) {
     const field = (n: string) => form.querySelector<HTMLInputElement>(`[data-upload="${n}"]`);
@@ -122,45 +186,23 @@ export function ImagePicker({ name, label, hint, images: initial, storageConfigu
   }
 
   return (
-    <div id={id} tabIndex={-1} className="flex flex-col gap-[var(--space-2)]">
-      <p className="m-0 text-base font-medium text-ink-900">{label}</p>
+    <div id={id} tabIndex={-1} role="group" aria-labelledby={labelId} aria-describedby={error ? `${id}-error` : undefined} className="flex flex-col gap-[var(--space-2)]">
+      <p id={labelId} className="m-0 text-base font-medium text-ink-900">{label}</p>
       {hint ? <p className="m-0 text-sm text-ink-600">{hint}</p> : null}
       {!unnamed ? chosen.map((imageId) => <input key={imageId} type="hidden" name={name} value={imageId} />) : null}
 
-      {chosen.length > 0 ? (
-        <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">
-          {chosen.map((imageId, index) => (
-            <li key={imageId} className="flex flex-wrap items-center gap-[var(--space-3)] rounded-control border border-line p-[var(--space-2)]">
-              <Thumb image={byId.get(imageId)} />
-              <span className="min-w-0 flex-1 text-sm">{altOf(byId.get(imageId))}</span>
-              <span className="flex flex-wrap gap-[var(--space-1)]">
-                {multiple && index > 0 ? (
-                  <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="moveUp" />} onClick={() => move(index, -1)}>
-                    {a("moveUp", locale)}
-                    <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
-                  </Button>
-                ) : null}
-                {multiple && index < chosen.length - 1 ? (
-                  <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="moveDown" />} onClick={() => move(index, 1)}>
-                    {a("moveDown", locale)}
-                    <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
-                  </Button>
-                ) : null}
-                <Button type="button" variant="quiet" size="sm" icon={<ConsoleIcon name="delete" />} onClick={() => update((current) => current.filter((x) => x !== imageId))}>
-                  {a("remove", locale)}
-                  <span className="visually-hidden"> {altOf(byId.get(imageId))}</span>
-                </Button>
-              </span>
-            </li>
-          ))}
-        </ul>
-      ) : (
+      {pictures.length > 0 && editorial && multiple ? (
+        <Grid as="ul" minColumnWidth="20rem" space={4} className="m-0 list-none p-0">{pictures}</Grid>
+      ) : pictures.length > 0 ? (
+        <ul className="m-0 flex list-none flex-col gap-[var(--space-2)] p-0">{pictures}</ul>
+      ) : !editorial ? (
         <p className="m-0 text-sm text-ink-600">{a("imageNoneChosen", locale)}</p>
-      )}
+      ) : null}
       {error ? <ErrorMessage id={`${id}-error`}>{error}</ErrorMessage> : null}
-      <div>
+      <div ref={chooser}>
         <Button type="button" variant="secondary" size="sm" icon={<ConsoleIcon name={multiple ? "add" : "images"} />} onClick={() => setOpen(true)}>
           {multiple ? a("imageAdd", locale) : chosen.length > 0 ? a("imageChange", locale) : a("imageChoose", locale)}
+          {editorial ? <span className="visually-hidden"> ({label})</span> : null}
         </Button>
       </div>
 

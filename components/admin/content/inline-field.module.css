@@ -1,0 +1,62 @@
+.surface {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  color: var(--ink-900);
+}
+
+.surface[data-appearance="title"] {
+  font-size: var(--text-3xl);
+  line-height: var(--leading-tight);
+  font-weight: var(--weight-semibold);
+}
+
+.surface[data-appearance="title"]:lang(th) {
+  line-height: 1.4;
+}
+
+.surface[data-appearance="lead"] {
+  font-size: var(--text-lg);
+  color: var(--ink-600);
+}
+
+.control,
+.measure {
+  grid-area: 1 / 1;
+  min-block-size: var(--target-min);
+  min-inline-size: 0;
+  padding: var(--space-1) 0;
+  font: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.measure {
+  /* The shared grid row grows for wrapped text, including in older browsers. */
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.control {
+  display: block;
+  align-self: stretch;
+  inline-size: 100%;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-control);
+  resize: none;
+}
+
+textarea.control {
+  overflow: hidden;
+}
+
+.control::placeholder {
+  color: var(--ink-500);
+  opacity: 1;
+}
+
+.control:hover,
+.control:focus {
+  background: var(--surface-alt);
+}

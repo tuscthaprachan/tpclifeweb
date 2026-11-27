@@ -11,12 +11,13 @@ interface MarkdownPaneProps {
   labelledBy: string;
   describedBy?: string;
   error?: string | null;
+  invalid?: boolean;
   errorId: string;
   rows?: number;
 }
 
 /** A monospace editing box with a line number gutter. It does not wrap, so each number stays beside its line. */
-export function MarkdownPane({ id, value, onChange, lang, labelledBy, describedBy, error, errorId, rows = 16 }: MarkdownPaneProps) {
+export function MarkdownPane({ id, value, onChange, lang, labelledBy, describedBy, error, invalid, errorId, rows = 16 }: MarkdownPaneProps) {
   const gutter = useRef<HTMLDivElement>(null);
   const lines = value.split("\n").length;
   return (
@@ -43,7 +44,7 @@ export function MarkdownPane({ id, value, onChange, lang, labelledBy, describedB
           autoCorrect="off"
           aria-labelledby={labelledBy}
           aria-describedby={[describedBy, error ? errorId : ""].filter(Boolean).join(" ") || undefined}
-          aria-invalid={error ? true : undefined}
+          aria-invalid={invalid || Boolean(error) || undefined}
           onChange={(e) => onChange(e.target.value)}
           onScroll={(e) => {
             if (gutter.current) gutter.current.scrollTop = e.currentTarget.scrollTop;

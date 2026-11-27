@@ -23,6 +23,7 @@ function subscribe(onChange: () => void) {
 }
 const clientNow = () => Math.floor(Date.now() / TICK_MS) * TICK_MS;
 const serverNow = () => null;
+const subscribePreview = () => () => {};
 
 type Stage = LiveTimelineItem & { key: number; s: number; e: number };
 type State = "done" | "now" | "next" | "later";
@@ -69,8 +70,8 @@ function lanesFor(stages: Stage[]): Map<number, number> {
  * state appears once the page runs in the browser, so it is never stale in
  * a cached page.
  */
-export function LiveTimelineBlock({ attrs, locale, headingLevel }: { attrs: LiveTimelineAttrs; locale: Locale; headingLevel: HeadingLevel }) {
-  const now = useSyncExternalStore(subscribe, clientNow, serverNow);
+export function LiveTimelineBlock({ attrs, locale, headingLevel, preview }: { attrs: LiveTimelineAttrs; locale: Locale; headingLevel: HeadingLevel; preview?: boolean }) {
+  const now = useSyncExternalStore(preview ? subscribePreview : subscribe, preview ? serverNow : clientNow, serverNow);
 
   const stages = useMemo<Stage[]>(
     () =>

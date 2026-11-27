@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, SlugField, TextField } from "@/components/admin/content/fields";
 import { NotificationBanner, Stack } from "@/components/ui";
 import { userNames } from "@/lib/admin/content/list";
@@ -56,9 +57,28 @@ export async function FacultyForm({ locale, id, saved, error }: { locale: Locale
           {a("facInUseBody", locale, { uses })}
         </NotificationBanner>
       ) : null}
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: faculty?.nameTh, en: faculty?.nameEn }} />
+        <BilingualTextField
+          appearance="text"
+          name="location"
+          label={L("facFieldOfficeLocation")}
+          hint={L("facHintOfficeLocation")}
+          maxLength={300}
+          defaultValue={{ th: faculty?.officeLocationTh, en: faculty?.officeLocationEn }}
+        />
+        <BilingualTextarea
+          appearance="text"
+          name="note"
+          label={L("facFieldOfficeNote")}
+          hint={L("facHintOfficeNote")}
+          maxLength={500}
+          rows={3}
+          defaultValue={{ th: faculty?.officeNoteTh, en: faculty?.officeNoteEn }}
+        />
+      </DocumentCanvas>
       <FormSection icon="faculties" id="faculty-about" legend={L("facGroupAbout")}>
         <Stack space={4}>
-          <BilingualTextField name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: faculty?.nameTh, en: faculty?.nameEn }} />
           <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={faculty?.slug} />
           <TextField
             name="sortOrder"
@@ -74,24 +94,9 @@ export async function FacultyForm({ locale, id, saved, error }: { locale: Locale
       <FormSection icon="organisations" id="faculty-office" legend={L("facGroupOffice")}>
         <Stack space={4}>
           <p className="m-0 text-ink-600">{L("facHintOffice")}</p>
-          <BilingualTextField
-            name="location"
-            label={L("facFieldOfficeLocation")}
-            hint={L("facHintOfficeLocation")}
-            maxLength={300}
-            defaultValue={{ th: faculty?.officeLocationTh, en: faculty?.officeLocationEn }}
-          />
           <TextField name="phone" label={L("facFieldOfficePhone")} maxLength={60} inputMode="text" defaultValue={faculty?.officePhone ?? ""} />
           <TextField name="email" label={L("facFieldOfficeEmail")} maxLength={254} defaultValue={faculty?.officeEmail ?? ""} />
           <TextField name="website" label={L("facFieldOfficeWebsite")} inputMode="url" defaultValue={faculty?.officeWebsite ?? ""} />
-          <BilingualTextarea
-            name="note"
-            label={L("facFieldOfficeNote")}
-            hint={L("facHintOfficeNote")}
-            maxLength={500}
-            rows={3}
-            defaultValue={{ th: faculty?.officeNoteTh, en: faculty?.officeNoteEn }}
-          />
         </Stack>
       </FormSection>
       <ProgrammeOfficesField defaultValue={faculty?.programmeOffices ?? []} />

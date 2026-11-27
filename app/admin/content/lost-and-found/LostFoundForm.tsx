@@ -2,6 +2,7 @@ import Link from "next/link";
 import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, DateField, DateTimeField, EnumSelect, TextField } from "@/components/admin/content/fields";
 import { ImagePicker } from "@/components/admin/content/ImagePicker";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
@@ -36,12 +37,12 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
 
   const [item] = id ? await db.select().from(lostFoundItems).where(eq(lostFoundItems.id, id)) : [];
   if (id && !item) notFound();
-  const [placeChoices, imageChoices, photos, names] = await Promise.all([
+  const [placeChoices, photos, names] = await Promise.all([
     loadChoices(db, getContentType("places")!),
-    listImageChoices(db),
     item ? db.select().from(lostFoundItemPhotos).where(eq(lostFoundItemPhotos.itemId, item.id)).orderBy(asc(lostFoundItemPhotos.position)) : [],
     item ? userNames(db, [item.updatedBy]) : new Map<string, string>(),
   ]);
+  const imageChoices = await listImageChoices(db, photos.map((photo) => photo.imageId));
 
   const record: ContentRecordInfo | undefined = item
     ? {
@@ -78,21 +79,41 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
         <p className="m-0 text-ink-600">{L("lfSectionPublicHint")}</p>
         {item ? <p className="m-0 text-sm font-medium text-ink-900">{a("lfReference", locale, { reference: item.reference })}</p> : null}
       </div>
-      <FormSection id="lf-item" icon={Package} legend={L("cfSecLfItem")}>
-        <EnumSelect
-          name="kind"
-          label={L("lfFieldKind")}
-          defaultValue={item?.kind ?? "found"}
-          options={LOST_FOUND_KINDS.map((value) => ({ value, label: kindLabel(value, locale) }))}
-        />
-        <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: item?.titleTh, en: item?.titleEn }} />
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: item?.titleTh, en: item?.titleEn }} />
         <BilingualTextarea
+          appearance="lead"
           name="description"
           label={L("lfFieldDescription")}
           hint={L("lfFieldDescriptionHint")}
           maxLength={2000}
           rows={5}
           defaultValue={{ th: item?.descriptionTh, en: item?.descriptionEn }}
+        />
+        <BilingualTextField
+          appearance="text"
+          name="locationNote"
+          label={L("lfFieldLocationNote")}
+          hint={L("lfFieldLocationNoteHint")}
+          maxLength={300}
+          defaultValue={{ th: item?.locationNoteTh, en: item?.locationNoteEn }}
+        />
+        <ImagePicker
+          name="photos"
+          label={L("lfFieldPhotos")}
+          hint={L("lfFieldPhotosHint")}
+          multiple
+          images={imageChoices}
+          storageConfigured={isStorageConfigured()}
+          defaultValue={photos.map((p) => p.imageId)}
+        />
+      </DocumentCanvas>
+      <FormSection id="lf-item" icon={Package} legend={L("cfSecLfItem")}>
+        <EnumSelect
+          name="kind"
+          label={L("lfFieldKind")}
+          defaultValue={item?.kind ?? "found"}
+          options={LOST_FOUND_KINDS.map((value) => ({ value, label: kindLabel(value, locale) }))}
         />
         <EnumSelect
           name="category"
@@ -103,25 +124,7 @@ export async function LostFoundForm({ locale, id, saved }: { locale: Locale; id?
       </FormSection>
       <FormSection id="lf-where" icon="places" legend={L("cfSecLfWhere")}>
         <ReferencePicker name="placeId" label={L("lfFieldPlace")} options={placeChoices} defaultValue={item?.placeId ?? null} emptyLabel={L("lfPlaceNone")} />
-        <BilingualTextField
-          name="locationNote"
-          label={L("lfFieldLocationNote")}
-          hint={L("lfFieldLocationNoteHint")}
-          maxLength={300}
-          defaultValue={{ th: item?.locationNoteTh, en: item?.locationNoteEn }}
-        />
         <DateField name="occurredOn" label={L("lfFieldOccurredOn")} defaultValue={item?.occurredOn} />
-      </FormSection>
-      <FormSection id="lf-photos" icon="images" legend={L("cfSecPhotos")}>
-        <ImagePicker
-          name="photos"
-          label={L("lfFieldPhotos")}
-          hint={L("lfFieldPhotosHint")}
-          multiple
-          images={imageChoices}
-          storageConfigured={isStorageConfigured()}
-          defaultValue={photos.map((p) => p.imageId)}
-        />
       </FormSection>
       <FormSection id="lf-handling" icon="lostFound" legend={L("cfSecLfHandling")}>
         <EnumSelect

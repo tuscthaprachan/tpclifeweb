@@ -1,20 +1,23 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Radios, Select, Textarea, TextInput, type RadioOption, type SelectOption } from "@/components/ui";
+import { ErrorMessage, Radios, Select, Textarea, TextInput, type RadioOption, type SelectOption } from "@/components/ui";
+import { describedBy } from "@/lib/a11y";
 import { fieldId } from "@/lib/admin/content/form-state";
 import { slugify } from "@/lib/admin/content/slug";
 import { a } from "@/lib/i18n/admin";
+import { LOCALES, OTHER_LOCALE, type Locale } from "@/lib/i18n/config";
 import { useContentForm } from "./context";
+import { useDocumentLanguage } from "./document-language";
 import { useRepeater } from "@/components/admin/hooks/use-repeater";
 import { AddRowButton, RepeaterStatus, RowActions } from "./RowButtons";
+import inline from "./inline-field.module.css";
 
 /**
  * Form controls for content forms. Each takes the field's `name` (dotted for
  * nested values, "title.th"), uses `fieldId(name)` as its id so the error
  * summary can link to it, and reads its error from the surrounding
- * `ContentForm`. They are uncontrolled: pass the stored value as
- * `defaultValue`.
+ * `ContentForm`. Pass the stored value as `defaultValue`.
  */
 
 interface BilingualProps {
@@ -27,7 +30,10 @@ interface BilingualProps {
   maxLength?: number;
   /** A textarea instead of a one-line input. */
   multiline?: boolean;
+  /** Initial textarea rows in structured forms. The document canvas fits the text. */
   rows?: number;
+  /** Typography on the document canvas. */
+  appearance?: "title" | "lead" | "text";
 }
 
 function Counted({ value, max }: { value: string; max: number }) {
@@ -38,42 +44,79 @@ function Counted({ value, max }: { value: string; max: number }) {
   );
 }
 
-function LanguageBox({ name, lang, label, hint, defaultValue, maxLength, multiline, rows }: BilingualProps & { lang: "th" | "en" }) {
+function LanguageField({ name, lang, label, hint, defaultValue, maxLength, multiline, rows, appearance = "text", activeLanguage }: BilingualProps & { lang: Locale; activeLanguage?: Locale }) {
   const { errors, locale, formId } = useContentForm();
   const path = `${name}.${lang}`;
-  const [value, setValue] = useState(defaultValue?.[lang] ?? "");
+  const id = fieldId(path);
+  const error = errors[path];
+  const singleLine = activeLanguage !== undefined && !multiline;
+  const initialValue = defaultValue?.[lang] ?? "";
+  const [value, setValue] = useState(initialValue);
   const language = a(lang === "th" ? "langThai" : "langEnglish", locale);
+  const translatedLabel = `${label} (${language})`;
   const common = {
-    id: fieldId(path),
+    id,
     name: path,
-    label: `${label} (${language})`,
-    hint,
-    error: errors[path],
-    lang,
     form: formId,
     value,
-    onChange: (e: { target: { value: string } }) => setValue(e.target.value),
+    onChange: (e: { target: { value: string } }) => setValue(singleLine ? e.target.value.replace(/[\r\n]+/g, " ") : e.target.value),
     autoComplete: "off",
   };
+  const count = maxLength ? <Counted value={value} max={maxLength} /> : null;
+
+  if (activeLanguage) {
+    const control = {
+      ...common,
+      "aria-describedby": describedBy(id, { hasHint: Boolean(hint), hasError: Boolean(error) }),
+      "aria-invalid": error ? true as const : undefined,
+      className: inline.control,
+      placeholder: label,
+    };
+    return (
+      <div data-content-language={lang} hidden={lang !== activeLanguage}>
+        <div className="flex min-w-0 flex-col gap-[var(--space-1)]">
+          <label htmlFor={id} className="text-sm font-medium text-ink-600">{translatedLabel}</label>
+          <div className={inline.surface} data-appearance={appearance} lang={lang}>
+            <span aria-hidden="true" className={inline.measure}>{value || label}{"\u200b"}</span>
+            <textarea
+              {...control}
+              rows={1}
+              onKeyDown={singleLine ? (event) => {
+                if (event.key === "Enter" && !event.nativeEvent.isComposing) event.preventDefault();
+              } : undefined}
+            />
+          </div>
+          {hint ? <p id={`${id}-hint`} className="m-0 text-sm text-ink-600">{hint}</p> : null}
+          {error ? <ErrorMessage id={`${id}-error`}>{error}</ErrorMessage> : null}
+          {count}
+        </div>
+      </div>
+    );
+  }
+
+  const options = { ...common, lang, label: translatedLabel, hint, error };
   return (
     <div className="flex min-w-0 flex-col gap-[var(--space-1)]">
-      {multiline ? <Textarea {...common} rows={rows ?? 5} /> : <TextInput {...common} />}
-      {maxLength ? <Counted value={value} max={maxLength} /> : null}
+      {multiline ? <Textarea {...options} rows={rows ?? 5} /> : <TextInput {...options} />}
+      {count}
     </div>
   );
 }
 
-/** Thai first, with the English box under it, in one column. */
+/** The canvas displays the active language while keeping both values in the form. */
 export function BilingualTextField(props: BilingualProps) {
+  const documentLanguage = useDocumentLanguage();
+  const language = documentLanguage?.language;
+  // In a repeater, the active control needs to be first for add/remove focus.
+  const languages = language ? [language, OTHER_LOCALE[language]] : LOCALES;
   return (
     <div className="flex flex-col gap-[var(--space-4)]">
-      <LanguageBox {...props} lang="th" />
-      <LanguageBox {...props} lang="en" />
+      {languages.map((lang) => <LanguageField key={lang} {...props} lang={lang} activeLanguage={language} />)}
     </div>
   );
 }
 
-/** Same as `BilingualTextField` with multi-line boxes. */
+/** Same as `BilingualTextField` with multi-line editing. */
 export function BilingualTextarea(props: BilingualProps) {
   return <BilingualTextField {...props} multiline />;
 }
@@ -209,7 +252,8 @@ export function CheckboxField({ name, label, hint, defaultChecked }: { name: str
           name={name}
           form={formId}
           defaultChecked={defaultChecked}
-          aria-describedby={hint ? `${id}-hint` : undefined}
+          aria-describedby={describedBy(id, { hasHint: Boolean(hint), hasError: Boolean(errors[name]) })}
+          aria-invalid={errors[name] ? true : undefined}
           className="m-0 mt-[calc((var(--target-min)-1.25rem)/2)] size-5 min-h-0 min-w-0 shrink-0"
         />
         <label htmlFor={id} className="flex min-h-[var(--target-min)] flex-1 flex-col justify-center text-base text-ink-900">
@@ -221,7 +265,7 @@ export function CheckboxField({ name, label, hint, defaultChecked }: { name: str
           ) : null}
         </label>
       </div>
-      {errors[name] ? <p className="m-0 text-base font-medium text-error">{errors[name]}</p> : null}
+      {errors[name] ? <ErrorMessage id={`${id}-error`}>{errors[name]}</ErrorMessage> : null}
     </div>
   );
 }
@@ -233,7 +277,7 @@ export function CheckboxField({ name, label, hint, defaultChecked }: { name: str
  * stays put, because changing a published address breaks links.
  */
 export function SlugField({ name = "slug", label, hint, defaultValue, suggestFrom = "title.en" }: { name?: string; label: string; hint?: ReactNode; defaultValue?: string; suggestFrom?: string }) {
-  const { errors, locale } = useContentForm();
+  const { errors, locale, formId } = useContentForm();
   const ref = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState(defaultValue ?? "");
   const followed = useRef(!defaultValue);
@@ -241,7 +285,7 @@ export function SlugField({ name = "slug", label, hint, defaultValue, suggestFro
   useEffect(() => {
     const form = ref.current?.querySelector("input")?.form;
     const source = form?.elements.namedItem(suggestFrom);
-    if (!form || !(source instanceof HTMLInputElement)) return;
+    if (!(source instanceof HTMLInputElement || source instanceof HTMLTextAreaElement)) return;
     const onInput = () => {
       if (followed.current) setValue(slugify(source.value));
     };
@@ -254,6 +298,7 @@ export function SlugField({ name = "slug", label, hint, defaultValue, suggestFro
     <TextInput
       id={fieldId(name)}
       name={name}
+      form={formId}
       label={label}
       hint={hint ?? a("hintSlug", locale)}
       error={errors[name]}

@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, DateTimeField, EnumRadios, TextField } from "@/components/admin/content/fields";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { Stack } from "@/components/ui";
@@ -52,29 +53,27 @@ export async function AlertForm({ locale, id, saved }: { locale: Locale; id?: st
       listHref={contentPath(def)}
       saved={saved}
     >
-      <FormSection icon="alerts" legend={L("alertsGroupMessage")} id="g-message">
-        <Stack space={4}>
-          <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: alert?.titleTh, en: alert?.titleEn }} />
-          <BilingualTextarea
-            name="body"
-            label={L("alertsFieldBody")}
-            hint={L("alertsHintBody")}
-            maxLength={1000}
-            rows={4}
-            defaultValue={{ th: alert?.bodyTh, en: alert?.bodyEn }}
-          />
-          <TextField
-            name="moreInfoUrl"
-            label={L("alertsFieldMoreInfo")}
-            hint={L("alertsHintMoreInfo")}
-            type="url"
-            inputMode="url"
-            defaultValue={alert?.moreInfoUrl}
-            className="max-w-[32rem]"
-          />
-        </Stack>
-      </FormSection>
-
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: alert?.titleTh, en: alert?.titleEn }} />
+        <BilingualTextarea
+          appearance="lead"
+          name="body"
+          label={L("alertsFieldBody")}
+          hint={L("alertsHintBody")}
+          maxLength={1000}
+          rows={4}
+          defaultValue={{ th: alert?.bodyTh, en: alert?.bodyEn }}
+        />
+        <TextField
+          name="moreInfoUrl"
+          label={L("alertsFieldMoreInfo")}
+          hint={L("alertsHintMoreInfo")}
+          type="url"
+          inputMode="url"
+          defaultValue={alert?.moreInfoUrl}
+          className="max-w-[32rem]"
+        />
+      </DocumentCanvas>
       <FormSection icon="places" legend={L("alertsGroupWhere")} id="g-where">
         <Stack space={4}>
           <EnumRadios

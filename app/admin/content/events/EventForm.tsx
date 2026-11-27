@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, CheckboxField, DateTimeField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { ImagePicker } from "@/components/admin/content/ImagePicker";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
@@ -22,10 +23,9 @@ import { deleteEvent, saveEvent } from "./actions";
 export async function EventForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
   const db = getDb();
   const def = getContentType("events")!;
-  const [refs, placeChoices] = await Promise.all([loadRichTextRefs(db), loadChoices(db, getContentType("places")!)]);
-
   const [event] = id ? await db.select().from(events).where(eq(events.id, id)) : [];
   if (id && !event) notFound();
+  const [refs, placeChoices] = await Promise.all([loadRichTextRefs(db, event?.coverImageId ? [event.coverImageId] : [], [event?.bodyTh, event?.bodyEn]), loadChoices(db, getContentType("places")!)]);
   const names = event ? await userNames(db, [event.updatedBy]) : new Map<string, string>();
 
   const record: ContentRecordInfo | undefined = event
@@ -52,26 +52,24 @@ export async function EventForm({ locale, id, saved }: { locale: Locale; id?: st
       saved={saved}
       details={
         <>
+          <SlugField label={L("fieldSlug")} defaultValue={event?.slug} />
           <EnumSelect name="owner" label={L("fieldOwner")} defaultValue={event?.owner ?? ""} options={[{ value: "", label: L("choiceSelect") }, ...ownerOptions(locale)]} />
           <EnumSelect name="category" label={L("fieldCategory")} defaultValue={event?.category ?? ""} options={[{ value: "", label: L("choiceNone") }, ...categoryOptions(locale)]} />
         </>
       }
     >
-      <FormSection icon="edit" legend={L("eventsGroupAbout")} id="g-about">
-        <Stack space={4}>
-          <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: event?.titleTh, en: event?.titleEn }} />
-          <SlugField label={L("fieldSlug")} defaultValue={event?.slug} />
-          <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("eventsHintSummary")} maxLength={500} rows={3} defaultValue={{ th: event?.summaryTh, en: event?.summaryEn }} />
-          <BilingualRichTextField name="body" label={L("eventsFieldBody")} refs={refs} defaultValue={{ th: event?.bodyTh, en: event?.bodyEn }} />
-          <ImagePicker
-            name="cover"
-            label={L("fieldCoverImage")}
-            images={refs.images}
-            storageConfigured={refs.storageConfigured}
-            defaultValue={event?.coverImageId ? [event.coverImageId] : []}
-          />
-        </Stack>
-      </FormSection>
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: event?.titleTh, en: event?.titleEn }} />
+        <BilingualTextarea appearance="lead" name="summary" label={L("fieldSummary")} hint={L("eventsHintSummary")} maxLength={500} rows={3} defaultValue={{ th: event?.summaryTh, en: event?.summaryEn }} />
+        <ImagePicker
+          name="cover"
+          label={L("fieldCoverImage")}
+          images={refs.images}
+          storageConfigured={refs.storageConfigured}
+          defaultValue={event?.coverImageId ? [event.coverImageId] : []}
+        />
+        <BilingualRichTextField name="body" label={L("eventsFieldBody")} refs={refs} defaultValue={{ th: event?.bodyTh, en: event?.bodyEn }} />
+      </DocumentCanvas>
 
       <FormSection icon="events" legend={L("eventsGroupWhen")} id="g-when">
         <Stack space={4}>

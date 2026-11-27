@@ -14,13 +14,15 @@ export function FormCalloutBlock({
   form,
   locale,
   headingLevel,
+  preview,
 }: {
   attrs: FormCalloutAttrs;
   form: FormSummary | undefined;
   locale: Locale;
   headingLevel: HeadingLevel;
+  preview?: boolean;
 }) {
-  if (!attrs?.formId || !form || !form.isActive) return null;
+  if (!attrs?.formId || !form || (!form.isActive && !preview)) return null;
 
   const record = {
     title: form.title,
@@ -30,5 +32,5 @@ export function FormCalloutBlock({
     signInType: form.signInType,
   };
 
-  return <FormCallout form={record} locale={locale} headingLevel={headingLevel} />;
+  return <FormCallout form={record} locale={locale} headingLevel={headingLevel} preview={preview} />;
 }

@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
 import { BilingualTextarea, BilingualTextField, CheckboxField, EnumSelect, SlugField } from "@/components/admin/content/fields";
 import { NotificationBanner, Stack } from "@/components/ui";
@@ -78,9 +79,13 @@ export async function OrganisationForm({ locale, id, saved }: { locale: Locale; 
           </ul>
         </NotificationBanner>
       ) : null}
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: org?.nameTh, en: org?.nameEn }} />
+        <BilingualTextarea appearance="lead" name="description" label={L("dirFieldDescription")} maxLength={1500} rows={4} defaultValue={{ th: org?.descriptionTh, en: org?.descriptionEn }} />
+        <BilingualTextField appearance="text" name="location" label={L("dirFieldLocation")} hint={L("dirHintLocation")} maxLength={200} defaultValue={{ th: org?.locationTh, en: org?.locationEn }} />
+      </DocumentCanvas>
       <FormSection icon="organisations" id="org-about" legend={L("dirGroupAbout")}>
         <Stack space={4}>
-          <BilingualTextField name="name" label={L("dirFieldName")} maxLength={150} defaultValue={{ th: org?.nameTh, en: org?.nameEn }} />
           <SlugField label={L("fieldSlug")} suggestFrom="name.en" defaultValue={org?.slug} />
           <EnumSelect
             name="type"
@@ -98,8 +103,6 @@ export async function OrganisationForm({ locale, id, saved }: { locale: Locale; 
             options={[{ value: "", label: L("choiceSelect") }, ...DIRECTORY_ORGANISATION_SCOPES.map((value) => ({ value, label: L(SCOPE_KEY[value]) }))]}
           />
           <BilingualTextField name="programme" label={L("dirFieldProgramme")} hint={L("dirHintProgramme")} maxLength={150} defaultValue={{ th: org?.programmeNameTh, en: org?.programmeNameEn }} />
-          <BilingualTextarea name="description" label={L("dirFieldDescription")} maxLength={1500} rows={4} defaultValue={{ th: org?.descriptionTh, en: org?.descriptionEn }} />
-          <BilingualTextField name="location" label={L("dirFieldLocation")} hint={L("dirHintLocation")} maxLength={200} defaultValue={{ th: org?.locationTh, en: org?.locationEn }} />
           <CheckboxField name="isActive" label={L("dirFieldActive")} hint={L("dirHintActive")} defaultChecked={org?.isActive ?? true} />
         </Stack>
       </FormSection>

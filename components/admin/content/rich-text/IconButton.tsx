@@ -14,7 +14,7 @@ interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
 }
 
 export const ICON_BUTTON =
-  "inline-flex size-8 min-h-0 min-w-0 shrink-0 items-center justify-center rounded-control text-ink-900 hover:bg-surface-sunk " +
+  "inline-flex size-8 min-h-[var(--target-min)] min-w-[var(--target-min)] shrink-0 items-center justify-center rounded-control text-ink-900 hover:bg-surface-sunk " +
   "aria-pressed:bg-action aria-pressed:text-action-ink aria-pressed:hover:bg-action-hover " +
   "disabled:cursor-not-allowed disabled:opacity-50 aria-expanded:bg-surface-sunk";
 

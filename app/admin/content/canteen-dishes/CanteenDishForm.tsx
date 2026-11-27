@@ -1,6 +1,7 @@
 import { asc, desc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextField, CheckboxField, DateField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { ImagePicker } from "@/components/admin/content/ImagePicker";
 import { ReferencePicker } from "@/components/admin/content/ReferencePicker";
@@ -19,7 +20,7 @@ import { RepeatRows, type RowValue } from "../canteen-stalls/RepeatRows";
 import { labelled, todayBangkok } from "../canteen-stalls/shared";
 import { deleteCanteenDish, saveCanteenDish } from "./actions";
 import { FormSection } from "@/components/admin/content/FormSection";
-import { Banknote, Tags, Camera, Languages } from "lucide-react";
+import { Banknote, Tags, Languages } from "lucide-react";
 
 /** The dish form, for the "new" page (no `id`; `stallId` preselects the stall) and the edit page. */
 export async function CanteenDishForm({ locale, id, saved, stallId }: { locale: Locale; id?: string; saved?: string; stallId?: string }) {
@@ -30,7 +31,7 @@ export async function CanteenDishForm({ locale, id, saved, stallId }: { locale: 
   const [dish] = id ? await db.select().from(canteenDishes).where(eq(canteenDishes.id, id)) : [];
   if (id && !dish) notFound();
   const [images, stalls, canonicals, variants, history, names] = await Promise.all([
-    listImageChoices(db),
+    listImageChoices(db, dish?.photoId ? [dish.photoId] : []),
     db.select({ id: canteenStalls.id, number: canteenStalls.number, nameTh: canteenStalls.nameTh, nameEn: canteenStalls.nameEn }).from(canteenStalls).orderBy(asc(canteenStalls.number)),
     db.select({ id: canonicalDishes.id, nameTh: canonicalDishes.nameTh, nameEn: canonicalDishes.nameEn }).from(canonicalDishes).orderBy(asc(canonicalDishes.nameEn)),
     dish ? db.select().from(canteenDishVariants).where(eq(canteenDishVariants.dishId, dish.id)).orderBy(asc(canteenDishVariants.position)) : [],
@@ -64,8 +65,17 @@ export async function CanteenDishForm({ locale, id, saved, stallId }: { locale: 
       listHref={dish ? `${contentPath(def)}?stall=${dish.stallId}` : contentPath(def)}
       saved={saved}
     >
-      <FormSection id="dish-name" icon="dishes" legend={L("cfSecNameStall")}>
-        <BilingualTextField name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: dish?.nameTh, en: dish?.nameEn }} />
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="name" label={L("canteenFieldName")} maxLength={200} defaultValue={{ th: dish?.nameTh, en: dish?.nameEn }} />
+        <ImagePicker
+          name="photo"
+          label={L("canteenFieldPhoto")}
+          images={images}
+          storageConfigured={isStorageConfigured()}
+          defaultValue={dish?.photoId ? [dish.photoId] : []}
+        />
+      </DocumentCanvas>
+      <FormSection id="dish-name" icon="dishes" legend={L("canteenFieldStall")}>
         <SlugField label={L("fieldSlug")} suggestFrom="name.en" hint={L("canteenHintDishSlug")} defaultValue={dish?.slug} />
         <ReferencePicker name="stallId" label={L("canteenFieldStall")} options={stallChoice} defaultValue={dish?.stallId ?? preselected} emptyLabel={L("choiceSelect")} />
         <TextField name="menuNumber" label={L("canteenFieldMenuNumber")} hint={L("canteenHintMenuNumber")} maxLength={20} className="max-w-[10rem]" defaultValue={dish?.menuNumber} />
@@ -141,15 +151,8 @@ export async function CanteenDishForm({ locale, id, saved, stallId }: { locale: 
           ]}
         />
       </FormSection>
-      <FormSection id="dish-links" icon={Camera} legend={L("cfSecLinksPhoto")}>
+      <FormSection id="dish-links" icon="canonicalDishes" legend={L("canteenFieldCanonical")}>
         <ReferencePicker name="canonicalId" label={L("canteenFieldCanonical")} hint={L("canteenHintCanonical")} options={canonicalChoice} defaultValue={dish?.canonicalId} />
-        <ImagePicker
-          name="photo"
-          label={L("canteenFieldPhoto")}
-          images={images}
-          storageConfigured={isStorageConfigured()}
-          defaultValue={dish?.photoId ? [dish.photoId] : []}
-        />
       </FormSection>
     </ContentForm>
   );

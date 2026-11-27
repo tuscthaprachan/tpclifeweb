@@ -1,7 +1,7 @@
 import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { FormSection } from "@/components/admin/content/FormSection";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualListField, BilingualTextarea, BilingualTextField, DateTimeField, EnumSelect, SlugField } from "@/components/admin/content/fields";
 import { ImagePicker } from "@/components/admin/content/ImagePicker";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
@@ -24,8 +24,6 @@ import { deleteNewsPost, saveNewsPost } from "./actions";
 export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: string; saved?: string }) {
   const db = getDb();
   const def = getContentType("news")!;
-  const refs = await loadRichTextRefs(db);
-
   const [post] = id ? await db.select().from(newsPosts).where(eq(newsPosts.id, id)) : [];
   if (id && !post) notFound();
   const [gallery, tags, names] = post
@@ -35,6 +33,7 @@ export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: str
         userNames(db, [post.updatedBy]),
       ])
     : [[], [], new Map<string, string>()];
+  const refs = await loadRichTextRefs(db, [...(post?.coverImageId ? [post.coverImageId] : []), ...gallery.map((g) => g.imageId)], [post?.bodyTh, post?.bodyEn]);
 
   const record: ContentRecordInfo | undefined = post
     ? {
@@ -60,6 +59,7 @@ export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: str
       saved={saved}
       details={
         <>
+          <SlugField label={L("fieldSlug")} defaultValue={post?.slug} />
           <EnumSelect
             name="owner"
             label={L("fieldOwner")}
@@ -77,15 +77,9 @@ export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: str
         </>
       }
     >
-      <FormSection id="news-title" icon="edit" legend={L("cfSecTitleSummary")}>
-        <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: post?.titleTh, en: post?.titleEn }} />
-        <SlugField label={L("fieldSlug")} defaultValue={post?.slug} />
-        <BilingualTextarea name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: post?.summaryTh, en: post?.summaryEn }} />
-      </FormSection>
-      <FormSection id="news-body" icon="guides" legend={L("cfSecBody")}>
-        <BilingualRichTextField name="body" label={L("fieldBody")} refs={refs} defaultValue={{ th: post?.bodyTh, en: post?.bodyEn }} />
-      </FormSection>
-      <FormSection id="news-images" icon="images" legend={L("cfSecImages")}>
+      <DocumentCanvas locale={locale}>
+        <BilingualTextField appearance="title" name="title" label={L("fieldTitle")} maxLength={200} defaultValue={{ th: post?.titleTh, en: post?.titleEn }} />
+        <BilingualTextarea appearance="lead" name="summary" label={L("fieldSummary")} hint={L("hintSummary")} maxLength={500} rows={3} defaultValue={{ th: post?.summaryTh, en: post?.summaryEn }} />
         <ImagePicker
           name="cover"
           label={L("fieldCoverImage")}
@@ -93,6 +87,7 @@ export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: str
           storageConfigured={refs.storageConfigured}
           defaultValue={post?.coverImageId ? [post.coverImageId] : []}
         />
+        <BilingualRichTextField name="body" label={L("fieldBody")} refs={refs} defaultValue={{ th: post?.bodyTh, en: post?.bodyEn }} />
         <ImagePicker
           name="gallery"
           label={L("fieldGallery")}
@@ -102,7 +97,7 @@ export async function NewsForm({ locale, id, saved }: { locale: Locale; id?: str
           storageConfigured={refs.storageConfigured}
           defaultValue={gallery.map((g) => g.imageId)}
         />
-      </FormSection>
+      </DocumentCanvas>
     </ContentForm>
   );
 }

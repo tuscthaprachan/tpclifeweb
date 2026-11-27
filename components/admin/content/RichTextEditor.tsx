@@ -1,7 +1,7 @@
 "use client";
 
 import { Extension, type Range } from "@tiptap/core";
-import { NodeSelection } from "@tiptap/pm/state";
+import { TextSelection } from "@tiptap/pm/state";
 import { EditorContent, ReactNodeViewRenderer, useEditor, useEditorState, type Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import {
@@ -9,6 +9,7 @@ import {
   useEffect,
   useId,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useReducer,
   useRef,
@@ -27,12 +28,13 @@ import type { ImageChoice } from "@/lib/admin/content/images";
 import { fieldId } from "@/lib/admin/content/form-state";
 import { a, type AdminKey } from "@/lib/i18n/admin";
 import { BLOCK_DEFAULTS, normaliseEditorDoc, type BlockType } from "@/lib/rich-text/editor";
-import { CUSTOM_NODES, isRichTextEmpty } from "@/lib/rich-text/schema";
+import { CUSTOM_NODES, isRichTextEmpty, parseRichTextDoc } from "@/lib/rich-text/schema";
 import { textStats } from "@/lib/rich-text/stats";
 import { richTextToPlainText } from "@/lib/rich-text/text";
 import { customBlockNodes, richTextExtensions } from "@/lib/rich-text/tiptap";
 import type { RichTextDoc } from "@/lib/rich-text/types";
 import { useContentForm } from "./context";
+import { useDocumentLanguage } from "./document-language";
 import { PortalDialog } from "./PortalDialog";
 import { BlockCard } from "./rich-text/BlockCard";
 import { EditorBridge } from "./rich-text/bridge";
@@ -162,6 +164,7 @@ interface RichTextEditorProps {
   handleRef?: Ref<RichTextEditorHandle>;
   /** Extra controls beside the label, for example "Copy layout from Thai". */
   headerExtra?: ReactNode;
+  active?: boolean;
 }
 
 /**
@@ -170,8 +173,9 @@ interface RichTextEditorProps {
  * a hidden input named `name` as JSON in either mode; the server checks it
  * again with `parseRichTextDoc`.
  */
-export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, handleRef, headerExtra }: RichTextEditorProps) {
+export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, handleRef, headerExtra, active = true }: RichTextEditorProps) {
   const { errors, locale, markDirty } = useContentForm();
+  const documentLanguage = useDocumentLanguage();
   const uid = useId();
   const id = fieldId(name);
   const error = errors[name];
@@ -201,6 +205,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   const jsonRef = useRef(json);
   const pastePos = useRef<number | null>(null);
   const hiddenRef = useRef<HTMLInputElement>(null);
+  const pendingRestore = useRef<RichTextDoc | null>(null);
   const [bridge] = useState(() => new EditorBridge());
 
   const liveRefs = useMemo<RichTextRefs>(() => ({ ...refs, images }), [refs, images]);
@@ -208,20 +213,27 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   const commit = useCallback((doc: RichTextDoc) => {
     const next = JSON.stringify(doc);
     jsonRef.current = next;
+    // The form may snapshot in-flight edits before React renders the value.
+    if (hiddenRef.current) hiddenRef.current.value = next;
     setJson(next);
     setPlain(richTextToPlainText(doc));
+  }, []);
+
+  const addImage = useCallback((image: ImageChoice) => {
+    setImages((current) => (current.some((item) => item.id === image.id) ? current : [image, ...current]));
   }, []);
 
   useEffect(() => {
     bridge.update({
       ctx: {
         locale,
+        bodyLocale: lang,
         refs: liveRefs,
-        onEdit: (type, pos, attrs) => dispatch({ type: "openBlock", block: { type, mode: "edit", pos, attrs } }),
+        onImageUploaded: addImage,
         announce,
       },
     });
-  }, [bridge, locale, liveRefs, announce]);
+  }, [bridge, locale, lang, liveRefs, addImage, announce]);
 
   const extensions = useMemo(
     () => [
@@ -246,14 +258,15 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        id,
+        id: mode === "visual" ? id : `${id}-visual`,
         role: "textbox",
         "aria-multiline": "true",
+        "aria-invalid": error ? "true" : "false",
         "aria-haspopup": "listbox",
         "aria-labelledby": `${uid}-label`,
         "aria-describedby": [hint ? `${uid}-hint` : "", error ? `${id}-error` : ""].filter(Boolean).join(" "),
         lang,
-        class: "prose-editor min-h-[14rem] px-[var(--space-3)] py-[var(--space-3)] outline-none",
+        class: "prose-editor min-h-[14rem] min-w-0 break-words py-[var(--space-6)] text-base text-ink-900 sm:py-[var(--space-8)]",
       },
       handlePaste: (_view, event) => {
         const file = imageFile(event.clipboardData?.files);
@@ -275,6 +288,43 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
       markDirty();
     },
   });
+  useLayoutEffect(() => {
+    const input = hiddenRef.current;
+    if (!input) return;
+
+    const restoreEditor = (doc: RichTextDoc) => {
+      if (!editor) {
+        pendingRestore.current = doc;
+        return;
+      }
+      editor.commands.setContent(isRichTextEmpty(doc) ? "" : doc, { emitUpdate: false });
+      pendingRestore.current = null;
+    };
+
+    const restorePayload = () => {
+      if (input.value === jsonRef.current) return;
+      let doc: RichTextDoc;
+      try {
+        doc = parseRichTextDoc(JSON.parse(input.value));
+      } catch {
+        input.value = jsonRef.current;
+        return;
+      }
+      restoreEditor(doc);
+      commit(doc);
+      if (mode === "markdown" && mdLib.current) {
+        if (mdTimer.current) clearTimeout(mdTimer.current);
+        mdTimer.current = null;
+        mdRef.current = mdLib.current.docToMarkdown(doc);
+        dispatch({ type: "markdownReplaced", md: mdRef.current });
+      }
+    };
+
+    if (editor && pendingRestore.current) restoreEditor(pendingRestore.current);
+    input.addEventListener("input", restorePayload);
+    return () => input.removeEventListener("input", restorePayload);
+  }, [editor, commit, mode]);
+
   const state = useToolbarState(editor);
 
   const T = (key: AdminKey, values?: Record<string, string | number>) => a(key, locale, values);
@@ -491,19 +541,32 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
   function onMarkdownChange(value: string) {
     mdRef.current = value;
     dispatch({ type: "markdownEdited", md: value });
-    markDirty();
     cancelMarkdownTimer();
     mdTimer.current = setTimeout(() => {
       mdTimer.current = null;
-      parseMarkdown(value);
+      if (parseMarkdown(value)) markDirty();
     }, 300);
+    markDirty();
   }
 
   useEffect(() => cancelMarkdownTimer, []);
 
   const flushRef = useRef(flushMarkdown);
+  const handleSubmitRef = useRef<(event: Event) => void>(() => {});
   useEffect(() => {
     flushRef.current = flushMarkdown;
+    handleSubmitRef.current = (event) => {
+      if (event.defaultPrevented || ui.mode.kind !== "markdown" || !ui.mode.dirty) return;
+      cancelMarkdownTimer();
+      if (parseMarkdown(mdRef.current)) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      documentLanguage?.setLanguage(lang);
+      const disclosure = wrapRef.current?.closest("details");
+      if (disclosure) disclosure.open = true;
+      requestAnimationFrame(() => wrapRef.current?.querySelector("textarea")?.focus());
+    };
   });
 
   useEffect(() => {
@@ -512,9 +575,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
     const onFormData = (event: FormDataEvent) => {
       if (mdTimer.current) event.formData.set(name, JSON.stringify(flushRef.current()));
     };
-    const onSubmit = () => {
-      if (mdTimer.current && hiddenRef.current) hiddenRef.current.value = JSON.stringify(flushRef.current());
-    };
+    const onSubmit = (event: Event) => handleSubmitRef.current(event);
     form.addEventListener("formdata", onFormData);
     form.addEventListener("submit", onSubmit, true);
     return () => {
@@ -553,7 +614,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           triggerIcon: state.h2 ? "rteHeading2" : state.h3 ? "rteHeading3" : state.h4 ? "rteHeading4" : "rteParagraph",
           radio: true,
           width: 64,
-          rank: 6,
+          rank: 3,
           actions: [
             act("p", T("rteParagraph"), "rteParagraph", { pressed: state.p, shortcut: keyLabel("paragraph"), run: () => chain().setParagraph().run() }),
             act("h2", T("rteHeading"), "rteHeading2", { pressed: state.h2, shortcut: keyLabel("heading2"), run: () => chain().setHeading({ level: 2 }).run() }),
@@ -566,11 +627,11 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           kind: "buttons",
           label: T("edGroupMarks"),
           actions: [
-            act("bold", T("rteBold"), "rteBold", { rank: 1, pressed: state.bold, shortcut: keyLabel("bold"), run: () => chain().toggleBold().run() }),
-            act("italic", T("rteItalic"), "rteItalic", { rank: 2, pressed: state.italic, shortcut: keyLabel("italic"), run: () => chain().toggleItalic().run() }),
-            act("underline", T("edUnderline"), "rteUnderline", { rank: 10, pressed: state.underline, shortcut: keyLabel("underline"), run: () => chain().toggleUnderline().run() }),
-            act("strike", T("edStrike"), "rteStrike", { rank: 11, pressed: state.strike, shortcut: keyLabel("strike"), run: () => chain().toggleStrike().run() }),
-            act("code", T("edCode"), "rteCode", { rank: 12, pressed: state.code, shortcut: keyLabel("code"), run: () => chain().toggleCode().run() }),
+            act("bold", T("rteBold"), "rteBold", { rank: 2, pressed: state.bold, shortcut: keyLabel("bold"), run: () => chain().toggleBold().run() }),
+            act("italic", T("rteItalic"), "rteItalic", { rank: 4, pressed: state.italic, shortcut: keyLabel("italic"), run: () => chain().toggleItalic().run() }),
+            act("underline", T("edUnderline"), "rteUnderline", { overflow: true, pressed: state.underline, shortcut: keyLabel("underline"), run: () => chain().toggleUnderline().run() }),
+            act("strike", T("edStrike"), "rteStrike", { overflow: true, pressed: state.strike, shortcut: keyLabel("strike"), run: () => chain().toggleStrike().run() }),
+            act("code", T("edCode"), "rteCode", { overflow: true, pressed: state.code, shortcut: keyLabel("code"), run: () => chain().toggleCode().run() }),
           ],
         },
         {
@@ -578,9 +639,9 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           kind: "buttons",
           label: T("edGroupLists"),
           actions: [
-            act("bullets", T("rteBullets"), "rteBullets", { rank: 4, pressed: state.bullet, shortcut: keyLabel("bullets"), run: () => chain().toggleBulletList().run() }),
-            act("numbers", T("rteNumbers"), "rteNumbers", { rank: 5, pressed: state.ordered, shortcut: keyLabel("numbers"), run: () => chain().toggleOrderedList().run() }),
-            act("quote", T("rteQuote"), "rteQuote", { rank: 13, pressed: state.quote, shortcut: keyLabel("quote"), run: () => chain().toggleBlockquote().run() }),
+            act("bullets", T("rteBullets"), "rteBullets", { overflow: true, pressed: state.bullet, shortcut: keyLabel("bullets"), run: () => chain().toggleBulletList().run() }),
+            act("numbers", T("rteNumbers"), "rteNumbers", { overflow: true, pressed: state.ordered, shortcut: keyLabel("numbers"), run: () => chain().toggleOrderedList().run() }),
+            act("quote", T("rteQuote"), "rteQuote", { overflow: true, pressed: state.quote, shortcut: keyLabel("quote"), run: () => chain().toggleBlockquote().run() }),
           ],
         },
         {
@@ -588,8 +649,8 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           kind: "buttons",
           label: T("edGroupLink"),
           actions: [
-            act("link", T("rteLink"), "rteLink", { rank: 3, pressed: state.link, shortcut: keyLabel("link"), run: openLink }),
-            act("unlink", T("edUnlink"), "rteUnlink", { rank: 14, disabled: !state.link, run: () => chain().extendMarkRange("link").unsetLink().run() }),
+            act("link", T("rteLink"), "rteLink", { rank: 5, pressed: state.link, shortcut: keyLabel("link"), run: openLink }),
+            act("unlink", T("edUnlink"), "rteUnlink", { overflow: true, disabled: !state.link, run: () => chain().extendMarkRange("link").unsetLink().run() }),
           ],
         },
         {
@@ -599,7 +660,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           triggerIcon: "add",
           triggerText: T("edInsert"),
           width: 96,
-          rank: 9,
+          rank: 1,
           actions: insertDefs.map((d, i) => act(d.id, d.label, d.icon, { shortcut: d.shortcut, separator: i === 4, run: () => d.run() })),
         },
         {
@@ -607,8 +668,8 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           kind: "buttons",
           label: T("edGroupHistory"),
           actions: [
-            act("undo", T("rteUndo"), "rteUndo", { rank: 7, disabled: !state.canUndo, shortcut: keyLabel("undo"), run: () => chain().undo().run() }),
-            act("redo", T("rteRedo"), "rteRedo", { rank: 8, disabled: !state.canRedo, shortcut: keyLabel("redo"), run: () => chain().redo().run() }),
+            act("undo", T("rteUndo"), "rteUndo", { overflow: true, disabled: !state.canUndo, shortcut: keyLabel("undo"), run: () => chain().undo().run() }),
+            act("redo", T("rteRedo"), "rteRedo", { overflow: true, disabled: !state.canRedo, shortcut: keyLabel("redo"), run: () => chain().redo().run() }),
           ],
         },
         {
@@ -617,7 +678,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           label: T("edGroupTools"),
           actions: [
             act("find", T("edFind"), "search", { pressed: findOpen, shortcut: keyLabel("find"), run: () => dispatch({ type: "toggleFind" }) }),
-            act("shortcuts", T("edShortcuts"), "rteKeyboard", { run: () => dispatch({ type: "openShortcuts" }) }),
+            act("shortcuts", T("edShortcuts"), "rteKeyboard", { overflow: true, run: () => dispatch({ type: "openShortcuts" }) }),
             act("full", full ? T("edFullscreenExit") : T("edFullscreen"), full ? "rteFullscreenExit" : "rteFullscreen", { pressed: full, shortcut: keyLabel("fullscreen"), run: toggleFull }),
           ],
         },
@@ -684,10 +745,10 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
       aria-modal={full ? true : undefined}
       aria-label={full ? T("edFullscreenLabel", { label }) : undefined}
       onKeyDown={onWrapperKey}
-      className={full ? "fixed inset-0 z-50 flex flex-col gap-[var(--space-2)] overflow-auto bg-surface p-[var(--space-4)]" : "flex flex-col gap-[var(--space-1)]"}
+      className={full ? "fixed inset-0 z-50 flex flex-col gap-[var(--space-2)] overflow-auto bg-surface p-[var(--space-4)]" : "flex min-w-0 flex-col gap-[var(--space-2)]"}
     >
       <div className="flex flex-wrap items-center justify-between gap-[var(--space-2)]">
-        <p id={`${uid}-label`} className="m-0 text-base font-medium text-ink-900">
+        <p id={`${uid}-label`} className="m-0 text-sm font-semibold text-ink-900">
           {label}
         </p>
         <div className="flex flex-wrap items-center gap-[var(--space-2)]">
@@ -713,11 +774,11 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           {hint}
         </p>
       ) : null}
-      <input ref={hiddenRef} type="hidden" name={name} value={json} />
-      <div className={`flex min-h-0 flex-col rounded-control bg-surface ${full ? "flex-1" : ""} ${error ? "border-[length:var(--border-width-thick)] border-error" : "border border-line-strong"}`}>
+      <input ref={hiddenRef} type="hidden" name={name} value={json} data-restore-editor />
+      <div className={`flex min-h-0 min-w-0 flex-col bg-surface ${full ? "flex-1" : ""}`}>
         {visual ? (
           <>
-            <Toolbar groups={groups} label={T("rteToolbar", { label })} controls={id} moreLabel={T("edMore")} onAfterMenu={() => editor?.commands.focus()} />
+            <Toolbar groups={groups} label={T("rteToolbar", { label })} controls={id} moreLabel={T("edMore")} />
             {editor && findOpen ? <FindPanel editor={editor} locale={locale} focusNonce={ui.findFocus} onClose={() => dispatch({ type: "close", overlay: "find" })} /> : null}
             {editor && state.inTable ? (
               <div role="toolbar" aria-label={T("edTableBar")} className="flex flex-wrap items-center gap-[2px] border-b border-line bg-surface-alt p-[var(--space-1)]">
@@ -770,15 +831,17 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           </>
         ) : null}
         <div hidden={!visual} className={full ? "min-h-0 flex-1 overflow-y-auto" : undefined}>
-          <EditorContent editor={editor} />
+          <EditorContent editor={editor} className="mx-auto w-full max-w-[var(--width-reading)]" />
         </div>
-        {editor && visual ? (
+        {editor && visual && active ? (
           <BubbleMenu
             editor={editor}
-            options={{ placement: "top", offset: 8 }}
-            shouldShow={({ editor: e, state: s }) => e.isEditable && !s.selection.empty && !(s.selection instanceof NodeSelection) && !e.isActive("codeBlock") && !findOpen}
+            options={{ placement: "top", offset: 8, flip: true, shift: true }}
+            shouldShow={({ editor: e, state: s }) =>
+              e.isEditable && e.isFocused && s.selection instanceof TextSelection && !s.selection.empty && !e.isActive("codeBlock") && ui.overlay.kind === "none"
+            }
           >
-            <div role="toolbar" aria-label={T("edBubbleLabel")} className="flex gap-[2px] rounded-control border border-line-strong bg-surface-overlay p-[2px] shadow-[var(--shadow-elevation)]">
+            <div role="toolbar" aria-label={T("edBubbleLabel")} className="flex max-w-[calc(100vw-var(--space-4))] flex-wrap gap-[var(--space-1)] rounded-control border border-line-strong bg-surface-overlay p-[var(--space-1)] shadow-[var(--elevation)]">
               {(groups.find((g) => g.id === "marks")?.actions ?? []).map((action) => (
                 <IconButton key={action.id} icon={action.icon} label={action.shortcut ? `${action.label} (${action.shortcut})` : action.label} pressed={action.pressed} onClick={action.run} tabIndex={-1} />
               ))}
@@ -788,12 +851,13 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
         ) : null}
         {!visual ? (
           <MarkdownPane
-            id={`${id}-markdown`}
+            id={id}
             value={md}
             onChange={onMarkdownChange}
             lang={lang}
             labelledBy={`${uid}-label`}
-            describedBy={[hint ? `${uid}-hint` : "", `${uid}-mdhint`].filter(Boolean).join(" ")}
+            describedBy={[hint ? `${uid}-hint` : "", `${uid}-mdhint`, error ? `${id}-error` : ""].filter(Boolean).join(" ")}
+            invalid={Boolean(error)}
             error={mdError}
             errorId={`${uid}-mderror`}
             rows={full ? 28 : 16}
@@ -809,7 +873,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
         ) : null}
         <p
           aria-label={T("edStatusLabel", { label })}
-          className="m-0 flex flex-wrap gap-x-[var(--space-4)] border-t border-line bg-surface-alt px-[var(--space-3)] py-[var(--space-1)] text-sm text-ink-600"
+          className="m-0 flex flex-wrap gap-x-[var(--space-4)] border-t border-line py-[var(--space-2)] text-xs text-ink-600"
         >
           <span>{T("edWords", { count: stats.words })}</span>
           <span>{T("edChars", { count: stats.characters })}</span>
@@ -833,7 +897,7 @@ export function RichTextEditor({ name, label, lang, hint, defaultValue, refs, ha
           refs={liveRefs}
           onSubmit={applyBlock}
           onClose={() => closeOverlay("block")}
-          onImageUploaded={(image) => setImages((cur) => (cur.some((i) => i.id === image.id) ? cur : [image, ...cur]))}
+          onImageUploaded={addImage}
         />
       ) : null}
 
@@ -887,11 +951,8 @@ function EnglishDisclosure({ summary, initiallyOpen, forceOpen, openRef, childre
 }
 
 /**
- * Thai first, then the English editor in a disclosure headed "English version".
- * The disclosure is open when English already has content, and whenever the
- * form has an error, so an error can never sit in a closed box; it is closed
- * only for an empty, error-free item. Closed fields still post. Names are
- * `<name>.th` and `<name>.en`.
+ * Both editors stay mounted so language changes preserve history, selection,
+ * and unfinished Markdown. Standalone fields keep their language disclosure.
  */
 export function BilingualRichTextField({
   name,
@@ -907,6 +968,7 @@ export function BilingualRichTextField({
   refs: RichTextRefs;
 }) {
   const { locale, errors } = useContentForm();
+  const documentLanguage = useDocumentLanguage();
   const openEnglish = useRef<(() => void) | null>(null);
   const handles = { th: useRef<RichTextEditorHandle>(null), en: useRef<RichTextEditorHandle>(null) };
   const [pending, setPending] = useState<{ from: "th" | "en"; to: "th" | "en"; doc: RichTextDoc } | null>(null);
@@ -933,6 +995,7 @@ export function BilingualRichTextField({
     <div className="flex flex-col gap-[var(--space-6)]">
       {(["th", "en"] as const).map((lang) => {
         const other = lang === "th" ? "en" : "th";
+        const active = !documentLanguage || documentLanguage.language === lang;
         const editor = (
           <RichTextEditor
             key={lang}
@@ -943,6 +1006,7 @@ export function BilingualRichTextField({
             defaultValue={defaultValue?.[lang]}
             refs={refs}
             handleRef={handles[lang]}
+            active={active}
             headerExtra={
               <Button type="button" variant="secondary" size="sm" icon={<ConsoleIcon name="rteCopy" />} onClick={() => copy(other, lang)}>
                 {a(other === "th" ? "edCopyFromThai" : "edCopyFromEnglish", locale)}
@@ -950,6 +1014,13 @@ export function BilingualRichTextField({
             }
           />
         );
+        if (documentLanguage) {
+          return (
+            <div key={lang} hidden={!active} data-content-language={lang}>
+              {editor}
+            </div>
+          );
+        }
         if (lang === "th") return editor;
         return (
           <EnglishDisclosure

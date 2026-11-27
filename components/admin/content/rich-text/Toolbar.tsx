@@ -17,6 +17,8 @@ export interface ToolbarAction {
   separator?: boolean;
   /** When the bar is too narrow for everything, lower ranks stay visible first. */
   rank?: number;
+  /** Keep this action in More tools. */
+  overflow?: boolean;
   run: () => void;
 }
 
@@ -38,10 +40,7 @@ export type ToolbarGroup =
     };
 
 const BUTTON = 32;
-const GAP = 2;
-const GROUP = 13;
-
-const widthOf = (group: ToolbarGroup) => (group.kind === "buttons" ? group.actions.length * BUTTON + (group.actions.length - 1) * GAP + GROUP : group.width + GROUP);
+const GAP = 4;
 
 const label = (a: ToolbarAction) => (a.shortcut ? `${a.label} (${a.shortcut})` : a.label);
 
@@ -64,7 +63,6 @@ interface ToolbarProps {
   label: string;
   controls: string;
   moreLabel: string;
-  onAfterMenu: () => void;
 }
 
 /**
@@ -72,36 +70,47 @@ interface ToolbarProps {
  * "More" menu at the end, so nothing wraps and nothing is lost. One tab stop;
  * Left, Right, Home and End move between the buttons.
  */
-export function Toolbar({ groups, label: toolbarLabel, controls, moreLabel, onAfterMenu }: ToolbarProps) {
+export function Toolbar({ groups, label: toolbarLabel, controls, moreLabel }: ToolbarProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState<number | null>(null);
+  const [size, setSize] = useState({ width: 0, button: BUTTON });
 
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const measure = () => setWidth(el.clientWidth > 0 ? el.clientWidth - 16 : null);
+    const coarse = window.matchMedia?.("(pointer: coarse)");
+    const measure = () => {
+      const target = Number.parseFloat(getComputedStyle(el).getPropertyValue("--target-min"));
+      setSize({ width: el.clientWidth, button: Math.max(BUTTON, target || BUTTON) });
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(el);
-    return () => observer.disconnect();
+    coarse?.addEventListener("change", measure);
+    return () => {
+      observer.disconnect();
+      coarse?.removeEventListener("change", measure);
+    };
   }, []);
 
   type Unit = { group: ToolbarGroup; action?: ToolbarAction; rank: number; order: number; width: number };
   const units: Unit[] = groups.flatMap((g, gi): Unit[] =>
-    g.kind === "menu" ? [{ group: g, rank: g.rank ?? 99, order: gi * 100, width: g.width }] : g.actions.map((action, ai) => ({ group: g, action, rank: action.rank ?? 99, order: gi * 100 + ai, width: BUTTON })),
+    g.kind === "menu" ? [{ group: g, rank: g.rank ?? 99, order: gi * 100, width: g.width }] : g.actions.map((action, ai) => ({ group: g, action, rank: action.rank ?? 99, order: gi * 100 + ai, width: size.button })),
   );
-  const fullWidth = groups.reduce((sum, g) => sum + widthOf(g), 0);
-  const compact = width !== null && fullWidth > width;
+  const primary = units.filter((unit) => !unit.action?.overflow);
+  const hasSecondary = primary.length < units.length;
+  const menuWidth = Math.max(size.button, 48);
+  const fullWidth = primary.reduce((sum, unit) => sum + unit.width + GAP, hasSecondary ? menuWidth + GAP : 0);
+  const compact = size.width > 0 && fullWidth > size.width;
   const keep = new Set<Unit>();
   if (compact) {
-    let used = BUTTON + 26 + GAP;
-    for (const unit of [...units].sort((x, y) => x.rank - y.rank || x.order - y.order)) {
-      if (used + unit.width + GAP > width) break;
+    let used = menuWidth;
+    for (const unit of [...primary].sort((x, y) => x.rank - y.rank || x.order - y.order)) {
+      if (used + unit.width + GAP > size.width) continue;
       used += unit.width + GAP;
       keep.add(unit);
     }
   }
-  const isShown = (unit: Unit) => !compact || keep.has(unit);
+  const isShown = (unit: Unit) => !unit.action?.overflow && (!compact || keep.has(unit));
   const visible: { group: ToolbarGroup; actions: ToolbarAction[]; menu: boolean }[] = [];
   const hiddenByGroup: { group: ToolbarGroup; actions: ToolbarAction[] }[] = [];
   for (const g of groups) {
@@ -144,14 +153,14 @@ export function Toolbar({ groups, label: toolbarLabel, controls, moreLabel, onAf
       aria-label={toolbarLabel}
       aria-controls={controls}
       onKeyDown={onKeyDown}
-      className="flex items-center gap-[var(--space-1)] border-b border-line bg-surface-alt p-[var(--space-2)]"
+      className="flex min-w-0 items-center gap-[var(--space-1)] border-b border-line pb-[var(--space-2)]"
     >
-      {visible.map(({ group, actions }, i) => (
+      {visible.map(({ group, actions }) => (
         <div
           key={group.id}
           role="group"
           aria-label={group.label}
-          className={`flex items-center gap-[2px] ${i > 0 && !compact ? "ml-[var(--space-1)] border-l border-line-strong pl-[var(--space-2)]" : ""}`}
+          className="flex shrink-0 items-center gap-[var(--space-1)]"
         >
           {group.kind === "buttons" ? (
             actions.map((action) => (
@@ -164,7 +173,6 @@ export function Toolbar({ groups, label: toolbarLabel, controls, moreLabel, onAf
               triggerLabel={group.label}
               icon={group.triggerIcon}
               items={toItems(group.actions, Boolean(group.radio))}
-              onAfterRun={onAfterMenu}
             >
               {group.triggerText ? <span className="text-sm">{group.triggerText}</span> : null}
             </Menu>
@@ -172,8 +180,8 @@ export function Toolbar({ groups, label: toolbarLabel, controls, moreLabel, onAf
         </div>
       ))}
       {overflow.length > 0 ? (
-        <div className="ml-auto pl-[var(--space-1)]">
-          <Menu tb label={moreLabel} triggerLabel={moreLabel} icon="more" align="end" items={overflow} onAfterRun={onAfterMenu} />
+        <div className="ml-auto shrink-0">
+          <Menu tb label={moreLabel} triggerLabel={moreLabel} icon="more" align="end" items={overflow} />
         </div>
       ) : null}
     </div>

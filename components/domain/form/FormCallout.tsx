@@ -14,6 +14,7 @@ export interface FormCalloutProps {
   /** The depth this callout's own heading sits at wherever it is embedded, so it never skips a level inside a rich text body (1.3.1). */
   headingLevel: HeadingLevel;
   className?: string;
+  preview?: boolean;
 }
 
 /**
@@ -32,16 +33,20 @@ export interface FormCalloutProps {
  *
  * Import as: `import { FormCallout } from "@/components/domain/form"`.
  */
-export function FormCallout({ form, locale, headingLevel, className }: FormCalloutProps) {
+export function FormCallout({ form, locale, headingLevel, className, preview }: FormCalloutProps) {
   const href = localePath(locale, `/forms/${form.slug.current}`);
 
   return (
     <div className={cx("border border-line-strong bg-surface", className)}>
       <div className="border-b border-line px-[var(--space-4)] py-[var(--space-3)]">
         <Heading level={headingLevel} className="m-0 text-lg">
-          <Link href={href} className="text-action no-underline hover:text-action-hover hover:underline">
-            {pick(form.title, locale)}
-          </Link>
+          {preview ? (
+            <span className="text-action">{pick(form.title, locale)}</span>
+          ) : (
+            <Link href={href} className="text-action no-underline hover:text-action-hover hover:underline">
+              {pick(form.title, locale)}
+            </Link>
+          )}
         </Heading>
       </div>
       <div className="px-[var(--space-4)] py-[var(--space-3)]">

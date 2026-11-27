@@ -1,6 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, TextField } from "@/components/admin/content/fields";
 import { FormSection } from "@/components/admin/content/FormSection";
 import { userNames } from "@/lib/admin/content/list";
@@ -35,15 +36,17 @@ export async function DecisionForm({ locale, owners, meetingId, id, saved }: { l
       saved={saved}
       hasStatus={false}
     >
+      <DocumentCanvas locale={locale}>
+        <TextField name="topic" label={L("odmFieldTopic")} defaultValue={row?.topic} />
+        <BilingualTextarea appearance="text" name="text" label={L("odmFieldDecisionText")} rows={4} defaultValue={{ th: row?.textTh, en: row?.textEn }} />
+        <TextField name="outcome" label={L("odmFieldOutcome")} defaultValue={row?.outcome} />
+      </DocumentCanvas>
       <FormSection id="od-decision-identity" icon="edit" legend={L("odmSecDecision")}>
         <div className="grid gap-[var(--space-4)] md:grid-cols-3">
           <TextField name="ref" label={L("odmFieldRef")} hint={L("odmHintRef")} defaultValue={row?.ref} />
           <TextField name="item" label={L("odmFieldItem")} hint={L("odmHintItem")} defaultValue={row?.item} />
           <TextField name="type" label={L("odmFieldDecisionType")} defaultValue={row?.type} />
         </div>
-        <TextField name="topic" label={L("odmFieldTopic")} defaultValue={row?.topic} />
-        <BilingualTextarea name="text" label={L("odmFieldDecisionText")} rows={4} defaultValue={{ th: row?.textTh, en: row?.textEn }} />
-        <TextField name="outcome" label={L("odmFieldOutcome")} defaultValue={row?.outcome} />
         <TextField name="amount" label={L("odmFieldAmount")} hint={L("odmHintAsPrinted")} defaultValue={row?.amount} />
         <TextField name="minutesAnchor" label={L("odmFieldMinutesAnchor")} defaultValue={row?.minutesAnchor} />
       </FormSection>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { ContentForm, type ContentRecordInfo } from "@/components/admin/content/ContentForm";
+import { DocumentCanvas } from "@/components/admin/content/DocumentCanvas";
 import { BilingualTextarea, BilingualTextField, CheckboxField, DateField, EnumSelect, SlugField, TextField } from "@/components/admin/content/fields";
 import { BilingualRichTextField } from "@/components/admin/content/RichTextEditor";
 import { Fieldset, NotificationBanner } from "@/components/ui";
@@ -37,10 +38,9 @@ const USE_LABEL: Record<FormUsageKind, AdminKey> = {
 export async function FormForm({ locale, id, saved, notice }: { locale: Locale; id?: string; saved?: string; notice?: string }) {
   const db = getDb();
   const def = getContentType("forms")!;
-  const refs = await loadRichTextRefs(db);
-
   const [form] = id ? await db.select().from(forms).where(eq(forms.id, id)) : [];
   if (id && !form) notFound();
+  const refs = await loadRichTextRefs(db, [], [form?.descriptionTh, form?.descriptionEn]);
   const [names, usages] = form
     ? await Promise.all([userNames(db, [form.updatedBy]), notice === "inuse" ? findFormUsages(db, form.id) : []])
     : [new Map<string, string>(), []];
@@ -85,6 +85,7 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
         saved={saved}
         details={
           <>
+            <SlugField label={L("fieldSlug")} defaultValue={form?.slug} />
             <EnumSelect
               name="category"
               label={L("fieldCategory")}
@@ -101,13 +102,12 @@ export async function FormForm({ locale, id, saved, notice }: { locale: Locale; 
           </>
         }
       >
-        <Group icon="forms" id="group-basics" legend={L("formsGroupBasics")}>
-          <BilingualTextField name="title" label={L("fieldTitle")} maxLength={200} defaultValue={pair(form?.titleTh, form?.titleEn)} />
-          <SlugField label={L("fieldSlug")} defaultValue={form?.slug} />
-          <BilingualTextField name="purpose" label={L("formsFieldPurpose")} hint={L("formsHintPurpose")} maxLength={300} defaultValue={pair(form?.purposeTh, form?.purposeEn)} />
-          <BilingualRichTextField name="description" label={L("formsFieldDescription")} refs={refs} defaultValue={{ th: form?.descriptionTh, en: form?.descriptionEn }} />
+        <DocumentCanvas locale={locale}>
+          <BilingualTextField appearance="title" name="title" label={L("fieldTitle")} maxLength={200} defaultValue={pair(form?.titleTh, form?.titleEn)} />
+          <BilingualTextField appearance="lead" name="purpose" label={L("formsFieldPurpose")} hint={L("formsHintPurpose")} maxLength={300} defaultValue={pair(form?.purposeTh, form?.purposeEn)} />
           <BilingualTextarea name="audience" label={L("formsFieldAudience")} hint={L("formsHintAudience")} rows={2} maxLength={500} defaultValue={pair(form?.audienceTh, form?.audienceEn)} />
-        </Group>
+          <BilingualRichTextField name="description" label={L("formsFieldDescription")} refs={refs} defaultValue={{ th: form?.descriptionTh, en: form?.descriptionEn }} />
+        </DocumentCanvas>
 
         <Group icon="check" id="group-before" legend={L("formsGroupBefore")}>
           <ObjectListField
